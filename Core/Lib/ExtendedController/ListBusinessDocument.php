@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,9 +44,8 @@ abstract class ListBusinessDocument extends ListController
 
     protected function addColorStatus(string $viewName, string $modelName): void
     {
-        $estadoDocumento = new EstadoDocumento();
         $where = [new DataBaseWhere('tipodoc', $modelName)];
-        foreach ($estadoDocumento->all($where, [], 0, 0) as $status) {
+        foreach (EstadoDocumento::all($where) as $status) {
             if ($status->color) {
                 $this->addColor($viewName, 'idestado', $status->idestado, $status->color, $status->nombre);
             }
@@ -89,7 +88,7 @@ abstract class ListBusinessDocument extends ListController
         foreach (InvoiceOperation::all() as $key => $value) {
             $operations[] = [
                 'code' => $key,
-                'description' => Tools::lang()->trans($value)
+                'description' => Tools::trans($value)
             ];
         }
         $this->addFilterSelect($viewName, 'operacion', 'operation', 'operacion', $operations);
@@ -128,11 +127,11 @@ abstract class ListBusinessDocument extends ListController
 
         $stock = [
             ['code' => '', 'description' => '------'],
-            ['code' => -2, 'description' => Tools::lang()->trans('book')],
-            ['code' => -1, 'description' => Tools::lang()->trans('subtract')],
-            ['code' => 0, 'description' => Tools::lang()->trans('do-nothing')],
-            ['code' => 1, 'description' => Tools::lang()->trans('add')],
-            ['code' => 2, 'description' => Tools::lang()->trans('foresee')]
+            ['code' => -2, 'description' => Tools::trans('book')],
+            ['code' => -1, 'description' => Tools::trans('subtract')],
+            ['code' => 0, 'description' => Tools::trans('do-nothing')],
+            ['code' => 1, 'description' => Tools::trans('add')],
+            ['code' => 2, 'description' => Tools::trans('foresee')]
         ];
         $this->addFilterSelect($viewName, 'actualizastock', 'stock', 'actualizastock', $stock);
 
@@ -163,11 +162,12 @@ abstract class ListBusinessDocument extends ListController
         $this->setSettings($viewName, 'megasearch', false);
     }
 
-    protected function createViewPurchases(string $viewName, string $modelName, string $label)
+    protected function createViewPurchases(string $viewName, string $modelName, string $label): void
     {
         $this->addView($viewName, $modelName, $label, 'fa-solid fa-copy')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
+            ->addOrderBy([$this->tab($viewName)->model->primaryColumn()], 'id')
             ->addOrderBy([$this->tableColToNumber('numero')], 'number')
             ->addOrderBy(['numproveedor'], 'numsupplier')
             ->addOrderBy(['codproveedor'], 'supplier-code')
@@ -183,12 +183,13 @@ abstract class ListBusinessDocument extends ListController
         $this->addColorStatus($viewName, $modelName);
     }
 
-    protected function createViewSales(string $viewName, string $modelName, string $label)
+    protected function createViewSales(string $viewName, string $modelName, string $label): void
     {
         $this->addView($viewName, $modelName, $label, 'fa-solid fa-copy')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['codcliente'], 'customer-code')
             ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
+            ->addOrderBy([$this->tab($viewName)->model->primaryColumn()], 'id')
             ->addOrderBy([$this->tableColToNumber('numero')], 'number')
             ->addOrderBy(['numero2'], 'number2')
             ->addOrderBy(['total'], 'total')
@@ -199,9 +200,9 @@ abstract class ListBusinessDocument extends ListController
 
         // filtramos por grupos de clientes
         $optionsGroup = [
-            ['label' => Tools::lang()->trans('any-group'), 'where' => []],
+            ['label' => Tools::trans('any-group'), 'where' => []],
             [
-                'label' => Tools::lang()->trans('without-groups'),
+                'label' => Tools::trans('without-groups'),
                 'where' => [new DataBaseWhere('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo IS NULL", 'IN')]
             ],
             ['label' => '------', 'where' => []],
@@ -214,7 +215,7 @@ abstract class ListBusinessDocument extends ListController
             ];
         }
         if (count($optionsGroup) > 3) {
-            $this->addFilterSelectWhere($viewName, 'codgrupo', $optionsGroup);
+            $this->addFilterSelectWhere($viewName, 'codgrupo', $optionsGroup, 'customer-group');
         }
 
         // filtramos por clientes y direcciones
@@ -267,6 +268,9 @@ abstract class ListBusinessDocument extends ListController
             case 'lock-invoice':
                 return $this->lockInvoiceAction($codes, $model, $allowUpdate, $this->dataBase);
 
+            case 'pay-invoice':
+                return $this->payInvoiceAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);
+
             case 'pay-receipt':
                 return $this->payReceiptAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);
         }
@@ -276,7 +280,8 @@ abstract class ListBusinessDocument extends ListController
 
     private function tableColToNumber(string $name): string
     {
-        return strtolower(FS_DB_TYPE) == 'postgresql' ?
+        $db_type = Tools::config('db_type');
+        return strtolower($db_type) == 'postgresql' ?
             'CAST(' . $name . ' as integer)' :
             'CAST(' . $name . ' as unsigned)';
     }

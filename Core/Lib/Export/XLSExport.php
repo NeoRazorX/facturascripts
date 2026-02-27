@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,7 +62,7 @@ class XLSExport extends ExportBase
         }
 
         $lineRows = $this->getCursorRawData($cursor);
-        $this->writer->writeSheet($lineRows, Tools::lang()->trans('lines'), $lineHeaders);
+        $this->writer->writeSheet($lineRows, Tools::trans('lines'), $lineHeaders);
 
         // modelo
         $headers = $this->getModelHeaders($model);
@@ -197,8 +197,8 @@ class XLSExport extends ExportBase
      */
     public function show(Response &$response)
     {
-        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=' . $this->getFileName() . '.xlsx');
+        $response->headers->set('Content-Type', 'application/octet-stream');
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $this->getFileName() . '.xlsx');
         $response->setContent($this->getDoc());
     }
 

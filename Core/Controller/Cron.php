@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,15 +21,19 @@ namespace FacturaScripts\Core\Controller;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
+use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\AlbaranProveedor;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\CronJob;
+use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
@@ -43,6 +47,7 @@ use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 use FacturaScripts\Dinamic\Model\WorkEvent;
+use ParseCsv\Csv;
 
 class Cron implements ControllerInterface
 {
@@ -61,7 +66,7 @@ class Cron implements ControllerInterface
         $this->echoLogo();
 
         Tools::log('cron')->notice('starting-cron');
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('starting-cron');
+        echo PHP_EOL . PHP_EOL . Tools::trans('starting-cron');
         ob_flush();
 
         // ejecutamos el cron de cada plugin
@@ -85,12 +90,15 @@ class Cron implements ControllerInterface
             ob_flush();
         }
 
+        // limpiamos los archivos expirados de la caché
+        Cache::expire();
+
         // mensaje de finalización
         $context = [
             '%timeNeeded%' => Kernel::getExecutionTime(3),
             '%memoryUsed%' => $this->getMemorySize(memory_get_peak_usage())
         ];
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('finished-cron', $context) . PHP_EOL . PHP_EOL;
+        echo PHP_EOL . PHP_EOL . Tools::trans('finished-cron', $context) . PHP_EOL . PHP_EOL;
         Tools::log()->notice('finished-cron', $context);
     }
 
@@ -121,12 +129,24 @@ END;
     {
         $job = new CronJob();
         $where = [
-            new DataBaseWhere('jobname', $name),
-            new DataBaseWhere('pluginname', null, 'IS')
+            Where::eq('jobname', $name),
+            Where::isNull('pluginname')
         ];
-        if (false === $job->loadFromCode('', $where)) {
+        if (false === $job->loadWhere($where)) {
             // no se había ejecutado nunca, lo creamos
             $job->jobname = $name;
+        }
+
+        // si el job lleva más de 6 horas en running, es un proceso zombie: lo liberamos
+        if ($job->running > 0 && strtotime($job->date) < time() - (6 * 3600)) {
+            Tools::log('cron')->warning('cron-stale-job-released', [
+                '%jobName%' => $job->jobname,
+            ]);
+            $job->running = 0;
+            $job->done = true;
+            $job->failed = true;
+            $job->fails++;
+            $job->save();
         }
 
         return $job;
@@ -140,7 +160,7 @@ END;
         }
 
         $minDate = Tools::dateTime('-' . $maxDays . ' days');
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('removing-logs-until', ['%date%' => $minDate]) . ' ... ';
+        echo PHP_EOL . PHP_EOL . Tools::trans('removing-logs-until', ['%date%' => $minDate]) . ' ... ';
         ob_flush();
 
         $query = LogMessage::table()
@@ -176,6 +196,51 @@ END;
         Tools::log('cron')->notice('old-work-events-delete-ok');
     }
 
+    protected function restoreNotifications(): void
+    {
+        echo PHP_EOL . PHP_EOL . Tools::trans('restoring-notifications') . ' ... ';
+        ob_flush();
+
+        // obtenemos las notificaciones existentes en la base de datos
+        $existing = [];
+        $emailNotification = new EmailNotification();
+        foreach ($emailNotification->all() as $notification) {
+            $existing[] = $notification->name;
+        }
+
+        // obtenemos las notificaciones que deberían existir del CSV
+        $filePath = CSVImport::getTableFilePath(EmailNotification::tableName());
+        if (empty($filePath)) {
+            return;
+        }
+
+        // leemos el CSV y restauramos solo las que faltan
+        $csv = new Csv();
+        $csv->auto($filePath);
+
+        $restored = 0;
+        foreach ($csv->data as $row) {
+            // si ya existe, la saltamos
+            if (in_array($row['name'], $existing)) {
+                continue;
+            }
+
+            // creamos la notificación que falta
+            $notification = new EmailNotification();
+            $notification->name = $row['name'];
+            $notification->enabled = $row['enabled'] === 'true';
+            $notification->subject = $row['subject'];
+            $notification->body = $row['body'];
+            if ($notification->save()) {
+                $restored++;
+            }
+        }
+
+        if ($restored > 0) {
+            Tools::log('cron')->notice('restored-notifications', ['%count%' => $restored]);
+        }
+    }
+
     protected function runCoreJobs(): void
     {
         $this->job('update-attached-relations')
@@ -208,6 +273,12 @@ END;
             ->run(function () {
                 $this->updateReceipts();
             });
+
+        $this->job('restore-notifications')
+            ->everyDayAt(5)
+            ->run(function () {
+                $this->restoreNotifications();
+            });
     }
 
     protected function runPlugins(): void
@@ -218,7 +289,7 @@ END;
                 continue;
             }
 
-            echo PHP_EOL . Tools::lang()->trans('running-plugin-cron', ['%pluginName%' => $pluginName]) . ' ... ';
+            echo PHP_EOL . Tools::trans('running-plugin-cron', ['%pluginName%' => $pluginName]) . ' ... ';
             Tools::log('cron')->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
 
             try {
@@ -233,7 +304,7 @@ END;
 
             // si no se está ejecutando en modo cli y lleva más de 20 segundos, se detiene
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 20) {
-                echo PHP_EOL . PHP_EOL . Tools::lang()->trans('cron-timeout');
+                echo PHP_EOL . PHP_EOL . Tools::trans('cron-timeout');
                 break;
             }
         }
@@ -241,20 +312,24 @@ END;
 
     protected function runWorkQueue(): void
     {
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('running-work-queue') . ' ... ';
+        $max = rand(25, 1000);
+
+        echo PHP_EOL . PHP_EOL . Tools::trans('running-work-queue') . ' ... (' . $max . ') ';
         ob_flush();
 
-        $max = 1000;
         while ($max > 0) {
             if (false === WorkQueue::run()) {
                 break;
             }
 
+            echo '.';
+            ob_flush();
+
             --$max;
 
             // si no se está ejecutando en modo cli y lleva más de 25 segundos, terminamos
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 25) {
-                echo PHP_EOL . PHP_EOL . Tools::lang()->trans('cron-timeout');
+                echo PHP_EOL . PHP_EOL . Tools::trans('cron-timeout');
                 return;
             }
         }
@@ -262,7 +337,7 @@ END;
 
     protected function updateAttachedRelations(): void
     {
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-attached-relations') . ' ... ';
+        echo PHP_EOL . PHP_EOL . Tools::trans('updating-attached-relations') . ' ... ';
         ob_flush();
 
         // si no hay relaciones con archivos adjuntos, terminamos
@@ -288,9 +363,9 @@ END;
         while (!empty($documents)) {
             foreach ($documents as $doc) {
                 $where = [new DataBaseWhere('model', $doc->modelClassName())];
-                $where[] = is_numeric($doc->primaryColumnValue()) ?
-                    new DataBaseWhere('modelid|modelcode', $doc->primaryColumnValue()) :
-                    new DataBaseWhere('modelcode', $doc->primaryColumnValue());
+                $where[] = is_numeric($doc->id()) ?
+                    new DataBaseWhere('modelid|modelcode', $doc->id()) :
+                    new DataBaseWhere('modelcode', $doc->id());
 
                 $num = $relationModel->count($where);
                 if ($num == $doc->numdocs) {
@@ -301,7 +376,7 @@ END;
                 if (false === $doc->save()) {
                     Tools::log('cron')->error('record-save-error', [
                         '%model%' => $doc->modelClassName(),
-                        '%id%' => $doc->primaryColumnValue()
+                        '%id%' => $doc->id()
                     ]);
                     break;
                 }
@@ -314,14 +389,12 @@ END;
 
     protected function updateFamilies(): void
     {
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-families') . ' ... ';
+        echo PHP_EOL . PHP_EOL . Tools::trans('updating-families') . ' ... ';
         ob_flush();
 
-        $producto = new Producto();
-
         // recorremos todas las familias para actualizar su contador de productos
-        foreach (Familia::all([], [], 0, 0) as $familia) {
-            $count = $producto->count([new DataBaseWhere('codfamilia', $familia->codfamilia)]);
+        foreach (Familia::all() as $familia) {
+            $count = Producto::count([new DataBaseWhere('codfamilia', $familia->codfamilia)]);
             if ($familia->numproductos == $count) {
                 continue;
             }
@@ -333,14 +406,12 @@ END;
 
     protected function updateManufacturers(): void
     {
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-manufacturers') . ' ... ';
+        echo PHP_EOL . PHP_EOL . Tools::trans('updating-manufacturers') . ' ... ';
         ob_flush();
 
-        $producto = new Producto();
-
         // recorremos todos los fabricantes para actualizar su contador de productos
-        foreach (Fabricante::all([], [], 0, 0) as $fabricante) {
-            $count = $producto->count([new DataBaseWhere('codfabricante', $fabricante->codfabricante)]);
+        foreach (Fabricante::all() as $fabricante) {
+            $count = Producto::count([new DataBaseWhere('codfabricante', $fabricante->codfabricante)]);
             if ($fabricante->numproductos == $count) {
                 continue;
             }
@@ -352,7 +423,7 @@ END;
 
     protected function updateReceipts(): void
     {
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-receipts') . ' ... ';
+        echo PHP_EOL . PHP_EOL . Tools::trans('updating-receipts') . ' ... ';
         ob_flush();
 
         // recorremos todos los recibos de compra impagados con fecha anterior a hoy
@@ -360,7 +431,8 @@ END;
             new DataBaseWhere('pagado', false),
             new DataBaseWhere('vencimiento', Tools::date(), '<')
         ];
-        foreach (ReciboProveedor::all($where, [], 0, 0) as $recibo) {
+        $orderBy = ['vencimiento' => 'DESC'];
+        foreach (ReciboProveedor::all($where, $orderBy, 0, 500) as $recibo) {
             // si el código de factura ha cambiado, lo guardamos
             $factura = $recibo->getInvoice();
             if ($recibo->codigofactura != $factura->codigo) {
@@ -372,7 +444,7 @@ END;
         }
 
         // recorremos todos los recibos de venta impagados con fecha anterior a hoy
-        foreach (ReciboCliente::all($where, [], 0, 0) as $recibo) {
+        foreach (ReciboCliente::all($where, $orderBy, 0, 500) as $recibo) {
             // si el código de factura ha cambiado, lo guardamos
             $factura = $recibo->getInvoice();
             if ($recibo->codigofactura != $factura->codigo) {

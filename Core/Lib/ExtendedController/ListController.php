@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,10 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 
@@ -59,7 +61,7 @@ abstract class ListController extends BaseController
         parent::privateCore($response, $user, $permissions);
 
         // Get action to execute
-        $action = $this->request->request->get('action', $this->request->query->get('action', ''));
+        $action = $this->request->inputOrQuery('action', '');
 
         // Execute actions before loading data
         if (false === $this->execPreviousAction($action) || false === $this->pipeFalse('execPreviousAction', $action)) {
@@ -266,11 +268,35 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Clears the cached filters for the active view.
+     */
+    protected function clearFiltersAction(): void
+    {
+        $viewName = $this->active;
+        $nick = Session::user()->nick;
+        $cacheKey = 'filters-' . Session::get('controllerName') . '-' . $viewName . '-' . $nick;
+
+        // clear cache
+        Cache::clear($cacheKey);
+
+        // clear filter values from request
+        $view = $this->listView($viewName);
+        foreach ($view->filters as $filter) {
+            $this->request->request->remove('filter' . $filter->key);
+        }
+
+        // clear query
+        $this->request->request->remove('query');
+
+        Tools::log()->notice('record-updated-correctly');
+    }
+
+    /**
      * Removes the selected page filter.
      */
     protected function deleteFilterAction(): void
     {
-        $id_filter = $this->request->request->get('loadfilter', 0);
+        $id_filter = $this->request->input('loadfilter', 0);
         if ($this->listView($this->active)->deletePageFilter($id_filter)) {
             Tools::log()->notice('record-deleted-correctly');
             $this->request->request->remove('loadfilter');
@@ -315,8 +341,12 @@ abstract class ListController extends BaseController
             case 'autocomplete':
                 $this->setTemplate(false);
                 $results = $this->autocompleteAction();
-                $this->response->setContent(json_encode($results));
+                $this->response->json($results);
                 return false;
+
+            case 'clear-filters':
+                $this->clearFiltersAction();
+                break;
 
             case 'delete':
                 $this->deleteAction();
@@ -343,8 +373,9 @@ abstract class ListController extends BaseController
         }
 
         $this->setTemplate(false);
+
         $codes = $this->request->request->getArray('codes');
-        $option = $this->request->get('option', '');
+        $option = $this->request->queryOrInput('option', '');
         $this->exportManager->newDoc($option);
         $this->views[$this->active]->export($this->exportManager, $codes);
         $this->exportManager->show($this->response);
@@ -410,7 +441,7 @@ abstract class ListController extends BaseController
             ];
 
             $fields = implode('|', $listView->searchFields);
-            $where = [new DataBaseWhere($fields, $this->request->get('query', ''), 'LIKE')];
+            $where = [new DataBaseWhere($fields, $this->request->queryOrInput('query', ''), 'LIKE')];
             $listView->loadData(false, $where);
             foreach ($listView->cursor as $model) {
                 $item = ['url' => $model->url()];
@@ -424,7 +455,7 @@ abstract class ListController extends BaseController
             }
         }
 
-        $this->response->setContent(json_encode($json));
+        $this->response->json($json);
     }
 
     /**
@@ -439,7 +470,7 @@ abstract class ListController extends BaseController
         $result = [];
         foreach ($view->getColumns() as $col) {
             if (false === $col->hidden()) {
-                $result[] = Tools::lang()->trans($col->title);
+                $result[] = Tools::trans($col->title);
             }
         }
 

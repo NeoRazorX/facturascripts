@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,21 +37,15 @@
         <group name="accounting" numcolumns="6">
             <column name="codsubcuentacom" title="subaccount-purchases" titleurl="ListCuenta" description="optional"
                     order="100">
-                <widget type="autocomplete" fieldname="codsubcuentacom">
-                    <values source="subcuentas" fieldcode="codsubcuenta"/>
-                </widget>
+                <widget type="subcuenta" fieldname="codsubcuentacom"/>
             </column>
             <column name="codsubcuentaven" title="subaccount-sales" titleurl="ListCuenta" description="optional"
                     order="110">
-                <widget type="autocomplete" fieldname="codsubcuentaven">
-                    <values source="subcuentas" fieldcode="codsubcuenta"/>
-                </widget>
+                <widget type="subcuenta" fieldname="codsubcuentaven"/>
             </column>
             <column name="codsubcuentairpcomf" title="subaccount-irpf" titleurl="ListCuenta" description="optional"
                     numcolumns="5" order="120">
-                <widget type="autocomplete" fieldname="codsubcuentairpfcom">
-                    <values source="subcuentas" fieldcode="codsubcuenta"/>
-                </widget>
+                <widget type="subcuenta" fieldname="codsubcuentairpfcom"/>
             </column>
         </group>
         <group name="advanced" numcolumns="6" valign="bottom">

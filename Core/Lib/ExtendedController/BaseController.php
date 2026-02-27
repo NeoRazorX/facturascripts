@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,8 +97,8 @@ abstract class BaseController extends Controller
     public function __construct(string $className, string $uri = '')
     {
         parent::__construct($className, $uri);
-        $activeTabGet = $this->request->query->get('activetab', '');
-        $this->active = $this->request->request->get('activetab', $activeTabGet);
+        $activeTabGet = $this->request->query('activetab', '');
+        $this->active = $this->request->input('activetab', $activeTabGet);
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
     }
@@ -258,7 +258,7 @@ abstract class BaseController extends Controller
 
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
-            $value = $this->request->get($field);
+            $value = $this->request->queryOrInput($field);
             $where[] = new DataBaseWhere($field, $value, '=', $operation);
         }
 
@@ -270,7 +270,7 @@ abstract class BaseController extends Controller
         if (empty($results) && '0' == $data['strict']) {
             $results[] = ['key' => $data['term'], 'value' => $data['term']];
         } elseif (empty($results)) {
-            $results[] = ['key' => null, 'value' => Tools::lang()->trans('no-data')];
+            $results[] = ['key' => null, 'value' => Tools::trans('no-data')];
         }
 
         return $results;
@@ -349,7 +349,7 @@ abstract class BaseController extends Controller
 
         $model = $this->views[$this->active]->model;
         $codes = $this->request->request->getArray('codes');
-        $code = $this->request->request->get('code');
+        $code = $this->request->input('code');
         if (empty($codes) && empty($code)) {
             Tools::log()->warning('no-selected-item');
             return false;
@@ -399,10 +399,10 @@ abstract class BaseController extends Controller
 
         $this->setTemplate(false);
         $this->exportManager->newDoc(
-            $this->request->get('option', ''),
+            $this->request->queryOrInput('option', ''),
             $this->title,
-            (int)$this->request->request->get('idformat', ''),
-            $this->request->request->get('langcode', '')
+            (int)$this->request->input('idformat', ''),
+            $this->request->input('langcode', '')
         );
 
         foreach ($this->views as $selectedView) {
@@ -432,7 +432,7 @@ abstract class BaseController extends Controller
         $column = $this->views[$viewName]->columnForField($fieldName);
         if (!empty($column)) {
             foreach ($column->widget->values as $value) {
-                $result[] = ['key' => Tools::lang()->trans($value['title']), 'value' => $value['value']];
+                $result[] = ['key' => Tools::trans($value['title']), 'value' => $value['value']];
             }
         }
         return $result;
@@ -449,7 +449,7 @@ abstract class BaseController extends Controller
     {
         $result = [];
         foreach ($keys as $key) {
-            $result[$key] = $this->request->get($key);
+            $result[$key] = $this->request->queryOrInput($key);
         }
         return $result;
     }
@@ -462,7 +462,7 @@ abstract class BaseController extends Controller
      */
     protected function selectAction(): array
     {
-        $required = (bool)$this->request->get('required', false);
+        $required = (bool)$this->request->queryOrInput('required', false);
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
 
         $return = $this->pipe('selectAction', $data, $required);

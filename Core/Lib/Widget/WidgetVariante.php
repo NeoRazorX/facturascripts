@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,6 +26,7 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\Join\VarianteProducto;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Variante;
 
 class WidgetVariante extends WidgetText
@@ -50,23 +51,23 @@ class WidgetVariante extends WidgetText
 
         $descriptionHtml = empty($description) ?
             '' :
-            '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
-        $label = Tools::lang()->trans($title);
+            '<small class="form-text text-muted">' . Tools::trans($description) . '</small>';
+        $label = Tools::trans($title);
         $labelHtml = $this->onclickHtml($label, $titleurl);
         $icon = empty($this->icon) ? 'fa-solid fa-cubes' : $this->icon;
 
         // hay que cargar el producto para mostrar su referencia
         $variante = new Variante();
-        $variante->loadFromCode('', [
-            new DataBaseWhere($this->match, $this->value)
-        ]);
+        if ($this->value !== null && $variante->loadWhereEq($this->match, $this->value) && $this->onclick === 'EditProducto') {
+            $labelHtml = '<a href="' . Tools::config('route') . '/' . $variante->url() . '">' . $label . '</a>';
+        }
 
         if ($this->readonly()) {
             return '<div class="mb-3 d-grid">'
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
                 . $labelHtml
                 . '<a href="' . $variante->url() . '" class="btn btn-outline-secondary">'
-                . '<i class="' . $icon . ' fa-fw"></i> ' . ($variante->referencia ?? Tools::lang()->trans('select'))
+                . '<i class="' . $icon . ' fa-fw"></i> ' . ($variante->referencia ?? Tools::trans('select'))
                 . '</a>'
                 . $descriptionHtml
                 . '</div>';
@@ -77,7 +78,7 @@ class WidgetVariante extends WidgetText
             . $labelHtml
             . '<a href="#" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
-            . '<span id="modal_span_' . $this->id . '">' . ($variante->referencia ?? Tools::lang()->trans('select')) . '</span>'
+            . '<span id="modal_span_' . $this->id . '">' . ($variante->referencia ?? Tools::trans('select')) . '</span>'
             . '</a>'
             . $descriptionHtml
             . '</div>'
@@ -101,9 +102,12 @@ class WidgetVariante extends WidgetText
 
         // hay que cargar el producto para mostrar su referencia
         $variante = new Variante();
-        $variante->loadFromCode('', [
-            new DataBaseWhere($this->match, $this->value)
-        ]);
+        if ($this->value !== null && $variante->loadWhereEq($this->match, $this->value) && $this->onclick === 'EditProducto') {
+            return '<td class="' . $class . '">'
+                . '<a href="' . Tools::config('route') . '/' . $variante->url() . '" class="cancelClickable">'
+                . $variante->referencia . '</a>'
+                . '</td>';
+        }
 
         return '<td class="' . $class . '">' . $this->onclickHtml($variante->referencia) . '</td>';
     }
@@ -124,7 +128,7 @@ class WidgetVariante extends WidgetText
 
         // cargamos y añadimos la variante seleccionada
         $model = new Variante();
-        if ($this->value && $model->loadFromCode($this->value)) {
+        if ($this->value && $model->load($this->value)) {
             $list[] = $model;
             $where[] = new DataBaseWhere('variantes.referencia', $model->referencia, '<>');
         }
@@ -147,6 +151,23 @@ class WidgetVariante extends WidgetText
                 $orderBy = ['referencia' => 'DESC'];
                 break;
 
+            case 'price-asc':
+                $orderBy = ['precio' => 'ASC'];
+                break;
+
+            case 'price-desc':
+                $orderBy = ['precio' => 'DESC'];
+                break;
+
+            case 'stock-asc':
+                $orderBy = ['stockfis' => 'ASC'];
+                break;
+
+            case 'stock-desc':
+                $orderBy = ['stockfis' => 'DESC'];
+                break;
+
+            case 'ref-asc':
             default:
                 $orderBy = ['referencia' => 'ASC'];
                 break;
@@ -159,20 +180,20 @@ class WidgetVariante extends WidgetText
         return $list;
     }
 
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetVariante.js');
+        $route = Tools::config('route');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetVariante.js?v=' . Tools::date());
     }
 
     protected function renderFamilyFilter(): string
     {
         $options = [
-            '<option value="">' . Tools::lang()->trans('family') . '</option>',
+            '<option value="">' . Tools::trans('family') . '</option>',
             '<option value="">------</option>',
         ];
 
-        $model = new Familia();
-        foreach ($model->all([], ['descripcion' => 'ASC'], 0, 0) as $item) {
+        foreach (Familia::all([], ['descripcion' => 'ASC']) as $item) {
             $options[] = '<option value="' . $item->codfamilia . '">' . $item->descripcion . '</option>';
         }
 
@@ -184,12 +205,11 @@ class WidgetVariante extends WidgetText
     protected function renderManufacturerFilter(): string
     {
         $options = [
-            '<option value="">' . Tools::lang()->trans('manufacturer') . '</option>',
+            '<option value="">' . Tools::trans('manufacturer') . '</option>',
             '<option value="">------</option>',
         ];
 
-        $model = new Fabricante();
-        foreach ($model->all([], ['nombre' => 'ASC'], 0, 0) as $item) {
+        foreach (Fabricante::all([], ['nombre' => 'ASC']) as $item) {
             $options[] = '<option value="' . $item->codfabricante . '">' . $item->nombre . '</option>';
         }
 
@@ -221,7 +241,12 @@ class WidgetVariante extends WidgetText
             . '</div>'
             . '</div>'
             . $this->renderVariantList()
-            . '<div class="modal-footer p-2 d-grid">' . $this->renderSelectNoneBtn() . '</div>'
+            . '<div class="modal-footer p-3">'
+            . '<div class="w-100 d-flex gap-2">'
+            . $this->renderNewProductBtn()
+            . $this->renderSelectNoneBtn()
+            . '</div>'
+            . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
@@ -231,13 +256,20 @@ class WidgetVariante extends WidgetText
     {
         return '<div class="input-group mb-2">'
             . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
-            . Tools::lang()->trans('search') . '" onkeydown="widgetVarianteSearchKp(\'' . $this->id . '\', event);" autofocus>'
-            . ''
+            . Tools::trans('search') . '" oninput="widgetVarianteSearchKp(\'' . $this->id . '\', event);" '
+            . 'onkeydown="if(event.key===\'Enter\'){event.preventDefault();widgetVarianteSearch(\'' . $this->id . '\');}" autofocus>'
             . '<button type="button" class="btn btn-primary" onclick="widgetVarianteSearch(\'' . $this->id . '\');">'
             . '<i class="fa-solid fa-search"></i>'
             . '</button>'
-            . ''
             . '</div>';
+    }
+
+    protected function renderNewProductBtn(): string
+    {
+        $producto = new Producto();
+        return '<a href="' . $producto->url('new') . '" target="_blank" class="btn btn-success">'
+            . '<i class="fa-solid fa-plus me-1"></i> ' . Tools::trans('new-product')
+            . '</a>';
     }
 
     protected function renderSelectNoneBtn(): string
@@ -246,16 +278,20 @@ class WidgetVariante extends WidgetText
             return '';
         }
 
-        return '<a href="#" class="btn btn-secondary" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'\');">'
-            . '<i class="fa-solid fa-times me-1"></i>' . Tools::lang()->trans('none')
-            . '</a>';
+        return '<button type="button" class="btn btn-secondary ms-auto" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'\'); return false;">'
+            . '<i class="fa-solid fa-times me-1"></i> ' . Tools::trans('none')
+            . '</button>';
     }
 
     protected function renderSortFilter(): string
     {
         return '<select class="form-select mb-2" id="modal_' . $this->id . '_s" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
-            . '<option value="ref-asc" selected>' . Tools::lang()->trans('sort-by-ref-asc') . '</option>'
-            . '<option value="ref-desc">' . Tools::lang()->trans('sort-by-ref-desc') . '</option>'
+            . '<option value="ref-asc" selected>' . Tools::trans('sort-by-ref-asc') . '</option>'
+            . '<option value="ref-desc">' . Tools::trans('sort-by-ref-desc') . '</option>'
+            . '<option value="price-asc">' . Tools::trans('sort-by-price-asc') . '</option>'
+            . '<option value="price-desc">' . Tools::trans('sort-by-price-desc') . '</option>'
+            . '<option value="stock-asc">' . Tools::trans('sort-by-stock-asc') . '</option>'
+            . '<option value="stock-desc">' . Tools::trans('sort-by-stock-desc') . '</option>'
             . '</select>';
     }
 
@@ -264,11 +300,33 @@ class WidgetVariante extends WidgetText
         $items = [];
         foreach ($this->variantes() as $item) {
             $match = $item->{$this->match};
+            $description = Tools::textBreak($item->description(), 300);
+
+            // Determinar la clase de color para el precio
+            $priceClass = '';
+            if ($item->precio < 0) {
+                $priceClass = ' text-danger';
+            } elseif ($item->precio == 0) {
+                $priceClass = ' text-warning';
+            }
+
+            // Determinar la clase de color para el stock
+            $stockClass = '';
+            if ($item->stockfis < 0) {
+                $stockClass = ' text-danger';
+            } elseif ($item->stockfis == 0) {
+                $stockClass = ' text-warning';
+            }
 
             $items[] = '<tr class="clickableRow" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'' . $match . '\');">'
-                . '<td><b>' . $item->referencia . '</b> ' . $item->description() . '</td>'
-                . '<td class="text-end text-nowrap">' . Tools::money($item->precio) . '</td>'
-                . '<td class="text-end text-nowrap">' . Tools::number($item->stockfis, 0) . '</td>'
+                . '<td class="text-center">'
+                . '<a href="' . $item->url() . '" target="_blank" onclick="event.stopPropagation();">'
+                . '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
+                . '</a>'
+                . '</td>'
+                . '<td><b>' . $item->referencia . '</b> ' . $description . '</td>'
+                . '<td class="text-end text-nowrap' . $priceClass . '">' . Tools::money($item->precio) . '</td>'
+                . '<td class="text-end text-nowrap' . $stockClass . '">' . Tools::number($item->stockfis, 0) . '</td>'
                 . '</tr>';
         }
 
@@ -276,9 +334,10 @@ class WidgetVariante extends WidgetText
             . '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
-            . '<th>' . Tools::lang()->trans('product') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('price') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('stock') . '</th>'
+            . '<th class="text-center"></th>'
+            . '<th>' . Tools::trans('product') . '</th>'
+            . '<th class="text-end">' . Tools::trans('price') . '</th>'
+            . '<th class="text-end">' . Tools::trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody id="list_' . $this->id . '">' . implode('', $items) . '</tbody>'

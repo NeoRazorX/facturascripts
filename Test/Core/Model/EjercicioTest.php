@@ -142,6 +142,59 @@ final class EjercicioTest extends TestCase
         $this->assertTrue($empresa2->delete());
     }
 
+    // Comprobar que no se puede crear un ejercicio con longsubcuenta fuera del rango permitido.
+    public function testLongsubcuentaLimit(): void
+    {
+        $nextYear = date('Y', strtotime(date('Y') . ' + 1 year'));
+
+        // intentamos crear un ejercicio con longsubcuenta = 0 (inválido)
+        $ejercicio = new Ejercicio();
+        $ejercicio->codejercicio = 't004';
+        $ejercicio->nombre = 'exercise-test';
+        $ejercicio->fechainicio = $nextYear . '-01-01';
+        $ejercicio->fechafin = $nextYear . '-12-31';
+        $ejercicio->longsubcuenta = 0;
+        $this->assertFalse($ejercicio->save(), 'exercise-should-not-save-with-longsubcuenta-0');
+
+        // intentamos crear un ejercicio con longsubcuenta = 3 (inválido)
+        $ejercicio->codejercicio = 't005';
+        $ejercicio->longsubcuenta = 3;
+        $this->assertFalse($ejercicio->save(), 'exercise-should-not-save-with-longsubcuenta-3');
+
+        // intentamos crear un ejercicio con longsubcuenta = 16 (inválido)
+        $ejercicio->codejercicio = 't006';
+        $ejercicio->longsubcuenta = 16;
+        $this->assertFalse($ejercicio->save(), 'exercise-should-not-save-with-longsubcuenta-16');
+
+        // intentamos crear un ejercicio con longsubcuenta = 20 (inválido)
+        $ejercicio->codejercicio = 't007';
+        $ejercicio->longsubcuenta = 20;
+        $this->assertFalse($ejercicio->save(), 'exercise-should-not-save-with-longsubcuenta-20');
+
+        // intentamos crear un ejercicio con longsubcuenta negativo (inválido)
+        $ejercicio->codejercicio = 't008';
+        $ejercicio->longsubcuenta = -5;
+        $this->assertFalse($ejercicio->save(), 'exercise-should-not-save-with-negative-longsubcuenta');
+
+        // creamos un ejercicio con longsubcuenta = 4 (válido - límite inferior)
+        $ejercicio->codejercicio = 't009';
+        $ejercicio->longsubcuenta = 4;
+        $this->assertTrue($ejercicio->save(), 'exercise-should-save-with-longsubcuenta-4');
+        $this->assertTrue($ejercicio->delete(), 'exercise-cant-delete');
+
+        // creamos un ejercicio con longsubcuenta = 10 (válido - valor por defecto)
+        $ejercicio->codejercicio = 't010';
+        $ejercicio->longsubcuenta = 10;
+        $this->assertTrue($ejercicio->save(), 'exercise-should-save-with-longsubcuenta-10');
+        $this->assertTrue($ejercicio->delete(), 'exercise-cant-delete');
+
+        // creamos un ejercicio con longsubcuenta = 15 (válido - límite superior)
+        $ejercicio->codejercicio = 't011';
+        $ejercicio->longsubcuenta = 15;
+        $this->assertTrue($ejercicio->save(), 'exercise-should-save-with-longsubcuenta-15');
+        $this->assertTrue($ejercicio->delete(), 'exercise-cant-delete');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

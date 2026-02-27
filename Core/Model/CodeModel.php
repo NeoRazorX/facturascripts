@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Auxiliary model to load a list of codes and their descriptions
@@ -72,6 +73,15 @@ class CodeModel
      */
     public static function all(string $tableName, string $fieldCode, string $fieldDescription, bool $addEmpty = true, array $where = []): array
     {
+        // validar nombres de campos para prevenir SQL injection
+        if (false === self::isValidFieldName($fieldCode)) {
+            Tools::log()->error('invalid-field-name: ' . $fieldCode);
+            return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
+        } elseif (false === self::isValidFieldName($fieldDescription)) {
+            Tools::log()->error('invalid-field-description: ' . $fieldDescription);
+            return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
+        }
+
         // check cache
         $cacheKey = $addEmpty ?
             'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription . '-empty' :
@@ -92,20 +102,21 @@ class CodeModel
         if (class_exists($modelClass)) {
             $model = new $modelClass();
             if ($model->modelClassName() === $tableName) {
-                return array_merge($result, $model->codeModelAll($fieldCode));
+                return method_exists($model, 'codeModelAll') ?
+                    array_merge($result, $model->codeModelAll($fieldCode)) :
+                    array_merge($result, self::codeModelAll($model, $fieldCode));
             }
         }
 
         // check table
-        self::initDataBase();
-        if (!self::$dataBase->tableExists($tableName)) {
+        if (!self::db()->tableExists($tableName)) {
             Tools::log()->error('table-not-found', ['%tableName%' => $tableName]);
             return $result;
         }
 
         $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description '
-            . 'FROM ' . $tableName . DataBaseWhere::getSQLWhere($where) . ' ORDER BY 2 ASC';
-        foreach (self::$dataBase->selectLimit($sql, self::getLimit()) as $row) {
+            . 'FROM ' . $tableName . Where::multiSqlLegacy($where) . ' ORDER BY 2 ASC';
+        foreach (self::db()->selectLimit($sql, self::getLimit()) as $row) {
             $result[] = new static($row);
         }
 
@@ -140,6 +151,28 @@ class CodeModel
         return $result;
     }
 
+    private static function codeModelAll(mixed $model, string $fieldCode): array
+    {
+        $results = [];
+        $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
+
+        $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $model->primaryDescriptionColumn() . ' AS description '
+            . 'FROM ' . $model::tableName() . ' ORDER BY 2 ASC';
+        foreach (self::db()->selectLimit($sql, self::getlimit()) as $d) {
+            $results[] = new static($d);
+        }
+
+        return $results;
+    }
+
+    private static function codeModelSearch(mixed $model, string $query, string $fieldCode, array $where): array
+    {
+        $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
+        $fields = $field . '|' . $model->primaryDescriptionColumn();
+        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        return self::all($model::tableName(), $field, $model->primaryDescriptionColumn(), false, $where);
+    }
+
     /**
      * Returns a codemodel with the selected data.
      *
@@ -152,6 +185,15 @@ class CodeModel
      */
     public function get(string $tableName, string $fieldCode, $code, $fieldDescription)
     {
+        // validar nombres de campos para prevenir SQL injection
+        if (false === self::isValidFieldName($fieldCode)) {
+            Tools::log()->error('invalid-field-name: ' . $fieldCode);
+            return new static();
+        } elseif (false === self::isValidFieldName($fieldDescription)) {
+            Tools::log()->error('invalid-field-description: ' . $fieldDescription);
+            return new static();
+        }
+
         // is a table or a model?
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if ($tableName && class_exists($modelClass)) {
@@ -164,11 +206,10 @@ class CodeModel
             return new static();
         }
 
-        self::initDataBase();
-        if ($tableName && self::$dataBase->tableExists($tableName)) {
+        if ($tableName && self::db()->tableExists($tableName)) {
             $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
-                . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::$dataBase->var2str($code);
-            $data = self::$dataBase->selectLimit($sql, 1);
+                . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::db()->var2str($code);
+            $data = self::db()->selectLimit($sql, 1);
             return empty($data) ? new static() : new static($data[0]);
         }
 
@@ -213,7 +254,9 @@ class CodeModel
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
             $model = new $modelClass();
-            return $model->codeModelSearch($query, $fieldCode, $where);
+            return method_exists($model, 'codeModelSearch') ?
+                $model->codeModelSearch($query, $fieldCode, $where) :
+                self::codeModelSearch($model, $query, $fieldCode, $where);
         }
 
         $fields = $fieldCode . '|' . $fieldDescription;
@@ -227,12 +270,37 @@ class CodeModel
     }
 
     /**
-     * Inits database connection.
+     * Valída que un nombre de campo sea seguro para usar en consultas SQL.
+     * Solo permite letras, números, guiones bajos y puntos (para campos con alias de tabla).
+     * También permite el uso de las funciones lower() y upper().
+     *
+     * @param string $fieldName
+     *
+     * @return bool
      */
-    protected static function initDataBase(): void
+    protected static function isValidFieldName(string $fieldName): bool
+    {
+        // permite campos vacíos (se usan valores por defecto en algunos casos)
+        if (empty($fieldName)) {
+            return true;
+        }
+
+        // permite lower() y upper() con un campo válido dentro
+        if (preg_match('/^(lower|upper)\(([a-zA-Z0-9_\.]+)\)$/i', $fieldName, $matches)) {
+            return true;
+        }
+
+        // permite letras, números, guiones bajos y puntos (para tabla.campo)
+        return preg_match('/^[a-zA-Z0-9_\.]+$/', $fieldName) === 1;
+    }
+
+    protected static function db(): DataBase
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
+            self::$dataBase->connect();
         }
+
+        return self::$dataBase;
     }
 }

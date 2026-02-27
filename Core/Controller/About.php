@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,13 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UploadedFile;
+use FacturaScripts\Dinamic\Model\AttachedFile;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\User;
 
 class About extends Controller
 {
@@ -56,30 +62,114 @@ class About extends Controller
         // Obtener las extensiones de PHP instaladas
         $extensions = get_loaded_extensions();
 
-        // Obtener el tamaño maxim de subida de archivo
-        $max_filesize = UploadedFile::getMaxFilesize();
-
         // Información del servidor web
         $server_software = $_SERVER['SERVER_SOFTWARE'];
 
         // Información del sistema operativo
         $os_info = php_uname();
 
-        // Obtener la versión de la Base de Datos
+        // Obtener la información de la Base de Datos
+        $database_type = $this->dataBase->type();
         $database_version = $this->dataBase->version();
+
+        // Obtener la versión de OpenSSL
+        $openssl_version = defined('OPENSSL_VERSION_TEXT') ? OPENSSL_VERSION_TEXT : 'No disponible';
+
+        // Espacio de almacenamiento para archivos adjuntos
+        $storage_limit = AttachedFile::getStorageLimit();
+        $storage_used = AttachedFile::getStorageUsed();
+        $storage_details = $this->getStorageDetails();
+
+        // Obtener el tamaño maxim de subida de archivo
+        $max_filesize = UploadedFile::getMaxFilesize();
 
         // Obtener la lista de plugins
         $plugins = Plugins::list();
 
+        // Calcular los límites actuales
+        $limits = $this->getLimits();
+
+        $server_date = date('d-m-Y H:i:s');
+
         return compact(
             'core_version',
-            'php_version',
-            'extensions',
-            'server_software',
-            'os_info',
+            'database_type',
             'database_version',
+            'extensions',
+            'limits',
             'max_filesize',
-            'plugins'
+            'openssl_version',
+            'os_info',
+            'php_version',
+            'plugins',
+            'server_date',
+            'server_software',
+            'storage_details',
+            'storage_limit',
+            'storage_used',
         );
+    }
+
+    private function getLimits(): array
+    {
+        // Contar usuarios
+        $users = User::count();
+
+        // Contar productos
+        $products = Producto::count();
+
+        // Contar clientes
+        $customers = Cliente::count();
+
+        // Contar facturas de cliente
+        $invoices = FacturaCliente::count();
+
+        return [
+            'customers' => $customers,
+            'invoices' => $invoices,
+            'products' => $products,
+            'users' => $users,
+        ];
+    }
+
+    private function getStorageDetails(): array
+    {
+        $storage = [];
+
+        foreach (Tools::folderScan('MyFiles') as $item) {
+            // obtener la ruta completa
+            $path = Tools::folder('MyFiles', $item);
+
+            // si no es una carpeta, agrupar por archivo
+            if (!is_dir($path)) {
+                // obtenemos el tamaño del archivo
+                $size = filesize($path);
+
+                // guardar el resultado
+                if (!isset($storage['files'])) {
+                    $storage['files'] = [
+                        'name' => 'files',
+                        'size' => 0,
+                        'human_size' => '',
+                    ];
+                }
+
+                $storage['files']['size'] += $size;
+                $storage['files']['human_size'] = Tools::bytes($storage['files']['size']);
+                continue;
+            }
+
+            // obtener el tamaño
+            $size = Tools::folderSize($path);
+
+            // guardar el resultado
+            $storage[$item] = [
+                'name' => $item,
+                'size' => $size,
+                'human_size' => Tools::bytes($size),
+            ];
+        }
+
+        return $storage;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Template;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\KernelException;
@@ -27,6 +27,7 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 use FacturaScripts\Dinamic\Model\ApiKey;
 
@@ -39,6 +40,9 @@ abstract class ApiController implements ControllerInterface
 
     /** @var ApiKey */
     protected $apiKey;
+
+    /** @var DataBase */
+    private $dataBase;
 
     /** @var Request */
     protected $request;
@@ -69,55 +73,73 @@ abstract class ApiController implements ControllerInterface
     {
         // si no hay constante api_key y la api está desactivada, no se puede acceder
         if (null === Tools::config('api_key') && false == Tools::settings('default', 'enable_api', false)) {
-            throw new KernelException('DisabledApi', Tools::lang()->trans('api-disabled'));
+            throw new KernelException('DisabledApi', Tools::trans('api-disabled'));
         }
 
-        if ($this->request->headers->get('REQUEST_METHOD') == 'OPTIONS') {
-            $this->response->headers->set('Access-Control-Allow-Origin', '*');
-            $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-            $allowHeaders = $this->request->headers->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
-            $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
-            $this->response->headers->set('Content-Type', 'application/json');
-            $this->response->send();
+        if ($this->request->header('REQUEST_METHOD') == 'OPTIONS') {
+            $allowHeaders = $this->request->header('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
+
+            $this->response
+                ->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+                ->header('Access-Control-Allow-Headers', $allowHeaders)
+                ->header('Content-Type', 'application/json')
+                ->send();
             return;
         }
 
         // comprobamos si la IP está bloqueada
         if ($this->clientHasManyIncidents()) {
-            throw new KernelException('IpBannedOnApi', Tools::lang()->trans('ip-banned'));
+            throw new KernelException('IpBannedOnApi', Tools::trans('ip-banned'));
         }
 
         // comprobamos el token
-        $altToken = $this->request->headers->get('Token', '');
-        $token = $this->request->headers->get('X-Auth-Token', $altToken);
+        $altToken = $this->request->header('Token', '');
+        $token = $this->request->header('X-Auth-Token', $altToken);
         if (false === $this->validateApiToken($token)) {
             $this->saveIncident();
-            throw new KernelException('InvalidApiToken', Tools::lang()->trans('auth-token-invalid'));
+            throw new KernelException('InvalidApiToken', Tools::trans('auth-token-invalid'));
+        }
+
+        // actualizamos la última actividad de la API key
+        if ($this->apiKey->id && false === $this->apiKey->fullaccess) {
+            $this->apiKey->updateActivity();
         }
 
         // comprobamos los permisos
         $resource = $this->getUriParam(2);
         if (false === $this->isAllowed($resource)) {
             $this->saveIncident();
-            throw new KernelException('ForbiddenApiEndpoint', Tools::lang()->trans('forbidden'));
+            throw new KernelException('ForbiddenApiEndpoint', Tools::trans('forbidden'));
         }
 
         // comprobamos la versión de la api
         $version = $this->getUriParam(1);
         if (empty($version)) {
-            throw new KernelException('MissingApiVersion', Tools::lang()->trans('api-version-not-found'));
+            throw new KernelException('MissingApiVersion', Tools::trans('api-version-not-found'));
         }
         if ($version != self::API_VERSION) {
-            throw new KernelException('InvalidApiVersion', Tools::lang()->trans('api-version-invalid'));
+            throw new KernelException('InvalidApiVersion', Tools::trans('api-version-invalid'));
         }
 
-        $this->response->headers->set('Access-Control-Allow-Origin', '*');
-        $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-        $this->response->headers->set('Content-Type', 'application/json');
+        $this->response
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+            ->header('Content-Type', 'application/json');
 
         $this->runResource();
 
         $this->response->send();
+    }
+
+    protected function db(): DataBase
+    {
+        if (null === $this->dataBase) {
+            $this->dataBase = new DataBase();
+            $this->dataBase->connect();
+        }
+
+        return $this->dataBase;
     }
 
     private function clientHasManyIncidents(): bool
@@ -130,7 +152,7 @@ abstract class ApiController implements ControllerInterface
                 $ipCount++;
             }
         }
-        return $ipCount > self::MAX_INCIDENT_COUNT;
+        return $ipCount >= self::MAX_INCIDENT_COUNT;
     }
 
     private function getIpList(): array
@@ -164,10 +186,10 @@ abstract class ApiController implements ControllerInterface
 
         $apiAccess = new ApiAccess();
         $where = [
-            new DataBaseWhere('idapikey', $this->apiKey->id),
-            new DataBaseWhere('resource', $resource)
+            Where::eq('idapikey', $this->apiKey->id),
+            Where::eq('resource', $resource)
         ];
-        if ($apiAccess->loadFromCode('', $where)) {
+        if ($apiAccess->loadWhere($where)) {
             switch ($this->request->method()) {
                 case 'DELETE':
                     return $apiAccess->allowdelete;
@@ -214,9 +236,9 @@ abstract class ApiController implements ControllerInterface
         }
 
         $where = [
-            new DataBaseWhere('apikey', $token),
-            new DataBaseWhere('enabled', true)
+            Where::eq('apikey', $token),
+            Where::eq('enabled', true)
         ];
-        return $this->apiKey->loadFromCode('', $where);
+        return $this->apiKey->loadWhere($where);
     }
 }

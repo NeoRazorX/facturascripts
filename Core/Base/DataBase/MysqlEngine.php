@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,7 +69,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function beginTransaction($link)
+    public function beginTransaction($link): bool
     {
         $result = $this->exec($link, 'START TRANSACTION;');
         if ($result) {
@@ -79,7 +79,7 @@ class MysqlEngine extends DataBaseEngine
         return $result;
     }
 
-    public function castInteger($link, $column)
+    public function castInteger($link, $column): string
     {
         return 'CAST(' . $this->escapeColumn($link, $column) . ' AS unsigned)';
     }
@@ -91,10 +91,20 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function close($link)
+    public function close($link): bool
     {
         $this->rollbackTransactions();
         return $link->close();
+    }
+
+    /**
+     * Returns the random function for MySQL.
+     *
+     * @return string
+     */
+    public function random(): string
+    {
+        return 'RAND()';
     }
 
     /**
@@ -104,7 +114,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function columnFromData($colData)
+    public function columnFromData($colData): array
     {
         $result = array_change_key_case($colData);
         $result['is_nullable'] = $result['null'];
@@ -120,7 +130,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function commit($link)
+    public function commit($link): bool
     {
         $result = $this->exec($link, 'COMMIT;');
         if ($result && in_array($link, $this->transactions, false)) {
@@ -138,20 +148,35 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function compareDataTypes($dbType, $xmlType)
+    public function compareDataTypes($dbType, $xmlType): bool
     {
         if (parent::compareDataTypes($dbType, $xmlType)) {
             return true;
-        } elseif ($dbType == 'tinyint(1)' && $xmlType == 'boolean') {
+        }
+
+        // bool
+        if ($dbType == 'tinyint(1)' && str_starts_with($xmlType, 'bool')) {
             return true;
-        } elseif (substr($dbType, 0, 3) == 'int' && strtolower($xmlType) == 'integer') {
+        }
+
+        // int
+        if (str_starts_with($dbType, 'int') && str_starts_with($xmlType, 'int')) {
             return true;
-        } elseif (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
+        }
+
+        // double
+        if (str_starts_with($dbType, 'double') && $xmlType == 'double precision') {
             return true;
-        } elseif (substr($dbType, 0, 8) == 'varchar(' && substr($xmlType, 0, 18) == 'character varying(') {
+        }
+
+        // varchar
+        if (str_starts_with($dbType, 'varchar(') && str_starts_with($xmlType, 'character varying(')) {
             // check length
             return substr($dbType, 8, -1) == substr($xmlType, 18, -1);
-        } elseif (substr($dbType, 0, 5) == 'char(' && substr($xmlType, 0, 18) == 'character varying(') {
+        }
+
+        // char
+        if (str_starts_with($dbType, 'char(') && str_starts_with($xmlType, 'character varying(')) {
             // check length
             return substr($dbType, 5, -1) == substr($xmlType, 18, -1);
         }
@@ -199,7 +224,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function errorMessage($link)
+    public function errorMessage($link): string
     {
         return empty($link->error) ? $this->lastErrorMsg : $link->error;
     }
@@ -212,8 +237,14 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function escapeColumn($link, $name)
+    public function escapeColumn($link, $name): string
     {
+        // Si contiene un punto, escapar cada parte por separado (tabla.columna)
+        if (strpos($name, '.') !== false) {
+            $parts = explode('.', $name);
+            return '`' . implode('`.`', $parts) . '`';
+        }
+
         return '`' . $name . '`';
     }
 
@@ -225,7 +256,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function escapeString($link, $str)
+    public function escapeString($link, $str): string
     {
         return $link->escape_string($str);
     }
@@ -238,15 +269,21 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function exec($link, $sql)
+    public function exec($link, $sql): bool
     {
+        $this->lastErrorMsg = '';
+
         try {
             if ($link->multi_query($sql)) {
                 do {
                     $more = $link->more_results() && $link->next_result();
                 } while ($more);
             }
-            return $link->errno === 0;
+            if ($link->errno !== 0) {
+                $this->lastErrorMsg = $link->error;
+                return false;
+            }
+            return true;
         } catch (Exception $err) {
             $this->lastErrorMsg = $err->getMessage();
         }
@@ -271,7 +308,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function inTransaction($link)
+    public function inTransaction($link): bool
     {
         return in_array($link, $this->transactions, false);
     }
@@ -283,7 +320,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function listTables($link)
+    public function listTables($link): array
     {
         $tables = [];
         foreach ($this->select($link, 'SHOW TABLES;') as $row) {
@@ -303,7 +340,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function rollback($link)
+    public function rollback($link): bool
     {
         $result = $this->exec($link, 'ROLLBACK;');
         if (in_array($link, $this->transactions, false)) {
@@ -322,17 +359,21 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function select($link, $sql)
+    public function select($link, $sql): array
     {
+        $this->lastErrorMsg = '';
         $result = [];
+
         try {
             $aux = $link->query($sql);
             if ($aux) {
-                $result = [];
                 while ($row = $aux->fetch_array(MYSQLI_ASSOC)) {
                     $result[] = $row;
                 }
                 $aux->free();
+            }
+            if ($link->errno !== 0) {
+                $this->lastErrorMsg = $link->error;
             }
         } catch (Exception $err) {
             $this->lastErrorMsg = $err->getMessage();
@@ -357,7 +398,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Rollback all active transactions.
      */
-    private function rollbackTransactions()
+    private function rollbackTransactions(): void
     {
         foreach ($this->transactions as $link) {
             $this->rollback($link);
@@ -369,7 +410,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @param mysqli $link
      */
-    private function unsetTransaction($link)
+    private function unsetTransaction($link): void
     {
         $count = 0;
         foreach ($this->transactions as $trans) {

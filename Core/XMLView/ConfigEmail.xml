@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,6 +31,9 @@
             <column name="password" order="110">
                 <widget type="password" fieldname="password" icon="fa-solid fa-key"/>
             </column>
+            <column name="logo" order="120">
+                <widget type="library" fieldname="idlogo" icon="fa-solid fa-image" onclick="EditAttachedFile" accept=".jpg,.jpeg,.png"/>
+            </column>
             <column name="email-signature" numcolumns="12" order="130">
                 <widget type="textarea" fieldname="signature"/>
             </column>
@@ -53,9 +56,7 @@
             </column>
             <column name="mailer" numcolumns="3" order="140">
                 <widget type="select" fieldname="mailer" required="true">
-                    <values title="Mail">mail</values>
-                    <values title="SendMail">sendmail</values>
-                    <values title="SMTP">smtp</values>
+                    <values/>
                 </widget>
             </column>
             <column name="authentication" numcolumns="3" order="150">
@@ -74,8 +75,8 @@
             <column name="replytouseremail" title="email-replies" order="100">
                 <widget type="select" fieldname="replytouseremail" required="true" translate="true">
                     <values title="default-to-user-email">1</values>
-                    <values title="default-to-company-email">0</values>
-                    <values title="always-to-company-email">-1</values>
+                    <values title="default-to-config-email">0</values>
+                    <values title="always-to-config-email">-1</values>
                 </widget>
             </column>
         </group>

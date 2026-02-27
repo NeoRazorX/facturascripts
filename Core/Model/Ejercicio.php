@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
@@ -30,9 +32,9 @@ use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Ejercicio extends Base\ModelClass
+class Ejercicio extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     const EXERCISE_STATUS_OPEN = 'ABIERTO';
     const EXERCISE_STATUS_CLOSED = 'CERRADO';
@@ -107,7 +109,7 @@ class Ejercicio extends Base\ModelClass
      */
     public $nombre;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->estado = self::EXERCISE_STATUS_OPEN;
@@ -117,15 +119,11 @@ class Ejercicio extends Base\ModelClass
         $this->nombre = '';
     }
 
-    public function delete(): bool
+    public function clearCache(): void
     {
-        if (parent::delete()) {
-            // limpiamos la caché de ejercicios
-            Ejercicios::clear();
-            return true;
-        }
+        parent::clearCache();
 
-        return false;
+        Ejercicios::clear();
     }
 
     /**
@@ -171,8 +169,8 @@ class Ejercicio extends Base\ModelClass
         new DinEmpresa();
 
         $code = $year = "'" . date('Y') . "'";
-        $start = self::$dataBase->var2str(date('01-01-Y'));
-        $end = self::$dataBase->var2str(date('31-12-Y'));
+        $start = self::db()->var2str(date('01-01-Y'));
+        $end = self::db()->var2str(date('31-12-Y'));
         $state = "'" . self::EXERCISE_STATUS_OPEN . "'";
         return 'INSERT INTO ' . static::tableName()
             . ' (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,idempresa)'
@@ -228,7 +226,7 @@ class Ejercicio extends Base\ModelClass
         ];
 
         $order = [$this->primaryColumn() => 'DESC'];
-        if ($this->loadFromCode('', $where, $order) && ($this->isOpened() || !$onlyOpened)) {
+        if ($this->loadWhere($where, $order) && ($this->isOpened() || !$onlyOpened)) {
             return true;
         }
 
@@ -263,17 +261,6 @@ class Ejercicio extends Base\ModelClass
         return 'codejercicio';
     }
 
-    public function save(): bool
-    {
-        if (parent::save()) {
-            // limpiamos la caché de ejercicios
-            Ejercicios::clear();
-            return true;
-        }
-
-        return false;
-    }
-
     public static function tableName(): string
     {
         return 'ejercicios';
@@ -281,7 +268,6 @@ class Ejercicio extends Base\ModelClass
 
     public function test(): bool
     {
-        // TODO: Change dates verify to $this->inRange() call
         $this->codejercicio = trim($this->codejercicio);
         $this->nombre = Tools::noHtml($this->nombre);
 
@@ -299,11 +285,18 @@ class Ejercicio extends Base\ModelClass
                 'invalid-column-lenght',
                 ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
             );
+        } elseif ($this->longsubcuenta < 4 || $this->longsubcuenta > 15) {
+            Tools::log()->warning(
+                'invalid-column-lenght',
+                ['%column%' => 'longsubcuenta', '%min%' => '4', '%max%' => '15']
+            );
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
-            $params = ['%endDate%' => $this->fechainicio, '%startDate%' => $this->fechafin];
-            Tools::log()->warning('start-date-later-end-date', $params);
+            Tools::log()->warning('start-date-later-end-date', [
+                '%endDate%' => $this->fechainicio,
+                '%startDate%' => $this->fechafin
+            ]);
         } elseif (strtotime($this->fechainicio) < 1) {
-            Tools::log()->warning('date-invalid');
+            Tools::log()->warning('invalid-date', ['%date%' => $this->fechainicio]);
         } else {
             return parent::test();
         }
@@ -340,7 +333,7 @@ class Ejercicio extends Base\ModelClass
             $new = new static();
             for ($num = 1; $num < 1000; $num++) {
                 $code = sprintf('%04s', (int)$num);
-                if (false === $new->loadFromCode($code)) {
+                if (false === $new->load($code)) {
                     $this->codejercicio = $code;
                     break;
                 }
@@ -354,7 +347,7 @@ class Ejercicio extends Base\ModelClass
         return $this->save();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         $where = [new DataBaseWhere('idempresa', $this->idempresa)];
         foreach ($this->all($where, [], 0, 0) as $ejercicio) {
@@ -366,6 +359,6 @@ class Ejercicio extends Base\ModelClass
             }
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 }

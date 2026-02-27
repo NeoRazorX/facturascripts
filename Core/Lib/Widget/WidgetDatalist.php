@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of WidgetDatalist
@@ -29,9 +30,10 @@ use FacturaScripts\Core\Model\CodeModel;
  */
 class WidgetDatalist extends WidgetSelect
 {
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetDatalist.js');
+        $route = Tools::config('route');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetDatalist.js?v=' . Tools::date());
     }
 
     /**
@@ -82,7 +84,7 @@ class WidgetDatalist extends WidgetSelect
         $this->fieldcode = $child['fieldcode'] ?? 'id';
         $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
-        $this->limit = $child['limit'] ?? CodeModel::ALL_LIMIT;
+        $this->limit = $child['limit'] ?? CodeModel::getlimit();
         if ($loadData && $this->source) {
             static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, false);

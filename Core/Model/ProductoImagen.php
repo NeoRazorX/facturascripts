@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Lib\MyFilesToken;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinAttachedFile;
@@ -32,13 +34,13 @@ use Throwable;
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author José Antonio Cuello Principal <yopli2000@gmail.com>
  */
-class ProductoImagen extends Base\ModelClass
+class ProductoImagen extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     const THUMBNAIL_PATH = '/MyFiles/Tmp/Thumbnails/';
 
-    /** @var int; */
+    /** @var int */
     public $id;
 
     /** @var int */
@@ -90,7 +92,7 @@ class ProductoImagen extends Base\ModelClass
     public function getFile(): AttachedFile
     {
         $file = new DinAttachedFile();
-        $file->loadFromCode($this->idfile);
+        $file->load($this->idfile);
         return $file;
     }
 
@@ -102,7 +104,7 @@ class ProductoImagen extends Base\ModelClass
     public function getProducto(): Producto
     {
         $producto = new DinProducto();
-        $producto->loadFromCode($this->idproducto);
+        $producto->load($this->idproducto);
         return $producto;
     }
 
@@ -163,9 +165,6 @@ class ProductoImagen extends Base\ModelClass
                     imagegif($thumb, FS_FOLDER . $thumbFile);
                     break;
             }
-
-            imagedestroy($image);
-            imagedestroy($thumb);
         } catch (Throwable $th) {
             Tools::log()->error($th->getMessage());
             return '';
@@ -182,11 +181,6 @@ class ProductoImagen extends Base\ModelClass
         new Variante();
 
         return parent::install();
-    }
-
-    public static function primaryColumn(): string
-    {
-        return 'id';
     }
 
     public static function tableName(): string
@@ -226,6 +220,7 @@ class ProductoImagen extends Base\ModelClass
         } elseif ($token && $parmaToken) {
             return $path . '?myft=' . MyFilesToken::get($path, true);
         }
+
         return $path;
     }
 }

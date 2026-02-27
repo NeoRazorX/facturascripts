@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,7 +75,7 @@ abstract class PanelController extends BaseController
         parent::privateCore($response, $user, $permissions);
 
         // Get any operations that have to be performed
-        $action = $this->request->request->get('action', $this->request->query->get('action', ''));
+        $action = $this->request->inputOrQuery('action', '');
 
         // Runs operations before reading data
         if ($this->execPreviousAction($action) === false || $this->pipeFalse('execPreviousAction', $action) === false) {
@@ -113,7 +113,7 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Sets the tabs position, by default is set to 'left', also supported 'bottom', 'top' and 'left-bottom.
+     * Sets the tabs position, by default is set to 'left', also supported 'bottom', 'top' and 'left-bottom'.
      *
      * @param string $position
      */
@@ -230,7 +230,7 @@ abstract class PanelController extends BaseController
         }
 
         // loads model data
-        $code = $this->request->request->get('code', '');
+        $code = $this->request->input('code', '');
         if (!$this->views[$this->active]->model->loadFromCode($code)) {
             Tools::log()->error('record-not-found');
             return false;
@@ -240,7 +240,7 @@ abstract class PanelController extends BaseController
         $this->views[$this->active]->processFormData($this->request, 'edit');
 
         // has PK value been changed?
-        $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
+        $this->views[$this->active]->newCode = (string)$this->views[$this->active]->model->primaryColumnValue();
         if ($code !== $this->views[$this->active]->newCode && $this->views[$this->active]->model->test()) {
             $pkColumn = $this->views[$this->active]->model->primaryColumn();
             $this->views[$this->active]->model->{$pkColumn} = $code;
@@ -280,19 +280,25 @@ abstract class PanelController extends BaseController
             case 'widget-library-search':
                 $this->setTemplate(false);
                 $results = $this->widgetLibrarySearchAction();
-                $this->response->setContent(json_encode($results));
+                $this->response->json($results);
                 break;
 
             case 'widget-library-upload':
                 $this->setTemplate(false);
                 $results = $this->widgetLibraryUploadAction();
-                $this->response->setContent(json_encode($results));
+                $this->response->json($results);
                 break;
 
             case 'widget-variante-search':
                 $this->setTemplate(false);
                 $results = $this->widgetVarianteSearchAction();
-                $this->response->setContent(json_encode($results));
+                $this->response->json($results);
+                break;
+            
+            case 'widget-subcuenta-search':
+                $this->setTemplate(false);
+                $results = $this->widgetSubcuentaSearchAction();
+                $this->response->json($results);
                 break;
         }
     }
@@ -310,13 +316,13 @@ abstract class PanelController extends BaseController
             case 'autocomplete':
                 $this->setTemplate(false);
                 $results = $this->autocompleteAction();
-                $this->response->setContent(json_encode($results));
+                $this->response->json($results);
                 return false;
 
             case 'datalist':
                 $this->setTemplate(false);
                 $results = $this->datalistAction();
-                $this->response->setContent(json_encode($results));
+                $this->response->json($results);
                 return false;
 
             case 'delete':
@@ -347,7 +353,7 @@ abstract class PanelController extends BaseController
             case 'select':
                 $this->setTemplate(false);
                 $results = $this->selectAction();
-                $this->response->setContent(json_encode($results));
+                $this->response->json($results);
                 return false;
         }
 
@@ -394,9 +400,9 @@ abstract class PanelController extends BaseController
     protected function widgetLibrarySearchAction(): array
     {
         // localizamos la pestaña y el nombre de la columna
-        $activeTab = $this->request->request->get('active_tab', '');
-        $colName = $this->request->request->get('col_name', '');
-        $widgetId = $this->request->request->get('widget_id', '');
+        $activeTab = $this->request->input('active_tab', '');
+        $colName = $this->request->input('col_name', '');
+        $widgetId = $this->request->input('widget_id', '');
 
         // si está vacío, no hacemos nada
         if (empty($activeTab) || empty($colName)) {
@@ -410,8 +416,8 @@ abstract class PanelController extends BaseController
         }
 
         $files = $column->widget->files(
-            $this->request->request->get('query', ''),
-            $this->request->request->get('sort', '')
+            $this->request->input('query', ''),
+            $this->request->input('sort', '')
         );
 
         $selectedValue = (int)$column->widget->plainText($this->tab($activeTab)->model);
@@ -424,9 +430,9 @@ abstract class PanelController extends BaseController
     protected function widgetLibraryUploadAction(): array
     {
         // localizamos la pestaña y el nombre de la columna
-        $activeTab = $this->request->request->get('active_tab', '');
-        $colName = $this->request->request->get('col_name', '');
-        $widgetId = $this->request->request->get('widget_id', '');
+        $activeTab = $this->request->input('active_tab', '');
+        $colName = $this->request->input('col_name', '');
+        $widgetId = $this->request->input('widget_id', '');
 
         // si está vacío, no hacemos nada
         if (empty($activeTab) || empty($colName)) {
@@ -439,25 +445,30 @@ abstract class PanelController extends BaseController
             return [];
         }
 
-        $file = $column->widget->uploadFile($this->request->files->get('file'));
-        if (false === $file->exists()) {
+        $file = $this->request->file('file');
+        if (empty($file)) {
+            return [];
+        }
+
+        $attachedFile = $column->widget->uploadFile($file);
+        if (false === $attachedFile->exists()) {
             return [];
         }
 
         $files = $column->widget->files();
         return [
-            'html' => $column->widget->renderFileList($files, $file->idfile, $widgetId),
+            'html' => $column->widget->renderFileList($files, $attachedFile->idfile, $widgetId),
             'records' => count($files),
-            'new_file' => $file->idfile,
-            'new_filename' => $file->shortFileName(),
+            'new_file' => $attachedFile->idfile,
+            'new_filename' => $attachedFile->shortFileName(),
         ];
     }
 
     protected function widgetVarianteSearchAction(): array
     {
         // localizamos la pestaña y el nombre de la columna
-        $activeTab = $this->request->request->get('active_tab', '');
-        $colName = $this->request->request->get('col_name', '');
+        $activeTab = $this->request->input('active_tab', '');
+        $colName = $this->request->input('col_name', '');
 
         // si está vacío, no hacemos nada
         if (empty($activeTab) || empty($colName)) {
@@ -471,10 +482,10 @@ abstract class PanelController extends BaseController
         }
 
         $variantes = $column->widget->variantes(
-            $this->request->request->get('query', ''),
-            $this->request->request->get('codfabricante', ''),
-            $this->request->request->get('codfamilia', ''),
-            $this->request->request->get('sort', '')
+            $this->request->input('query', ''),
+            $this->request->input('codfabricante', ''),
+            $this->request->input('codfamilia', ''),
+            $this->request->input('sort', '')
         );
 
         $results = [];
@@ -489,8 +500,45 @@ abstract class PanelController extends BaseController
                 'stock' => $variante->stockfis,
                 'stock_str' => Tools::number($variante->stockfis, 0),
                 'match' => $variante->{$column->widget->match},
+                'url' => $variante->url()
             ];
         }
+        return $results;
+    }
+
+    protected function widgetSubcuentaSearchAction(): array
+    {
+        // localizamos la pestaña y el nombre de la columna
+        $activeTab = $this->request->input('active_tab', '');
+        $colName = $this->request->input('col_name', '');
+
+        // si está vacío, no hacemos nada
+        if (empty($activeTab) || empty($colName)) {
+            return [];
+        }
+
+        // buscamos la columna
+        $column = $this->tab($activeTab)->columnForField($colName);
+        if (empty($column) || strtolower($column->widget->getType()) !== 'subcuenta') {
+            return [];
+        }
+
+        $subcuentas = $column->widget->subcuentas(
+            $this->request->input('query', ''),
+            $this->request->request->get('codejercicio', ''),
+            $this->request->request->get('sort', '')
+        );
+
+        $results = [];
+        foreach ($subcuentas as $subcuenta) {
+            $results[] = [
+                'codsubcuenta' => $subcuenta->codsubcuenta,
+                'descripcion' => $subcuenta->descripcion,
+                'saldo' => $subcuenta->saldo,
+                'url' => $subcuenta->url()
+            ];
+        }
+
         return $results;
     }
 }

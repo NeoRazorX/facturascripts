@@ -1,0 +1,65 @@
+{% extends "Master/MenuBghTemplate.html.twig" %}
+
+{% block bodyHeaderOptions %}
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+{% endblock %}
+
+{% block body %}
+    {% set firstView = fsc.views | first %}
+    {% set user = firstView.model %}
+
+    <div class="container" style="margin-top: -70px;">
+        <div class="row">
+            <div class="col-sm-12">
+                <form action="{{ user.url() }}" method="post">
+                    {{ formToken() }}
+                    <input type="hidden" name="action" value="two-factor-verify"/>
+                    <input type="hidden" name="two_factor_secret_key"
+                           value="{{ user.two_factor_secret_key }}"/>
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h1 class="h2">
+                                <i class="fa-solid fa-shield-halved me-2" aria-hidden="true"></i>
+                                {{ trans('two-factor-auth') }}
+                            </h1>
+                            <hr/>
+                            {% set twoFactorUrl = user.getTwoFactorUrl() %}
+                            {% set twoFactorQr = user.getTwoFactorQR() %}
+                            <div class="row d-flex align-items-center">
+                                <div class="col-md mb-3 text-center">
+                                    <img src="{{ twoFactorQr }}" alt="qr"/>
+                                    <div>
+                                        <a href="{{ twoFactorUrl }}"
+                                           class="btn btn-outline-warning mb-3">
+                                            <i class="fa-solid fa-link me-1"></i>
+                                            {{ trans('setup-manually') }}
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-md mb-3">
+                                    <div>
+                                        <p>{{ trans('two-factor-auth-p') }}</p>
+                                        <input type="text" class="form-control mb-3" name="two_factor_code"
+                                               placeholder="{{ trans('code') }}" autofocus required/>
+                                        <button class="btn btn-success w-100 mb-3" type="submit">
+                                            <i class="fa-solid fa-check me-1"></i>
+                                            {{ trans('verify') }}
+                                        </button>
+                                        <a href="{{ user.url() }}" class="btn btn-outline-secondary w-100">
+                                            <i class="fa-solid fa-times me-1"></i>
+                                            {{ trans('cancel') }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,134 @@
+name: PHPUnit Tests - Country Configurations
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+env:
+  DB_NAME: facturascripts_test
+  DB_USER: root
+  DB_PASS: root
+  DB_HOST: 127.0.0.1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        country:
+          - code: COL
+            name: Colombia
+            lang: es_CO
+            timezone: America/Bogota
+          - code: DOM
+            name: Dominican Republic
+            lang: es_DO
+            timezone: America/Santo_Domingo
+          - code: ECU
+            name: Ecuador
+            lang: es_EC
+            timezone: America/Guayaquil
+          - code: GTM
+            name: Guatemala
+            lang: es_GT
+            timezone: America/Guatemala
+          - code: MEX
+            name: Mexico
+            lang: es_MX
+            timezone: America/Mexico_City
+        database:
+          - type: mysql
+            version: '8.0'
+            port: 3306
+      fail-fast: false
+
+    name: ${{ matrix.country.name }} (${{ matrix.country.code }}) - ${{ matrix.database.type }} ${{ matrix.database.version }}
+
+    services:
+      mysql:
+        image: mysql:${{ matrix.database.version }}
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: facturascripts_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: bcmath, curl, gd, iconv, mysqli, pdo_mysql, pdo_pgsql, pgsql, soap, zip, fileinfo, openssl, simplexml, mbstring, intl
+          coverage: xdebug
+          tools: composer:v2
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
+
+      - name: Verify database connection
+        run: |
+          echo "Testing ${{ matrix.database.type }} ${{ matrix.database.version }} connection..."
+          mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SHOW DATABASES;"
+          mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SELECT VERSION();"
+
+      - name: Create application config for ${{ matrix.country.name }}
+        run: |
+          cat > config.php << 'EOF'
+          <?php
+          define('FS_COOKIES_EXPIRE', 31536000);
+          define('FS_ROUTE', '');
+          define('FS_DB_TYPE', 'mysql');
+          define('FS_DB_HOST', '${{ env.DB_HOST }}');
+          define('FS_DB_PORT', 3306);
+          define('FS_DB_NAME', '${{ env.DB_NAME }}');
+          define('FS_DB_USER', '${{ env.DB_USER }}');
+          define('FS_DB_PASS', '${{ env.DB_PASS }}');
+          define('FS_DB_FOREIGN_KEYS', true);
+          define('FS_DB_TYPE_CHECK', true);
+          define('FS_MYSQL_CHARSET', 'utf8mb4');
+          define('FS_MYSQL_COLLATE', 'utf8mb4_unicode_520_ci');
+          define('FS_LANG', '${{ matrix.country.lang }}');
+          define('FS_TIMEZONE', '${{ matrix.country.timezone }}');
+          define('FS_INITIAL_CODPAIS', '${{ matrix.country.code }}');
+          define('FS_HIDDEN_PLUGINS', '');
+          define('FS_DEBUG', true);
+          define('FS_DISABLE_ADD_PLUGINS', false);
+          define('FS_DISABLE_RM_PLUGINS', false);
+          EOF
+          echo "Configuration created for ${{ matrix.country.name }} (${{ matrix.country.code }})"
+          echo "Language: ${{ matrix.country.lang }}"
+          echo "Timezone: ${{ matrix.country.timezone }}"
+
+      - name: Run PHPUnit tests for ${{ matrix.country.name }}
+        run: |
+          echo "Running tests with ${{ matrix.country.name }} configuration..."
+          if [ -f phpunit.xml ] || [ -f phpunit.xml.dist ]; then
+            vendor/bin/phpunit --coverage-text --coverage-clover=coverage-${{ matrix.country.code }}.xml
+          else
+            echo "No PHPUnit configuration found. Running with default settings..."
+            vendor/bin/phpunit --bootstrap vendor/autoload.php tests/
+          fi

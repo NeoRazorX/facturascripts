@@ -53,7 +53,7 @@ class WidgetStars extends WidgetNumber
 
         // añadimos estrellas vacías hasta llegar al máximo
         for ($i = ceil($this->value); $i < $this->max; $i++) {
-            $html .= '<i class="far fa-star"></i>';
+            $html .= '<i class="fa-regular fa-star"></i>';
         }
 
         return $html;

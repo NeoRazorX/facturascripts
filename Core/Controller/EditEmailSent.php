@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,12 +51,12 @@ class EditEmailSent extends EditController
     /**
      * Redirects to the contact page of this email.
      */
-    protected function contactAction()
+    protected function contactAction(): void
     {
         $contact = new Contacto();
         $email = $this->getViewModelValue($this->getMainViewName(), 'addressee');
         $where = [new DataBaseWhere('email', $email)];
-        if ($contact->loadFromCode('', $where)) {
+        if ($contact->loadWhere($where)) {
             $this->redirect($contact->url());
             return;
         }
@@ -104,12 +104,10 @@ class EditEmailSent extends EditController
 
     protected function createViewOtherEmails(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails', 'fa-solid fa-paper-plane');
-        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
-        $this->views[$viewName]->searchFields = ['body', 'subject'];
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'EmailSent', 'emails', 'fa-solid fa-paper-plane')
+            ->addOrderBy(['date'], 'date', 2)
+            ->addSearchFields(['body', 'subject'])
+            ->setSettings('btnNew', false);
     }
 
     /**
@@ -143,17 +141,17 @@ class EditEmailSent extends EditController
 
         // cargamos el modelo
         $model = $this->getModel();
-        if (false === $model->loadFromCode($this->request->get('code', ''))) {
-            $this->response->setContent(json_encode(['getHtml' => false]));
+        if (false === $model->loadFromCode($this->request->queryOrInput('code', ''))) {
+            $this->response->json(['getHtml' => false]);
             return;
         }
 
-        $this->response->setContent(json_encode([
+        $this->response->json([
             'getHtml' => true,
             'html' => empty($model->html) ?
-                '<h1 style="text-align: center">' . Tools::lang()->trans('not-stored-content') . '</h1>' :
+                '<h1 style="text-align: center">' . Tools::trans('not-stored-content') . '</h1>' :
                 Tools::fixHtml($model->html),
-        ]));
+        ]);
     }
 
     /**
@@ -168,7 +166,15 @@ class EditEmailSent extends EditController
 
         switch ($viewName) {
             case 'EmailSentAttachment':
-                $view->cursor = $this->views[$mvn]->model->getAttachments();
+                $attachments = $this->views[$mvn]->model->getAttachments();
+
+                // si no hay adjuntos ocultamos la pestaña
+                if (empty($attachments)) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+
+                $view->cursor = $attachments;
                 $view->count = count($view->cursor);
                 break;
 
@@ -184,11 +190,6 @@ class EditEmailSent extends EditController
 
             default:
                 parent::loadData($viewName, $view);
-
-                // si no hay adjuntos ocultamos la pestaña
-                if (false === $view->model->attachment) {
-                    $this->setSettings('EmailSentAttachment', 'active', false);
-                }
                 break;
         }
     }

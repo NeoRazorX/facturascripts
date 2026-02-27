@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,10 +62,11 @@ class ListCliente extends ListController
     protected function createViewBankAccounts(string $viewName = 'ListCuentaBancoCliente'): void
     {
         $this->addView($viewName, 'CuentaBancoCliente', 'bank-accounts', 'fa-solid fa-piggy-bank')
-            ->addSearchFields(['codcuenta', 'descripcion', 'iban', 'swift'])
-            ->addOrderBy(['codcuenta'], 'bank-mandate')
+            ->addSearchFields(['codcuenta', 'descripcion', 'iban', 'mandato', 'swift'])
+            ->addOrderBy(['codcuenta'], 'code')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['iban'], 'iban')
+            ->addOrderBy(['mandato'], 'bank-mandate')
             ->addOrderBy(['fmandato', 'codcuenta'], 'bank-mandate-date', 2);
 
         // desactivamos botones
@@ -90,11 +91,11 @@ class ListCliente extends ListController
         // filtros
         $values = [
             [
-                'label' => Tools::lang()->trans('customers'),
+                'label' => Tools::trans('customers'),
                 'where' => [new DataBaseWhere('codcliente', null, 'IS NOT')]
             ],
             [
-                'label' => Tools::lang()->trans('all'),
+                'label' => Tools::trans('all'),
                 'where' => []
             ]
         ];
@@ -103,14 +104,14 @@ class ListCliente extends ListController
         $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', Paises::codeModel());
 
         $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
-        if (count($provinces) >= CodeModel::ALL_LIMIT) {
+        if (count($provinces) >= CodeModel::getlimit()) {
             $this->addFilterAutocomplete($viewName, 'provincia', 'province', 'provincia', 'contactos', 'provincia');
         } else {
             $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
         }
 
         $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
-        if (count($cities) >= CodeModel::ALL_LIMIT) {
+        if (count($cities) >= CodeModel::getlimit()) {
             $this->addFilterAutocomplete($viewName, 'ciudad', 'city', 'ciudad', 'contactos', 'ciudad');
         } else {
             $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
@@ -136,14 +137,14 @@ class ListCliente extends ListController
 
         // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => Tools::lang()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => Tools::lang()->trans('all'), 'where' => []]
+            ['label' => Tools::trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => Tools::trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => Tools::trans('all'), 'where' => []]
         ]);
         $this->addFilterSelectWhere($viewName, 'type', [
-            ['label' => Tools::lang()->trans('all'), 'where' => []],
-            ['label' => Tools::lang()->trans('is-person'), 'where' => [new DataBaseWhere('personafisica', true)]],
-            ['label' => Tools::lang()->trans('company'), 'where' => [new DataBaseWhere('personafisica', false)]]
+            ['label' => Tools::trans('all'), 'where' => []],
+            ['label' => Tools::trans('is-person'), 'where' => [new DataBaseWhere('personafisica', true)]],
+            ['label' => Tools::trans('company'), 'where' => [new DataBaseWhere('personafisica', false)]]
         ]);
 
         $fiscalIds = $this->codeModel->all('clientes', 'tipoidfiscal', 'tipoidfiscal');

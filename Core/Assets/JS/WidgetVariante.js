@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,36 @@ function widgetVarianteDraw(id, results) {
     let html = '';
 
     results.forEach(function (element) {
+        let descripcion = element.descripcion;
+        if (descripcion.length > 300) {
+            descripcion = descripcion.substring(0, 300) + '...';
+        }
+
+        // Determinar la clase de color para el precio
+        let priceClass = '';
+        if (element.precio < 0) {
+            priceClass = ' text-danger';
+        } else if (element.precio == 0) {
+            priceClass = ' text-warning';
+        }
+
+        // Determinar la clase de color para el stock
+        let stockClass = '';
+        if (element.stock < 0) {
+            stockClass = ' text-danger';
+        } else if (element.stock == 0) {
+            stockClass = ' text-warning';
+        }
+
         html += '<tr class="clickableRow" onclick="widgetVarianteSelect(\'' + id + '\', \'' + element.match + '\');">'
-            + '<td><b>' + element.referencia + '</b> ' + element.descripcion + '</td>'
-            + '<td class="text-end text-nowrap">' + element.precio_str + '</td>'
-            + '<td class="text-end text-nowrap">' + element.stock_str + '</td>'
+            + '<td class="text-center">'
+            + '<a href="' + element.url + '" target="_blank" onclick="event.stopPropagation();">'
+            + '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
+            + '</a>'
+            + '</td>'
+            + '<td><b>' + element.referencia + '</b> ' + descripcion + '</td>'
+            + '<td class="text-end text-nowrap' + priceClass + '">' + element.precio_str + '</td>'
+            + '<td class="text-end text-nowrap' + stockClass + '">' + element.stock_str + '</td>'
             + '</tr>';
     });
 
@@ -58,11 +84,19 @@ function widgetVarianteSearch(id) {
     });
 }
 
+// Objeto para almacenar los timeouts de cada instancia del widget
+let widgetVarianteSearchTimeouts = {};
+
 function widgetVarianteSearchKp(id, event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        widgetVarianteSearch(id);
+    // Limpiar el timeout anterior si existe
+    if (widgetVarianteSearchTimeouts[id]) {
+        clearTimeout(widgetVarianteSearchTimeouts[id]);
     }
+
+    // Crear un nuevo timeout para buscar después de 400ms
+    widgetVarianteSearchTimeouts[id] = setTimeout(function() {
+        widgetVarianteSearch(id);
+    }, 400);
 }
 
 function widgetVarianteSelect(id, value) {

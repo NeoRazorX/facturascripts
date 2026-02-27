@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -27,10 +29,12 @@ use FacturaScripts\Core\Tools;
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class LogMessage extends Base\ModelClass
+class LogMessage extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
+    const AUDIT_CHANNEL = 'audit';
+    const DOCS_CHANNEL = 'docs';
     const MAX_MESSAGE_LEN = 3000;
 
     /**
@@ -105,7 +109,7 @@ class LogMessage extends Base\ModelClass
      */
     public $uri;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->time = Tools::dateTime();
@@ -131,11 +135,6 @@ class LogMessage extends Base\ModelClass
         return parent::delete();
     }
 
-    public static function primaryColumn(): string
-    {
-        return 'id';
-    }
-
     public static function tableName(): string
     {
         return 'logs';
@@ -157,13 +156,13 @@ class LogMessage extends Base\ModelClass
         return parent::test();
     }
 
-    protected function saveUpdate(array $values = []): bool
+    protected function saveUpdate(): bool
     {
         if ($this->channel === self::AUDIT_CHANNEL) {
             Tools::log()->warning('cant-update-audit-log');
             return false;
         }
 
-        return parent::saveUpdate($values);
+        return parent::saveUpdate();
     }
 }

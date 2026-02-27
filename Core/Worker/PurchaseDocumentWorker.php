@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Worker;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\WorkEvent;
 use FacturaScripts\Core\Template\WorkerClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AlbaranProveedor;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\PedidoProveedor;
@@ -47,10 +47,10 @@ class PurchaseDocumentWorker extends WorkerClass
         }
 
         // cargamos el documento
-        if (false === $doc->loadFromCode($event->value)) {
+        if (false === $doc->load($event->value)) {
             return $this->done();
         }
-        
+
         // recorremos las líneas del documento
         foreach ($doc->getLines() as $line) {
             if (empty($line->referencia) ||
@@ -63,11 +63,11 @@ class PurchaseDocumentWorker extends WorkerClass
             // buscamos el producto del proveedor
             $product = new ProductoProveedor();
             $where = [
-                new DataBaseWhere('codproveedor', $doc->codproveedor),
-                new DataBaseWhere('referencia', $line->referencia),
-                new DataBaseWhere('coddivisa', $doc->coddivisa)
+                Where::eq('codproveedor', $doc->codproveedor),
+                Where::eq('referencia', $line->referencia),
+                Where::eq('coddivisa', $doc->coddivisa)
             ];
-            if (false === $product->loadFromCode('', $where) ||
+            if (false === $product->loadWhere($where) ||
                 strtotime($product->actualizado) <= strtotime($doc->fecha . ' ' . $doc->hora)) {
                 $product->actualizado = Tools::dateTime($doc->fecha . ' ' . $doc->hora);
                 $product->coddivisa = $doc->coddivisa;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,7 +42,7 @@ class ReciboProveedorTest extends TestCase
         self::installAccountingPlan();
     }
 
-    public function testCreateInvoiceCreateReceipt()
+    public function testCreateInvoiceCreateReceipt(): void
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();
@@ -68,7 +68,7 @@ class ReciboProveedorTest extends TestCase
         }
     }
 
-    public function testCreateInvoiceOnPastDate()
+    public function testCreateInvoiceOnPastDate(): void
     {
         // creamos una factura de ayer
         $yesterday = date(ModelCore::DATE_STYLE, strtotime('-1 day'));
@@ -96,7 +96,7 @@ class ReciboProveedorTest extends TestCase
         }
     }
 
-    public function testCreatePaidInvoiceOnPastDate()
+    public function testCreatePaidInvoiceOnPastDate(): void
     {
         // creamos una forma de pago pagada
         $payMethod = new FormaPago();
@@ -147,7 +147,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
-    public function testCreatePaidInvoiceOnPastDateWithTimeLimit()
+    public function testCreatePaidInvoiceOnPastDateWithTimeLimit(): void
     {
         // creamos una forma de pago pagada con vencimiento a 10 días
         $payMethod = new FormaPago();
@@ -199,7 +199,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
-    public function testReceiptsTotalGreaterThanInvoice()
+    public function testReceiptsTotalGreaterThanInvoice(): void
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();
@@ -227,7 +227,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testUpdateAndCreateReceipts()
+    public function testUpdateAndCreateReceipts(): void
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();
@@ -264,7 +264,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testUpdateReceiptsUpdateInvoice()
+    public function testUpdateReceiptsUpdateInvoice(): void
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();
@@ -332,7 +332,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testUpdateInvoiceWithPaidReceipt()
+    public function testUpdateInvoiceWithPaidReceipt(): void
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();

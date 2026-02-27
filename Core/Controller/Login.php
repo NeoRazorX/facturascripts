@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,6 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
-use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
@@ -42,11 +41,13 @@ class Login implements ControllerInterface
     public $empresa;
 
     /** @var string */
+    private $template = 'Login/Login.html.twig';
+
+    /** @var string */
     public $title = 'Login';
 
-    /** @var boolean */
-    private $two_factor_view = false;
-
+    /** @var string */
+    public $two_factor_user;
 
     public function __construct(string $className, string $url = '')
     {
@@ -69,7 +70,7 @@ class Login implements ControllerInterface
         $this->title = $this->empresa->nombrecorto;
 
         $request = Request::createFromGlobals();
-        $action = $request->request->get('action', $request->query->get('action', ''));
+        $action = $request->inputOrQuery('action', '');
 
         switch ($action) {
             case 'change-password':
@@ -84,26 +85,16 @@ class Login implements ControllerInterface
                 $this->logoutAction($request);
                 break;
 
-            case 'valid-totp':
-                $this->validCodeAction($request);
+            case 'two-factor-validation':
+                $this->twoFactorValidationAction($request);
                 break;
         }
 
-        if ($this->two_factor_view) {
-            echo Html::render('Login/TwoFactor.html.twig', [
-                'controllerName' => 'Login',
-                'debugBarRender' => false,
-                'fsc' => $this,
-                'template' => 'Login/TwoFactor.html.twig',
-            ]);
-            return;
-        }
-
-        echo Html::render('Login/Login.html.twig', [
+        echo Html::render($this->template, [
             'controllerName' => 'Login',
             'debugBarRender' => false,
             'fsc' => $this,
-            'template' => 'Login/Login.html.twig',
+            'template' => $this->template,
         ]);
     }
 
@@ -164,34 +155,34 @@ class Login implements ControllerInterface
             return;
         }
 
-        $username = $request->request->get('fsNewUserPasswd');
+        $username = $request->input('fsNewUserPasswd');
         if ($this->userHasManyIncidents(Session::getClientIp(), $username)) {
             Tools::log()->warning('ip-banned');
             return;
         }
 
-        $dbPassword = $request->request->get('fsDbPasswd');
+        $dbPassword = $request->input('fsDbPasswd');
         if ($dbPassword !== Tools::config('db_pass')) {
             Tools::log()->warning('login-invalid-db-password');
             $this->saveIncident(Session::getClientIp(), $username);
             return;
         }
 
-        $password = $request->request->get('fsNewPasswd');
-        $password2 = $request->request->get('fsNewPasswd2');
+        $password = $request->input('fsNewPasswd');
+        $password2 = $request->input('fsNewPasswd2');
         if (empty($username) || empty($password) || empty($password2)) {
             Tools::log()->warning('login-empty-fields');
             return;
         }
 
         if ($password !== $password2) {
-            Tools::log()->warning('different-passwords', ['%userNick%' => $username]);
+            Tools::log()->warning('different-passwords', ['%userNick%' => htmlspecialchars($username)]);
             return;
         }
 
         $user = new User();
-        if (false === $user->loadFromCode($username)) {
-            Tools::log()->warning('login-user-not-found');
+        if (false === $user->load($username)) {
+            Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($username)]);
             $this->saveIncident(Session::getClientIp(), $username);
             return;
         }
@@ -201,7 +192,16 @@ class Login implements ControllerInterface
             return;
         }
 
-        $user->setPassword($password);
+        if (false === $user->setPassword($password)) {
+            Tools::log()->warning('weak-password', ['%userNick%' => htmlspecialchars($username)]);
+            return;
+        }
+
+        // desactivamos el 2FA si estaba activado
+        if ($user->two_factor_enabled) {
+            $user->disableTwoFactor();
+        }
+
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');
             $this->saveIncident(Session::getClientIp(), $username);
@@ -216,14 +216,13 @@ class Login implements ControllerInterface
         $multiRequestProtection = new MultiRequestProtection();
 
         // si el usuario está autenticado, añadimos su nick a la semilla
-        $cookieNick = $request->cookies->get('fsNick', '');
+        $cookieNick = $request->cookie('fsNick', '');
         if ($cookieNick) {
             $multiRequestProtection->addSeed($cookieNick);
         }
 
         // comprobamos el token
-        $urlToken = $request->query->get('multireqtoken', '');
-        $token = $request->request->get('multireqtoken', $urlToken);
+        $token = $request->inputOrQuery('multireqtoken', '');
         if (empty($token) || false === $multiRequestProtection->validate($token)) {
             Tools::log()->warning('invalid-request');
             return false;
@@ -278,8 +277,8 @@ class Login implements ControllerInterface
             return;
         }
 
-        $userName = $request->request->get('fsNick');
-        $password = $request->request->get('fsPassword');
+        $userName = $request->input('fsNick');
+        $password = $request->input('fsPassword');
         if (empty($userName) || empty($password)) {
             Tools::log()->warning('login-error-empty-fields');
             return;
@@ -292,7 +291,7 @@ class Login implements ControllerInterface
         }
 
         $user = new User();
-        if (false === $user->loadFromCode($userName)) {
+        if (false === $user->load($userName)) {
             Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($userName)]);
             $this->saveIncident(Session::getClientIp());
             return;
@@ -310,20 +309,26 @@ class Login implements ControllerInterface
         }
 
         if ($user->two_factor_enabled) {
-            $this->two_factor_view = true;
+            $this->two_factor_user = $user->nick;
+            $this->template = 'Login/TwoFactor.html.twig';
             return;
         }
 
         $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
-    protected function validCodeAction(Request $request): void
+    protected function twoFactorValidationAction(Request $request): void
     {
         $user = new User();
-        $user->loadFromCode($request->request->get('fsNick'));
+        if (!$user->load($request->input('fsNick'))) {
+            Tools::log()->warning('user-not-found');
+            $this->saveIncident(Session::getClientIp());
+            return;
+        }
 
-        if (!TwoFactorManager::verifyCode($user->two_factor_secret_key, $request->request->get('fsCode'))) {
-            Tools::log()->warning('login-2fa-fail');
+        if (!$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))) {
+            Tools::log()->warning('two-factor-code-invalid');
+            $this->saveIncident(Session::getClientIp(), $user->nick);
             return;
         }
 
@@ -334,7 +339,7 @@ class Login implements ControllerInterface
     {
         // update user data
         Session::set('user', $user);
-        $browser = $request->headers->get('User-Agent');
+        $browser = $request->userAgent();
         $user->newLogkey($ip, $browser);
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');

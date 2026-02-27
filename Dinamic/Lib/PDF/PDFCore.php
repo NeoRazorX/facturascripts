@@ -1,7 +1,7 @@
 <?php namespace FacturaScripts\Dinamic\Lib\PDF;
 
 /**
- * Class created by Core/Base/PluginDeploy
+ * Class created by Core/Internal/PluginsDeploy
  * @author FacturaScripts <carlos@facturascripts.com>
  */
 abstract class PDFCore extends \FacturaScripts\Core\Lib\PDF\PDFCore

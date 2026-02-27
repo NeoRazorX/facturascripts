@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,13 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
+use FacturaScripts\Core\Model\Base\FiscalNumberTrait;
+use FacturaScripts\Core\Model\Base\GravatarTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Almacen as DinAlmacen;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
@@ -34,9 +40,12 @@ use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Empresa extends Base\Contact
+class Empresa extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
+    use EmailAndPhonesTrait;
+    use FiscalNumberTrait;
+    use GravatarTrait;
 
     /** @var string */
     public $administrador;
@@ -59,6 +68,12 @@ class Empresa extends Base\Contact
     /** @var string */
     public $excepcioniva;
 
+    /** @var string */
+    public $fax;
+
+    /** @var string */
+    public $fechaalta;
+
     /** @var int */
     public $idempresa;
 
@@ -66,7 +81,16 @@ class Empresa extends Base\Contact
     public $idlogo;
 
     /** @var string */
+    public $nombre;
+
+    /** @var string */
     public $nombrecorto;
+
+    /** @var string */
+    public $observaciones;
+
+    /** @var bool */
+    public $personafisica;
 
     /** @var string */
     public $provincia;
@@ -83,11 +107,20 @@ class Empresa extends Base\Contact
         return Vies::check($this->cifnif ?? '', $codiso, $msg) === 1;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->codpais = Tools::settings('default', 'codpais');
+        $this->fechaalta = Tools::date();
         $this->regimeniva = RegimenIVA::defaultValue();
+        $this->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+
+        Empresas::clear();
     }
 
     public function delete(): bool
@@ -97,13 +130,7 @@ class Empresa extends Base\Contact
             return false;
         }
 
-        if (parent::delete()) {
-            // limpiamos la caché
-            Empresas::clear();
-            return true;
-        }
-
-        return false;
+        return parent::delete();
     }
 
     /**
@@ -113,9 +140,8 @@ class Empresa extends Base\Contact
      */
     public function getBankAccounts(): array
     {
-        $companyAccounts = new DinCuentaBanco();
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
-        return $companyAccounts->all($where, [], 0, 0);
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        return DinCuentaBanco::all($where, [], 0, 0);
     }
 
     /**
@@ -125,9 +151,8 @@ class Empresa extends Base\Contact
      */
     public function getExercises(): array
     {
-        $exercise = new DinEjercicio();
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
-        return $exercise->all($where, [], 0, 0);
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        return DinEjercicio::all($where, [], 0, 0);
     }
 
     /**
@@ -137,9 +162,8 @@ class Empresa extends Base\Contact
      */
     public function getWarehouses(): array
     {
-        $warehouse = new DinAlmacen();
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
-        return $warehouse->all($where, [], 0, 0);
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        return DinAlmacen::all($where, [], 0, 0);
     }
 
     public function install(): string
@@ -148,8 +172,8 @@ class Empresa extends Base\Contact
         new AttachedFile();
 
         $num = mt_rand(1, 9999);
-        $name = defined('FS_INITIAL_EMPRESA') ? FS_INITIAL_EMPRESA : 'E-' . $num;
-        $codpais = defined('FS_INITIAL_CODPAIS') ? FS_INITIAL_CODPAIS : 'ESP';
+        $name = Tools::config('initial_empresa', 'E-' . $num);
+        $codpais = Tools::config('initial_codpais', 'ESP');
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,direccion,administrador,cifnif,nombre,'
             . 'nombrecorto,personafisica,regimeniva) '
             . "VALUES (1,'','" . $codpais . "','','','00000014Z','" . Tools::textBreak($name, 100)
@@ -176,17 +200,6 @@ class Empresa extends Base\Contact
         return 'nombrecorto';
     }
 
-    public function save(): bool
-    {
-        if (parent::save()) {
-            // limpiamos la caché
-            Empresas::clear();
-            return true;
-        }
-
-        return false;
-    }
-
     public static function tableName(): string
     {
         return 'empresas';
@@ -199,11 +212,20 @@ class Empresa extends Base\Contact
         $this->ciudad = Tools::noHtml($this->ciudad);
         $this->codpostal = Tools::noHtml($this->codpostal);
         $this->direccion = Tools::noHtml($this->direccion);
+        $this->fax = Tools::noHtml($this->fax) ?? '';
+        $this->nombre = Tools::noHtml($this->nombre);
         $this->nombrecorto = Tools::noHtml($this->nombrecorto);
+        $this->observaciones = Tools::noHtml($this->observaciones);
         $this->provincia = Tools::noHtml($this->provincia);
         $this->web = Tools::noHtml($this->web);
 
-        return parent::test();
+        // check if the web is a valid url
+        if (!empty($this->web) && false === Validator::url($this->web)) {
+            Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
+            return false;
+        }
+
+        return parent::test() && $this->testEmailAndPhones() && $this->testFiscalNumber();
     }
 
     protected function createPaymentMethods(): bool
@@ -212,6 +234,7 @@ class Empresa extends Base\Contact
         $formaPago->codpago = $formaPago->newCode();
         $formaPago->descripcion = Tools::lang()->trans('default');
         $formaPago->idempresa = $this->idempresa;
+
         return $formaPago->save();
     }
 
@@ -228,15 +251,16 @@ class Empresa extends Base\Contact
         $almacen->nombre = $this->nombrecorto ?? $this->nombre;
         $almacen->provincia = $this->provincia;
         $almacen->telefono = $this->telefono1;
+
         return $almacen->save();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->idempresa)) {
             $this->idempresa = $this->newCode();
         }
 
-        return parent::saveInsert($values) && $this->createPaymentMethods() && $this->createWarehouse();
+        return parent::saveInsert() && $this->createPaymentMethods() && $this->createWarehouse();
     }
 }

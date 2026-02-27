@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
@@ -30,7 +31,6 @@ use FacturaScripts\Dinamic\Model\CodeModel;
  */
 class AutocompleteFilter extends BaseFilter
 {
-
     /**
      * @var string
      */
@@ -91,7 +91,7 @@ class AutocompleteFilter extends BaseFilter
     public function render(): string
     {
         $label = static::$i18n->trans($this->label);
-        $html = '<div class="col-sm-3 col-lg-2">'
+        $html = '<div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">'
             . '<input type="hidden" name="' . $this->name() . '" value="' . $this->value . '"/>'
             . '<div class="mb-3">'
             . '<div class="input-group">';
@@ -101,12 +101,13 @@ class AutocompleteFilter extends BaseFilter
                 . '<i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>'
                 . '</span>';
         } else {
-            $html .= '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->name() . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
+            $html .= '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->name()
+                . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
                 . '<i class="fa-solid fa-times fa-fw" aria-hidden="true"></i>'
                 . '</button>';
         }
 
-        $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control filter-autocomplete"'
+        $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control filter-autocomplete' . ($this->value ? ' is-valid' : '') . '"'
             . ' data-name="' . $this->name() . '" data-field="' . $this->field . '" data-source="' . $this->table . '" data-fieldcode="' . $this->fieldcode
             . '" data-fieldtitle="' . $this->fieldtitle . '" placeholder = "' . $label . '" autocomplete="off" ' . $this->readonly() . '/>'
             . '</div>'
@@ -119,17 +120,18 @@ class AutocompleteFilter extends BaseFilter
     /**
      * Adds need asset to the asset manager.
      */
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
-        AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/ListFilterAutocomplete.js');
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/ListFilterAutocomplete.js');
     }
 
     /**
      * @return string
      */
-    protected function getDescription()
+    protected function getDescription(): string
     {
         $codeModel = new CodeModel();
         return $codeModel->getDescription($this->table, $this->fieldcode, $this->value, $this->fieldtitle);

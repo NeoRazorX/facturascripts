@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -50,6 +50,12 @@ class Installer implements ControllerInterface
     /** @var string */
     public $db_user;
 
+    /** @var string */
+    public $initial_pass;
+
+    /** @var string */
+    public $initial_user;
+
     /** @var Request */
     protected $request;
 
@@ -60,12 +66,12 @@ class Installer implements ControllerInterface
     {
         $this->request = Request::createFromGlobals();
 
-        $lang = $this->request->get('fs_lang', $this->getUserLanguage());
+        $lang = $this->request->inputOrQuery('fs_lang', $this->getUserLanguage());
         Tools::lang()->setDefaultLang($lang);
 
         // si ya hay configuración de base de datos, lanzamos error de que ya está instalado
         if (Tools::config('db_name')) {
-            throw new KernelException('AlreadyInstalled', Tools::lang()->trans('already-installed'));
+            throw new KernelException('AlreadyInstalled', Tools::trans('already-installed-p'));
         }
 
         Html::disablePlugins();
@@ -78,12 +84,14 @@ class Installer implements ControllerInterface
 
     public function run(): void
     {
-        $this->db_host = strtolower(trim($this->request->get('fs_db_host', 'localhost')));
-        $this->db_name = strtolower(trim($this->request->get('fs_db_name', 'facturascripts')));
-        $this->db_pass = $this->request->get('fs_db_pass', '');
-        $this->db_port = (int)$this->request->get('fs_db_port', 3306);
-        $this->db_type = $this->request->get('fs_db_type', 'mysql');
-        $this->db_user = strtolower(trim($this->request->get('fs_db_user', 'root')));
+        $this->db_host = strtolower(trim($this->request->input('fs_db_host', 'localhost')));
+        $this->db_name = trim($this->request->input('fs_db_name', 'facturascripts'));
+        $this->db_pass = $this->request->input('fs_db_pass', '');
+        $this->db_port = (int)$this->request->input('fs_db_port', 3306);
+        $this->db_type = $this->request->input('fs_db_type', 'mysql');
+        $this->db_user = trim($this->request->input('fs_db_user', 'root'));
+        $this->initial_user = trim($this->request->input('fs_initial_user', ''));
+        $this->initial_pass = $this->request->input('fs_initial_pass', '');
 
         $installed = $this->searchErrors() &&
             $this->request->method() === 'POST' &&
@@ -93,16 +101,19 @@ class Installer implements ControllerInterface
             $this->saveInstall();
 
         if ($installed) {
-            if (!empty($this->request->get('unattended', ''))) {
+            if (!empty($this->request->input('unattended', ''))) {
                 echo 'OK';
                 return;
             }
 
-            echo Html::render('Installer/Redir.html.twig');
+            echo Html::render('Installer/Redir.html.twig', [
+                'initial_user' => empty($this->initial_user) ? 'admin' : $this->initial_user,
+                'initial_pass' => empty($this->initial_pass) ? 'admin' : $this->initial_pass,
+            ]);
             return;
         }
 
-        if ('TRUE' === $this->request->get('phpinfo', '')) {
+        if ('TRUE' === $this->request->query('phpinfo', '')) {
             /** @noinspection ForgottenDebugOutputInspection */
             phpinfo();
             return;
@@ -124,9 +135,9 @@ class Installer implements ControllerInterface
             'user' => $this->db_user,
             'pass' => $this->db_pass,
             'name' => $this->db_name,
-            'socket' => $this->request->request->get('mysql_socket', ''),
-            'pgsql-ssl' => $this->request->request->get('pgsql_ssl_mode', ''),
-            'pgsql-endpoint' => $this->request->request->get('pgsql_endpoint', '')
+            'socket' => $this->request->input('mysql_socket', ''),
+            'pgsql-ssl' => $this->request->input('pgsql_ssl_mode', ''),
+            'pgsql-endpoint' => $this->request->input('pgsql_endpoint', '')
         ];
 
         if ('postgresql' == $this->db_type && strtolower($dbData['name']) != $dbData['name']) {
@@ -172,7 +183,7 @@ class Installer implements ControllerInterface
 
     private function getUserLanguage(): string
     {
-        $dataLanguage = explode(';', filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
+        $dataLanguage = explode(';', filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE') ?? '');
         $userLanguage = str_replace('-', '_', explode(',', $dataLanguage[0])[0]);
         return file_exists(FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
     }
@@ -190,7 +201,7 @@ class Installer implements ControllerInterface
         $contentFile = file_get_contents($samplePath);
 
         // reemplazamos la ruta de la instalación
-        $route = $this->request->request->get('fs_route', $this->getUri());
+        $route = $this->request->input('fs_route', $this->getUri());
         if (!empty($route)) {
             $contentFile = str_replace('RewriteBase /', 'RewriteBase ' . $route, $contentFile);
         }
@@ -209,8 +220,8 @@ class Installer implements ControllerInterface
         }
 
         fwrite($file, "<?php\n");
-        fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 31536000) . ");\n");
-        fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
+        fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->input('fs_cookie_expire', 31536000) . ");\n");
+        fwrite($file, "define('FS_ROUTE', '" . $this->request->input('fs_route', $this->getUri()) . "');\n");
         fwrite($file, "define('FS_DB_TYPE', '" . $this->db_type . "');\n");
         fwrite($file, "define('FS_DB_HOST', '" . $this->db_host . "');\n");
         fwrite($file, "define('FS_DB_PORT', " . $this->db_port . ");\n");
@@ -230,11 +241,11 @@ class Installer implements ControllerInterface
             fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
         }
 
-        if ($this->db_type === 'mysql' && $this->request->request->get('mysql_socket') !== '') {
-            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
+        if ($this->db_type === 'mysql' && $this->request->input('mysql_socket') !== '') {
+            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->input('mysql_socket') . "');\n");
         } elseif ($this->db_type === 'postgresql') {
-            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->request->request->get('pgsql_ssl_mode') . "');\n");
-            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->request->request->get('pgsql_endpoint') . "');\n");
+            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->request->input('pgsql_ssl_mode') . "');\n");
+            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->request->input('pgsql_endpoint') . "');\n");
         }
 
         $fields = [
@@ -243,16 +254,26 @@ class Installer implements ControllerInterface
             'hidden_plugins' => ''
         ];
         foreach ($fields as $field => $default) {
-            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, $default) . "');\n");
+            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->input('fs_' . $field, $default) . "');\n");
         }
 
         $booleanFields = ['debug', 'disable_add_plugins', 'disable_rm_plugins'];
         foreach ($booleanFields as $field) {
-            fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->request->get('fs_' . $field, 'false') . ");\n");
+            fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->input('fs_' . $field, 'false') . ");\n");
         }
 
-        if ($this->request->request->get('fs_gtm', false)) {
+        if ($this->request->input('fs_gtm', false)) {
             fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
+        }
+
+        $initialUser = $this->request->input('fs_initial_user', '');
+        if (!empty($initialUser)) {
+            fwrite($file, "define('FS_INITIAL_USER', '" . $initialUser . "');\n");
+        }
+
+        $initialPass = $this->request->input('fs_initial_pass', '');
+        if (!empty($initialPass)) {
+            fwrite($file, "define('FS_INITIAL_PASS', '" . $initialPass . "');\n");
         }
 
         fclose($file);
@@ -282,6 +303,11 @@ class Installer implements ControllerInterface
 
         if (false === is_writable(FS_FOLDER)) {
             Tools::log()->critical('folder-not-writable');
+            $errors = true;
+        }
+
+        if (!empty($this->initial_user) && 1 !== preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->initial_user)) {
+            Tools::log()->warning('invalid-admin-username', ['%min%' => '3', '%max%' => '50']);
             $errors = true;
         }
 
@@ -363,8 +389,8 @@ class Installer implements ControllerInterface
         }
 
         // try to connect to the database
-        $connection = pg_connect($connectionStr . ' dbname=' . $dbData['name']);
-        if (is_resource($connection)) {
+        $connection = @pg_connect($connectionStr . ' dbname=' . $dbData['name']);
+        if ($connection !== false) {
             // if postgresql version is too old, we can't continue
             if ($this->versionPostgres($connection) < 10) {
                 Tools::log()->critical('postgresql-version-too-old');
@@ -376,7 +402,7 @@ class Installer implements ControllerInterface
 
         // can't connect to the database, try to connect to the default database
         $connection = pg_connect($connectionStr . ' dbname=postgres');
-        if (is_resource($connection)) {
+        if ($connection !== false) {
             // if postgresql version is too old, we can't continue
             if ($this->versionPostgres($connection) < 10) {
                 Tools::log()->critical('postgresql-version-too-old');

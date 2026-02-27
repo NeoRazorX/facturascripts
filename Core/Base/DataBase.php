@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,6 +64,13 @@ final class DataBase
     private static $tables = [];
 
     /**
+     * Type of database engine.
+     *
+     * @var string
+     */
+    private static $type;
+
+    /**
      * DataBase constructor and prepare the class to use it.
      */
     public function __construct()
@@ -71,7 +78,8 @@ final class DataBase
         if (Tools::config('db_name') && self::$link === null) {
             self::$miniLog = new MiniLog(self::CHANNEL);
 
-            switch (strtolower(FS_DB_TYPE)) {
+            self::$type = strtolower(Tools::config('db_type'));
+            switch (self::$type) {
                 case 'postgresql':
                     self::$engine = new PostgresqlEngine();
                     break;
@@ -101,6 +109,16 @@ final class DataBase
     public function castInteger(string $col): string
     {
         return self::$engine->castInteger(self::$link, $col);
+    }
+
+    /**
+     * Returns the random function for the database engine.
+     *
+     * @return string
+     */
+    public function random(): string
+    {
+        return self::$engine->random();
     }
 
     /**
@@ -223,9 +241,10 @@ final class DataBase
             // adds the sql query to the history
             self::$miniLog->debug($sql, ['duration' => $stop - $start]);
 
-
-            if (!$result) {
+            // check errors
+            if (!$result || self::$engine->hasError()) {
                 self::$miniLog->error(self::$engine->errorMessage(self::$link), ['sql' => $sql]);
+                self::$engine->clearError();
             }
 
             if ($inTransaction) {
@@ -296,13 +315,34 @@ final class DataBase
      *
      * @return array
      */
-    public function getIndexes(string $tableName): array
+    public function getAllIndexes(string $tableName): array
     {
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
         foreach ($data as $row) {
-            $result[] = ['name' => $row['Key_name'] ?? $row['key_name'] ?? ''];
+            $result[] = [
+                'name' => $row['Key_name'] ?? $row['key_name'] ?? '',
+                'column' => $row['Column_name'] ?? $row['column_name'] ?? '',
+            ];
         }
+
+        return $result;
+    }
+
+    /**
+     * Returns an array with the FacturaScripts indexes of a given table.
+     *
+     * @param string $tableName
+     *
+     * @return array
+     */
+    public function getIndexes(string $tableName): array
+    {
+        $result = array_filter($this->getAllIndexes($tableName), function ($dbIdx) {
+            return false !== strpos($dbIdx['name'], 'fs_');
+        });
+
+        $result = array_values($result);
 
         return $result;
     }
@@ -438,6 +478,11 @@ final class DataBase
         }
 
         return in_array($tableName, $list, false);
+    }
+
+    public function type(): string
+    {
+        return self::$type ?? '';
     }
 
     /**

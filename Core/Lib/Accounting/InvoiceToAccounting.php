@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,7 +97,7 @@ class InvoiceToAccounting extends AccountingClass
     protected function addCustomerLine(Asiento $entry): bool
     {
         $customer = new Cliente();
-        if (false === $customer->loadFromCode($this->document->codcliente)) {
+        if (false === $customer->load($this->document->codcliente)) {
             Tools::log()->warning('customer-not-found');
             $this->counterpart = null;
             return false;
@@ -394,7 +394,7 @@ class InvoiceToAccounting extends AccountingClass
     protected function addSupplierLine(Asiento $entry): bool
     {
         $supplier = new Proveedor();
-        if (false === $supplier->loadFromCode($this->document->codproveedor)) {
+        if (false === $supplier->load($this->document->codproveedor)) {
             Tools::log()->warning('supplier-not-found');
             $this->counterpart = null;
             return false;
@@ -428,7 +428,7 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        if (false === $this->exercise->loadFromCode($this->document->codejercicio) || false === $this->exercise->isOpened()) {
+        if (false === $this->exercise->load($this->document->codejercicio) || false === $this->exercise->isOpened()) {
             Tools::log()->warning('closed-exercise', ['%exerciseName%' => $this->document->codejercicio]);
             return false;
         }
@@ -443,9 +443,8 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        $cuenta = new Cuenta();
         $where = [new DataBaseWhere('codejercicio', $this->document->codejercicio)];
-        if (0 === $cuenta->count($where)) {
+        if (0 === Cuenta::count($where)) {
             Tools::log()->warning('accounting-data-missing', ['%exerciseName%' => $this->document->codejercicio]);
             return false;
         }
@@ -462,9 +461,9 @@ class InvoiceToAccounting extends AccountingClass
     /**
      * Generate the accounting entry for a purchase document.
      */
-    protected function purchaseAccountingEntry()
+    protected function purchaseAccountingEntry(): void
     {
-        $concept = Tools::lang()->trans('supplier-invoice') . ' ' . $this->document->codigo;
+        $concept = Tools::trans('supplier-invoice') . ' ' . $this->document->codigo;
         $concept .= $this->document->numproveedor ? ' (' . $this->document->numproveedor . ') - ' . $this->document->nombre :
             ' - ' . $this->document->nombre;
 
@@ -475,26 +474,65 @@ class InvoiceToAccounting extends AccountingClass
             return;
         }
 
-        if ($this->addSupplierLine($entry) &&
-            $this->addPurchaseTaxLines($entry) &&
-            $this->addPurchaseIrpfLines($entry) &&
-            $this->addPurchaseSuppliedLines($entry) &&
-            $this->addGoodsPurchaseLine($entry) &&
-            $entry->isBalanced()) {
-            $this->document->idasiento = $entry->primaryColumnValue();
+        if (false === $this->addSupplierLine($entry)) {
+            Tools::log()->warning('supplier-line-error', [
+                '%invoice%' => $this->document->codigo,
+                '%supplier%' => $this->document->nombre
+            ]);
+            $entry->delete();
             return;
         }
 
-        Tools::log()->warning('accounting-lines-error');
-        $entry->delete();
+        if (false === $this->addPurchaseTaxLines($entry)) {
+            Tools::log()->warning('purchase-tax-lines-error', [
+                '%invoice%' => $this->document->codigo
+            ]);
+            $entry->delete();
+            return;
+        }
+
+        if (false === $this->addPurchaseIrpfLines($entry)) {
+            Tools::log()->warning('purchase-irpf-lines-error', [
+                '%invoice%' => $this->document->codigo
+            ]);
+            $entry->delete();
+            return;
+        }
+
+        if (false === $this->addPurchaseSuppliedLines($entry)) {
+            Tools::log()->warning('purchase-supplied-lines-error', [
+                '%invoice%' => $this->document->codigo
+            ]);
+            $entry->delete();
+            return;
+        }
+
+        if (false === $this->addGoodsPurchaseLine($entry)) {
+            Tools::log()->warning('purchase-goods-lines-error', [
+                '%invoice%' => $this->document->codigo
+            ]);
+            $entry->delete();
+            return;
+        }
+
+        if (false === $entry->isBalanced()) {
+            Tools::log()->warning('unbalanced-accounting-entry', [
+                '%document%' => $entry->documento,
+                '%difference%' => abs($entry->debe - $entry->haber)
+            ]);
+            $entry->delete();
+            return;
+        }
+
+        $this->document->idasiento = $entry->id();
     }
 
     /**
      * Generate the accounting entry for a sales document.
      */
-    protected function salesAccountingEntry()
+    protected function salesAccountingEntry(): void
     {
-        $concept = Tools::lang()->trans('customer-invoice') . ' ' . $this->document->codigo;
+        $concept = Tools::trans('customer-invoice') . ' ' . $this->document->codigo;
         $concept .= $this->document->numero2 ? ' (' . $this->document->numero2 . ') - ' . $this->document->nombrecliente :
             ' - ' . $this->document->nombrecliente;
 
@@ -505,18 +543,57 @@ class InvoiceToAccounting extends AccountingClass
             return;
         }
 
-        if ($this->addCustomerLine($entry) &&
-            $this->addSalesTaxLines($entry) &&
-            $this->addSalesIrpfLines($entry) &&
-            $this->addSalesSuppliedLines($entry) &&
-            $this->addGoodsSalesLine($entry) &&
-            $entry->isBalanced()) {
-            $this->document->idasiento = $entry->primaryColumnValue();
+        if (false === $this->addCustomerLine($entry)) {
+            Tools::log()->warning('customer-line-error', [
+                '%invoice%' => $this->document->codigo,
+                '%customer%' => $this->document->nombrecliente
+            ]);
+            $entry->delete();
             return;
         }
 
-        Tools::log()->warning('accounting-lines-error');
-        $entry->delete();
+        if (false === $this->addSalesTaxLines($entry)) {
+            Tools::log()->warning('sales-tax-lines-error', [
+                '%invoice%' => $this->document->codigo
+            ]);
+            $entry->delete();
+            return;
+        }
+
+        if (false === $this->addSalesIrpfLines($entry)) {
+            Tools::log()->warning('sales-irpf-lines-error', [
+                '%invoice%' => $this->document->codigo
+            ]);
+            $entry->delete();
+            return;
+        }
+
+        if (false === $this->addSalesSuppliedLines($entry)) {
+            Tools::log()->warning('sales-supplied-lines-error', [
+                '%invoice%' => $this->document->codigo
+            ]);
+            $entry->delete();
+            return;
+        }
+
+        if (false === $this->addGoodsSalesLine($entry)) {
+            Tools::log()->warning('sales-goods-lines-error', [
+                '%invoice%' => $this->document->codigo
+            ]);
+            $entry->delete();
+            return;
+        }
+
+        if (false === $entry->isBalanced()) {
+            Tools::log()->warning('unbalanced-accounting-entry', [
+                '%document%' => $entry->documento,
+                '%difference%' => abs($entry->debe - $entry->haber)
+            ]);
+            $entry->delete();
+            return;
+        }
+
+        $this->document->idasiento = $entry->id();
     }
 
     /**
@@ -525,7 +602,7 @@ class InvoiceToAccounting extends AccountingClass
      * @param Asiento $entry
      * @param string $concept
      */
-    protected function setAccountingData(Asiento &$entry, string $concept)
+    protected function setAccountingData(Asiento &$entry, string $concept): void
     {
         $entry->codejercicio = $this->document->codejercicio;
         $entry->concepto = $concept;
@@ -536,7 +613,7 @@ class InvoiceToAccounting extends AccountingClass
 
         // Assign analytical data defined in Serie model
         $serie = new Serie();
-        $serie->loadFromCode($this->document->codserie);
+        $serie->load($this->document->codserie);
 
         $entry->iddiario = $serie->iddiario;
         $entry->canal = $serie->canal;

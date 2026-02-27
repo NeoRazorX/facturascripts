@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\MyFilesToken;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 
 /**
@@ -72,11 +72,39 @@ class EmailSent extends ModelClass
     /** @var string */
     public $verificode;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->date = Tools::dateTime();
         $this->opened = false;
+    }
+
+    public function delete(): bool
+    {
+        // eliminamos los archivos adjuntos si existen
+        if ($this->attachment && !empty($this->uuid) && !empty($this->email_from)) {
+            $folderPath = NewMail::getAttachmentPath($this->email_from, 'Sent') . $this->uuid;
+            $fullPath = FS_FOLDER . '/' . $folderPath;
+
+            if (is_dir($fullPath)) {
+                // eliminar todos los archivos del directorio
+                foreach (scandir($fullPath) as $file) {
+                    if ('.' === $file || '..' === $file) {
+                        continue;
+                    }
+
+                    $filePath = $fullPath . '/' . $file;
+                    if (is_file($filePath)) {
+                        unlink($filePath);
+                    }
+                }
+
+                // eliminar el directorio
+                rmdir($fullPath);
+            }
+        }
+
+        return parent::delete();
     }
 
     public function getAttachments(): array
@@ -105,9 +133,12 @@ class EmailSent extends ModelClass
         return $files;
     }
 
-    public static function primaryColumn(): string
+    public function install(): string
     {
-        return 'id';
+        // dependencias
+        new User();
+
+        return parent::install();
     }
 
     public static function tableName(): string
@@ -133,13 +164,12 @@ class EmailSent extends ModelClass
 
     public static function verify(string $verificode, string $addressee = ''): bool
     {
-        $model = new static();
-        $where = [new DataBaseWhere('verificode', $verificode)];
+        $where = [Where::eq('verificode', $verificode)];
         if (!empty($addressee)) {
-            $where[] = new DataBaseWhere('addressee', $addressee);
+            $where[] = Where::eq('addressee', $addressee);
         }
 
-        foreach ($model->all($where) as $item) {
+        foreach (static::all($where) as $item) {
             $item->opened = true;
             $item->save();
 

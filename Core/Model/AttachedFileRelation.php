@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinFile;
@@ -28,9 +30,9 @@ use FacturaScripts\Dinamic\Model\AttachedFile as DinFile;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class AttachedFileRelation extends Base\ModelClass
+class AttachedFileRelation extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * @var string
@@ -72,25 +74,23 @@ class AttachedFileRelation extends Base\ModelClass
      */
     public $observations;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->creationdate = Tools::dateTime();
     }
 
-    public function getFile(): DinFile
+    public function getFile(): ?DinFile
     {
-        $file = new DinFile();
-        $file->loadFromCode($this->idfile);
-        return $file;
+        return $this->belongsTo(AttachedFile::class, 'idfile');
     }
 
     /**
      * Return the max file size that can be uploaded.
      *
-     * @return int
+     * @return float
      */
-    public function getMaxFileUpload()
+    public function getMaxFileUpload(): float
     {
         return UploadedFile::getMaxFilesize() / 1024 / 1024;
     }
@@ -101,11 +101,6 @@ class AttachedFileRelation extends Base\ModelClass
         new DinFile();
 
         return parent::install();
-    }
-
-    public static function primaryColumn(): string
-    {
-        return 'id';
     }
 
     public static function tableName(): string

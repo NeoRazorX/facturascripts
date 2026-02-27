@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,7 +46,7 @@ function json2tr(json) {
 }
 
 /**
- * Asigns clickable events to new elements.
+ * Assigns clickable events to new elements.
  */
 function reloadClickableRow() {
     $(".clickableRow").mousedown(function (event) {
@@ -95,4 +95,57 @@ function searchOnSection(url) {
             }
         });
     });
+}
+
+/**
+ * Searches on multiple sections sequentially to avoid server overload.
+ *
+ * @param {Object} sections - Object with section names as keys and URLs as values
+ */
+function searchOnSections(sections) {
+    var urls = Object.values(sections);
+    var index = 0;
+
+    function searchNext() {
+        if (index < urls.length) {
+            var url = urls[index];
+            index++;
+
+            $.getJSON(url, function (json) {
+                $.each(json, function (key, val) {
+                    var items = json2tr(val.results);
+
+                    if (items.length > 0) {
+                        $("#v-pills-tab").append("<a class='nav-link text-nowrap' id='v-pills-" + key + "-tab' data-bs-toggle='pill' href='#v-pills-"
+                                + key + "' role='tab' aria-controls='v-pills-" + key + "' aria-expanded='true'>\n\
+                            <i class='" + val.icon + " fa-fw me-1 d-none d-lg-inline-block'></i>\n\
+                            <span class='d-inline d-lg-inline'>" + val.title + "</span>\n\
+                            <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>" + items.length + "</span>\n\
+                        </a>");
+                        var tableHTML = "<thead><tr>";
+                        $.each(val.columns, function (key3, val3) {
+                            tableHTML += "<th>" + val3 + "</th>";
+                        });
+                        tableHTML += "<tr></thead>";
+                        $.each(items, function (key3, val3) {
+                            tableHTML += val3;
+                        });
+                        $("#v-pills-tabContent").append("<div class='tab-pane fade' id='v-pills-" + key + "' role='tabpanel' aria-labelledby='v-pills-" + key + "-tab'>\n\
+                            <div class='card shadow'><div class='table-responsive'>\n\
+                            <table class='table table-striped table-hover mb-0'>" + tableHTML + "</table>\n\
+                            </div>\n\</div>\n\</div>");
+                        $("#v-pills-tab a:first").tab("show");
+                        reloadClickableRow();
+
+                        $("#no-data-msg").hide();
+                    }
+                });
+            }).always(function() {
+                // Continue with next search regardless of success or failure
+                searchNext();
+            });
+        }
+    }
+
+    searchNext();
 }

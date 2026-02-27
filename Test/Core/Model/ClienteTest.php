@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +35,7 @@ final class ClienteTest extends TestCase
         $cliente->nombre = 'Test';
         $cliente->cifnif = '12345678A';
         $this->assertTrue($cliente->save(), 'cliente-cant-save');
-        $this->assertNotNull($cliente->primaryColumnValue(), 'cliente-not-stored');
+        $this->assertNotNull($cliente->id(), 'cliente-not-stored');
         $this->assertTrue($cliente->exists(), 'cliente-cant-persist');
 
         // razón social es igual a nombre
@@ -180,6 +181,11 @@ final class ClienteTest extends TestCase
 
     public function testVies(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un cliente sin cifnif
         $cliente = new Cliente();
         $cliente->nombre = 'Test';
@@ -199,15 +205,39 @@ final class ClienteTest extends TestCase
 
         // asignamos un cifnif incorrecto
         $cliente->cifnif = '12345678A';
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
         $this->assertFalse($cliente->checkVies());
 
         // asignamos un cifnif correcto
         $cliente->cifnif = '503297887';
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
         $this->assertTrue($cliente->checkVies());
 
         // eliminamos
         $this->assertTrue($address->delete());
         $this->assertTrue($cliente->delete());
+    }
+
+    public function testHasColumn(): void
+    {
+        $cliente = new Cliente();
+        
+        // comprobamos que tiene las columnas esperadas
+        $this->assertTrue($cliente->hasColumn('nombre'), 'cliente-should-have-nombre-column');
+        $this->assertTrue($cliente->hasColumn('cifnif'), 'cliente-should-have-cifnif-column');
+        $this->assertTrue($cliente->hasColumn('codcliente'), 'cliente-should-have-codcliente-column');
+        $this->assertTrue($cliente->hasColumn('email'), 'cliente-should-have-email-column');
+        $this->assertTrue($cliente->hasColumn('telefono1'), 'cliente-should-have-telefono1-column');
+        $this->assertTrue($cliente->hasColumn('razonsocial'), 'cliente-should-have-razonsocial-column');
+        
+        // comprobamos que no tiene columnas que no existen
+        $this->assertFalse($cliente->hasColumn('columna_inexistente'), 'cliente-should-not-have-columna_inexistente');
+        $this->assertFalse($cliente->hasColumn('total'), 'cliente-should-not-have-total-column');
+        $this->assertFalse($cliente->hasColumn(''), 'cliente-should-not-have-empty-column');
     }
 
     protected function tearDown(): void

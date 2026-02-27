@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,7 +28,6 @@ use FacturaScripts\Core\Tools;
  */
 class RowStatistics extends VisualItem
 {
-
     /** @var array */
     protected $children;
 
@@ -68,7 +67,7 @@ class RowStatistics extends VisualItem
     {
         $color = isset($data['color']) ? $this->colorToClass($data['color'], 'btn-') : 'btn-light';
         $icon = isset($data['icon']) ? '<i class="' . $data['icon'] . ' fa-fw"></i> ' : '';
-        $label = isset($data['label']) ? Tools::lang()->trans($data['label']) : '';
+        $label = isset($data['label']) ? Tools::trans($data['label']) : '';
         $link = $data['link'] ?? '#';
         $divID = empty($data['id']) ? '' : ' id="' . $data['id'] . '"';
         $class = empty($data['class']) ? '' : $data['class'];

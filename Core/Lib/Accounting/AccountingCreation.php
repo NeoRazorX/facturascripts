@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,7 +28,7 @@ use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Class to create accounting sub-accounts automatically:
+ * Class to create accounting subaccounts automatically:
  *
  *   - General
  *   - Customer
@@ -39,22 +39,16 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 class AccountingCreation
 {
-
-    /**
-     * @var Ejercicio
-     */
+    /** @var Ejercicio */
     private $exercise;
 
-    /**
-     * Class constructor
-     */
     public function __construct()
     {
         $this->exercise = new Ejercicio();
     }
 
     /**
-     * Create a sub-account with the code and the reported description
+     * Create a subaccount with the code and the reported description
      * belonging to the group and exercise.
      *
      * @param Cuenta $account Parent group account
@@ -63,7 +57,7 @@ class AccountingCreation
      *
      * @return Subcuenta
      */
-    public function createFromAccount($account, $code, $description = '')
+    public function createFromAccount($account, $code, $description = ''): Subcuenta
     {
         if (!$account->exists() || !$this->checkExercise($account->codejercicio)) {
             return new Subcuenta();
@@ -76,6 +70,7 @@ class AccountingCreation
         $subaccount->descripcion = empty($description) ? $account->descripcion : $description;
         $subaccount->idcuenta = $account->idcuenta;
         $subaccount->save();
+
         return $subaccount;
     }
 
@@ -87,25 +82,26 @@ class AccountingCreation
      *
      * @return Cuenta
      */
-    public function copyAccountToExercise($account, $codejercicio)
+    public function copyAccountToExercise($account, $codejercicio): Cuenta
     {
-        /// account already exists?
+        // account already exists?
         $newAccount = new Cuenta();
         $where = [
             new DataBaseWhere('codcuenta', $account->codcuenta),
             new DataBaseWhere('codejercicio', $codejercicio)
         ];
-        if ($newAccount->loadFromCode('', $where)) {
+        if ($newAccount->loadWhere($where)) {
             return $newAccount;
         }
 
-        /// create account
+        // create account
         $newAccount->codcuenta = $account->codcuenta;
         $newAccount->codcuentaesp = $account->codcuentaesp;
         $newAccount->codejercicio = $codejercicio;
         $newAccount->descripcion = $account->descripcion;
         $newAccount->parent_codcuenta = $account->parent_codcuenta;
         $newAccount->save();
+
         return $newAccount;
     }
 
@@ -115,7 +111,7 @@ class AccountingCreation
      *    - Check subaccount exists.
      *
      * For new subaccount:
-     *    - Search acount and copy from source subacount if dont exists.
+     *    - Search account and copy from source subaccount if it don't exist.
      *    - Save new subaccount.
      *
      * @param Subcuenta $subAccount
@@ -123,7 +119,7 @@ class AccountingCreation
      *
      * @return Subcuenta
      */
-    public function copySubAccountToExercise($subAccount, $codejercicio)
+    public function copySubAccountToExercise($subAccount, $codejercicio): Subcuenta
     {
         if (!$this->checkExercise($codejercicio)) {
             return new Subcuenta();
@@ -134,7 +130,7 @@ class AccountingCreation
             new DataBaseWhere('codsubcuenta', $subAccount->codsubcuenta),
             new DataBaseWhere('codejercicio', $codejercicio)
         ];
-        if ($newSubaccount->loadFromCode('', $where)) {
+        if ($newSubaccount->loadWhere($where)) {
             return $newSubaccount;
         }
 
@@ -150,11 +146,12 @@ class AccountingCreation
 
         $newSubaccount->idcuenta = $account->idcuenta;
         $newSubaccount->save();
+
         return $newSubaccount;
     }
 
     /**
-     * Create the accounting sub-account for the informed customer or supplier.
+     * Create the accounting subaccount for the informed customer or supplier.
      * If the customer or supplier does not have an associated accounting subaccount,
      * one is calculated automatically.
      *
@@ -163,14 +160,21 @@ class AccountingCreation
      *
      * @return Subcuenta
      */
-    public function createSubjectAccount(&$subject, $account)
+    public function createSubjectAccount(&$subject, $account): Subcuenta
     {
         if (!$account->exists() || !$this->checkExercise($account->codejercicio)) {
             return new Subcuenta();
         }
 
         if (empty($subject->codsubcuenta)) {
-            $subject->codsubcuenta = $this->getFreeSubjectSubaccount($subject, $account);
+            $new = $this->getFreeSubjectSubaccount($subject, $account);
+            if (!empty($new)) {
+                $subject->codsubcuenta = $new;
+            }
+        }
+
+        if (empty($subject->codsubcuenta)) {
+            return new Subcuenta();
         }
 
         $subaccount = new Subcuenta();
@@ -179,9 +183,16 @@ class AccountingCreation
         $subaccount->codsubcuenta = $subject->codsubcuenta;
         $subaccount->descripcion = $subject->razonsocial;
         $subaccount->idcuenta = $account->idcuenta;
-        if ($subaccount->save()) {
-            $subject->save();
+        if (false === $subaccount->save()) {
+            Tools::log()->error('cant-create-subaccount', [
+                '%codsubcuenta%' => $subaccount->codsubcuenta,
+                '%codcuenta%' => $subaccount->codcuenta,
+                '%codejercicio%' => $subaccount->codejercicio
+            ]);
+            return new Subcuenta();
         }
+
+        $subject->save();
 
         return $subaccount;
     }
@@ -209,21 +220,22 @@ class AccountingCreation
     }
 
     /**
-     * Calculate an accounting sub-account from the customer or supplier code
+     * Calculate an accounting subaccount from the customer or supplier code
      *
      * @param Cliente|Proveedor $subject Customer or Supplier model
      * @param Cuenta $account Parent group account model
      *
      * @return string
      */
-    public function getFreeSubjectSubaccount($subject, $account)
+    public function getFreeSubjectSubaccount($subject, $account): string
     {
         if (false === $this->checkExercise($account->codejercicio)) {
+            Tools::log()->error('closed-exercise', ['%code%' => $account->codejercicio]);
             return '';
         }
 
         // nos quedamos solamente con los números del código
-        $code = preg_replace('/[^0-9]/', '', $subject->primaryColumnValue());
+        $code = preg_replace('/[^0-9]/', '', $subject->id());
         if (strlen($code) === $this->exercise->longsubcuenta) {
             // si el código ya tiene la longitud de una subcuenta, lo usamos como subcuenta
             return $code;
@@ -266,7 +278,7 @@ class AccountingCreation
                 new DataBaseWhere('codejercicio', $account->codejercicio),
                 new DataBaseWhere('codsubcuenta', $newCode)
             ];
-            if (false === $subcuenta->loadFromCode('', $where)) {
+            if (false === $subcuenta->loadWhere($where)) {
                 return $newCode;
             }
         }
@@ -287,7 +299,7 @@ class AccountingCreation
     private function checkExercise(string $code): bool
     {
         if ($this->exercise->codejercicio !== $code) {
-            $this->exercise->loadFromCode($code);
+            $this->exercise->load($code);
         }
 
         return $this->exercise->isOpened();

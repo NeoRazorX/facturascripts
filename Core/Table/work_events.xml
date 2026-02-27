@@ -15,6 +15,10 @@
         <type>timestamp</type>
     </column>
     <column>
+        <name>execution_time</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>

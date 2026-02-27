@@ -27,20 +27,29 @@ namespace FacturaScripts\Core\Lib;
  */
 class RegimenIVA
 {
-    const ES_TAX_EXCEPTION_E1 = 'ES_20';
-    const ES_TAX_EXCEPTION_E2 = 'ES_21';
-    const ES_TAX_EXCEPTION_E3 = 'ES_22';
-    const ES_TAX_EXCEPTION_E4 = 'ES_23_24';
-    const ES_TAX_EXCEPTION_E5 = 'ES_25';
-    const ES_TAX_EXCEPTION_E6 = 'ES_OTHER';
-
+    const ES_TAX_EXCEPTION_E1 = 'ES_20'; // E1 Exenta art. 20 LIVA – Exenciones interiores (sanidad, enseñanza, seguros, financieros…)
+    const ES_TAX_EXCEPTION_E2 = 'ES_21'; // E2 Exenta art. 21 LIVA – Exportaciones a países terceros
+    const ES_TAX_EXCEPTION_E3 = 'ES_22'; // E3 Exenta art. 22 LIVA – Operaciones asimiladas a exportaciones
+    const ES_TAX_EXCEPTION_E4 = 'ES_23_24'; // E4 Exenta arts. 23–24 LIVA – Zonas francas y depósitos aduaneros
+    const ES_TAX_EXCEPTION_E5 = 'ES_25'; // E5 Exenta art. 25 LIVA – Entregas intracomunitarias de bienes
+    const ES_TAX_EXCEPTION_E6 = 'ES_OTHER'; // E6 Otras exenciones (oro de inversión, regímenes especiales, etc.)
+    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = 'ES_PASSIVE_SUBJECT'; // N6 Inversión del sujeto pasivo (art. 84 LIVA)
+    const ES_TAX_EXCEPTION_ART_7 = 'ES_ART_7'; // N3 No sujeta art. 7 LIVA – Operaciones no sujetas (aportaciones, transmisión de UEA, muestras…)
+    const ES_TAX_EXCEPTION_ART_14 = 'ES_ART_14'; // N4 No sujeta art. 14 LIVA – Operaciones vinculadas a exportaciones
+    const ES_TAX_EXCEPTION_LOCATION_RULES = 'ES_LOCATION_RULES'; // N2 No sujeta – Reglas de localización de servicios (arts. 69–70 LIVA, servicios B2B UE o fuera UE)
+    const ES_TAX_EXCEPTION_N1 = 'ES_N1'; // No sujeta N1 – Reglas de localización entregas de bienes (art. 68 LIVA)
+    const ES_TAX_EXCEPTION_N5 = 'ES_N5'; // No sujeta N5 – Otras disposiciones específicas (OTAN, convenios internacionales…)
     const TAX_SYSTEM_AGRARIAN = 'Agrario';
     const TAX_SYSTEM_CASH_CRITERIA = 'Caja';
     const TAX_SYSTEM_EXEMPT = 'Exento';
     const TAX_SYSTEM_GENERAL = 'General';
     const TAX_SYSTEM_GOLD = 'Oro';
     const TAX_SYSTEM_GROUP_ENTITIES = 'Grupo entidades';
+    const TAX_SYSTEM_ONE_STOP_SHOP_OSS = 'One Stop Shop (OSS)';
+    const TAX_SYSTEM_ONE_STOP_SHOP_IOSS = 'One Stop Shop (IOSS)';
     const TAX_SYSTEM_SIMPLIFIED = 'Simplificado';
+    const TAX_SYSTEM_SPECIAL_RETAIL_TRADERS = 'Comerciante minorista';
+    const TAX_SYSTEM_SPECIAL_SMALL_BUSINESS = 'Pequeño empresario';
     const TAX_SYSTEM_SURCHARGE = 'Recargo';
     const TAX_SYSTEM_TELECOM = 'Telecom';
     const TAX_SYSTEM_TRAVEL = 'Agencias de viaje';
@@ -78,6 +87,12 @@ class RegimenIVA
             self::TAX_SYSTEM_TRAVEL => 'es-tax-regime-travel',
             self::TAX_SYSTEM_TELECOM => 'es-tax-regime-telecom',
             self::TAX_SYSTEM_USED_GOODS => 'es-tax-regime-used-goods',
+            self::TAX_SYSTEM_SPECIAL_RETAIL_TRADERS => 'es-tax-regime-special-retail-traders',
+            self::TAX_SYSTEM_SPECIAL_SMALL_BUSINESS => 'es-tax-regime-special-small-business',
+            self::TAX_SYSTEM_ONE_STOP_SHOP_OSS => 'es-tax-regime-one-stop-shop-oss',
+            self::TAX_SYSTEM_ONE_STOP_SHOP_IOSS => 'es-tax-regime-one-stop-shop-ioss',
+            self::ES_TAX_EXCEPTION_N1 => 'es-tax-exception-n1',  
+            self::ES_TAX_EXCEPTION_N5 => 'es-tax-exception-n5', 
         ];
 
         return array_merge($defaultValues, self::$values);
@@ -92,6 +107,12 @@ class RegimenIVA
             self::ES_TAX_EXCEPTION_E4 => 'es-tax-exception-e4',
             self::ES_TAX_EXCEPTION_E5 => 'es-tax-exception-e5',
             self::ES_TAX_EXCEPTION_E6 => 'es-tax-exception-e6',
+            self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT => 'es-tax-exception-passive-subject',
+            self::ES_TAX_EXCEPTION_ART_7 => 'es-tax-exception-art-7',
+            self::ES_TAX_EXCEPTION_ART_14 => 'es-tax-exception-art-14',
+            self::ES_TAX_EXCEPTION_LOCATION_RULES => 'es-tax-exception-location-rules',
+            self::ES_TAX_EXCEPTION_N1 => 'es-tax-exception-n1',
+            self::ES_TAX_EXCEPTION_N5 => 'es-tax-exception-n5',
         ];
 
         return array_merge($defaultExceptions, self::$exceptions);

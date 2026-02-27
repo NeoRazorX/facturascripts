@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,10 +22,18 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
+use FacturaScripts\Core\Model\Base\FiscalNumberTrait;
+use FacturaScripts\Core\Model\Base\GravatarTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
@@ -33,9 +41,12 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Proveedor extends Base\ComercialContact
+class Proveedor extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
+    use EmailAndPhonesTrait;
+    use FiscalNumberTrait;
+    use GravatarTrait;
 
     const SPECIAL_ACCOUNT = 'PROVEE';
     const SPECIAL_CREDITOR_ACCOUNT = 'ACREED';
@@ -44,10 +55,61 @@ class Proveedor extends Base\ComercialContact
     public $acreedor;
 
     /** @var string */
+    public $codcliente;
+
+    /** @var string */
     public $codimpuestoportes;
+
+    /** @var string */
+    public $codpago;
+
+    /** @var string */
+    public $codproveedor;
+
+    /** @var string */
+    public $codretencion;
+
+    /** @var string */
+    public $codserie;
+
+    /** @var string */
+    public $codsubcuenta;
+
+    /** @var bool */
+    public $debaja;
+
+    /** @var string */
+    public $fax;
+
+    /** @var string */
+    public $fechaalta;
+
+    /** @var string */
+    public $fechabaja;
 
     /** @var int */
     public $idcontacto;
+
+    /** @var string */
+    public $langcode;
+
+    /** @var string */
+    public $nombre;
+
+    /** @var string */
+    public $observaciones;
+
+    /** @var bool */
+    public $personafisica;
+
+    /** @var string */
+    public $razonsocial;
+
+    /** @var string */
+    public $regimeniva;
+
+    /** @var string */
+    public $web;
 
     public function checkVies(bool $msg = true): bool
     {
@@ -55,11 +117,16 @@ class Proveedor extends Base\ComercialContact
         return Vies::check($this->cifnif ?? '', $codiso, $msg) === 1;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->acreedor = false;
         $this->codimpuestoportes = Tools::settings('default', 'codimpuesto');
+        $this->debaja = false;
+        $this->fechaalta = Tools::date();
+        $this->personafisica = true;
+        $this->regimeniva = RegimenIVA::defaultValue();
+        $this->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
     }
 
     public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
@@ -78,9 +145,8 @@ class Proveedor extends Base\ComercialContact
      */
     public function getAddresses(): array
     {
-        $contactModel = new DinContacto();
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
-        return $contactModel->all($where, [], 0, 0);
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        return DinContacto::all($where, [], 0, 0);
     }
 
     /**
@@ -90,9 +156,8 @@ class Proveedor extends Base\ComercialContact
      */
     public function getBankAccounts(): array
     {
-        $contactAccounts = new DinCuentaBancoProveedor();
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
-        return $contactAccounts->all($where, [], 0, 0);
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        return DinCuentaBancoProveedor::all($where, [], 0, 0);
     }
 
     /**
@@ -103,7 +168,7 @@ class Proveedor extends Base\ComercialContact
     public function getDefaultAddress(): Contacto
     {
         $contact = new DinContacto();
-        $contact->loadFromCode($this->idcontacto);
+        $contact->load($this->idcontacto);
         return $contact;
     }
 
@@ -121,7 +186,7 @@ class Proveedor extends Base\ComercialContact
                 new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
                 new DataBaseWhere('codejercicio', $codejercicio),
             ];
-            if ($subAccount->loadFromCode('', $where)) {
+            if ($subAccount->loadWhere($where)) {
                 return $subAccount;
             }
 
@@ -133,7 +198,7 @@ class Proveedor extends Base\ComercialContact
 
             // buscamos la cuenta especial
             $special = new DinCuentaEspecial();
-            if (false === $special->loadFromCode($specialAccount)) {
+            if (false === $special->load($specialAccount)) {
                 return new DinSubcuenta();
             }
 
@@ -145,6 +210,30 @@ class Proveedor extends Base\ComercialContact
         return $crear ?
             $this->createSubcuenta($codejercicio, $specialAccount) :
             new DinSubcuenta();
+    }
+
+    public function install(): string
+    {
+        // dependencias
+        new FormaPago();
+        new Retencion();
+        new Serie();
+
+        return parent::install();
+    }
+
+    public function irpf(): float
+    {
+        if (empty($this->codretencion)) {
+            return 0.0;
+        }
+
+        $retention = new Retencion();
+        if ($retention->load($this->codretencion)) {
+            return $retention->porcentaje;
+        }
+
+        return 0.0;
     }
 
     public static function primaryColumn(): string
@@ -164,13 +253,13 @@ class Proveedor extends Base\ComercialContact
 
     public function test(): bool
     {
-        if (empty($this->nombre)) {
-            Tools::log()->warning(
-                'field-can-not-be-null',
-                ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]
-            );
-            return false;
-        }
+        $this->debaja = !empty($this->fechabaja);
+        $this->fax = Tools::noHtml($this->fax) ?? '';
+        $this->langcode = Tools::noHtml($this->langcode);
+        $this->nombre = Tools::noHtml($this->nombre);
+        $this->observaciones = Tools::noHtml($this->observaciones) ?? '';
+        $this->razonsocial = Tools::noHtml($this->razonsocial);
+        $this->web = Tools::noHtml($this->web);
 
         if (!empty($this->codproveedor) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
             Tools::log()->warning(
@@ -180,14 +269,32 @@ class Proveedor extends Base\ComercialContact
             return false;
         }
 
-        return parent::test();
+        if (empty($this->nombre)) {
+            Tools::log()->warning(
+                'field-can-not-be-null',
+                ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]
+            );
+            return false;
+        }
+
+        if (empty($this->razonsocial)) {
+            $this->razonsocial = $this->nombre;
+        }
+
+        // check if the web is a valid url
+        if (!empty($this->web) && false === Validator::url($this->web)) {
+            Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
+            return false;
+        }
+
+        return parent::test() && $this->testEmailAndPhones() && $this->testFiscalNumber();
     }
 
     protected function createSubcuenta(string $codejercicio, string $specialAccount): Subcuenta
     {
         // buscamos la cuenta especial
         $special = new DinCuentaEspecial();
-        if (false === $special->loadFromCode($specialAccount)) {
+        if (false === $special->load($specialAccount)) {
             return new Subcuenta();
         }
 
@@ -216,13 +323,13 @@ class Proveedor extends Base\ComercialContact
         return $subAccount;
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codproveedor)) {
             $this->codproveedor = (string)$this->newCode();
         }
 
-        $return = parent::saveInsert($values);
+        $return = parent::saveInsert();
         if ($return && empty($this->idcontacto)) {
             // creates new contact
             $contact = new DinContacto();

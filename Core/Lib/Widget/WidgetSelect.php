@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -119,7 +119,7 @@ class WidgetSelect extends BaseWidget
         if ('' === $value) {
             $model->{$this->fieldname} = null;
         } elseif ($this->multiple && false === $this->readonly()) {
-            $model->{$this->fieldname} = implode(',', $value);
+            $model->{$this->fieldname} = implode(',', unserialize($value));
         } else {
             $model->{$this->fieldname} = $value;
         }
@@ -139,6 +139,8 @@ class WidgetSelect extends BaseWidget
      */
     public function setValuesFromArray(array $items, bool $translate = false, bool $addEmpty = false, string $col1 = 'value', string $col2 = 'title')
     {
+        $this->values = [];
+
         if ($addEmpty && false === $this->multiple) {
             $this->values = [['value' => null, 'title' => '------']];
         }
@@ -166,6 +168,8 @@ class WidgetSelect extends BaseWidget
 
     public function setValuesFromArrayKeys(array $values, bool $translate = false, bool $addEmpty = false)
     {
+        $this->values = [];
+
         if ($addEmpty && false === $this->multiple) {
             $this->values = [['value' => null, 'title' => '------']];
         }
@@ -232,23 +236,24 @@ class WidgetSelect extends BaseWidget
     /**
      *  Translate the fixed titles, if they exist
      */
-    private function applyTranslations()
+    private function applyTranslations(): void
     {
         foreach ($this->values as $key => $value) {
             if (empty($value['title']) || '------' === $value['title']) {
                 continue;
             }
 
-            $this->values[$key]['title'] = Tools::lang()->trans($value['title']);
+            $this->values[$key]['title'] = Tools::trans($value['title']);
         }
     }
 
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::add('css', FS_ROUTE . '/node_modules/select2/dist/css/select2.min.css');
-        AssetManager::add('css', FS_ROUTE . '/node_modules/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css');
-        AssetManager::add('js', FS_ROUTE . '/node_modules/select2/dist/js/select2.min.js', 2);
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/node_modules/select2/dist/css/select2.min.css?v=5');
+        AssetManager::addCss($route . '/node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css?v=5');
+        AssetManager::addJs($route . '/node_modules/select2/dist/js/select2.min.js?v=5', 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js?v=5');
     }
 
     /**
@@ -294,7 +299,7 @@ class WidgetSelect extends BaseWidget
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
-            if ($option['value'] == $this->value && (!$found || $this->multiple)) {
+            if ($this->valuesMatch($option['value'], $this->value) && (!$found || $this->multiple)) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
                 continue;
@@ -338,12 +343,34 @@ class WidgetSelect extends BaseWidget
         $this->fieldcode = $child['fieldcode'] ?? 'id';
         $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
-        $this->limit = $child['limit'] ?? CodeModel::ALL_LIMIT;
+        $this->limit = $child['limit'] ?? CodeModel::getlimit();
         if ($loadData && $this->source) {
             static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
             $this->setValuesFromCodeModel($values, $this->translate);
         }
+    }
+
+    /**
+     * Compares two values for equality, normalizing booleans to strings
+     * and using strict string comparison to avoid type juggling issues.
+     *
+     * @param mixed $value1
+     * @param mixed $value2
+     * @return bool
+     */
+    private function valuesMatch($value1, $value2): bool
+    {
+        // normalize boolean values to string
+        if (is_bool($value1)) {
+            $value1 = $value1 ? '1' : '0';
+        }
+        if (is_bool($value2)) {
+            $value2 = $value2 ? '1' : '0';
+        }
+
+        // use string comparison to avoid type juggling (e.g., "01" != "1")
+        return (string)$value1 === (string)$value2;
     }
 
     /**
@@ -377,8 +404,7 @@ class WidgetSelect extends BaseWidget
 
         $selected = null;
         foreach ($this->values as $option) {
-            // don't use strict comparation (===)
-            if ($option['value'] == $this->value) {
+            if ($this->valuesMatch($option['value'], $this->value)) {
                 $selected = $option['title'];
             }
         }

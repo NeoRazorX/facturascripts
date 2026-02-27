@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,12 @@ use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\AlbaranCliente;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\PedidoCliente;
+use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -92,7 +98,7 @@ class EditCliente extends ComercialContactController
         return $data;
     }
 
-    protected function createDocumentView(string $viewName, string $model, string $label)
+    protected function createDocumentView(string $viewName, string $model, string $label): void
     {
         $this->createCustomerListView($viewName, $model, $label);
 
@@ -102,7 +108,7 @@ class EditCliente extends ComercialContactController
         $this->addButtonApproveDocument($viewName);
     }
 
-    protected function createInvoiceView(string $viewName)
+    protected function createInvoiceView(string $viewName): void
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
 
@@ -112,11 +118,12 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     * Create views
+     * Crea todas las vista de EditCliente y sus paneles
      */
     protected function createViews()
     {
         parent::createViews();
+
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-solid fa-piggy-bank');
 
@@ -146,9 +153,22 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     * @return bool
+     * Crea el panel de 'Direcciones y contactos' con el botón de Aplicar a documentos
      */
-    protected function editAction()
+    protected function createContactsView(string $viewName = 'EditDireccionContacto'): void
+    {
+        parent::createContactsView($viewName);
+
+        $this->addButton($viewName, [
+            'action' => 'update-docs-address',
+            'color' => 'warning',
+            'confirm' => true,
+            'icon' => 'fa-solid fa-pencil',
+            'label' => 'update-docs-address'
+        ]);
+    }
+
+    protected function editAction(): bool
     {
         $return = parent::editAction();
         if ($return && $this->active === $this->getMainViewName()) {
@@ -161,26 +181,32 @@ class EditCliente extends ComercialContactController
         return $return;
     }
 
-    /**
-     * @return bool
-     */
-    protected function insertAction()
+    protected function execPreviousAction($action)
+    {
+        if ($action == 'update-docs-address') {
+            return $this->updateDocsAddressAction();
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    protected function insertAction(): bool
     {
         if (false === parent::insertAction()) {
             return false;
         }
 
         // redirect to return_url if return is defined
-        $return_url = $this->request->query->get('return');
+        $return_url = $this->request->query('return');
         if (empty($return_url)) {
             return true;
         }
 
         $model = $this->views[$this->active]->model;
         if (strpos($return_url, '?') === false) {
-            $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+            $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->id());
         } else {
-            $this->redirect($return_url . '&' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+            $this->redirect($return_url . '&' . $model->primaryColumn() . '=' . $model->id());
         }
 
         return true;
@@ -248,7 +274,7 @@ class EditCliente extends ComercialContactController
     /**
      * Load the available language values from translator.
      */
-    protected function loadLanguageValues(string $viewName)
+    protected function loadLanguageValues(string $viewName): void
     {
         $columnLangCode = $this->views[$viewName]->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
@@ -261,7 +287,7 @@ class EditCliente extends ComercialContactController
         }
     }
 
-    protected function setCustomWidgetValues(string $viewName)
+    protected function setCustomWidgetValues(string $viewName): void
     {
         // Load values option to VAT Type select input
         $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
@@ -293,5 +319,98 @@ class EditCliente extends ComercialContactController
             $contacts2 = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', true, $where);
             $columnShipping->widget->setValuesFromCodeModel($contacts2);
         }
+    }
+
+    /**
+     * Actualiza la dirección de envío del cliente a todos los documentos de venta pendientes con la misma dirección:
+     */
+    protected function updateDocsAddressAction(): bool
+    {
+        if (false === $this->validateFormToken()) {
+            return false;
+        } elseif (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return false;
+        }
+
+        // recoger contacto
+        $contacto = new Contacto();
+        $idcontacto = $this->request->input('idcontacto');
+        if (false === $contacto->load($idcontacto)) {
+            Tools::log()->error('address-not-found');
+            return false;
+        }
+
+        // recoger cliente
+        $cliente = new Cliente();
+        $codcliente = $this->request->input('codcliente');
+        if (false === $cliente->load($codcliente)) {
+            Tools::log()->error('customer-not-found');
+            return false;
+        }
+
+        // variable para registrar los errores
+        $failCounter = 0;
+        $successCounter = 0;
+
+        // filtros
+        $where = [
+            new DataBaseWhere('codcliente', $codcliente),
+            new DataBaseWhere('idcontactofact', $idcontacto),
+            new DataBaseWhere('editable', true)
+        ];
+        // para cada documento de venta
+        foreach (['AlbaranCliente', 'FacturaCliente', 'PedidoCliente', 'PresupuestoCliente'] as $modelName) {
+
+            // obtener el documento de venta correspondiente
+            $salesDocuments = [];
+            switch ($modelName) {
+                case 'AlbaranCliente':
+                    $salesDocuments = AlbaranCliente::all($where);
+                    break;
+
+                case 'FacturaCliente':
+                    $salesDocuments = FacturaCliente::all($where);
+                    break;
+
+                case 'PedidoCliente':
+                    $salesDocuments = PedidoCliente::all($where);
+                    break;
+
+                case 'PresupuestoCliente':
+                    $salesDocuments = PresupuestoCliente::all($where);
+                    break;
+            }
+
+            // para cada documento de venta aplicar y guardar
+            foreach ($salesDocuments as $salesDoc) {
+                $salesDoc->direccion = $contacto->direccion;
+                $salesDoc->apartado = $contacto->apartado;
+                $salesDoc->codpostal = $contacto->codpostal;
+                $salesDoc->ciudad = $contacto->ciudad;
+                $salesDoc->provincia = $contacto->provincia;
+                $salesDoc->codpais = $contacto->codpais;
+
+                if (false === $salesDoc->save()) {
+                    $failCounter += 1;
+                } else {
+                    $successCounter += 1;
+                }
+            }
+        }
+
+        // notificar del resultado
+        if ($failCounter === 0) {
+            Tools::log()->notice('address-applied-to-documents-successfully', [
+                '%successes%' => $successCounter
+            ]);
+        } else {
+            Tools::log()->warning('address-applied-to-documents-with-errors', [
+                '%failures%' => $failCounter,
+                '%successes%' => $successCounter
+            ]);
+        }
+
+        return true;
     }
 }

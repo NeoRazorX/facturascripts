@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,6 +31,41 @@ use ParseCsv\Csv;
 class CSVImport
 {
     /**
+     * Return the correct filepath for the table
+     *
+     * @param string $table
+     *
+     * @return string
+     */
+    public static function getTableFilePath(string $table): string
+    {
+        if ($table === 'settings') {
+            return '';
+        }
+
+        $codpais = Tools::settings('default', 'codpais', 'ESP');
+        $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/' . $table . '.csv';
+        if (file_exists($filePath)) {
+            return $filePath;
+        }
+
+        $config_lang = Tools::config('lang');
+        $lang = strtoupper(substr($config_lang, 0, 2));
+        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . $lang . '/' . $table . '.csv';
+        if (file_exists($filePath)) {
+            return $filePath;
+        }
+
+        // If everything else fails
+        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/ES/' . $table . '.csv';
+        if (file_exists($filePath)) {
+            return $filePath;
+        }
+
+        return '';
+    }
+
+    /**
      * Return the insert SQL reading a CSV file for the specific file
      *
      * @param string $table
@@ -43,6 +78,7 @@ class CSVImport
     {
         $csv = new Csv();
         $csv->auto($filePath);
+
         $dataBase = new DataBase();
 
         $insertFields = [];
@@ -58,6 +94,9 @@ class CSVImport
             }
 
             $insertRows[] = '(' . implode(',', $insertRow) . ')';
+        }
+        if (empty($insertRows)) {
+            return '';
         }
 
         $sql = 'INSERT INTO ' . $table . ' (' . implode(',', $insertFields) . ') VALUES ' . implode(',', $insertRows);
@@ -106,40 +145,6 @@ class CSVImport
     }
 
     /**
-     * Return the correct filepath for the table
-     *
-     * @param string $table
-     *
-     * @return string
-     */
-    protected static function getTableFilePath(string $table): string
-    {
-        if ($table === 'settings') {
-            return '';
-        }
-
-        $codpais = Tools::settings('default', 'codpais', 'ESP');
-        $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/' . $table . '.csv';
-        if (file_exists($filePath)) {
-            return $filePath;
-        }
-
-        $lang = strtoupper(substr(FS_LANG, 0, 2));
-        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . $lang . '/' . $table . '.csv';
-        if (file_exists($filePath)) {
-            return $filePath;
-        }
-
-        // If everything else fails
-        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/ES/' . $table . '.csv';
-        if (file_exists($filePath)) {
-            return $filePath;
-        }
-
-        return '';
-    }
-
-    /**
      * @param string $sql
      * @param Csv $csv
      *
@@ -147,7 +152,7 @@ class CSVImport
      */
     private static function insertOnDuplicateSql($sql, $csv): string
     {
-        switch (FS_DB_TYPE) {
+        switch (Tools::config('db_type')) {
             case 'mysql':
                 $sql .= ' ON DUPLICATE KEY UPDATE '
                     . implode(', ', array_map(function ($value) {

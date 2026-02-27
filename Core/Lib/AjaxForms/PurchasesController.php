@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,8 +26,8 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
-use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -47,6 +47,7 @@ abstract class PurchasesController extends PanelController
     const MAIN_VIEW_NAME = 'main';
     const MAIN_VIEW_TEMPLATE = 'Tab/PurchasesDocument';
 
+    /** @var array */
     private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
 
     abstract public function getModelClassName();
@@ -58,12 +59,12 @@ abstract class PurchasesController extends PanelController
         }
 
         // loaded record? just return it
-        if ($this->views[static::MAIN_VIEW_NAME]->model->primaryColumnValue()) {
+        if ($this->views[static::MAIN_VIEW_NAME]->model->id()) {
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
         // get the record identifier
-        $code = $this->request->get('code');
+        $code = $this->request->queryOrInput('code');
         if (empty($code)) {
             // empty identifier? Then sets initial parameters to the new record and return it
             $formData = $this->request->query->all();
@@ -78,13 +79,13 @@ abstract class PurchasesController extends PanelController
 
     /**
      * @param PurchaseDocument $model
-     * @param PurchaseDocumentLine[] $lines
+     * @param BusinessDocumentLine[] $lines
      *
      * @return string
      */
     public function renderPurchasesForm(PurchaseDocument $model, array $lines): string
     {
-        $url = empty($model->primaryColumnValue()) ? $this->url() : $model->url();
+        $url = empty($model->id()) ? $this->url() : $model->url();
 
         return '<div id="purchasesFormHeader">' . PurchasesHeaderHTML::render($model) . '</div>'
             . '<div id="purchasesFormLines">' . PurchasesLineHTML::render($lines, $model) . '</div>'
@@ -114,7 +115,7 @@ abstract class PurchasesController extends PanelController
 
         $list = [];
         $variante = new Variante();
-        $query = (string)$this->request->get('term');
+        $query = (string)$this->request->queryOrInput('term');
         $where = [
             new DataBaseWhere('p.bloqueado', 0),
             new DataBaseWhere('p.secompra', 1)
@@ -127,10 +128,10 @@ abstract class PurchasesController extends PanelController
         }
 
         if (empty($list)) {
-            $list[] = ['key' => null, 'value' => Tools::lang()->trans('no-data')];
+            $list[] = ['key' => null, 'value' => Tools::trans('no-data')];
         }
 
-        $this->response->setContent(json_encode($list));
+        $this->response->json($list);
         return false;
     }
 
@@ -142,12 +143,15 @@ abstract class PurchasesController extends PanelController
         $this->createViewLogAudit();
     }
 
-    protected function createViewsDoc()
+    protected function createViewsDoc(): void
     {
         $pageData = $this->getPageData();
         $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fa-solid fa-file');
-        AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
-        AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+
         PurchasesHeaderHTML::assets();
         PurchasesLineHTML::assets();
         PurchasesFooterHTML::assets();
@@ -234,16 +238,21 @@ abstract class PurchasesController extends PanelController
 
     protected function exportAction()
     {
+        if (false === $this->permissions->allowExport) {
+            Tools::log()->warning('no-print-permission');
+            return;
+        }
+
         $this->setTemplate(false);
 
         $subjectLang = $this->views[static::MAIN_VIEW_NAME]->model->getSubject()->langcode;
-        $requestLang = $this->request->request->get('langcode');
+        $requestLang = $this->request->input('langcode');
         $langCode = $requestLang ?? $subjectLang ?? '';
 
         $this->exportManager->newDoc(
-            $this->request->get('option', ''),
+            $this->request->queryOrInput('option', ''),
             $this->title,
-            (int)$this->request->request->get('idformat', ''),
+            (int)$this->request->input('idformat', ''),
             $langCode
         );
         $this->exportManager->addBusinessDocPage($this->views[static::MAIN_VIEW_NAME]->model);
@@ -255,11 +264,11 @@ abstract class PurchasesController extends PanelController
         $this->setTemplate(false);
         $supplier = new Proveedor();
         $list = [];
-        $term = $this->request->get('term');
+        $term = $this->request->queryOrInput('term');
         foreach ($supplier->codeModelSearch($term) as $item) {
             $list[$item->code] = $item->code . ' | ' . Tools::fixHtml($item->description);
         }
-        $this->response->setContent(json_encode($list));
+        $this->response->json($list);
         return false;
     }
 
@@ -267,7 +276,7 @@ abstract class PurchasesController extends PanelController
     {
         $this->setTemplate(false);
         $model = $this->getModel();
-        $formData = json_decode($this->request->request->get('data'), true);
+        $formData = json_decode($this->request->input('data'), true);
         PurchasesHeaderHTML::apply($model, $formData);
         PurchasesFooterHTML::apply($model, $formData);
         PurchasesModalHTML::apply($model, $formData);
@@ -288,7 +297,7 @@ abstract class PurchasesController extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $code = $this->request->get('code');
+        $code = $this->request->queryOrInput('code');
 
         switch ($viewName) {
             case 'docfiles':
@@ -307,7 +316,7 @@ abstract class PurchasesController extends PanelController
 
                 // data not found?
                 $view->loadData($code);
-                $action = $this->request->request->get('action', '');
+                $action = $this->request->input('action', '');
                 if ('' === $action && empty($view->model->primaryColumnValue())) {
                     Tools::log()->warning('record-not-found');
                     break;
@@ -330,7 +339,7 @@ abstract class PurchasesController extends PanelController
         $this->setTemplate(false);
         $model = $this->getModel();
         $lines = $model->getLines();
-        $formData = json_decode($this->request->request->get('data'), true);
+        $formData = json_decode($this->request->input('data'), true);
         PurchasesHeaderHTML::apply($model, $formData);
         PurchasesFooterHTML::apply($model, $formData);
         PurchasesLineHTML::apply($model, $lines, $formData);
@@ -347,7 +356,7 @@ abstract class PurchasesController extends PanelController
         return false;
     }
 
-    protected function saveDocAction(): bool
+    protected function saveDocAction(bool $sendOk = true): bool
     {
         $this->setTemplate(false);
 
@@ -358,16 +367,16 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
-        $this->dataBase->beginTransaction();
+        $this->db()->beginTransaction();
 
         $model = $this->getModel();
-        $formData = json_decode($this->request->request->get('data'), true);
+        $formData = json_decode($this->request->input('data'), true);
         PurchasesHeaderHTML::apply($model, $formData);
         PurchasesFooterHTML::apply($model, $formData);
 
         if (false === $model->save()) {
+            $this->db()->rollback();
             $this->sendJsonWithLogs(['ok' => false]);
-            $this->dataBase->rollback();
             return false;
         }
 
@@ -377,8 +386,8 @@ abstract class PurchasesController extends PanelController
 
         foreach ($lines as $line) {
             if (false === $line->save()) {
+                $this->db()->rollback();
                 $this->sendJsonWithLogs(['ok' => false]);
-                $this->dataBase->rollback();
                 return false;
             }
         }
@@ -386,21 +395,24 @@ abstract class PurchasesController extends PanelController
         // remove missing lines
         foreach ($model->getLines() as $oldLine) {
             if (in_array($oldLine->idlinea, PurchasesLineHTML::getDeletedLines()) && false === $oldLine->delete()) {
+                $this->db()->rollback();
                 $this->sendJsonWithLogs(['ok' => false]);
-                $this->dataBase->rollback();
                 return false;
             }
         }
 
         $lines = $model->getLines();
         if (false === Calculator::calculate($model, $lines, true)) {
+            $this->db()->rollback();
             $this->sendJsonWithLogs(['ok' => false]);
-            $this->dataBase->rollback();
             return false;
         }
 
-        $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
-        $this->dataBase->commit();
+        $this->db()->commit();
+
+        if ($sendOk) {
+            $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
+        }
         return true;
     }
 
@@ -417,13 +429,17 @@ abstract class PurchasesController extends PanelController
 
         // guardamos el documento
         if ($this->getModel()->editable && false === $this->saveDocAction()) {
+            $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
-        // si la factura es de 0 €, la marcamos como pagada
+        // cargamos el modelo actualizado y los datos del form
         $model = $this->getModel();
-        if (empty($model->total) && property_exists($model, 'pagada')) {
-            $model->pagada = (bool)$this->request->request->get('selectedLine');
+        $formData = json_decode($this->request->input('data'), true);
+
+        // si la factura es de 0 €, la marcamos como pagada
+        if (empty($model->total) && $model->hasColumn('pagada')) {
+            $model->pagada = (bool)$formData['paid-status'];
             $model->save();
             $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
             return false;
@@ -438,15 +454,15 @@ abstract class PurchasesController extends PanelController
         }
 
         // marcamos los recibos como pagados, eso marcará la factura como pagada
-        $formData = json_decode($this->request->request->get('data'), true);
+        $formData = json_decode($this->request->input('data'), true);
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
             // si no está pagado, actualizamos fechapago y codpago
             if (false == $receipt->pagado) {
-                $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
-                $receipt->codpago = $model->codpago;
+                $receipt->fechapago = $formData['paid-date-modal'] ?? Tools::date();
+                $receipt->codpago = $formData['paid-payment-modal'] ?? $model->codpago;
             }
-            $receipt->pagado = (bool)$this->request->request->get('selectedLine');
+            $receipt->pagado = (bool)$formData['paid-status'];
             if (false === $receipt->save()) {
                 $this->sendJsonWithLogs(['ok' => false]);
                 return false;
@@ -468,30 +484,28 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
-        if ($this->getModel()->editable && false === $this->saveDocAction()) {
+        if ($this->getModel()->editable && false === $this->saveDocAction(false)) {
             return false;
         }
 
+        $this->db()->beginTransaction();
+
         $model = $this->getModel();
-        $model->idestado = (int)$this->request->request->get('selectedLine');
+        $model->idestado = (int)$this->request->input('selectedLine');
         if (false === $model->save()) {
+            $this->db()->rollback();
             $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
+        $this->db()->commit();
         $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
     }
 
     private function sendJsonWithLogs(array $data): void
     {
-        $data['messages'] = [];
-        foreach (Tools::log()::read('', $this->logLevels) as $message) {
-            if ($message['channel'] != 'audit') {
-                $data['messages'][] = $message;
-            }
-        }
-
-        $this->response->setContent(json_encode($data));
+        $data['messages'] = Tools::log()::read('master', $this->logLevels);
+        $this->response->json($data);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -63,7 +63,7 @@ class AccountingPlanImport
      */
     public function importCSV(string $filePath, string $codejercicio): bool
     {
-        if (false === $this->exercise->loadFromCode($codejercicio)) {
+        if (false === $this->exercise->load($codejercicio)) {
             Tools::log()->error('exercise-not-found');
             return false;
         }
@@ -96,7 +96,7 @@ class AccountingPlanImport
      */
     public function importXML(string $filePath, string $codejercicio): bool
     {
-        if (false === $this->exercise->loadFromCode($codejercicio)) {
+        if (false === $this->exercise->load($codejercicio)) {
             Tools::log()->error('exercise-not-found');
             return false;
         }
@@ -147,7 +147,7 @@ class AccountingPlanImport
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codcuenta', $code)
         ];
-        if ($account->loadFromCode('', $where)) {
+        if ($account->loadWhere($where)) {
             return true;
         }
 
@@ -170,7 +170,7 @@ class AccountingPlanImport
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codsubcuenta', $code)
         ];
-        if ($subaccount->loadFromCode('', $where)) {
+        if ($subaccount->loadWhere($where)) {
             return true;
         }
 
@@ -270,6 +270,12 @@ class AccountingPlanImport
         $csv = new Csv();
         $csv->auto($filePath);
 
+        // Verificar que el CSV tenga al menos 2 columnas (código y descripción)
+        if (count($csv->titles) < 2) {
+            Tools::log()->warning('csv-file-must-have-at-least-2-columns');
+            return false;
+        }
+
         $length = [];
         $accountPlan = [];
         foreach ($csv->data as $value) {
@@ -285,6 +291,13 @@ class AccountingPlanImport
 
         $lengths = array_unique($length);
         sort($lengths);
+
+        // Verificar que haya al menos 2 longitudes diferentes (cuentas y subcuentas)
+        if (count($lengths) < 2) {
+            Tools::log()->warning('accounting-plan-must-have-at-least-2-levels');
+            return false;
+        }
+
         $minLength = min($lengths);
         $maxLength = max($lengths);
         $keys = array_keys($accountPlan);

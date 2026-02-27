@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -28,9 +30,9 @@ use FacturaScripts\Core\Tools;
  * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class PageOption extends Base\ModelClass
+class PageOption extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Definition of the columns. It is called columns but it always
@@ -82,7 +84,7 @@ class PageOption extends Base\ModelClass
      */
     public $rows;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->columns = [];
@@ -104,20 +106,33 @@ class PageOption extends Base\ModelClass
      *
      * @param array $data
      * @param array $exclude
+     * @param bool $sync
      */
-    public function loadFromData(array $data = [], array $exclude = [])
+    public function loadFromData(array $data = [], array $exclude = [], bool $sync = true): void
     {
         array_push($exclude, 'columns', 'modals', 'filters', 'rows', 'code', 'action');
-        parent::loadFromData($data, $exclude);
+        parent::loadFromData($data, $exclude, $sync);
 
         $this->columns = json_decode($data['columns'], true);
         $this->modals = json_decode($data['modals'], true);
         $this->rows = json_decode($data['rows'], true);
     }
 
-    public static function primaryColumn(): string
+    public function save(): bool
     {
-        return 'id';
+        // encode the values of the view configuration fields
+        $this->columns = $this->getEncodeValues()['columns'];
+        $this->modals = $this->getEncodeValues()['modals'];
+        $this->rows = $this->getEncodeValues()['rows'];
+
+        $saved = parent::save();
+
+        // decode the values of the view configuration fields
+        $this->columns = json_decode($this->columns, true);
+        $this->modals = json_decode($this->modals, true);
+        $this->rows = json_decode($this->rows, true);
+
+        return $saved;
     }
 
     public static function tableName(): string
@@ -144,19 +159,5 @@ class PageOption extends Base\ModelClass
             'modals' => json_encode($this->modals),
             'rows' => json_encode($this->rows),
         ];
-    }
-
-    protected function saveInsert(array $values = []): bool
-    {
-        $this->last_update = Tools::dateTime();
-
-        return parent::saveInsert($this->getEncodeValues());
-    }
-
-    protected function saveUpdate(array $values = []): bool
-    {
-        $this->last_update = Tools::dateTime();
-
-        return parent::saveUpdate($this->getEncodeValues());
     }
 }

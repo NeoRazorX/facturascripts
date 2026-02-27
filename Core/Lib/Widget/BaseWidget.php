@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,6 +38,8 @@ class BaseWidget extends VisualItem
      * @var string
      */
     public $fieldname;
+
+    public $fieldclick;
 
     /**
      * @var string
@@ -80,6 +82,11 @@ class BaseWidget extends VisualItem
     protected $value;
 
     /**
+     * @var mixed
+     */
+    protected $valueOnClick = null;
+
+    /**
      * @param array $data
      */
     public function __construct($data)
@@ -87,6 +94,7 @@ class BaseWidget extends VisualItem
         parent::__construct($data);
         $this->autocomplete = false;
         $this->fieldname = $data['fieldname'];
+        $this->fieldclick = $data['fieldclick'] ?? '';
         $this->icon = $data['icon'] ?? '';
         $this->onclick = $data['onclick'] ?? '';
         $this->readonly = $data['readonly'] ?? 'false';
@@ -108,8 +116,8 @@ class BaseWidget extends VisualItem
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
-        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
-        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>';
+        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . Tools::trans($description) . '</small>';
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::trans($title), $titleurl) . '</label>';
 
         if (empty($this->icon)) {
             return '<div class="mb-3">'
@@ -246,11 +254,11 @@ class BaseWidget extends VisualItem
     /**
      * @param array $children
      */
-    protected function loadOptions($children)
+    protected function loadOptions($children): void
     {
         foreach ($children as $child) {
             if ($child['tag'] === 'option') {
-                $child['text'] = html_entity_decode($child['text']);
+                $child['text'] = html_entity_decode($child['text'] ?? '');
                 $this->options[] = $child;
             }
         }
@@ -264,19 +272,20 @@ class BaseWidget extends VisualItem
      */
     protected function onclickHtml($inside, $titleurl = '')
     {
-        if (empty($this->onclick) || is_null($this->value)) {
+        $value = empty($this->valueOnClick) ? $this->value : $this->valueOnClick;
+        if (empty($this->onclick) || is_null($value)) {
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        $params = strpos($this->onclick, '?') !== false ? '&' : '?';
-        return '<a href="' . FS_ROUTE . '/' . $this->onclick . $params . 'code=' . rawurlencode($this->value)
+        $params = str_contains($this->onclick, '?') ? '&' : '?';
+        return '<a href="' . Tools::config('route') . '/' . $this->onclick . $params . 'code=' . rawurlencode($value)
             . '" class="cancelClickable">' . $inside . '</a>';
     }
 
     /**
      * @return bool
      */
-    protected function readonly()
+    protected function readonly(): bool
     {
         if ($this->readonly === 'dinamic') {
             return !empty($this->value);
@@ -291,6 +300,9 @@ class BaseWidget extends VisualItem
     protected function setValue($model)
     {
         $this->value = $model->{$this->fieldname} ?? null;
+        if (false === empty($this->fieldclick)) {
+            $this->valueOnClick = $model->{$this->fieldclick} ?? null;
+        }
     }
 
     /**

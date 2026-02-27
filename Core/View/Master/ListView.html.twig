@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -96,7 +96,7 @@
             </div>
             {# -- Filters -- #}
             {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
-            <div id="form{{ currentView.getViewName() }}Filters" class="row align-items-center border-bottom mb-3"
+            <div id="form{{ currentView.getViewName() }}Filters" class="row g-2 align-items-center border-bottom mb-3"
                  style="{{ divFiltersStyle }}">
                 {% for filterName, filter in currentView.filters %}
                     {{ filter.render() | raw }}
@@ -254,13 +254,19 @@
             </a>
         {% else %}
             <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
-                <i class="fa-solid fa-filter fa-fw"></i> {{ trans('filters') }}
+                <i class="fa-solid fa-filter fa-fw"></i>
+                <span class="d-none d-lg-inline">{{ trans('filters') }}</span>
             </button>
             {% if currentView.showFilters and currentView.settings.saveFilters %}
                 {# -- Save user filters -- #}
                 <button type="button" class="btn btn-success" data-bs-toggle="modal"
                         data-bs-target="#savefilter{{ viewName }}" title="{{ trans('save-filter') }}">
-                    <i class="fa-solid fa-save fa-fw"></i> {{ trans('save') }}
+                    <i class="fa-solid fa-save fa-fw"></i>
+                    <span class="d-none d-lg-inline">{{ trans('save') }}</span>
+                </button>
+                <button type="button" class="btn btn-outline-danger" title="{{ trans('clear-filters') }}"
+                        onclick="listViewSetAction('{{ viewName }}', 'clear-filters');">
+                    <i class="fa-solid fa-filter-circle-xmark fa-fw"></i>
                 </button>
             {% endif %}
         {% endif %}
@@ -314,7 +320,7 @@
                             <div class="mb-3">
                                 <label>{{ trans('description') }}</label>
                                 <input type="text" name="filter-description" class="form-control noEnterKey"
-                                       autofocus=""/>
+                                       autofocus/>
                             </div>
                         </div>
                     </div>
@@ -388,8 +394,8 @@
                 <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off"
                        placeholder="{{ trans('search') }}"/>
                 <button type="submit" class="btn btn-secondary">
-                        <i class="fa-solid fa-search" aria-hidden="true"></i>
-                    </button>
+                    <i class="fa-solid fa-search" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
     {% endif %}
@@ -400,7 +406,7 @@
         <div class="btn-group">
             <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="true">
-                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fa-solid fa-sort-amount-up' : 'fa-solid fa-sort-amount-down' %}
+                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fa-solid fa-angles-up' : 'fa-solid fa-angles-down' %}
                 <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
                 <span class="d-none d-lg-inline">{{ currentView.orderOptions[currentView.orderKey]['label'] }}</span>
                 <span class="caret"></span>

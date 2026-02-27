@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,7 +54,7 @@ final class Plugin
     public $min_version = 0;
 
     /** @var float */
-    public $min_php = 7.4;
+    public $min_php = 8;
 
     /** @var string */
     public $name = '-';
@@ -203,7 +203,25 @@ final class Plugin
 
     public function hasUpdate(): bool
     {
-        return $this->version < $this->forja('version', 0.0);
+        // obtenemos los builds disponibles para este plugin
+        foreach (Forja::getBuildsByName($this->name) as $build) {
+            // comprobamos si hay una versión estable más reciente
+            if ($build['stable'] && $build['version'] > $this->version) {
+                return true;
+            }
+
+            // si no están habilitadas las actualizaciones beta, continuamos
+            if (false === Tools::settings('default', 'enableupdatesbeta', false)) {
+                continue;
+            }
+
+            // comprobamos si hay una versión beta más reciente
+            if ($build['beta'] && $build['version'] > $this->version) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function init(): bool
@@ -223,13 +241,15 @@ final class Plugin
 
         // ejecutamos los procesos de la clase Init del plugin
         $init = new $className();
-        if ($this->enabled && $this->post_enable && Kernel::lock('plugin-init-update')) {
+        $updateLockName = 'plugin-' . $this->name . '-init-update';
+        if ($this->enabled && $this->post_enable && Kernel::lock($updateLockName)) {
             $init->update();
-            Kernel::unlock('plugin-init-update');
+            Kernel::unlock($updateLockName);
         }
-        if ($this->disabled() && $this->post_disable && Kernel::lock('plugin-init-uninstall')) {
+        $uninstallLockName = 'plugin-' . $this->name . '-init-uninstall';
+        if ($this->disabled() && $this->post_disable && Kernel::lock($uninstallLockName)) {
             $init->uninstall();
-            Kernel::unlock('plugin-init-uninstall');
+            Kernel::unlock($uninstallLockName);
         }
         if ($this->enabled) {
             $init->init();
@@ -249,7 +269,7 @@ final class Plugin
         // si la versión de PHP es menor que la requerida, no es compatible
         if (version_compare(PHP_VERSION, $this->min_php, '<')) {
             $this->compatible = false;
-            $this->compatibilityDescription = Tools::lang()->trans('plugin-phpversion-error', [
+            $this->compatibilityDescription = Tools::trans('plugin-phpversion-error', [
                 '%pluginName%' => $this->name,
                 '%php%' => $this->min_php
             ]);
@@ -259,7 +279,7 @@ final class Plugin
         // si la versión de FacturaScripts es menor que la requerida, no es compatible
         if (Kernel::version() < $this->min_version) {
             $this->compatible = false;
-            $this->compatibilityDescription = Tools::lang()->trans('plugin-needs-fs-version', [
+            $this->compatibilityDescription = Tools::trans('plugin-needs-fs-version', [
                 '%pluginName%' => $this->name,
                 '%minVersion%' => $this->min_version,
                 '%version%' => Kernel::version()
@@ -267,10 +287,10 @@ final class Plugin
             return;
         }
 
-        // si la versión requerida es menor que 2021, no es compatible
-        if ($this->min_version < 2020) {
+        // si la versión requerida es menor que 2025, no es compatible
+        if ($this->min_version < 2025) {
             $this->compatible = false;
-            $this->compatibilityDescription = Tools::lang()->trans('plugin-not-compatible', [
+            $this->compatibilityDescription = Tools::trans('plugin-not-compatible', [
                 '%pluginName%' => $this->name,
                 '%version%' => Kernel::version()
             ]);
@@ -282,8 +302,9 @@ final class Plugin
 
     private function hidden(): bool
     {
-        if (defined('FS_HIDDEN_PLUGINS') && FS_HIDDEN_PLUGINS !== '') {
-            return in_array($this->name, explode(',', FS_HIDDEN_PLUGINS));
+        $hidden_plugins = Tools::config('hidden_plugins', '');
+        if ($hidden_plugins !== '') {
+            return in_array($this->name, explode(',', $hidden_plugins));
         }
 
         return false;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Agente;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -28,13 +29,30 @@ final class AgenteTest extends TestCase
 {
     use LogErrorsTrait;
 
+    public function testClear(): void
+    {
+        $agent = new Agente();
+        $this->assertNull($agent->cargo);
+        $this->assertNull($agent->cifnif);
+        $this->assertNull($agent->codagente);
+        $this->assertFalse($agent->debaja);
+        $this->assertNull($agent->email);
+        $this->assertNull($agent->fechabaja);
+        $this->assertNull($agent->idcontacto);
+        $this->assertNull($agent->idproducto);
+        $this->assertNull($agent->nombre);
+        $this->assertNull($agent->observaciones);
+        $this->assertNull($agent->telefono1);
+        $this->assertNull($agent->telefono2);
+    }
+
     public function testCreate(): void
     {
         $agent = new Agente();
         $agent->codagente = 'Test';
         $agent->nombre = 'Test Agent';
         $this->assertTrue($agent->save(), 'agent-cant-save');
-        $this->assertNotNull($agent->primaryColumnValue(), 'agent-not-stored');
+        $this->assertNotNull($agent->id(), 'agent-not-stored');
         $this->assertTrue($agent->exists(), 'agent-cant-persist');
         $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'agent-cant-delete');
@@ -59,7 +77,6 @@ final class AgenteTest extends TestCase
         // comprobamos que los teléfonos, fax, email y observaciones no sean nulos
         $this->assertNotNull($agent->telefono1, 'agent-telefono1-null');
         $this->assertNotNull($agent->telefono2, 'agent-telefono2-null');
-        $this->assertNotNull($agent->fax, 'agent-fax-null');
         $this->assertNotNull($agent->email, 'agent-email-null');
         $this->assertNotNull($agent->observaciones, 'agent-observaciones-null');
 
@@ -88,6 +105,11 @@ final class AgenteTest extends TestCase
 
     public function testVies(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un agente sin cifnif
         $agent = new Agente();
         $agent->codagente = 'Test';

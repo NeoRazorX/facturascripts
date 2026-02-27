@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -67,7 +67,7 @@ class EditAlmacen extends EditController
 
         $this->listView($viewName)->addFilterSelectWhere('type', [
             [
-                'label' => Tools::lang()->trans('all'),
+                'label' => Tools::trans('all'),
                 'where' => []
             ],
             [
@@ -75,12 +75,12 @@ class EditAlmacen extends EditController
                 'where' => []
             ],
             [
-                'label' => Tools::lang()->trans('under-minimums'),
-                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmin', '<')]
+                'label' => Tools::trans('under-minimums'),
+                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmin', '<', 'AND', true)]
             ],
             [
-                'label' => Tools::lang()->trans('excess'),
-                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>')]
+                'label' => Tools::trans('excess'),
+                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>', 'AND', true)]
             ]
         ]);
 

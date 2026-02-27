@@ -19,11 +19,14 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Lib\Accounting\ClosingToAcounting;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Asiento;
+use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
@@ -46,6 +49,10 @@ final class EjercicioCierreTest extends TestCase
 
     public function testCloseExercise(): void
     {
+        // comprobamos si existe la tabla de cuentas
+        $db = new DataBase();
+        $this->assertTrue($db->tableExists(Cuenta::tableName()));
+
         // creamos una nueva empresa
         $empresa = $this->getRandomCompany();
         $this->assertTrue($empresa->save());
@@ -53,7 +60,7 @@ final class EjercicioCierreTest extends TestCase
         // obtenemos el almacén por defecto
         $almacen = new Almacen();
         $where = [new DataBaseWhere('idempresa', $empresa->idempresa)];
-        $this->assertTrue($almacen->loadFromCode('', $where));
+        $this->assertTrue($almacen->loadWhere($where));
 
         // creamos el ejercicio para 2020
         $ejercicio = new Ejercicio();
@@ -65,7 +72,7 @@ final class EjercicioCierreTest extends TestCase
         $this->assertTrue($ejercicio->save());
 
         // copiamos el plan contable
-        $filePath = FS_FOLDER . '/Core/Data/Codpais/ESP/defaultPlan.csv';
+        $filePath = FS_FOLDER . '/Core/Data/Codpais/' . Paises::default()->codpais . '/defaultPlan.csv';
         $planImport = new AccountingPlanImport();
         $planImport->importCSV($filePath, $ejercicio->codejercicio);
 
@@ -84,10 +91,11 @@ final class EjercicioCierreTest extends TestCase
             'copySubAccounts' => true
         ];
         $closing = new ClosingToAcounting();
+        $this->assertTrue($ejercicio->reload());
         $this->assertTrue($closing->exec($ejercicio, $data));
 
         // comprobamos que el ejercicio está cerrado
-        $this->assertTrue($ejercicio->loadFromCode($ejercicio->codejercicio));
+        $this->assertTrue($ejercicio->reload());
         $this->assertFalse($ejercicio->isOpened());
 
         // comprobamos que todas las subcuentas del ejercicio anterior tienen saldo 0
@@ -127,7 +135,7 @@ final class EjercicioCierreTest extends TestCase
         // obtenemos el almacén por defecto
         $almacen = new Almacen();
         $where = [new DataBaseWhere('idempresa', $empresa->idempresa)];
-        $this->assertTrue($almacen->loadFromCode('', $where));
+        $this->assertTrue($almacen->loadWhere($where));
 
         // creamos el ejercicio para 2026
         $ejercicio = new Ejercicio();
@@ -139,7 +147,7 @@ final class EjercicioCierreTest extends TestCase
         $this->assertTrue($ejercicio->save());
 
         // copiamos el plan contable
-        $filePath = FS_FOLDER . '/Core/Data/Codpais/ESP/defaultPlan.csv';
+        $filePath = FS_FOLDER . '/Core/Data/Codpais/' . Paises::default()->codpais . '/defaultPlan.csv';
         $planImport = new AccountingPlanImport();
         $planImport->importCSV($filePath, $ejercicio->codejercicio);
 

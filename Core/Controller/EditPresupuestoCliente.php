@@ -24,7 +24,7 @@ class EditPresupuestoCliente extends SalesController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'estimation';
-        $data['icon'] = 'far fa-file-powerpoint';
+        $data['icon'] = 'fa-regular fa-file-powerpoint';
         $data['showonmenu'] = false;
         return $data;
     }

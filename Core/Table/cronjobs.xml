@@ -11,6 +11,11 @@
         <type>timestamp</type>
     </column>
     <column>
+        <name>daily_exec</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
         <name>done</name>
         <type>boolean</type>
         <default>false</default>
@@ -18,6 +23,7 @@
     <column>
         <name>duration</name>
         <type>double precision</type>
+        <default>0</default>
     </column>
     <column>
         <name>enabled</name>
@@ -30,6 +36,11 @@
         <default>false</default>
     </column>
     <column>
+        <name>fails</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
@@ -40,8 +51,18 @@
         <null>NO</null>
     </column>
     <column>
+        <name>last_duration</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
         <name>pluginname</name>
         <type>character varying(50)</type>
+    </column>
+    <column>
+        <name>running</name>
+        <type>integer</type>
+        <default>0</default>
     </column>
     <constraint>
         <name>cronjobs_pkey</name>

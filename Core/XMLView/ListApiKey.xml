@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,27 +22,30 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="id" onclick="EditApiKey" />
+            <widget type="text" fieldname="id" onclick="EditApiKey"/>
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="description" />
+            <widget type="text" fieldname="description"/>
         </column>
-        <column name="api-key" order="120">
-            <widget type="text" fieldname="apikey" />
+        <column name="api-key" display="none" order="120">
+            <widget type="text" fieldname="apikey"/>
         </column>
-        <column name="enabled" display="center" order="130">
-            <widget type="checkbox" fieldname="enabled" />
+        <column name="enabled" display="none" order="130">
+            <widget type="checkbox" fieldname="enabled"/>
         </column>
         <column name="full-access" display="center" order="140">
-            <widget type="checkbox" fieldname="fullaccess" />
+            <widget type="checkbox" fieldname="fullaccess"/>
         </column>
         <column name="user" order="150">
             <widget type="select" fieldname="nick" required="true">
-                <values source="users" fieldcode="nick" fieldtitle="nick" />
+                <values source="users" fieldcode="nick" fieldtitle="nick"/>
             </widget>
         </column>
         <column name="created" display="right" order="160">
-            <widget type="date" fieldname="creationdate" />
+            <widget type="date" fieldname="creationdate"/>
+        </column>
+        <column name="last-activity" display="right" order="170">
+            <widget type="datetime" fieldname="lastactivity"/>
         </column>
     </columns>
     <rows>

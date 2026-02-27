@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -80,6 +80,12 @@ class SalesModalHTML
     {
         self::$codalmacen = $model->codalmacen;
 
+        if (empty($model->id()) && !$model->editable) {
+            return '<div class="alert alert-warning mt-4">'
+                . '<i class="fa-solid fa-triangle-exclamation fa-fw"></i> ' . Tools::trans('default-status-non-editable')
+                . '</div>';
+        }
+
         return $model->editable ? static::modalClientes($url) . static::modalProductos() : '';
     }
 
@@ -107,19 +113,19 @@ class SalesModalHTML
         }
 
         if (empty($tbody)) {
-            $tbody .= '<tr class="table-warning"><td colspan="4">' . Tools::lang()->trans('no-data') . '</td></tr>';
+            $tbody .= '<tr class="table-warning"><td colspan="4">' . Tools::trans('no-data') . '</td></tr>';
         }
 
         $extraTh = self::$vendido ?
-            '<th class="text-end">' . Tools::lang()->trans('last-price-sale') . '</th>' :
+            '<th class="text-end">' . Tools::trans('last-price-sale') . '</th>' :
             '';
         return '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
-            . '<th>' . Tools::lang()->trans('product') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('price') . '</th>'
+            . '<th>' . Tools::trans('product') . '</th>'
+            . '<th class="text-end">' . Tools::trans('price') . '</th>'
             . $extraTh
-            . '<th class="text-end">' . Tools::lang()->trans('stock') . '</th>'
+            . '<th class="text-end">' . Tools::trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -128,10 +134,9 @@ class SalesModalHTML
 
     public static function fabricantes(): string
     {
-        $fabricante = new Fabricante();
-        $options = '<option value="">' . Tools::lang()->trans('manufacturer') . '</option>'
+        $options = '<option value="">' . Tools::trans('manufacturer') . '</option>'
             . '<option value="">------</option>';
-        foreach ($fabricante->all([], ['nombre' => 'ASC'], 0, 0) as $man) {
+        foreach (Fabricante::all([], ['nombre' => 'ASC'], 0, 0) as $man) {
             $options .= '<option value="' . $man->codfabricante . '">' . $man->nombre . '</option>';
         }
 
@@ -141,13 +146,12 @@ class SalesModalHTML
 
     protected static function familias(): string
     {
-        $options = '<option value="">' . Tools::lang()->trans('family') . '</option>'
+        $options = '<option value="">' . Tools::trans('family') . '</option>'
             . '<option value="">------</option>';
 
-        $familia = new Familia();
         $where = [new DataBaseWhere('madre', null, 'IS')];
         $orderBy = ['descripcion' => 'ASC'];
-        foreach ($familia->all($where, $orderBy, 0, 0) as $fam) {
+        foreach (Familia::all($where, $orderBy, 0, 0) as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">' . $fam->descripcion . '</option>';
 
             // añadimos las subfamilias de forma recursiva
@@ -160,39 +164,32 @@ class SalesModalHTML
 
     protected static function getClientes(User $user, ControllerPermissions $permissions): array
     {
-        // buscamos en caché
         $cacheKey = 'model-Cliente-sales-modal-' . $user->nick;
-        $clientes = Cache::get($cacheKey);
-        if (is_array($clientes)) {
-            return $clientes;
-        }
 
-        // ¿El usuario tiene permiso para ver todos los clientes?
-        $showAll = false;
-        foreach (RoleAccess::allFromUser($user->nick, 'EditCliente') as $access) {
-            if (false === $access->onlyownerdata) {
-                $showAll = true;
+        return Cache::remember($cacheKey, function () use ($user, $permissions) {
+            // ¿El usuario tiene permiso para ver todos los clientes?
+            $showAll = false;
+            foreach (RoleAccess::allFromUser($user->nick, 'EditCliente') as $access) {
+                if (false === $access->onlyownerdata) {
+                    $showAll = true;
+                }
             }
-        }
 
-        // consultamos la base de datos
-        $cliente = new Cliente();
-        $where = [new DataBaseWhere('fechabaja', null, 'IS')];
-        if ($permissions->onlyOwnerData && !$showAll) {
-            $where[] = new DataBaseWhere('codagente', $user->codagente);
-            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
-        }
-        $clientes = $cliente->all($where, ['LOWER(nombre)' => 'ASC']);
-
-        // guardamos en caché
-        Cache::set($cacheKey, $clientes);
-
-        return $clientes;
+            // consultamos la base de datos
+            $where = [new DataBaseWhere('fechabaja', null, 'IS')];
+            if ($permissions->onlyOwnerData && !$showAll) {
+                $where[] = new DataBaseWhere('codagente', $user->codagente);
+                $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+            }
+            return Cliente::all($where, ['LOWER(nombre)' => 'ASC'], 0, 50);
+        });
     }
 
     protected static function getProducts(): array
     {
         $dataBase = new DataBase();
+        $dataBase->connect();
+
         $sql = 'SELECT v.referencia, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
             . ' v.idatributovalor4, v.precio, COALESCE(s.disponible, 0) as disponible, p.nostock'
             . ' FROM variantes v'
@@ -209,7 +206,7 @@ class SalesModalHTML
 
             // buscamos las subfamilias
             $familia = new Familia();
-            if ($familia->loadFromCode(self::$codfamilia)) {
+            if ($familia->load(self::$codfamilia)) {
                 foreach ($familia->getSubfamilias() as $fam) {
                     $codFamilias[] = $dataBase->var2str($fam->codfamilia);
                 }
@@ -275,7 +272,7 @@ class SalesModalHTML
 
         if (!isset(self::$idatributovalores[$id])) {
             $attValor = new AtributoValor();
-            $attValor->loadFromCode($id);
+            $attValor->load($id);
             self::$idatributovalores[$id] = $attValor->descripcion;
         }
 
@@ -305,14 +302,14 @@ class SalesModalHTML
             . '<div class="modal-dialog modal-dialog-scrollable">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-users fa-fw"></i> ' . Tools::lang()->trans('customers') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-users fa-fw"></i> ' . Tools::trans('customers') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . '</button>'
             . '</div>'
             . '<div class="modal-body p-0">'
             . '<div class="p-3">'
             . '<div class="input-group">'
-            . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . Tools::lang()->trans('search') . '" />'
+            . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . Tools::trans('search') . '" />'
             . '<div class="input-group-apend">'
             . '<button type="button" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>'
             . '</div>'
@@ -321,7 +318,7 @@ class SalesModalHTML
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
             . '<div class="modal-footer bg-light">'
             . '<a href="EditCliente?return=' . urlencode($url) . $linkAgent . '" class="btn w-100 btn-success">'
-            . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::lang()->trans('new')
+            . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::trans('new')
             . '</a>'
             . '</div>'
             . '</div>'
@@ -335,30 +332,30 @@ class SalesModalHTML
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-cubes fa-fw"></i> ' . Tools::lang()->trans('products') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-cubes fa-fw"></i> ' . Tools::trans('products') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row g-3">'
-            . '<div class="col-sm mb-2">'
+            . '<div class="row g-2">'
+            . '<div class="col-sm-6 col-md-12 col-lg mb-2">'
             . '<div class="input-group">'
-            . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . Tools::lang()->trans('search')
+            . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . Tools::trans('search')
             . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\', event);"/>'
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return salesFormAction(\'find-product\', \'0\');">'
             . '<i class="fa-solid fa-search"></i></button>'
             . '</div>'
             . '</div>'
-            . '<div class="col-sm mb-2">' . static::fabricantes() . '</div>'
-            . '<div class="col-sm mb-2">' . static::familias() . '</div>'
-            . '<div class="col-sm mb-2">' . static::orden() . '</div>'
+            . '<div class="col-sm-6 col-md-4 col-lg mb-2">' . static::fabricantes() . '</div>'
+            . '<div class="col-sm-6 col-md-4 col-lg mb-2">' . static::familias() . '</div>'
+            . '<div class="col-sm-6 col-md-4 col-lg mb-2">' . static::orden() . '</div>'
             . '</div>'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . '<div class="col-sm">'
             . '<div class="form-check">'
             . '<input type="checkbox" name="fp_vendido" value="1" class="form-check-input" id="vendido" onchange="return salesFormAction(\'find-product\', \'0\');">'
-            . '<label class="form-check-label" for="vendido">' . Tools::lang()->trans('previously-sold-to-customer') . '</label>'
+            . '<label class="form-check-label" for="vendido">' . Tools::trans('previously-sold-to-customer') . '</label>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -374,12 +371,12 @@ class SalesModalHTML
         return '<div class="input-group">'
             . '<span class="input-group-text"><i class="fa-solid fa-sort-amount-down-alt"></i></span>'
             . '<select name="fp_orden" class="form-select" onchange="return salesFormAction(\'find-product\', \'0\');">'
-            . '<option value="">' . Tools::lang()->trans('sort') . '</option>'
+            . '<option value="">' . Tools::trans('sort') . '</option>'
             . '<option value="">------</option>'
-            . '<option value="ref_asc">' . Tools::lang()->trans('reference') . '</option>'
-            . '<option value="desc_asc">' . Tools::lang()->trans('description') . '</option>'
-            . '<option value="price_desc">' . Tools::lang()->trans('price') . '</option>'
-            . '<option value="stock_desc">' . Tools::lang()->trans('stock') . '</option>'
+            . '<option value="ref_asc">' . Tools::trans('reference') . '</option>'
+            . '<option value="desc_asc">' . Tools::trans('description') . '</option>'
+            . '<option value="price_desc">' . Tools::trans('price') . '</option>'
+            . '<option value="stock_desc">' . Tools::trans('stock') . '</option>'
             . '</select>'
             . '</div>';
     }

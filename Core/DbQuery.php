@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Permite realizar consultas a la base de datos de forma sencilla.
@@ -133,7 +134,7 @@ final class DbQuery
         $sql = 'DELETE FROM ' . self::db()->escapeColumn($this->table);
 
         if (!empty($this->where)) {
-            $sql .= ' WHERE ' . Where::multiSql($this->where);
+            $sql .= Where::multiSqlLegacy($this->where);
         }
 
         return self::db()->exec($sql);
@@ -235,7 +236,7 @@ final class DbQuery
     {
         $max = $this->maxString($field);
         return is_null($decimals) ?
-            (float)$max:
+            (float)$max :
             round((float)$max, $decimals);
     }
 
@@ -256,7 +257,7 @@ final class DbQuery
     {
         $min = $this->minString($field);
         return is_null($decimals) ?
-            (float)$min:
+            (float)$min :
             round((float)$min, $decimals);
     }
 
@@ -282,9 +283,46 @@ final class DbQuery
 
     public function orderBy(string $field, string $order = 'ASC'): self
     {
+        // validamos que order sea ASC o DESC
+        $order = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
+
+        // si lleva paréntesis, validamos que sea una expresión permitida
+        if (str_contains($field, '(') && str_contains($field, ')')) {
+            // si es RAND() o RANDOM(), usamos la función random del engine
+            if (preg_match('/^(RAND|RANDOM)\(\)$/i', $field)) {
+                $this->orderBy[] = self::db()->random();
+                return $this;
+            }
+
+            // permitimos LOWER(), UPPER(), CAST() y COALESCE()
+            if (preg_match('/^(LOWER|UPPER)\([a-zA-Z0-9_.]+\)$/i', $field) ||
+                preg_match('/^CAST\([a-zA-Z0-9_.]+ AS [a-zA-Z0-9_ ]+\)$/i', $field) ||
+                preg_match('/^COALESCE\([a-zA-Z0-9_., ]+\)$/i', $field)) {
+                $this->orderBy[] = $field . ' ' . $order;
+                return $this;
+            }
+            // si no es una expresión permitida, escapamos el campo completo
+        }
+
         // si el campo comienza por integer: hacemos el cast a integer
-        if (0 === strpos($field, 'integer:')) {
+        if (str_starts_with($field, 'integer:')) {
             $field = self::db()->castInteger(substr($field, 8));
+            $this->orderBy[] = $field . ' ' . $order;
+            return $this;
+        }
+
+        // si empieza por lower, hacemos el lower
+        if (str_starts_with($field, 'lower:')) {
+            $field = 'LOWER(' . self::db()->escapeColumn(substr($field, 6)) . ')';
+            $this->orderBy[] = $field . ' ' . $order;
+            return $this;
+        }
+
+        // si empieza por upper, hacemos el upper
+        if (str_starts_with($field, 'upper:')) {
+            $field = 'UPPER(' . self::db()->escapeColumn(substr($field, 6)) . ')';
+            $this->orderBy[] = $field . ' ' . $order;
+            return $this;
         }
 
         $this->orderBy[] = self::db()->escapeColumn($field) . ' ' . $order;
@@ -297,6 +335,13 @@ final class DbQuery
         foreach ($fields as $field => $order) {
             $this->orderBy($field, $order);
         }
+
+        return $this;
+    }
+
+    public function orderByRandom(): self
+    {
+        $this->orderBy[] = self::db()->random();
 
         return $this;
     }
@@ -332,7 +377,7 @@ final class DbQuery
         $sql = 'SELECT ' . $this->fields . ' FROM ' . self::db()->escapeColumn($this->table);
 
         if (!empty($this->where)) {
-            $sql .= ' WHERE ' . Where::multiSql($this->where);
+            $sql .= Where::multiSqlLegacy($this->where);
         }
 
         if (!empty($this->groupBy)) {
@@ -386,7 +431,7 @@ final class DbQuery
         $sql = 'UPDATE ' . self::db()->escapeColumn($this->table) . ' SET ' . implode(', ', $fields);
 
         if (!empty($this->where)) {
-            $sql .= ' WHERE ' . Where::multiSql($this->where);
+            $sql .= Where::multiSqlLegacy($this->where);
         }
 
         return self::db()->exec($sql);
@@ -405,8 +450,8 @@ final class DbQuery
         }
 
         foreach ($where as $value) {
-            // si no es una instancia de Where, lanzamos una excepción
-            if (!($value instanceof Where)) {
+            // si no es una instancia de Where o DataBaseWhere, lanzamos una excepción
+            if (!($value instanceof Where) && !($value instanceof DataBaseWhere)) {
                 throw new Exception('Invalid where clause ' . print_r($value, true));
             }
 
@@ -504,6 +549,7 @@ final class DbQuery
     {
         if (null === self::$db) {
             self::$db = new DataBase();
+            self::$db->connect();
         }
 
         return self::$db;

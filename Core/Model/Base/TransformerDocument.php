@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,7 +37,7 @@ abstract class TransformerDocument extends BusinessDocument
     /**
      * @var bool
      */
-    private static $documentGeneration = true;
+    private static $document_generation = true;
 
     /**
      * Indicates whether the document can be modified
@@ -59,6 +59,25 @@ abstract class TransformerDocument extends BusinessDocument
     public $idestado;
 
     /**
+     * Campos que se pueden modificar aunque el documento no sea editable.
+     *
+     * @var array
+     */
+    private static $unlocked_fields = ['femail', 'idestado', 'numdocs', 'pagada'];
+
+    /**
+     * Adds a field to the list of unlocked fields (editable even when document is not editable).
+     *
+     * @param string $field
+     */
+    public static function addUnlockedField(string $field): void
+    {
+        if (false === in_array($field, self::$unlocked_fields, true)) {
+            self::$unlocked_fields[] = $field;
+        }
+    }
+
+    /**
      * Returns all children documents of this one.
      *
      * @return TransformerDocument[]
@@ -67,12 +86,11 @@ abstract class TransformerDocument extends BusinessDocument
     {
         $children = [];
         $keys = [];
-        $docTransformation = new DocTransformation();
         $where = [
             new DataBaseWhere('model1', $this->modelClassName()),
-            new DataBaseWhere('iddoc1', $this->primaryColumnValue())
+            new DataBaseWhere('iddoc1', $this->id())
         ];
-        foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
+        foreach (DocTransformation::all($where, [], 0, 0) as $docTrans) {
             // we use this key to load documents only once
             $key = $docTrans->model2 . '|' . $docTrans->iddoc2;
             if (in_array($key, $keys, true)) {
@@ -97,9 +115,10 @@ abstract class TransformerDocument extends BusinessDocument
     /**
      * Reset the values of all model properties.
      */
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
+
         $this->editable = true;
 
         // select default status
@@ -129,7 +148,7 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // we check if there is already an open transaction so as not to break it
-        $newTransaction = false === static::$dataBase->inTransaction() && self::$dataBase->beginTransaction();
+        $newTransaction = false === static::db()->inTransaction() && self::db()->beginTransaction();
 
         // remove lines to update stock
         foreach ($this->getLines() as $line) {
@@ -137,7 +156,7 @@ abstract class TransformerDocument extends BusinessDocument
                 continue;
             }
             if ($newTransaction) {
-                self::$dataBase->rollback();
+                self::db()->rollback();
             }
             return false;
         }
@@ -145,15 +164,15 @@ abstract class TransformerDocument extends BusinessDocument
         // remove this model
         if (false === parent::delete()) {
             if ($newTransaction) {
-                self::$dataBase->rollback();
+                self::db()->rollback();
             }
             return false;
         }
 
-        // load parents, remove relations and update servido column
+        // remove relations and update servido column
         $parents = $this->parentDocuments();
         $docTransformation = new DocTransformation();
-        $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue(), true);
+        $docTransformation->deleteFrom($this->modelClassName(), $this->id(), true);
 
         // change parent doc status
         foreach ($parents as $parent) {
@@ -167,18 +186,19 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->warning('deleted-model', [
+        Tools::log($this->getAuditChannel())->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
-            '%key%' => $this->primaryColumnValue(),
+            '%key%' => $this->id(),
             '%desc%' => $this->primaryDescription(),
             'model-class' => $this->modelClassName(),
-            'model-code' => $this->primaryColumnValue(),
+            'model-code' => $this->id(),
             'model-data' => $this->toArray()
         ]);
 
         if ($newTransaction) {
-            self::$dataBase->commit();
+            self::db()->commit();
         }
+
         return true;
     }
 
@@ -190,8 +210,7 @@ abstract class TransformerDocument extends BusinessDocument
     public function getAvailableStatus(): array
     {
         if (null === self::$estados) {
-            $statusModel = new EstadoDocumento();
-            self::$estados = $statusModel->all([], ['idestado' => 'ASC'], 0, 0);
+            self::$estados = EstadoDocumento::all([], ['idestado' => 'ASC'], 0, 0);
         }
 
         $available = [];
@@ -212,8 +231,18 @@ abstract class TransformerDocument extends BusinessDocument
     public function getStatus(): EstadoDocumento
     {
         $status = new EstadoDocumento();
-        $status->loadFromCode($this->idestado);
+        $status->load($this->idestado);
         return $status;
+    }
+
+    /**
+     * Returns the list of unlocked fields (editable even when document is not editable).
+     *
+     * @return array
+     */
+    public static function getUnlockedFields(): array
+    {
+        return self::$unlocked_fields;
     }
 
     public function install(): string
@@ -233,12 +262,11 @@ abstract class TransformerDocument extends BusinessDocument
     {
         $parents = [];
         $keys = [];
-        $docTransformation = new DocTransformation();
         $where = [
             new DataBaseWhere('model2', $this->modelClassName()),
-            new DataBaseWhere('iddoc2', $this->primaryColumnValue())
+            new DataBaseWhere('iddoc2', $this->id())
         ];
-        foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
+        foreach (DocTransformation::all($where, [], 0, 0) as $docTrans) {
             // we use this key to load documents only once
             $key = $docTrans->model1 . '|' . $docTrans->iddoc1;
             if (in_array($key, $keys, true)) {
@@ -261,6 +289,20 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
+     * Removes a field from the list of unlocked fields.
+     *
+     * @param string $field
+     */
+    public static function removeUnlockedField(string $field): void
+    {
+        $key = array_search($field, self::$unlocked_fields, true);
+        if ($key !== false) {
+            unset(self::$unlocked_fields[$key]);
+            self::$unlocked_fields = array_values(self::$unlocked_fields);
+        }
+    }
+
+    /**
      * Saves data in the database.
      *
      * @return bool
@@ -269,12 +311,13 @@ abstract class TransformerDocument extends BusinessDocument
     {
         // match editable with status
         $this->editable = $this->getStatus()->editable;
+
         return parent::save();
     }
 
-    public function setDocumentGeneration(bool $value)
+    public function setDocumentGeneration(bool $value): void
     {
-        self::$documentGeneration = $value;
+        self::$document_generation = $value;
     }
 
     /**
@@ -284,17 +327,20 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
-        if (false === $this->editable && false === $this->previousData['editable'] && $field != 'idestado') {
+        // check if field is locked when document is not editable
+        if (!$this->editable && !$this->getOriginal('editable') && !in_array($field, self::$unlocked_fields, true)) {
             Tools::log()->warning('non-editable-document');
             return false;
-        } elseif ($field !== 'idestado') {
+        }
+
+        if ($field !== 'idestado') {
             return parent::onChange($field);
         }
 
         $status = $this->getStatus();
-        if (empty($status->generadoc) || false === self::$documentGeneration) {
+        if (empty($status->generadoc) || false === self::$document_generation) {
             // update lines to update stock
             foreach ($this->getLines() as $line) {
                 $line->actualizastock = $status->actualizastock;
@@ -331,16 +377,5 @@ abstract class TransformerDocument extends BusinessDocument
 
         // no pending lines to generate a new document
         return true;
-    }
-
-    /**
-     * Sets fields to be watched.
-     *
-     * @param array $fields
-     */
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['editable', 'idestado'];
-        parent::setPreviousData(array_merge($more, $fields));
     }
 }

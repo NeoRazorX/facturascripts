@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@
 
 {% block messages %}
     {% include 'Macro/Toasts.html.twig' %}
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-12">
                 {{ showMessage(log, ['error', 'critical'], 'danger') }}
@@ -36,26 +36,26 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container">
+        <div class="row pt-3 pb-3">
             <div class="col-sm-6">
                 <div class="btn-group">
-                    <a href="{{ asset('AdminPlugins') }}" class="btn btn-sm btn-secondary">
-                        <i class="fa-solid fa-arrow-start fa-fw" aria-hidden="true"></i>
+                    <a href="{{ asset('AdminPlugins') }}" class="btn btn-secondary">
+                        <i class="fa-solid fa-arrow-left fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ trans('plugins') }} </span>
                     </a>
-                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary" title="{{ trans('refresh') }}">
+                    <a href="{{ fsc.url() }}" class="btn btn-secondary" title="{{ trans('refresh') }}">
                         <i class="fa-solid fa-redo" aria-hidden="true"></i>
                     </a>
                 </div>
                 {% if fsc.telemetryManager.ready() %}
-                    <button class="btn btn-sm btn-secondary" type="button" data-bs-toggle="modal"
+                    <button class="btn btn-secondary" type="button" data-bs-toggle="modal"
                             data-bs-target="#modalTelemetry">
                         <i class="fa-solid fa-registered fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ trans('manage-installation') }} </span>
                     </button>
                 {% else %}
-                    <button class="btn btn-sm btn-warning" type="button" data-bs-toggle="modal"
+                    <button class="btn btn-warning" type="button" data-bs-toggle="modal"
                             data-bs-target="#modalTelemetry">
                         <i class="fa-solid fa-registered fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ trans('register-installation') }}</span>
@@ -72,11 +72,6 @@
         </div>
         <div class="row">
             <div class="col-sm">
-                {% if fsc.telemetryManager.ready() == false %}
-                    <div class="mb-3">
-                        {{ Utils.registerInstall(false) }}
-                    </div>
-                {% endif %}
                 <div class="card shadow-sm mb-4">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
@@ -96,36 +91,76 @@
                                         {% if item.mincore > fsc.getCoreVersion() %}
                                             {{ trans('requires-core', {'%version%': item.mincore}) }}
                                         {% elseif item.downloaded %}
-                                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-spin-action btn-sm btn-success" onclick="animateSpinner('add')">
-                                                <i class="fa-solid fa-rocket fa-fw" aria-hidden="true"></i> {{ trans('update') }}
+                                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}"
+                                               class="btn btn-spin-action btn-sm btn-success"
+                                               onclick="animateSpinner('add')">
+                                                <i class="fa-solid fa-rocket fa-fw fa-bounce me-1"
+                                                   aria-hidden="true"></i>{{ trans('update') }}
                                             </a>
-                                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn btn-spin-action btn-sm btn-warning" onclick="animateSpinner('add')">
-                                                <i class="fa-solid fa-times fa-fw" aria-hidden="true"></i> {{ trans('cancel') }}
+                                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}"
+                                               class="btn btn-spin-action btn-sm btn-warning"
+                                               onclick="animateSpinner('add')">
+                                                <i class="fa-solid fa-times fa-fw me-1"
+                                                   aria-hidden="true"></i>{{ trans('cancel') }}
                                             </a>
                                         {% elseif item.name == 'CORE' and fsc.coreUpdateWarnings %}
-                                            <button type="button" class="btn btn-spin-action btn-warning" data-bs-toggle="modal"
-                                                    data-bs-target="#coreWarningModal">{{ trans('download') }}
+                                            <button type="button" class="btn btn-spin-action btn-warning"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#coreWarningModal">
+                                                <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
                                             </button>
                                         {% elseif item.stable %}
                                             <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                                               class="btn btn-spin-action btn-sm btn-secondary" onclick="animateSpinner('add')">{{ trans('download') }}
+                                               class="btn btn-spin-action btn-sm btn-secondary"
+                                               onclick="animateSpinner('add')">
+                                                <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
                                             </a>
                                         {% else %}
                                             <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                                               class="btn btn-spin-action btn-sm btn-outline-warning" onclick="animateSpinner('add')">{{ trans('beta') }}
+                                               class="btn btn-spin-action btn-sm btn-secondary"
+                                               onclick="animateSpinner('add')">
+                                                <i class="fa-solid fa-flask-vial fa-fw me-1" aria-hidden="true"></i>{{ trans('beta') }}
                                             </a>
                                         {% endif %}
                                     </td>
                                 </tr>
                             {% else %}
-                                <tr class="table-warning">
-                                    <td colspan="3"><b>{{ trans('no-data') }}</b></td>
+                                <tr class="table-success">
+                                    <td colspan="3">
+                                        <p class="p-2 mb-0">✅ {{ trans('no-updates-now') }}</p>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
+                {% if settings('default', 'enableupdatesbeta', false) %}
+                    <hr/>
+                    <div class="card shadow-sm mt-4 mb-4">
+                        <div class="card-body">
+                            <h5>
+                                <i class="fa-solid fa-flask-vial text-danger me-2" aria-hidden="true"></i>
+                                {{ trans('updates-beta-warning') }}
+                            </h5>
+                            <p class="card-text">{{ trans('updates-beta-warning-p') }}</p>
+                        </div>
+                        <div class="card-footer p-2">
+                            <form method="post">
+                                {{ formToken() }}
+                                <input type="hidden" name="action" value="disable-beta"/>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary btn-spin-action">
+                                    {{ trans('disable') }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% elseif fsc.telemetryManager.ready() == false %}
+                    <hr/>
+                    <div class="mt-4 mb-3">
+                        {{ Utils.registerInstall(false) }}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -138,18 +173,22 @@
                             <i class="fa-solid fa-registered me-1"></i>
                             {{ trans('registered-installation', {'%number%': fsc.telemetryManager.id()}) }}
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('close') }}"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="{{ trans('close') }}"></button>
                     </div>
                     <div class="modal-body">
                         <p>{{ trans('registered-installation-p') }}</p>
                         <p>{{ trans('telemetry-data-to-send') }}</p>
-                        <a class="btn btn-primary float-start" href="{{ fsc.url() }}?action=claim-install" target="_blank">
+                        <a class="btn btn-primary float-start" href="{{ fsc.url() }}?action=claim-install"
+                           target="_blank">
+                            <i class="fa-solid fa-cog fa-fw" aria-hidden="true"></i>
                             {{ trans('manage') }}
                         </a>
                         <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
                             {{ formToken() }}
                             <input type="hidden" name="action" value="unlink"/>
                             <button type="submit" class="btn btn-danger btn-spin-action float-end">
+                                <i class="fa-solid fa-unlink fa-fw" aria-hidden="true"></i>
                                 {{ trans('unlink') }}
                             </button>
                         </form>
@@ -162,12 +201,13 @@
                             <h5 class="modal-title">
                                 <i class="fa-solid fa-registered me-1"></i> {{ trans('register-installation') }}
                             </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('close') }}"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="{{ trans('close') }}"></button>
                         </div>
                         <div class="modal-body">
                             <p>{{ trans('register-installation-p') }}</p>
                             <p>{{ trans('telemetry-data-to-send') }}</p>
-                            <button type="submit" class="btn btn-primary btn-spin-action">
+                            <button type="submit" class="btn btn-primary btn-spin-action w-100">
                                 {{ trans('register-installation') }}
                             </button>
                         </div>
@@ -199,15 +239,20 @@
                             {% if item.name == 'CORE' and fsc.coreUpdateWarnings %}
                                 <div class="btn-group">
                                     <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}"
-                                       class="btn btn-spin-action btn-warning" onclick="animateSpinner('add')">{{ trans('download') }}
+                                       class="btn btn-spin-action btn-warning"
+                                       onclick="animateSpinner('add')">
+                                        <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
                                     </a>
-                                    <button type="button" class="btn btn-spin-action btn-warning dropdown-toggle dropdown-toggle-split"
+                                    <button type="button"
+                                            class="btn btn-spin-action btn-warning dropdown-toggle dropdown-toggle-split"
                                             data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span class="sr-only">{{ trans('options') }}</span>
+                                        <span class="visually-hidden">{{ trans('options') }}</span>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end">
                                         <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                                           class="btn btn-warning" onclick="animateSpinner('add')">{{ trans('do-not-disable-plugins') }}
+                                           class="btn btn-warning"
+                                           onclick="animateSpinner('add')">
+                                            <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('do-not-disable-plugins') }}
                                         </a>
                                     </div>
                                 </div>
