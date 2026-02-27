@@ -280,6 +280,11 @@ abstract class BaseView
         $current = 1;
         $limit = (int)$this->settings['itemLimit'];
 
+        // Si limit es 0 o negativo, no tiene sentido paginar
+        if ($limit <= 0) {
+            return [];
+        }
+
         // add all pages
         while ($key2 < $this->count) {
             $pages[$key1] = [
