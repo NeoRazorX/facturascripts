@@ -156,8 +156,20 @@ class Updater extends Controller
      */
     private function downloadAction(): void
     {
-        $idItem = $this->request->get('item', '');
         $this->updaterItems = self::getUpdateItems();
+
+        $idItem = $this->request->query('item', '');
+        $this->downloadPlugin($idItem);
+
+        // ¿Hay que desactivar algo?
+        $disable = $this->request->query('disable', '');
+        foreach (explode(',', $disable) as $plugin) {
+            Plugins::disable($plugin);
+        }
+    }
+
+    private function downloadPlugin($idItem): void
+    {
         foreach ($this->updaterItems as $key => $item) {
             if ($item['id'] != $idItem) {
                 continue;
@@ -176,16 +188,19 @@ class Updater extends Controller
             }
 
             Tools::log()->error('download-error', [
-                '%body%' => $http->body(),
+                '%body%' => $http->body() . ' - ' . 'Plugin ' . $item['name'],
                 '%error%' => $http->errorMessage(),
                 '%status%' => $http->status(),
             ]);
         }
+    }
 
-        // ¿Hay que desactivar algo?
-        $disable = $this->request->get('disable', '');
-        foreach (explode(',', $disable) as $plugin) {
-            Plugins::disable($plugin);
+    private function downloadAllPluginsAction(): void
+    {
+        $this->updaterItems = self::getUpdateItems();
+
+        foreach ($this->updaterItems as $updater_item) {
+            $this->downloadPlugin($updater_item['id']);
         }
     }
 
@@ -207,6 +222,10 @@ class Updater extends Controller
             case 'download':
                 $this->downloadAction();
                 return;
+
+            case 'download-all-plugins':
+                $this->downloadAllPluginsAction();
+                break;
 
             case 'post-update':
                 $this->postUpdateAction();

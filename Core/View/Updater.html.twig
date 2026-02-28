@@ -72,6 +72,16 @@
         </div>
         <div class="row">
             <div class="col-sm">
+                {% set hasUndownloaded = fsc.updaterItems|reduce((carry, item) => carry or not item.downloaded, false) %}
+                {% if hasUndownloaded %}
+                    <div class="d-flex justify-content-end mb-1">
+                        <a href="{{ fsc.url() }}?action=download-all-plugins"
+                           class="btn btn-spin-action btn-sm btn-secondary"
+                           onclick="animateSpinner('add')">
+                            <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download-all-plugins') }}
+                        </a>
+                    </div>
+                {% endif %}
                 <div class="card shadow-sm mb-4">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
