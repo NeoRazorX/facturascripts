@@ -49,7 +49,18 @@ class RowActions extends VisualItem
             $btnArray['tag'] = 'button';
         }
 
+        if (empty($btnArray['hash'])) {
+            $hashData = $btnArray;
+            unset($hashData['action']);
+            $btnArray['hash'] = md5(serialize($hashData));
+        }
+
         $this->children[] = $btnArray;
+    }
+
+    public function getChildren(): array
+    {
+        return $this->children;
     }
 
     public function render(bool $small = false, string $viewName = ''): string
@@ -80,5 +91,10 @@ class RowActions extends VisualItem
         }
 
         return $html;
+    }
+
+    public function setChildren(array $children): void
+    {
+        $this->children = $children;
     }
 }
