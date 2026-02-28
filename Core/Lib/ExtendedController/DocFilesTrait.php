@@ -190,7 +190,7 @@ trait DocFilesTrait
         $where[] = is_numeric($modelid) ?
             new DataBaseWhere('modelid|modelcode', $modelid) :
             new DataBaseWhere('modelcode', $modelid);
-        $view->loadData('', $where, ['creationdate' => 'DESC']);
+        $view->loadData('', $where, ['orden' => 'ASC', 'creationdate' => 'DESC']);
     }
 
     private function unlinkFileAction(): bool
@@ -250,5 +250,32 @@ trait DocFilesTrait
         }
 
         return true;
+    }
+
+    private function sortFilesAction(): bool
+    {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $idsOrdenadas = $this->request->request->getArray('orden');
+        if (false === empty($idsOrdenadas)) {
+            $orden = 1;
+            foreach ($idsOrdenadas as $id_archivo) {
+                $archivo = new AttachedFileRelation();
+                $archivo->load($id_archivo);
+                $archivo->orden = $orden;
+                if ($archivo->save()) {
+                    $orden++;
+                }
+            }
+        }
+
+        $this->setTemplate(false);
+
+        $this->response->json(['status' => 'ok']);
+
+        return false;
     }
 }
