@@ -92,6 +92,12 @@ class WidgetFile extends BaseWidget
                 continue;
             }
 
+            // exclude unsafe files
+            if (!$uploadFile->isSafe()) {
+                Tools::log()->warning('unsafe-file-with-name', ['%fileName%' => $uploadFile->getClientOriginalName()]);
+                continue;
+            }
+
             // check if the file already exists
             $destiny = FS_FOLDER . '/MyFiles/';
             $destinyName = $uploadFile->getClientOriginalName();
