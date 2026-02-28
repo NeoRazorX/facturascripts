@@ -48,8 +48,13 @@ final class FormasPago implements DataSrcInterface
 
     public static function codeModel(bool $addEmpty = true): array
     {
+        $where = [];
+        if (false === is_null($idempresa)) {
+            $where[] = new DataBaseWhere('idempresa', $idempresa);
+        }
+
         $codes = [];
-        foreach (self::all() as $formaPago) {
+        foreach (self::all($where) as $formaPago) {
             $codes[$formaPago->codpago] = $formaPago->descripcion;
         }
 

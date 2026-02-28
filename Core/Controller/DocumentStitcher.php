@@ -22,10 +22,14 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Lib\ListFilter\PeriodFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\SelectFilter;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\User;
@@ -35,6 +39,7 @@ use FacturaScripts\Dinamic\Model\User;
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class DocumentStitcher extends Controller
 {
@@ -46,11 +51,17 @@ class DocumentStitcher extends Controller
     /** @var TransformerDocument[] */
     public $documents = [];
 
+    /** @var array */
+    public $filters = [];
+
     /** @var string */
     public $modelName;
 
     /** @var TransformerDocument[] */
     public $moreDocuments = [];
+
+    /** @var array */
+    public $where = [];
 
     public function getAvailableStatus(): array
     {
@@ -93,6 +104,7 @@ class DocumentStitcher extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $action = $this->request->request->get('action', '');
 
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
@@ -104,6 +116,11 @@ class DocumentStitcher extends Controller
         }
 
         $this->loadDocuments();
+        $this->addFilters();
+        if ('search' === $action) {
+            $this->processFormDataLoad();
+        }
+
         $this->loadMoreDocuments();
 
         $statusCode = $this->request->input('status', '');
@@ -121,6 +138,16 @@ class DocumentStitcher extends Controller
                 $this->generateNewDocument((int)$statusCode);
             }
         }
+    }
+
+    protected function addFilters()
+    {
+        $payMethods = FormasPago::codeModel(true, $this->documents[0]->idempresa);
+        if (count($payMethods) > 2) {
+            $this->filters['codpago'] = new SelectFilter('codpago', 'codpago', 'payment-method', $payMethods);
+        }
+
+        $this->filters['fecha'] = new PeriodFilter('fecha', 'fecha', 'date');
     }
 
     /**
@@ -174,6 +201,7 @@ class DocumentStitcher extends Controller
             'mostrar_cantidad' => false,
             'mostrar_precio' => false
         ]);
+
         $this->pipe('addInfoLine', $infoLine);
         $newLines[] = $infoLine;
     }
@@ -406,20 +434,29 @@ class DocumentStitcher extends Controller
 
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         $model = new $modelClass();
-        $where = [
-            new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen),
-            new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
-            new DataBaseWhere('codserie', $this->documents[0]->codserie),
-            new DataBaseWhere('dtopor1', $this->documents[0]->dtopor1),
-            new DataBaseWhere('dtopor2', $this->documents[0]->dtopor2),
-            new DataBaseWhere('editable', true),
-            new DataBaseWhere('idempresa', $this->documents[0]->idempresa),
-            new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
-        ];
+        $this->where[] = new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen);
+        $this->where[] = new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa);
+        $this->where[] = new DataBaseWhere('codserie', $this->documents[0]->codserie);
+        $this->where[] = new DataBaseWhere('dtopor1', $this->documents[0]->dtopor1);
+        $this->where[] = new DataBaseWhere('dtopor2', $this->documents[0]->dtopor2);
+        $this->where[] = new DataBaseWhere('editable', true);
+        $this->where[] = new DataBaseWhere('idempresa', $this->documents[0]->idempresa);
+        $this->where[] = new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue());
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
-        foreach ($model->all($where, $orderBy, 0, 0) as $doc) {
+        foreach ($model->all($this->where, $orderBy, 0, 0) as $doc) {
             if (false === in_array($doc->id(), $this->getCodes())) {
                 $this->moreDocuments[] = $doc;
+            }
+        }
+    }
+
+    protected function processFormDataLoad()
+    {
+        // filters
+        foreach ($this->filters as $filter) {
+            $filter->setValueFromRequest($this->request);
+            if ($filter->getDataBaseWhere($this->where)) {
+                $this->showFilters = true;
             }
         }
     }
