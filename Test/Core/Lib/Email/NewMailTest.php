@@ -20,7 +20,9 @@
 namespace FacturaScripts\Test\Core\Lib\Email;
 
 use FacturaScripts\Core\Lib\Email\NewMail;
+use PHPMailer\PHPMailer\PHPMailer;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 final class NewMailTest extends TestCase
 {
@@ -66,5 +68,26 @@ final class NewMailTest extends TestCase
         $this->assertEmpty($mailer->getToAddresses());
         $this->assertEmpty($mailer->getCcAddresses());
         $this->assertCount(1, $mailer->getBccAddresses());
+    }
+
+    // testear que las funciones de borrado borran correctamente las cosas
+    public function testClear(): void
+    {
+        $mailer = NewMail::create()
+            ->to('to@facturascripts.com')
+            ->cc('cc@facturascripts.com')
+            ->bcc('bcc@facturascripts.com');
+
+        $this->assertNotEmpty($mailer->getToAddresses());
+        $mailer->clearTo();
+        $this->assertEmpty($mailer->getToAddresses());
+        
+        $this->assertNotEmpty($mailer->getCcAddresses());
+        $mailer->clearCC();
+        $this->assertEmpty($mailer->getCcAddresses());
+        
+        $this->assertNotEmpty($mailer->getBccAddresses());
+        $mailer->clearBCC();
+        $this->assertEmpty($mailer->getBccAddresses());
     }
 }

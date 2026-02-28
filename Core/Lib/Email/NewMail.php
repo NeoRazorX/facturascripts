@@ -237,6 +237,36 @@ class NewMail
         return $this;
     }
 
+    /**
+     * Limpia el BCC del mail
+     */
+    public function clearBCC(): NewMail
+    {
+        $this->mail->clearBCCs();
+
+        return $this;
+    }
+
+    /**
+     * Limpia el CC del mail
+     */
+    public function clearCC(): NewMail
+    {
+        $this->mail->clearCCs();
+
+        return $this;
+    }
+
+    /**
+     * Limpia el To del mail
+     */
+    public function clearTo(): NewMail
+    {
+        $this->mail->clearAddresses();
+
+        return $this;
+    }
+
     public static function create(): NewMail
     {
         return new static();
@@ -335,6 +365,8 @@ class NewMail
 
     /**
      * Envía el correo.
+     * 
+     * Si se envía correctamente, borra los BCC, CC y To del email después de enviarlo.
      *
      * @throws Exception
      * @throws LoaderError
@@ -410,6 +442,10 @@ class NewMail
 
         if ($this->mail->send()) {
             $this->saveMailSent();
+            // limpiar campos del email después de enviar
+            $this->clearTo();
+            $this->clearCC();
+            $this->clearBCC();
             return true;
         }
 
