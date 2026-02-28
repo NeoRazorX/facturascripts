@@ -369,8 +369,34 @@ class WidgetSelect extends BaseWidget
             $value2 = $value2 ? '1' : '0';
         }
 
-        // use string comparison to avoid type juggling (e.g., "01" != "1")
-        return (string)$value1 === (string)$value2;
+        // Convertir a string para comparación consistente
+        $value1 = (string)$value1;
+        $value2 = (string)$value2;
+
+        if ($this->multiple && (str_contains($value1, ',') || str_contains($value2, ','))) {
+            return $this->multipleMatch($value1, $value2);
+        }
+
+        return $value1 === $value2;
+    }
+
+    /**
+     * Cuando es un select multiple, compara los valores
+     * tratandolos como arrays.
+     * ej. $value1 = '3' y $value2 = '2,3'
+     *
+     * @param string $value1
+     * @param string $value2
+     *
+     * @return bool
+     */
+    protected function multipleMatch(string $value1, string $value2): bool
+    {
+        $array1 = array_map('trim', explode(',', $value1));
+        $array2 = array_map('trim', explode(',', $value2));
+
+        // array_intersect retorna los elementos comunes
+        return !empty(array_intersect($array1, $array2));
     }
 
     /**
