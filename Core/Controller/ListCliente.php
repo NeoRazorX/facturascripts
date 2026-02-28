@@ -103,19 +103,10 @@ class ListCliente extends ListController
 
         $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', Paises::codeModel());
 
-        $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
-        if (count($provinces) >= CodeModel::getlimit()) {
-            $this->addFilterAutocomplete($viewName, 'provincia', 'province', 'provincia', 'contactos', 'provincia');
-        } else {
-            $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
-        }
-
-        $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
-        if (count($cities) >= CodeModel::getlimit()) {
-            $this->addFilterAutocomplete($viewName, 'ciudad', 'city', 'ciudad', 'contactos', 'ciudad');
-        } else {
-            $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
-        }
+        // filtro de provincias
+        $this->addFilterSelectMix($viewName, 'provincia', 'province', 'provincia', 'contactos');
+        // filtro de ciudades
+        $this->addFilterSelectMix($viewName, 'ciudad', 'city', 'ciudad', 'contactos');
 
         $this->addFilterAutocomplete($viewName, 'codpostal', 'zip-code', 'codpostal', 'contactos', 'codpostal');
 
