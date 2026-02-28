@@ -454,5 +454,28 @@ END;
             // guardamos para que se actualice
             $recibo->save();
         }
+
+        //actualizamos el vencimiento de las facturas de cliente segun los recibos
+        foreach (ReciboCliente::all() as $recibo) {
+            $factura = $recibo->getInvoice();
+            if ($factura->pagada === false){
+                //comparamos la fecha de vencimiento de la factura con la del recibo
+                if (empty($factura->vencimiento) || $recibo->vencimiento > $factura->vencimiento) {
+                    $factura->vencimiento = $recibo->vencimiento;
+                    $factura->save();
+                }
+            }
+        }
+        //actualizamos el vencimiento de las facturas de proveedor segun los recibos
+        foreach (ReciboProveedor::all() as $recibo) {
+            $factura = $recibo->getInvoice();
+            if ($factura->pagada === false){
+                //comparamos la fecha de vencimiento de la factura con la del recibo
+                if (empty($factura->vencimiento) || $recibo->vencimiento > $factura->vencimiento) {
+                    $factura->vencimiento = $recibo->vencimiento;
+                    $factura->save();
+                }
+            } 
+        }
     }
 }
