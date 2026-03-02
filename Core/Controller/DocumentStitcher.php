@@ -145,14 +145,14 @@ class DocumentStitcher extends Controller
     protected function addFilters(): void
     {
         $payMethods = [];
-        foreach (FormasPago::codeModel(true) as $payMethod) {
+        foreach (FormasPago::all() as $payMethod) {
             if ($payMethod->idempresa == $this->documents[0]->idempresa) {
-                $payMethods[] = $payMethod;
+                $payMethods[$payMethod->id()] = $payMethod->descripcion;
             }
         }
 
         if (count($payMethods) > 2) {
-            $this->filters['codpago'] = new SelectFilter('codpago', 'codpago', 'payment-method', $payMethods);
+            $this->filters['codpago'] = new SelectFilter('codpago', 'codpago', 'payment-method', CodeModel::array2codeModel($payMethods));
         }
 
         $this->filters['fecha'] = new PeriodFilter('fecha', 'fecha', 'date');
