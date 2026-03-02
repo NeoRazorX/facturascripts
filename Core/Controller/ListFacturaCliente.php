@@ -185,8 +185,10 @@ class ListFacturaCliente extends ListBusinessDocument
         // filtros
         $paises = Paises::codeModel();
         $this->addFilterSelect($viewName, 'country', 'country', 'codpais', $paises);
-        $this->addFilterAutocomplete($viewName, 'provincia', 'province', 'provincia', 'provincias');
-        $this->addFilterAutocomplete($viewName, 'ciudad', 'city', 'ciudad', 'ciudades');
+        // filtro de provincias
+        $this->addFilterSelectMix($viewName, 'provincia', 'province', 'provincia', 'provincias');
+        // filtro de ciudades
+        $this->addFilterSelectMix($viewName, 'ciudad', 'city', 'ciudad', 'ciudades');
 
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
