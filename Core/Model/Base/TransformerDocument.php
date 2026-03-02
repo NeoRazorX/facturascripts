@@ -59,11 +59,18 @@ abstract class TransformerDocument extends BusinessDocument
     public $idestado;
 
     /**
+     * Document previous status, from the EstadoDocumento model.
+     *
+     * @var int
+     */
+    public $idestadoanterior;
+
+    /**
      * Campos que se pueden modificar aunque el documento no sea editable.
      *
      * @var array
      */
-    private static $unlocked_fields = ['femail', 'idestado', 'numdocs', 'pagada'];
+    private static $unlocked_fields = ['femail', 'idestado', 'idestadoanterior', 'numdocs', 'pagada'];
 
     /**
      * Adds a field to the list of unlocked fields (editable even when document is not editable).
@@ -176,6 +183,14 @@ abstract class TransformerDocument extends BusinessDocument
 
         // change parent doc status
         foreach ($parents as $parent) {
+            // si tiene idestadoanterior lo asignamos
+            if(false === empty($parent->idestadoanterior)){
+                $parent->idestado = $parent->idestadoanterior;
+                $parent->save();
+                continue;
+            }
+
+            // si no tiene idestadoanterior asignamos el default como se hacia antes
             foreach ($parent->getAvailableStatus() as $status) {
                 if ($status->predeterminado) {
                     $parent->idestado = $status->idestado;
@@ -338,6 +353,9 @@ abstract class TransformerDocument extends BusinessDocument
         if ($field !== 'idestado') {
             return parent::onChange($field);
         }
+
+        // guardamos el estado anterior para poder revertirlo
+        $this->idestadoanterior = $this->getOriginal('idestado');
 
         $status = $this->getStatus();
         if (empty($status->generadoc) || false === self::$document_generation) {
