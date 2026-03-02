@@ -75,9 +75,9 @@ class Myfiles implements ControllerInterface
     {
         $parts = explode('.', $filePath);
         $safe = [
-            '7z', 'accdb', 'ai', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'dxf', 'dwg', 'eot', 'gif', 'gz', 'html',
-            'ico', 'ics', 'jfif', 'jpeg', 'jpg', 'js', 'json', 'map', 'md', 'mdb', 'mkv', 'mov', 'mp3', 'mp4', 'ndg',
-            'ods', 'odt', 'ogg', 'pdf', 'png', 'pptx', 'rar', 'sql', 'step', 'svg', 'ttf', 'txt', 'webm', 'webp',
+            '7z', 'accdb', 'ai', 'aac', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'dxf', 'dwg', 'eot', 'flac', 'gif', 'gz', 'html',
+            'ico', 'ics', 'jfif', 'jpeg', 'jpg', 'js', 'json', 'm4a', 'map', 'md', 'mdb', 'mkv', 'mov', 'mp3', 'mp4', 'ndg',
+            'ods', 'odt', 'ogg', 'pdf', 'png', 'pptx', 'rar', 'sql', 'step', 'svg', 'ttf', 'txt', 'wav', 'webm', 'webp',
             'woff', 'woff2', 'xls', 'xlsm', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         $extension = strtolower(end($parts));
@@ -90,20 +90,58 @@ class Myfiles implements ControllerInterface
             return;
         }
 
-        header('Content-Type: ' . $this->getMime($this->filePath));
+        $mimeType = $this->getMime($this->filePath);
+        $fileSize = filesize($this->filePath);
+
+        // Permite acceso CORS para que Safari pueda cargar recursos
+        header('Access-Control-Allow-Origin: *');
+
+        // Manejo de Range Requests para Safari (crucial para audio)
+        $start = 0;
+        $end = $fileSize - 1;
+
+        if (isset($_SERVER['HTTP_RANGE']) && preg_match('/bytes=(\d+)-(\d*)/', $_SERVER['HTTP_RANGE'], $matches)) {
+            $start = intval($matches[1]);
+            $end = $matches[2] !== '' ? intval($matches[2]) : $end;
+
+            header('HTTP/1.1 206 Partial Content');
+            header('Content-Range: bytes ' . $start . '-' . $end . '/' . $fileSize);
+            header('Content-Length: ' . ($end - $start + 1));
+        } else {
+            header('HTTP/1.1 200 OK');
+            header('Content-Length: ' . $fileSize);
+        }
+
+        header('Content-Type: ' . $mimeType);
+        header('Accept-Ranges: bytes');
         header('Cache-Control: public, max-age=31536000, immutable');
+
+        // Para archivos de audio, nunca descargar - siempre reproducir inline
+        if (strpos($mimeType, 'audio') === 0) {
+            header('Content-Disposition: inline; filename="' . basename($this->filePath) . '"');
+        } else {
+            // force to download svg, xml and html files to prevent XSS attacks
+            if ($this->shouldForceDownload($this->filePath)) {
+                header('Content-Disposition: attachment; filename="' . basename($this->filePath) . '"');
+            }
+        }
 
         // disable the buffer if enabled
         if (ob_get_contents()) {
             ob_end_flush();
         }
 
-        // force to download svg, xml and html files to prevent XSS attacks
-        if ($this->shouldForceDownload($this->filePath)) {
-            header('Content-Disposition: attachment; filename="' . basename($this->filePath) . '"');
+        // Enviar el archivo
+        if (isset($_SERVER['HTTP_RANGE'])) {
+            // Enviar solo el rango solicitado
+            $file = fopen($this->filePath, 'rb');
+            fseek($file, $start);
+            echo fread($file, $end - $start + 1);
+            fclose($file);
+        } else {
+            // Enviar el archivo completo
+            readfile($this->filePath);
         }
-
-        readfile($this->filePath);
     }
 
     private function getMime(string $filePath): string
@@ -120,6 +158,28 @@ class Myfiles implements ControllerInterface
             case 'xml':
             case 'xsig':
                 return 'text/xml';
+
+            // Formatos de audio - asegurar tipos MIME correctos
+            case 'm4a':
+                return 'audio/mp4';
+
+            case 'mp3':
+                return 'audio/mpeg';
+
+            case 'wav':
+                return 'audio/wav';
+
+            case 'ogg':
+                return 'audio/ogg';
+
+            case 'webm':
+                return 'audio/webm';
+
+            case 'aac':
+                return 'audio/aac';
+
+            case 'flac':
+                return 'audio/flac';
         }
 
         return mime_content_type($filePath);
