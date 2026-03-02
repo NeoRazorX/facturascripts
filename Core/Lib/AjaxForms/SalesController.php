@@ -230,6 +230,9 @@ abstract class SalesController extends PanelController
             case 'save-status':
                 return $this->saveStatusAction();
 
+            case 'sort-files':
+                return $this->sortFilesAction();
+
             case 'unlink-file':
                 return $this->unlinkFileAction();
         }
