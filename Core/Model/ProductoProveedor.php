@@ -25,7 +25,6 @@ use FacturaScripts\Core\Model\Base\ProductRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Lib\CostPriceTools;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
@@ -190,37 +189,5 @@ class ProductoProveedor extends ModelClass
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getVariant()->url($type);
-    }
-
-    /**
-     * This method is called after a record is deleted on the database (delete).
-     */
-    protected function onDelete(): void
-    {
-        CostPriceTools::update($this->getVariant());
-
-        parent::onDelete();
-    }
-
-    /**
-     * This method is called after a new record is saved on the database (saveInsert).
-     */
-    protected function onInsert(): void
-    {
-        CostPriceTools::update($this->getVariant());
-
-        parent::onInsert();
-    }
-
-    /**
-     * This method is called after a record is updated on the database (saveUpdate).
-     */
-    protected function onUpdate(): void
-    {
-        if ($this->isDirty('neto')) {
-            CostPriceTools::update($this->getVariant());
-        }
-
-        parent::onUpdate();
     }
 }
