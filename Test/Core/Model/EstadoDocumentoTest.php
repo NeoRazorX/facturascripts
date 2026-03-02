@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -168,6 +168,26 @@ final class EstadoDocumentoTest extends TestCase
 
         // Comprobamos que no se pueda guardar un estado que sea predeterminado y no editable.
         $this->assertFalse($status->save());
+    }
+
+    /**
+     * No permitir crear estados de ventas que generen un documento de compras o viceversa.
+     */
+    public function testSalesDocsCantGeneratePurchaseDocs(): void
+    {
+        // Crear nuevo estado de ventas que genere un documento de compras
+        $status = new EstadoDocumento();
+        $status->nombre = 'Test sales';
+        $status->tipodoc = 'PresupuestoCliente';
+        $status->generadoc = 'PedidoProveedor';
+        $this->assertFalse($status->save(), 'sales-docs-cant-generate-purchase-docs');
+
+        // Crear nuevo estado de compras que genere un documento de ventas
+        $status2 = new EstadoDocumento();
+        $status2->nombre = 'Test purchase';
+        $status2->tipodoc = 'PresupuestoProveedor';
+        $status2->generadoc = 'PedidoCliente';
+        $this->assertFalse($status2->save(), 'purchase-docs-cant-generate-sales-docs');
     }
 
     protected function tearDown(): void
