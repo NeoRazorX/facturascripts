@@ -23,7 +23,6 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\FormasPago;
-use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -59,6 +58,9 @@ class DocumentStitcher extends Controller
 
     /** @var TransformerDocument[] */
     public $moreDocuments = [];
+
+    /** @var bool */
+    public $showFilters = false;
 
     /** @var array */
     public $where = [];
@@ -140,9 +142,15 @@ class DocumentStitcher extends Controller
         }
     }
 
-    protected function addFilters()
+    protected function addFilters(): void
     {
-        $payMethods = FormasPago::codeModel(true, $this->documents[0]->idempresa);
+        $payMethods = [];
+        foreach (FormasPago::codeModel(true) as $payMethod) {
+            if ($payMethod->idempresa == $this->documents[0]->idempresa) {
+                $payMethods[] = $payMethod;
+            }
+        }
+
         if (count($payMethods) > 2) {
             $this->filters['codpago'] = new SelectFilter('codpago', 'codpago', 'payment-method', $payMethods);
         }
@@ -450,7 +458,7 @@ class DocumentStitcher extends Controller
         }
     }
 
-    protected function processFormDataLoad()
+    protected function processFormDataLoad(): void
     {
         // filters
         foreach ($this->filters as $filter) {
