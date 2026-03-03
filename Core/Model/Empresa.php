@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
 use FacturaScripts\Core\Model\Base\FiscalNumberTrait;
@@ -112,6 +112,7 @@ class Empresa extends ModelClass
         parent::clear();
         $this->codpais = Tools::settings('default', 'codpais');
         $this->fechaalta = Tools::date();
+        $this->personafisica = false;
         $this->regimeniva = RegimenIVA::defaultValue();
         $this->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
     }
@@ -140,7 +141,7 @@ class Empresa extends ModelClass
      */
     public function getBankAccounts(): array
     {
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        $where = [Where::eq('idempresa', $this->idempresa)];
         return DinCuentaBanco::all($where, [], 0, 0);
     }
 
@@ -151,7 +152,7 @@ class Empresa extends ModelClass
      */
     public function getExercises(): array
     {
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        $where = [Where::eq('idempresa', $this->idempresa)];
         return DinEjercicio::all($where, [], 0, 0);
     }
 
@@ -162,7 +163,7 @@ class Empresa extends ModelClass
      */
     public function getWarehouses(): array
     {
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        $where = [Where::eq('idempresa', $this->idempresa)];
         return DinAlmacen::all($where, [], 0, 0);
     }
 
@@ -176,8 +177,11 @@ class Empresa extends ModelClass
         $codpais = Tools::config('initial_codpais', 'ESP');
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,direccion,administrador,cifnif,nombre,'
             . 'nombrecorto,personafisica,regimeniva) '
-            . "VALUES (1,'','" . $codpais . "','','','00000014Z','" . Tools::textBreak($name, 100)
-            . "','" . Tools::textBreak($name, 32) . "','0'," . "'" . RegimenIVA::defaultValue() . "');";
+            . 'VALUES (1,' . self::db()->var2str('') . ',' . self::db()->var2str($codpais) . ',' . self::db()->var2str('')
+            . ',' . self::db()->var2str('') . ',' . self::db()->var2str('00000014Z')
+            . ',' . self::db()->var2str(Tools::textBreak($name, 100))
+            . ',' . self::db()->var2str(Tools::textBreak($name, 32))
+            . ',' . self::db()->var2str(false) . ',' . self::db()->var2str(RegimenIVA::defaultValue()) . ');';
     }
 
     /**
@@ -212,7 +216,7 @@ class Empresa extends ModelClass
         $this->ciudad = Tools::noHtml($this->ciudad);
         $this->codpostal = Tools::noHtml($this->codpostal);
         $this->direccion = Tools::noHtml($this->direccion);
-        $this->fax = Tools::noHtml($this->fax) ?? '';
+        $this->fax = Tools::noHtml($this->fax);
         $this->nombre = Tools::noHtml($this->nombre);
         $this->nombrecorto = Tools::noHtml($this->nombrecorto);
         $this->observaciones = Tools::noHtml($this->observaciones);
