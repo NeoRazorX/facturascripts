@@ -96,11 +96,6 @@
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="tax-transport" titleurl="ListImpuesto" display="none" numcolumns="2" order="120">
-                <widget type="select" fieldname="codimpuestoportes">
-                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"/>
-                </widget>
-            </column>
             <column name="vat-regime" numcolumns="2" order="130">
                 <widget type="select" fieldname="regimeniva" required="true"/>
             </column>

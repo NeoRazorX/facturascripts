@@ -58,9 +58,6 @@ class Proveedor extends ModelClass
     public $codcliente;
 
     /** @var string */
-    public $codimpuestoportes;
-
-    /** @var string */
     public $codpago;
 
     /** @var string */
@@ -121,7 +118,7 @@ class Proveedor extends ModelClass
     {
         parent::clear();
         $this->acreedor = false;
-        $this->codimpuestoportes = Tools::settings('default', 'codimpuesto');
+        $this->codretencion = Tools::settings('default', 'codretencion');
         $this->debaja = false;
         $this->fechaalta = Tools::date();
         $this->personafisica = true;
