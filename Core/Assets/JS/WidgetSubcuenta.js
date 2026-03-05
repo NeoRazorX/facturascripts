@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,8 +26,7 @@ function widgetSubaccountDraw(id, results) {
             maximumFractionDigits: 2
         });
         const saldoClass = saldoValue < 0 ? ' text-danger' : '';
-        const desc = (element.descripcion || '').replace(/'/g, "\\'");
-        html += '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' + id + '\', \'' + element.codsubcuenta + '\', \'' + desc + '\');">'
+        html += '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' + id + '\', \'' + element.codsubcuenta + '\');">'
             + '<td class="text-center">'
             + '<a href="' + element.url + '" target="_blank" onclick="event.stopPropagation();">'
             + '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
@@ -82,8 +81,8 @@ function widgetSubaccountSearchKp(id, event) {
     }, 400);
 }
 
-function widgetSubaccountSelect(id, value, description) {
+function widgetSubaccountSelect(id, value) {
     $("#" + id).val(value);
     $("#modal_" + id).modal("hide");
-    $("#modal_span_" + id).text(description || value);
+    $("#modal_span_" + id).text(value);
 }

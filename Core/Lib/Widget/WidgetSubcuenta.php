@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,22 +53,21 @@ class WidgetSubcuenta extends WidgetText
         $labelHtml = $this->onclickHtml($label, $titleurl);
         $icon = empty($this->icon) ? 'fa-solid fa-book' : $this->icon;
 
-        // hay que cargar la subcuenta para mostrar su nombre
-        $subcuenta = new Subcuenta();
-        if (false === empty($this->value)) {
-            $subcuenta->loadWhere([
-                new DataBaseWhere($this->match, $this->value)
-            ]);
-        }
-
         $safeValue = Tools::noHtml($this->value);
 
         if ($this->readonly()) {
+            $subcuenta = new Subcuenta();
+            if (false === empty($this->value)) {
+                $subcuenta->loadWhere([
+                    new DataBaseWhere($this->match, $this->value)
+                ]);
+            }
+
             return '<div class="mb-3 d-grid">'
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $safeValue . '">'
                 . $labelHtml
                 . '<a href="' . $subcuenta->url() . '" class="btn btn-outline-secondary">'
-                . '<i class="' . $icon . ' fa-fw"></i> ' . ($subcuenta->nombre ?? $safeValue ?? Tools::trans('select'))
+                . '<i class="' . $icon . ' fa-fw"></i> ' . ($safeValue ?? Tools::trans('select'))
                 . '</a>'
                 . $descriptionHtml
                 . '</div>';
@@ -79,7 +78,7 @@ class WidgetSubcuenta extends WidgetText
             . $labelHtml
             . '<a href="#" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
-            . '<span id="modal_span_' . $this->id . '">' . Tools::noHtml($subcuenta->nombre ?? $this->value ?? Tools::trans('select')) . '</span>'
+            . '<span id="modal_span_' . $this->id . '">' . ($safeValue ?? Tools::trans('select')) . '</span>'
             . '</a>'
             . $descriptionHtml
             . '</div>';
@@ -286,8 +285,7 @@ class WidgetSubcuenta extends WidgetText
         foreach ($this->subcuentas() as $item) {
             $match = $item->{$this->match};
             $saldoClass = $item->saldo < 0 ? ' text-danger' : '';
-            $desc = str_replace("'", "\\'", $item->descripcion);
-            $items[] = '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'' . $match . '\', \'' . $desc . '\');">'
+            $items[] = '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'' . $match . '\');">'
                 . '<td class="text-center">'
                 . '<a href="' . $item->url() . '" target="_blank" onclick="event.stopPropagation();">'
                 . '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
