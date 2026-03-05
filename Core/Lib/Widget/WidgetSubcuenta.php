@@ -61,23 +61,25 @@ class WidgetSubcuenta extends WidgetText
             ]);
         }
 
+        $safeValue = Tools::noHtml($this->value);
+
         if ($this->readonly()) {
             return '<div class="mb-3 d-grid">'
-                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $safeValue . '">'
                 . $labelHtml
                 . '<a href="' . $subcuenta->url() . '" class="btn btn-outline-secondary">'
-                . '<i class="' . $icon . ' fa-fw"></i> ' . ($subcuenta->nombre ?? $this->value ?? Tools::trans('select'))
+                . '<i class="' . $icon . ' fa-fw"></i> ' . ($subcuenta->nombre ?? $safeValue ?? Tools::trans('select'))
                 . '</a>'
                 . $descriptionHtml
                 . '</div>';
         }
 
         $html = '<div class="mb-3 d-grid">'
-            . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+            . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $safeValue . '">'
             . $labelHtml
             . '<a href="#" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
-            . '<span id="modal_span_' . $this->id . '">' . ($subcuenta->nombre ?? $this->value ?? Tools::trans('select')) . '</span>'
+            . '<span id="modal_span_' . $this->id . '">' . Tools::noHtml($subcuenta->nombre ?? $this->value ?? Tools::trans('select')) . '</span>'
             . '</a>'
             . $descriptionHtml
             . '</div>';
@@ -108,7 +110,7 @@ class WidgetSubcuenta extends WidgetText
         $model = new Subcuenta();
         if ($this->value && $model->loadWhere([new DataBaseWhere($this->match, $this->value)])) {
             $list[] = clone $model;
-            $where[] = new DataBaseWhere($model->primaryColumn(), $model->id, '<>');
+            $where[] = new DataBaseWhere($model->primaryColumn(), $model->id(), '<>');
         }
 
         if ($query) {
@@ -192,32 +194,6 @@ class WidgetSubcuenta extends WidgetText
         }
 
         return '<td class="' . $class . '">' . $this->onclickHtml($subcuenta->nombre ?? $this->value) . '</td>';
-    }
-
-    public function search(string $query, string $codejercicio, string $sort): array
-    {
-        $where = [];
-        if (false === empty($query)) {
-            $where[] = new DataBaseWhere('codsubcuenta', $query, 'LIKE');
-            $where[] = new DataBaseWhere('descripcion', $query, 'LIKE');
-        }
-
-        if (false === empty($codejercicio)) {
-            $where[] = new DataBaseWhere('codejercicio', $codejercicio);
-        }
-
-        switch ($sort) {
-            case 'cod-desc':
-                $orderBy = ['codsubcuenta' => 'DESC'];
-                break;
-
-            default:
-                $orderBy = ['codsubcuenta' => 'ASC'];
-                break;
-        }
-
-        $subcuenta = new Subcuenta();
-        return $subcuenta->fetchAll($where, $orderBy, 0, 100);
     }
 
     protected function assets(): void
@@ -308,9 +284,10 @@ class WidgetSubcuenta extends WidgetText
     {
         $items = [];
         foreach ($this->subcuentas() as $item) {
-            $match = $item->codsubcuenta;
+            $match = $item->{$this->match};
             $saldoClass = $item->saldo < 0 ? ' text-danger' : '';
-            $items[] = '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'' . $match . '\');">'
+            $desc = str_replace("'", "\\'", $item->descripcion);
+            $items[] = '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'' . $match . '\', \'' . $desc . '\');">'
                 . '<td class="text-center">'
                 . '<a href="' . $item->url() . '" target="_blank" onclick="event.stopPropagation();">'
                 . '<i class="fa-solid fa-external-link-alt fa-fw"></i>'

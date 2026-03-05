@@ -26,7 +26,8 @@ function widgetSubaccountDraw(id, results) {
             maximumFractionDigits: 2
         });
         const saldoClass = saldoValue < 0 ? ' text-danger' : '';
-        html += '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' + id + '\', \'' + element.codsubcuenta + '\');">'
+        const desc = (element.descripcion || '').replace(/'/g, "\\'");
+        html += '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' + id + '\', \'' + element.codsubcuenta + '\', \'' + desc + '\');">'
             + '<td class="text-center">'
             + '<a href="' + element.url + '" target="_blank" onclick="event.stopPropagation();">'
             + '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
@@ -81,8 +82,8 @@ function widgetSubaccountSearchKp(id, event) {
     }, 400);
 }
 
-function widgetSubaccountSelect(id, value) {
+function widgetSubaccountSelect(id, value, description) {
     $("#" + id).val(value);
     $("#modal_" + id).modal("hide");
-    $("#modal_span_" + id).html(value);
+    $("#modal_span_" + id).text(description || value);
 }
