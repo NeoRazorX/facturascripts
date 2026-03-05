@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Filter all records that match the search term and his child's.
+ * Filter all records that match the search term and its children.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
@@ -93,11 +93,12 @@ class TreeFilter extends SelectFilter
     private function getIds(): array
     {
         $result = [];
+        $database = new DataBase();
 
         $sql = "WITH RECURSIVE valuelist AS ("
             . "SELECT " . $this->fieldcode . "," . $this->fieldparent
             . " FROM " . $this->table
-            . " WHERE " . $this->fieldcode . " = '" . $this->value . "'"
+            . " WHERE " . $this->fieldcode . " = " . $database->var2str($this->value)
             . " UNION ALL "
             . "SELECT t1." . $this->fieldcode . ", t1." . $this->fieldparent
             . " FROM " . $this->table . " t1"
@@ -105,7 +106,6 @@ class TreeFilter extends SelectFilter
             . ") "
             . "SELECT * FROM valuelist;";
 
-        $database = new DataBase();
         foreach ($database->select($sql) as $row) {
             $result[] = $row[$this->fieldcode];
         }
@@ -128,10 +128,11 @@ class TreeFilter extends SelectFilter
         }
         $sql .= " ORDER BY " . $this->fieldtitle;
 
-        // realizar consulta, construir y "maquillar" el árbol
+        // realizar consulta, construir y formatear el árbol
         $rows = $dataBase->select($sql);
         $tree = $this->buildTree($rows);
-        return $this->flattenTree($tree);
+        $values = [['code' => '', 'description' => '------']];
+        return array_merge($values, $this->flattenTree($tree));
     }
 
     /**
@@ -164,10 +165,10 @@ class TreeFilter extends SelectFilter
      * Recibe un array de [codPadre = [codHijo...], ...] en donde codHijo es [cod = x, titulo = x, codPadre = x]
      * y el argumento del id del padre o rama a construir.
      * 
-     * Hace una llamada recursiva a la función y construye un array en forma de arbol,
+     * Hace una llamada recursiva a la función y construye un array en forma de árbol,
      * crea una rama y hace una llamada recursiva a las siguientes ramas.
-     * 
-     * Devuelve un array en forma de arbol al final, con children = [[cod = x, titulo = x, codPadre = x, children = [elementosHijos...]]] donde
+     *
+     * Devuelve un array en forma de árbol al final, con children = [[cod = x, titulo = x, codPadre = x, children = [elementosHijos...]]] donde
      * elementosHijos es otro [[cod = x, titulo = x, codPadre = x, children = [elementosHijos...]]].
      */
     private function buildTreeRecursive(array &$grouped, $parentId): array
@@ -189,7 +190,7 @@ class TreeFilter extends SelectFilter
      * Recibe un array recursivo de elementos $tree = [elemento1, elemento2, elemento3...] donde
      * cada elemento tiene a su vez un $elemento['children'] = $tree con sus hijos.
      * 
-     * Lo formatea para una salida más intuitiva
+     * Lo formatea para una salida más intuitiva.
      */
     private function flattenTree(array $tree, int $level = 0): array
     {
