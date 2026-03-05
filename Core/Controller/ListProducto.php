@@ -48,7 +48,7 @@ class ListProducto extends ListController
     /**
      * Load views
      */
-    protected function createViews()
+    protected function createViews(): void
     {
         $this->createViewProducto();
         $this->createViewVariante();
@@ -67,7 +67,6 @@ class ListProducto extends ListController
             ->addSearchFields(['referencia', 'descripcion', 'observaciones']);
 
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
-        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $types = [['code' => '', 'description' => '------']];
         foreach (ProductType::all() as $key => $value) {
             $types[] = [
@@ -95,7 +94,7 @@ class ListProducto extends ListController
                 ['label' => Tools::trans('all'), 'where' => []]
             ])
             ->addFilterSelect('codfabricante', 'manufacturer', 'codfabricante', $manufacturers)
-            ->addFilterSelect('codfamilia', 'family', 'codfamilia', $families)
+            ->addFilterTree('codfamilia', 'family', 'codfamilia', 'familias', 'madre', 'codfamilia', 'descripcion')
             ->addFilterSelect('tipo', 'type', 'tipo', $types)
             ->addFilterNumber('min-price', 'price', 'precio', '>=')
             ->addFilterNumber('max-price', 'price', 'precio', '<=')
@@ -106,8 +105,7 @@ class ListProducto extends ListController
             ->addFilterCheckbox('nostock', 'no-stock', 'nostock')
             ->addFilterCheckbox('ventasinstock', 'allow-sale-without-stock', 'ventasinstock')
             ->addFilterCheckbox('secompra', 'for-purchase', 'secompra')
-            ->addFilterCheckbox('sevende', 'for-sale', 'sevende')
-            ->addFilterTree('descendientede', 'descendant-of', 'codfamilia', 'familias', 'madre', 'codfamilia', 'descripcion');
+            ->addFilterCheckbox('sevende', 'for-sale', 'sevende');
     }
 
     protected function createViewVariante(string $viewName = 'ListVariante'): void
@@ -133,7 +131,7 @@ class ListProducto extends ListController
         // filtros
         $this->listView($viewName)
             ->addFilterSelect('codfabricante', 'manufacturer', 'codfabricante', $manufacturers)
-            ->addFilterSelect('codfamilia', 'family', 'codfamilia', $families)
+            ->addFilterTree('codfamilia', 'family', 'codfamilia', 'familias', 'madre', 'codfamilia', 'descripcion')
             ->addFilterSelect('idatributovalor1', 'attribute-value-1', 'variantes.idatributovalor1', $attributes1)
             ->addFilterSelect('idatributovalor2', 'attribute-value-2', 'variantes.idatributovalor2', $attributes2)
             ->addFilterSelect('idatributovalor3', 'attribute-value-3', 'variantes.idatributovalor3', $attributes3)
@@ -189,7 +187,7 @@ class ListProducto extends ListController
                 ]
             ])
             ->addFilterSelect('codfabricante', 'manufacturer', 'productos.codfabricante', $manufacturers)
-            ->addFilterSelect('codfamilia', 'family', 'productos.codfamilia', $families)
+            ->addFilterTree('codfamilia', 'family', 'codfamilia', 'familias', 'madre', 'codfamilia', 'descripcion')
             ->addFilterNumber('min-stock', 'quantity', 'cantidad', '>=')
             ->addFilterNumber('max-stock', 'quantity', 'cantidad', '<=')
             ->addFilterNumber('min-reserved', 'reserved', 'reservada', '>=')
