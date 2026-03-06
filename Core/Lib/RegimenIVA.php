@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,41 +52,66 @@ class RegimenIVA
 
     /** @var array */
     private static $exceptions = [];
+    /** @var array */
+    private static $removedExceptions = [];
 
     /** @var array */
     private static $values = [];
+    /** @var array */
+    private static $removedValues = [];
 
     public static function add(string $key, string $value): void
     {
         $fixedKey = substr($key, 0, 20);
-        self::$exceptions[$fixedKey] = $value;
+        self::$values[$fixedKey] = $value;
+        unset(self::$removedValues[$fixedKey]);
     }
 
     public static function addException(string $key, string $value): void
     {
         $fixedKey = substr($key, 0, 20);
         self::$exceptions[$fixedKey] = $value;
+        unset(self::$removedExceptions[$fixedKey]);
+    }
+
+    public static function remove(string $key): void
+    {
+        $fixedKey = substr($key, 0, 20);
+        unset(self::$values[$fixedKey]);
+        self::$removedValues[$fixedKey] = true;
+    }
+
+    public static function removeException(string $key): void
+    {
+        $fixedKey = substr($key, 0, 20);
+        unset(self::$exceptions[$fixedKey]);
+        self::$removedExceptions[$fixedKey] = true;
     }
 
     public static function all(): array
     {
         $defaultValues = [
+            self::TAX_SYSTEM_GENERAL => 'es-tax-regime-general',
+            self::TAX_SYSTEM_EXEMPT => 'es-tax-regime-exempt',
+            self::TAX_SYSTEM_SURCHARGE => 'es-tax-regime-surcharge',
+            self::TAX_SYSTEM_SIMPLIFIED => 'es-tax-regime-simplified',
             self::TAX_SYSTEM_AGRARIAN => 'es-tax-regime-agrarian',
             self::TAX_SYSTEM_CASH_CRITERIA => 'es-tax-regime-cash-criteria',
-            self::TAX_SYSTEM_EXEMPT => 'es-tax-regime-exempt',
-            self::TAX_SYSTEM_GENERAL => 'es-tax-regime-general',
-            self::TAX_SYSTEM_GOLD => 'es-tax-regime-gold',
             self::TAX_SYSTEM_GROUP_ENTITIES => 'es-tax-regime-group-entities',
-            self::TAX_SYSTEM_SIMPLIFIED => 'es-tax-regime-simplified',
-            self::TAX_SYSTEM_SURCHARGE => 'es-tax-regime-surcharge',
             self::TAX_SYSTEM_TRAVEL => 'es-tax-regime-travel',
             self::TAX_SYSTEM_USED_GOODS => 'es-tax-regime-used-goods',
+            self::TAX_SYSTEM_GOLD => 'es-tax-regime-gold',
             self::TAX_SYSTEM_SPECIAL_SMALL_BUSINESS => 'es-tax-regime-special-small-business',
             self::TAX_SYSTEM_ONE_STOP_SHOP_OSS => 'es-tax-regime-one-stop-shop-oss',
             self::TAX_SYSTEM_ONE_STOP_SHOP_IOSS => 'es-tax-regime-one-stop-shop-ioss',
         ];
 
-        return array_merge($defaultValues, self::$values);
+        $all = array_merge($defaultValues, self::$values);
+        foreach (array_keys(self::$removedValues) as $key) {
+            unset($all[$key]);
+        }
+
+        return $all;
     }
 
     public static function allExceptions(): array
@@ -103,7 +128,12 @@ class RegimenIVA
             self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT => 'es-tax-exception-passive-subject',
         ];
 
-        return array_merge($defaultExceptions, self::$exceptions);
+        $all = array_merge($defaultExceptions, self::$exceptions);
+        foreach (array_keys(self::$removedExceptions) as $key) {
+            unset($all[$key]);
+        }
+
+        return $all;
     }
 
     public static function defaultValue(): string
