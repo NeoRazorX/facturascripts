@@ -19,8 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Params\RefundInvoiceParams;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Service\InvoiceManager;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
@@ -82,90 +83,18 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
             }
         }
 
-        // si no se especifican cantidades de las lineas,
-        // incluimos todas las lineas en la factura rectificativa.
-        if (empty($lines)) {
-            $lines = $invoiceLines;
-        }
+        $params = new RefundInvoiceParams(
+            lines: $lines,
+            codserie: $this->request->input('codserie', ''),
+            fecha: $this->request->input('fecha'),
+            hora: $this->request->input('hora'),
+            observaciones: $this->request->input('observaciones', ''),
+            idestado: $this->request->input('idestado', ''),
+            nick: $this->request->input('nick', ''),
+            includeAllLinesIfEmpty: true
+        );
 
-        $this->db()->beginTransaction();
-
-        if ($invoice->editable) {
-            foreach ($invoice->getAvailableStatus() as $status) {
-                if ($status->editable || !$status->activo) {
-                    continue;
-                }
-
-                $invoice->idestado = $status->idestado;
-                if (false === $invoice->save()) {
-                    $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
-                    $this->db()->rollback();
-                    return null;
-                }
-            }
-        }
-
-        $newRefund = new FacturaCliente();
-        $newRefund->loadFromData($invoice->toArray(), $invoice::dontCopyFields());
-        $newRefund->codigorect = $invoice->codigo;
-        $newRefund->codserie = $this->request->input('codserie') ?? $invoice->codserie;
-        $newRefund->idfacturarect = $invoice->idfactura;
-        $newRefund->nick = $this->request->input('nick');
-        $newRefund->observaciones = $this->request->input('observaciones');
-
-        $date = $this->request->input('fecha');
-        $hour = $this->request->input('hora');
-        if (false === $newRefund->setDate($date, $hour)) {
-            $this->sendError('error-set-date', Response::HTTP_BAD_REQUEST);
-            $this->db()->rollback();
-            return null;
-        }
-
-        if (false === $newRefund->save()) {
-            $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->db()->rollback();
-            return null;
-        }
-
-        foreach ($lines as $line) {
-            $newLine = $newRefund->getNewLine($line->toArray());
-            $newLine->cantidad = 0 - (float)$this->request->input('refund_' . $line->id(), $line->cantidad);
-            $newLine->idlinearect = $line->idlinea;
-            if (false === $newLine->save()) {
-                $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
-                $this->db()->rollback();
-                return null;
-            }
-        }
-
-        $newLines = $newRefund->getLines();
-        $newRefund->idestado = $invoice->idestado;
-        if (false === Calculator::calculate($newRefund, $newLines, true)) {
-            $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->db()->rollback();
-            return null;
-        }
-
-        // si la factura estaba pagada, marcamos los recibos de la nueva como pagados
-        if ($invoice->pagada) {
-            foreach ($newRefund->getReceipts() as $receipt) {
-                $receipt->pagado = true;
-                $receipt->save();
-            }
-        }
-
-        // asignamos el estado de la factura
-        $newRefund->idestado = $this->request->input('idestado');
-        if (false === $newRefund->save()) {
-            $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->db()->rollback();
-            return null;
-        }
-
-        $this->db()->commit();
-        Tools::log()->notice('record-updated-correctly');
-
-        return $newRefund;
+        return InvoiceManager::createRefund($invoice, $params);
     }
 
     private function sendError(string $message, int $http_code): void
