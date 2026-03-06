@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
 
@@ -223,6 +224,8 @@ class EditProveedor extends ComercialContactController
             case $mainViewName:
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
+                $this->loadExceptionVat($viewName);
+                $this->loadOperationValues($viewName);
                 break;
 
             default:
@@ -244,6 +247,22 @@ class EditProveedor extends ComercialContactController
             }
 
             $columnLangCode->widget->setValuesFromArray($langs, false, true);
+        }
+    }
+
+    protected function loadExceptionVat(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('vat-exception');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
+        }
+    }
+
+    protected function loadOperationValues(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('operation');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(InvoiceOperation::all(), true, true);
         }
     }
 

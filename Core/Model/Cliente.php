@@ -111,6 +111,9 @@ class Cliente extends ModelClass
     public $nombre;
 
     /** @var string */
+    public $operacion;
+
+    /** @var string */
     public $observaciones;
 
     /** @var bool */
@@ -340,6 +343,11 @@ class Cliente extends ModelClass
         // check if the web is a valid url
         if (!empty($this->web) && false === Validator::url($this->web)) {
             Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
+            return false;
+        }
+
+        if (false === RegimenIVA::isValidCombination($this->operacion, $this->excepcioniva, 'sales')) {
+            Tools::log()->warning('invalid-operation-exception-combination');
             return false;
         }
 

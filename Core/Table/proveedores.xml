@@ -47,6 +47,10 @@
         <default>false</default>
     </column>
     <column>
+        <name>excepcioniva</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
         <name>email</name>
         <type>character varying(100)</type>
     </column>
@@ -78,6 +82,10 @@
     <column>
         <name>observaciones</name>
         <type>text</type>
+    </column>
+    <column>
+        <name>operacion</name>
+        <type>character varying(20)</type>
     </column>
     <column>
         <name>personafisica</name>

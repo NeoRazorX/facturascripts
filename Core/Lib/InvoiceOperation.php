@@ -26,8 +26,8 @@ namespace FacturaScripts\Core\Lib;
  */
 class InvoiceOperation
 {
-    const BENEFIT_THIRD_PARTIES = 'benefit-3-parties';
     const EXPORT = 'exportacion';
+    const IMPORT = 'importacion';
     const INTRA_COMMUNITY = 'intracomunitaria';
     const SUCCESSIVE_TRACT = 'successive-tract';
     const WORK_CERTIFICATION = 'work-certification';
@@ -46,8 +46,8 @@ class InvoiceOperation
         $defaults = [
             self::INTRA_COMMUNITY => 'intra-community',
             self::EXPORT => 'operation-export',
+            self::IMPORT => 'operation-import',
             self::WORK_CERTIFICATION => 'work-certification',
-            self::BENEFIT_THIRD_PARTIES => 'benefit-3-parties',
             self::SUCCESSIVE_TRACT => 'successive-tract',
         ];
 

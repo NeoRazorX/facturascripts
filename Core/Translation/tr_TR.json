@@ -1265,7 +1265,7 @@
     "php-support-end": "PHP desteği %current% yakında sona erecek. Lütfen PHP'yi %min% veya üzeri bir sürüme güncelleyin.",
     "php-version-too-new": "%min_version% ile %max_version% arasında bir PHP sürümü kullanmanız önerilir. Şu anda %version% kullanıyorsunuz.",
     "physical-stock": "Fiziksel stok",
-    "pick-up-flight-id": "Alım Uçuşu",
+    "pick-up-flight-id": "Alım uçuşu",
     "pick-up-flight-time": "Alım uçağı saati",
     "pick-up-point": "Alım noktası",
     "picking": "Seçme",

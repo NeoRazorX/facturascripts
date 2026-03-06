@@ -879,7 +879,7 @@
     "invoice-receipts-diff": "Há uma diferença (%diff%) entre o valor da fatura e a soma de seus recibos.",
     "invoice-regularized-cant-change-date": "A fatura está dentro de uma regularização de %tax%. A data não pode ser modificada.",
     "invoice-regularized-cant-delete": "A fatura está dentro de uma regularização de %tax%. Não pode ser excluída.",
-    "invoice-without-acc-entry": "Fatura sem lançamento",
+    "invoice-without-acc-entry": "Fatura sem lançamento contábil",
     "invoiced": "faturado",
     "invoices": "Faturas",
     "invoices-cant-generate-new-docs": "As faturas não podem gerar novos documentos",

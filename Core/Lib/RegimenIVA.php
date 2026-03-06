@@ -33,12 +33,9 @@ class RegimenIVA
     const ES_TAX_EXCEPTION_E4 = 'ES_23_24'; // E4 Exenta arts. 23–24 LIVA – Zonas francas y depósitos aduaneros
     const ES_TAX_EXCEPTION_E5 = 'ES_25'; // E5 Exenta art. 25 LIVA – Entregas intracomunitarias de bienes
     const ES_TAX_EXCEPTION_E6 = 'ES_OTHER'; // E6 Otras exenciones (oro de inversión, regímenes especiales, etc.)
-    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = 'ES_PASSIVE_SUBJECT'; // N6 Inversión del sujeto pasivo (art. 84 LIVA)
-    const ES_TAX_EXCEPTION_ART_7 = 'ES_ART_7'; // N3 No sujeta art. 7 LIVA – Operaciones no sujetas (aportaciones, transmisión de UEA, muestras…)
-    const ES_TAX_EXCEPTION_ART_14 = 'ES_ART_14'; // N4 No sujeta art. 14 LIVA – Operaciones vinculadas a exportaciones
-    const ES_TAX_EXCEPTION_LOCATION_RULES = 'ES_LOCATION_RULES'; // N2 No sujeta – Reglas de localización de servicios (arts. 69–70 LIVA, servicios B2B UE o fuera UE)
-    const ES_TAX_EXCEPTION_N1 = 'ES_N1'; // No sujeta N1 – Reglas de localización entregas de bienes (art. 68 LIVA)
-    const ES_TAX_EXCEPTION_N5 = 'ES_N5'; // No sujeta N5 – Otras disposiciones específicas (OTAN, convenios internacionales…)
+    const ES_TAX_EXCEPTION_N1 = 'ES_N1'; // N1 No sujeta – art. 7, 14 y otros (aportaciones, transmisión de UEA, muestras, operaciones vinculadas a exportaciones, OTAN, convenios…)
+    const ES_TAX_EXCEPTION_N2 = 'ES_N2'; // N2 No sujeta – Reglas de localización (arts. 68–70 LIVA, entregas de bienes y servicios B2B UE o fuera UE)
+    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = 'ES_PASSIVE_SUBJECT'; // Inversión del sujeto pasivo (art. 84 LIVA)
     const TAX_SYSTEM_AGRARIAN = 'Agrario';
     const TAX_SYSTEM_CASH_CRITERIA = 'Caja';
     const TAX_SYSTEM_EXEMPT = 'Exento';
@@ -48,10 +45,8 @@ class RegimenIVA
     const TAX_SYSTEM_ONE_STOP_SHOP_OSS = 'One Stop Shop (OSS)';
     const TAX_SYSTEM_ONE_STOP_SHOP_IOSS = 'One Stop Shop (IOSS)';
     const TAX_SYSTEM_SIMPLIFIED = 'Simplificado';
-    const TAX_SYSTEM_SPECIAL_RETAIL_TRADERS = 'Comerciante minorista';
     const TAX_SYSTEM_SPECIAL_SMALL_BUSINESS = 'Pequeño empresario';
     const TAX_SYSTEM_SURCHARGE = 'Recargo';
-    const TAX_SYSTEM_TELECOM = 'Telecom';
     const TAX_SYSTEM_TRAVEL = 'Agencias de viaje';
     const TAX_SYSTEM_USED_GOODS = 'Bienes usados';
 
@@ -85,14 +80,10 @@ class RegimenIVA
             self::TAX_SYSTEM_SIMPLIFIED => 'es-tax-regime-simplified',
             self::TAX_SYSTEM_SURCHARGE => 'es-tax-regime-surcharge',
             self::TAX_SYSTEM_TRAVEL => 'es-tax-regime-travel',
-            self::TAX_SYSTEM_TELECOM => 'es-tax-regime-telecom',
             self::TAX_SYSTEM_USED_GOODS => 'es-tax-regime-used-goods',
-            self::TAX_SYSTEM_SPECIAL_RETAIL_TRADERS => 'es-tax-regime-special-retail-traders',
             self::TAX_SYSTEM_SPECIAL_SMALL_BUSINESS => 'es-tax-regime-special-small-business',
             self::TAX_SYSTEM_ONE_STOP_SHOP_OSS => 'es-tax-regime-one-stop-shop-oss',
             self::TAX_SYSTEM_ONE_STOP_SHOP_IOSS => 'es-tax-regime-one-stop-shop-ioss',
-            self::ES_TAX_EXCEPTION_N1 => 'es-tax-exception-n1',  
-            self::ES_TAX_EXCEPTION_N5 => 'es-tax-exception-n5', 
         ];
 
         return array_merge($defaultValues, self::$values);
@@ -107,12 +98,9 @@ class RegimenIVA
             self::ES_TAX_EXCEPTION_E4 => 'es-tax-exception-e4',
             self::ES_TAX_EXCEPTION_E5 => 'es-tax-exception-e5',
             self::ES_TAX_EXCEPTION_E6 => 'es-tax-exception-e6',
-            self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT => 'es-tax-exception-passive-subject',
-            self::ES_TAX_EXCEPTION_ART_7 => 'es-tax-exception-art-7',
-            self::ES_TAX_EXCEPTION_ART_14 => 'es-tax-exception-art-14',
-            self::ES_TAX_EXCEPTION_LOCATION_RULES => 'es-tax-exception-location-rules',
             self::ES_TAX_EXCEPTION_N1 => 'es-tax-exception-n1',
-            self::ES_TAX_EXCEPTION_N5 => 'es-tax-exception-n5',
+            self::ES_TAX_EXCEPTION_N2 => 'es-tax-exception-n2',
+            self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT => 'es-tax-exception-passive-subject',
         ];
 
         return array_merge($defaultExceptions, self::$exceptions);
@@ -121,5 +109,44 @@ class RegimenIVA
     public static function defaultValue(): string
     {
         return self::TAX_SYSTEM_GENERAL;
+    }
+
+    /**
+     * Comprueba si la combinación de operación y excepción de IVA es válida.
+     *
+     * @param string|null $operation Valor de InvoiceOperation (intracomunitaria, exportacion, importacion, null…)
+     * @param string|null $exception Valor de excepción de IVA (ES_20, ES_25, ES_PASSIVE_SUBJECT, null…)
+     * @param string $context 'sales' o 'purchases'
+     */
+    public static function isValidCombination(?string $operation, ?string $exception, string $context): bool
+    {
+        $validMap = [
+            'intracomunitaria' => [
+                'sales' => [self::ES_TAX_EXCEPTION_E3, self::ES_TAX_EXCEPTION_E4, self::ES_TAX_EXCEPTION_E5, self::ES_TAX_EXCEPTION_N2],
+                'purchases' => [self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, self::ES_TAX_EXCEPTION_N1, self::ES_TAX_EXCEPTION_N2],
+            ],
+            'exportacion' => [
+                'sales' => [self::ES_TAX_EXCEPTION_E2],
+                'purchases' => [],
+            ],
+            'importacion' => [
+                'sales' => [],
+                'purchases' => [null],
+            ],
+        ];
+
+        // sin operación: se permiten excepciones genéricas o null
+        if (empty($operation)) {
+            $allowed = [null, self::ES_TAX_EXCEPTION_E1, self::ES_TAX_EXCEPTION_E6, self::ES_TAX_EXCEPTION_N1, self::ES_TAX_EXCEPTION_N2, self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT];
+            return in_array($exception, $allowed);
+        }
+
+        // operación no reconocida: permitimos cualquier combinación
+        if (!isset($validMap[$operation])) {
+            return true;
+        }
+
+        $allowed = $validMap[$operation][$context] ?? [];
+        return in_array($exception, $allowed);
     }
 }

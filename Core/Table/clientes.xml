@@ -99,6 +99,10 @@
         <type>text</type>
     </column>
     <column>
+        <name>operacion</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
         <name>personafisica</name>
         <type>boolean</type>
         <default>true</default>

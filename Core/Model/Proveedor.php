@@ -76,6 +76,9 @@ class Proveedor extends ModelClass
     public $debaja;
 
     /** @var string */
+    public $excepcioniva;
+
+    /** @var string */
     public $fax;
 
     /** @var string */
@@ -92,6 +95,9 @@ class Proveedor extends ModelClass
 
     /** @var string */
     public $nombre;
+
+    /** @var string */
+    public $operacion;
 
     /** @var string */
     public $observaciones;
@@ -281,6 +287,11 @@ class Proveedor extends ModelClass
         // check if the web is a valid url
         if (!empty($this->web) && false === Validator::url($this->web)) {
             Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
+            return false;
+        }
+
+        if (false === RegimenIVA::isValidCombination($this->operacion, $this->excepcioniva, 'purchases')) {
+            Tools::log()->warning('invalid-operation-exception-combination');
             return false;
         }
 
