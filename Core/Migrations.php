@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Template\MigrationClass;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\FormaPago;
@@ -153,10 +153,10 @@ final class Migrations
 
         // compatibilidad: con la nueva validación, estos casos requieren operación informada
         $updates = [
-            RegimenIVA::ES_TAX_EXCEPTION_E2 => InvoiceOperation::EXPORT,
-            RegimenIVA::ES_TAX_EXCEPTION_E3 => InvoiceOperation::INTRA_COMMUNITY,
-            RegimenIVA::ES_TAX_EXCEPTION_E4 => InvoiceOperation::INTRA_COMMUNITY,
-            RegimenIVA::ES_TAX_EXCEPTION_E5 => InvoiceOperation::INTRA_COMMUNITY,
+            TaxExceptions::ES_TAX_EXCEPTION_E2 => InvoiceOperation::EXPORT,
+            TaxExceptions::ES_TAX_EXCEPTION_E3 => InvoiceOperation::INTRA_COMMUNITY,
+            TaxExceptions::ES_TAX_EXCEPTION_E4 => InvoiceOperation::INTRA_COMMUNITY,
+            TaxExceptions::ES_TAX_EXCEPTION_E5 => InvoiceOperation::INTRA_COMMUNITY,
         ];
 
         foreach ($updates as $exception => $operation) {

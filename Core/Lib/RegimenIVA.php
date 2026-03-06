@@ -27,15 +27,16 @@ namespace FacturaScripts\Core\Lib;
  */
 class RegimenIVA
 {
-    const ES_TAX_EXCEPTION_E1 = 'ES_20'; // E1 Exenta art. 20 LIVA – Exenciones interiores (sanidad, enseñanza, seguros, financieros…)
-    const ES_TAX_EXCEPTION_E2 = 'ES_21'; // E2 Exenta art. 21 LIVA – Exportaciones a países terceros
-    const ES_TAX_EXCEPTION_E3 = 'ES_22'; // E3 Exenta art. 22 LIVA – Operaciones asimiladas a exportaciones
-    const ES_TAX_EXCEPTION_E4 = 'ES_23_24'; // E4 Exenta arts. 23–24 LIVA – Zonas francas y depósitos aduaneros
-    const ES_TAX_EXCEPTION_E5 = 'ES_25'; // E5 Exenta art. 25 LIVA – Entregas intracomunitarias de bienes
-    const ES_TAX_EXCEPTION_E6 = 'ES_OTHER'; // E6 Otras exenciones (oro de inversión, regímenes especiales, etc.)
-    const ES_TAX_EXCEPTION_N1 = 'ES_N1'; // N1 No sujeta – art. 7, 14 y otros (aportaciones, transmisión de UEA, muestras, operaciones vinculadas a exportaciones, OTAN, convenios…)
-    const ES_TAX_EXCEPTION_N2 = 'ES_N2'; // N2 No sujeta – Reglas de localización (arts. 68–70 LIVA, entregas de bienes y servicios B2B UE o fuera UE)
-    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = 'ES_PASSIVE_SUBJECT'; // Inversión del sujeto pasivo (art. 84 LIVA)
+    // Deprecated: use TaxExceptions constants.
+    const ES_TAX_EXCEPTION_E1 = TaxExceptions::ES_TAX_EXCEPTION_E1;
+    const ES_TAX_EXCEPTION_E2 = TaxExceptions::ES_TAX_EXCEPTION_E2;
+    const ES_TAX_EXCEPTION_E3 = TaxExceptions::ES_TAX_EXCEPTION_E3;
+    const ES_TAX_EXCEPTION_E4 = TaxExceptions::ES_TAX_EXCEPTION_E4;
+    const ES_TAX_EXCEPTION_E5 = TaxExceptions::ES_TAX_EXCEPTION_E5;
+    const ES_TAX_EXCEPTION_E6 = TaxExceptions::ES_TAX_EXCEPTION_E6;
+    const ES_TAX_EXCEPTION_N1 = TaxExceptions::ES_TAX_EXCEPTION_N1;
+    const ES_TAX_EXCEPTION_N2 = TaxExceptions::ES_TAX_EXCEPTION_N2;
+    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT;
     const TAX_SYSTEM_AGRARIAN = 'Agrario';
     const TAX_SYSTEM_CASH_CRITERIA = 'Caja';
     const TAX_SYSTEM_EXEMPT = 'Exento';
@@ -51,11 +52,6 @@ class RegimenIVA
     const TAX_SYSTEM_USED_GOODS = 'Bienes usados';
 
     /** @var array */
-    private static $exceptions = [];
-    /** @var array */
-    private static $removedExceptions = [];
-
-    /** @var array */
     private static $values = [];
     /** @var array */
     private static $removedValues = [];
@@ -67,11 +63,12 @@ class RegimenIVA
         unset(self::$removedValues[$fixedKey]);
     }
 
+    /**
+     * @deprecated Use TaxExceptions::add() instead.
+     */
     public static function addException(string $key, string $value): void
     {
-        $fixedKey = substr($key, 0, 20);
-        self::$exceptions[$fixedKey] = $value;
-        unset(self::$removedExceptions[$fixedKey]);
+        TaxExceptions::add($key, $value);
     }
 
     public static function remove(string $key): void
@@ -81,11 +78,12 @@ class RegimenIVA
         self::$removedValues[$fixedKey] = true;
     }
 
+    /**
+     * @deprecated Use TaxExceptions::remove() instead.
+     */
     public static function removeException(string $key): void
     {
-        $fixedKey = substr($key, 0, 20);
-        unset(self::$exceptions[$fixedKey]);
-        self::$removedExceptions[$fixedKey] = true;
+        TaxExceptions::remove($key);
     }
 
     public static function all(): array
@@ -114,26 +112,12 @@ class RegimenIVA
         return $all;
     }
 
+    /**
+     * @deprecated Use TaxExceptions::all() instead.
+     */
     public static function allExceptions(): array
     {
-        $defaultExceptions = [
-            self::ES_TAX_EXCEPTION_E1 => 'es-tax-exception-e1',
-            self::ES_TAX_EXCEPTION_E2 => 'es-tax-exception-e2',
-            self::ES_TAX_EXCEPTION_E3 => 'es-tax-exception-e3',
-            self::ES_TAX_EXCEPTION_E4 => 'es-tax-exception-e4',
-            self::ES_TAX_EXCEPTION_E5 => 'es-tax-exception-e5',
-            self::ES_TAX_EXCEPTION_E6 => 'es-tax-exception-e6',
-            self::ES_TAX_EXCEPTION_N1 => 'es-tax-exception-n1',
-            self::ES_TAX_EXCEPTION_N2 => 'es-tax-exception-n2',
-            self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT => 'es-tax-exception-passive-subject',
-        ];
-
-        $all = array_merge($defaultExceptions, self::$exceptions);
-        foreach (array_keys(self::$removedExceptions) as $key) {
-            unset($all[$key]);
-        }
-
-        return $all;
+        return TaxExceptions::all();
     }
 
     public static function defaultValue(): string
@@ -147,36 +131,11 @@ class RegimenIVA
      * @param string|null $operation Valor de InvoiceOperation (intracomunitaria, exportacion, importacion, null…)
      * @param string|null $exception Valor de excepción de IVA (ES_20, ES_25, ES_PASSIVE_SUBJECT, null…)
      * @param string $context 'sales' o 'purchases'
+     *
+     * @deprecated Use TaxExceptions::isValidCombination() instead.
      */
     public static function isValidCombination(?string $operation, ?string $exception, string $context): bool
     {
-        $validMap = [
-            'intracomunitaria' => [
-                'sales' => [self::ES_TAX_EXCEPTION_E3, self::ES_TAX_EXCEPTION_E4, self::ES_TAX_EXCEPTION_E5, self::ES_TAX_EXCEPTION_N2],
-                'purchases' => [self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, self::ES_TAX_EXCEPTION_N1, self::ES_TAX_EXCEPTION_N2],
-            ],
-            'exportacion' => [
-                'sales' => [self::ES_TAX_EXCEPTION_E2],
-                'purchases' => [],
-            ],
-            'importacion' => [
-                'sales' => [],
-                'purchases' => [null],
-            ],
-        ];
-
-        // sin operación: se permiten excepciones genéricas o null
-        if (empty($operation)) {
-            $allowed = [null, self::ES_TAX_EXCEPTION_E1, self::ES_TAX_EXCEPTION_E6, self::ES_TAX_EXCEPTION_N1, self::ES_TAX_EXCEPTION_N2, self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT];
-            return in_array($exception, $allowed);
-        }
-
-        // operación no reconocida: permitimos cualquier combinación
-        if (!isset($validMap[$operation])) {
-            return true;
-        }
-
-        $allowed = $validMap[$operation][$context] ?? [];
-        return in_array($exception, $allowed);
+        return TaxExceptions::isValidCombination($operation, $exception, $context);
     }
 }

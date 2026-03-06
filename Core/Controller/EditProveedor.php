@@ -26,6 +26,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
+use FacturaScripts\Core\Lib\TaxExceptions;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -254,7 +255,7 @@ class EditProveedor extends ComercialContactController
     {
         $column = $this->views[$viewName]->columnForName('vat-exception');
         if ($column && $column->widget->getType() === 'select') {
-            $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
+            $column->widget->setValuesFromArrayKeys(TaxExceptions::all(), true, true);
         }
     }
 

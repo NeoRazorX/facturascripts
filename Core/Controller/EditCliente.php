@@ -27,6 +27,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -264,7 +265,7 @@ class EditCliente extends ComercialContactController
     {
         $column = $this->views[$viewName]->columnForName('vat-exception');
         if ($column && $column->widget->getType() === 'select') {
-            $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
+            $column->widget->setValuesFromArrayKeys(TaxExceptions::all(), true, true);
         }
     }
 

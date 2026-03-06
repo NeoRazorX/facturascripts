@@ -30,6 +30,7 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
@@ -290,7 +291,7 @@ class Proveedor extends ModelClass
             return false;
         }
 
-        if (false === RegimenIVA::isValidCombination($this->operacion, $this->excepcioniva, 'purchases')) {
+        if (false === TaxExceptions::isValidCombination($this->operacion, $this->excepcioniva, 'purchases')) {
             Tools::log()->warning('invalid-operation-exception-combination');
             return false;
         }

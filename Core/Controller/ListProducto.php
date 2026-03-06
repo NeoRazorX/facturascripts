@@ -26,7 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Dinamic\Model\Atributo;
 
 /**
@@ -76,7 +76,7 @@ class ListProducto extends ListController
         }
         $taxes = Impuestos::codeModel();
         $exceptions = [['code' => '', 'description' => '------']];
-        foreach (RegimenIVA::allExceptions() as $key => $value) {
+        foreach (TaxExceptions::all() as $key => $value) {
             $exceptions[] = [
                 'code' => $key,
                 'description' => Tools::trans($value)
