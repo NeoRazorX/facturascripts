@@ -91,8 +91,8 @@ class RegimenIVA
     public static function all(): array
     {
         $defaultValues = [
-            self::TAX_SYSTEM_GENERAL => 'es-tax-regime-general',
             self::TAX_SYSTEM_EXEMPT => 'es-tax-regime-exempt',
+            self::TAX_SYSTEM_GENERAL => 'es-tax-regime-general',
             self::TAX_SYSTEM_SURCHARGE => 'es-tax-regime-surcharge',
             self::TAX_SYSTEM_SIMPLIFIED => 'es-tax-regime-simplified',
             self::TAX_SYSTEM_AGRARIAN => 'es-tax-regime-agrarian',
