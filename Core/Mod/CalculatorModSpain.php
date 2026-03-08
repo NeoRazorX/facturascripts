@@ -484,18 +484,15 @@ class CalculatorModSpain implements CalculatorModInterface
             return false;
         }
 
-        // E3: ES_22 solo si cliente UE, NIF-IVA válido, país != España
-        if ($line->excepcioniva === TaxExceptions::ES_TAX_EXCEPTION_E3 && $line->iva > 0 && !Paises::miembroUE($doc->codpais)
-            && (!FiscalNumberValidator::validate($subjectFiscalID, $doc->cifnif, true) || $doc->codpais === 'ESP')) {
-            Tools::log()->warning('Excepción fiscal "' . $exceptions['ES_22'] . '" no puede tener IVA si el cliente es de la UE y el NIF-IVA no es válido o el país es España.');
+        // E3: ES_22 Exenta art. 22 LIVA – Operaciones asimiladas a exportaciones, nunca llevan IVA
+        if ($line->excepcioniva === TaxExceptions::ES_TAX_EXCEPTION_E3 && $line->iva > 0) {
+            Tools::log()->warning('Excepción fiscal "' . $exceptions['ES_22'] . '" no puede tener IVA.');
             return false;
         }
 
-        // E4: ES_23_24 (arts. 23–24 LIVA: zonas francas, depósitos aduaneros y regímenes asimilados).
-        // Nota: no es específico de "servicios"; se aplica a supuestos especiales de bienes/servicios vinculados a estos regímenes.
-        if ($line->excepcioniva === TaxExceptions::ES_TAX_EXCEPTION_E4 && $line->iva > 0 && !Paises::miembroUE($doc->codpais)
-            && (!FiscalNumberValidator::validate($subjectFiscalID, $doc->cifnif, true) || $line->getProducto()->tipo !== ProductType::SERVICE)) {
-            Tools::log()->warning('Excepción fiscal "' . $exceptions['ES_23_24'] . '" no puede tener IVA si el cliente es de la UE y el NIF-IVA no es válido o el producto de la línea no es un servicio.');
+        // E4: ES_23_24 Exenta arts. 23–24 LIVA – Zonas francas y depósitos aduaneros, nunca llevan IVA
+        if ($line->excepcioniva === TaxExceptions::ES_TAX_EXCEPTION_E4 && $line->iva > 0) {
+            Tools::log()->warning('Excepción fiscal "' . $exceptions['ES_23_24'] . '" no puede tener IVA.');
             return false;
         }
 

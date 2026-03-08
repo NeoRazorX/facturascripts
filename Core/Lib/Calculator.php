@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Contract\CalculatorModInterface;
 use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\ImpuestoZona;
