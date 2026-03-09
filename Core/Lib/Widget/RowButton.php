@@ -38,6 +38,9 @@ class RowButton extends VisualItem
     public $confirm;
 
     /** @var string */
+    public $hash;
+
+    /** @var string */
     public $icon;
 
     /** @var string */
@@ -61,6 +64,7 @@ class RowButton extends VisualItem
         $this->action = $data['action'] ?? '';
         $this->color = $data['color'] ?? '';
         $this->confirm = isset($data['confirm']);
+        $this->hash = $data['hash'] ?? '';
         $this->icon = $data['icon'] ?? '';
         $this->label = isset($data['label']) ? Tools::trans($data['label']) : '';
         $this->level = isset($data['level']) ? (int)$data['level'] : 0;
@@ -98,23 +102,23 @@ class RowButton extends VisualItem
 
         switch ($this->type) {
             case 'js':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
+                return '<button data-hash="' . $this->hash . '" type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
                     . '" title="' . $title . '">' . $icon . $label . '</button>';
 
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
-                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                return '<a data-hash="' . $this->hash . '" ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
                     . ' title="' . $title . '">' . $icon . $label . '</a>';
 
             case 'modal':
                 $modal = 'modal' . $this->action;
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-bs-toggle="modal" data-bs-target="#'
+                return '<button data-hash="' . $this->hash . '" type="button"' . $divID . ' class="' . $cssClass . '" data-bs-toggle="modal" data-bs-target="#'
                     . $modal . '" title="' . $title . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
                     . $icon . $label . '</button>';
 
             default:
                 $onclick = $this->getOnClickValue($viewName, $jsFunction);
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
+                return '<button data-hash="' . $this->hash . '" type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
                     . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
     }
@@ -142,12 +146,12 @@ class RowButton extends VisualItem
 
         switch ($this->type) {
             case 'js':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
+                return '<button data-hash="' . $this->hash . '" type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
                     . '" title="' . $title . '">' . $icon . $label . '</button> ';
 
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
-                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                return '<a data-hash="' . $this->hash . '" ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
                     . ' title="' . $title . '">' . $icon . $label . '</a> ';
         }
 
