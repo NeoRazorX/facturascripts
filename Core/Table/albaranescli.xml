@@ -123,6 +123,10 @@
         <type>integer</type>
     </column>
     <column>
+        <name>idestadoanterior</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>irpf</name>
         <type>double precision</type>
     </column>
@@ -249,6 +253,10 @@
     <constraint>
         <name>ca_albaranescli_idestados</name>
         <type>FOREIGN KEY (idestado) REFERENCES estados_documentos (idestado) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_albaranescli_idestadoanterior</name>
+        <type>FOREIGN KEY (idestadoanterior) REFERENCES estados_documentos (idestado) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_albaranescli_nick</name>
