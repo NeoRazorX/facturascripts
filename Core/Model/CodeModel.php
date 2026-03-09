@@ -280,20 +280,42 @@ class CodeModel
      */
     protected static function isValidFieldName(string $fieldName): bool
     {
-        // permite campos vacíos (se usan valores por defecto en algunos casos)
-        if (empty($fieldName)) {
+        // permite campos vacíos (valores por defecto)
+        if ($fieldName === '') {
             return true;
         }
 
-        // permite lower() y upper() con un campo válido dentro
-        if (preg_match('/^(lower|upper)\(([a-zA-Z0-9_\.]+)\)$/i', $fieldName, $matches)) {
+        // Identificador: campo o tabla.campo (sin espacios, sin comillas)
+        $fieldName = trim($fieldName);
+        $ident = '[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?';
+
+        // Campo directo
+        if (preg_match('/^' . $ident . '$/', $fieldName)) {
             return true;
         }
 
-        // permite letras, números, guiones bajos y puntos (para tabla.campo)
-        return preg_match('/^[a-zA-Z0-9_\.]+$/', $fieldName) === 1;
+        // lower(field) / upper(field)
+        if (preg_match('/^(lower|upper)\((' . $ident . ')\)$/i', $fieldName)) {
+            return true;
+        }
+
+        // substring(field, start, len) con números
+        if (preg_match('/^substring\((' . $ident . '),\s*(\d+)\s*,\s*(\d+)\s*\)$/i', $fieldName, $m)) {
+            $start = (int)$m[2];
+            $len   = (int)$m[3];
+            // límites razonables (ajusta a tu caso)
+            return $start >= 1 && $len >= 1 && $len <= 1000;
+        }
+
+        // concat(arg1, arg2, ...) donde arg es un identificador o literal simple '...'(sin comillas internas o escapadas)
+        $arg = "(?:$ident|'[^']*')";
+        if (preg_match('/^concat\(\s*' . $arg . '(?:\s*,\s*' . $arg . ')+\s*\)$/i', $fieldName)) {
+            return true;
+        }
+
+        return false;
     }
-
+    
     protected static function db(): DataBase
     {
         if (self::$dataBase === null) {
