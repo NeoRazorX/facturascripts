@@ -19,12 +19,13 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use Exception;
 use FacturaScripts\Core\Contract\CalculatorModInterface;
 use FacturaScripts\Core\DataSrc\Impuestos;
-use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\ImpuestoZona;
+use FacturaScripts\Core\Template\CalculatorModClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
@@ -34,29 +35,51 @@ use FacturaScripts\Dinamic\Model\Impuesto;
  */
 class Calculator
 {
-    /** @var CalculatorModInterface[] */
+    /** @var CalculatorModClass[] */
     public static $mods = [];
 
-    public static function addMod(CalculatorModInterface $mod): void
+    // Se activa cuando un mod corta el cálculo de subtotales con STOP_ALL.
+    // La usamos en calculate() para abortar antes de leer un array parcial.
+    private static $stopAllFromSubtotals = false;
+
+    // Sin type-hint para aceptar ambos contratos durante la transición:
+    // CalculatorModClass (nuevo) y CalculatorModInterface (legacy/deprecated).
+    public static function addMod($mod): void
     {
-        self::$mods[] = $mod;
+        if ($mod instanceof CalculatorModClass || $mod instanceof CalculatorModInterface) {
+            self::$mods[] = $mod;
+            return;
+        }
+
+        throw new Exception('Mod must be an instance of CalculatorModClass');
     }
 
     public static function calculate(BusinessDocument &$doc, array &$lines, bool $save): bool
     {
         // ponemos totales a 0
-        self::clear($doc, $lines);
+        if (false === self::clear($doc, $lines)) {
+            return false;
+        }
 
         // aplicamos configuraciones, excepciones, etc
-        self::apply($doc, $lines);
+        if (false === self::apply($doc, $lines)) {
+            return false;
+        }
 
         // calculamos subtotales en líneas
         foreach ($lines as $line) {
-            self::calculateLine($doc, $line);
+            if (false === self::calculateLine($doc, $line)) {
+                return false;
+            }
         }
 
         // calculamos los totales
         $subtotals = self::getSubtotals($doc, $lines);
+        // Si getSubtotals() fue interrumpido por STOP_ALL, no usamos subtotales incompletos.
+        if (self::$stopAllFromSubtotals) {
+            return false;
+        }
+
         $doc->irpf = $subtotals['irpf'];
         $doc->neto = $subtotals['neto'];
         $doc->netosindto = $subtotals['netosindto'];
@@ -78,27 +101,61 @@ class Calculator
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
-            if (false === $mod->calculate($doc, $lines)) {
+            $return = $mod->calculate($doc, $lines);
+
+            // compatibilidad con mods antiguos
+            if ($mod instanceof CalculatorModInterface) {
+                // En mods legacy, false solo corta la cadena de mods, no todo el cálculo.
+                if ($return === false) {
+                    break;
+                }
+                continue;
+            }
+
+            if ($return === CalculatorModClass::STOP_MODS) {
                 break;
+            }
+
+            if ($return === CalculatorModClass::STOP_ALL) {
+                return false;
             }
         }
 
-        return $save && self::save($doc, $lines);
+        if ($save) {
+            return self::save($doc, $lines);
+        }
+
+        return true;
     }
 
-    public static function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): void
+    public static function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): bool
     {
         $line->pvpsindto = $line->cantidad * $line->pvpunitario;
         $line->pvptotal = $line->pvpsindto * (100 - $line->dtopor) / 100 * (100 - $line->dtopor2) / 100;
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
-            if (false === $mod->calculateLine($doc, $line)) {
+            $return = $mod->calculateLine($doc, $line);
+
+            // compatibilidad con mods antiguos
+            if ($mod instanceof CalculatorModInterface) {
+                // En mods legacy, false solo corta la cadena de mods, no todo el cálculo.
+                if ($return === false) {
+                    break;
+                }
+                continue;
+            }
+
+            if ($return === CalculatorModClass::STOP_MODS) {
                 break;
             }
+
+            if ($return === CalculatorModClass::STOP_ALL) {
+                return false;
+            }
         }
+
+        return true;
     }
 
     /**
@@ -109,6 +166,9 @@ class Calculator
      */
     public static function getSubtotals(BusinessDocument $doc, array $lines): array
     {
+        // Reiniciamos la marca en cada ejecución para no arrastrar estado previo.
+        self::$stopAllFromSubtotals = false;
+
         $subtotals = [
             'irpf' => 0.0,
             'iva' => [],
@@ -122,6 +182,91 @@ class Calculator
             'totalsuplidos' => 0.0
         ];
 
+        $done = false;
+        foreach (self::$mods as $mod) {
+            if ($mod instanceof CalculatorModInterface) {
+                continue;
+            }
+
+            $return = $mod->accumulateSubtotals($subtotals, $doc, $lines);
+
+            if ($return === CalculatorModClass::STOP_MODS) {
+                // El mod ya ha calculado/acumulado subtotales y corta esta fase.
+                // Marcamos done=true para NO ejecutar el accumulate() interno del Calculator.
+                $done = true;
+                break;
+            }
+
+            if ($return === CalculatorModClass::STOP_ALL) {
+                // Guardamos el motivo de salida para que calculate() pueda abortar de forma segura.
+                self::$stopAllFromSubtotals = true;
+                return $subtotals;
+            }
+        }
+
+        if (!$done) {
+            // Solo ejecutamos el acumulado interno si ningún mod ha respondido STOP_MODS.
+            $subtotals = self::accumulate($subtotals, $doc, $lines);
+        }
+
+        // turno para que los mods apliquen cambios
+        foreach (self::$mods as $mod) {
+            if ($mod instanceof CalculatorModInterface) {
+                // Contrato legacy: false detiene solo esta fase de modificación de subtotales.
+                if (false === $mod->getSubtotals($subtotals, $doc, $lines)) {
+                    break;
+                }
+                continue;
+            }
+
+            $return = $mod->updateSubtotals($subtotals, $doc, $lines);
+
+            if ($return === CalculatorModClass::STOP_MODS) {
+                // STOP_MODS aquí solo detiene updateSubtotals; no cancela el cálculo global.
+                break;
+            }
+
+            if ($return === CalculatorModClass::STOP_ALL) {
+                // Guardamos el motivo de salida para que calculate() pueda abortar de forma segura.
+                self::$stopAllFromSubtotals = true;
+                return $subtotals;
+            }
+        }
+
+        // redondeamos los IVA
+        foreach ($subtotals['iva'] as $key => $value) {
+            $subtotals['iva'][$key]['neto'] = Tools::round($value['neto']);
+            $subtotals['iva'][$key]['netosindto'] = Tools::round($value['netosindto']);
+            $subtotals['iva'][$key]['totaliva'] = Tools::round($value['totaliva']);
+            $subtotals['iva'][$key]['totalrecargo'] = Tools::round($value['totalrecargo']);
+
+            // trasladamos a los subtotales
+            $subtotals['neto'] += Tools::round($value['neto']);
+            $subtotals['netosindto'] += Tools::round($value['netosindto']);
+            $subtotals['totaliva'] += Tools::round($value['totaliva']);
+            $subtotals['totalrecargo'] += Tools::round($value['totalrecargo']);
+        }
+
+        // redondeamos los subtotales
+        $subtotals['neto'] = Tools::round($subtotals['neto']);
+        $subtotals['netosindto'] = Tools::round($subtotals['netosindto']);
+        $subtotals['totalirpf'] = Tools::round($subtotals['totalirpf']);
+        $subtotals['totaliva'] = Tools::round($subtotals['totaliva']);
+        $subtotals['totalrecargo'] = Tools::round($subtotals['totalrecargo']);
+        $subtotals['totalsuplidos'] = Tools::round($subtotals['totalsuplidos']);
+
+        // calculamos el beneficio
+        $subtotals['totalbeneficio'] = Tools::round($subtotals['neto'] - $subtotals['totalcoste']);
+
+        // calculamos el total
+        $subtotals['total'] = Tools::round($subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']
+            + $subtotals['totalrecargo'] - $subtotals['totalirpf']);
+
+        return $subtotals;
+    }
+
+    private static function accumulate(array $subtotals, BusinessDocument $doc, array $lines): array
+    {
         // método de cálculo configurable: classic (por defecto) o price-adjusted
         $taxMethod = Tools::settings('default', 'taxcalculationmethod', 'classic');
 
@@ -196,43 +341,6 @@ class Calculator
             }
         }
 
-        // turno para que los mods apliquen cambios
-        foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
-            if (false === $mod->getSubtotals($subtotals, $doc, $lines)) {
-                break;
-            }
-        }
-
-        // redondeamos los IVA
-        foreach ($subtotals['iva'] as $key => $value) {
-            $subtotals['iva'][$key]['neto'] = Tools::round($value['neto']);
-            $subtotals['iva'][$key]['netosindto'] = Tools::round($value['netosindto']);
-            $subtotals['iva'][$key]['totaliva'] = Tools::round($value['totaliva']);
-            $subtotals['iva'][$key]['totalrecargo'] = Tools::round($value['totalrecargo']);
-
-            // trasladamos a los subtotales
-            $subtotals['neto'] += Tools::round($value['neto']);
-            $subtotals['netosindto'] += Tools::round($value['netosindto']);
-            $subtotals['totaliva'] += Tools::round($value['totaliva']);
-            $subtotals['totalrecargo'] += Tools::round($value['totalrecargo']);
-        }
-
-        // redondeamos los subtotales
-        $subtotals['neto'] = Tools::round($subtotals['neto']);
-        $subtotals['netosindto'] = Tools::round($subtotals['netosindto']);
-        $subtotals['totalirpf'] = Tools::round($subtotals['totalirpf']);
-        $subtotals['totaliva'] = Tools::round($subtotals['totaliva']);
-        $subtotals['totalrecargo'] = Tools::round($subtotals['totalrecargo']);
-        $subtotals['totalsuplidos'] = Tools::round($subtotals['totalsuplidos']);
-
-        // calculamos el beneficio
-        $subtotals['totalbeneficio'] = Tools::round($subtotals['neto'] - $subtotals['totalcoste']);
-
-        // calculamos el total
-        $subtotals['total'] = Tools::round($subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']
-            + $subtotals['totalrecargo'] - $subtotals['totalirpf']);
-
         return $subtotals;
     }
 
@@ -240,9 +348,9 @@ class Calculator
      * @param BusinessDocument $doc
      * @param BusinessDocumentLine[] $lines
      *
-     * @return void
+     * @return bool
      */
-    private static function apply(BusinessDocument &$doc, array &$lines): void
+    private static function apply(BusinessDocument &$doc, array &$lines): bool
     {
         $subject = $doc->getSubject();
         $noTax = $doc->getSerie()->siniva;
@@ -281,20 +389,35 @@ class Calculator
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
-            if (false === $mod->apply($doc, $lines)) {
+            $return = $mod->apply($doc, $lines);
+
+            // compatibilidad con mods antiguos
+            if ($mod instanceof CalculatorModInterface) {
+                if ($return === false) {
+                    break;
+                }
+                continue;
+            }
+
+            if ($return === CalculatorModClass::STOP_MODS) {
                 break;
             }
+
+            if ($return === CalculatorModClass::STOP_ALL) {
+                return false;
+            }
         }
+
+        return true;
     }
 
     /**
      * @param BusinessDocument $doc
      * @param BusinessDocumentLine[] $lines
      *
-     * @return void
+     * @return bool
      */
-    private static function clear(BusinessDocument &$doc, array &$lines): void
+    private static function clear(BusinessDocument &$doc, array &$lines): bool
     {
         $doc->neto = $doc->netosindto = 0.0;
         $doc->total = $doc->totaleuros = 0.0;
@@ -319,11 +442,26 @@ class Calculator
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
-            if (false === $mod->clear($doc, $lines)) {
+            $return = $mod->clear($doc, $lines);
+
+            // compatibilidad con mods antiguos
+            if ($mod instanceof CalculatorModInterface) {
+                if ($return === false) {
+                    break;
+                }
+                continue;
+            }
+
+            if ($return === CalculatorModClass::STOP_MODS) {
                 break;
             }
+
+            if ($return === CalculatorModClass::STOP_ALL) {
+                return false;
+            }
         }
+
+        return true;
     }
 
     /**
@@ -334,6 +472,24 @@ class Calculator
      */
     private static function save(BusinessDocument $doc, array $lines): bool
     {
+        // turno para que los mods apliquen cambios
+        foreach (self::$mods as $mod) {
+            // excluimos mods antiguos
+            if ($mod instanceof CalculatorModInterface) {
+                continue;
+            }
+
+            $return = $mod->save($doc, $lines);
+
+            if ($return === CalculatorModClass::STOP_MODS) {
+                break;
+            }
+
+            if ($return === CalculatorModClass::STOP_ALL) {
+                return false;
+            }
+        }
+
         foreach ($lines as $line) {
             if (false === $line->save()) {
                 return false;

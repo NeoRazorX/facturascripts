@@ -40,7 +40,7 @@ final class CalculatorTest extends TestCase
     {
         $doc = new PresupuestoCliente();
         $lines = [];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos
         $this->assertEquals(0.0, $doc->neto, 'bad-neto');
@@ -60,7 +60,7 @@ final class CalculatorTest extends TestCase
         $lines = [$doc->getNewLine()];
 
         // comprobamos el documento
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
         $this->assertEquals(0.0, $doc->neto, 'bad-neto');
         $this->assertEquals(0.0, $doc->netosindto, 'bad-netosindto');
         $this->assertEquals(0.0, $doc->total, 'bad-total');
@@ -94,7 +94,7 @@ final class CalculatorTest extends TestCase
         $line2->iva = 4;
 
         $lines = [$line1, $line2];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(120.0, $doc->neto, 'bad-neto');
@@ -137,7 +137,7 @@ final class CalculatorTest extends TestCase
         $line2->iva = 4;
 
         $lines = [$line1, $line2];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(107.91, $doc->neto, 'bad-neto');
@@ -171,7 +171,7 @@ final class CalculatorTest extends TestCase
         $line1->dtopor = 100;
 
         $lines = [$line1];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(0.0, $doc->neto, 'bad-neto');
@@ -209,7 +209,7 @@ final class CalculatorTest extends TestCase
         $line3->iva = 21;
 
         $lines = [$line1, $line2, $line3];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(175.0, $doc->neto, 'bad-neto');
@@ -253,7 +253,7 @@ final class CalculatorTest extends TestCase
         $line3->recargo = 0.0;
 
         $lines = [$line1, $line2, $line3];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(175.0, $doc->neto, 'bad-neto');
@@ -287,7 +287,7 @@ final class CalculatorTest extends TestCase
         $line1->recargo = 5.2;
 
         $lines = [$line1];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(200.0, $doc->neto, 'bad-neto');
@@ -328,7 +328,7 @@ final class CalculatorTest extends TestCase
         $line3->suplido = true;
 
         $lines = [$line1, $line2, $line3];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(150.0, $doc->neto, 'bad-neto');
@@ -371,7 +371,7 @@ final class CalculatorTest extends TestCase
         $line2->iva = 4;
 
         $lines = [$line1, $line2];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(120.0, $doc->neto, 'bad-neto');
@@ -404,7 +404,7 @@ final class CalculatorTest extends TestCase
         $line1->iva = 21;
 
         $lines = [$line1];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -438,7 +438,7 @@ final class CalculatorTest extends TestCase
         $line1->iva = 21;
 
         $lines = [$line1];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -502,7 +502,7 @@ final class CalculatorTest extends TestCase
         $line1->iva = $tax1->iva;
 
         $lines = [$line1];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -550,7 +550,7 @@ final class CalculatorTest extends TestCase
         $line1->iva = 21;
 
         $lines = [$line1];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -596,7 +596,7 @@ final class CalculatorTest extends TestCase
         $line2->iva = $tax->iva;
 
         $lines = [$line1, $line2];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         // neto: (3 * 100) + (2 * 50) = 300 + 100 = 400
@@ -659,7 +659,7 @@ final class CalculatorTest extends TestCase
         $line2->recargo = $tax->recargo;
 
         $lines = [$line1, $line2];
-        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
         // neto: (3 * 100) + (2 * 50) = 300 + 100 = 400

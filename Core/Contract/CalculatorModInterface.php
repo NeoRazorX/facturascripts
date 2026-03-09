@@ -22,6 +22,9 @@ namespace FacturaScripts\Core\Contract;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 
+/**
+ * @deprecated use CalculatorModClass instead
+ */
 interface CalculatorModInterface
 {
     public function apply(BusinessDocument &$doc, array &$lines): bool;

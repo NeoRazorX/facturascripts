@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Mod;
 
-use FacturaScripts\Core\Contract\CalculatorModInterface;
+use FacturaScripts\Core\Template\CalculatorModClass;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\InvoiceOperation;
@@ -39,14 +39,14 @@ use FacturaScripts\Dinamic\Model\Contacto;
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
-class CalculatorModSpain implements CalculatorModInterface
+class CalculatorModSpain extends CalculatorModClass
 {
-    public function apply(BusinessDocument &$doc, array &$lines): bool
+    public function apply(BusinessDocument $doc, array &$lines): string
     {
         // No se aplica el cálculo si la empresa no está en España
         $company = $doc->getCompany();
         if ($company->codpais !== 'ESP') {
-            return true;
+            return $this->done();
         }
 
         $subject = $doc->getSubject();
@@ -68,25 +68,20 @@ class CalculatorModSpain implements CalculatorModInterface
             }
         }
 
-        return true;
+        return $this->done();
     }
 
-    public function calculate(BusinessDocument &$doc, array &$lines): bool
-    {
-        return true;
-    }
-
-    public function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): bool
+    public function calculateLine(BusinessDocument $doc, BusinessDocumentLine $line): string
     {
         // No se aplica el cálculo si la empresa no está en España
         $company = $doc->getCompany();
         if ($company->codpais !== 'ESP') {
-            return true;
+            return $this->done();
         }
 
         // si la línea no es nueva, no hacemos nada
         if (!empty($line->id())) {
-            return true;
+            return $this->done();
         }
 
         // excepción por defecto del sujeto (cliente o proveedor)
@@ -108,7 +103,7 @@ class CalculatorModSpain implements CalculatorModInterface
                 $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT;
             }
 
-            return true;
+            return $this->done();
         }
 
         // si el documento es de exportación, aplicamos IVA 0% y exención del sujeto o E2 por defecto
@@ -116,7 +111,7 @@ class CalculatorModSpain implements CalculatorModInterface
             $line->iva = 0.0;
             $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
             $line->excepcioniva = $subjectException ?? TaxExceptions::ES_TAX_EXCEPTION_E2;
-            return true;
+            return $this->done();
         }
 
         // si el documento es de importación, la factura del proveedor va sin IVA
@@ -126,7 +121,7 @@ class CalculatorModSpain implements CalculatorModInterface
             $line->recargo = 0.0;
             $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
             $line->excepcioniva = null;
-            return true;
+            return $this->done();
         }
 
         // si el sujeto tiene una excepción de IVA configurada (p.ej. inversión del sujeto pasivo
@@ -142,29 +137,18 @@ class CalculatorModSpain implements CalculatorModInterface
                 $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
             }
 
-            return true;
+            return $this->done();
         }
 
-        return true;
+        return $this->done();
     }
 
-    public function clear(BusinessDocument &$doc, array &$lines): bool
-    {
-        return true;
-    }
-
-    /**
-     * @param array $subtotals
-     * @param BusinessDocument $doc
-     * @param BusinessDocumentLine[] $lines
-     * @return bool
-     */
-    public function getSubtotals(array &$subtotals, BusinessDocument $doc, array $lines): bool
+    public function accumulateSubtotals(array &$subtotals, BusinessDocument $doc, array &$lines): string
     {
         // No se aplica el cálculo si la empresa no está en España
         $company = $doc->getCompany();
         if ($company->codpais !== 'ESP') {
-            return true;
+            return $this->done();
         }
 
         $subtotals = [
@@ -213,7 +197,7 @@ class CalculatorModSpain implements CalculatorModInterface
 
             // 3. Validación de exención por línea
             if (!$this->validateLineExemptions($doc, $line, $subject->tipoidfiscal, $addressShipping, $globalEx)) {
-                return false;
+                return $this->stopAll();
             }
 
             // 4. Acumular para sugerencia de global
@@ -301,18 +285,18 @@ class CalculatorModSpain implements CalculatorModInterface
 
         // 1. Validación global
         if (!$this->validateGlobalExemption($globalEx, $allZeroIva, $exenciones, $doc)) {
-            return false;
+            return $this->stopAll();
         }
 
         // 2. Conflictos de exenciones
         if (!$this->checkLineConflicts($exenciones, $hasIva)) {
-            return false;
+            return $this->stopAll();
         }
 
         // 4. Sugerencia automática de global
         $this->suggestGlobalExemption($doc, $lines, $allLinesSaved, $allE3, $allE4, $allE2, $allE5, $allN2);
 
-        return true;
+        return $this->stopMods();
     }
 
     private static function applyUsedGoods(array &$subtotals, BusinessDocument $doc, BusinessDocumentLine $line, string $ivaKey, float $pvpTotal, float $totalCoste): bool
