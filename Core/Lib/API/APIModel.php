@@ -192,10 +192,19 @@ class APIModel extends APIResourceClass
      */
     private function getResourcesFromFolder($folder): array
     {
+        // Modelos que no deben exponerse en la API
+        $excludedModels = ['CodeModel', 'TotalModel'];
+
         $resources = [];
         foreach (scandir(FS_FOLDER . '/Dinamic/' . $folder, SCANDIR_SORT_ASCENDING) as $fName) {
             if (substr($fName, -4) === '.php') {
                 $modelName = substr($fName, 0, -4);
+
+                // Excluir modelos auxiliares
+                if (in_array($modelName, $excludedModels, true)) {
+                    continue;
+                }
+
                 $plural = $this->pluralize($modelName);
                 $resources[$plural] = $this->setResource($modelName);
             }

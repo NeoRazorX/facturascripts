@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -84,5 +84,5 @@ function widgetSubaccountSearchKp(id, event) {
 function widgetSubaccountSelect(id, value) {
     $("#" + id).val(value);
     $("#modal_" + id).modal("hide");
-    $("#modal_span_" + id).html(value);
+    $("#modal_span_" + id).text(value);
 }

@@ -29,8 +29,6 @@ use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
-use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
  * Controller for editing models that are related and show
@@ -150,9 +148,9 @@ abstract class ComercialContactController extends EditController
      *
      * @param string $viewName
      */
-    protected function createContactsView(string $viewName = 'EditDireccionContacto'): void
+    protected function createContactsView(string $viewName = 'EditDireccionContacto'): EditListView
     {
-        $this->addEditListView($viewName, 'Contacto', 'addresses-and-contacts', 'fa-solid fa-address-book');
+        return $this->addEditListView($viewName, 'Contacto', 'addresses-and-contacts', 'fa-solid fa-address-book');
     }
 
     /**
@@ -162,9 +160,9 @@ abstract class ComercialContactController extends EditController
      * @param string $model
      * @param string $label
      */
-    protected function createCustomerListView(string $viewName, string $model, string $label): void
+    protected function createCustomerListView(string $viewName, string $model, string $label): ListView
     {
-        $this->createListView($viewName, $model, $label, $this->getCustomerFields());
+        return $this->createListView($viewName, $model, $label, $this->getCustomerFields());
     }
 
     /**
@@ -172,20 +170,14 @@ abstract class ComercialContactController extends EditController
      *
      * @param string $viewName
      */
-    protected function createEmailsView(string $viewName = 'ListEmailSent'): void
+    protected function createEmailsView(string $viewName = 'ListEmailSent'): ListView
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
+        return $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
             ->addOrderBy(['date'], 'date', 2)
-            ->addSearchFields(['addressee', 'body', 'subject']);
-
-        // desactivamos la columna de destinatario
-        $this->views[$viewName]->disableColumn('to');
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
-
-        // filtros
-        $this->listView($viewName)->addFilterPeriod('period', 'date', 'date', true);
+            ->addSearchFields(['addressee', 'body', 'subject'])
+            ->disableColumn('to')
+            ->setSettings('btnNew', false)
+            ->addFilterPeriod('period', 'date', 'date', true);
     }
 
     /**
@@ -195,18 +187,16 @@ abstract class ComercialContactController extends EditController
      * @param string $model
      * @param string $label
      */
-    protected function createLineView(string $viewName, string $model, string $label = 'products'): void
+    protected function createLineView(string $viewName, string $model, string $label = 'products'): ListView
     {
-        $this->addListView($viewName, $model, $label, 'fa-solid fa-cubes')
+        return $this->addListView($viewName, $model, $label, 'fa-solid fa-cubes')
             ->addOrderBy(['idlinea'], 'code', 2)
             ->addOrderBy(['cantidad'], 'quantity')
             ->addOrderBy(['pvptotal'], 'amount')
-            ->addSearchFields(['referencia', 'descripcion']);
-
-        // botones
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnPrint', true);
+            ->addSearchFields(['referencia', 'descripcion'])
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false)
+            ->setSettings('btnPrint', true);
     }
 
     /**
@@ -217,22 +207,20 @@ abstract class ComercialContactController extends EditController
      * @param string $label
      * @param array $fields
      */
-    private function createListView(string $viewName, string $model, string $label, array $fields): void
+    private function createListView(string $viewName, string $model, string $label, array $fields): ListView
     {
-        // create view
-        $this->addListView($viewName, $model, $label, 'fa-solid fa-copy')
+        $view = $this->addListView($viewName, $model, $label, 'fa-solid fa-copy')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['fecha', 'hora'], 'date', 2)
             ->addOrderBy(['numero'], 'number')
             ->addOrderBy([$fields['numfield']], $fields['numtitle'])
             ->addOrderBy(['total'], 'amount')
-            ->addSearchFields(['codigo', 'observaciones', $fields['numfield']]);
+            ->addSearchFields(['codigo', 'observaciones', $fields['numfield']])
+            ->disableColumn($fields['linkfield'], true);
 
-        // disable columns
-        $this->listView($viewName)->disableColumn($fields['linkfield'], true);
-
-        // filters
         $this->addCommonViewFilters($viewName, $model);
+
+        return $view;
     }
 
     /**
@@ -241,28 +229,29 @@ abstract class ComercialContactController extends EditController
      * @param string $viewName
      * @param string $model
      */
-    protected function createReceiptView(string $viewName, string $model): void
+    protected function createReceiptView(string $viewName, string $model): ListView
     {
-        $this->addListView($viewName, $model, 'receipts', 'fa-solid fa-dollar-sign')
+        return $this->addListView($viewName, $model, 'receipts', 'fa-solid fa-dollar-sign')
             ->addOrderBy(['fecha'], 'date')
             ->addOrderBy(['fechapago'], 'payment-date')
             ->addOrderBy(['vencimiento'], 'expiration', 2)
             ->addOrderBy(['importe'], 'amount')
-            ->addSearchFields(['codigofactura', 'observaciones']);
-
-        // filtros
-        $this->listView($viewName)->addFilterPeriod('period-f', 'fecha', 'fecha');
-        $this->listView($viewName)->addFilterPeriod('period-v', 'expiration', 'vencimiento');
-
-        // botones
-        $this->addButtonPayReceipt($viewName);
-        $this->setSettings($viewName, 'btnPrint', true);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
-
-        // desactivar columnas
-        $this->views[$viewName]->disableColumn('customer');
-        $this->views[$viewName]->disableColumn('supplier');
+            ->addSearchFields(['codigofactura', 'observaciones'])
+            ->addFilterPeriod('period-f', 'fecha', 'fecha')
+            ->addFilterPeriod('period-v', 'expiration', 'vencimiento')
+            ->addButton([
+                'action' => 'pay-receipt',
+                'color' => 'outline-success',
+                'confirm' => 'true',
+                'icon' => 'fa-solid fa-check',
+                'label' => 'paid',
+                'type' => 'action'
+            ])
+            ->setSettings('btnPrint', true)
+            ->setSettings('btnNew', false)
+            ->setSettings('btnDelete', false)
+            ->disableColumn('customer')
+            ->disableColumn('supplier');
     }
 
     /**
@@ -270,19 +259,17 @@ abstract class ComercialContactController extends EditController
      *
      * @param string $viewName
      */
-    protected function createSubaccountsView(string $viewName = 'ListSubcuenta'): void
+    protected function createSubaccountsView(string $viewName = 'ListSubcuenta'): ListView
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-book')
+        return $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-book')
             ->addOrderBy(['codsubcuenta'], 'code')
             ->addOrderBy(['codejercicio'], 'exercise', 2)
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['saldo'], 'balance')
-            ->addSearchFields(['codsubcuenta', 'descripcion']);
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'checkBoxes', false);
+            ->addSearchFields(['codsubcuenta', 'descripcion'])
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false)
+            ->setSettings('checkBoxes', false);
     }
 
     /**
@@ -292,9 +279,9 @@ abstract class ComercialContactController extends EditController
      * @param string $model
      * @param string $label
      */
-    protected function createSupplierListView(string $viewName, string $model, string $label): void
+    protected function createSupplierListView(string $viewName, string $model, string $label): ListView
     {
-        $this->createListView($viewName, $model, $label, $this->getSupplierFields());
+        return $this->createListView($viewName, $model, $label, $this->getSupplierFields());
     }
 
     /**
@@ -392,7 +379,7 @@ abstract class ComercialContactController extends EditController
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($viewName);
                 if ($view->model->exists() && !empty($view->model->cifnif)) {
-                    $this->addButton($viewName, [
+                    $view->addButton([
                         'action' => 'check-vies',
                         'color' => 'info',
                         'icon' => 'fa-solid fa-check-double',
@@ -423,7 +410,7 @@ abstract class ComercialContactController extends EditController
                 $view->loadData('', $where);
 
                 // añadimos un botón para enviar un nuevo email
-                $this->addButton($viewName, [
+                $view->addButton([
                     'action' => 'SendMail?email-to=' . $email,
                     'color' => 'success',
                     'icon' => 'fa-solid fa-envelope',
@@ -434,21 +421,4 @@ abstract class ComercialContactController extends EditController
         }
     }
 
-    /**
-     * @param Cliente|Proveedor $subject
-     */
-    protected function updateContact($subject): void
-    {
-        $contact = $subject->getDefaultAddress();
-        $contact->email = $subject->email;
-        $contact->fax = $subject->fax;
-        $contact->telefono1 = $subject->telefono1;
-        $contact->telefono2 = $subject->telefono2;
-
-        // Sincronice fiscal data for pass validation
-        $contact->cifnif = $subject->cifnif;
-        $contact->tipoidfiscal = $subject->tipoidfiscal;
-
-        $contact->save();
-    }
 }

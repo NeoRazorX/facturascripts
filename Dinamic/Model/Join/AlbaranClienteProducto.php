@@ -4,6 +4,6 @@
  * Class created by Core/Internal/PluginsDeploy
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class AlbaranClienteProducto extends \FacturaScripts\Core\Model\Join\AlbaranClienteProducto
+class AlbaranClienteProducto extends \FacturaScripts\Plugins\Informes\Model\Join\AlbaranClienteProducto
 {
 }

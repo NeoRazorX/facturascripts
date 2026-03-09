@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,6 +30,7 @@ use FacturaScripts\Dinamic\Lib\ListFilter\NumberFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\PeriodFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\SelectFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\SelectWhereFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\TreeFilter;
 use FacturaScripts\Dinamic\Model\PageFilter;
 
 /**
@@ -188,6 +189,27 @@ trait ListViewFiltersTrait
     public function addFilterSelectWhere(string $key, array $values, string $label = ''): ListView
     {
         $this->filters[$key] = new SelectWhereFilter($key, $values, $label);
+
+        return $this;
+    }
+
+    /**
+     * Añade un filtro de tipo Arbol, recursivo
+     *
+     * Un ejemplo de uso es el modelo familia de producto que contiene a su vez un padre que es familia de producto.
+     *
+     * @param string $key Clave única para identificar el filtro.
+     * @param string $label Etiqueta que se mostrará para el filtro.
+     * @param string $field Campo de la tabla a filtrar.
+     * @param string $table Tabla de la base de datos donde se aplicará el filtro.
+     * @param string $fieldparent Campo que indica el padre para la estructura de árbol.
+     * @param string $fieldcode Campo que representa el código del nodo del árbol.
+     * @param string $fieldtitle Campo que representa el título o nombre del nodo del árbol.
+     * @param array $where Condiciones WHERE adicionales.
+     */
+    public function addFilterTree(string $key, string $label, string $field, string $table, string $fieldparent, string $fieldcode = '', string $fieldtitle = '', array $where = []): ListView
+    {
+        $this->filters[$key] = new TreeFilter($key, $field, $label, $table, $fieldparent, $fieldcode, $fieldtitle, $where);
 
         return $this;
     }

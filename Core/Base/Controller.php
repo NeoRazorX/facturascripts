@@ -144,7 +144,7 @@ class Controller implements ControllerInterface
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
 
-        $this->checkPhpVersion(8.0);
+        $this->checkPhpVersion(8.1);
     }
 
     /**

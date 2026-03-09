@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -82,20 +82,18 @@ class EditProveedor extends ComercialContactController
 
     protected function createDocumentView(string $viewName, string $model, string $label): void
     {
-        $this->createSupplierListView($viewName, $model, $label);
+        $this->createSupplierListView($viewName, $model, $label)
+            ->setSettings('btnPrint', true);
 
-        // botones
-        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonGroupDocument($viewName);
         $this->addButtonApproveDocument($viewName);
     }
 
     protected function createInvoiceView(string $viewName): void
     {
-        $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
+        $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices')
+            ->setSettings('btnPrint', true);
 
-        // botones
-        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonLockInvoice($viewName);
     }
 
@@ -108,17 +106,15 @@ class EditProveedor extends ComercialContactController
             ->addOrderBy(['neto'], 'net')
             ->addOrderBy(['stock'], 'stock')
             ->addSearchFields(['referencia', 'refproveedor'])
-            ->disableColumn('supplier');
-
-        // botones
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnPrint', true);
+            ->disableColumn('supplier')
+            ->setSettings('btnNew', false)
+            ->setSettings('btnPrint', true);
     }
 
     /**
      * Create views
      */
-    protected function createViews()
+    protected function createViews(): void
     {
         parent::createViews();
 
@@ -157,9 +153,6 @@ class EditProveedor extends ComercialContactController
         $return = parent::editAction();
         if ($return && $this->active === $this->getMainViewName()) {
             $this->checkSubaccountLength($this->getModel()->codsubcuenta);
-
-            // update contact email and phones when supplier email or phones are updated
-            $this->updateContact($this->views[$this->active]->model);
         }
 
         return $return;

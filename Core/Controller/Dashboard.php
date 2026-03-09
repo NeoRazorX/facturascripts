@@ -83,6 +83,7 @@ class Dashboard extends Controller
         $data['menu'] = 'reports';
         $data['title'] = 'dashboard';
         $data['icon'] = 'fa-solid fa-chalkboard-teacher';
+        $data['showonmenu'] = false;
         return $data;
     }
 

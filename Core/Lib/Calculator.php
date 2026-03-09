@@ -113,12 +113,16 @@ class Calculator
             'iva' => [],
             'neto' => 0.0,
             'netosindto' => 0.0,
+            'totalbeneficio' => 0.0,
             'totalcoste' => 0.0,
             'totalirpf' => 0.0,
             'totaliva' => 0.0,
             'totalrecargo' => 0.0,
             'totalsuplidos' => 0.0
         ];
+
+        // método de cálculo configurable: classic (por defecto) o price-adjusted
+        $taxMethod = Tools::settings('default', 'taxcalculationmethod', 'classic');
 
         // acumulamos por cada línea
         foreach ($lines as $line) {
@@ -163,9 +167,6 @@ class Calculator
 
             // IVA
             if ($line->iva > 0) {
-                // método de cálculo configurable: classic (por defecto) o price-adjusted
-                $taxMethod = Tools::settings('default', 'taxcalculationmethod', 'classic');
-
                 if ($taxMethod === 'price-adjusted' && $line->getTax()->tipo !== Impuesto::TYPE_FIXED_VALUE) {
                     // calculamos el precio con IVA unitario
                     $pvp_iva = Tools::round($line->pvpunitario * (100 + $line->iva) / 100);
@@ -252,11 +253,7 @@ class Calculator
         if (isset($doc->codpais) && $doc->codpais) {
             $taxZoneModel = new ImpuestoZona();
             foreach ($taxZoneModel->all([], ['prioridad' => 'DESC']) as $taxZone) {
-                if ($taxZone->codpais == $doc->codpais && $taxZone->provincia() == $doc->provincia) {
-                    $taxZones[] = $taxZone;
-                } elseif ($taxZone->codpais == $doc->codpais && $taxZone->codisopro == null) {
-                    $taxZones[] = $taxZone;
-                } elseif ($taxZone->codpais == null) {
+                if ($taxZone->matchPais($doc->codpais, $doc->provincia)) {
                     $taxZones[] = $taxZone;
                 }
             }
@@ -308,6 +305,11 @@ class Calculator
         // si tiene totalcoste, lo reiniciamos
         if ($doc->hasColumn('totalcoste')) {
             $doc->totalcoste = 0.0;
+        }
+
+        // si tiene totalbeneficio, lo reiniciamos
+        if ($doc->hasColumn('totalbeneficio')) {
+            $doc->totalbeneficio = 0.0;
         }
 
         foreach ($lines as $line) {
