@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\ImpuestoZona;
 use FacturaScripts\Core\Template\CalculatorModClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -55,7 +56,7 @@ class Calculator
         throw new Exception('Mod must be an instance of CalculatorModClass');
     }
 
-    public static function calculate(BusinessDocument &$doc, array &$lines, bool $save): bool
+    public static function calculate(BusinessDocument $doc, array &$lines, bool $save): bool
     {
         // ponemos totales a 0
         if (false === self::clear($doc, $lines)) {
@@ -129,7 +130,7 @@ class Calculator
         return true;
     }
 
-    public static function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): bool
+    public static function calculateLine(BusinessDocument $doc, BusinessDocumentLine $line): bool
     {
         $line->pvpsindto = $line->cantidad * $line->pvpunitario;
         $line->pvptotal = $line->pvpsindto * (100 - $line->dtopor) / 100 * (100 - $line->dtopor2) / 100;
@@ -351,7 +352,7 @@ class Calculator
      *
      * @return bool
      */
-    private static function apply(BusinessDocument &$doc, array &$lines): bool
+    private static function apply(BusinessDocument $doc, array &$lines): bool
     {
         $subject = $doc->getSubject();
         $noTax = $doc->getSerie()->siniva;
@@ -420,7 +421,7 @@ class Calculator
      *
      * @return bool
      */
-    private static function clear(BusinessDocument &$doc, array &$lines): bool
+    private static function clear(BusinessDocument $doc, array &$lines): bool
     {
         $doc->neto = $doc->netosindto = 0.0;
         $doc->total = $doc->totaleuros = 0.0;
