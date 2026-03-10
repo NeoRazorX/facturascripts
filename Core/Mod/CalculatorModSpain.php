@@ -329,18 +329,18 @@ class CalculatorModSpain extends CalculatorModClass
         $subtotals['iva'][$ivaKey0]['neto'] += $totalCoste;
         $subtotals['iva'][$ivaKey0]['netosindto'] += $totalCoste;
 
-        // si el beneficio es negativo y la serie no es rectificativa, no hay IVA
         $beneficio = $pvpTotal - $totalCoste;
-        if ($beneficio <= 0 && $doc->getSerie()->tipo !== 'R') {
-            return true;
-        }
 
-        // IVA seleccionado
+        // siempre acumulamos el margen en el neto (puede ser negativo)
         $subtotals['iva'][$ivaKey]['neto'] += $beneficio;
         $subtotals['iva'][$ivaKey]['netosindto'] += $beneficio;
-        $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-            $line->cantidad * $line->iva :
-            $beneficio * $line->iva / 100;
+
+        // solo aplicamos IVA si hay beneficio o es rectificativa
+        if ($beneficio > 0 || $doc->getSerie()->tipo === 'R') {
+            $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
+                $line->cantidad * $line->iva :
+                $beneficio * $line->iva / 100;
+        }
 
         return true;
     }
@@ -370,18 +370,18 @@ class CalculatorModSpain extends CalculatorModClass
         $subtotals['iva'][$ivaKey0]['neto'] += $totalCoste;
         $subtotals['iva'][$ivaKey0]['netosindto'] += $totalCoste;
 
-        // si el margen es negativo y la serie no es rectificativa, no hay IVA
         $margen = $pvpTotal - $totalCoste;
-        if ($margen <= 0 && $doc->getSerie()->tipo !== 'R') {
-            return true;
-        }
 
-        // IVA sobre el margen
+        // siempre acumulamos el margen en el neto (puede ser negativo)
         $subtotals['iva'][$ivaKey]['neto'] += $margen;
         $subtotals['iva'][$ivaKey]['netosindto'] += $margen;
-        $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-            $line->cantidad * $line->iva :
-            $margen * $line->iva / 100;
+
+        // solo aplicamos IVA si hay margen positivo o es rectificativa
+        if ($margen > 0 || $doc->getSerie()->tipo === 'R') {
+            $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
+                $line->cantidad * $line->iva :
+                $margen * $line->iva / 100;
+        }
 
         return true;
     }

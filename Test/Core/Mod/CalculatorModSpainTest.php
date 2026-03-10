@@ -20,12 +20,14 @@
 namespace FacturaScripts\Test\Core\Mod;
 
 use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
+use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -436,5 +438,497 @@ final class CalculatorModSpainTest extends TestCase
         // restauramos el régimen original de la empresa
         $company->regimeniva = $originalRegimen;
         $this->assertTrue($company->save(), 'can-not-restore-company');
+    }
+
+    public function testCompanyReSupplierPurchase(): void
+    {
+        // cambiamos el régimen de la empresa a recargo de equivalencia
+        $doc = new PresupuestoProveedor();
+        $company = $doc->getCompany();
+        $originalRegimen = $company->regimeniva;
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
+        $this->assertTrue($company->save(), 'can-not-save-company');
+
+        // creamos un proveedor normal
+        $subject = $this->getRandomSupplier();
+        $this->assertTrue($subject->save(), 'can-not-create-supplier');
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-supplier');
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 2;
+        $line1->pvpunitario = 100;
+        $line1->iva = 21;
+        $line1->recargo = 5.2;
+
+        $lines = [$line1];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // comprobamos el documento: el recargo se aplica porque la empresa tiene RE
+        $this->assertEquals(200.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(200.0, $doc->netosindto, 'bad-netosindto');
+        $this->assertEquals(252.4, $doc->total, 'bad-total');
+        $this->assertEquals(42.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(10.4, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+
+        // restauramos el régimen original de la empresa
+        $company->regimeniva = $originalRegimen;
+        $this->assertTrue($company->save(), 'can-not-restore-company');
+
+        // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
+    }
+
+    public function testGetSubtotalsPurchaseIntraCommunityWithoutPreviousCalculate(): void
+    {
+        $doc = new PresupuestoProveedor();
+        $doc->operacion = InvoiceOperation::INTRA_COMMUNITY;
+
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $line->iva = 21;
+        $line->recargo = 0;
+
+        $this->assertTrue(Calculator::calculateLine($doc, $line), 'can-not-calculate-line');
+
+        $subtotals = Calculator::getSubtotals($doc, [$line]);
+
+        $this->assertEquals(100.0, $subtotals['neto'], 'bad-neto');
+        $this->assertEquals(0.0, $subtotals['totaliva'], 'bad-totaliva');
+        $this->assertEquals(0.0, $subtotals['iva']['21|0']['totaliva'], 'bad-subtotal-iva');
+    }
+
+    public function testProductLineWithCustomerRe(): void
+    {
+        // obtenemos el impuesto IVA21%
+        $tax = Impuestos::get('IVA21');
+        if (false === $tax->exists()) {
+            $this->markTestSkipped('IVA21-not-found');
+        }
+
+        // creamos un producto con IVA 21%
+        $product = $this->getRandomProduct();
+        $product->codimpuesto = $tax->codimpuesto;
+        $this->assertTrue($product->save(), 'can-not-save-product');
+
+        // creamos un cliente con recargo de equivalencia
+        $subject = $this->getRandomCustomer();
+        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        // creamos un presupuesto
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-customer');
+        $this->assertTrue($doc->save(), 'can-not-save-doc');
+
+        // añadimos el producto: la línea debe tener recargo porque el cliente tiene RE
+        $line = $doc->getNewProductLine($product->referencia);
+        $this->assertEquals($tax->codimpuesto, $line->codimpuesto);
+        $this->assertEquals($tax->iva, $line->iva);
+        $this->assertEquals($tax->recargo, $line->recargo, 'bad-recargo');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-doc');
+        $this->assertTrue($product->delete(), 'can-not-delete-product');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
+    public function testProductLineWithCompanyRe(): void
+    {
+        // obtenemos el impuesto IVA21%
+        $tax = Impuestos::get('IVA21');
+        if (false === $tax->exists()) {
+            $this->markTestSkipped('IVA21-not-found');
+        }
+
+        // creamos un producto con IVA 21%
+        $product = $this->getRandomProduct();
+        $product->codimpuesto = $tax->codimpuesto;
+        $this->assertTrue($product->save(), 'can-not-save-product');
+
+        // cambiamos el régimen de la empresa a RE
+        $doc = new PresupuestoProveedor();
+        $company = $doc->getCompany();
+        $originalRegimen = $company->regimeniva;
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
+        $this->assertTrue($company->save(), 'can-not-save-company');
+
+        // creamos un proveedor normal
+        $subject = $this->getRandomSupplier();
+        $this->assertTrue($subject->save(), 'can-not-save-supplier');
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-supplier');
+        $this->assertTrue($doc->save(), 'can-not-save-doc');
+
+        // añadimos el producto: la línea debe tener recargo porque la empresa tiene RE
+        $line = $doc->getNewProductLine($product->referencia);
+        $this->assertEquals($tax->codimpuesto, $line->codimpuesto);
+        $this->assertEquals($tax->iva, $line->iva);
+        $this->assertEquals($tax->recargo, $line->recargo, 'bad-recargo');
+
+        // restauramos el régimen original de la empresa
+        $company->regimeniva = $originalRegimen;
+        $this->assertTrue($company->save(), 'can-not-restore-company');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-doc');
+        $this->assertTrue($product->delete(), 'can-not-delete-product');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-supplier');
+    }
+
+    public function testUsedGoodsSaleNegativeMargin(): void
+    {
+        // obtenemos IVA21
+        $tax = Impuestos::get('IVA21');
+        if (false === $tax->exists()) {
+            $this->markTestSkipped('IVA21-not-found');
+        }
+
+        // creamos un producto de segunda mano
+        $product = $this->getRandomProduct();
+        $product->codimpuesto = $tax->codimpuesto;
+        $product->tipo = ProductType::SECOND_HAND;
+        $this->assertTrue($product->save(), 'can-not-save-product');
+
+        // cambiamos el régimen de la empresa a bienes usados
+        $doc = new PresupuestoCliente();
+        $company = $doc->getCompany();
+        $originalRegimen = $company->regimeniva;
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_USED_GOODS;
+        $this->assertTrue($company->save(), 'can-not-save-company');
+
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-customer');
+        $this->assertTrue($doc->save(), 'can-not-save-doc');
+
+        // añadimos el producto: pvp 80, coste 100, margen -20
+        $line = $doc->getNewProductLine($product->referencia);
+        $line->cantidad = 1;
+        $line->pvpunitario = 80;
+        $line->coste = 100;
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // REBU con margen negativo: no hay IVA, el total es el pvp
+        $this->assertEquals(80.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(0.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(80.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+
+        // restauramos el régimen original de la empresa
+        $company->regimeniva = $originalRegimen;
+        $this->assertTrue($company->save(), 'can-not-restore-company');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-doc');
+        $this->assertTrue($product->delete(), 'can-not-delete-product');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+    }
+
+    public function testUsedGoodsSaleRectificativeNegativeMargin(): void
+    {
+        // obtenemos IVA21
+        $tax = Impuestos::get('IVA21');
+        if (false === $tax->exists()) {
+            $this->markTestSkipped('IVA21-not-found');
+        }
+
+        // creamos una serie rectificativa
+        $serie = new Serie();
+        $serie->codserie = 'RT';
+        if (false === $serie->exists()) {
+            $serie->descripcion = 'Rectificativas test';
+            $serie->tipo = 'R';
+            $this->assertTrue($serie->save(), 'can-not-save-serie');
+            Series::clear();
+        }
+
+        // creamos un producto de segunda mano
+        $product = $this->getRandomProduct();
+        $product->codimpuesto = $tax->codimpuesto;
+        $product->tipo = ProductType::SECOND_HAND;
+        $this->assertTrue($product->save(), 'can-not-save-product');
+
+        // cambiamos el régimen de la empresa a bienes usados
+        $doc = new PresupuestoCliente();
+        $doc->codserie = $serie->codserie;
+        $company = $doc->getCompany();
+        $originalRegimen = $company->regimeniva;
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_USED_GOODS;
+        $this->assertTrue($company->save(), 'can-not-save-company');
+
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-customer');
+        $this->assertTrue($doc->save(), 'can-not-save-doc');
+
+        // nota de crédito: cantidad -1, pvp 200, coste 150
+        // margen = (-200) - (-150) = -50
+        $line = $doc->getNewProductLine($product->referencia);
+        $line->cantidad = -1;
+        $line->pvpunitario = 200;
+        $line->coste = 150;
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // REBU rectificativa: IVA sobre el margen negativo (-50 * 21% = -10.5)
+        $this->assertEquals(-200.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(-10.5, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(-210.5, $doc->total, 'bad-total');
+
+        // restauramos el régimen original de la empresa
+        $company->regimeniva = $originalRegimen;
+        $this->assertTrue($company->save(), 'can-not-restore-company');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-doc');
+        $this->assertTrue($product->delete(), 'can-not-delete-product');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+        $serie->delete();
+    }
+
+    public function testTravelAgencySaleNegativeMargin(): void
+    {
+        // cambiamos el régimen de la empresa a agencia de viajes
+        $doc = new PresupuestoCliente();
+        $company = $doc->getCompany();
+        $originalRegimen = $company->regimeniva;
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_TRAVEL;
+        $this->assertTrue($company->save(), 'can-not-save-company');
+
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 80;
+        $line->coste = 100;
+        $line->iva = 21;
+
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // agencia de viajes con margen negativo: no hay IVA, el total es el pvp
+        $this->assertEquals(80.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(0.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(80.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+
+        // restauramos el régimen original de la empresa
+        $company->regimeniva = $originalRegimen;
+        $this->assertTrue($company->save(), 'can-not-restore-company');
+    }
+
+    public function testTravelAgencySaleRectificativeNegativeMargin(): void
+    {
+        // creamos una serie rectificativa
+        $serie = new Serie();
+        $serie->codserie = 'RT';
+        if (false === $serie->exists()) {
+            $serie->descripcion = 'Rectificativas test';
+            $serie->tipo = 'R';
+            $this->assertTrue($serie->save(), 'can-not-save-serie');
+            Series::clear();
+        }
+
+        // cambiamos el régimen de la empresa a agencia de viajes
+        $doc = new PresupuestoCliente();
+        $doc->codserie = $serie->codserie;
+        $company = $doc->getCompany();
+        $originalRegimen = $company->regimeniva;
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_TRAVEL;
+        $this->assertTrue($company->save(), 'can-not-save-company');
+
+        // nota de crédito: cantidad -1, pvp 200, coste 120
+        // margen = (-200) - (-120) = -80
+        $line = $doc->getNewLine();
+        $line->cantidad = -1;
+        $line->pvpunitario = 200;
+        $line->coste = 120;
+        $line->iva = 21;
+
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // rectificativa: IVA sobre el margen negativo (-80 * 21% = -16.8)
+        $this->assertEquals(-200.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(-16.8, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(-216.8, $doc->total, 'bad-total');
+
+        // restauramos el régimen original de la empresa
+        $company->regimeniva = $originalRegimen;
+        $this->assertTrue($company->save(), 'can-not-restore-company');
+
+        // eliminamos
+        $serie->delete();
+    }
+
+    public function testExportPurchaseIsNoOp(): void
+    {
+        // operacion EXPORT en compra no debe modificar el IVA
+        $doc = new PresupuestoProveedor();
+        $doc->operacion = InvoiceOperation::EXPORT;
+
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $line->iva = 21;
+
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // el IVA se mantiene porque EXPORT solo aplica a ventas
+        $this->assertEquals(21.0, $lines[0]->iva, 'bad-line-iva');
+        $this->assertEquals(100.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(21.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(121.0, $doc->total, 'bad-total');
+    }
+
+    public function testImportSaleIsNoOp(): void
+    {
+        // operacion IMPORT en venta no debe modificar el IVA
+        $doc = new PresupuestoCliente();
+        $doc->operacion = InvoiceOperation::IMPORT;
+
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $line->iva = 21;
+
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // el IVA se mantiene porque IMPORT solo aplica a compras
+        $this->assertEquals(21.0, $lines[0]->iva, 'bad-line-iva');
+        $this->assertEquals(100.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(21.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(121.0, $doc->total, 'bad-total');
+    }
+
+    public function testUsedGoodsSaleNormalProduct(): void
+    {
+        // obtenemos IVA21
+        $tax = Impuestos::get('IVA21');
+        if (false === $tax->exists()) {
+            $this->markTestSkipped('IVA21-not-found');
+        }
+
+        // creamos un producto normal (NO segunda mano)
+        $product = $this->getRandomProduct();
+        $product->codimpuesto = $tax->codimpuesto;
+        $this->assertTrue($product->save(), 'can-not-save-product');
+
+        // cambiamos el régimen de la empresa a bienes usados
+        $doc = new PresupuestoCliente();
+        $company = $doc->getCompany();
+        $originalRegimen = $company->regimeniva;
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_USED_GOODS;
+        $this->assertTrue($company->save(), 'can-not-save-company');
+
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-customer');
+        $this->assertTrue($doc->save(), 'can-not-save-doc');
+
+        // añadimos el producto: pvp 200, coste 150
+        $line = $doc->getNewProductLine($product->referencia);
+        $line->cantidad = 1;
+        $line->pvpunitario = 200;
+        $line->coste = 150;
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // producto normal: IVA sobre el total, no sobre el margen
+        $this->assertEquals(200.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(42.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(242.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+
+        // restauramos el régimen original de la empresa
+        $company->regimeniva = $originalRegimen;
+        $this->assertTrue($company->save(), 'can-not-restore-company');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-doc');
+        $this->assertTrue($product->delete(), 'can-not-delete-product');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+    }
+
+    public function testTravelAgencyPurchase(): void
+    {
+        // cambiamos el régimen de la empresa a agencia de viajes
+        $doc = new PresupuestoProveedor();
+        $company = $doc->getCompany();
+        $originalRegimen = $company->regimeniva;
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_TRAVEL;
+        $this->assertTrue($company->save(), 'can-not-save-company');
+
+        // creamos un proveedor normal
+        $subject = $this->getRandomSupplier();
+        $this->assertTrue($subject->save(), 'can-not-save-supplier');
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-supplier');
+
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $line->coste = 80;
+        $line->iva = 21;
+
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // compra de agencia de viajes: IVA normal (margen solo aplica a ventas)
+        $this->assertEquals(100.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(21.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(121.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+
+        // restauramos el régimen original de la empresa
+        $company->regimeniva = $originalRegimen;
+        $this->assertTrue($company->save(), 'can-not-restore-company');
+
+        // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
+    }
+
+    public function testIntraCommunityPurchaseMultipleRates(): void
+    {
+        $doc = new PresupuestoProveedor();
+        $doc->operacion = InvoiceOperation::INTRA_COMMUNITY;
+
+        // línea al 21%
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 1;
+        $line1->pvpunitario = 100;
+        $line1->iva = 21;
+
+        // línea al 10%
+        $line2 = $doc->getNewLine();
+        $line2->cantidad = 1;
+        $line2->pvpunitario = 50;
+        $line2->iva = 10;
+
+        $lines = [$line1, $line2];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // ambas líneas mantienen IVA para autorepercusión
+        $this->assertEquals(21.0, $lines[0]->iva, 'bad-line1-iva');
+        $this->assertEquals(10.0, $lines[1]->iva, 'bad-line2-iva');
+
+        // pero el IVA se neutraliza en el total del documento
+        $this->assertEquals(150.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(0.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(150.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
     }
 }
