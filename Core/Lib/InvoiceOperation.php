@@ -29,6 +29,8 @@ class InvoiceOperation
     const EXPORT = 'exportacion';
     const IMPORT = 'importacion';
     const INTRA_COMMUNITY = 'intracomunitaria';
+    const INTRA_COMMUNITY_SERVICES = 'intracom-servicios';
+    const REVERSE_CHARGE = 'inv-sujeto-pasivo';
     const SUCCESSIVE_TRACT = 'successive-tract';
     const WORK_CERTIFICATION = 'work-certification';
 
@@ -55,6 +57,8 @@ class InvoiceOperation
     {
         $defaults = [
             self::INTRA_COMMUNITY => 'intra-community',
+            self::INTRA_COMMUNITY_SERVICES => 'intra-community-services',
+            self::REVERSE_CHARGE => 'reverse-charge',
             self::EXPORT => 'operation-export',
             self::IMPORT => 'operation-import',
             self::WORK_CERTIFICATION => 'work-certification',

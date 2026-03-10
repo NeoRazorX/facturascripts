@@ -45,36 +45,36 @@ abstract class CalculatorModClass
 
     public function accumulateSubtotals(array &$subtotals, BusinessDocument $doc, array &$lines): string
     {
-        return self::CONTINUE;
+        return $this->done();
     }
 
     public function apply(BusinessDocument $doc, array &$lines): string
     {
-        return self::CONTINUE;
+        return $this->done();
     }
 
     public function calculate(BusinessDocument $doc, array &$lines): string
     {
-        return self::CONTINUE;
+        return $this->done();
     }
 
     public function calculateLine(BusinessDocument $doc, BusinessDocumentLine $line): string
     {
-        return self::CONTINUE;
+        return $this->done();
     }
 
     public function clear(BusinessDocument $doc, array &$lines): string
     {
-        return self::CONTINUE;
+        return $this->done();
     }
 
     public function save(BusinessDocument $doc, array &$lines): string
     {
-        return self::CONTINUE;
+        return $this->done();
     }
 
     public function updateSubtotals(array &$subtotals, BusinessDocument $doc, array $lines): string
     {
-        return self::CONTINUE;
+        return $this->done();
     }
 }

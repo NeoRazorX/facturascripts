@@ -85,6 +85,14 @@ class TaxExceptions
                 'sales' => [self::ES_TAX_EXCEPTION_E3, self::ES_TAX_EXCEPTION_E4, self::ES_TAX_EXCEPTION_E5, self::ES_TAX_EXCEPTION_N2],
                 'purchases' => [self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, self::ES_TAX_EXCEPTION_N1, self::ES_TAX_EXCEPTION_N2],
             ],
+            InvoiceOperation::INTRA_COMMUNITY_SERVICES => [
+                'sales' => [self::ES_TAX_EXCEPTION_N2],
+                'purchases' => [self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT],
+            ],
+            InvoiceOperation::REVERSE_CHARGE => [
+                'sales' => [self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT],
+                'purchases' => [self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT],
+            ],
             InvoiceOperation::EXPORT => [
                 'sales' => [self::ES_TAX_EXCEPTION_E2],
                 'purchases' => [],

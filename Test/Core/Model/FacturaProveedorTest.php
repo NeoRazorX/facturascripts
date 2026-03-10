@@ -332,14 +332,15 @@ final class FacturaProveedorTest extends TestCase
         $lines = $invoice->getLines();
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
-        // comprobamos los totales
+        // comprobamos los totales: el proveedor tiene RE pero la empresa no,
+        // así que en compras no se aplica recargo
         $this->assertEquals(200, $invoice->neto, 'bad-neto');
         $this->assertEquals(200, $invoice->netosindto, 'bad-netosindto');
         $this->assertEquals(42, $invoice->totaliva, 'bad-totaliva');
-        $this->assertEquals(10.4, $invoice->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0, $invoice->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0, $invoice->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0, $invoice->totalsuplidos, 'bad-totalsuplidos');
-        $this->assertEquals(252.4, $invoice->total, 'bad-total');
+        $this->assertEquals(242, $invoice->total, 'bad-total');
 
         // comprobamos el asiento
         $entry = $invoice->getAccountingEntry();
@@ -387,14 +388,15 @@ final class FacturaProveedorTest extends TestCase
         $lines = $invoice->getLines();
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
-        // comprobamos los totales
+        // comprobamos los totales: la empresa tiene RE,
+        // así que en compras sí se aplica recargo
         $this->assertEquals(100, $invoice->neto, 'bad-neto');
         $this->assertEquals(100, $invoice->netosindto, 'bad-netosindto');
         $this->assertEquals(21, $invoice->totaliva, 'bad-totaliva');
-        $this->assertEquals(0, $invoice->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(5.2, $invoice->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0, $invoice->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0, $invoice->totalsuplidos, 'bad-totalsuplidos');
-        $this->assertEquals(121, $invoice->total, 'bad-total');
+        $this->assertEquals(126.2, $invoice->total, 'bad-total');
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');

@@ -21,9 +21,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Template\ModelTrait;
-use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Dinamic\Model\LineaPedidoProveedor as LineaPedido;
 
 /**
@@ -65,12 +65,16 @@ class PedidoProveedor extends PurchaseDocument
     public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpedido', 'servido'])
     {
         $newLine = new LineaPedido();
+        $newLine->actualizastock = $this->getStatus()->actualizastock;
+        $newLine->excepcioniva = $this->getSubject()->excepcioniva;
         $newLine->idpedido = $this->idpedido;
         $newLine->irpf = $this->irpf;
-        $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
 
-        Calculator::calculateLine($this, $newLine);
+        // si no viene de getNewProductLine(), calculamos la línea
+        if (empty($data['referencia'] ?? '')) {
+            Calculator::calculateLine($this, $newLine);
+        }
 
         // allow extensions
         $this->pipe('getNewLine', $newLine, $data, $exclude);

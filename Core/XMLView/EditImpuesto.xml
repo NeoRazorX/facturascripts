@@ -54,11 +54,17 @@
             <column name="impacted-tax-re-subaccount" description="optional" order="170">
                 <widget type="subcuenta" fieldname="codsubcuentarepre"/>
             </column>
+            <column name="impacted-tax-intra-subaccount" description="optional" order="175">
+                <widget type="subcuenta" fieldname="codsubcuentarepintra"/>
+            </column>
             <column name="supported-tax-subaccount" description="optional" order="180">
                 <widget type="subcuenta" fieldname="codsubcuentasop"/>
             </column>
             <column name="supported-tax-re-subaccount" description="optional" order="190">
                 <widget type="subcuenta" fieldname="codsubcuentasopre"/>
+            </column>
+            <column name="supported-tax-intra-subaccount" description="optional" order="195">
+                <widget type="subcuenta" fieldname="codsubcuentasopintra"/>
             </column>
         </group>
         <group name="extra" numcolumns="12">

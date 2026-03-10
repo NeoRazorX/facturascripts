@@ -24,6 +24,7 @@ use FacturaScripts\Core\Contract\CalculatorModInterface;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\ImpuestoZona;
 use FacturaScripts\Core\Template\CalculatorModClass;
 use FacturaScripts\Core\Tools;
@@ -278,7 +279,7 @@ class Calculator
                 $subtotals['totalcoste'] += $totalCoste;
             }
 
-            $pvpTotal = $line->pvptotal * (100 - $doc->dtopor1) / 100 * (100 - $doc->dtopor2) / 100;
+            $pvpTotal = $line->pvptotal * $doc->getEUDiscount();
             if (empty($line->pvptotal)) {
                 continue;
             }
@@ -357,33 +358,35 @@ class Calculator
         $taxException = $subject->excepcioniva ?? null;
         $regimen = $subject->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
 
-        // cargamos las zonas de impuestos
+        // cargamos las zonas de impuestos para los documentos de venta
         $taxZones = [];
-        if (isset($doc->codpais) && $doc->codpais) {
-            $taxZoneModel = new ImpuestoZona();
-            foreach ($taxZoneModel->all([], ['prioridad' => 'DESC']) as $taxZone) {
+        if ($doc instanceof SalesDocument) {
+            foreach (ImpuestoZona::all([], ['prioridad' => 'DESC']) as $taxZone) {
                 if ($taxZone->matchPais($doc->codpais, $doc->provincia)) {
                     $taxZones[] = $taxZone;
                 }
             }
         }
 
+        // recorremos las líneas del documento
         foreach ($lines as $line) {
-            // aplicamos las excepciones de impuestos
+            // ¿La serie es sin impuestos o el régimen exento?
+            if ($noTax || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
+                $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
+                $line->excepcioniva = $taxException;
+                $line->iva = $line->recargo = 0.0;
+                continue;
+            }
+
+            // aplicamos la zona de impuestos
             foreach ($taxZones as $taxZone) {
                 if ($line->codimpuesto === $taxZone->codimpuesto) {
                     $line->codimpuesto = $taxZone->codimpuestosel;
+                    $line->excepcioniva = $taxZone->excepcioniva;
                     $line->iva = $line->getTax()->iva;
                     $line->recargo = $line->getTax()->recargo;
                     break;
                 }
-            }
-
-            // ¿La serie es sin impuestos o el régimen exento?
-            if ($noTax || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
-                $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
-                $line->iva = $line->recargo = 0.0;
-                $line->excepcioniva = $taxException;
             }
         }
 

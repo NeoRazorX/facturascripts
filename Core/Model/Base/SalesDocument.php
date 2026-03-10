@@ -227,6 +227,7 @@ abstract class SalesDocument extends TransformerDocument
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
             $newLine->coste = $variant->coste;
             $newLine->descripcion = $variant->description();
+            $newLine->excepcioniva = $product->excepcioniva ?? $newLine->excepcioniva;
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $product->getTax()->iva;
             $newLine->pvpunitario = $this->getRate()->applyTo($variant, $product);
