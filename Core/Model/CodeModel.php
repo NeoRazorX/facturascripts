@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
@@ -169,7 +168,7 @@ class CodeModel
     {
         $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
         $fields = $field . '|' . $model->primaryDescriptionColumn();
-        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
         return self::all($model::tableName(), $field, $model->primaryDescriptionColumn(), false, $where);
     }
 
@@ -198,8 +197,7 @@ class CodeModel
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if ($tableName && class_exists($modelClass)) {
             $model = new $modelClass();
-            $where = [new DataBaseWhere($fieldCode, $code)];
-            if ($model->loadFromCode('', $where)) {
+            if ($model->loadWhereEq($fieldCode, $code)) {
                 return new static(['code' => $model->{$fieldCode}, 'description' => $model->primaryDescription()]);
             }
 
@@ -244,7 +242,7 @@ class CodeModel
      * @param string $fieldCode
      * @param string $fieldDescription
      * @param string $query
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      *
      * @return static[]
      */
@@ -260,7 +258,7 @@ class CodeModel
         }
 
         $fields = $fieldCode . '|' . $fieldDescription;
-        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
         return self::all($tableName, $fieldCode, $fieldDescription, false, $where);
     }
 
@@ -270,13 +268,9 @@ class CodeModel
     }
 
     /**
-     * Valída que un nombre de campo sea seguro para usar en consultas SQL.
+     * Valida que un nombre de campo sea seguro para usar en consultas SQL.
      * Solo permite letras, números, guiones bajos y puntos (para campos con alias de tabla).
-     * También permite el uso de las funciones lower() y upper().
-     *
-     * @param string $fieldName
-     *
-     * @return bool
+     * También permite el uso de las funciones lower(), upper(), substring() y concat().
      */
     protected static function isValidFieldName(string $fieldName): bool
     {
@@ -302,8 +296,7 @@ class CodeModel
         // substring(field, start, len) con números
         if (preg_match('/^substring\((' . $ident . '),\s*(\d+)\s*,\s*(\d+)\s*\)$/i', $fieldName, $m)) {
             $start = (int)$m[2];
-            $len   = (int)$m[3];
-            // límites razonables (ajusta a tu caso)
+            $len = (int)$m[3];
             return $start >= 1 && $len >= 1 && $len <= 1000;
         }
 
@@ -315,7 +308,7 @@ class CodeModel
 
         return false;
     }
-    
+
     protected static function db(): DataBase
     {
         if (self::$dataBase === null) {

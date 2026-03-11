@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -388,17 +388,15 @@ final class CodeModelTest extends TestCase
         }
         $this->assertTrue($found, 'No funcionó lower() con tabla.campo');
 
-        // Test con función no permitida concat() - debe fallar
-        $result = CodeModel::all('almacenes', 'concat(codalmacen, nombre)', 'nombre', true);
+        // Test con función permitida concat()
+        $result = CodeModel::all('almacenes', 'concat(codalmacen, nombre)', 'nombre', false);
         $this->assertIsArray($result);
-        $this->assertCount(1, $result); // Solo debe retornar el elemento vacío
-        $this->assertNull($result[0]->code);
+        $this->assertNotEmpty($result);
 
-        // Test con función no permitida substring() - debe fallar
-        $result = CodeModel::all('almacenes', 'codalmacen', 'substring(nombre, 1, 10)', true);
+        // Test con función permitida substring()
+        $result = CodeModel::all('almacenes', 'codalmacen', 'substring(nombre, 1, 10)', false);
         $this->assertIsArray($result);
-        $this->assertCount(1, $result); // Solo debe retornar el elemento vacío
-        $this->assertNull($result[0]->code);
+        $this->assertNotEmpty($result);
 
         // Test con intento de SQL injection - debe fallar
         $result = CodeModel::all('almacenes', 'codalmacen; DROP TABLE almacenes--', 'nombre', true);
