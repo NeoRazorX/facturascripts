@@ -764,7 +764,7 @@ final class ProductoTest extends TestCase
 
     private function getTestSupplier(): Proveedor
     {
-        $num = mt_rand(1, 999);
+        $num = mt_rand(1, 999999);
         $supplier = new Proveedor();
         $supplier->codproveedor = 'TEST' . $num;
         $supplier->nombre = 'Test Supplier ' . $num;
