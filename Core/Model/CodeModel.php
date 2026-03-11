@@ -272,7 +272,10 @@ class CodeModel
     /**
      * Valída que un nombre de campo sea seguro para usar en consultas SQL.
      * Solo permite letras, números, guiones bajos y puntos (para campos con alias de tabla).
-     * También permite el uso de las funciones lower() y upper().
+     * También permite el uso de algunas funciones SQL concretamente:
+     *   - lower() y upper()
+     *   - substring() con sintaxis substring(campo, start, length) donde start y length son números enteros positivos
+     *   - concat() con sintaxis concat(arg1, arg2, ...) donde arg es un identificador o un string literal simple (entre comillas simples, sin comillas internas)
      *
      * @param string $fieldName
      *
