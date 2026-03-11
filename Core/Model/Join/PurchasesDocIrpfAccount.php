@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\JoinModel;
+use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Familia;
 
@@ -40,25 +40,19 @@ class PurchasesDocIrpfAccount extends JoinModel
 
     /**
      * Get totals for subaccount of IRPF purchase document
-     *
-     * @param FacturaProveedor $document
-     * @param string $defaultSubacode
-     * @param float $percentage
-     *
-     * @return array
      */
     public function getTotalsForDocument($document, string $defaultSubacode, float $percentage): array
     {
         $totals = [];
         $where = [
-            new DataBaseWhere('lineasfacturasprov.idfactura', $document->idfactura),
-            new DataBaseWhere('lineasfacturasprov.suplido', false)
+            Where::eq('lineasfacturasprov.idfactura', $document->idfactura),
+            Where::eq('lineasfacturasprov.suplido', false),
         ];
         $order = [
             "COALESCE(productos.codsubcuentairpfcom, '')" => 'ASC',
             "COALESCE(productos.codfamilia, '')" => 'ASC'
         ];
-        foreach ($this->all($where, $order) as $row) {
+        foreach (static::all($where, $order) as $row) {
             $codSubAccount = empty($row->codsubcuenta) ? Familia::purchaseIrpfSubAccount($row->codfamilia) : $row->codsubcuenta;
             if (empty($codSubAccount)) {
                 $codSubAccount = $defaultSubacode;
@@ -71,13 +65,6 @@ class PurchasesDocIrpfAccount extends JoinModel
         return $this->checkTotals($totals, $document, $defaultSubacode);
     }
 
-    /**
-     * @param array $totals
-     * @param FacturaProveedor $document
-     * @param string $defaultSubacode
-     *
-     * @return array
-     */
     protected function checkTotals(array &$totals, $document, string $defaultSubacode): array
     {
         // round and add the totals
@@ -96,11 +83,6 @@ class PurchasesDocIrpfAccount extends JoinModel
         return $totals;
     }
 
-    /**
-     * List of fields or columns to select.
-     *
-     * @return array
-     */
     protected function getFields(): array
     {
         return [
@@ -111,11 +93,6 @@ class PurchasesDocIrpfAccount extends JoinModel
         ];
     }
 
-    /**
-     * Return Group By fields
-     *
-     * @return string
-     */
     protected function getGroupFields(): string
     {
         return 'lineasfacturasprov.idfactura,'
@@ -123,21 +100,11 @@ class PurchasesDocIrpfAccount extends JoinModel
             . "COALESCE(productos.codfamilia, '')";
     }
 
-    /**
-     * List of tables related to from sql.
-     *
-     * @return string
-     */
     protected function getSQLFrom(): string
     {
         return 'lineasfacturasprov LEFT JOIN productos ON productos.idproducto = lineasfacturasprov.idproducto';
     }
 
-    /**
-     * List of tables required for the execution of the view.
-     *
-     * @return array
-     */
     protected function getTables(): array
     {
         return ['lineasfacturasprov', 'productos'];
