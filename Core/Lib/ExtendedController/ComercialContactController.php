@@ -420,5 +420,4 @@ abstract class ComercialContactController extends EditController
                 break;
         }
     }
-
 }

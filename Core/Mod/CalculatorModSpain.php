@@ -50,7 +50,6 @@ class CalculatorModSpain extends CalculatorModClass
         $taxMethod = Tools::settings('default', 'taxcalculationmethod', 'classic');
 
         foreach ($lines as $line) {
-
             // coste
             $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
             if (isset($line->coste)) {

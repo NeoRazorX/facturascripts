@@ -219,7 +219,6 @@ class ConfigEmail extends PanelController
             case 'enable-notification':
                 $this->enableNotificationAction(true);
                 break;
-
         }
 
         return parent::execPreviousAction($action);

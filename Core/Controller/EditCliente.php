@@ -367,7 +367,6 @@ class EditCliente extends ComercialContactController
         ];
         // para cada documento de venta
         foreach (['AlbaranCliente', 'FacturaCliente', 'PedidoCliente', 'PresupuestoCliente'] as $modelName) {
-
             // obtener el documento de venta correspondiente
             $salesDocuments = [];
             switch ($modelName) {
