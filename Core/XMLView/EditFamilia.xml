@@ -52,6 +52,9 @@
             <column name="products" numcolumns="4" order="100">
                 <widget type="number" fieldname="numproductos" readonly="true"/>
             </column>
+            <column name="image" numcolumns="4" order="110">
+                <widget type="library" fieldname="idattachedfile"/>
+            </column>
         </group>
     </columns>
 </view>
