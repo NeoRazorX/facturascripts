@@ -287,8 +287,6 @@ abstract class ListController extends BaseController
 
         // clear query
         $this->request->request->remove('query');
-
-        Tools::log()->notice('record-updated-correctly');
     }
 
     /**
