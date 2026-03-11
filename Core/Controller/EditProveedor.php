@@ -263,7 +263,7 @@ class EditProveedor extends ComercialContactController
     {
         $column = $this->views[$viewName]->columnForName('operation');
         if ($column && $column->widget->getType() === 'select') {
-            $column->widget->setValuesFromArrayKeys(InvoiceOperation::all(), true, true);
+            $column->widget->setValuesFromArrayKeys(InvoiceOperation::allForPurchases(), true, true);
         }
     }
 
