@@ -374,27 +374,38 @@ class NewMail
             $bccAddresses = $this->getBCCAddresses();
 
             if (!empty($ccAddresses)) {
+                // limpiamos primero para evitar conflicto por dirección duplicada al pasar de CC a TO
+                $this->mail->clearCCs();
+
                 // movemos el primer CC a TO
                 $firstCC = array_shift($ccAddresses);
                 $this->to($firstCC);
 
-                // limpiamos y volvemos a agregar los CC restantes
-                $this->mail->clearCCs();
+                // volvemos a agregar los CC restantes
                 foreach ($ccAddresses as $email) {
                     $this->cc($email);
                 }
             } elseif (!empty($bccAddresses)) {
+                // limpiamos primero para evitar conflicto por dirección duplicada al pasar de BCC a TO
+                $this->mail->clearBCCs();
+
                 // movemos el primer BCC a TO
                 $firstBCC = array_shift($bccAddresses);
                 $this->to($firstBCC);
 
-                // limpiamos y volvemos a agregar los BCC restantes
-                $this->mail->clearBCCs();
+                // volvemos a agregar los BCC restantes
                 foreach ($bccAddresses as $email) {
                     $this->bcc($email);
                 }
             } else {
                 // no hay ningún destinatario
+                Tools::log()->warning('email-no-recipients');
+                return false;
+            }
+
+            // PHPMailer evita destinatarios duplicados entre TO/CC/BCC.
+            // Si no hemos podido promover ninguno, cancelamos el envío.
+            if (empty($this->getToAddresses())) {
                 Tools::log()->warning('email-no-recipients');
                 return false;
             }
