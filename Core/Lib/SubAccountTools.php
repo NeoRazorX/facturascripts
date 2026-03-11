@@ -31,7 +31,6 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 class SubAccountTools
 {
-
     /**
      * All tax special codes
      */

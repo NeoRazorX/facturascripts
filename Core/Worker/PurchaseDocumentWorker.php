@@ -53,10 +53,12 @@ class PurchaseDocumentWorker extends WorkerClass
 
         // recorremos las líneas del documento
         foreach ($doc->getLines() as $line) {
-            if (empty($line->referencia) ||
+            if (
+                empty($line->referencia) ||
                 $line->cantidad <= 0 ||
                 $line->pvpunitario <= 0 ||
-                false === Tools::settings('default', 'updatesupplierprices')) {
+                false === Tools::settings('default', 'updatesupplierprices')
+            ) {
                 continue;
             }
 
@@ -67,8 +69,10 @@ class PurchaseDocumentWorker extends WorkerClass
                 Where::eq('referencia', $line->referencia),
                 Where::eq('coddivisa', $doc->coddivisa)
             ];
-            if (false === $product->loadWhere($where) ||
-                strtotime($product->actualizado) <= strtotime($doc->fecha . ' ' . $doc->hora)) {
+            if (
+                false === $product->loadWhere($where) ||
+                strtotime($product->actualizado) <= strtotime($doc->fecha . ' ' . $doc->hora)
+            ) {
                 $product->actualizado = Tools::dateTime($doc->fecha . ' ' . $doc->hora);
                 $product->coddivisa = $doc->coddivisa;
                 $product->codproveedor = $doc->codproveedor;

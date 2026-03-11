@@ -31,7 +31,6 @@ use FacturaScripts\Dinamic\Model\Partida;
  */
 class PartidaAsiento extends JoinModel
 {
-
     /** @var Asiento */
     private $asiento;
 

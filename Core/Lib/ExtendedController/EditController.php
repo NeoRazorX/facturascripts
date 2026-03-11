@@ -69,8 +69,10 @@ abstract class EditController extends PanelController
     protected function exportAction()
     {
         // comprobamos permisos
-        if (false === $this->views[$this->active]->settings['btnPrint'] ||
-            false === $this->permissions->allowExport) {
+        if (
+            false === $this->views[$this->active]->settings['btnPrint'] ||
+            false === $this->permissions->allowExport
+        ) {
             Tools::log()->warning('no-print-permission');
             return;
         }

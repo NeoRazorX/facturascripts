@@ -86,8 +86,10 @@ class CalculatorModSpain extends CalculatorModClass
             }
 
             // si es una venta de segunda mano o de agencia de viajes, calculamos el IVA sobre el margen
-            if (self::applyUsedGoods($subtotals, $doc, $line, $ivaKey, $pvpTotal, $totalCoste)
-                || self::applyTravel($subtotals, $doc, $line, $ivaKey, $pvpTotal, $totalCoste)) {
+            if (
+                self::applyUsedGoods($subtotals, $doc, $line, $ivaKey, $pvpTotal, $totalCoste)
+                || self::applyTravel($subtotals, $doc, $line, $ivaKey, $pvpTotal, $totalCoste)
+            ) {
                 continue;
             }
 
@@ -187,9 +189,11 @@ class CalculatorModSpain extends CalculatorModClass
             }
 
             // Si es una compra de bienes usados, no aplicamos impuestos
-            if ($doc instanceof PurchaseDocument
+            if (
+                $doc instanceof PurchaseDocument
                 && $companyRegimen === RegimenIVA::TAX_SYSTEM_USED_GOODS
-                && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+                && $line->getProducto()->tipo === ProductType::SECOND_HAND
+            ) {
                 $line->codimpuesto = null;
                 $line->iva = $line->recargo = 0.0;
                 continue;
@@ -290,8 +294,10 @@ class CalculatorModSpain extends CalculatorModClass
         // IVA devengado = IVA deducible → efecto neto 0 en el documento.
         // Mantenemos neto, codimpuesto e iva% en el array para que la contabilidad
         // pueda recalcular y generar los asientos de autorepercusión.
-        if ($doc instanceof PurchaseDocument
-            && in_array($doc->operacion, [InvoiceOperation::INTRA_COMMUNITY, InvoiceOperation::INTRA_COMMUNITY_SERVICES, InvoiceOperation::REVERSE_CHARGE])) {
+        if (
+            $doc instanceof PurchaseDocument
+            && in_array($doc->operacion, [InvoiceOperation::INTRA_COMMUNITY, InvoiceOperation::INTRA_COMMUNITY_SERVICES, InvoiceOperation::REVERSE_CHARGE])
+        ) {
             foreach ($subtotals['iva'] as &$value) {
                 $value['totaliva'] = 0.0;
                 $value['totalrecargo'] = 0.0;
@@ -305,9 +311,11 @@ class CalculatorModSpain extends CalculatorModClass
     protected static function applyUsedGoods(array &$subtotals, BusinessDocument $doc, BusinessDocumentLine $line, string $ivaKey, float $pvpTotal, float $totalCoste): bool
     {
         // si no es una venta de segunda mano, no hacemos nada
-        if ($doc instanceof PurchaseDocument
+        if (
+            $doc instanceof PurchaseDocument
             || $doc->getCompany()->regimeniva !== RegimenIVA::TAX_SYSTEM_USED_GOODS
-            || $line->getProducto()->tipo !== ProductType::SECOND_HAND) {
+            || $line->getProducto()->tipo !== ProductType::SECOND_HAND
+        ) {
             return false;
         }
 
@@ -347,8 +355,10 @@ class CalculatorModSpain extends CalculatorModClass
     protected static function applyTravel(array &$subtotals, BusinessDocument $doc, BusinessDocumentLine $line, string $ivaKey, float $pvpTotal, float $totalCoste): bool
     {
         // si no es una venta de una agencia de viajes, no hacemos nada
-        if ($doc instanceof PurchaseDocument
-            || $doc->getCompany()->regimeniva !== RegimenIVA::TAX_SYSTEM_TRAVEL) {
+        if (
+            $doc instanceof PurchaseDocument
+            || $doc->getCompany()->regimeniva !== RegimenIVA::TAX_SYSTEM_TRAVEL
+        ) {
             return false;
         }
 

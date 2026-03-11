@@ -325,9 +325,11 @@ trait CommonLineHTML
 
     private static function subtotalValue(BusinessDocumentLine $line, TransformerDocument $model): float
     {
-        if ($model->subjectColumn() === 'codcliente'
+        if (
+            $model->subjectColumn() === 'codcliente'
             && $model->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
-            && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+            && $line->getProducto()->tipo === ProductType::SECOND_HAND
+        ) {
             $profit = $line->pvpunitario - $line->coste;
             $tax = $profit * ($line->iva + $line->recargo - $line->irpf) / 100;
             return ($line->coste + $profit + $tax) * $line->cantidad;

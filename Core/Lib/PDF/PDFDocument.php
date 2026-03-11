@@ -275,9 +275,11 @@ abstract class PDFDocument extends PDFCore
         foreach ($model->getlines() as $line) {
             $data = [];
             foreach ($this->getLineHeaders() as $key => $value) {
-                if (property_exists($line, 'mostrar_precio') &&
+                if (
+                    property_exists($line, 'mostrar_precio') &&
                     $line->mostrar_precio === false &&
-                    in_array($key, ['pvpunitario', 'dtopor', 'dtopor2', 'pvptotal', 'iva', 'recargo', 'irpf'], true)) {
+                    in_array($key, ['pvpunitario', 'dtopor', 'dtopor2', 'pvptotal', 'iva', 'recargo', 'irpf'], true)
+                ) {
                     continue;
                 }
 

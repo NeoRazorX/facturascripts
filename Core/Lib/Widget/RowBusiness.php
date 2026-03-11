@@ -25,7 +25,6 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class RowBusiness extends VisualItem
 {
-
     /**
      * Define the columns that the group includes
      *

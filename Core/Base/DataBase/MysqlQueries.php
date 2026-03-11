@@ -27,7 +27,6 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class MysqlQueries implements DataBaseQueries
 {
-
     /**
      * Returns the needed SQL to convert a column to integer
      *

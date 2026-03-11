@@ -282,15 +282,19 @@ class AttachedFile extends ModelClass
         }
 
         $currentPath = FS_FOLDER . '/MyFiles/' . $this->path;
-        if ($this->getStorageLimit() > 0 &&
-            filesize($currentPath) + static::getStorageUsed([$this->idfile]) > $this->getStorageLimit()) {
+        if (
+            $this->getStorageLimit() > 0 &&
+            filesize($currentPath) + static::getStorageUsed([$this->idfile]) > $this->getStorageLimit()
+        ) {
             Tools::log()->critical('storage-limit-reached');
             unlink($currentPath);
             return false;
         }
 
-        if (empty($this->path) ||
-            false === rename($currentPath, $newFolderPath . '/' . $this->idfile . '.' . $this->getExtension())) {
+        if (
+            empty($this->path) ||
+            false === rename($currentPath, $newFolderPath . '/' . $this->idfile . '.' . $this->getExtension())
+        ) {
             return false;
         }
 

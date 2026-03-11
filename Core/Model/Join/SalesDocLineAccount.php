@@ -37,7 +37,6 @@ use FacturaScripts\Dinamic\Model\Familia;
  */
 class SalesDocLineAccount extends JoinModel
 {
-
     /**
      * Get totals for subaccount of sale document
      */

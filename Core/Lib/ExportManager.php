@@ -139,8 +139,10 @@ class ExportManager
 
         // find a custom option for this model
         foreach (static::$optionsModels as $option) {
-            if ($option['option'] !== self::$selectedOption ||
-                $option['modelName'] !== $model->modelClassName()) {
+            if (
+                $option['option'] !== self::$selectedOption ||
+                $option['modelName'] !== $model->modelClassName()
+            ) {
                 continue;
             }
 

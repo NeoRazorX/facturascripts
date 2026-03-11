@@ -29,7 +29,6 @@ use FacturaScripts\Core\Tools;
  */
 class WidgetPercentage extends WidgetNumber
 {
-
     /**
      * @param array $data
      */

@@ -125,8 +125,10 @@ trait DocFilesTrait
         }
 
         $modelId = $fileRelation->modelid ?? $fileRelation->modelcode;
-        if ($modelId != $this->request->query('code') ||
-            $fileRelation->model !== $this->getModelClassName()) {
+        if (
+            $modelId != $this->request->query('code') ||
+            $fileRelation->model !== $this->getModelClassName()
+        ) {
             Tools::log()->warning('not-allowed-delete');
             return true;
         }
@@ -161,8 +163,10 @@ trait DocFilesTrait
             return true;
         }
 
-        if ($fileRelation->modelcode != $this->request->query('code') ||
-            $fileRelation->model !== $this->getModelClassName()) {
+        if (
+            $fileRelation->modelcode != $this->request->query('code') ||
+            $fileRelation->model !== $this->getModelClassName()
+        ) {
             Tools::log()->warning('not-allowed-modify');
             return true;
         }

@@ -42,7 +42,6 @@ use FacturaScripts\Dinamic\Model\Variante;
  */
 class TarifaProducto extends JoinModel
 {
-
     /** @var Tarifa[] */
     private static $rates = [];
 

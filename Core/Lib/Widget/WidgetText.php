@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class WidgetText extends BaseWidget
 {
-
     /**
      * Indicates the maximum length of characters.
      * 0 -> indeterminate

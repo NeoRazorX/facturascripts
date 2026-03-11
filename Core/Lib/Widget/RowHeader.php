@@ -25,5 +25,4 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class RowHeader extends RowFooter
 {
-    
 }

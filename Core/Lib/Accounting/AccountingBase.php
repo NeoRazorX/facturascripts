@@ -30,7 +30,6 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
  */
 abstract class AccountingBase
 {
-
     /**
      * Link with the active dataBase
      *

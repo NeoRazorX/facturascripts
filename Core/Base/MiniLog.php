@@ -252,8 +252,10 @@ final class MiniLog
         $finalContext = array_merge($context, self::$context);
         $transMessage = is_null($this->translator) ? $message : $this->translator->trans($message, $context);
         foreach (self::$data as $key => $value) {
-            if ($value['channel'] === $this->channel && $value['level'] === $level &&
-                $value['message'] === $transMessage && $value['context'] === $finalContext) {
+            if (
+                $value['channel'] === $this->channel && $value['level'] === $level &&
+                $value['message'] === $transMessage && $value['context'] === $finalContext
+            ) {
                 self::$data[$key]['count']++;
                 return;
             }

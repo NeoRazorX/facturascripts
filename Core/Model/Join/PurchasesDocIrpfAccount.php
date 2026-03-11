@@ -37,7 +37,6 @@ use FacturaScripts\Dinamic\Model\Familia;
  */
 class PurchasesDocIrpfAccount extends JoinModel
 {
-
     /**
      * Get totals for subaccount of IRPF purchase document
      */

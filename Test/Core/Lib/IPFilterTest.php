@@ -31,7 +31,6 @@ use PHPUnit\Framework\TestCase;
  */
 final class IPFilterTest extends TestCase
 {
-
     use LogErrorsTrait;
 
     const CLEAN_IP = '192.168.0.2';

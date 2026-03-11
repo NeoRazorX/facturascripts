@@ -164,7 +164,7 @@ class TreeFilter extends SelectFilter
     /**
      * Recibe un array de [codPadre = [codHijo...], ...] en donde codHijo es [cod = x, titulo = x, codPadre = x]
      * y el argumento del id del padre o rama a construir.
-     * 
+     *
      * Hace una llamada recursiva a la función y construye un array en forma de árbol,
      * crea una rama y hace una llamada recursiva a las siguientes ramas.
      *
@@ -189,7 +189,7 @@ class TreeFilter extends SelectFilter
     /**
      * Recibe un array recursivo de elementos $tree = [elemento1, elemento2, elemento3...] donde
      * cada elemento tiene a su vez un $elemento['children'] = $tree con sus hijos.
-     * 
+     *
      * Lo formatea para una salida más intuitiva.
      */
     private function flattenTree(array $tree, int $level = 0): array
