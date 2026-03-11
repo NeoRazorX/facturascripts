@@ -153,10 +153,5 @@ class EditEmpresa extends EditController
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
             $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all(), true);
         }
-
-        $columnVATException = $view->columnForName('vat-exception');
-        if ($columnVATException && $columnVATException->widget->getType() === 'select') {
-            $columnVATException->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
-        }
     }
 }

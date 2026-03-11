@@ -30,6 +30,7 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
@@ -76,6 +77,9 @@ class Proveedor extends ModelClass
     public $debaja;
 
     /** @var string */
+    public $excepcioniva;
+
+    /** @var string */
     public $fax;
 
     /** @var string */
@@ -92,6 +96,9 @@ class Proveedor extends ModelClass
 
     /** @var string */
     public $nombre;
+
+    /** @var string */
+    public $operacion;
 
     /** @var string */
     public $observaciones;
@@ -281,6 +288,11 @@ class Proveedor extends ModelClass
         // check if the web is a valid url
         if (!empty($this->web) && false === Validator::url($this->web)) {
             Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
+            return false;
+        }
+
+        if (false === TaxExceptions::isValidCombination($this->operacion, $this->excepcioniva, 'purchases')) {
+            Tools::log()->warning('invalid-operation-exception-combination');
             return false;
         }
 

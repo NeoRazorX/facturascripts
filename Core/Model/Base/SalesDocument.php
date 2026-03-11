@@ -227,6 +227,7 @@ abstract class SalesDocument extends TransformerDocument
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
             $newLine->coste = $variant->coste;
             $newLine->descripcion = $variant->description();
+            $newLine->excepcioniva = $product->excepcioniva ?? $newLine->excepcioniva;
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $product->getTax()->iva;
             $newLine->pvpunitario = $this->getRate()->applyTo($variant, $product);
@@ -512,6 +513,7 @@ abstract class SalesDocument extends TransformerDocument
             $this->codpago = $subject->codpago ?? $this->codpago;
             $this->codserie = $subject->codserie ?? $this->codserie;
             $this->irpf = $subject->irpf() ?? $this->irpf;
+            $this->operacion = $subject->operacion ?? $this->operacion;
         }
 
         // billing address

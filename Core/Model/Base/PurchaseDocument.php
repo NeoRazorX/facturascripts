@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Proveedor as CoreProveedor;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
@@ -89,6 +90,7 @@ abstract class PurchaseDocument extends TransformerDocument
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
             $newLine->descripcion = $variant->description();
+            $newLine->excepcioniva = $product->excepcioniva ?? $newLine->excepcioniva;
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $product->getTax()->iva;
             $newLine->pvpunitario = $variant->coste;
@@ -96,6 +98,8 @@ abstract class PurchaseDocument extends TransformerDocument
             $newLine->referencia = $variant->referencia;
 
             $this->setLastSupplierPrice($newLine);
+
+            Calculator::calculateLine($this, $newLine);
 
             // allow extensions
             $this->pipe('getNewProductLine', $newLine, $variant, $product);
@@ -172,6 +176,7 @@ abstract class PurchaseDocument extends TransformerDocument
             $this->codpago = $subject->codpago ?? $this->codpago;
             $this->codserie = $subject->codserie ?? $this->codserie;
             $this->irpf = $subject->irpf() ?? $this->irpf;
+            $this->operacion = $subject->operacion ?? $this->operacion;
         }
 
         // allow extensions

@@ -22,6 +22,8 @@ namespace FacturaScripts\Core;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Template\MigrationClass;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\FormaPago;
@@ -44,6 +46,7 @@ final class Migrations
         self::runMigration('fixAgenciasTransporte', [self::class, 'fixAgenciasTransporte']);
         self::runMigration('fixFormasPago', [self::class, 'fixFormasPago']);
         self::runMigration('fixRectifiedInvoices', [self::class, 'fixRectifiedInvoices']);
+        self::runMigration('fixClientesOperationFromVatException', [self::class, 'fixClientesOperationFromVatException']);
     }
 
     /**
@@ -134,6 +137,33 @@ final class Migrations
             . " AND nick NOT IN (SELECT nick FROM users);";
 
         self::db()->exec($sql);
+    }
+
+    // versión 2026.01, fecha 06-03-2026
+    private static function fixClientesOperationFromVatException(): void
+    {
+        if (false === self::db()->tableExists('clientes')) {
+            return;
+        }
+
+        $columns = self::db()->getColumns('clientes');
+        if (!isset($columns['operacion']) || !isset($columns['excepcioniva'])) {
+            return;
+        }
+
+        // compatibilidad: con la nueva validación, estos casos requieren operación informada
+        $updates = [
+            TaxExceptions::ES_TAX_EXCEPTION_E2 => InvoiceOperation::EXPORT,
+            TaxExceptions::ES_TAX_EXCEPTION_E3 => InvoiceOperation::INTRA_COMMUNITY,
+            TaxExceptions::ES_TAX_EXCEPTION_E4 => InvoiceOperation::INTRA_COMMUNITY,
+            TaxExceptions::ES_TAX_EXCEPTION_E5 => InvoiceOperation::INTRA_COMMUNITY,
+        ];
+
+        foreach ($updates as $exception => $operation) {
+            $sql = "UPDATE clientes SET operacion = " . self::db()->var2str($operation)
+                . " WHERE operacion IS NULL AND excepcioniva = " . self::db()->var2str($exception) . ";";
+            self::db()->exec($sql);
+        }
     }
 
     private static function fixAgenciasTransporte(): void

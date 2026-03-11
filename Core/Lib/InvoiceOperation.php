@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,31 +26,95 @@ namespace FacturaScripts\Core\Lib;
  */
 class InvoiceOperation
 {
-    const BENEFIT_THIRD_PARTIES = 'benefit-3-parties';
     const EXPORT = 'exportacion';
+    const IMPORT = 'importacion';
     const INTRA_COMMUNITY = 'intracomunitaria';
+    const INTRA_COMMUNITY_SERVICES = 'intracom-servicios';
+    const REVERSE_CHARGE = 'inv-sujeto-pasivo';
     const SUCCESSIVE_TRACT = 'successive-tract';
+    const TYPE_PURCHASE = 'purchase';
+    const TYPE_SALE = 'sale';
     const WORK_CERTIFICATION = 'work-certification';
 
     /** @var array */
     private static $all = [];
+    /** @var array */
+    private static $removed = [];
+    /** @var array */
+    private static $types = [];
 
-    public static function add(string $key, string $value): void
+    public static function add(string $key, string $value, ?string $type = null): void
     {
         $fixedKey = substr($key, 0, 20);
         self::$all[$fixedKey] = $value;
+        unset(self::$removed[$fixedKey]);
+
+        if ($type) {
+            self::$types[$fixedKey] = $type;
+        }
+    }
+
+    public static function remove(string $key): void
+    {
+        $fixedKey = substr($key, 0, 20);
+        unset(self::$all[$fixedKey], self::$types[$fixedKey]);
+        self::$removed[$fixedKey] = true;
     }
 
     public static function all(): array
     {
+        return self::filter();
+    }
+
+    public static function allForPurchases(): array
+    {
+        return self::filter(self::TYPE_PURCHASE);
+    }
+
+    public static function allForSales(): array
+    {
+        return self::filter(self::TYPE_SALE);
+    }
+
+    private static function defaultTypes(): array
+    {
+        return [
+            self::EXPORT => self::TYPE_SALE,
+            self::IMPORT => self::TYPE_PURCHASE,
+            self::SUCCESSIVE_TRACT => self::TYPE_SALE,
+            self::WORK_CERTIFICATION => self::TYPE_SALE,
+        ];
+    }
+
+    private static function filter(?string $type = null): array
+    {
         $defaults = [
             self::INTRA_COMMUNITY => 'intra-community',
+            self::INTRA_COMMUNITY_SERVICES => 'intra-community-services',
+            self::REVERSE_CHARGE => 'reverse-charge',
             self::EXPORT => 'operation-export',
+            self::IMPORT => 'operation-import',
             self::WORK_CERTIFICATION => 'work-certification',
-            self::BENEFIT_THIRD_PARTIES => 'benefit-3-parties',
             self::SUCCESSIVE_TRACT => 'successive-tract',
         ];
 
-        return array_merge($defaults, self::$all);
+        $all = array_merge($defaults, self::$all);
+        foreach (array_keys(self::$removed) as $key) {
+            unset($all[$key]);
+        }
+
+        if (null === $type) {
+            return $all;
+        }
+
+        $types = array_merge(self::defaultTypes(), self::$types);
+        foreach (array_keys($all) as $key) {
+            // si tiene tipo asignado y no coincide, lo quitamos
+            if (isset($types[$key]) && $types[$key] !== $type) {
+                unset($all[$key]);
+            }
+        }
+
+        return $all;
     }
 }
