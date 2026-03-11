@@ -24,6 +24,7 @@ use FacturaScripts\Core\Contract\CalculatorModInterface;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\ImpuestoZona;
 use FacturaScripts\Core\Template\CalculatorModClass;
@@ -387,6 +388,14 @@ class Calculator
                     $line->iva = $line->getTax()->iva;
                     $line->recargo = $line->getTax()->recargo;
                     break;
+                }
+            }
+
+            // Recargo de equivalencia en compras: solo aplica si la empresa tiene régimen RE
+            if ($line->recargo > 0 && $doc instanceof PurchaseDocument) {
+                $companyRegimen = $doc->getCompany()->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
+                if ($companyRegimen !== RegimenIVA::TAX_SYSTEM_SURCHARGE) {
+                    $line->recargo = 0.0;
                 }
             }
         }
