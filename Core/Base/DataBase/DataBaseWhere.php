@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,14 @@ namespace FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Structure that defines a WHERE condition to filter the model data
+ * @deprecated Usar FacturaScripts\Core\Where en su lugar.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
+#[Deprecated(
+    reason: 'Use FacturaScripts\Core\Where instead',
+)]
 class DataBaseWhere
 {
     /**
