@@ -74,10 +74,19 @@ class AttachedFileRelation extends ModelClass
      */
     public $observations;
 
+    /**
+     * @var int
+     */
+    public $orden;
+
     public function clear(): void
     {
         parent::clear();
         $this->creationdate = Tools::dateTime();
+
+        // Inicialmente el orden es el id
+        // hasta que se asigne un orden en concreto.
+        $this->orden = $this->orden ?? $this->id;
     }
 
     public function getFile(): ?DinFile
