@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,13 +28,16 @@
             <column name="code" description="optional" numcolumns="2" order="110">
                 <widget type="text" fieldname="codfamilia" icon="fa-solid fa-hashtag" maxlength="8" readonly="dinamic"/>
             </column>
-            <column name="parent" description="desc-parent-family" numcolumns="4" order="120">
+            <column name="parent" description="desc-parent-family" numcolumns="3" order="120">
                 <widget type="select" fieldname="madre" onclick="EditFamilia">
                     <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"/>
                 </widget>
             </column>
+            <column name="image" numcolumns="3" order="130">
+                <widget type="library" fieldname="idattachedfile"/>
+            </column>
         </group>
-        <group name="accounting" numcolumns="6">
+        <group name="accounting" numcolumns="8">
             <column name="codsubcuentacom" title="subaccount-purchases" titleurl="ListCuenta" description="optional"
                     order="100">
                 <widget type="subcuenta" fieldname="codsubcuentacom"/>
@@ -48,12 +51,9 @@
                 <widget type="subcuenta" fieldname="codsubcuentairpfcom"/>
             </column>
         </group>
-        <group name="advanced" numcolumns="6" valign="bottom">
+        <group name="advanced" numcolumns="4" valign="bottom">
             <column name="products" numcolumns="4" order="100">
                 <widget type="number" fieldname="numproductos" readonly="true"/>
-            </column>
-            <column name="image" numcolumns="4" order="110">
-                <widget type="library" fieldname="idattachedfile"/>
             </column>
         </group>
     </columns>
