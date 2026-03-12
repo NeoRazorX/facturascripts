@@ -258,6 +258,11 @@ abstract class BaseController extends Controller
 
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            // validar nombre de campo para prevenir SQL injection
+            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                Tools::log()->warning('autocomplete: invalid field filter name');
+                return [];
+            }
             $value = $this->request->queryOrInput($field);
             $where[] = new DataBaseWhere($field, $value, '=', $operation);
         }
@@ -322,6 +327,11 @@ abstract class BaseController extends Controller
 
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            // validar nombre de campo para prevenir SQL injection
+            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                Tools::log()->warning('datalist: invalid field filter name');
+                return [];
+            }
             $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
         }
 

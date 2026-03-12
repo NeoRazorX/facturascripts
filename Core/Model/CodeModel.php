@@ -72,6 +72,12 @@ class CodeModel
      */
     public static function all(string $tableName, string $fieldCode, string $fieldDescription, bool $addEmpty = true, array $where = []): array
     {
+        // validar nombre de tabla para prevenir SQL injection
+        if (false === self::isValidTableName($tableName)) {
+            Tools::log()->error('invalid-table-name: ' . $tableName);
+            return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
+        }
+
         // validar nombres de campos para prevenir SQL injection
         if (false === self::isValidFieldName($fieldCode)) {
             Tools::log()->error('invalid-field-name: ' . $fieldCode);
@@ -248,6 +254,12 @@ class CodeModel
      */
     public static function search(string $tableName, string $fieldCode, string $fieldDescription, string $query, array $where = []): array
     {
+        // validar nombre de tabla para prevenir SQL injection
+        if (false === self::isValidTableName($tableName)) {
+            Tools::log()->error('invalid-table-name: ' . $tableName);
+            return [];
+        }
+
         // is a table or a model?
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
@@ -307,6 +319,15 @@ class CodeModel
         }
 
         return false;
+    }
+
+    /**
+     * Valida que un nombre de tabla sea seguro para usar en consultas SQL.
+     * Solo permite letras, números y guiones bajos.
+     */
+    protected static function isValidTableName(string $tableName): bool
+    {
+        return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $tableName) === 1;
     }
 
     protected static function db(): DataBase
