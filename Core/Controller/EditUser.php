@@ -134,6 +134,13 @@ class EditUser extends EditController
     {
         $this->permissions->allowUpdate = $this->allowUpdate();
 
+        // prevent nick change: nick is immutable once created
+        $code = $this->request->input('code', '');
+        if ($code !== '' && $this->request->input('nick', $code) !== $code) {
+            Tools::log()->warning('not-allowed-modify');
+            return false;
+        }
+
         // prevent some user changes
         if ($this->request->input('code', '') === $this->user->nick) {
             if ($this->user->admin != (bool)$this->request->input('admin')) {
