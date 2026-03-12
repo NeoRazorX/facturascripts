@@ -147,11 +147,14 @@ abstract class TransformerDocument extends BusinessDocument
             return false;
         }
 
+        // get lines before opening the transaction to ensure table checks happen outside it
+        $lines = $this->getLines();
+
         // we check if there is already an open transaction so as not to break it
         $newTransaction = false === static::db()->inTransaction() && self::db()->beginTransaction();
 
         // remove lines to update stock
-        foreach ($this->getLines() as $line) {
+        foreach ($lines as $line) {
             if ($line->delete()) {
                 continue;
             }

@@ -46,6 +46,16 @@ final class DbUpdater
 
     public static function createOrUpdateTable(string $table_name, array $structure = [], string $sql_after = ''): bool
     {
+        if (self::db()->inTransaction()) {
+            if (self::db()->tableExists($table_name)) {
+                // omitimos la validación de estructura en transacción, se comprobará después
+                return true;
+            }
+
+            self::$last_error = 'cant create table ' . $table_name . ' in transaction';
+            return false;
+        }
+
         if (self::db()->tableExists($table_name)) {
             return self::updateTable($table_name, $structure);
         }
