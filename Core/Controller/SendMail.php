@@ -205,7 +205,7 @@ class SendMail extends Controller
                 ? $model->numero2
                 : $model->numproveedor;
 
-            if($model->hasColumn('idcontactofact') && $contacto = Contacto::find($model->idcontactofact)){
+            if ($model->hasColumn('idcontactofact') && $contacto = Contacto::find($model->idcontactofact)) {
                 $shortValues[5] = $contacto->nombre;
                 $shortValues[6] = $contacto->apellidos;
             }
