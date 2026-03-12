@@ -19,14 +19,14 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Asiento;
 
 /**
- * Description of InvoiceTrait
+ * Trait con la funcionalidad común de las facturas.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -80,7 +80,7 @@ trait InvoiceTrait
             return false;
         }
 
-        // remove receipts
+        // eliminamos los recibos
         foreach ($this->getReceipts() as $receipt) {
             $receipt->disableInvoiceUpdate(true);
             if (false === $receipt->delete()) {
@@ -89,7 +89,7 @@ trait InvoiceTrait
             }
         }
 
-        // remove accounting
+        // eliminamos la contabilidad
         $acEntry = $this->getAccountingEntry();
         $acEntry->editable = true;
         if ($acEntry->exists() && false === $acEntry->delete()) {
@@ -110,7 +110,7 @@ trait InvoiceTrait
         }
 
         if (!isset($this->refunds)) {
-            $where = [new DataBaseWhere('idfacturarect', $this->idfactura)];
+            $where = [Where::eq('idfacturarect', $this->idfactura)];
             $this->refunds = $this->all($where, ['idfactura' => 'DESC'], 0, 0);
         }
 
@@ -118,9 +118,9 @@ trait InvoiceTrait
     }
 
     /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
+     * Esta función se ejecuta al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará después de la creación de la tabla. Útil para insertar valores
+     * por defecto.
      *
      * @return string
      */
@@ -139,16 +139,16 @@ trait InvoiceTrait
     }
 
     /**
-     * Returns all parent document of this one.
+     * Devuelve todos los documentos padre de este.
      *
      * @return TransformerDocument[]
      */
     public function parentDocuments(): array
     {
         $parents = parent::parentDocuments();
-        $where = [new DataBaseWhere('idfactura', $this->idfacturarect)];
+        $where = [Where::eq('idfactura', $this->idfacturarect)];
         foreach ($this->all($where, ['idfactura' => 'DESC'], 0, 0) as $invoice) {
-            // is this invoice in parents?
+            // ¿está esta factura en los padres?
             foreach ($parents as $parent) {
                 if ($parent->primaryColumnValue() == $invoice->primaryColumnValue()) {
                     continue 2;
@@ -175,7 +175,7 @@ trait InvoiceTrait
         switch ($field) {
             case 'codcliente':
             case 'codproveedor':
-                // prevent from removing paid receipts
+                // evitamos eliminar recibos pagados
                 foreach ($this->getReceipts() as $receipt) {
                     if ($receipt->pagado) {
                         Tools::log()->warning('paid-receipts-prevent-action');
@@ -184,7 +184,7 @@ trait InvoiceTrait
                 }
             // no break
             case 'codpago':
-                // remove unpaid receipts
+                // eliminamos los recibos no pagados
                 foreach ($this->getReceipts() as $receipt) {
                     if (false === $receipt->pagado && false === $receipt->delete()) {
                         Tools::log()->warning('cant-remove-receipt');
@@ -213,7 +213,7 @@ trait InvoiceTrait
 
     protected function onChangeTotal(): bool
     {
-        // remove accounting entry
+        // eliminamos el asiento contable
         $asiento = $this->getAccountingEntry();
         $asiento->editable = true;
         if ($asiento->exists() && false === $asiento->delete()) {
@@ -221,12 +221,12 @@ trait InvoiceTrait
             return false;
         }
 
-        // create a new accounting entry
+        // creamos un nuevo asiento contable
         $this->idasiento = null;
         $tool = new InvoiceToAccounting();
         $tool->generate($this);
 
-        // check receipts
+        // comprobamos los recibos
         $generator = new ReceiptGenerator();
         $generator->generate($this);
         $generator->update($this);

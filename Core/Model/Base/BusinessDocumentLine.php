@@ -19,16 +19,16 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Template\ModelClass as NewModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Description of BusinessDocumentLine
+ * Linea de documento de negocio.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -37,21 +37,21 @@ abstract class BusinessDocumentLine extends NewModelClass
     use TaxRelationTrait;
 
     /**
-     * Update stock status.
+     * Estado de actualización de stock.
      *
      * @var int
      */
     public $actualizastock;
 
     /**
-     * Quantity.
+     * Cantidad.
      *
      * @var float|int
      */
     public $cantidad;
 
     /**
-     * Description of the line.
+     * Descripción de la línea.
      *
      * @var string
      */
@@ -64,14 +64,14 @@ abstract class BusinessDocumentLine extends NewModelClass
     protected static $dont_copy_fields = ['idlinea', 'orden', 'servido'];
 
     /**
-     * Percentage of discount.
+     * Porcentaje de descuento.
      *
      * @var float|int
      */
     public $dtopor;
 
     /**
-     * Percentage of second discount.
+     * Porcentaje de segundo descuento.
      *
      * @var float|int
      */
@@ -81,7 +81,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     public $excepcioniva;
 
     /**
-     * Primary key.
+     * Clave primaria.
      *
      * @var int
      */
@@ -91,63 +91,63 @@ abstract class BusinessDocumentLine extends NewModelClass
     public $idproducto;
 
     /**
-     * % of IRPF of the line.
+     * % de IRPF de la línea.
      *
      * @var float|int
      */
     public $irpf;
 
     /**
-     * % of the related tax.
+     * % del impuesto relacionado.
      *
      * @var float|int
      */
     public $iva;
 
     /**
-     * Position of the line in the document. The higher down.
+     * Posición de la línea en el documento. Cuanto mayor, más abajo.
      *
      * @var int
      */
     public $orden;
 
     /**
-     * Net amount without discounts.
+     * Importe neto sin descuentos.
      *
      * @var float|int
      */
     public $pvpsindto;
 
     /**
-     * Net amount of the line, without taxes.
+     * Importe neto de la línea, sin impuestos.
      *
      * @var float|int
      */
     public $pvptotal;
 
     /**
-     * Price of the item, one unit.
+     * Precio del artículo, una unidad.
      *
      * @var float|int
      */
     public $pvpunitario;
 
     /**
-     * % surcharge of line equivalence.
+     * % de recargo de equivalencia de la línea.
      *
      * @var float|int
      */
     public $recargo;
 
     /**
-     * Reference of the article.
+     * Referencia del artículo.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Served.
+     * Servido.
      *
      * @var float|int
      */
@@ -157,12 +157,12 @@ abstract class BusinessDocumentLine extends NewModelClass
     public $suplido;
 
     /**
-     * Returns the parent document of this line.
+     * Devuelve el documento padre de esta línea.
      */
     abstract public function getDocument();
 
     /**
-     * Returns the name of the column to store the document's identifier.
+     * Devuelve el nombre de la columna que almacena el identificador del documento.
      */
     abstract public function documentColumn();
 
@@ -183,7 +183,7 @@ abstract class BusinessDocumentLine extends NewModelClass
         $this->servido = 0.0;
         $this->suplido = false;
 
-        // default tax
+        // impuesto por defecto
         $this->codimpuesto = Tools::settings('default', 'codimpuesto');
         $this->iva = $this->getTax()->iva;
         $this->recargo = $this->getTax()->recargo;
@@ -195,7 +195,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     }
 
     /**
-     * Returns the identifier of the document.
+     * Devuelve el identificador del documento.
      *
      * @return int
      */
@@ -221,7 +221,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     }
 
     /**
-     * Returns the Equivalent Unified Discount.
+     * Devuelve el Descuento Unificado Equivalente.
      *
      * @return float
      */
@@ -258,7 +258,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     {
         $producto = new Producto();
 
-        // for backward compatibility we must search by reference
+        // por compatibilidad buscamos por referencia
         if (empty($this->idproducto) && !empty($this->referencia)) {
             $this->idproducto = $this->getVariante()->idproducto;
         }
@@ -276,7 +276,7 @@ abstract class BusinessDocumentLine extends NewModelClass
 
     public function install(): string
     {
-        // needed dependencies
+        // dependencias necesarias
         new Impuesto();
         new Producto();
 
@@ -318,7 +318,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     }
 
     /**
-     * Transfers the line stock from one warehouse to another.
+     * Transfiere el stock de la línea de un almacén a otro.
      *
      * @param string $fromCodalmacen
      * @param string $toCodalmacen
@@ -327,14 +327,14 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     public function transfer($fromCodalmacen, $toCodalmacen): bool
     {
-        // find the stock
+        // buscamos el stock
         $fromStock = new Stock();
         $where = [
-            new DataBaseWhere('codalmacen', $fromCodalmacen),
-            new DataBaseWhere('referencia', $this->referencia)
+            Where::eq('codalmacen', $fromCodalmacen),
+            Where::eq('referencia', $this->referencia)
         ];
         if (empty($this->referencia) || false === $fromStock->loadWhere($where)) {
-            // no need to transfer
+            // no es necesario transferir
             return true;
         }
         $this->applyStockChanges(
@@ -345,14 +345,14 @@ abstract class BusinessDocumentLine extends NewModelClass
         );
         $fromStock->save();
 
-        // find the new stock
+        // buscamos el nuevo stock
         $toStock = new Stock();
         $where2 = [
-            new DataBaseWhere('codalmacen', $toCodalmacen),
-            new DataBaseWhere('referencia', $this->referencia)
+            Where::eq('codalmacen', $toCodalmacen),
+            Where::eq('referencia', $this->referencia)
         ];
         if (false === $toStock->loadWhere($where2)) {
-            // stock not found, then create one
+            // stock no encontrado, creamos uno
             $toStock->codalmacen = $toCodalmacen;
             $toStock->idproducto = $this->idproducto ?? $this->getProducto()->idproducto;
             $toStock->referencia = $this->referencia;
@@ -395,7 +395,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     }
 
     /**
-     * Apply stock modifications according to $mode.
+     * Aplica las modificaciones de stock según el $mode.
      *
      * @param Stock $stock
      * @param int $mode
@@ -425,8 +425,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     }
 
     /**
-     * This method is called before save (update) in the database this record
-     * data when some field value has changed.
+     * Este método se ejecuta antes de guardar (update) cuando algún campo ha cambiado.
      *
      * @param string $field
      *
@@ -445,7 +444,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     }
 
     /**
-     * This method is called after this record is deleted from database.
+     * Este método se ejecuta después de eliminar este registro de la base de datos.
      */
     protected function onDelete(): void
     {
@@ -461,7 +460,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     }
 
     /**
-     * Updates stock according to line data and $codalmacen warehouse.
+     * Actualiza el stock según los datos de la línea y el almacén.
      *
      * @return bool
      */
@@ -473,28 +472,28 @@ abstract class BusinessDocumentLine extends NewModelClass
             return true;
         }
 
-        // find the variant
+        // buscamos la variante
         $variante = new Variante();
-        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        $where = [Where::eq('referencia', $this->referencia)];
         if (empty($this->referencia) || false === $variante->loadWhere($where)) {
             return true;
         }
 
-        // find the product
+        // buscamos el producto
         $producto = $variante->getProducto();
         if ($producto->nostock) {
             return true;
         }
 
-        // find the stock
+        // buscamos el stock
         $stock = new Stock();
         $doc = $this->getDocument();
         $where2 = [
-            new DataBaseWhere('codalmacen', $doc->codalmacen),
-            new DataBaseWhere('referencia', $this->referencia)
+            Where::eq('codalmacen', $doc->codalmacen),
+            Where::eq('referencia', $this->referencia)
         ];
         if (false === $stock->loadWhere($where2)) {
-            // stock not found, then create one
+            // stock no encontrado, creamos uno
             $stock->codalmacen = $doc->codalmacen;
             $stock->idproducto = $this->idproducto ?? $this->getProducto()->idproducto;
             $stock->referencia = $this->referencia;
@@ -509,7 +508,7 @@ abstract class BusinessDocumentLine extends NewModelClass
 
         $this->applyStockChanges($stock, $this->actualizastock, $this->cantidad, $this->servido);
 
-        // enough stock?
+        // ¿hay suficiente stock?
         if (false === $producto->ventasinstock && $this->actualizastock === -1 && $stock->cantidad < 0) {
             Tools::log()->warning('not-enough-stock', ['%reference%' => $this->referencia]);
             return false;
