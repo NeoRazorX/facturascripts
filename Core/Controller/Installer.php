@@ -28,7 +28,9 @@ use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Base\DataBase\SqliteEngine;
 use mysqli;
+use PDO;
 
 class Installer implements ControllerInterface
 {
@@ -151,6 +153,9 @@ class Installer implements ControllerInterface
 
             case 'postgresql':
                 return $this->testPostgresql($dbData);
+
+            case 'sqlite':
+                return $this->testSqlite($dbData);
         }
 
         Tools::log()->critical('cant-connect-database');
@@ -430,6 +435,37 @@ class Installer implements ControllerInterface
         }
 
         return false;
+    }
+
+    private function testSqlite(array $dbData): bool
+    {
+        if (false === class_exists('PDO') || false === in_array('sqlite', PDO::getAvailableDrivers(), false)) {
+            Tools::log()->critical('php-extension-not-found', ['%extension%' => 'pdo_sqlite']);
+            return false;
+        }
+
+        try {
+            $database = SqliteEngine::getDatabasePath($dbData['name']);
+        } catch (KernelException $e) {
+            Tools::log()->critical($e->getMessage());
+            return false;
+        }
+
+        $directory = dirname($database);
+        if ($database !== ':memory:' && false === is_dir($directory) && false === @mkdir($directory, 0755, true)) {
+            Tools::log()->critical('cant-create-folder', ['%folderName%' => $directory]);
+            return false;
+        }
+
+        try {
+            $connection = new PDO('sqlite:' . $database);
+            $connection->exec('PRAGMA foreign_keys = ON;');
+            return true;
+        } catch (Exception $e) {
+            Tools::log()->critical('cant-connect-database');
+            Tools::log()->critical($e->getMessage());
+            return false;
+        }
     }
 
     private function versionPostgres($connection): float

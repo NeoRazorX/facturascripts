@@ -246,6 +246,13 @@ class AttachedFile extends ModelClass
                     return max($this->newCode(), $row['nextval']);
                 }
                 break;
+
+            case 'sqlite':
+                $sql = "SELECT seq + 1 AS nextid FROM sqlite_sequence WHERE name = '" . static::tableName() . "';";
+                foreach (static::db()->select($sql) as $row) {
+                    return max($this->newCode(), $row['nextid']);
+                }
+                break;
         }
 
         return $this->newCode();
