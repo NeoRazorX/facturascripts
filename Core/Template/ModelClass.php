@@ -630,6 +630,9 @@ abstract class ModelClass
             } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
                 Tools::log()->warning('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]);
                 $return = false;
+            } elseif ($this->fieldValueExceedsMaxLength($value, $this->{$key})) {
+                Tools::log()->warning('value-too-long');
+                $return = false;
             }
         }
         if (false === $return) {
@@ -789,6 +792,19 @@ abstract class ModelClass
         }
 
         return in_array(strtolower($value), ['true', 't', '1'], false);
+    }
+
+    private function fieldValueExceedsMaxLength(array $field, $value): bool
+    {
+        if ($value === null || is_array($value) || is_object($value)) {
+            return false;
+        }
+
+        if (preg_match('/^(?:character varying|varchar|char)\((\d+)\)$/i', (string)$field['type'], $matches) !== 1) {
+            return false;
+        }
+
+        return strlen((string)$value) > (int)$matches[1];
     }
 
     private function getIntegerValueForField(array $field, $value): ?int
