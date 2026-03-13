@@ -99,7 +99,7 @@
                 </widget>
             </column>
             <column name="country" titleurl="ListPais" numcolumns="4" order="150">
-                <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
+                <widget type="select" fieldname="codpais" onclick="EditPais">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"/>
                 </widget>
             </column>
