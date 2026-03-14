@@ -7,7 +7,6 @@ on:
     branches: [ master, main ]
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   DB_NAME: facturascripts_test
   DB_USER: root
   DB_PASS: root
