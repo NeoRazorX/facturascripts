@@ -29,15 +29,15 @@ final class TaxExceptionsTest extends TestCase
     {
         $all = TaxExceptions::all();
 
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_E1, $all);
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_E2, $all);
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_E3, $all);
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_E4, $all);
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_E5, $all);
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_E6, $all);
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_N1, $all);
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_N2, $all);
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_20, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_21, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_22, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_23_24, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_25, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_OTHER, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_7, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_68_70, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_84, $all);
         $this->assertCount(9, $all);
     }
 
@@ -56,32 +56,32 @@ final class TaxExceptionsTest extends TestCase
 
     public function testAddOverridesExistingLabel(): void
     {
-        $original = TaxExceptions::all()[TaxExceptions::ES_TAX_EXCEPTION_E1];
+        $original = TaxExceptions::all()[TaxExceptions::ES_TAX_EXCEPTION_20];
 
-        TaxExceptions::add(TaxExceptions::ES_TAX_EXCEPTION_E1, 'new-label');
-        $this->assertEquals('new-label', TaxExceptions::all()[TaxExceptions::ES_TAX_EXCEPTION_E1]);
+        TaxExceptions::add(TaxExceptions::ES_TAX_EXCEPTION_20, 'new-label');
+        $this->assertEquals('new-label', TaxExceptions::all()[TaxExceptions::ES_TAX_EXCEPTION_20]);
 
         // restauramos
-        TaxExceptions::add(TaxExceptions::ES_TAX_EXCEPTION_E1, $original);
+        TaxExceptions::add(TaxExceptions::ES_TAX_EXCEPTION_20, $original);
     }
 
     public function testRemoveDefaultException(): void
     {
-        TaxExceptions::remove(TaxExceptions::ES_TAX_EXCEPTION_E6);
-        $this->assertArrayNotHasKey(TaxExceptions::ES_TAX_EXCEPTION_E6, TaxExceptions::all());
+        TaxExceptions::remove(TaxExceptions::ES_TAX_EXCEPTION_OTHER);
+        $this->assertArrayNotHasKey(TaxExceptions::ES_TAX_EXCEPTION_OTHER, TaxExceptions::all());
 
         // restauramos
-        TaxExceptions::add(TaxExceptions::ES_TAX_EXCEPTION_E6, 'es-tax-exception-e6');
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_E6, TaxExceptions::all());
+        TaxExceptions::add(TaxExceptions::ES_TAX_EXCEPTION_OTHER, 'es-tax-exception-other');
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_OTHER, TaxExceptions::all());
     }
 
     public function testRemoveAndReAdd(): void
     {
-        TaxExceptions::remove(TaxExceptions::ES_TAX_EXCEPTION_N1);
-        $this->assertArrayNotHasKey(TaxExceptions::ES_TAX_EXCEPTION_N1, TaxExceptions::all());
+        TaxExceptions::remove(TaxExceptions::ES_TAX_EXCEPTION_7);
+        $this->assertArrayNotHasKey(TaxExceptions::ES_TAX_EXCEPTION_7, TaxExceptions::all());
 
-        TaxExceptions::add(TaxExceptions::ES_TAX_EXCEPTION_N1, 'es-tax-exception-n1');
-        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_N1, TaxExceptions::all());
+        TaxExceptions::add(TaxExceptions::ES_TAX_EXCEPTION_7, 'es-tax-exception-7');
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_7, TaxExceptions::all());
     }
 
     public function testAddKeyIsTruncatedTo20Chars(): void
@@ -108,19 +108,19 @@ final class TaxExceptionsTest extends TestCase
 
     public function testNoOperationAllowsGenericExceptions(): void
     {
-        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_E1, 'sales'));
-        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_E6, 'sales'));
-        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_N1, 'purchases'));
-        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_N2, 'purchases'));
-        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_20, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_OTHER, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_7, 'purchases'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_68_70, 'purchases'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_84, 'sales'));
     }
 
     public function testNoOperationRejectsSpecificExceptions(): void
     {
-        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_E2, 'sales'));
-        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_E3, 'purchases'));
-        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_E4, 'sales'));
-        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_E5, 'purchases'));
+        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_21, 'sales'));
+        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_22, 'purchases'));
+        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_23_24, 'sales'));
+        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_25, 'purchases'));
     }
 
     // isValidCombination: intracomunitaria
@@ -128,32 +128,32 @@ final class TaxExceptionsTest extends TestCase
     public function testIntraCommunityValidSales(): void
     {
         $op = InvoiceOperation::INTRA_COMMUNITY;
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_E3, 'sales'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_E4, 'sales'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_E5, 'sales'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_N2, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_22, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_23_24, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_25, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_68_70, 'sales'));
     }
 
     public function testIntraCommunityInvalidSales(): void
     {
         $op = InvoiceOperation::INTRA_COMMUNITY;
-        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_E1, 'sales'));
-        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, 'sales'));
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_20, 'sales'));
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_84, 'sales'));
         $this->assertFalse(TaxExceptions::isValidCombination($op, null, 'sales'));
     }
 
     public function testIntraCommunityValidPurchases(): void
     {
         $op = InvoiceOperation::INTRA_COMMUNITY;
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, 'purchases'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_N1, 'purchases'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_N2, 'purchases'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_84, 'purchases'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_7, 'purchases'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_68_70, 'purchases'));
     }
 
     public function testIntraCommunityInvalidPurchases(): void
     {
         $op = InvoiceOperation::INTRA_COMMUNITY;
-        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_E5, 'purchases'));
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_25, 'purchases'));
         $this->assertFalse(TaxExceptions::isValidCombination($op, null, 'purchases'));
     }
 
@@ -162,16 +162,16 @@ final class TaxExceptionsTest extends TestCase
     public function testIntraCommunityServicesValid(): void
     {
         $op = InvoiceOperation::INTRA_COMMUNITY_SERVICES;
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_N2, 'sales'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, 'purchases'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_68_70, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_84, 'purchases'));
     }
 
     public function testIntraCommunityServicesInvalid(): void
     {
         $op = InvoiceOperation::INTRA_COMMUNITY_SERVICES;
-        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_E1, 'sales'));
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_20, 'sales'));
         $this->assertFalse(TaxExceptions::isValidCombination($op, null, 'sales'));
-        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_N2, 'purchases'));
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_68_70, 'purchases'));
         $this->assertFalse(TaxExceptions::isValidCombination($op, null, 'purchases'));
     }
 
@@ -180,28 +180,28 @@ final class TaxExceptionsTest extends TestCase
     public function testReverseChargeValid(): void
     {
         $op = InvoiceOperation::REVERSE_CHARGE;
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, 'sales'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, 'purchases'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_84, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_84, 'purchases'));
     }
 
     public function testReverseChargeInvalid(): void
     {
         $op = InvoiceOperation::REVERSE_CHARGE;
         $this->assertFalse(TaxExceptions::isValidCombination($op, null, 'sales'));
-        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_E1, 'purchases'));
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_20, 'purchases'));
     }
 
     // isValidCombination: exportación
 
     public function testExportValidSales(): void
     {
-        $this->assertTrue(TaxExceptions::isValidCombination(InvoiceOperation::EXPORT, TaxExceptions::ES_TAX_EXCEPTION_E2, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination(InvoiceOperation::EXPORT, TaxExceptions::ES_TAX_EXCEPTION_21, 'sales'));
     }
 
     public function testExportInvalidSales(): void
     {
         $this->assertFalse(TaxExceptions::isValidCombination(InvoiceOperation::EXPORT, null, 'sales'));
-        $this->assertFalse(TaxExceptions::isValidCombination(InvoiceOperation::EXPORT, TaxExceptions::ES_TAX_EXCEPTION_E1, 'sales'));
+        $this->assertFalse(TaxExceptions::isValidCombination(InvoiceOperation::EXPORT, TaxExceptions::ES_TAX_EXCEPTION_20, 'sales'));
     }
 
     // isValidCombination: importación
@@ -213,7 +213,7 @@ final class TaxExceptionsTest extends TestCase
 
     public function testImportInvalidPurchases(): void
     {
-        $this->assertFalse(TaxExceptions::isValidCombination(InvoiceOperation::IMPORT, TaxExceptions::ES_TAX_EXCEPTION_E1, 'purchases'));
+        $this->assertFalse(TaxExceptions::isValidCombination(InvoiceOperation::IMPORT, TaxExceptions::ES_TAX_EXCEPTION_20, 'purchases'));
     }
 
     // isValidCombination: operación desconocida
@@ -221,7 +221,7 @@ final class TaxExceptionsTest extends TestCase
     public function testUnknownOperationAllowsAnything(): void
     {
         $this->assertTrue(TaxExceptions::isValidCombination('unknown-op', null, 'sales'));
-        $this->assertTrue(TaxExceptions::isValidCombination('unknown-op', TaxExceptions::ES_TAX_EXCEPTION_E1, 'purchases'));
-        $this->assertTrue(TaxExceptions::isValidCombination('unknown-op', TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination('unknown-op', TaxExceptions::ES_TAX_EXCEPTION_20, 'purchases'));
+        $this->assertTrue(TaxExceptions::isValidCombination('unknown-op', TaxExceptions::ES_TAX_EXCEPTION_84, 'sales'));
     }
 }

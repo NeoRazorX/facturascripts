@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Mod;
 
 use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
@@ -176,7 +177,7 @@ class CalculatorModSpain extends CalculatorModClass
             if ($docRegimen === RegimenIVA::TAX_SYSTEM_GOLD) {
                 $line->codimpuesto = null;
                 $line->iva = $line->recargo = 0.0;
-                $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E6;
+                $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_OTHER;
                 continue;
             }
 
@@ -184,7 +185,7 @@ class CalculatorModSpain extends CalculatorModClass
             // y se marca con excepción E6 para el SII (arts. 124-134 LIVA)
             if ($doc instanceof PurchaseDocument && $docRegimen === RegimenIVA::TAX_SYSTEM_AGRARIAN) {
                 $line->recargo = 0.0;
-                $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E6;
+                $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_OTHER;
                 continue;
             }
 
@@ -220,14 +221,14 @@ class CalculatorModSpain extends CalculatorModClass
             if ($doc instanceof SalesDocument) {
                 $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->iva = $line->recargo = 0.0;
-                $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E5;
+                $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_25;
                 return true;
             }
 
             // Compras intracomunitarias (AIB): mantenemos codimpuesto e IVA originales
             // para que la contabilidad pueda calcular la autorepercusión.
             $line->recargo = 0.0;
-            $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_PASSIVE_SUBJECT;
+            $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_84;
             return true;
         }
 
@@ -238,14 +239,14 @@ class CalculatorModSpain extends CalculatorModClass
             if ($doc instanceof SalesDocument) {
                 $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->iva = $line->recargo = 0.0;
-                $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_N2;
+                $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_68_70;
                 return true;
             }
 
             // Compras de servicios a empresarios UE: ISP (art. 84.Uno.2º LIVA).
             // Mantenemos codimpuesto e IVA originales para la autorepercusión.
             $line->recargo = 0.0;
-            $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_PASSIVE_SUBJECT;
+            $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_84;
             return true;
         }
 
@@ -255,13 +256,13 @@ class CalculatorModSpain extends CalculatorModClass
             if ($doc instanceof SalesDocument) {
                 $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->iva = $line->recargo = 0.0;
-                $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_PASSIVE_SUBJECT;
+                $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_84;
                 return true;
             }
 
             // Compras con ISP: mantenemos codimpuesto e IVA originales para la autorepercusión
             $line->recargo = 0.0;
-            $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_PASSIVE_SUBJECT;
+            $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_84;
             return true;
         }
 
@@ -269,7 +270,7 @@ class CalculatorModSpain extends CalculatorModClass
         if ($doc instanceof SalesDocument && $doc->operacion === InvoiceOperation::EXPORT) {
             $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
             $line->iva = $line->recargo = 0.0;
-            $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E2;
+            $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_21;
             return true;
         }
 

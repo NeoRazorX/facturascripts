@@ -27,15 +27,17 @@ namespace FacturaScripts\Core\Lib;
  */
 class TaxExceptions
 {
-    const ES_TAX_EXCEPTION_E1 = 'ES_20'; // E1 Exenta art. 20 LIVA – Exenciones interiores (sanidad, enseñanza, seguros, financieros…)
-    const ES_TAX_EXCEPTION_E2 = 'ES_21'; // E2 Exenta art. 21 LIVA – Exportaciones a países terceros
-    const ES_TAX_EXCEPTION_E3 = 'ES_22'; // E3 Exenta art. 22 LIVA – Operaciones asimiladas a exportaciones
-    const ES_TAX_EXCEPTION_E4 = 'ES_23_24'; // E4 Exenta arts. 23–24 LIVA – Zonas francas y depósitos aduaneros
-    const ES_TAX_EXCEPTION_E5 = 'ES_25'; // E5 Exenta art. 25 LIVA – Entregas intracomunitarias de bienes
-    const ES_TAX_EXCEPTION_E6 = 'ES_OTHER'; // E6 Otras exenciones (oro de inversión, regímenes especiales, etc.)
-    const ES_TAX_EXCEPTION_N1 = 'ES_N1'; // N1 No sujeta – art. 7, 14 y otros (aportaciones, transmisión de UEA, muestras, operaciones vinculadas a exportaciones, OTAN, convenios…)
-    const ES_TAX_EXCEPTION_N2 = 'ES_N2'; // N2 No sujeta – Reglas de localización (arts. 68–70 LIVA, entregas de bienes y servicios B2B UE o fuera UE)
-    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = 'ES_PASSIVE_SUBJECT'; // Inversión del sujeto pasivo (art. 84 LIVA)
+    const ES_TAX_EXCEPTION_7 = 'ES_7'; // No sujeta – Art. 7 LIVA (aportaciones, transmisión de UEA, muestras, autoconsumo exterior, etc.)
+    const ES_TAX_EXCEPTION_14 = 'ES_14'; // No sujeta – Art. 14 LIVA (regímenes aduaneros, depósitos, zonas francas, operaciones en tránsito)
+    const ES_TAX_EXCEPTION_20 = 'ES_20'; // Exenta Art. 20 LIVA – Exenciones interiores (sanidad, enseñanza, seguros, banca…)
+    const ES_TAX_EXCEPTION_21 = 'ES_21'; // Exenta Art. 21 LIVA – Exportaciones a países terceros
+    const ES_TAX_EXCEPTION_22 = 'ES_22'; // Exenta Art. 22 LIVA – Operaciones asimiladas a exportaciones
+    const ES_TAX_EXCEPTION_23_24 = 'ES_23_24'; // Exenta Arts. 23–24 LIVA – Zonas francas y depósitos aduaneros
+    const ES_TAX_EXCEPTION_25 = 'ES_25'; // Exenta - Art. 25 LIVA – Entregas intracomunitarias
+    const ES_TAX_EXCEPTION_68_70 = 'ES_68_70'; // No sujeta – Arts. 68–70 LIVA (reglas de localización de bienes y servicios, B2B a UE/extranjero)
+    const ES_TAX_EXCEPTION_84 = 'ES_84'; // Sujeta - Inversión del sujeto pasivo Art. 84 LIVA (obras, inmuebles, residuos, oro de inversión no exento…)
+    const ES_TAX_EXCEPTION_OTHER = 'ES_OTHER'; // Exenta - Otras exenciones (oro de inversión, regímenes especiales, organismos internacionales, etc.)
+    const ES_OTHER_NOT_SUBJECT = 'ES_OTHER_NOT_SUBJECT'; // No sujeta – Otros supuestos no sujetos (OTAN, convenios internacionales, fuerzas armadas UE…)
 
     /** @var array */
     private static $values = [];
@@ -52,15 +54,17 @@ class TaxExceptions
     public static function all(): array
     {
         $defaultValues = [
-            self::ES_TAX_EXCEPTION_E1 => 'es-tax-exception-e1',
-            self::ES_TAX_EXCEPTION_E2 => 'es-tax-exception-e2',
-            self::ES_TAX_EXCEPTION_E3 => 'es-tax-exception-e3',
-            self::ES_TAX_EXCEPTION_E4 => 'es-tax-exception-e4',
-            self::ES_TAX_EXCEPTION_E5 => 'es-tax-exception-e5',
-            self::ES_TAX_EXCEPTION_E6 => 'es-tax-exception-e6',
-            self::ES_TAX_EXCEPTION_N1 => 'es-tax-exception-n1',
-            self::ES_TAX_EXCEPTION_N2 => 'es-tax-exception-n2',
-            self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT => 'es-tax-exception-passive-subject',
+            self::ES_TAX_EXCEPTION_7 => 'es-tax-exception-7',
+            self::ES_TAX_EXCEPTION_14 => 'es-tax-exception-14',
+            self::ES_TAX_EXCEPTION_20 => 'es-tax-exception-20',
+            self::ES_TAX_EXCEPTION_21 => 'es-tax-exception-21',
+            self::ES_TAX_EXCEPTION_22 => 'es-tax-exception-22',
+            self::ES_TAX_EXCEPTION_23_24 => 'es-tax-exception-23-24',
+            self::ES_TAX_EXCEPTION_25 => 'es-tax-exception-25',
+            self::ES_TAX_EXCEPTION_68_70 => 'es-tax-exception-68-70',
+            self::ES_TAX_EXCEPTION_84 => 'es-tax-exception-84',
+            self::ES_TAX_EXCEPTION_OTHER => 'es-tax-exception-other',
+            self::ES_OTHER_NOT_SUBJECT => 'es-tax-exception-other-not-subject',
         ];
 
         $all = array_merge($defaultValues, self::$values);
@@ -69,6 +73,12 @@ class TaxExceptions
         }
 
         return $all;
+    }
+
+    public static function get(?string $key): ?string
+    {
+        $values = self::all();
+        return $values[$key] ?? null;
     }
 
     /**
@@ -82,19 +92,19 @@ class TaxExceptions
     {
         $validMap = [
             InvoiceOperation::INTRA_COMMUNITY => [
-                'sales' => [self::ES_TAX_EXCEPTION_E3, self::ES_TAX_EXCEPTION_E4, self::ES_TAX_EXCEPTION_E5, self::ES_TAX_EXCEPTION_N2],
-                'purchases' => [self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, self::ES_TAX_EXCEPTION_N1, self::ES_TAX_EXCEPTION_N2],
+                'sales' => [self::ES_TAX_EXCEPTION_22, self::ES_TAX_EXCEPTION_23_24, self::ES_TAX_EXCEPTION_25, self::ES_TAX_EXCEPTION_68_70],
+                'purchases' => [self::ES_TAX_EXCEPTION_84, self::ES_TAX_EXCEPTION_7, self::ES_TAX_EXCEPTION_68_70],
             ],
             InvoiceOperation::INTRA_COMMUNITY_SERVICES => [
-                'sales' => [self::ES_TAX_EXCEPTION_N2],
-                'purchases' => [self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT],
+                'sales' => [self::ES_TAX_EXCEPTION_68_70],
+                'purchases' => [self::ES_TAX_EXCEPTION_84],
             ],
             InvoiceOperation::REVERSE_CHARGE => [
-                'sales' => [self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT],
-                'purchases' => [self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT],
+                'sales' => [self::ES_TAX_EXCEPTION_84],
+                'purchases' => [self::ES_TAX_EXCEPTION_84],
             ],
             InvoiceOperation::EXPORT => [
-                'sales' => [self::ES_TAX_EXCEPTION_E2],
+                'sales' => [self::ES_TAX_EXCEPTION_21],
                 'purchases' => [],
             ],
             InvoiceOperation::IMPORT => [
@@ -105,7 +115,7 @@ class TaxExceptions
 
         // without operation: generic exceptions or null are allowed
         if (empty($operation)) {
-            $allowed = [null, self::ES_TAX_EXCEPTION_E1, self::ES_TAX_EXCEPTION_E6, self::ES_TAX_EXCEPTION_N1, self::ES_TAX_EXCEPTION_N2, self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT];
+            $allowed = [null, self::ES_TAX_EXCEPTION_20, self::ES_TAX_EXCEPTION_OTHER, self::ES_TAX_EXCEPTION_7, self::ES_TAX_EXCEPTION_68_70, self::ES_TAX_EXCEPTION_84];
             return in_array($exception, $allowed);
         }
 

@@ -26,8 +26,19 @@ use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\Agente;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FormaPago;
+use FacturaScripts\Dinamic\Model\LineaAlbaranCliente;
+use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
+use FacturaScripts\Dinamic\Model\LineaFacturaCliente;
+use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
+use FacturaScripts\Dinamic\Model\LineaPedidoCliente;
+use FacturaScripts\Dinamic\Model\LineaPedidoProveedor;
+use FacturaScripts\Dinamic\Model\LineaPresupuestoCliente;
+use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor;
 use FacturaScripts\Dinamic\Model\LogMessage;
+use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Serie;
 
 final class Migrations
@@ -47,6 +58,7 @@ final class Migrations
         self::runMigration('fixFormasPago', [self::class, 'fixFormasPago']);
         self::runMigration('fixRectifiedInvoices', [self::class, 'fixRectifiedInvoices']);
         self::runMigration('fixClientesOperationFromVatException', [self::class, 'fixClientesOperationFromVatException']);
+        self::runMigration('fixTaxException', [self::class, 'fixTaxException']);
     }
 
     /**
@@ -153,10 +165,10 @@ final class Migrations
 
         // compatibilidad: con la nueva validación, estos casos requieren operación informada
         $updates = [
-            TaxExceptions::ES_TAX_EXCEPTION_E2 => InvoiceOperation::EXPORT,
-            TaxExceptions::ES_TAX_EXCEPTION_E3 => InvoiceOperation::INTRA_COMMUNITY,
-            TaxExceptions::ES_TAX_EXCEPTION_E4 => InvoiceOperation::INTRA_COMMUNITY,
-            TaxExceptions::ES_TAX_EXCEPTION_E5 => InvoiceOperation::INTRA_COMMUNITY,
+            TaxExceptions::ES_TAX_EXCEPTION_21 => InvoiceOperation::EXPORT,
+            TaxExceptions::ES_TAX_EXCEPTION_22 => InvoiceOperation::INTRA_COMMUNITY,
+            TaxExceptions::ES_TAX_EXCEPTION_23_24 => InvoiceOperation::INTRA_COMMUNITY,
+            TaxExceptions::ES_TAX_EXCEPTION_25 => InvoiceOperation::INTRA_COMMUNITY,
         ];
 
         foreach ($updates as $exception => $operation) {
@@ -251,6 +263,64 @@ final class Migrations
 
         $sqlUpdate = "UPDATE series SET tipo = 'R' WHERE codserie = " . self::db()->var2str($serieRectifying) . ";";
         self::db()->exec($sqlUpdate);
+    }
+
+    // TODO: añadir versión y fecha de lanzamiento
+    private function fixTaxException(): void
+    {
+        // forzamos la comprobación de las tablas
+        new Empresa();
+        new Cliente();
+        new Proveedor();
+        new LineaPresupuestoProveedor();
+        new LineaPedidoProveedor();
+        new LineaAlbaranProveedor();
+        new LineaFacturaProveedor();
+        new LineaPresupuestoCliente();
+        new LineaPedidoCliente();
+        new LineaAlbaranCliente();
+        new LineaFacturaCliente();
+
+        // recorremos todas las tablas que tienen el campo excepcioniva
+        $tables = [
+            'empresas', 'clientes', 'proveedores',
+            'lineaspresupuestoprov', 'lineaspedidosprov', 'lineasalbaranesprov', 'lineasfacturasprov',
+            'lineaspresupuestocli', 'lineaspedidoscli', 'lineasalbaranescli', 'lineasfacturascli'
+        ];
+        foreach ($tables as $table) {
+            // si la tabla no existe, continuamos
+            if (false === self::db()->tableExists($table)) {
+                continue;
+            }
+
+            // si el campo excepcioniva no existe, continuamos
+            $found = false;
+            foreach (self::db()->getColumns($table) as $columnInfo) {
+                if ($columnInfo['name'] === 'excepcioniva') {
+                    $found = true;
+                    break;
+                }
+            }
+            if (false === $found) {
+                continue;
+            }
+
+            // cambios
+            // ES_N1 = ES_7
+            // ES_N5 = ES_OTHER_NOT_SUBJECT
+            // ES_ART_7 = ES_7
+            // ES_ART_14 = ES_14
+            // ES_LOCATION_RULES = ES_68_70
+            // ES_PASSIVE_SUBJECT = ES_84
+            self::db()->exec("UPDATE " . $table . " SET excepcioniva = CASE "
+                . "WHEN excepcioniva = 'ES_N1' THEN 'ES_7' "
+                . "WHEN excepcioniva = 'ES_N5' THEN 'ES_OTHER_NOT_SUBJECT' "
+                . "WHEN excepcioniva = 'ES_ART_7' THEN 'ES_7' "
+                . "WHEN excepcioniva = 'ES_ART_14' THEN 'ES_14' "
+                . "WHEN excepcioniva = 'ES_LOCATION_RULES' THEN 'ES_68_70' "
+                . "WHEN excepcioniva = 'ES_PASSIVE_SUBJECT' THEN 'ES_84' "
+                . "ELSE excepcioniva END;");
+        }
     }
 
     private static function getExecutedMigrations(): array
