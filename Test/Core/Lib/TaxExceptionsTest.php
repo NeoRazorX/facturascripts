@@ -38,7 +38,7 @@ final class TaxExceptionsTest extends TestCase
         $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_7, $all);
         $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_68_70, $all);
         $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_84, $all);
-        $this->assertCount(9, $all);
+        $this->assertCount(11, $all);
     }
 
     public function testAddCustomException(): void
