@@ -54,7 +54,7 @@ class Init extends InitClass
 {
     public function init(): void
     {
-        Kernel::addRoute('/api/3/ApiControllerPruebas', 'ApiControllerPruebas', -1);
+        Kernel::addRoute('/api/3/pruebas', 'ApiControllerPruebas', -1);
         ApiRoot::addCustomResource('pruebas');
     }
     // ...

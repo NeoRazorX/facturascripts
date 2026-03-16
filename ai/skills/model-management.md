@@ -26,9 +26,8 @@ if ($user->load('admin')) {
 
 ### Buscar múltiples registros
 ```php
-$userModel = new User();
 // all(where, order, offset, limit)
-$activeUsers = $userModel->all([Where::eq('enabled' => true)], ['nick' => 'ASC'], 0, 10);
+$activeUsers = User::all([Where::eq('enabled', true)], ['nick' => 'ASC'], 0, 10);
 
 foreach ($activeUsers as $user) {
     echo $user->nick;
@@ -50,7 +49,7 @@ if ($user->save()) {
 
 ### Contar registros con condiciones
 ```php
-$totalAdmins = User::count([Where::eq('admin' => true)]);
+$totalAdmins = User::count([Where::eq('admin', true)]);
 echo "Total de administradores: " . $totalAdmins;
 ```
 

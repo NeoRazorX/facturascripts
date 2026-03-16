@@ -1,7 +1,7 @@
 # Extensiones y Ganchos (Pipes y Hooks)
 
-FacturaScripts permite extender la funcionalidad del sistema sin modificar el código del núcleo mediante **Extensiones
-** (en PHP) y **Ganchos** (en plantillas Twig). Esta es la forma preferida de personalización antes que la herencia.
+FacturaScripts permite extender la funcionalidad del sistema sin modificar el código del núcleo mediante **Extensiones**
+(en PHP) y **Ganchos** (en plantillas Twig). Esta es la forma preferida de personalización antes que la herencia.
 
 ## Extensiones (Backend PHP)
 
@@ -30,8 +30,8 @@ public function createViews(): void
 
 ### Cómo registrar una extensión desde un Plugin
 
-Añade `pipe('nombre_extension')` en cualquier archivo php para dar soporte a aque otros plugins puedan añadir contenido
-en ese pipe. Adicionalmente, puedes añadir variables después del nombre del pipe.
+En el código del núcleo, añade `$this->pipe('nombre_del_pipe')` donde quieras dar soporte a que otros plugins puedan
+añadir contenido en ese pipe. Adicionalmente, puedes añadir variables después del nombre del pipe.
 
 ```php
 $this->pipe('nombre_del_pipe', $data);
@@ -85,8 +85,8 @@ En las plantillas Twig, se encuentran llamadas a ganchos que los plugins pueden 
 Los plugins pueden registrar contenido para estos ganchos, lo que permite añadir campos a formularios, botones
 adicionales o información extra en listados.
 
-Crear el archivo dentro de `Extension\View\MenuTemplate_HeadFirst.html.twig` para añadir código al archivo y posición
-indicada en el propio nombre del archivo, como `MenuTemplate` es esl archivo y `HeadFirst` es la posición.
+Crear el archivo dentro de `Extension/View/MenuTemplate_HeadFirst.html.twig` para añadir código al archivo y posición
+indicada en el propio nombre del archivo, donde `MenuTemplate` es el archivo y `HeadFirst` es la posición.
 
 ---
 

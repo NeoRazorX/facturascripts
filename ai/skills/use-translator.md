@@ -45,8 +45,9 @@ foreach ($idiomas as $id => $nombre) {
 
 ### Traducir a un idioma específico (sin cambiar el global)
 ```php
-use FacturaScripts\Core\Translator;
+use FacturaScripts\Core\Tools;
 
-// Traduce 'invoice' al francés
-echo Translator::customTrans('fr_FR', 'invoice');
+// Traduce 'invoice' al francés sin modificar el traductor global
+$traductor = Tools::lang('fr_FR');
+echo $traductor->customTrans('invoice');
 ```

@@ -59,5 +59,5 @@ use FacturaScripts\Core\Tools;
 
 // Establecer un ajuste de la base de datos (tabla settings)
 Tools::settingsSet('default', 'company_name', 'Mi Empresa 2');
-Tools:settingsSave();
+Tools::settingsSave();
 ```

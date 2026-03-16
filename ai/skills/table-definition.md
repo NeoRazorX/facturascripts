@@ -7,7 +7,7 @@ Esta skill describe cómo definir la estructura de las tablas de la base de dato
 - Añadir o modificar columnas en tablas existentes.
 - Definir claves primarias y relaciones (claves foráneas).
 
-## Reglas
+##  Reglas
 - Los archivos de tablas deben ubicarse en la carpeta `Table/` del núcleo o del plugin.
 - FacturaScripts detecta automáticamente los cambios en estos archivos y sincroniza la base de datos (siempre que el modo desarrollador esté activo o se fuerce la actualización).
 - El nombre del archivo debe coincidir con el nombre de la tabla.
@@ -19,15 +19,15 @@ Esta skill describe cómo definir la estructura de las tablas de la base de dato
 ### Etiquetas principales
 - `<table>`: Nodo raíz que contiene la definición de la tabla.
 - `<column>`: Define una columna de la tabla.
-  - `<name>`: Nombre de la columna.
-  - `<type>`: Tipo de dato (ej: `integer`, `boolean`, `character varying(50)`, `timestamp`, `double precision`).
-  - `<null>`: `NO` para columnas obligatorias, `YES` para opcionales (por defecto).
-  - `<default>`: Valor por defecto para la columna.
+    - `<name>`: Nombre de la columna.
+    - `<type>`: Tipo de dato (ej: `integer`, `boolean`, `character varying(50)`, `timestamp`, `double precision`).
+    - `<null>`: `NO` para columnas obligatorias, `YES` para opcionales (por defecto).
+    - `<default>`: Valor por defecto para la columna.
 - `<constraint>`: Define restricciones como claves primarias o foráneas.
 
 ## Ejemplo de uso
 
-### Definición de una tabla básica (`mi_tabla.xml`)
+### Definición de una tabla básica (`mi_tablas.xml`)
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <table>
@@ -47,7 +47,7 @@ Esta skill describe cómo definir la estructura de las tablas de la base de dato
         <default>CURRENT_TIMESTAMP</default>
     </column>
     <constraint>
-        <name>mi_tabla_pkey</name>
+        <name>mi_tablas_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
 </table>
@@ -56,7 +56,7 @@ Esta skill describe cómo definir la estructura de las tablas de la base de dato
 ### Definición de una clave foránea
 ```xml
 <constraint>
-    <name>ca_mi_tabla_cliente</name>
+    <name>ca_mi_tablas_cliente</name>
     <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE CASCADE ON UPDATE CASCADE</type>
 </constraint>
 ```

@@ -82,7 +82,7 @@ Para añadir lógica a un modelo existente (ej: `Cliente`), se crea un archivo e
 ```php
 namespace FacturaScripts\Plugins\MiNuevoPlugin\Extension\Model;
 
-use FacturaScripts\Closure;
+use Closure;
 
 class Cliente
 {
@@ -101,7 +101,7 @@ Para añadir acciones o cambiar el comportamiento de una página:
 ```php
 namespace FacturaScripts\Plugins\MiNuevoPlugin\Extension\Controller;
 
-use FacturaScripts\Closure;
+use Closure;
 
 class ListCliente
 {
