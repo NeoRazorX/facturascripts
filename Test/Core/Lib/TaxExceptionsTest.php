@@ -38,6 +38,8 @@ final class TaxExceptionsTest extends TestCase
         $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_7, $all);
         $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_68_70, $all);
         $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_84, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_TAX_EXCEPTION_14, $all);
+        $this->assertArrayHasKey(TaxExceptions::ES_OTHER_NOT_SUBJECT, $all);
         $this->assertCount(11, $all);
     }
 

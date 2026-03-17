@@ -165,16 +165,18 @@ class ListCliente extends ListController
 
         $operations = $this->codeModel->all('clientes', 'operacion', 'operacion', true, [Where::isNotNull('operacion')]);
         foreach ($operations as &$item) {
-            if (!empty($item->code)) {
-                $item->description = Tools::trans(InvoiceOperation::get($item->description));
+            $operationKey = InvoiceOperation::get($item->code);
+            if (null !== $operationKey) {
+                $item->description = Tools::trans($operationKey);
             }
         }
         $this->addFilterSelect($viewName, 'operation', 'operation', 'operacion', $operations);
 
         $vatExceptions = $this->codeModel->all('clientes', 'excepcioniva', 'excepcioniva', true, [Where::isNotNull('excepcioniva')]);
         foreach ($vatExceptions as &$item) {
-            if (!empty($item->code)) {
-                $item->description = Tools::trans(TaxExceptions::get($item->description));
+            $operationKey = InvoiceOperation::get($item->code);
+            if (null !== $operationKey) {
+                $item->description = Tools::trans($operationKey);
             }
         }
         $this->addFilterSelect($viewName, 'vat-exception', 'vat-exception', 'excepcioniva', $vatExceptions);
