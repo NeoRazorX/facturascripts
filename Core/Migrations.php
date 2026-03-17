@@ -266,7 +266,7 @@ final class Migrations
     }
 
     // TODO: añadir versión y fecha de lanzamiento
-    private function fixTaxException(): void
+    private static function fixTaxException(): void
     {
         // forzamos la comprobación de las tablas
         new Empresa();
