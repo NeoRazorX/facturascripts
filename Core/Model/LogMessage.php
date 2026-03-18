@@ -131,7 +131,7 @@ class LogMessage extends ModelClass
      */
     public function context(): array
     {
-        return json_decode(Tools::fixHtml($this->context), true) ?? [];
+        return json_decode(Tools::fixHtml($this->context) ?? '', true) ?? [];
     }
 
     public function delete(): bool
