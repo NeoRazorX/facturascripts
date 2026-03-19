@@ -28,6 +28,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
+use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\AlbaranProveedor;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
@@ -278,6 +279,12 @@ END;
             ->run(function () {
                 $this->restoreNotifications();
             });
+
+        $this->job('update-unpaid-invoices')
+            ->everyDayAt(6)
+            ->run(function () {
+                $this->updateUnpaidInvoices();
+            });
     }
 
     protected function runPlugins(): void
@@ -452,6 +459,26 @@ END;
 
             // guardamos para que se actualice
             $recibo->save();
+        }
+    }
+
+    protected function updateUnpaidInvoices(): void
+    {
+        echo PHP_EOL . PHP_EOL . Tools::trans('updating-unpaid-invoices') . ' ... ';
+        ob_flush();
+
+        $generator = new ReceiptGenerator();
+        $where = [Where::eq('pagada', false)];
+        $orderBy = ['fecha' => 'DESC'];
+
+        // recorremos las facturas de cliente impagadas
+        foreach (FacturaCliente::all($where, $orderBy, 0, 500) as $factura) {
+            $generator->update($factura);
+        }
+
+        // recorremos las facturas de proveedor impagadas
+        foreach (FacturaProveedor::all($where, $orderBy, 0, 500) as $factura) {
+            $generator->update($factura);
         }
     }
 }
