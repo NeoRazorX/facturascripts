@@ -865,7 +865,6 @@
     "invalid-date-there-are-invoices-before": "Fecha no válida: %date%. La factura %other% es anterior a esta y sin embargo tiene fecha posterior: %other-date%. Toda factura debe tener una fecha anterior o igual a la siguiente.",
     "invalid-iban": "IBAN no válido: %iban%",
     "invalid-iso-code": "Código ISO '%iso-code%' no válido",
-    "invalid-log-level": "Nivel de log no válido: %level%",
     "invalid-number": "Número no válido: %number%",
     "invalid-request": "Petición no válida",
     "invalid-token": "Token no válido",
