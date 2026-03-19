@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Kernel;
@@ -362,10 +361,10 @@ END;
         $documents = $models[0]->all([], $orderBy, 0, $limit);
         while (!empty($documents)) {
             foreach ($documents as $doc) {
-                $where = [new DataBaseWhere('model', $doc->modelClassName())];
+                $where = [Where::eq('model', $doc->modelClassName())];
                 $where[] = is_numeric($doc->id()) ?
-                    new DataBaseWhere('modelid|modelcode', $doc->id()) :
-                    new DataBaseWhere('modelcode', $doc->id());
+                    Where::eq('modelid|modelcode', $doc->id()) :
+                    Where::eq('modelcode', $doc->id());
 
                 $num = $relationModel->count($where);
                 if ($num == $doc->numdocs) {
@@ -394,7 +393,7 @@ END;
 
         // recorremos todas las familias para actualizar su contador de productos
         foreach (Familia::all() as $familia) {
-            $count = Producto::count([new DataBaseWhere('codfamilia', $familia->codfamilia)]);
+            $count = Producto::count([Where::eq('codfamilia', $familia->codfamilia)]);
             if ($familia->numproductos == $count) {
                 continue;
             }
@@ -411,7 +410,7 @@ END;
 
         // recorremos todos los fabricantes para actualizar su contador de productos
         foreach (Fabricante::all() as $fabricante) {
-            $count = Producto::count([new DataBaseWhere('codfabricante', $fabricante->codfabricante)]);
+            $count = Producto::count([Where::eq('codfabricante', $fabricante->codfabricante)]);
             if ($fabricante->numproductos == $count) {
                 continue;
             }
@@ -428,8 +427,8 @@ END;
 
         // recorremos todos los recibos de compra impagados con fecha anterior a hoy
         $where = [
-            new DataBaseWhere('pagado', false),
-            new DataBaseWhere('vencimiento', Tools::date(), '<')
+            Where::eq('pagado', false),
+            Where::lt('vencimiento', Tools::date())
         ];
         $orderBy = ['vencimiento' => 'DESC'];
         foreach (ReciboProveedor::all($where, $orderBy, 0, 500) as $recibo) {

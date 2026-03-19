@@ -19,13 +19,13 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
 use FacturaScripts\Core\Model\Base\PaymentRelationTrait;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
@@ -155,7 +155,7 @@ class ReciboCliente extends ModelClass
      */
     public function getPayments(): array
     {
-        $where = [new DataBaseWhere('idrecibo', $this->idrecibo)];
+        $where = [Where::eq('idrecibo', $this->idrecibo)];
         $orderBy = ['fecha' => 'DESC', 'hora' => 'DESC', 'idpago' => 'DESC'];
         return DinPagoCliente::all($where, $orderBy, 0, 0);
     }
