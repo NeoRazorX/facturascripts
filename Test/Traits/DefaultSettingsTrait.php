@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Traits;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
@@ -27,7 +26,9 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\RegularizacionImpuesto;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 trait DefaultSettingsTrait
 {
@@ -40,7 +41,6 @@ trait DefaultSettingsTrait
         }
 
         // recorremos todos los ejercicios
-        $cuenta = new Cuenta();
         Ejercicios::clear();
         foreach (Ejercicios::all() as $exercise) {
             // si está cerrado, lo abrimos
@@ -49,8 +49,8 @@ trait DefaultSettingsTrait
                 $exercise->save();
             }
 
-            $where = [new DataBaseWhere('codejercicio', $exercise->codejercicio)];
-            if ($cuenta->count($where) > 0) {
+            $where = [Where::eq('codejercicio', $exercise->codejercicio)];
+            if (Cuenta::count($where) > 0) {
                 // ya tiene plan contable
                 continue;
             }
@@ -58,6 +58,22 @@ trait DefaultSettingsTrait
             // importamos el plan contable en aquellos que no tengan
             $planImport = new AccountingPlanImport();
             $planImport->importCSV($filePath, $exercise->codejercicio);
+        }
+    }
+
+    protected static function loadCoreModels(): void
+    {
+        foreach (Tools::folderScan(Tools::folder('Core', 'Model')) as $fileName) {
+            if ('.php' !== substr($fileName, -4)) {
+                continue;
+            }
+
+            $className = '\\FacturaScripts\\Dinamic\\Model\\' . substr($fileName, 0, -4);
+            if (false === is_subclass_of($className, ModelClass::class)) {
+                continue;
+            }
+
+            new $className();
         }
     }
 
@@ -78,7 +94,7 @@ trait DefaultSettingsTrait
             }
         }
 
-        $where = [new DataBaseWhere('idempresa', Tools::settings('default', 'idempresa', 1))];
+        $where = [Where::eq('idempresa', Tools::settings('default', 'idempresa', 1))];
         foreach (Almacen::all($where) as $warehouse) {
             Tools::settingsSet('default', 'codalmacen', $warehouse->codalmacen);
         }
