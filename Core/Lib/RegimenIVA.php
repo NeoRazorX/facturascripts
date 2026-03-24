@@ -28,15 +28,15 @@ namespace FacturaScripts\Core\Lib;
 class RegimenIVA
 {
     // Deprecated: use TaxExceptions constants.
-    const ES_TAX_EXCEPTION_E1 = TaxExceptions::ES_TAX_EXCEPTION_E1;
-    const ES_TAX_EXCEPTION_E2 = TaxExceptions::ES_TAX_EXCEPTION_E2;
-    const ES_TAX_EXCEPTION_E3 = TaxExceptions::ES_TAX_EXCEPTION_E3;
-    const ES_TAX_EXCEPTION_E4 = TaxExceptions::ES_TAX_EXCEPTION_E4;
-    const ES_TAX_EXCEPTION_E5 = TaxExceptions::ES_TAX_EXCEPTION_E5;
-    const ES_TAX_EXCEPTION_E6 = TaxExceptions::ES_TAX_EXCEPTION_E6;
-    const ES_TAX_EXCEPTION_N1 = TaxExceptions::ES_TAX_EXCEPTION_N1;
-    const ES_TAX_EXCEPTION_N2 = TaxExceptions::ES_TAX_EXCEPTION_N2;
-    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = TaxExceptions::ES_TAX_EXCEPTION_PASSIVE_SUBJECT;
+    const ES_TAX_EXCEPTION_E1 = TaxExceptions::ES_TAX_EXCEPTION_20;
+    const ES_TAX_EXCEPTION_E2 = TaxExceptions::ES_TAX_EXCEPTION_21;
+    const ES_TAX_EXCEPTION_E3 = TaxExceptions::ES_TAX_EXCEPTION_22;
+    const ES_TAX_EXCEPTION_E4 = TaxExceptions::ES_TAX_EXCEPTION_23_24;
+    const ES_TAX_EXCEPTION_E5 = TaxExceptions::ES_TAX_EXCEPTION_25;
+    const ES_TAX_EXCEPTION_E6 = TaxExceptions::ES_TAX_EXCEPTION_OTHER;
+    const ES_TAX_EXCEPTION_N1 = TaxExceptions::ES_TAX_EXCEPTION_7;
+    const ES_TAX_EXCEPTION_N2 = TaxExceptions::ES_TAX_EXCEPTION_68_70;
+    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = TaxExceptions::ES_TAX_EXCEPTION_84;
     const TAX_SYSTEM_AGRARIAN = 'Agrario';
     const TAX_SYSTEM_CASH_CRITERIA = 'Caja';
     const TAX_SYSTEM_EXEMPT = 'Exento';

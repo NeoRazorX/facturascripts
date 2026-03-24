@@ -66,6 +66,12 @@ class InvoiceOperation
         return self::filter();
     }
 
+    public static function get(?string $key): ?string
+    {
+        $values = self::all();
+        return $values[$key] ?? null;
+    }
+
     public static function allForPurchases(): array
     {
         return self::filter(self::TYPE_PURCHASE);

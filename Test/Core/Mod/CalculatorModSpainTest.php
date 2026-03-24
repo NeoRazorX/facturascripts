@@ -25,6 +25,7 @@ use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Serie;
@@ -61,7 +62,7 @@ final class CalculatorModSpainTest extends TestCase
         $this->assertEquals(0.0, $lines[0]->iva, 'bad-line-iva');
         $this->assertEquals(0.0, $lines[0]->recargo, 'bad-line-recargo');
         $this->assertEquals(Impuestos::get('IVA0')->codimpuesto, $lines[0]->codimpuesto, 'bad-line-codimpuesto');
-        $this->assertEquals(RegimenIVA::ES_TAX_EXCEPTION_E5, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_25, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
 
         // comprobamos el documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -86,7 +87,7 @@ final class CalculatorModSpainTest extends TestCase
         // la línea mantiene el IVA para la contabilidad (autorepercusión)
         $this->assertEquals(21.0, $lines[0]->iva, 'bad-line-iva');
         $this->assertEquals(0.0, $lines[0]->recargo, 'bad-line-recargo');
-        $this->assertEquals(RegimenIVA::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_84, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
 
         // el IVA se neutraliza en el total del documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -111,7 +112,7 @@ final class CalculatorModSpainTest extends TestCase
         // no sujeta por reglas de localización, exención N2
         $this->assertEquals(0.0, $lines[0]->iva, 'bad-line-iva');
         $this->assertEquals(0.0, $lines[0]->recargo, 'bad-line-recargo');
-        $this->assertEquals(RegimenIVA::ES_TAX_EXCEPTION_N2, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_68_70, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
 
         // comprobamos el documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -135,7 +136,7 @@ final class CalculatorModSpainTest extends TestCase
         // ISP: mantiene IVA para autorepercusión
         $this->assertEquals(21.0, $lines[0]->iva, 'bad-line-iva');
         $this->assertEquals(0.0, $lines[0]->recargo, 'bad-line-recargo');
-        $this->assertEquals(RegimenIVA::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_84, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
 
         // el IVA se neutraliza en el total del documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -159,7 +160,7 @@ final class CalculatorModSpainTest extends TestCase
         // ISP doméstico: el vendedor no cobra IVA
         $this->assertEquals(0.0, $lines[0]->iva, 'bad-line-iva');
         $this->assertEquals(0.0, $lines[0]->recargo, 'bad-line-recargo');
-        $this->assertEquals(RegimenIVA::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_84, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
 
         // comprobamos el documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -183,7 +184,7 @@ final class CalculatorModSpainTest extends TestCase
         // ISP doméstico: mantiene IVA para autorepercusión
         $this->assertEquals(21.0, $lines[0]->iva, 'bad-line-iva');
         $this->assertEquals(0.0, $lines[0]->recargo, 'bad-line-recargo');
-        $this->assertEquals(RegimenIVA::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_84, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
 
         // el IVA se neutraliza en el total del documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -207,7 +208,7 @@ final class CalculatorModSpainTest extends TestCase
         // exportación: IVA 0% con exención E2
         $this->assertEquals(0.0, $lines[0]->iva, 'bad-line-iva');
         $this->assertEquals(0.0, $lines[0]->recargo, 'bad-line-recargo');
-        $this->assertEquals(RegimenIVA::ES_TAX_EXCEPTION_E2, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_21, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
 
         // comprobamos el documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -260,7 +261,7 @@ final class CalculatorModSpainTest extends TestCase
         $this->assertNull($lines[0]->codimpuesto, 'bad-line-codimpuesto');
         $this->assertEquals(0.0, $lines[0]->iva, 'bad-line-iva');
         $this->assertEquals(0.0, $lines[0]->recargo, 'bad-line-recargo');
-        $this->assertEquals(RegimenIVA::ES_TAX_EXCEPTION_E6, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_OTHER, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
 
         // comprobamos el documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
@@ -294,7 +295,7 @@ final class CalculatorModSpainTest extends TestCase
         // REAGYP: mantiene IVA pero elimina recargo, excepción E6
         $this->assertEquals(21.0, $lines[0]->iva, 'bad-line-iva');
         $this->assertEquals(0.0, $lines[0]->recargo, 'bad-line-recargo');
-        $this->assertEquals(RegimenIVA::ES_TAX_EXCEPTION_E6, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_OTHER, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
 
         // comprobamos el documento
         $this->assertEquals(100.0, $doc->neto, 'bad-neto');
