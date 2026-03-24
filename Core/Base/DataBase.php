@@ -103,6 +103,7 @@ final class DataBase
         }
 
         self::$miniLog->debug('Begin Transaction');
+
         return self::$engine->beginTransaction(self::$link);
     }
 
