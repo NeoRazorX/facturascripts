@@ -311,6 +311,28 @@ abstract class BusinessDocument extends NewModelClass
     }
 
     /**
+     * Devuelve el descuento total de todo el documento.
+     * Este cálculo tiene en cuenta tanto los descuentos globales aplicados al documento
+     * como los descuentos individuales aplicados en cada una de las líneas.
+     * 
+     * OJO, sin tener en cuenta impuestos.
+     * Se redondea el resultado con los decimales configurados por el sistema para evitar problemas de precisión en coma flotante.
+     *
+     * @return float Descuento total calculado.
+     */
+    public function getTotalDiscounts(): float
+    {
+        $netoNoDto = 0.0;
+        foreach ($this->getLines() as $line) {
+            // sumar las lineas sin descuentos
+            $netoNoDto += $line->pvpsindto;
+        }
+
+        // devolver el neto (total con descuento sin impuestos) - sumaLineasSinDto
+        return Tools::round($netoNoDto - $this->neto);
+    }
+
+    /**
      * Esta función se ejecuta al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará después de la creación de la tabla. Útil para insertar valores
      * por defecto.
