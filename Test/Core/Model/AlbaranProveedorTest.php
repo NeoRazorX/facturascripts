@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -298,8 +298,11 @@ final class AlbaranProveedorTest extends TestCase
             }
 
             $statusFound = true;
+            $previous = $doc->idestado;
             $doc->idestado = $status->idestado;
             $this->assertTrue($doc->save(), 'can-not-approve-albaran-proveedor-4');
+            $this->assertEquals($previous, $doc->idestado_ant, 'albaran-proveedor-bad-previous-status');
+            $this->assertEquals($previous, $doc->getPreviousStatus()->idestado, 'albaran-proveedor-bad-previous-status-model');
             break;
         }
 
@@ -373,8 +376,7 @@ final class AlbaranProveedorTest extends TestCase
 
         // obtenemos el almacén de la empresa 2
         $warehouse = new Almacen();
-        $where = [Where::eq('idempresa', $company2->idempresa)];
-        $warehouse->loadWhere($where);
+        $warehouse->loadWhereEq('idempresa', $company2->idempresa);
 
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
@@ -399,8 +401,11 @@ final class AlbaranProveedorTest extends TestCase
             }
 
             // al cambiar el estado genera una nueva factura
+            $previous = $doc->idestado;
             $doc->idestado = $status->idestado;
             $this->assertTrue($doc->save(), 'albaran-cant-save');
+            $this->assertEquals($previous, $doc->idestado_ant, 'albaran-bad-previous-status');
+            $this->assertEquals($previous, $doc->getPreviousStatus()->idestado, 'albaran-bad-previous-status-model');
 
             // comprobamos que la factura se ha creado
             $children = $doc->childrenDocuments();

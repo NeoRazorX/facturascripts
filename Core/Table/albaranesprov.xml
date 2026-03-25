@@ -83,6 +83,10 @@
         <type>integer</type>
     </column>
     <column>
+        <name>idestado_ant</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>irpf</name>
         <type>double precision</type>
     </column>
@@ -190,6 +194,10 @@
     <constraint>
         <name>ca_albaranesprov_idestado</name>
         <type>FOREIGN KEY (idestado) REFERENCES estados_documentos (idestado) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_albaranesprov_idestado_ant</name>
+        <type>FOREIGN KEY (idestado_ant) REFERENCES estados_documentos (idestado) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_albaranesprov_nick</name>

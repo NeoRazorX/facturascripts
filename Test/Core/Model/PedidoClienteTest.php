@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Almacen;
@@ -277,8 +276,7 @@ final class PedidoClienteTest extends TestCase
 
         // recargamos y comprobamos el stock
         $stock = new Stock();
-        $where = [new DataBaseWhere('idproducto', $product->idproducto)];
-        $stock->loadWhere($where);
+        $stock->loadWhereEq('idproducto', $product->idproducto);
         $this->assertEquals(1, $stock->reservada, 'pedido-cliente-do-not-update-stock');
         $this->assertEquals(0, $stock->disponible, 'pedido-cliente-do-not-update-stock');
         $this->assertEquals(0, $stock->cantidad, 'pedido-cliente-do-not-update-stock');
@@ -305,7 +303,7 @@ final class PedidoClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-3');
 
         // recargamos y comprobamos el stock
-        $stock->loadWhere($where);
+        $stock->loadWhereEq('idproducto', $product->idproducto);
         $this->assertEquals(0, $stock->reservada, 'pedido-cliente-do-not-update-stock');
         $this->assertEquals(0, $stock->disponible, 'pedido-cliente-do-not-update-stock');
         $this->assertEquals(0, $stock->cantidad, 'pedido-cliente-do-not-update-stock');
@@ -369,8 +367,7 @@ final class PedidoClienteTest extends TestCase
 
         // obtenemos el almacén de la empresa 2
         $warehouse = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadWhere($where);
+        $warehouse->loadWhereEq('idempresa', $company2->idempresa);
 
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -395,8 +392,11 @@ final class PedidoClienteTest extends TestCase
             }
 
             // al cambiar el estado genera un nuevo albarán
+            $previous = $doc->idestado;
             $doc->idestado = $status->idestado;
             $this->assertTrue($doc->save(), 'pedido-cant-save');
+            $this->assertEquals($previous, $doc->idestado_ant, 'pedido-bad-previous-status');
+            $this->assertEquals($previous, $doc->getPreviousStatus()->idestado, 'pedido-bad-previous-status-model');
 
             // comprobamos que el albarán se ha creado
             $children = $doc->childrenDocuments();
