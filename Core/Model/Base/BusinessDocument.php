@@ -314,7 +314,7 @@ abstract class BusinessDocument extends NewModelClass
      * Devuelve el descuento total de todo el documento.
      * Este cálculo tiene en cuenta tanto los descuentos globales aplicados al documento
      * como los descuentos individuales aplicados en cada una de las líneas.
-     * 
+     *
      * OJO, sin tener en cuenta impuestos.
      * Se redondea el resultado con los decimales configurados por el sistema para evitar problemas de precisión en coma flotante.
      *
