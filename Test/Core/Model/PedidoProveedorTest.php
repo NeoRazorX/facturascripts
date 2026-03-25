@@ -410,6 +410,7 @@ final class PedidoProveedorTest extends TestCase
                 $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'albaran-bad-idempresa');
                 $this->assertEquals($company2->idempresa, $child->idempresa, 'albaran-bad-idempresa');
             }
+            break;
         }
 
         // eliminamos

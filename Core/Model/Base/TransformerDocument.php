@@ -186,12 +186,21 @@ abstract class TransformerDocument extends BusinessDocument
 
         // cambiamos el estado del documento padre
         foreach ($parents as $parent) {
+            $previousStatus = $parent->getPreviousStatus();
+            if ($previousStatus && empty($previousStatus->generadoc)) {
+                $parent->idestado = $previousStatus->idestado;
+                $parent->save();
+                continue;
+            }
+
             foreach ($parent->getAvailableStatus() as $status) {
-                if ($status->predeterminado) {
-                    $parent->idestado = $status->idestado;
-                    $parent->save();
-                    break;
+                if (!$status->predeterminado) {
+                    continue;
                 }
+
+                $parent->idestado = $status->idestado;
+                $parent->save();
+                break;
             }
         }
 

@@ -415,6 +415,7 @@ final class AlbaranProveedorTest extends TestCase
                 $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'factura-bad-idempresa');
                 $this->assertEquals($company2->idempresa, $child->idempresa, 'factura-bad-idempresa');
             }
+            break;
         }
 
         // eliminamos
@@ -423,6 +424,8 @@ final class AlbaranProveedorTest extends TestCase
         foreach ($children as $child) {
             $this->assertTrue($child->delete(), 'factura-cant-delete');
         }
+        $this->assertTrue($doc->reload(), 'albaran-cant-reload');
+        $this->assertEquals($previous, $doc->idestado, 'albaran-bad-restored-status');
         $this->assertTrue($doc->delete());
         $this->assertTrue($subject->getDefaultAddress()->delete());
         $this->assertTrue($subject->delete());

@@ -353,6 +353,7 @@ final class PresupuestoProveedorTest extends TestCase
                 $this->assertEquals($company2->idempresa, $child->idempresa, 'pedido-bad-idempresa');
                 $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'pedido-bad-codalmacen');
             }
+            break;
         }
 
         // eliminamos
@@ -401,6 +402,7 @@ final class PresupuestoProveedorTest extends TestCase
             $this->assertTrue($doc->save(), 'pedido-cant-save');
             $this->assertEquals($previous, $doc->idestado_ant, 'presupuesto-bad-previous-status');
             $this->assertEquals($previous, $doc->getPreviousStatus()->idestado, 'presupuesto-bad-previous-status-model');
+            break;
         }
 
         // comprobamos que el pedido se ha creado
