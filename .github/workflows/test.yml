@@ -219,7 +219,7 @@ jobs:
       - name: Run PHP CodeSniffer
         run: |
           if [ -f phpcs.xml ] || [ -f phpcs.xml.dist ]; then
-            phpcs
+            vendor/bin/phpcs
           else
             echo "No PHPCS configuration found, skipping..."
           fi
