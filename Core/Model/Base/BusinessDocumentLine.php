@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Template\ModelClass as NewModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Stock;
@@ -204,6 +205,42 @@ abstract class BusinessDocumentLine extends NewModelClass
         return $this->{$this->documentColumn()};
     }
 
+    /**
+     * Devuelve las líneas hijas generadas desde esta línea.
+     *
+     * @return BusinessDocumentLine[]
+     */
+    public function childrenLines(): array
+    {
+        if (empty($this->documentColumnValue()) || empty($this->id())) {
+            return [];
+        }
+
+        $children = [];
+        $keys = [];
+        $where = [
+            Where::eq('model1', $this->getDocument()->modelClassName()),
+            Where::eq('iddoc1', $this->documentColumnValue()),
+            Where::eq('idlinea1', $this->id())
+        ];
+        foreach (DocTransformation::all($where, ['id' => 'ASC'], 0, 0) as $docTrans) {
+            $childLine = $docTrans->getChildLine();
+            if (false === $childLine->exists()) {
+                continue;
+            }
+
+            $key = $docTrans->model2 . '|' . $docTrans->iddoc2 . '|' . $docTrans->idlinea2;
+            if (in_array($key, $keys, true)) {
+                continue;
+            }
+
+            $children[] = $childLine;
+            $keys[] = $key;
+        }
+
+        return $children;
+    }
+
     public static function dontCopyField(string $field): void
     {
         static::$dont_copy_fields[] = $field;
@@ -218,6 +255,30 @@ abstract class BusinessDocumentLine extends NewModelClass
     public function getDisableUpdateStock(): bool
     {
         return $this->disable_update_stock;
+    }
+
+    /**
+     * Devuelve la línea padre desde la que se generó esta línea.
+     */
+    public function getParentLine(): ?BusinessDocumentLine
+    {
+        if (empty($this->documentColumnValue()) || empty($this->id())) {
+            return null;
+        }
+
+        $where = [
+            Where::eq('model2', $this->getDocument()->modelClassName()),
+            Where::eq('iddoc2', $this->documentColumnValue()),
+            Where::eq('idlinea2', $this->id())
+        ];
+        foreach (DocTransformation::all($where) as $docTrans) {
+            $parentLine = $docTrans->getParentLine();
+            if ($parentLine->exists()) {
+                return $parentLine;
+            }
+        }
+
+        return null;
     }
 
     /**
