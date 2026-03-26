@@ -1,0 +1,77 @@
+version: 1
+
+skills:
+  - id: use-tools
+    title: Uso de la clase Tools
+    file: ai/skills/use-tools.md
+    when_to_use:
+      - formatear fechas, números o dinero
+      - operaciones con archivos y carpetas
+      - obtener configuraciones o ajustes
+    tags: [tools, utilities, format]
+
+  - id: use-translator
+    title: Uso del traductor (Translator)
+    file: ai/skills/use-translator.md
+    when_to_use:
+      - traducir textos o cadenas
+      - gestionar idiomas y traducciones
+    tags: [translation, i18n]
+
+  - id: model-management
+    title: Gestión de Modelos (ModelClass)
+    file: ai/skills/model-management.md
+    when_to_use:
+      - operaciones CRUD (Crear, Leer, Actualizar, Borrar)
+      - buscar registros en la base de datos
+      - persistencia de datos
+    tags: [model, crud, database]
+
+  - id: table-definition
+    title: Definición de Tablas (XML)
+    file: ai/skills/table-definition.md
+    when_to_use:
+      - crear o modificar tablas de base de datos
+      - definir columnas y restricciones
+    tags: [table, xml, database, schema]
+
+  - id: xml-view-definition
+    title: Definición de Vistas (XMLView)
+    file: ai/skills/xml-view-definition.md
+    when_to_use:
+      - crear o modificar listados y formularios
+      - definir widgets y visualización
+    tags: [view, xml, ui, forms, list]
+
+  - id: plugin-development
+    title: Extensión mediante Plugins
+    file: ai/skills/plugin-development.md
+    when_to_use:
+      - crear nuevos plugins
+      - extender modelos o controladores del núcleo
+      - modularidad y extensibilidad
+    tags: [plugin, extension, modularity]
+
+  - id: api-usage
+    title: Uso de la API
+    file: ai/skills/api-usage.md
+    when_to_use:
+      - interactuar con FacturaScripts desde aplicaciones externas
+      - crear nuevos endpoints de API
+    tags: [api, rest, json, authentication]
+
+  - id: use-http
+    title: Uso de la clase Http
+    file: ai/skills/use-http.md
+    when_to_use:
+      - realizar peticiones HTTP externas desde FacturaScripts
+      - consumir servicios web de terceros
+    tags: [http, curl, request, client]
+  - id: extensions-and-hooks
+    title: Extensiones y Ganchos (Pipes/Hooks)
+    file: ai/skills/extensions-and-hooks.md
+    when_to_use:
+      - extender funcionalidad sin usar herencia
+      - añadir contenido dinámico en plantillas Twig
+      - interceptar acciones del núcleo
+    tags: [extension, pipe, hook, twig, plugin]
