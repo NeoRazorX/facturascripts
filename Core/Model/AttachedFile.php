@@ -190,6 +190,11 @@ class AttachedFile extends ModelClass
 
     public function test(): bool
     {
+        // primero revisar si existe el path realmente
+        if (empty($this->path)) {
+            return false;
+        }
+
         if (empty($this->idfile)) {
             $this->idfile = $this->getNextCode();
             return $this->setFile() && parent::test();
