@@ -195,6 +195,84 @@ final class EjercicioTest extends TestCase
         $this->assertTrue($ejercicio->delete(), 'exercise-cant-delete');
     }
 
+    // Comprobar que al crear ejercicios automáticamente se asignan los códigos alternativos correctos.
+    // La secuencia es: año (2098), 0098, 0+idempresa+98, 0001-9999.
+    public function testAlternativeCodesOnCreate(): void
+    {
+        $idempresa = 1;
+        $year = '2098';
+        $year2 = '98';
+        $inicio = $year . '-01-01';
+        $fin = $year . '-12-31';
+
+        // Creamos el primer ejercicio manualmente con código = año
+        $ej1 = new Ejercicio();
+        $ej1->idempresa = $idempresa;
+        $ej1->codejercicio = $year;
+        $ej1->nombre = 'alt-code-test-1';
+        $ej1->fechainicio = $inicio;
+        $ej1->fechafin = $fin;
+        $this->assertTrue($ej1->save(), 'exercise-1-should-save');
+
+        // Creamos una segunda empresa
+        $empresa2 = $this->getRandomCompany();
+        $this->assertTrue($empresa2->save());
+
+        // loadFromDate para empresa2 debe crear ejercicio con código 0098
+        $ej2 = new Ejercicio();
+        $ej2->idempresa = $empresa2->idempresa;
+        $this->assertTrue($ej2->loadFromDate($inicio));
+        $this->assertEquals('00' . $year2, $ej2->codejercicio, 'exercise-2-should-be-00' . $year2);
+
+        // Ocupamos el código 0+idempresa+98 manualmente para la siguiente prueba
+        $code3 = sprintf('%04s', '0' . $empresa2->idempresa . $year2);
+
+        // Creamos una tercera empresa
+        $empresa3 = $this->getRandomCompany();
+        $this->assertTrue($empresa3->save());
+
+        // loadFromDate para empresa3 debe crear ejercicio con código 0+idempresa+98
+        $ej3 = new Ejercicio();
+        $ej3->idempresa = $empresa3->idempresa;
+        $this->assertTrue($ej3->loadFromDate($inicio));
+        $this->assertEquals(sprintf('%04s', '0' . $empresa3->idempresa . $year2), $ej3->codejercicio,
+            'exercise-3-should-be-0' . $empresa3->idempresa . $year2);
+
+        // Ocupamos también el código 0+idempresa4+98
+        $empresa4 = $this->getRandomCompany();
+        $this->assertTrue($empresa4->save());
+
+        // Creamos manualmente un ejercicio para ocupar el código que le correspondería
+        $code4 = sprintf('%04s', '0' . $empresa4->idempresa . $year2);
+        $ej4block = new Ejercicio();
+        $ej4block->idempresa = $empresa4->idempresa;
+        $ej4block->codejercicio = $code4;
+        $ej4block->nombre = 'alt-code-block';
+        $ej4block->fechainicio = '2097-01-01';
+        $ej4block->fechafin = '2097-12-31';
+        $this->assertTrue($ej4block->save(), 'exercise-block-should-save');
+
+        // loadFromDate para empresa4 debe caer en el rango 0001-9999
+        $ej4 = new Ejercicio();
+        $ej4->idempresa = $empresa4->idempresa;
+        $this->assertTrue($ej4->loadFromDate($inicio));
+        $this->assertNotEquals($year, $ej4->codejercicio);
+        $this->assertNotEquals('00' . $year2, $ej4->codejercicio);
+        $this->assertNotEquals($code4, $ej4->codejercicio);
+        $this->assertMatchesRegularExpression('/^\d{4}$/', $ej4->codejercicio,
+            'exercise-4-should-be-numeric-4-digits');
+
+        // Eliminamos en orden inverso
+        $this->assertTrue($ej4->delete());
+        $this->assertTrue($ej4block->delete());
+        $this->assertTrue($ej3->delete());
+        $this->assertTrue($ej2->delete());
+        $this->assertTrue($ej1->delete());
+        $this->assertTrue($empresa4->delete());
+        $this->assertTrue($empresa3->delete());
+        $this->assertTrue($empresa2->delete());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
