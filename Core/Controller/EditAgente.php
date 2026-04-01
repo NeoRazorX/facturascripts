@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Core\Lib\ExtendedController\ListView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\TotalModel;
@@ -88,17 +89,16 @@ class EditAgente extends ComercialContactController
 
     protected function createDocumentView(string $viewName, string $model, string $label): void
     {
-        $this->createCustomerListView($viewName, $model, $label);
+        $this->createCustomerListView($viewName, $model, $label)
+            ->setSettings('btnPrint', true);
 
-        // botones
-        $this->tab($viewName)->setSettings('btnPrint', true);
         $this->addButtonGroupDocument($viewName);
         $this->addButtonApproveDocument($viewName);
     }
 
-    protected function createEmailsView(string $viewName = 'ListEmailSent'): void
+    protected function createEmailsView(string $viewName = 'ListEmailSent'): ListView
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
+        return $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
             ->addSearchFields(['addressee', 'body', 'subject'])
             ->addOrderBy(['date'], 'date', 2)
             ->disableColumn('to')
@@ -107,17 +107,16 @@ class EditAgente extends ComercialContactController
 
     protected function createInvoiceView(string $viewName): void
     {
-        $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
+        $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices')
+            ->setSettings('btnPrint', true);
 
-        // botones
-        $this->tab($viewName)->setSettings('btnPrint', true);
         $this->addButtonLockInvoice($viewName);
     }
 
     /**
      * Load Views
      */
-    protected function createViews()
+    protected function createViews(): void
     {
         parent::createViews();
 
@@ -200,7 +199,7 @@ class EditAgente extends ComercialContactController
                 $view->loadData('', $where);
 
                 // añadimos un botón para enviar un nuevo email
-                $this->addButton($viewName, [
+                $view->addButton([
                     'action' => 'SendMail?email=' . $email,
                     'color' => 'success',
                     'icon' => 'fa-solid fa-envelope',

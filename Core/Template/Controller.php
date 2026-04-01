@@ -150,7 +150,7 @@ abstract class Controller implements ControllerInterface
         AssetManager::clear();
         AssetManager::setAssetsForPage($this->className);
 
-        $this->checkPhpVersion(8.0);
+        $this->checkPhpVersion(8.1);
     }
 
     public function url(): string

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,9 @@
  */
 
 namespace FacturaScripts\Core;
+
+use Exception;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * This class allow sending telemetry data to the master server,
@@ -104,7 +107,7 @@ final class Telemetry
         $params['action'] = 'install';
 
         // hacemos una petición a la url de telemetría
-        $request = Http::get(self::TELEMETRY_URL, $params)->setTimeout(10);
+        $request = Http::post(self::TELEMETRY_URL, $params)->setTimeout(10);
         if ($request->failed()) {
             return false;
         }
@@ -182,7 +185,7 @@ final class Telemetry
         $this->calculateHash($params);
 
         // hacemos una petición a la url de telemetría
-        $request = Http::get(self::TELEMETRY_URL, $params)->setTimeout(3);
+        $request = Http::post(self::TELEMETRY_URL, $params)->setTimeout(3);
         if ($request->failed()) {
             return false;
         }
@@ -213,10 +216,37 @@ final class Telemetry
         ];
 
         if (false === $minimum) {
+            $data['dbengine'] = $this->getDatabaseEngine();
+            $data['fingerprints'] = $this->collectFingerprints();
             $data['pluginlist'] = implode(',', Plugins::enabled());
         }
 
         return $data;
+    }
+
+    private function collectFingerprints(): string
+    {
+        $fingerprints = [];
+        foreach (Plugins::list() as $plugin) {
+            $path = Tools::folder('Plugins', $plugin->name, '.fingerprint');
+            if (file_exists($path)) {
+                $content = trim(file_get_contents($path));
+                if (!empty($content)) {
+                    $fingerprints[] = $content;
+                }
+            }
+        }
+        return implode(',', $fingerprints);
+    }
+
+    private function getDatabaseEngine(): string
+    {
+        try {
+            $db = new DataBase();
+            return $db->type();
+        } catch (Exception $e) {
+            return '';
+        }
     }
 
     private function save(): bool

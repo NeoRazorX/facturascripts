@@ -1,5 +1,6 @@
 codimpuesto,descripcion,iva,recargo
-GENIVA,"Impuesto General sobre el Valor Añadido",4.5,0
+GENIVA,"Tipo general",4.5,0
 REDIVA,"Tipo reducido",1,0
 SUPREDIVA,"Tipo superreducido",0,0
-ESPIVA,"Tipo especial",9.5,0
+ESPIVA,"Tipo especial",2.5,0
+INCIVA,"Tipo incrementado",9.5,0

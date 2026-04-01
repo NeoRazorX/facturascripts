@@ -456,6 +456,22 @@ final class PluginsTest extends TestCase
         $this->assertTrue(Plugins::remove('TestPlugin4'));
     }
 
+    public function testZipSlip(): void
+    {
+        // obtenemos la lista de plugins
+        $initialList = Plugins::list();
+
+        // intentamos añadir un plugin con path traversal (Zip Slip)
+        $this->assertFalse(Plugins::add(__DIR__ . '/../__files/zip-slip-poc.zip'));
+
+        // comprobamos que no se ha añadido ningún plugin
+        $this->assertEquals($initialList, Plugins::list());
+
+        // comprobamos que el archivo malicioso no se ha creado
+        $this->assertFileDoesNotExist(Plugins::folder() . '/rce.php');
+        $this->assertFileDoesNotExist(Tools::folder() . '/rce.php');
+    }
+
     public function testEnableMissingPlugin(): void
     {
         // activamos un plugin que no existe

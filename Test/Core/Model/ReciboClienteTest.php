@@ -434,6 +434,44 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
+    public function testPayReceiptCreatesPayment(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // comprobamos que existe un recibo impagado
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $this->assertFalse($receipts[0]->pagado, 'receipt-should-be-unpaid');
+
+        // comprobamos que no hay pagos
+        $this->assertCount(0, $receipts[0]->getPayments(), 'should-have-no-payments');
+
+        // marcamos el recibo como pagado
+        $receipts[0]->pagado = true;
+        $this->assertTrue($receipts[0]->save(), 'can-not-set-paid-receipt');
+
+        // comprobamos que se ha creado un pago
+        $payments = $receipts[0]->getPayments();
+        $this->assertCount(1, $payments, 'should-have-one-payment');
+        $this->assertEquals($receipts[0]->importe, $payments[0]->importe, 'bad-payment-amount');
+        $this->assertEquals($receipts[0]->idrecibo, $payments[0]->idrecibo, 'bad-payment-receipt-id');
+
+        // comprobamos que el pago tiene un asiento
+        $this->assertNotEmpty($payments[0]->idasiento, 'payment-should-have-accounting-entry');
+
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
