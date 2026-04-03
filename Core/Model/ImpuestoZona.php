@@ -62,6 +62,9 @@ class ImpuestoZona extends ModelClass
      */
     public $codpais;
 
+    /** @var string */
+    public $excepcioniva;
+
     /**
      * Primary key autoincremental
      *

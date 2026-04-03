@@ -47,7 +47,7 @@ class Vies
     /**
      * Simula una respuesta del servicio VIES para usar en pruebas unitarias.
      * Este método solo debe utilizarse en el contexto de pruebas.
-     * 
+     *
      * @param int|null $response Vies::RESULT_VALID para simular un número de IVA válido,
      *                           Vies::RESULT_INVALID para simular un número de IVA inválido,
      *                           Vies::RESULT_ERROR para simular un error,

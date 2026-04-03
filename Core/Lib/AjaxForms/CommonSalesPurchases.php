@@ -26,6 +26,7 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
@@ -536,8 +537,12 @@ trait CommonSalesPurchases
 
     protected static function operacion(BusinessDocument $model): string
     {
+        $operations = $model instanceof PurchaseDocument
+            ? InvoiceOperation::allForPurchases()
+            : InvoiceOperation::allForSales();
+
         $options = ['<option value="">------</option>'];
-        foreach (InvoiceOperation::all() as $key => $value) {
+        foreach ($operations as $key => $value) {
             $options[] = ($key === $model->operacion) ?
                 '<option value="' . $key . '" selected>' . Tools::trans($value) . '</option>' :
                 '<option value="' . $key . '">' . Tools::trans($value) . '</option>';

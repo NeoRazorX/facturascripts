@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class RowActions extends VisualItem
 {
-
     /**
      * @var array
      */

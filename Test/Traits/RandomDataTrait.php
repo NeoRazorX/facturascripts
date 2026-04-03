@@ -170,7 +170,7 @@ trait RandomDataTrait
     protected function getRandomProvince(string $codpais): Provincia
     {
         $province = new Provincia();
-        $province->provincia = 'Test Province ' . mt_rand(1, 99);
+        $province->provincia = 'Test Province ' . mt_rand(1, 999999);
         $province->codpais = $codpais;
         $province->alias = 'TP' . mt_rand(1, 999);
 

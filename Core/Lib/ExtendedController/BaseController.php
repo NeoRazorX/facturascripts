@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -258,6 +258,11 @@ abstract class BaseController extends Controller
 
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            // validar nombre de campo para prevenir SQL injection
+            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                Tools::log()->warning('autocomplete: invalid field filter name');
+                return [];
+            }
             $value = $this->request->queryOrInput($field);
             $where[] = new DataBaseWhere($field, $value, '=', $operation);
         }
@@ -322,6 +327,11 @@ abstract class BaseController extends Controller
 
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            // validar nombre de campo para prevenir SQL injection
+            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                Tools::log()->warning('datalist: invalid field filter name');
+                return [];
+            }
             $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
         }
 
@@ -391,8 +401,10 @@ abstract class BaseController extends Controller
 
     protected function exportAction()
     {
-        if (false === $this->views[$this->active]->settings['btnPrint'] ||
-            false === $this->permissions->allowExport) {
+        if (
+            false === $this->views[$this->active]->settings['btnPrint'] ||
+            false === $this->permissions->allowExport
+        ) {
             Tools::log()->warning('no-print-permission');
             return;
         }
@@ -472,6 +484,11 @@ abstract class BaseController extends Controller
 
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            // validar nombre de campo para prevenir SQL injection
+            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                Tools::log()->warning('select: invalid field filter name');
+                return [];
+            }
             $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
         }
 

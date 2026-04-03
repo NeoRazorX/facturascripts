@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,18 +24,14 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 
 /**
- * The class from which all views of the model are inherited.
- * It allows the visualization of data of several tables of the database.
- * This type of model is only for reading data, it does not allow modification
- * or deletion of data directly.
- *
- * A main model ("master") must be indicated, which will be responsible for executing
- * the data modification actions. This means that when inserting, modifying or deleting,
- * only the operation on the indicated master model is performed.
+ * @deprecated Usar FacturaScripts\Core\Template\JoinModel en su lugar.
  *
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
  * @author Carlos García Gómez              <carlos@facturascripts.com>
  */
+#[Deprecated(
+    reason: 'Use FacturaScripts\Core\Template\JoinModel instead',
+)]
 abstract class JoinModel
 {
     /**

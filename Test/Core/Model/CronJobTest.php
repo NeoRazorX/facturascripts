@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use Exception;
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\CronJob;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -273,6 +274,36 @@ final class CronJobTest extends TestCase
         $this->assertGreaterThan(0.09, $job->duration);
 
         // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
+    public function testRunFailLogIncludesFileAndLine(): void
+    {
+        MiniLog::clear('cron');
+
+        $job = new CronJob();
+        $job->jobname = 'TestName8Log';
+        $job->pluginname = 'TestPlugin8Log';
+        $this->assertTrue($job->everyDayAt(0)->isReady());
+
+        $exception = new Exception('Test log context');
+        $expectedFile = str_replace(FS_FOLDER, '', $exception->getFile());
+        $expectedLine = $exception->getLine();
+
+        $this->assertFalse(
+            $job->run(function () use ($exception) {
+                throw $exception;
+            })
+        );
+
+        $logs = MiniLog::read('cron', ['critical']);
+        $this->assertNotEmpty($logs);
+        $this->assertSame('Test log context', $logs[0]['message']);
+        $this->assertSame('TestName8Log', $logs[0]['context']['jobname']);
+        $this->assertSame('TestPlugin8Log', $logs[0]['context']['pluginname']);
+        $this->assertSame($expectedFile, $logs[0]['context']['file']);
+        $this->assertSame($expectedLine, $logs[0]['context']['line']);
+
         $this->assertTrue($job->delete());
     }
 

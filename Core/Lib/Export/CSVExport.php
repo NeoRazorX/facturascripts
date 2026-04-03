@@ -31,7 +31,6 @@ use FacturaScripts\Core\Response;
  */
 class CSVExport extends ExportBase
 {
-
     const LIST_LIMIT = 1000;
 
     /**

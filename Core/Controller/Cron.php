@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Kernel;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
+use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\AlbaranProveedor;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
@@ -279,6 +279,12 @@ END;
             ->run(function () {
                 $this->restoreNotifications();
             });
+
+        $this->job('update-unpaid-invoices')
+            ->everyDayAt(6)
+            ->run(function () {
+                $this->updateUnpaidInvoices();
+            });
     }
 
     protected function runPlugins(): void
@@ -362,10 +368,10 @@ END;
         $documents = $models[0]->all([], $orderBy, 0, $limit);
         while (!empty($documents)) {
             foreach ($documents as $doc) {
-                $where = [new DataBaseWhere('model', $doc->modelClassName())];
+                $where = [Where::eq('model', $doc->modelClassName())];
                 $where[] = is_numeric($doc->id()) ?
-                    new DataBaseWhere('modelid|modelcode', $doc->id()) :
-                    new DataBaseWhere('modelcode', $doc->id());
+                    Where::eq('modelid|modelcode', $doc->id()) :
+                    Where::eq('modelcode', $doc->id());
 
                 $num = $relationModel->count($where);
                 if ($num == $doc->numdocs) {
@@ -394,7 +400,7 @@ END;
 
         // recorremos todas las familias para actualizar su contador de productos
         foreach (Familia::all() as $familia) {
-            $count = Producto::count([new DataBaseWhere('codfamilia', $familia->codfamilia)]);
+            $count = Producto::count([Where::eq('codfamilia', $familia->codfamilia)]);
             if ($familia->numproductos == $count) {
                 continue;
             }
@@ -411,7 +417,7 @@ END;
 
         // recorremos todos los fabricantes para actualizar su contador de productos
         foreach (Fabricante::all() as $fabricante) {
-            $count = Producto::count([new DataBaseWhere('codfabricante', $fabricante->codfabricante)]);
+            $count = Producto::count([Where::eq('codfabricante', $fabricante->codfabricante)]);
             if ($fabricante->numproductos == $count) {
                 continue;
             }
@@ -428,8 +434,8 @@ END;
 
         // recorremos todos los recibos de compra impagados con fecha anterior a hoy
         $where = [
-            new DataBaseWhere('pagado', false),
-            new DataBaseWhere('vencimiento', Tools::date(), '<')
+            Where::eq('pagado', false),
+            Where::lt('vencimiento', Tools::date())
         ];
         $orderBy = ['vencimiento' => 'DESC'];
         foreach (ReciboProveedor::all($where, $orderBy, 0, 500) as $recibo) {
@@ -453,6 +459,26 @@ END;
 
             // guardamos para que se actualice
             $recibo->save();
+        }
+    }
+
+    protected function updateUnpaidInvoices(): void
+    {
+        echo PHP_EOL . PHP_EOL . Tools::trans('updating-unpaid-invoices') . ' ... ';
+        ob_flush();
+
+        $generator = new ReceiptGenerator();
+        $where = [Where::eq('pagada', false)];
+        $orderBy = ['fecha' => 'DESC'];
+
+        // recorremos las facturas de cliente impagadas
+        foreach (FacturaCliente::all($where, $orderBy, 0, 500) as $factura) {
+            $generator->update($factura);
+        }
+
+        // recorremos las facturas de proveedor impagadas
+        foreach (FacturaProveedor::all($where, $orderBy, 0, 500) as $factura) {
+            $generator->update($factura);
         }
     }
 }

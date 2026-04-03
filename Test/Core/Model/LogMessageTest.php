@@ -49,6 +49,52 @@ class LogMessageTest extends TestCase
         $this->assertFalse($item->delete(), 'can-delete-audit-log');
     }
 
+    public function testCanNotSaveInvalidLevel(): void
+    {
+        $item = new LogMessage();
+        $item->channel = 'test';
+        $item->level = 'invalid-level';
+        $item->message = 'test';
+        $this->assertFalse($item->save(), 'can-save-invalid-level');
+    }
+
+    public function testSanitizesNickAndIp(): void
+    {
+        $item = new LogMessage();
+        $item->channel = 'test';
+        $item->level = 'info';
+        $item->message = 'test';
+        $item->nick = '<b>admin</b>';
+        $item->ip = '<b>127.0.0.1</b>';
+        $this->assertTrue($item->save(), 'cant-save-model');
+
+        $this->assertStringNotContainsString('<b>', $item->nick);
+        $this->assertStringNotContainsString('<b>', $item->ip);
+
+        $this->assertTrue($item->delete(), 'cant-delete-model');
+    }
+
+    public function testContextReturnsEmptyArrayOnNull(): void
+    {
+        $item = new LogMessage();
+        $item->context = null;
+        $this->assertEquals([], $item->context());
+    }
+
+    public function testContextReturnsEmptyArrayOnInvalidJson(): void
+    {
+        $item = new LogMessage();
+        $item->context = 'not-json';
+        $this->assertEquals([], $item->context());
+    }
+
+    public function testContextReturnsArray(): void
+    {
+        $item = new LogMessage();
+        $item->context = json_encode(['key' => 'value']);
+        $this->assertEquals(['key' => 'value'], $item->context());
+    }
+
     public function testCanNotUpdateAuditLogs(): void
     {
         $item = new LogMessage();

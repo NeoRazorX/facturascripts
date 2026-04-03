@@ -24,7 +24,6 @@ use FacturaScripts\Dinamic\Model\Serie;
 
 trait SerieRelationTrait
 {
-
     /**
      * @var string
      */

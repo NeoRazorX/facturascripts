@@ -27,7 +27,7 @@ class Root extends Controller
     public function getPageData(): array
     {
         $data = parent::getPageData();
-        $data['menu'] = 'reports';
+        $data['menu'] = 'admin';
         $data['title'] = Empresas::default()->nombrecorto ?? 'FacturaScripts';
         $data['icon'] = 'fa-solid fa-home';
         $data['showonmenu'] = false;

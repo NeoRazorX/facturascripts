@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,7 +43,7 @@ class ListImpuesto extends ListController
     /**
      * Load views
      */
-    protected function createViews()
+    protected function createViews(): void
     {
         $this->createViewsTax();
         $this->createViewsRetention();
@@ -51,9 +51,10 @@ class ListImpuesto extends ListController
 
     protected function createViewsRetention(string $viewName = 'ListRetencion'): void
     {
-        $this->addView($viewName, 'Retencion', 'retentions', 'fa-solid fa-plus-square')
+        $this->addView($viewName, 'Retencion', 'retentions', 'fa-solid fa-minus-circle')
             ->addOrderBy(['codretencion'], 'code')
             ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['porcentaje'], 'percentage', 1)
             ->addSearchFields(['descripcion', 'codretencion']);
     }
 
@@ -62,6 +63,8 @@ class ListImpuesto extends ListController
         $this->addView($viewName, 'Impuesto', 'taxes', 'fa-solid fa-plus-square')
             ->addOrderBy(['codimpuesto'], 'code')
             ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['iva'], 'vat', 1)
+            ->addOrderBy(['recargo'], 'surcharge')
             ->addSearchFields(['descripcion', 'codimpuesto']);
     }
 

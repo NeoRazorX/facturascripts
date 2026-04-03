@@ -246,7 +246,7 @@ abstract class ModelClass
 
     public function exists(): bool
     {
-        if (null === $this->id()) {
+        if (null === $this->id() || '' === $this->id()) {
             return false;
         }
 
@@ -359,7 +359,7 @@ abstract class ModelClass
      */
     public function load($code): bool
     {
-        if (null === $code) {
+        if (null === $code || '' === $code) {
             return false;
         }
 

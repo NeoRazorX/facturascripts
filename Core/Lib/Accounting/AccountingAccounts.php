@@ -158,10 +158,12 @@ class AccountingAccounts
     {
         $bankAccount = new CuentaBanco();
         $paymentMethod = new FormaPago();
-        if ($paymentMethod->load($codpago) &&
+        if (
+            $paymentMethod->load($codpago) &&
             $paymentMethod->codcuentabanco &&
             $bankAccount->load($paymentMethod->codcuentabanco) &&
-            !empty($bankAccount->codsubcuentagasto)) {
+            !empty($bankAccount->codsubcuentagasto)
+        ) {
             $subaccount = $this->getSubAccount($bankAccount->codsubcuentagasto);
             return $subaccount->exists() ? $subaccount : $this->getSpecialSubAccount($specialAccount);
         }
@@ -207,10 +209,12 @@ class AccountingAccounts
     {
         $bankAccount = new CuentaBanco();
         $paymentMethod = new FormaPago();
-        if ($paymentMethod->load($codpago) &&
+        if (
+            $paymentMethod->load($codpago) &&
             $paymentMethod->codcuentabanco &&
             $bankAccount->load($paymentMethod->codcuentabanco) &&
-            !empty($bankAccount->codsubcuenta)) {
+            !empty($bankAccount->codsubcuenta)
+        ) {
             $subaccount = $this->getSubAccount($bankAccount->codsubcuenta);
             return $subaccount->exists() ? $subaccount : $this->getSpecialSubAccount($specialAccount);
         }

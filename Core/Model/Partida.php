@@ -239,10 +239,12 @@ class Partida extends ModelClass
         }
 
         // get by id
-        if (!empty($this->idsubcuenta) &&
+        if (
+            !empty($this->idsubcuenta) &&
             $subCta->load($this->idsubcuenta) &&
             $subCta->codsubcuenta === $this->codsubcuenta &&
-            $subCta->codejercicio === $accEntry->codejercicio) {
+            $subCta->codejercicio === $accEntry->codejercicio
+        ) {
             return $subCta;
         }
 

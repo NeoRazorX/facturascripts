@@ -79,6 +79,12 @@ class CSVImport
         $csv = new Csv();
         $csv->auto($filePath);
 
+        // si no se ha detectado el delimitador, forzamos ;
+        if (empty($csv->delimiter)) {
+            $csv->delimiter = ';';
+            $csv->parseFile($filePath);
+        }
+
         $dataBase = new DataBase();
 
         $insertFields = [];

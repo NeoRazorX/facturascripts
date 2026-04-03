@@ -61,9 +61,11 @@ class PurchasesHeaderHTML
                     return;
                 }
             }
-        } elseif (isset($formData['action'], $formData['codproveedor']) &&
+        } elseif (
+            isset($formData['action'], $formData['codproveedor']) &&
             $formData['action'] === 'set-supplier' &&
-            $proveedor->load($formData['codproveedor'])) {
+            $proveedor->load($formData['codproveedor'])
+        ) {
             // existing record and change supplier
             $model->setSubject($proveedor);
             return;

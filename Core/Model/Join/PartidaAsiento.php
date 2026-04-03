@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Core\Model\Base\JoinModel;
+use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 
@@ -31,10 +31,7 @@ use FacturaScripts\Dinamic\Model\Partida;
  */
 class PartidaAsiento extends JoinModel
 {
-
-    /**
-     * @var Asiento
-     */
+    /** @var Asiento */
     private $asiento;
 
     public function __construct(array $data = [])
@@ -51,14 +48,6 @@ class PartidaAsiento extends JoinModel
         return $partida;
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         $this->asiento->idasiento = $this->idasiento;

@@ -32,7 +32,6 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 class AccountingPlanExport
 {
-
     /**
      * Export accounting plan data to CSV file.
      *

@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\PDF;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Template\ExtensionsTrait;
 use FacturaScripts\Core\Tools;
@@ -179,6 +180,27 @@ abstract class PDFDocument extends PDFCore
 
     /**
      * @param BusinessDocument $model
+     *
+     * @return string[]
+     */
+    protected function getTaxExceptions($model): array
+    {
+        $allExceptions = TaxExceptions::all();
+        $found = [];
+
+        foreach ($model->getLines() as $line) {
+            if (!empty($line->excepcioniva) && !isset($found[$line->excepcioniva])) {
+                $found[$line->excepcioniva] = isset($allExceptions[$line->excepcioniva])
+                    ? $this->i18n->trans($allExceptions[$line->excepcioniva])
+                    : $line->excepcioniva;
+            }
+        }
+
+        return $found;
+    }
+
+    /**
+     * @param BusinessDocument $model
      */
     protected function getTaxesRows($model)
     {
@@ -275,9 +297,11 @@ abstract class PDFDocument extends PDFCore
         foreach ($model->getlines() as $line) {
             $data = [];
             foreach ($this->getLineHeaders() as $key => $value) {
-                if (property_exists($line, 'mostrar_precio') &&
+                if (
+                    property_exists($line, 'mostrar_precio') &&
                     $line->mostrar_precio === false &&
-                    in_array($key, ['pvpunitario', 'dtopor', 'dtopor2', 'pvptotal', 'iva', 'recargo', 'irpf'], true)) {
+                    in_array($key, ['pvpunitario', 'dtopor', 'dtopor2', 'pvptotal', 'iva', 'recargo', 'irpf'], true)
+                ) {
                     continue;
                 }
 
@@ -330,6 +354,17 @@ abstract class PDFDocument extends PDFCore
      */
     protected function insertBusinessDocFooter($model)
     {
+        // excepciones de IVA
+        $exceptions = $this->getTaxExceptions($model);
+        if (!empty($exceptions)) {
+            $this->newPage();
+            $this->pdf->ezText($this->i18n->trans('tax-exceptions') . "\n", self::FONT_SIZE);
+            $this->newLine();
+            foreach ($exceptions as $exception) {
+                $this->pdf->ezText('- ' . $exception . "\n", self::FONT_SIZE);
+            }
+        }
+
         if (!empty($model->observaciones)) {
             $this->newPage();
             $this->pdf->ezText($this->i18n->trans('observations') . "\n", self::FONT_SIZE);

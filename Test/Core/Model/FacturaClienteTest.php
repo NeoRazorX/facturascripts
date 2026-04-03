@@ -868,7 +868,8 @@ final class FacturaClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($customer->getDefaultAddress()->delete());
-        $this->assertTrue($customer->delete());;
+        $this->assertTrue($customer->delete());
+        ;
     }
 
     public function testSetIntraCommunity(): void

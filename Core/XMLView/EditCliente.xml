@@ -119,7 +119,12 @@
             <column name="vat-regime" numcolumns="2" order="180">
                 <widget type="select" fieldname="regimeniva" required="true"/>
             </column>
-            <column name="vat-exception" order="190">
+            <column name="operation" numcolumns="2" order="185">
+                <widget type="select" fieldname="operacion">
+                    <values/>
+                </widget>
+            </column>
+            <column name="vat-exception" numcolumns="2" order="190">
                 <widget type="select" fieldname="excepcioniva">
                     <values/>
                 </widget>

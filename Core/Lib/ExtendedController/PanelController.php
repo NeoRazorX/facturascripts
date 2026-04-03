@@ -294,7 +294,7 @@ abstract class PanelController extends BaseController
                 $results = $this->widgetVarianteSearchAction();
                 $this->response->json($results);
                 break;
-            
+
             case 'widget-subcuenta-search':
                 $this->setTemplate(false);
                 $results = $this->widgetSubcuentaSearchAction();

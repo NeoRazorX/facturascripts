@@ -144,9 +144,11 @@ class BusinessDocumentCode
             $preDate = $document->fecha;
             $preHour = $document->hora;
             foreach ($previous as $preDoc) {
-                if ($expectedNumber != $preDoc->numero &&
+                if (
+                    $expectedNumber != $preDoc->numero &&
                     $expectedNumber >= $sequence->inicio &&
-                    $document->codejercicio == $preCodejercicio) {
+                    $document->codejercicio == $preCodejercicio
+                ) {
                     // hole found
                     $document->fecha = $preDate;
                     $document->hora = $preHour;
@@ -166,9 +168,11 @@ class BusinessDocumentCode
             if (empty($previous)) {
                 // no previous document, then use initial number
                 $sequence->numero = $sequence->inicio;
-            } elseif ($expectedNumber >= $sequence->inicio &&
+            } elseif (
+                $expectedNumber >= $sequence->inicio &&
                 $expectedNumber >= $sequence->numero - self::GAP_LIMIT &&
-                $document->codejercicio == $preCodejercicio) {
+                $document->codejercicio == $preCodejercicio
+            ) {
                 // the gap is in the first positions of the range
                 $document->fecha = $preDate;
                 $document->hora = $preHour;

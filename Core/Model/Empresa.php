@@ -66,9 +66,6 @@ class Empresa extends ModelClass
     public $direccion;
 
     /** @var string */
-    public $excepcioniva;
-
-    /** @var string */
     public $fax;
 
     /** @var string */

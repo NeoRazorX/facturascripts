@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
@@ -151,7 +152,7 @@ trait CommonLineHTML
         $product = $line->getProducto();
         $excepcionIva = empty($line->idlinea) && empty($line->{$field}) ? $product->{$field} : $line->{$field};
 
-        foreach (RegimenIVA::allExceptions() as $key => $value) {
+        foreach (TaxExceptions::all() as $key => $value) {
             $selected = $excepcionIva === $key ? 'selected' : '';
             $options .= '<option value="' . $key . '" ' . $selected . '>' . Tools::trans($value) . '</option>';
         }
@@ -324,9 +325,11 @@ trait CommonLineHTML
 
     private static function subtotalValue(BusinessDocumentLine $line, TransformerDocument $model): float
     {
-        if ($model->subjectColumn() === 'codcliente'
+        if (
+            $model->subjectColumn() === 'codcliente'
             && $model->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
-            && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+            && $line->getProducto()->tipo === ProductType::SECOND_HAND
+        ) {
             $profit = $line->pvpunitario - $line->coste;
             $tax = $profit * ($line->iva + $line->recargo - $line->irpf) / 100;
             return ($line->coste + $profit + $tax) * $line->cantidad;

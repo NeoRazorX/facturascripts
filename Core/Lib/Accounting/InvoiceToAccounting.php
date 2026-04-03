@@ -230,9 +230,40 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addPurchaseTaxLines(Asiento $entry): bool
     {
+        $isIntra = in_array($this->document->operacion, [
+            InvoiceOperation::INTRA_COMMUNITY,
+            InvoiceOperation::INTRA_COMMUNITY_SERVICES,
+            InvoiceOperation::REVERSE_CHARGE,
+        ]);
+
         foreach ($this->subtotals['iva'] as $value) {
             // buscamos el impuesto
             $tax = Impuestos::get($value['codimpuesto']);
+
+            // si es intracomunitaria o ISP, añadimos autorepercusión con cuentas intra
+            if ($isIntra) {
+                $subAccountSup = $tax->getInputIntraTaxAccount($this->exercise->codejercicio);
+                if (false === $subAccountSup->exists()) {
+                    Tools::log()->warning('ivasop-account-not-found');
+                    return false;
+                }
+                $subAccountImp = $tax->getOutputIntraTaxAccount($this->exercise->codejercicio);
+                if (false === $subAccountImp->exists()) {
+                    Tools::log()->warning('ivarep-account-not-found');
+                    return false;
+                }
+
+                // calculamos el importe del IVA
+                $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
+                $value['totalrecargo'] = 0.0;
+                $done = $this->addTaxLine($entry, $subAccountSup, $this->counterpart, true, $value) &&
+                    $this->addTaxLine($entry, $subAccountImp, $this->counterpart, false, $value);
+                if (false === $done) {
+                    return false;
+                }
+                continue;
+            }
+
             $subAccountSup = $tax->getInputTaxAccount($this->exercise->codejercicio);
             if (false === $subAccountSup->exists()) {
                 Tools::log()->warning('ivasop-account-not-found');
@@ -242,31 +273,6 @@ class InvoiceToAccounting extends AccountingClass
             if (false === $subAccountSupSurcharge->exists()) {
                 Tools::log()->warning('ivasopre-account-not-found');
                 return false;
-            }
-            $subAccountImp = $tax->getOutputTaxAccount($this->exercise->codejercicio);
-            if (false === $subAccountImp->exists()) {
-                Tools::log()->warning('ivarep-account-not-found');
-                return false;
-            }
-            $subAccountImpSurcharge = $tax->getOutputSurchargeAccount($this->exercise->codejercicio);
-            if (false === $subAccountImpSurcharge->exists()) {
-                Tools::log()->warning('ivarepre-account-not-found');
-                return false;
-            }
-
-            // si la operación es intracomunitaria, añadimos también la línea de IVA repercutido
-            if ($this->document->operacion === InvoiceOperation::INTRA_COMMUNITY) {
-                // calculamos el importe del IVA
-                $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
-                $value['totalrecargo'] = round($value['neto'] * $value['recargo'] / 100, 2);
-                $done = $this->addTaxLine($entry, $subAccountSup, $this->counterpart, true, $value) &&
-                    $this->addSurchargeLine($entry, $subAccountSupSurcharge, $this->counterpart, true, $value) &&
-                    $this->addTaxLine($entry, $subAccountImp, $this->counterpart, false, $value) &&
-                    $this->addSurchargeLine($entry, $subAccountImpSurcharge, $this->counterpart, false, $value);
-                if (false === $done) {
-                    return false;
-                }
-                continue;
             }
 
             // añadimos la línea de IVA soportado
@@ -339,9 +345,37 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addSalesTaxLines(Asiento $entry): bool
     {
+        $isIntra = in_array($this->document->operacion, [
+            InvoiceOperation::INTRA_COMMUNITY,
+            InvoiceOperation::INTRA_COMMUNITY_SERVICES,
+        ]);
+
         foreach ($this->subtotals['iva'] as $value) {
-            // search for tax data
             $tax = Impuestos::get($value['codimpuesto']);
+
+            // ventas intracomunitarias: autorepercusión con cuentas intra
+            if ($isIntra) {
+                $subAccOut = $tax->getOutputIntraTaxAccount($this->exercise->codejercicio);
+                if (false === $subAccOut->exists()) {
+                    Tools::log()->warning('ivarep-subaccount-not-found');
+                    return false;
+                }
+                $subAccIn = $tax->getInputIntraTaxAccount($this->exercise->codejercicio);
+                if (false === $subAccIn->exists()) {
+                    Tools::log()->warning('ivasop-subaccount-not-found');
+                    return false;
+                }
+
+                $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
+                $value['totalrecargo'] = 0.0;
+                $done = $this->addTaxLine($entry, $subAccOut, $this->counterpart, false, $value) &&
+                    $this->addTaxLine($entry, $subAccIn, $this->counterpart, true, $value);
+                if (false === $done) {
+                    return false;
+                }
+                continue;
+            }
+
             $subAccOut = $tax->getOutputTaxAccount($this->exercise->codejercicio);
             if (false === $subAccOut->exists()) {
                 Tools::log()->warning('ivarep-subaccount-not-found');
@@ -351,29 +385,6 @@ class InvoiceToAccounting extends AccountingClass
             if (false === $subAccOutSurcharge->exists()) {
                 Tools::log()->warning('ivarepre-subaccount-not-found');
                 return false;
-            }
-            $subAccIn = $tax->getInputTaxAccount($this->exercise->codejercicio);
-            if (false === $subAccIn->exists()) {
-                Tools::log()->warning('ivasop-subaccount-not-found');
-                return false;
-            }
-            $subAccInSurcharge = $tax->getInputSurchargeAccount($this->exercise->codejercicio);
-            if (false === $subAccInSurcharge->exists()) {
-                Tools::log()->warning('ivasopre-subaccount-not-found');
-                return false;
-            }
-
-            if ($this->document->operacion === InvoiceOperation::INTRA_COMMUNITY) {
-                $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
-                $value['totalrecargo'] = round($value['neto'] * $value['recargo'] / 100, 2);
-                $done = $this->addTaxLine($entry, $subAccOut, $this->counterpart, false, $value) &&
-                    $this->addSurchargeLine($entry, $subAccOutSurcharge, $this->counterpart, false, $value) &&
-                    $this->addTaxLine($entry, $subAccIn, $this->counterpart, true, $value) &&
-                    $this->addSurchargeLine($entry, $subAccInSurcharge, $this->counterpart, true, $value);
-                if (false === $done) {
-                    return false;
-                }
-                continue;
             }
 
             // add tax lines

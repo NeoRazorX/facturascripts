@@ -29,7 +29,6 @@ use FacturaScripts\Core\Model\CodeModel;
  */
 class SelectFilter extends BaseFilter
 {
-
     /** @var string */
     public $icon = '';
 

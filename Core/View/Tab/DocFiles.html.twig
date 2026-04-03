@@ -41,11 +41,11 @@
                 </form>
             {% endif %}
 
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+            <div id="docs-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
                 {% for docfile in currentView.cursor %}
                     {% set file = docfile.getFile() %}
                     {% if file %}
-                    <div class="col">
+                    <div class="col" data-doc-id="{{ docfile.id }}">
                         <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
                               onsubmit="animateSpinner('add')">
                             {{ formToken() }}
@@ -92,7 +92,7 @@
                                         <i class="fa-solid fa-hard-drive ms-3" aria-hidden="true"></i> {{ bytes(file.size) }}
                                     </p>
                                 </div>
-                                <div class="card-footer p-2">
+                                <div class="card-footer p-2" style="cursor: move;">
                                     <div class="d-flex justify-content-between align-items-center">
                                         {% if fsc.permissions.allowDelete %}
                                             <div class="dropdown">
@@ -137,3 +137,38 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('#docs-container').sortable({
+            cursor: "move",
+            tolerance: "pointer",
+            opacity: 0.65,
+            stop: (event, ui) => {
+
+                const orden = Array.from(event.target.children).map(doc => doc.dataset.docId);
+
+                if (orden.length > 0) {
+
+                    const url = new URL(window.location.href);
+                    url.searchParams.append('action', 'sort-files');
+
+                    $.ajax({
+                        method: "POST",
+                        url,
+                        data: {orden},
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.status !== 'ok') {
+                                alert(data.message);
+                            }
+                        },
+                        error: function (msg) {
+                            alert(msg.status + " " + msg.responseText);
+                        }
+                    });
+                }
+            },
+        });
+    });
+</script>

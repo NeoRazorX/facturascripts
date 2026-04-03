@@ -78,9 +78,11 @@ class SalesHeaderHTML
                     return;
                 }
             }
-        } elseif (isset($formData['action'], $formData['codcliente']) &&
+        } elseif (
+            isset($formData['action'], $formData['codcliente']) &&
             $formData['action'] === 'set-customer' &&
-            $cliente->load($formData['codcliente'])) {
+            $cliente->load($formData['codcliente'])
+        ) {
             // existing record and change customer
             $model->setSubject($cliente);
             return;

@@ -147,12 +147,14 @@ class DocumentStitcher extends Controller
     protected function addDocument($newDoc): bool
     {
         foreach ($this->documents as $doc) {
-            if ($doc->codalmacen != $newDoc->codalmacen ||
+            if (
+                $doc->codalmacen != $newDoc->codalmacen ||
                 $doc->coddivisa != $newDoc->coddivisa ||
                 $doc->idempresa != $newDoc->idempresa ||
                 $doc->dtopor1 != $newDoc->dtopor1 ||
                 $doc->dtopor2 != $newDoc->dtopor2 ||
-                $doc->subjectColumnValue() != $newDoc->subjectColumnValue()) {
+                $doc->subjectColumnValue() != $newDoc->subjectColumnValue()
+            ) {
                 Tools::log()->warning('incompatible-document', ['%code%' => $newDoc->codigo]);
                 return false;
             }

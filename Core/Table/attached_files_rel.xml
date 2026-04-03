@@ -42,6 +42,10 @@
         <name>observations</name>
         <type>text</type>
     </column>
+    <column>
+        <name>orden</name>
+        <type>integer</type>
+    </column>
     <constraint>
         <name>attached_files_rel_pkey</name>
         <type>PRIMARY KEY (id)</type>

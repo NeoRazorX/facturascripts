@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\JoinModel;
+use FacturaScripts\Core\Template\JoinModel;
+use FacturaScripts\Core\Where;
 
 /**
  * Auxiliary model to load a summary of subaccount
@@ -37,10 +37,7 @@ use FacturaScripts\Core\Model\Base\JoinModel;
  */
 class SubcuentaSaldo extends JoinModel
 {
-    /**
-     * Reset the values of all model view properties.
-     */
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->debe = 0.0;
@@ -50,11 +47,6 @@ class SubcuentaSaldo extends JoinModel
         $this->canal = 0;
     }
 
-    /**
-     * List of fields or columns to select clausule.
-     *
-     * @return array
-     */
     protected function getFields(): array
     {
         return [
@@ -68,11 +60,6 @@ class SubcuentaSaldo extends JoinModel
         ];
     }
 
-    /**
-     * Return Group By fields
-     *
-     * @return string
-     */
     protected function getGroupFields(): string
     {
         return 'partidas.idsubcuenta,'
@@ -82,22 +69,12 @@ class SubcuentaSaldo extends JoinModel
             . 'EXTRACT(MONTH FROM asientos.fecha)';
     }
 
-    /**
-     * List of tables related to from clausule.
-     *
-     * @return string
-     */
     protected function getSQLFrom(): string
     {
         return 'partidas'
             . ' INNER JOIN asientos ON asientos.idasiento = partidas.idasiento';
     }
 
-    /**
-     * List of tables required for the execution of the view.
-     *
-     * @return array
-     */
     protected function getTables(): array
     {
         return [
@@ -106,12 +83,7 @@ class SubcuentaSaldo extends JoinModel
         ];
     }
 
-    /**
-     * Assign the values of the $data array to the model view properties.
-     *
-     * @param array $data
-     */
-    protected function loadFromData(array $data)
+    protected function loadFromData(array $data): void
     {
         parent::loadFromData($data);
         $this->saldo = round($this->debe - $this->haber, FS_NF0);
@@ -120,21 +92,15 @@ class SubcuentaSaldo extends JoinModel
     /**
      * Load in an array "detail" the monthly and channel balances of a sub-account
      * and return the sum of them.
-     *
-     * @param int $idSubAccount
-     * @param int $channel
-     * @param array $detail
-     *
-     * @return float
      */
     public function setSubAccountBalance($idSubAccount, $channel, &$detail): float
     {
         $result = 0;
         $where = [
-            new DataBaseWhere('partidas.idsubcuenta', $idSubAccount),
-            new DataBaseWhere('asientos.canal', empty($channel) ? null : $channel)
+            Where::eq('partidas.idsubcuenta', $idSubAccount),
+            Where::eq('asientos.canal', empty($channel) ? null : $channel),
         ];
-        foreach ($this->all($where, ['mes' => 'ASC']) as $values) {
+        foreach (static::all($where, ['mes' => 'ASC']) as $values) {
             $detail[$values->mes - 1] = round($values->saldo, (int)FS_NF0);
             $result += $values->saldo;
         }

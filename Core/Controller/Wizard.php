@@ -55,7 +55,7 @@ class Wizard extends Controller
 
     public function getRegimenIva(): array
     {
-        $list = [];
+        $list = ['' => '------'];
         foreach (RegimenIVA::all() as $key => $value) {
             $list[$key] = Tools::trans($value);
         }
