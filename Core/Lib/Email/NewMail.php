@@ -73,6 +73,9 @@ class NewMail
     /** @var array */
     private static $mailer = ['mail' => 'Mail', 'sendmail' => 'SendMail', 'smtp' => 'SMTP'];
 
+    /** @var array<string, callable> */
+    private static $blockHandlers = [];
+
     /** @var BaseBlock[] */
     protected $mainBlocks = [];
 
@@ -131,6 +134,16 @@ class NewMail
 
         $this->signature = Tools::settings('email', 'signature', '');
         $this->verificode = Tools::randomString(20);
+    }
+
+    /**
+     * Registra un handler personalizado para un tipo de shortcode de bloque.
+     * El callable recibe (array $attrs, string $content) y debe devolver un BaseBlock o null.
+     * Ejemplo: NewMail::addBlockHandler('myblock', fn($attrs, $content) => new MyBlock($content));
+     */
+    public static function addBlockHandler(string $tag, callable $handler): void
+    {
+        self::$blockHandlers[strtolower($tag)] = $handler;
     }
 
     public static function addMailer(string $key, string $name): void
@@ -411,6 +424,9 @@ class NewMail
             }
         }
 
+        // procesamos los shortcodes de bloque en el texto antes de renderizar
+        $this->replaceTextToBlock();
+
         $this->renderHTML();
         $this->mail->msgHTML($this->html);
 
@@ -529,6 +545,125 @@ class NewMail
         $this->mail->addAddress($email, $name);
 
         return $this;
+    }
+
+    /**
+     * Busca shortcodes de bloque en el texto del email y los convierte en objetos BaseBlock.
+     * Sintaxis: [blockTipo atributos]contenido[/blockTipo] o [blockTipo atributos] (auto-cierre)
+     * Ejemplos:
+     *   [blockTitle type="h2"]Bienvenido[/blockTitle]
+     *   [blockText]Párrafo de texto[/blockText]
+     *   [blockHtml]<ul><li>item</li></ul>[/blockHtml]
+     *   [blockButton label="Reservar" href="https://..."]
+     *   [blockSpace height="20"]
+     * Los plugins pueden registrar tipos adicionales con NewMail::addBlockHandler().
+     */
+    protected function replaceTextToBlock(): void
+    {
+        if (empty($this->text)) {
+            return;
+        }
+
+        // buscamos shortcodes con o sin contenido interior: [blockXxx attrs]...[/blockXxx] o [blockXxx attrs]
+        preg_match_all(
+            '/\[block(\w+)([^\]]*)\](?:(.*?)\[\/block\1\])?/s',
+            $this->text,
+            $matches,
+            PREG_OFFSET_CAPTURE
+        );
+
+        // si no hay shortcodes, no hacemos nada
+        if (empty($matches[0])) {
+            return;
+        }
+
+        // guardamos los bloques existentes para añadirlos al final
+        $existingBlocks = $this->mainBlocks;
+        $this->mainBlocks = [];
+        $text = $this->text;
+        $this->text = '';
+        $lastPos = 0;
+
+        foreach ($matches[0] as $idx => $match) {
+            $fullMatch = $match[0];
+            $offset = $match[1];
+            $blockType = $matches[1][$idx][0];
+            $attrsStr = $matches[2][$idx][0];
+            $content = $matches[3][$idx][0] ?? '';
+
+            // texto antes del shortcode → TextBlock
+            $before = trim(substr($text, $lastPos, $offset - $lastPos));
+            if ('' !== $before) {
+                $this->addMainBlock(new TextBlock($before));
+            }
+            $lastPos = $offset + strlen($fullMatch);
+
+            // creamos el bloque correspondiente al shortcode
+            $attrs = static::parseShortcodeAttributes($attrsStr);
+            $block = $this->createBlockFromShortcode($blockType, $attrs, $content);
+            if ($block !== null) {
+                $this->addMainBlock($block);
+            }
+        }
+
+        // texto restante tras el último shortcode → TextBlock
+        $remaining = trim(substr($text, $lastPos));
+        if ('' !== $remaining) {
+            $this->addMainBlock(new TextBlock($remaining));
+        }
+
+        // reañadimos los bloques que existían antes
+        foreach ($existingBlocks as $block) {
+            $this->mainBlocks[] = $block;
+        }
+    }
+
+    /**
+     * Instancia el bloque correspondiente al tipo de shortcode.
+     * Los plugins pueden ampliar los tipos usando NewMail::addBlockHandler().
+     */
+    protected function createBlockFromShortcode(string $type, array $attrs, string $content): ?BaseBlock
+    {
+        // primero comprobamos si hay un handler registrado por un plugin
+        $lowerType = strtolower($type);
+        if (isset(self::$blockHandlers[$lowerType])) {
+            return (self::$blockHandlers[$lowerType])($attrs, $content);
+        }
+
+        // tipos nativos del core
+        switch ($lowerType) {
+            case 'title':
+                return new TitleBlock($content, $attrs['type'] ?? 'h2', $attrs['css'] ?? '', $attrs['style'] ?? '');
+            case 'text':
+                return new TextBlock($content, $attrs['css'] ?? '', $attrs['style'] ?? '');
+            case 'html':
+                return new HtmlBlock($content);
+            case 'button':
+                return new ButtonBlock(
+                    $attrs['label'] ?? $content,
+                    $attrs['href'] ?? '',
+                    $attrs['css'] ?? '',
+                    $attrs['style'] ?? ''
+                );
+            case 'space':
+                return new SpaceBlock((float)($attrs['height'] ?? 30));
+        }
+
+        return null;
+    }
+
+    /**
+     * Parsea los atributos de un shortcode en un array clave => valor.
+     * Soporta comillas simples y dobles: attr="valor" o attr='valor'
+     */
+    protected static function parseShortcodeAttributes(string $attrsStr): array
+    {
+        preg_match_all('/(\w+)=["\']([^"\']*)["\']/', $attrsStr, $matches);
+        $attrs = [];
+        foreach ($matches[1] as $i => $key) {
+            $attrs[$key] = $matches[2][$i];
+        }
+        return $attrs;
     }
 
     /**
