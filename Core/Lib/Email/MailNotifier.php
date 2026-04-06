@@ -83,7 +83,6 @@ class MailNotifier
         $newMail->to($email, $name);
         $newMail->title = static::getText($notification->subject, $params);
         $newMail->text = static::getText($notification->body, $params);
-        static::replaceTextToBlock($newMail, $params);
 
         foreach ($mainBlocks as $block) {
             $newMail->addMainBlock($block);
@@ -100,52 +99,4 @@ class MailNotifier
         return $newMail->send();
     }
 
-    /**
-     * Los bloques se añaden al campo de params como 'block1', 'block2', ...
-     * Cada bloque se compone de un string o de un objeto que herede de BaseBlock.
-     * El texto del email puede contener {block1}, {block2}, ... Para indicar
-     * dónde se debe insertar cada bloque. Si no se encuentra la etiqueta, el bloque
-     * se añade al final del email.
-     */
-    protected static function replaceTextToBlock(DinNewMail &$newMail, array $params): void
-    {
-        // si no hay parámetros o texto, no hacemos nada
-        if (empty($params) || empty($newMail->text)) {
-            return;
-        }
-
-        // Obtenemos las coincidencias de {block1}, {block2}, ... sobre el texto
-        preg_match_all('/{block(\d+)}/', $newMail->text, $matches);
-
-        // si no hay coincidencias, no hacemos nada
-        if (empty($matches[1])) {
-            return;
-        }
-
-        // obtenemos el texto hasta el primer bloque, y entre los bloques
-        // para añadir un TextBlock con el texto encontrado
-        $text = $newMail->text;
-        $newMail->text = '';
-        $lastPos = 0;
-
-        // recorremos los bloques encontrados
-        foreach ($matches[1] as $blockIndex) {
-            $substr = substr($text, $lastPos, strpos($text, '{block' . $blockIndex . '}') - $lastPos);
-            $lastPos = strpos($text, '{block' . $blockIndex . '}') + strlen('{block' . $blockIndex . '}');
-            if (empty($substr) && isset($params['block' . $blockIndex]) && $params['block' . $blockIndex] instanceof BaseBlock) {
-                $newMail->addMainBlock($params['block' . $blockIndex]);
-                continue;
-            }
-
-            $newMail->addMainBlock(new TextBlock($substr));
-            if (isset($params['block' . $blockIndex]) && $params['block' . $blockIndex] instanceof BaseBlock) {
-                $newMail->addMainBlock($params['block' . $blockIndex]);
-            }
-        }
-
-        $substr = substr($text, $lastPos);
-        if (false === empty($substr)) {
-            $newMail->addMainBlock(new TextBlock($substr));
-        }
-    }
 }
