@@ -1117,7 +1117,7 @@
     "next": "Sonraki",
     "nick": "Kullanıcı",
     "no": "Hayır",
-    "no-admin": "Yönetici değil",
+    "no-admin": "Yönetici yok",
     "no-agent": "Ajan yok",
     "no-data": "Veri yok",
     "no-data-received-form": "Form üzerinden hiçbir veri alınmadı",
