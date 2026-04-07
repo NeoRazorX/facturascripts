@@ -150,8 +150,10 @@ class BusinessDocumentCode
                     $document->codejercicio == $preCodejercicio
                 ) {
                     // hole found
-                    $document->fecha = $preDate;
-                    $document->hora = $preHour;
+                    if (false === $sequence->mantenerfecha) {
+                        $document->fecha = $preDate;
+                        $document->hora = $preHour;
+                    }
                     $sequence->disablePatternTest(true);
                     $sequence->save();
                     $sequence->disablePatternTest(false);
@@ -174,8 +176,10 @@ class BusinessDocumentCode
                 $document->codejercicio == $preCodejercicio
             ) {
                 // the gap is in the first positions of the range
-                $document->fecha = $preDate;
-                $document->hora = $preHour;
+                if (false === $sequence->mantenerfecha) {
+                    $document->fecha = $preDate;
+                    $document->hora = $preHour;
+                }
                 $sequence->disablePatternTest(true);
                 $sequence->save();
                 $sequence->disablePatternTest(false);

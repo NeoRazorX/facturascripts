@@ -36,6 +36,12 @@
         <null>NO</null>
     </column>
     <column>
+        <name>mantenerfecha</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
         <name>numero</name>
         <type>integer</type>
         <null>NO</null>
