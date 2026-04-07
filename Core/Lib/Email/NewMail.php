@@ -24,14 +24,15 @@ use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
-use FacturaScripts\Dinamic\Lib\Email\HtmlBlock as DinHtmlBlock;
-use FacturaScripts\Dinamic\Lib\Email\TextBlock as DinTextBlock;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionNamedType;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -58,6 +59,21 @@ class NewMail
     /** @var string */
     public $fromNick;
 
+    /** @var string */
+    public $signature;
+
+    /** @var string */
+    public $text;
+
+    /** @var string */
+    public $title;
+
+    /** @var string */
+    public $verificode;
+
+    /** @var array<string, callable> */
+    private static $blockHandlers = [];
+
     /** @var BaseBlock[] */
     protected $footerBlocks = [];
 
@@ -70,32 +86,25 @@ class NewMail
     /** @var PHPMailer */
     protected $mail;
 
-    /** @var array */
-    private static $mailer = ['mail' => 'Mail', 'sendmail' => 'SendMail', 'smtp' => 'SMTP'];
-
-    /** @var array<string, callable> */
-    private static $blockHandlers = [];
-
     /** @var BaseBlock[] */
     protected $mainBlocks = [];
 
-    /** @var string */
-    public $signature;
+    /** @var array */
+    private static $mailer = ['mail' => 'Mail', 'sendmail' => 'SendMail', 'smtp' => 'SMTP'];
 
     /** @var string */
     protected static $template = 'NewTemplate.html.twig';
 
-    /** @var string */
-    public $text;
-
-    /** @var string */
-    public $title;
-
-    /** @var string */
-    public $verificode;
-
     public function __construct()
     {
+        static::addBlockHandler('BoxBlock');
+        static::addBlockHandler('ButtonBlock');
+        static::addBlockHandler('HtmlBlock');
+        static::addBlockHandler('SpaceBlock');
+        static::addBlockHandler('TableBlock');
+        static::addBlockHandler('TextBlock');
+        static::addBlockHandler('TitleBlock');
+
         $this->empresa = Empresas::default();
 
         $this->fromEmail = Tools::settings('email', 'email');
@@ -137,25 +146,6 @@ class NewMail
     }
 
     /**
-     * Registra un handler personalizado para un tipo de shortcode de bloque.
-     * El callable recibe (array $attrs, string $content) y debe devolver un BaseBlock o null.
-     * Ejemplo: NewMail::addBlockHandler('myblock', fn($attrs, $content) => new MyBlock($content));
-     */
-    public static function addBlockHandler(string $tag, callable $handler): void
-    {
-        self::$blockHandlers[strtolower($tag)] = $handler;
-    }
-
-    public static function addMailer(string $key, string $name): void
-    {
-        if (array_key_exists($key, self::$mailer)) {
-            return;
-        }
-
-        self::$mailer[$key] = $name;
-    }
-
-    /**
      * @deprecated since version 2023.09
      */
     public function addAddress(string $email, string $name = ''): NewMail
@@ -181,6 +171,19 @@ class NewMail
     public function addBCC(string $email, string $name = ''): NewMail
     {
         return $this->bcc($email, $name);
+    }
+
+    /**
+     * Registra un handler personalizado para un tipo de shortcode de bloque.
+     * El callable recibe (array $attrs, string $content) y debe devolver un BaseBlock o null.
+     * Ejemplo: NewMail::addBlockHandler('myblock', fn($attrs, $content) => new MyBlock($content));
+     */
+    public static function addBlockHandler(string $tag): void
+    {
+        $className = '\\FacturaScripts\\Dinamic\\Lib\\Email\\' . $tag;
+        if (false === isset(self::$blockHandlers[$tag]) && class_exists($className)) {
+            self::$blockHandlers[$tag] = $className;
+        }
     }
 
     /**
@@ -211,6 +214,15 @@ class NewMail
         $this->mainBlocks[] = $block;
 
         return $this;
+    }
+
+    public static function addMailer(string $key, string $name): void
+    {
+        if (array_key_exists($key, self::$mailer)) {
+            return;
+        }
+
+        self::$mailer[$key] = $name;
     }
 
     /**
@@ -255,12 +267,6 @@ class NewMail
         return new static();
     }
 
-    public static function getAttachmentPath(?string $email, string $folder): string
-    {
-        $path = 'MyFiles/Email/{{email}}/' . $folder . '/';
-        return str_replace('{{email}}', $email, $path);
-    }
-
     /**
      * Devuelve los nombres de los archivos adjuntos.
      */
@@ -272,6 +278,12 @@ class NewMail
         }
 
         return $names;
+    }
+
+    public static function getAttachmentPath(?string $email, string $folder): string
+    {
+        $path = 'MyFiles/Email/{{email}}/' . $folder . '/';
+        return str_replace('{{email}}', $email, $path);
     }
 
     /**
@@ -319,6 +331,22 @@ class NewMail
         }
 
         return self::$mailer;
+    }
+
+    /**
+     * Devuelve los bloques del cuerpo del correo.
+     */
+    public function getMainBlocks(): array
+    {
+        // si no hay texto, devolvemos los bloques principales tal cual
+        if (empty($this->text)) {
+            return $this->mainBlocks;
+        }
+
+        // procesamos el texto: shortcodes, html y texto plano
+        $this->replaceTextToBlock();
+
+        return $this->mainBlocks;
     }
 
     public static function getTemplate(): string
@@ -424,9 +452,6 @@ class NewMail
             }
         }
 
-        // procesamos los shortcodes de bloque en el texto antes de renderizar
-        $this->replaceTextToBlock();
-
         $this->renderHTML();
         $this->mail->msgHTML($this->html);
 
@@ -483,13 +508,6 @@ class NewMail
         return $this;
     }
 
-    public function subject(string $subject): NewMail
-    {
-        $this->title = $subject;
-
-        return $this;
-    }
-
     public static function setTemplate(string $template): void
     {
         static::$template = $template;
@@ -521,6 +539,13 @@ class NewMail
         return $return;
     }
 
+    public function subject(string $subject): NewMail
+    {
+        $this->title = $subject;
+
+        return $this;
+    }
+
     /**
      * Pruebe la conexión PHPMailer.
      *
@@ -548,108 +573,133 @@ class NewMail
     }
 
     /**
-     * Busca shortcodes de bloque en el texto del email y los convierte en objetos BaseBlock.
-     * Sintaxis: [blockTipo atributos]contenido[/blockTipo] o [blockTipo atributos] (auto-cierre)
-     * Ejemplos:
-     *   [blockTitle type="h2"]Bienvenido[/blockTitle]
-     *   [blockText]Párrafo de texto[/blockText]
-     *   [blockHtml]<ul><li>item</li></ul>[/blockHtml]
-     *   [blockButton label="Reservar" href="https://..."]
-     *   [blockSpace height="20"]
-     * Los plugins pueden registrar tipos adicionales con NewMail::addBlockHandler().
+     * Añade un HtmlBlock si el texto contiene etiquetas HTML, o un TextBlock si es texto plano.
+     * Siempre usa la clase Dinamic para que los plugins puedan sobreescribirla.
      */
-    protected function replaceTextToBlock(): void
+    protected function addTextOrHtmlBlock(string $text): void
     {
-        if (empty($this->text)) {
+        if (strip_tags($text) !== $text) {
+            $className = self::$blockHandlers['HtmlBlock'] ?? null;
+            if ($className !== null) {
+                $this->addMainBlock(new $className($text));
+            }
             return;
         }
 
-        // buscamos shortcodes con o sin contenido interior: [blockXxx attrs]...[/blockXxx] o [blockXxx attrs]
-        preg_match_all(
-            '/\[block(\w+)([^\]]*)\](?:(.*?)\[\/block\1\])?/s',
-            $this->text,
-            $matches,
-            PREG_OFFSET_CAPTURE
-        );
-
-        // si no hay shortcodes, no hacemos nada
-        if (empty($matches[0])) {
-            return;
-        }
-
-        // guardamos los bloques existentes para añadirlos al final
-        $existingBlocks = $this->mainBlocks;
-        $this->mainBlocks = [];
-        $text = $this->text;
-        $this->text = '';
-        $lastPos = 0;
-
-        foreach ($matches[0] as $idx => $match) {
-            $fullMatch = $match[0];
-            $offset = $match[1];
-            $blockType = $matches[1][$idx][0];
-            $attrsStr = $matches[2][$idx][0];
-            $content = $matches[3][$idx][0] ?? '';
-
-            // texto antes del shortcode → TextBlock
-            $before = trim(substr($text, $lastPos, $offset - $lastPos));
-            if ('' !== $before) {
-                $this->addMainBlock(new TextBlock($before));
-            }
-            $lastPos = $offset + strlen($fullMatch);
-
-            // creamos el bloque correspondiente al shortcode
-            $attrs = static::parseShortcodeAttributes($attrsStr);
-            $block = $this->createBlockFromShortcode($blockType, $attrs, $content);
-            if ($block !== null) {
-                $this->addMainBlock($block);
-            }
-        }
-
-        // texto restante tras el último shortcode → TextBlock
-        $remaining = trim(substr($text, $lastPos));
-        if ('' !== $remaining) {
-            $this->addMainBlock(new TextBlock($remaining));
-        }
-
-        // reañadimos los bloques que existían antes
-        foreach ($existingBlocks as $block) {
-            $this->mainBlocks[] = $block;
+        $className = self::$blockHandlers['TextBlock'] ?? null;
+        if ($className !== null) {
+            $this->addMainBlock(new $className($text));
         }
     }
 
     /**
-     * Instancia el bloque correspondiente al tipo de shortcode.
-     * Los plugins pueden ampliar los tipos usando NewMail::addBlockHandler().
+     * Convierte un valor de string (proveniente de un atributo de shortcode) al tipo PHP indicado.
+     */
+    protected static function castShortcodeValue(string $value, string $type): mixed
+    {
+        return match ($type) {
+            'float' => (float)$value,
+            'int'   => (int)$value,
+            'bool'  => in_array(strtolower($value), ['true', '1', 'yes'], true),
+            'array' => [],
+            default => $value,
+        };
+    }
+
+    /**
+     * Instancia el bloque correspondiente al tipo de shortcode buscando en el registro de handlers.
+     * Usa Reflection para inspeccionar el constructor de la clase Dinamic correspondiente
+     * y pasar los parámetros correctos desde los atributos del shortcode y su contenido.
+     * El primer parámetro no array y no encontrado en attrs recibe el contenido entre etiquetas.
      */
     protected function createBlockFromShortcode(string $type, array $attrs, string $content): ?BaseBlock
     {
-        // primero comprobamos si hay un handler registrado por un plugin
-        $lowerType = strtolower($type);
-        if (isset(self::$blockHandlers[$lowerType])) {
-            return (self::$blockHandlers[$lowerType])($attrs, $content);
+        // los tags se registran con sufijo 'Block' (ej: 'TitleBlock')
+        $tag = $type . 'Block';
+        $className = null;
+        foreach (self::$blockHandlers as $handlerTag => $handlerClass) {
+            if (strcasecmp($handlerTag, $tag) === 0) {
+                $className = $handlerClass;
+                break;
+            }
         }
 
-        // tipos nativos del core
-        switch ($lowerType) {
-            case 'title':
-                return new TitleBlock($content, $attrs['type'] ?? 'h2', $attrs['css'] ?? '', $attrs['style'] ?? '');
-            case 'text':
-                return new TextBlock($content, $attrs['css'] ?? '', $attrs['style'] ?? '');
-            case 'html':
-                return new HtmlBlock($content);
-            case 'button':
-                return new ButtonBlock(
-                    $attrs['label'] ?? $content,
-                    $attrs['href'] ?? '',
-                    $attrs['css'] ?? '',
-                    $attrs['style'] ?? ''
-                );
-            case 'space':
-                return new SpaceBlock((float)($attrs['height'] ?? 30));
+        // si no hay handler registrado, ignoramos el shortcode
+        if ($className === null) {
+            return null;
         }
 
-        return null;
+        // usamos reflection para instanciar la clase con los parámetros correctos
+        try {
+            $reflection = new ReflectionClass($className);
+            $constructor = $reflection->getConstructor();
+
+            if ($constructor === null) {
+                return $reflection->newInstance();
+            }
+
+            $args = [];
+            $isFirst = true;
+
+            foreach ($constructor->getParameters() as $param) {
+                $name = $param->getName();
+                $typeName = $param->getType() instanceof ReflectionNamedType
+                    ? $param->getType()->getName()
+                    : 'string';
+
+                // si el atributo existe en el shortcode, lo usamos directamente
+                if (array_key_exists($name, $attrs)) {
+                    $args[] = static::castShortcodeValue($attrs[$name], $typeName);
+                    $isFirst = false;
+                    continue;
+                }
+
+                // el primer parámetro no-array sin attr correspondiente recibe el contenido entre etiquetas
+                if ($isFirst) {
+                    $isFirst = false;
+                    if ($typeName !== 'array' && $content !== '') {
+                        $args[] = static::castShortcodeValue($content, $typeName);
+                        continue;
+                    }
+                }
+
+                // usamos el valor por defecto si existe
+                if ($param->isDefaultValueAvailable()) {
+                    $args[] = $param->getDefaultValue();
+                    continue;
+                }
+
+                // sin attr, sin contenido y sin default → valor cero del tipo
+                $args[] = static::zeroValueForType($typeName);
+            }
+
+            return $reflection->newInstanceArgs($args);
+        } catch (ReflectionException $e) {
+            Tools::log()->warning('email-block-reflection-error', [
+                '%block%' => $className,
+                '%error%' => $e->getMessage(),
+            ]);
+            return null;
+        }
+    }
+
+    /**
+     * Devuelve los bloques del pie del correo.
+     */
+    protected function getFooterBlocks(): array
+    {
+        $signature = Tools::fixHtml($this->signature);
+        if (empty($signature)) {
+            return $this->footerBlocks;
+        }
+
+        // usamos la clase Dinamic para que los plugins puedan sobreescribirla
+        $className = self::$blockHandlers['TextBlock'] ?? null;
+        if ($className === null) {
+            return $this->footerBlocks;
+        }
+
+        return array_merge($this->footerBlocks, [new $className($signature, 'text-footer')]);
     }
 
     /**
@@ -664,37 +714,6 @@ class NewMail
             $attrs[$key] = $matches[2][$i];
         }
         return $attrs;
-    }
-
-    /**
-     * Devuelve los bloques del pie del correo.
-     */
-    protected function getFooterBlocks(): array
-    {
-        $signature = Tools::fixHtml($this->signature);
-        return empty($signature)
-            ? $this->footerBlocks
-            : array_merge($this->footerBlocks, [new TextBlock($signature, 'text-footer')]);
-    }
-
-    /**
-     * Devuelve los bloques del cuerpo del correo.
-     */
-    protected function getMainBlocks(): array
-    {
-        // si no hay texto, devolvemos los bloques principales
-        if (empty($this->text)) {
-            return $this->mainBlocks;
-        }
-
-        // buscamos si en el texto hay algo de html
-        $textWithoutHtml = strip_tags($this->text);
-        if ($textWithoutHtml !== $this->text) {
-            return array_merge([new DinHtmlBlock($this->text)], $this->mainBlocks);
-        }
-
-        // si no hay html, devolvemos el texto como bloque de texto
-        return array_merge([new DinTextBlock($this->text, 'pb-15')], $this->mainBlocks);
     }
 
     /**
@@ -723,6 +742,83 @@ class NewMail
             'mainBlocks' => $this->getMainBlocks(),
             'title' => $this->title
         ]);
+    }
+
+    /**
+     * Busca shortcodes de bloque en el texto del email y los convierte en objetos BaseBlock.
+     * También detecta HTML entre bloques y lo envuelve en HtmlBlock; el texto plano va a TextBlock.
+     * Sintaxis: [blockTipo atributos]contenido[/blockTipo] o [blockTipo atributos] (auto-cierre)
+     * Ejemplos:
+     *   [blockTitle type="h2"]Bienvenido[/blockTitle]
+     *   [blockText]Párrafo de texto[/blockText]
+     *   [blockHtml]<ul><li>item</li></ul>[/blockHtml]
+     *   [blockButton label="Reservar" href="https://..."]
+     *   [blockSpace height="20"]
+     * Los plugins pueden registrar tipos adicionales con NewMail::addBlockHandler().
+     */
+    protected function replaceTextToBlock(): void
+    {
+        if (empty($this->text)) {
+            return;
+        }
+
+        // buscamos shortcodes con o sin contenido interior: [blockXxx attrs]...[/blockXxx] o [blockXxx attrs]
+        preg_match_all(
+            '/\[block(\w+)([^\]]*)\](?:(.*?)\[\/block\1\])?/s',
+            $this->text,
+            $matches,
+            PREG_OFFSET_CAPTURE
+        );
+
+        // guardamos los bloques existentes para añadirlos al final
+        $existingBlocks = $this->mainBlocks;
+        $this->mainBlocks = [];
+        $text = $this->text;
+        $this->text = '';
+
+        // si no hay shortcodes, procesamos el texto completo como html o texto plano
+        if (empty($matches[0])) {
+            $this->addTextOrHtmlBlock($text);
+            foreach ($existingBlocks as $block) {
+                $this->mainBlocks[] = $block;
+            }
+            return;
+        }
+
+        $lastPos = 0;
+
+        foreach ($matches[0] as $idx => $match) {
+            $fullMatch = $match[0];
+            $offset = $match[1];
+            $blockType = $matches[1][$idx][0];
+            $attrsStr = $matches[2][$idx][0];
+            $content = $matches[3][$idx][0] ?? '';
+
+            // texto antes del shortcode → HtmlBlock si contiene html, TextBlock si es texto plano
+            $before = trim(substr($text, $lastPos, $offset - $lastPos));
+            if ('' !== $before) {
+                $this->addTextOrHtmlBlock($before);
+            }
+            $lastPos = $offset + strlen($fullMatch);
+
+            // creamos el bloque correspondiente al shortcode
+            $attrs = static::parseShortcodeAttributes($attrsStr);
+            $block = $this->createBlockFromShortcode($blockType, $attrs, $content);
+            if ($block !== null) {
+                $this->addMainBlock($block);
+            }
+        }
+
+        // texto restante tras el último shortcode → HtmlBlock si contiene html, TextBlock si es texto plano
+        $remaining = trim(substr($text, $lastPos));
+        if ('' !== $remaining) {
+            $this->addTextOrHtmlBlock($remaining);
+        }
+
+        // reañadimos los bloques que existían antes
+        foreach ($existingBlocks as $block) {
+            $this->mainBlocks[] = $block;
+        }
     }
 
     /**
@@ -811,5 +907,19 @@ class NewMail
         }
 
         return [];
+    }
+
+    /**
+     * Devuelve el valor neutro para un tipo PHP dado (usado cuando no hay attr ni default).
+     */
+    protected static function zeroValueForType(string $type): mixed
+    {
+        return match ($type) {
+            'float' => 0.0,
+            'int'   => 0,
+            'bool'  => false,
+            'array' => [],
+            default => '',
+        };
     }
 }
