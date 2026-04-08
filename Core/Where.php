@@ -469,12 +469,12 @@ final class Where
     {
         // si no contiene %, se los añadimos
         if (strpos($value, '%') === false) {
-            return 'LOWER(' . self::sqlColumn($field) . ') ' . $operator
+            return 'LOWER(CONCAT(' . self::sqlColumn($field) . ",'')) " . $operator
                 . " LOWER('%" . self::db()->escapeString($value) . "%')";
         }
 
         // contiene algún comodín
-        return 'LOWER(' . self::sqlColumn($field) . ') ' . $operator
+        return 'LOWER(CONCAT(' . self::sqlColumn($field) . ",'')) " . $operator
             . " LOWER('" . self::db()->escapeString($value) . "')";
     }
 
