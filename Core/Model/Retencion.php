@@ -115,9 +115,46 @@ class Retencion extends ModelClass
     protected function saveInsert(): bool
     {
         if (empty($this->codretencion)) {
-            $this->codretencion = (string)$this->newCode();
+            $this->codretencion = $this->newLetterCode();
         }
 
         return parent::saveInsert();
+    }
+
+    private function newLetterCode(): string
+    {
+        $desc = preg_replace('/[^A-Z]/i', '', strtoupper($this->descripcion ?? ''));
+        $pct = (int)$this->porcentaje;
+
+        // try 3 letters + percentage
+        $prefix3 = substr($desc, 0, 3);
+        if (strlen($prefix3) === 3) {
+            $candidate = $prefix3 . $pct;
+            if (false === $this->codretencionExists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        // try 4 letters + percentage
+        $prefix4 = substr($desc, 0, 4);
+        if (strlen($prefix4) === 4) {
+            $candidate = $prefix4 . $pct;
+            if (false === $this->codretencionExists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return (string)$this->newCode();
+    }
+
+    private function codretencionExists(string $codretencion): bool
+    {
+        foreach (Retenciones::all() as $retencion) {
+            if (strtoupper($retencion->codretencion) === strtoupper($codretencion)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
