@@ -264,6 +264,11 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
+        $campoRequeridoNoSeleccionado = false;
+        if($this->required && empty($this->value)){
+            $campoRequeridoNoSeleccionado = true;
+        }
+
         $class = $this->combineClasses($this->css('form-select select2'), $this->class, $extraClass);
 
         if ($this->parent) {
@@ -293,6 +298,7 @@ class WidgetSelect extends BaseWidget
             . ' data-fieldtitle="' . $this->fieldtitle . '"'
             . ' data-fieldfilter="' . $this->fieldfilter . '"'
             . ' data-limit="' . $this->limit . '"'
+            . ($campoRequeridoNoSeleccionado ? ' data-campo-requerido-no-seleccionado="true"' : '')
             . '>';
 
         $found = false;
@@ -317,6 +323,15 @@ class WidgetSelect extends BaseWidget
         }
 
         $html .= '</select>';
+
+        if($campoRequeridoNoSeleccionado){
+            $html .= '<div class="form-text marquee-container">
+                <span class="marquee-text text-danger fw-bold text-uppercase">
+                    ' . Tools::trans("required") . '                    
+                </span>
+            </div';
+        }
+
         return $html;
     }
 
