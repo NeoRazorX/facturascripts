@@ -36,18 +36,23 @@
         <column name="description" order="130">
             <widget type="textarea" fieldname="descripcion"/>
         </column>
-        <column name="special-account" order="140">
+        <column name="account" order="140">
+            <widget type="select" fieldname="idcuenta">
+                <values source="cuentas" fieldcode="idcuenta" fieldtitle="codcuenta"/>
+            </widget>
+        </column>
+        <column name="special-account" order="150">
             <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
                 <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"/>
             </widget>
         </column>
-        <column name="debit" display="right" order="150">
+        <column name="debit" display="right" order="160">
             <widget type="money" fieldname="debe"/>
         </column>
-        <column name="credit" display="right" order="160">
+        <column name="credit" display="right" order="170">
             <widget type="money" fieldname="haber"/>
         </column>
-        <column name="balance" display="right" order="170">
+        <column name="balance" display="right" order="180">
             <widget type="money" fieldname="saldo"/>
         </column>
     </columns>
