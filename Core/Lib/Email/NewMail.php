@@ -30,9 +30,6 @@ use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionNamedType;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -593,28 +590,10 @@ class NewMail
     }
 
     /**
-     * Convierte un valor de string (proveniente de un atributo de shortcode) al tipo PHP indicado.
-     */
-    protected static function castShortcodeValue(string $value, string $type): mixed
-    {
-        return match ($type) {
-            'float' => (float)$value,
-            'int'   => (int)$value,
-            'bool'  => in_array(strtolower($value), ['true', '1', 'yes'], true),
-            'array' => [],
-            default => $value,
-        };
-    }
-
-    /**
-     * Instancia el bloque correspondiente al tipo de shortcode buscando en el registro de handlers.
-     * Usa Reflection para inspeccionar el constructor de la clase Dinamic correspondiente
-     * y pasar los parámetros correctos desde los atributos del shortcode y su contenido.
-     * El primer parámetro no array y no encontrado en attrs recibe el contenido entre etiquetas.
+     * Instancia el bloque correspondiente al tipo de shortcode delegando en su método fromShortcode().
      */
     protected function createBlockFromShortcode(string $type, array $attrs, string $content): ?BaseBlock
     {
-        // los tags se registran con sufijo 'Block' (ej: 'TitleBlock')
         $tag = $type . 'Block';
         $className = null;
         foreach (self::$blockHandlers as $handlerTag => $handlerClass) {
@@ -624,63 +603,11 @@ class NewMail
             }
         }
 
-        // si no hay handler registrado, ignoramos el shortcode
         if ($className === null) {
             return null;
         }
 
-        // usamos reflection para instanciar la clase con los parámetros correctos
-        try {
-            $reflection = new ReflectionClass($className);
-            $constructor = $reflection->getConstructor();
-
-            if ($constructor === null) {
-                return $reflection->newInstance();
-            }
-
-            $args = [];
-            $isFirst = true;
-
-            foreach ($constructor->getParameters() as $param) {
-                $name = $param->getName();
-                $typeName = $param->getType() instanceof ReflectionNamedType
-                    ? $param->getType()->getName()
-                    : 'string';
-
-                // si el atributo existe en el shortcode, lo usamos directamente
-                if (array_key_exists($name, $attrs)) {
-                    $args[] = static::castShortcodeValue($attrs[$name], $typeName);
-                    $isFirst = false;
-                    continue;
-                }
-
-                // el primer parámetro no-array sin attr correspondiente recibe el contenido entre etiquetas
-                if ($isFirst) {
-                    $isFirst = false;
-                    if ($typeName !== 'array' && $content !== '') {
-                        $args[] = static::castShortcodeValue($content, $typeName);
-                        continue;
-                    }
-                }
-
-                // usamos el valor por defecto si existe
-                if ($param->isDefaultValueAvailable()) {
-                    $args[] = $param->getDefaultValue();
-                    continue;
-                }
-
-                // sin attr, sin contenido y sin default → valor cero del tipo
-                $args[] = static::zeroValueForType($typeName);
-            }
-
-            return $reflection->newInstanceArgs($args);
-        } catch (ReflectionException $e) {
-            Tools::log()->warning('email-block-reflection-error', [
-                '%block%' => $className,
-                '%error%' => $e->getMessage(),
-            ]);
-            return null;
-        }
+        return $className::fromShortcode($attrs, $content);
     }
 
     /**
@@ -909,17 +836,4 @@ class NewMail
         return [];
     }
 
-    /**
-     * Devuelve el valor neutro para un tipo PHP dado (usado cuando no hay attr ni default).
-     */
-    protected static function zeroValueForType(string $type): mixed
-    {
-        return match ($type) {
-            'float' => 0.0,
-            'int'   => 0,
-            'bool'  => false,
-            'array' => [],
-            default => '',
-        };
-    }
 }

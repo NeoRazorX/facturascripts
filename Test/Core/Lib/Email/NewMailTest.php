@@ -85,7 +85,6 @@ final class NewMailTest extends TestCase
             . '[blockUnknown]este shortcode no existe[/blockUnknown]'
             . '[blockFake]';
         
-
         $blocks = NewMail::create()->body($text)->getMainBlocks();
 
         // solo los 5 bloques válidos deben estar presentes

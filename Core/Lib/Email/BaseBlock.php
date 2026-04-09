@@ -41,6 +41,15 @@ abstract class BaseBlock
 
     abstract public function render(bool $footer = false): string;
 
+    /**
+     * Crea una instancia del bloque a partir de los atributos y contenido de un shortcode.
+     * Las subclases deben sobreescribir este método para mapear correctamente sus parámetros.
+     */
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static($content);
+    }
+
     public function setVerificode(string $code): void
     {
         $this->verificode = $code;

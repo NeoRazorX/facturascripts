@@ -45,6 +45,16 @@ class ButtonBlock extends BaseBlock
         $this->href = $href;
     }
 
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static(
+            $attrs['label'] ?? $content,
+            $attrs['href'] ?? '',
+            $attrs['css'] ?? '',
+            $attrs['style'] ?? ''
+        );
+    }
+
     public function render(bool $footer = false): string
     {
         $this->footer = $footer;
