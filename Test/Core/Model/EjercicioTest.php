@@ -235,8 +235,11 @@ final class EjercicioTest extends TestCase
         $ej3 = new Ejercicio();
         $ej3->idempresa = $empresa3->idempresa;
         $this->assertTrue($ej3->loadFromDate($inicio));
-        $this->assertEquals(sprintf('%04s', '0' . $empresa3->idempresa . $year2), $ej3->codejercicio,
-            'exercise-3-should-be-0' . $empresa3->idempresa . $year2);
+        $this->assertEquals(
+            sprintf('%04s', '0' . $empresa3->idempresa . $year2),
+            $ej3->codejercicio,
+            'exercise-3-should-be-0' . $empresa3->idempresa . $year2
+        );
 
         // Ocupamos también el código 0+idempresa4+98
         $empresa4 = $this->getRandomCompany();
@@ -259,8 +262,11 @@ final class EjercicioTest extends TestCase
         $this->assertNotEquals($year, $ej4->codejercicio);
         $this->assertNotEquals('00' . $year2, $ej4->codejercicio);
         $this->assertNotEquals($code4, $ej4->codejercicio);
-        $this->assertMatchesRegularExpression('/^\d{4}$/', $ej4->codejercicio,
-            'exercise-4-should-be-numeric-4-digits');
+        $this->assertMatchesRegularExpression(
+            '/^\d{4}$/',
+            $ej4->codejercicio,
+            'exercise-4-should-be-numeric-4-digits'
+        );
 
         // Eliminamos en orden inverso
         $this->assertTrue($ej4->delete());
