@@ -136,7 +136,10 @@ class GroupItem extends VisualItem
             . '<div class="modal-dialog ' . $this->class . '" role="document">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
+            . '<div>'
             . '<h5 class="modal-title">' . $icon . Tools::trans($this->title) . '</h5>'
+            . (empty($this->description) ? '' : '<small class="form-text text-muted">' . Tools::trans($this->description) . '</small>')
+            . '</div>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . '</button>'
             . '</div>'
