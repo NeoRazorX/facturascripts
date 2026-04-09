@@ -55,7 +55,7 @@ trait LogErrorsTrait
     protected function searchAuditLog(string $modelClass, string $modelCode): bool
     {
         foreach (MiniLog::read('audit') as $log) {
-            if ($log['context']['model-class'] === $modelClass && $log['context']['model-code'] === $modelCode) {
+            if ($log['context']['model-class'] === $modelClass && (string)$log['context']['model-code'] === $modelCode) {
                 return true;
             }
         }
