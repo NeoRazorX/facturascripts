@@ -283,24 +283,53 @@ class WidgetInfo extends BaseWidget
     }
 
     /**
+     * Devuelve un href seguro para renderizar o cadena vacía si no es válido.
+     *
+     * Se permiten únicamente URLs absolutas http/https y rutas relativas
+     * habituales de la aplicación.
+     *
+     * @return string
+     */
+    private function getSafeHref(): string
+    {
+        $href = trim((string)$this->href);
+        if ($href === '') {
+            return '';
+        }
+
+        $scheme = parse_url($href, PHP_URL_SCHEME);
+        if (is_string($scheme) && $scheme !== '') {
+            $scheme = strtolower($scheme);
+            return in_array($scheme, ['http', 'https'], true) ? $href : '';
+        }
+
+        if ($href[0] === '/' || $href[0] === '?' || $href[0] === '#') {
+            return $href;
+        }
+
+        return preg_match('/^[^:\s]+(?:\/[^:\s]*)?$/', $href) ? $href : '';
+    }
+
+    /**
      * Construye el HTML del botón de enlace.
      *
      * @return string
      */
     protected function buildLinkHtml(): string
     {
-        if (empty($this->href)) {
+        $safeHref = $this->getSafeHref();
+        if ($safeHref === '') {
             return '';
         }
 
-        $btnText = $this->btnText ? Tools::trans($this->btnText) : $this->href;
+        $btnText = $this->btnText ? Tools::trans($this->btnText) : $safeHref;
         $btnClass = 'btn btn-sm ' . $this->btnClass;
 
         // determinar si es un enlace externo para abrir en nueva ventana
-        $isExternal = preg_match('/^https?:\/\//i', $this->href);
+        $isExternal = preg_match('/^https?:\/\//i', $safeHref);
         $target = $isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
 
-        return '<a href="' . Tools::noHtml($this->href) . '" class="' . $btnClass . '"' . $target . '>'
+        return '<a href="' . Tools::noHtml($safeHref) . '" class="' . $btnClass . '"' . $target . '>'
             . $btnText
             . '</a>';
     }
