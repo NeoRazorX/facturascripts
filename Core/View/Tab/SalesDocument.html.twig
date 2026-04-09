@@ -17,6 +17,66 @@
 <script>
     let waitCounter = 0;
     let keyupInputName = null;
+    let addressChanged = false;
+
+    function showAddressChangeWarning() {
+        // 1. Inyectar el CSS con el pulso verde fluorescente
+        if (!document.getElementById('css-animacion-guardar')) {
+            const style = document.createElement('style');
+            style.id = 'css-animacion-guardar';
+            style.innerHTML = `
+            @keyframes pulse-green {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.8);
+                }
+                70% {
+                    box-shadow: 0 0 0 15px rgba(0, 255, 0, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(0, 255, 0, 0);
+                }
+            }
+            .btn-animacion-no-guardado {
+                animation: pulse-green 1.5s infinite !important;
+                border: 2px solid #00ff00 !important;
+                position: relative;
+                z-index: 1;
+            }
+            .btn-animacion-no-guardado:active {
+                transform: scale(0.92);
+                animation: none !important;
+            }
+        `;
+            document.head.appendChild(style);
+        }
+
+        // 2. Lógica del Warning (Alert)
+        let warningDiv = document.getElementById('addressChangeWarning');
+        if (!warningDiv) {
+            const warningDivContainer = document.createElement('div');
+            warningDivContainer.className = 'container-fluid';
+
+            warningDiv = document.createElement('div');
+            warningDiv.id = 'addressChangeWarning';
+            warningDiv.className = 'alert alert-warning mt-2 mb-2 shadow-sm';
+            warningDiv.innerHTML = '<i class="fa-solid fa-circle-info fa-fw"></i> {{ trans("address-changed-save-msg") }}';
+
+            warningDivContainer.appendChild(warningDiv);
+            const formHeader = document.getElementById('salesFormHeader');
+            if (formHeader) {
+                formHeader.insertBefore(warningDivContainer, formHeader.firstChild);
+            }
+        }
+
+        // 3. Aplicar la clase al botón de guardado
+        const saveBtn = document.querySelector('#salesFormFooter .btn-primary i.fa-save')?.closest('.btn-primary');
+        if (saveBtn) {
+            // Si el botón ya tiene la clase, no hacemos nada para no reiniciar la animación
+            if (!saveBtn.classList.contains('btn-animacion-no-guardado')) {
+                saveBtn.classList.add('btn-animacion-no-guardado');
+            }
+        }
+    }
 
     function changeColumn(btn) {
         $(btn).addClass('active').siblings().removeClass('active');
@@ -72,7 +132,11 @@
 
     function salesFormAction(action, selectedLine) {
         animateSpinner('add');
-        $('#headerModal').modal('hide');
+        
+        // Comprobar si el cliente ha cambiado y mostrar el warning
+        if (action === 'set-customer') {
+            addressChanged = true;
+        }
 
         document.forms['salesForm']['action'].value = action;
         document.forms['salesForm']['selectedLine'].value = selectedLine;
@@ -120,6 +184,12 @@
             if (Array.isArray(data.messages)) {
                 data.messages.forEach(item => alert(item.message));
             }
+            
+            // Mostrar la alerta de cambios en cliente
+            if (addressChanged) {
+                showAddressChangeWarning();
+            }
+            
             switch (document.forms['salesForm']['action'].value) {
                 case 'add-product':
                 case 'fast-product':
