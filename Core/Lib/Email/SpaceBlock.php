@@ -33,6 +33,11 @@ class SpaceBlock extends BaseBlock
         $this->height = $height;
     }
 
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static((float)($attrs['height'] ?? 30));
+    }
+
     public function render(bool $footer = false): string
     {
         $this->footer = $footer;

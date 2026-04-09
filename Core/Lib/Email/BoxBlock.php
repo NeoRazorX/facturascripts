@@ -41,6 +41,11 @@ class BoxBlock extends BaseBlock
         $this->blocks = $blocks;
     }
 
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static([], $attrs['css'] ?? '', $attrs['style'] ?? '');
+    }
+
     public function render(bool $footer = false): string
     {
         $this->footer = $footer;

@@ -45,6 +45,16 @@ class TitleBlock extends BaseBlock
         $this->type = $type;
     }
 
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static(
+            $attrs['text'] ?? $content,
+            $attrs['type'] ?? 'h2',
+            $attrs['css'] ?? '',
+            $attrs['style'] ?? ''
+        );
+    }
+
     public function render(bool $footer = false): string
     {
         $this->footer = $footer;
