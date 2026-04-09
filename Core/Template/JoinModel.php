@@ -275,6 +275,11 @@ abstract class JoinModel
         return $this->load($cod);
     }
 
+    public function loadWhereEq(string $field, $value): bool
+    {
+        return $this->loadWhere([Where::eq($field, $value)]);
+    }
+
     /**
      * Carga el primer registro que coincida con las condiciones especificadas.
      *
