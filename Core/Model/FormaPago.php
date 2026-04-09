@@ -178,9 +178,43 @@ class FormaPago extends ModelClass
     protected function saveInsert(): bool
     {
         if (empty($this->codpago)) {
-            $this->codpago = (string)$this->newCode();
+            $this->codpago = $this->newLetterCode();
         }
 
         return parent::saveInsert();
+    }
+
+    private function newLetterCode(): string
+    {
+        $desc = preg_replace('/[^A-Z0-9_\+\.\-]/i', '', strtoupper($this->descripcion ?? ''));
+        $prefix = substr($desc, 0, 4);
+
+        // try the first 4 letters of the description
+        if (strlen($prefix) === 4 && false === $this->codpagoExists($prefix)) {
+            return $prefix;
+        }
+
+        // try the 4-letter prefix + digit (2 to 9)
+        if (strlen($prefix) === 4) {
+            for ($digit = 2; $digit <= 9; $digit++) {
+                $candidate = $prefix . $digit;
+                if (false === $this->codpagoExists($candidate)) {
+                    return $candidate;
+                }
+            }
+        }
+
+        return (string)$this->newCode();
+    }
+
+    private function codpagoExists(string $codpago): bool
+    {
+        foreach (FormasPago::all() as $formaPago) {
+            if (strtoupper($formaPago->codpago) === strtoupper($codpago)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
