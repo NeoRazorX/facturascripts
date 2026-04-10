@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
@@ -145,7 +145,7 @@ class Dashboard extends Controller
      * @param string $field
      * @param int $previous
      *
-     * @return DataBaseWhere[]
+     * @return Where[]
      */
     private function getStatsWhere(string $field, int $previous): array
     {
@@ -154,8 +154,8 @@ class Dashboard extends Controller
         $untilDate = date('01-m-Y', strtotime($fromDate . ' +1 month'));
 
         return [
-            new DataBaseWhere($field, $fromDate, '>='),
-            new DataBaseWhere($field, $untilDate, '<'),
+            Where::gte($field, $fromDate),
+            Where::lt($field, $untilDate),
         ];
     }
 
@@ -237,7 +237,7 @@ class Dashboard extends Controller
         $minDate = Tools::date('-2 days');
         $minDateTime = Tools::dateTime('-2 days');
 
-        $whereCustomer = [new DataBaseWhere('fechaalta', $minDate, '>=')];
+        $whereCustomer = [Where::gte('fechaalta', $minDate)];
         foreach (Cliente::all($whereCustomer, ['fechaalta' => 'DESC'], 0, 3) as $customer) {
             $this->openLinks[] = [
                 'type' => 'customer',
@@ -247,7 +247,7 @@ class Dashboard extends Controller
             ];
         }
 
-        $whereContact = [new DataBaseWhere('fechaalta', $minDate, '>=')];
+        $whereContact = [Where::gte('fechaalta', $minDate)];
         foreach (Contacto::all($whereContact, ['fechaalta' => 'DESC'], 0, 3) as $contact) {
             $this->openLinks[] = [
                 'type' => 'contact',
@@ -257,7 +257,7 @@ class Dashboard extends Controller
             ];
         }
 
-        $whereProd = [new DataBaseWhere('actualizado', $minDateTime, '>=')];
+        $whereProd = [Where::gte('actualizado', $minDateTime)];
         foreach (Producto::all($whereProd, ['actualizado' => 'DESC'], 0, 3) as $product) {
             $this->openLinks[] = [
                 'type' => 'product',
@@ -276,9 +276,9 @@ class Dashboard extends Controller
     private function loadReceiptSection(): void
     {
         $where = [
-            new DataBaseWhere('pagado', false),
-            new DataBaseWhere('vencimiento', Tools::date(), '<'),
-            new DataBaseWhere('vencimiento', date('Y-m-d', strtotime('-1 year')), '>'),
+            Where::eq('pagado', false),
+            Where::lt('vencimiento', Tools::date()),
+            Where::gt('vencimiento', date('Y-m-d', strtotime('-1 year'))),
         ];
         $this->receipts = ReciboCliente::all($where, ['vencimiento' => 'DESC']);
 
@@ -334,8 +334,8 @@ class Dashboard extends Controller
     {
         $minDate = Tools::date('-2 days');
         $where = [
-            new DataBaseWhere('fecha', $minDate, '>='),
-            new DataBaseWhere('nick', $this->user->nick),
+            Where::gte('fecha', $minDate),
+            Where::eq('nick', $this->user->nick),
         ];
         foreach ($model->all($where, [$model->primaryColumn() => 'DESC'], 0, 3) as $doc) {
             $this->openLinks[] = [
