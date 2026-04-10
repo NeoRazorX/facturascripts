@@ -40,7 +40,7 @@
     {% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
 
     <div class="container" style="margin-top: -100px;">
-        <form method="post" class="form" id="formWizard">
+        <form method="post" enctype="multipart/form-data" class="form" id="formWizard">
             {{ formToken() }}
             <input type="hidden" name="action" value="step1"/>
             <div class="card shadow mb-5">
@@ -55,24 +55,30 @@
                     <p>{{ trans('wizard-p') }}</p>
                     <hr/>
                     <div class="row gx-2">
-                        <div class="col-lg-3 col-md-6">
+                        <div class="col-12">
+                            <h2 class="h6 text-uppercase text-muted mb-3">{{ trans('company') }}</h2>
+                        </div>
+                        <div class="col-lg-6 col-md-12">
                             <div class="mb-3">
                                 {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text',
                                     trans('company-name'), '', {'autofocus': '', 'maxlength': '100', 'required': ''}) }}
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6">
+                        <div class="col-lg-6 col-md-12">
                             <div class="mb-3">
                                 <label class="mb-1">{{ trans('type') }}</label>
-                                <select name="personafisica" class="form-select">
-                                    {% if fsc.empresa.personafisica %}
-                                        <option value="1" selected>{{ trans('is-person') }}</option>
-                                        <option value="0">{{ trans('company') }}</option>
-                                    {% else %}
-                                        <option value="1">{{ trans('is-person') }}</option>
-                                        <option value="0" selected>{{ trans('company') }}</option>
-                                    {% endif %}
-                                </select>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <input type="radio" class="btn-check" name="personafisica" id="personafisica-company"
+                                           value="0" autocomplete="off"{% if not fsc.empresa.personafisica %} checked{% endif %}>
+                                    <label class="btn btn-outline-secondary" for="personafisica-company">
+                                        {{ trans('company') }}
+                                    </label>
+                                    <input type="radio" class="btn-check" name="personafisica" id="personafisica-person"
+                                           value="1" autocomplete="off"{% if fsc.empresa.personafisica %} checked{% endif %}>
+                                    <label class="btn btn-outline-secondary" for="personafisica-person">
+                                        {{ trans('is-person') }}
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-6">
@@ -89,17 +95,21 @@
                         </div>
                         <div class="col-lg-6 col-md-12">
                             <div class="mb-3">
+                                <label class="mb-1" for="logo">{{ trans('logo') }}</label>
+                                <input type="file" name="logo" id="logo" class="form-control"
+                                       accept=".gif,.jpg,.jpeg,.png"/>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <h2 class="h6 text-uppercase text-muted mb-3">{{ trans('address') }}</h2>
+                        </div>
+                        <div class="col-lg-6 col-md-12">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', trans('address'),
                                     'fa-solid fa-map-marked', {'maxlength': '200'}) }}
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="mb-3">
-                                {{ forms.simpleInput('apartado', 'apartado', fsc.empresa.apartado, 'text', trans('post-office-box'),
-                                    NULL, {'maxlength': '10', 'placeholder': trans('optional')}) }}
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
+                        <div class="col-lg-2 col-md-6">
                             <div class="mb-3">
                                 {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', trans('zip-code'),
                                     NULL, {'maxlength': '10'}) }}
@@ -128,6 +138,15 @@
                                 {% endif %}
                             </div>
                         </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="mb-3">
+                                {{ forms.simpleInput('apartado', 'apartado', fsc.empresa.apartado, 'text', trans('post-office-box'),
+                                    NULL, {'maxlength': '10', 'placeholder': trans('optional')}) }}
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <h2 class="h6 text-uppercase text-muted mb-3">{{ trans('contact') }}</h2>
+                        </div>
                         {% if fsc.empresa.email is empty or fsc.user.email is empty %}
                             <div class="col-lg-4 col-md-6">
                                 <div class="mb-3">
@@ -151,6 +170,9 @@
                     </div>
                     {% if fsc.user.verifyPassword('admin') %}
                         <div class="row gx-2">
+                            <div class="col-12 mt-2">
+                                <h2 class="h6 text-uppercase text-muted mb-3">{{ trans('password') }}</h2>
+                            </div>
                             <div class="col mt-3">
                                 <div class="alert alert-warning" role="alert">
                                     <h4 class="alert-heading">

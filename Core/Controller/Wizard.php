@@ -21,16 +21,21 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\UploadedFile;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\Role;
+use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -219,8 +224,8 @@ class Wizard extends Controller
 
         // assigns warehouse?
         $where = [
-            new DataBaseWhere('idempresa', $this->empresa->idempresa),
-            new DataBaseWhere('idempresa', null, 'IS', 'OR')
+            Where::eq('idempresa', $this->empresa->idempresa),
+            Where::orIsNull('idempresa')
         ];
         foreach (Almacen::all($where) as $almacen) {
             $this->setWarehouse($almacen, $codpais);
@@ -270,6 +275,10 @@ class Wizard extends Controller
             'Impuesto', 'Retencion', 'Serie', 'Provincia']);
         $this->saveAddress($codpais);
 
+        if (false === $this->saveLogo()) {
+            return;
+        }
+
         // change password
         $pass = $this->request->input('password', '');
         if ('' !== $pass && false === $this->saveNewPassword($pass)) {
@@ -295,15 +304,14 @@ class Wizard extends Controller
         $this->empresa->regimeniva = $this->request->input('regimeniva');
         $this->empresa->save();
 
-        foreach (['codimpuesto', 'costpricepolicy'] as $key) {
-            $value = $this->request->input($key);
-            $finalValue = empty($value) ? null : $value;
-            Tools::settingsSet('default', $key, $finalValue);
-        }
-        Tools::settingsSet('default', 'updatesupplierprices', (bool)$this->request->input('updatesupplierprices', '0'));
+        $codimpuesto = $this->request->input('codimpuesto');
+        Tools::settingsSet('default', 'codimpuesto', empty($codimpuesto) ? null : $codimpuesto);
         Tools::settingsSet('default', 'ventasinstock', (bool)$this->request->input('ventasinstock', '0'));
         Tools::settingsSet('default', 'site_url', Tools::siteUrl());
         Tools::settingsSave();
+
+        $this->saveInvoiceStartNumber();
+        $this->saveBankAccount();
 
         if ($this->request->input('defaultplan', '0')) {
             $this->loadDefaultAccountingPlan($this->empresa->codpais);
@@ -348,6 +356,107 @@ class Wizard extends Controller
         $this->finalRedirect();
     }
 
+    private function saveBankAccount(): void
+    {
+        $iban = $this->request->input('iban', '');
+        $bankName = $this->request->input('bank_name', '');
+        if (empty($iban) && empty($bankName)) {
+            return;
+        }
+
+        $paymentMethod = $this->getTransferPaymentMethod();
+        if (false === $paymentMethod->exists()) {
+            return;
+        }
+
+        $account = new CuentaBanco();
+        if (!empty($paymentMethod->codcuentabanco)) {
+            $account->load($paymentMethod->codcuentabanco);
+        }
+
+        $account->descripcion = empty($bankName) ? $this->empresa->nombrecorto : $bankName;
+        $account->iban = $iban;
+        $account->idempresa = $this->empresa->idempresa;
+        if (false === $account->save()) {
+            return;
+        }
+
+        $paymentMethod->codcuentabanco = $account->codcuenta;
+        $paymentMethod->idempresa = $this->empresa->idempresa;
+        $paymentMethod->save();
+    }
+
+    private function saveLogo(): bool
+    {
+        $uploadFile = $this->request->file('logo');
+        if (empty($uploadFile)) {
+            return true;
+        }
+
+        if (false === $uploadFile->isValid()) {
+            Tools::log()->error($uploadFile->getErrorMessage());
+            return false;
+        }
+
+        if (false === in_array($uploadFile->getClientMimeType(), ['image/gif', 'image/jpeg', 'image/png'])) {
+            Tools::log()->error('not-valid-image');
+            return false;
+        }
+
+        $attachedFile = $this->uploadLogoFile($uploadFile);
+        if (empty($attachedFile->idfile)) {
+            Tools::log()->error('file-not-found', ['%fileName%' => $uploadFile->getClientOriginalName()]);
+            return false;
+        }
+
+        $this->empresa->idlogo = $attachedFile->idfile;
+        return $this->empresa->save();
+    }
+
+    private function saveInvoiceStartNumber(): void
+    {
+        $startNumber = (int)$this->request->input('invoice_start_number', '1');
+        if ($startNumber < 2) {
+            return;
+        }
+
+        $exerciseCode = $this->getCompanyExerciseCode();
+        if (empty($exerciseCode)) {
+            return;
+        }
+
+        // buscamos las secuencias de FacturaCliente para actualizar el número de inicio
+        $secuencia = new SecuenciaDocumento();
+        $where = [
+            Where::eq('codejercicio', $exerciseCode),
+            Where::eq('codserie', 'A'),
+            Where::eq('tipodoc', 'FacturaCliente'),
+            Where::eq('idempresa', $this->empresa->idempresa),
+        ];
+        $found = false;
+        foreach ($secuencia->all($where) as $sec) {
+            $found = true;
+            $sec->inicio = $startNumber;
+            $sec->numero = $startNumber;
+            $sec->patron = 'F{EJE}{SERIE}{NUM}';
+            $sec->save();
+        }
+        if ($found) {
+            return;
+        }
+
+        // si no existe la secuencia, la creamos
+        $secuencia->codejercicio = $exerciseCode;
+        $secuencia->codserie = 'A';
+        $secuencia->idempresa = $this->empresa->idempresa;
+        $secuencia->inicio = $startNumber;
+        $secuencia->numero = $startNumber;
+        $secuencia->patron = 'F{EJE}{SERIE}{NUM}';
+        $secuencia->tipodoc = 'FacturaCliente';
+        $secuencia->usarhuecos = true;
+        $secuencia->save();
+    }
+
     private function setWarehouse(Almacen $almacen, string $codpais): void
     {
         $almacen->ciudad = $this->empresa->ciudad;
@@ -362,5 +471,52 @@ class Wizard extends Controller
         Tools::settingsSet('default', 'codalmacen', $almacen->codalmacen);
         Tools::settingsSet('default', 'idempresa', $this->empresa->idempresa);
         Tools::settingsSave();
+    }
+
+    private function uploadLogoFile(UploadedFile $uploadFile): AttachedFile
+    {
+        // exclude php files
+        if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
+            return new AttachedFile();
+        }
+
+        $destiny = FS_FOLDER . '/MyFiles/';
+        $destinyName = $uploadFile->getClientOriginalName();
+        if (file_exists($destiny . $destinyName)) {
+            $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
+        }
+
+        if (false === $uploadFile->move($destiny, $destinyName)) {
+            return new AttachedFile();
+        }
+
+        $file = new AttachedFile();
+        $file->path = $destinyName;
+        return $file->save() ? $file : new AttachedFile();
+    }
+
+    private function getTransferPaymentMethod(): FormaPago
+    {
+        $paymentMethod = new FormaPago();
+        if ($paymentMethod->load('TRANS')) {
+            return $paymentMethod;
+        }
+
+        $paymentMethod->codpago = 'TRANS';
+        $paymentMethod->descripcion = 'Transferencia bancaria';
+        $paymentMethod->idempresa = $this->empresa->idempresa;
+        $paymentMethod->plazovencimiento = 1;
+        $paymentMethod->tipovencimiento = 'months';
+        $paymentMethod->save();
+        return $paymentMethod;
+    }
+
+    private function getCompanyExerciseCode(): string
+    {
+        foreach ($this->empresa->getExercises() as $exercise) {
+            return (string)$exercise->codejercicio;
+        }
+
+        return '';
     }
 }
