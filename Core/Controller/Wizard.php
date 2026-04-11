@@ -306,6 +306,10 @@ class Wizard extends Controller
 
         $codimpuesto = $this->request->input('codimpuesto');
         Tools::settingsSet('default', 'codimpuesto', empty($codimpuesto) ? null : $codimpuesto);
+
+        $codpago = $this->request->input('codpago');
+        Tools::settingsSet('default', 'codpago', empty($codpago) ? null : $codpago);
+
         Tools::settingsSet('default', 'ventasinstock', (bool)$this->request->input('ventasinstock', '0'));
         Tools::settingsSet('default', 'site_url', Tools::siteUrl());
         Tools::settingsSave();

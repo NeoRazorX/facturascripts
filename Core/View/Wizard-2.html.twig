@@ -69,6 +69,20 @@
                     <div class="row gx-2">
                         <div class="col-lg-6 col-md-6">
                             <div class="mb-3">
+                                {{ forms.simpleInput('invoice_start_number', 'invoice_start_number', '1', 'number',
+                                    trans('invoice-start-number'), '', {'min': '1'}) }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3">
+                                {{ forms.simpleSelect('codpago', 'codpago', settings('default', 'codpago'),
+                                    fsc.getSelectValues('FormaPago', false), trans('default-payment-method')) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gx-2">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('bank_name', 'bank_name', '', 'text', trans('bank-name'),
                                     'fa-solid fa-building-columns', {'maxlength': '100', 'placeholder': trans('optional')}) }}
                             </div>
@@ -78,14 +92,6 @@
                                 {{ forms.simpleInput('iban', 'iban', '', 'text', trans('iban'),
                                     'fa-solid fa-university', {'maxlength': '34', 'placeholder': trans('optional')}) }}
                                 <small class="form-text text-muted">{{ trans('wizard-iban-help') }}</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row gx-2">
-                        <div class="col-lg-6 col-md-6">
-                            <div class="mb-3">
-                                {{ forms.simpleInput('invoice_start_number', 'invoice_start_number', '1', 'number',
-                                    trans('invoice-start-number'), '', {'min': '1'}) }}
                             </div>
                         </div>
                     </div>
