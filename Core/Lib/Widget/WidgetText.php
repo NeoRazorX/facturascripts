@@ -35,6 +35,14 @@ class WidgetText extends BaseWidget
     protected $maxlength;
 
     /**
+     * Indicates the minim length of characters.
+     * 0 -> indeterminate
+     *
+     * @var int
+     */
+    protected $minlength;
+
+    /**
      * Class constructor
      *
      * @param array $data
@@ -42,17 +50,27 @@ class WidgetText extends BaseWidget
     public function __construct($data)
     {
         parent::__construct($data);
-        $this->maxlength = $data['maxlength'] ?? 0;
+        $this->maxlength = $data['maxlength'] ?? $data['max'] ?? 0;
+        $this->minlength = $data['minlength'] ?? $data['min'] ?? 0;
     }
 
     /**
-     * Add extra attributes to html input field
+     * Add extra attributes to HTML input field
      *
      * @return string
      */
-    protected function inputHtmlExtraParams()
+    protected function inputHtmlExtraParams(): string
     {
-        $params = $this->maxlength > 0 ? ' maxlength="' . $this->maxlength . '"' : '';
+        $params = '';
+
+        if ($this->maxlength > 0) {
+            $params .= ' maxlength="' . $this->maxlength . '"';
+        }
+
+        if ($this->minlength > 0) {
+            $params .= ' minlength="' . $this->minlength . '"';
+        }
+
         return $params . parent::inputHtmlExtraParams();
     }
 }
