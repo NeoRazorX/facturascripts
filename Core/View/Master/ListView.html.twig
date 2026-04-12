@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,7 +57,7 @@
                             </a>
                         {% endif %}
                     {% endif %}
-                    {% if currentView.settings.btnDelete %}
+                    {% if currentView.settings.btnDelete and currentView.count > 0 %}
                         <button type="button" class="btn btn-danger"
                                 onclick="listViewDelete('{{ currentView.getViewName() }}');"
                                 title="{{ trans('delete') }}">
@@ -69,7 +69,7 @@
                             {{ _self.printButton(fsc, currentView) }}
                         </div>
                     {% endif %}
-                    {% if currentView.settings.clickable %}
+                    {% if currentView.settings.clickable and currentView.count > 0 %}
                         <button type="button" class="btn btn-light"
                                 onclick="listViewOpenTab('{{ currentView.getViewName() }}');"
                                 title="{{ trans('open-tab') }}">

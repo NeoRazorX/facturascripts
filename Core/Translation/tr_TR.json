@@ -1883,7 +1883,7 @@
     "without-tax": "KDV hariç",
     "without-taxation": "Vergisiz",
     "wizard": "Asistan",
-    "wizard-iban-help": "Cuenta bancaria que aparecerá en las facturas.",
+    "wizard-iban-help": "Faturalarda görünecek banka hesabı.",
     "wizard-p": "Kurulumu tamamlamak için işinize dair bu formu doldurun.",
     "wizard-plugins": "Eklentiler, yeni işlevsellikler ekleyen bileşenlerdir. Hemen etkinleştirmek istediğiniz eklentileri seçin veya daha sonra kontrol panelinden yapın.",
     "work": "İş",
