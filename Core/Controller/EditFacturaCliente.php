@@ -7,8 +7,9 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\AjaxForms\SalesController;
-use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Params\RefundInvoiceParams;
+use FacturaScripts\Core\Service\InvoiceManager;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
@@ -306,78 +307,22 @@ class EditFacturaCliente extends SalesController
                 $lines[] = $line;
             }
         }
-        if (empty($lines)) {
-            Tools::log()->warning('no-selected-item');
+
+        $params = new RefundInvoiceParams(
+            lines: $lines,
+            codserie: $this->request->input('codserie', ''),
+            fecha: $this->request->input('fecha'),
+            observaciones: $this->request->input('observaciones', ''),
+            idestado: $this->request->input('idestado', ''),
+            nick: $this->user->nick,
+            includeAllLinesIfEmpty: false
+        );
+
+        $newRefund = InvoiceManager::createRefund($invoice, $params);
+        if ($newRefund === null) {
             return true;
         }
 
-        $this->dataBase->beginTransaction();
-
-        if ($invoice->editable) {
-            foreach ($invoice->getAvailableStatus() as $status) {
-                if ($status->editable || !$status->activo) {
-                    continue;
-                }
-
-                $invoice->idestado = $status->idestado;
-                if (false === $invoice->save()) {
-                    Tools::log()->error('record-save-error');
-                    $this->dataBase->rollback();
-                    return true;
-                }
-            }
-        }
-
-        $newRefund = new FacturaCliente();
-        $newRefund->loadFromData($invoice->toArray(), $invoice::dontCopyFields());
-        $newRefund->codigorect = $invoice->codigo;
-        $newRefund->codserie = $this->request->input('codserie');
-        $newRefund->idfacturarect = $invoice->idfactura;
-        $newRefund->nick = $this->user->nick;
-        $newRefund->observaciones = $this->request->input('observaciones');
-        $newRefund->setDate($this->request->input('fecha'), date(Tools::HOUR_STYLE));
-        if (false === $newRefund->save()) {
-            Tools::log()->error('record-save-error');
-            $this->dataBase->rollback();
-            return true;
-        }
-
-        foreach ($lines as $line) {
-            $newLine = $newRefund->getNewLine($line->toArray());
-            $newLine->cantidad = 0 - (float)$this->request->input('refund_' . $line->id(), '0');
-            $newLine->idlinearect = $line->idlinea;
-            if (false === $newLine->save()) {
-                Tools::log()->error('record-save-error');
-                $this->dataBase->rollback();
-                return true;
-            }
-        }
-
-        $newLines = $newRefund->getLines();
-        if (false === Calculator::calculate($newRefund, $newLines, true)) {
-            Tools::log()->error('record-save-error');
-            $this->dataBase->rollback();
-            return true;
-        }
-
-        // si la factura estaba pagada, marcamos los recibos de la nueva como pagados
-        if ($invoice->pagada) {
-            foreach ($newRefund->getReceipts() as $receipt) {
-                $receipt->pagado = true;
-                $receipt->save();
-            }
-        }
-
-        // asignamos el estado de la factura
-        $newRefund->idestado = $this->request->input('idestado');
-        if (false === $newRefund->save()) {
-            Tools::log()->error('record-save-error');
-            $this->dataBase->rollback();
-            return true;
-        }
-
-        $this->dataBase->commit();
-        Tools::log()->notice('record-updated-correctly');
         $this->redirect($newRefund->url() . '&action=save-ok');
         return false;
     }
