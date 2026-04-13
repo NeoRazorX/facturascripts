@@ -55,8 +55,10 @@
             <div class="row">
                 <div class="col-12 text-end">
                     {# -- Row statistics -- #}
-                    {% set row = currentView.getRow('statistics') %}
-                    {{ row.render(fsc) | raw }}
+                    {% if fsc.hasData %}
+                        {% set row = currentView.getRow('statistics') %}
+                        {{ row.render(fsc) | raw }}
+                    {% endif %}
                     {% if fieldCount > 30 and currentView.settings.btnSave %}
                         <button class="btn btn-sm btn-primary" type="submit">
                             <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
