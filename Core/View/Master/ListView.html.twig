@@ -174,8 +174,23 @@
                         {% endfor %}
                     </tr>
                 {% else %}
-                    <tr class="table-warning">
-                        <td colspan="{{ 1 + currentView.getColumns() | length }}">{{ trans('no-data') }}</td>
+                    <tr>
+                        <td colspan="{{ 1 + currentView.getColumns() | length }}" class="text-center p-5 text-muted">
+                            {% if currentView.query %}
+                                <div class="mb-3">
+                                    <i class="fa-solid fa-magnifying-glass fa-3x text-secondary"></i>
+                                </div>
+                                <p class="mb-0">{{ trans('no-results-found') }}</p>
+                            {% else %}
+                                <div class="mb-3">
+                                    <i class="fa-solid fa-inbox fa-3x text-secondary"></i>
+                                </div>
+                                <p class="mb-1">{{ trans('no-data-empty-list') }}</p>
+                                {% if currentView.settings.btnNew %}
+                                    <p class="mb-0 small">{{ trans('no-data-click-new') }}</p>
+                                {% endif %}
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
