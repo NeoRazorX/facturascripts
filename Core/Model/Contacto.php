@@ -165,7 +165,7 @@ class Contacto extends ModelClass
         return $this->nombre . ' ' . $this->apellidos;
     }
 
-    public function getCustomer(bool $create = true): Cliente
+    public function getCustomer(bool $create = true): DinCliente
     {
         $cliente = new DinCliente();
         if ($this->codcliente && $cliente->load($this->codcliente)) {
