@@ -164,7 +164,7 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewPurchases(string $viewName, string $modelName, string $label): void
     {
-        $this->addView($viewName, $modelName, $label, 'fa-solid fa-copy')
+        $this->addView($viewName, $modelName, $label, 'fa-regular fa-file')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
             ->addOrderBy([$this->tab($viewName)->model->primaryColumn()], 'id')
@@ -185,7 +185,7 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewSales(string $viewName, string $modelName, string $label): void
     {
-        $this->addView($viewName, $modelName, $label, 'fa-solid fa-copy')
+        $this->addView($viewName, $modelName, $label, 'fa-regular fa-file')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['codcliente'], 'customer-code')
             ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)

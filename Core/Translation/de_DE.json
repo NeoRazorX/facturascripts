@@ -1124,6 +1124,8 @@
     "no-admin": "Kein Administrator",
     "no-agent": "Kein Agent",
     "no-data": "Keine Daten",
+    "no-data-click-new": "Pulsa el botón Nuevo para crear el primer registro.",
+    "no-data-empty-list": "Este listado está vacío.",
     "no-data-received-form": "Keine Daten vom Formular erhalten",
     "no-devices-detected-scan-usb": "Es wurden keine Geräte erkannt. Bitte versuchen Sie einen Scan.",
     "no-document-selected": "Es wurde kein Dokument ausgewählt.",

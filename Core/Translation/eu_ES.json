@@ -1124,6 +1124,8 @@
     "no-admin": "Ez da administratzaile",
     "no-agent": "Agenterik gabe",
     "no-data": "Ez dago daturik",
+    "no-data-click-new": "Pulsa el botón Nuevo para crear el primer registro.",
+    "no-data-empty-list": "Este listado está vacío.",
     "no-data-received-form": "Ez da inprimaki bidez daturik jaso",
     "no-devices-detected-scan-usb": "Ez da gailurik detektatu. Saiatu eskaneatzen.",
     "no-document-selected": "Ez da dokumenturik hautatu",
