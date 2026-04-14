@@ -106,8 +106,14 @@ class EditCliente extends ComercialContactController
         $this->createCustomerListView($viewName, $model, $label)
             ->setSettings('btnPrint', true);
 
-        $this->addButtonGroupDocument($viewName);
-        $this->addButtonApproveDocument($viewName);
+        // agrupamos las acciones en un dropdown
+        $this->tab($viewName)->addButtonGroup([
+            'name' => 'doc-actions',
+            'icon' => 'fa-solid fa-circle-check',
+            'label' => 'actions'
+        ]);
+        $this->addButtonApproveDocument($viewName, 'doc-actions');
+        $this->addButtonGroupDocument($viewName, 'doc-actions');
     }
 
     protected function createInvoiceView(string $viewName): void
@@ -115,7 +121,14 @@ class EditCliente extends ComercialContactController
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices')
             ->setSettings('btnPrint', true);
 
-        $this->addButtonLockInvoice($viewName);
+        // agrupamos las acciones de facturas en un dropdown
+        $this->tab($viewName)->addButtonGroup([
+            'name' => 'invoice-actions',
+            'icon' => 'fa-solid fa-circle-check',
+            'label' => 'actions'
+        ]);
+        $this->addButtonPayInvoice($viewName, 'invoice-actions');
+        $this->addButtonLockInvoice($viewName, 'invoice-actions');
     }
 
     /**
@@ -232,7 +245,7 @@ class EditCliente extends ComercialContactController
 
             case 'ListFacturaCliente':
                 $view->loadData('', $where);
-                $this->addButtonGenerateAccountingInvoices($viewName, $codcliente);
+                $this->addButtonGenerateAccountingInvoices($viewName, $codcliente, 'invoice-actions');
                 break;
 
             case 'ListAlbaranCliente':

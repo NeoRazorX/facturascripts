@@ -64,12 +64,12 @@
                             <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
                         </button>
                     {% endif %}
-                    {% if currentView.settings.btnPrint %}
+                    {% if currentView.settings.btnPrint and currentView.count > 0 %}
                         <div class="btn-group">
                             {{ _self.printButton(fsc, currentView) }}
                         </div>
                     {% endif %}
-                    {% if currentView.settings.clickable and currentView.count > 0 %}
+                    {% if currentView.settings.clickable and currentView.count > 1 %}
                         <button type="button" class="btn btn-light"
                                 onclick="listViewOpenTab('{{ currentView.getViewName() }}');"
                                 title="{{ trans('open-tab') }}">
@@ -356,7 +356,7 @@
 
 {% macro colorsButton(currentView) %}
     {% set legend = currentView.getRow('status').legend() %}
-    {% if legend %}
+    {% if legend and currentView.count > 0 %}
         {% set viewName = currentView.getViewName() %}
         <div class="btn-group">
             <div class="dropdown">
