@@ -92,6 +92,7 @@ Luego visita http://localhost:8000 en tu navegador.
 
 ## 📚 Documentación
 
+- **Curso Oficial de Usuario** (con certificación oficial): [facturascripts.com/cursos/curso-de-usuario](https://facturascripts.com/cursos/curso-de-usuario)
 - **Guía de Usuario**: [facturascripts.com/ayuda](https://facturascripts.com/ayuda)
 - **Documentación para Desarrolladores**: [facturascripts.com/ayuda-dev](https://facturascripts.com/ayuda-dev)
 - **Hoja de Ruta**: [facturascripts.com/roadmap](https://facturascripts.com/roadmap)
@@ -124,11 +125,11 @@ Si descubres una vulnerabilidad de seguridad, por favor envía un correo electr�
 
 ## 🔗 Recursos Útiles
 
-- [📹 Curso de YouTube](https://www.youtube.com/watch?v=rGopZA3ErzE&list=PLNxcJ5CWZ8V6nfeVu6vieKI_d8a_ObLfY)
 - [🧾 Programa para hacer facturas gratis](https://facturascripts.com/programa-para-hacer-facturas)
 - [📋 Programa para hacer presupuestos gratis](https://facturascripts.com/programa-de-presupuestos)
 - [📊 Programa de contabilidad gratis para autónomos](https://facturascripts.com/software-contabilidad)
 - [🖨️ Programa para imprimir tickets](https://facturascripts.com/remote-printer)
+- [📹 Curso viejo de YouTube](https://www.youtube.com/watch?v=rGopZA3ErzE&list=PLNxcJ5CWZ8V6nfeVu6vieKI_d8a_ObLfY)
 
 ---
 
