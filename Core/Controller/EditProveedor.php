@@ -34,7 +34,7 @@ use FacturaScripts\Core\Lib\TaxExceptions;
  * @author       Nazca Networks             <comercial@nazcanetworks.com>
  * @author       Fco. Antonio Moreno Pérez  <famphuelva@gmail.com>
  * @author       Carlos García Gómez        <carlos@facturascripts.com>
- * @collaborator Daniel Fernández Giménez   <hola@danielfg.es>
+ * @collaborator Daniel Fernández Giménez   <contacto@danielfg.es>
  */
 class EditProveedor extends ComercialContactController
 {
