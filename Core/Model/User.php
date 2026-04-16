@@ -39,7 +39,7 @@ use FacturaScripts\Dinamic\Model\Serie as DinSerie;
  * Usuario de FacturaScripts.
  *
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
- * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ * @collaborator Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class User extends ModelClass
 {

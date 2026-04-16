@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Lib;
  * This class centralizes all types of products.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class ProductType
 {

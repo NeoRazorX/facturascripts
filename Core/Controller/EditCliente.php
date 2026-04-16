@@ -41,7 +41,7 @@ use FacturaScripts\Dinamic\Model\PresupuestoCliente;
  * @author       Carlos García Gómez           <carlos@facturascripts.com>
  * @author       Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author       Fco. Antonio Moreno Pérez     <famphuelva@gmail.com>
- * @collaborator Daniel Fernández Giménez      <hola@danielfg.es>
+ * @collaborator Daniel Fernández Giménez      <contacto@danielfg.es>
  */
 class EditCliente extends ComercialContactController
 {

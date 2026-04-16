@@ -40,7 +40,7 @@ use Twig\Error\SyntaxError;
  * Description of NewMail
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class NewMail
 {

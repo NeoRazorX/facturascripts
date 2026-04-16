@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Lib;
  * This class centralizes all common method for VAT Regime.
  *
  * @author          Carlos García Gómez         <carlos@facturascripts.com>
- * @collaborator    Daniel Fernández Giménez    <hola@danielfg.es>
+ * @collaborator    Daniel Fernández Giménez    <contacto@danielfg.es>
  */
 class RegimenIVA
 {

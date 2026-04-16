@@ -25,7 +25,7 @@ use FacturaScripts\Core\Template\ExtensionsTrait;
  * Description of TitleBlock
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class TitleBlock extends BaseBlock
 {
