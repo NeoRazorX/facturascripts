@@ -36,7 +36,7 @@ use SimpleXMLElement;
  *
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @author       Raul Jimenez             <comercial@nazcanetworks.com>
- * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ * @collaborator Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class AccountingPlanImport
 {

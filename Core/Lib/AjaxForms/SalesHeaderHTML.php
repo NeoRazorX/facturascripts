@@ -36,7 +36,7 @@ use FacturaScripts\Dinamic\Model\Provincia;
  * Description of SalesHeaderHTML
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class SalesHeaderHTML
 {

@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\EmailNotification;
 /**
  * Controller to edit main settings
  *
- * @author Daniel Fernández Giménez  <hola@danielfg.es>
+ * @author Daniel Fernández Giménez  <contacto@danielfg.es>
  * @author Carlos Garcia Gomez       <carlos@facturascripts.com>
  */
 class ConfigEmail extends PanelController

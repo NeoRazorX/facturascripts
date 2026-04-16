@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Lib\Email;
  * Description of BaseBlock
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 abstract class BaseBlock
 {

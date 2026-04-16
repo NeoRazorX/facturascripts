@@ -25,7 +25,7 @@ use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Tools;
 
 /**
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 trait IntracomunitariaTrait
 {
