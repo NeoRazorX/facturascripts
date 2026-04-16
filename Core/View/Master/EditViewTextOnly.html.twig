@@ -1,0 +1,149 @@
+{#
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+#}
+{% set currentView = fsc.getCurrentView() %}
+{% set action = currentView.model.exists() ? 'edit' : 'insert' %}
+{% set fieldCount = 0 %}
+{% for group in currentView.getColumns() %}
+    {% set fieldCount = fieldCount + group.columns | length %}
+{% endfor %}
+
+<script>
+    function editViewDelete(viewName) {
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal' + viewName));
+
+        document.getElementById('confirmDeleteBtn' + viewName).onclick = function () {
+            document.querySelector("#form" + viewName + " input[name='action']").value = "delete";
+            document.getElementById("form" + viewName).submit();
+        };
+
+        deleteModal.show();
+        return false;
+    }
+
+    function editViewEdit(viewName) {
+        document.querySelector("#form" + viewName + " input[name='action']").value = "mostrar-formulario-editar";
+        document.getElementById("form" + viewName).submit();
+        return false;
+    }
+</script>
+
+{# -- Row header -- #}
+<div class="row">
+    {% set row = currentView.getRow('header') %}
+    {{ row.render(currentView.getViewName(), '', fsc) | raw }}
+</div>
+
+<form id="form{{ currentView.getViewName() }}" method="post" enctype="multipart/form-data"
+      onsubmit="animateSpinner('add')">
+    {{ formToken() }}
+    <input type="hidden" name="action" value="{{ action }}"/>
+    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+    <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
+    <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
+        <div class="{{ currentView.settings.card ? 'card-body' : 'container-fluid' }}">
+            <div class="row">
+                <div class="col-12 text-end">
+                    {# -- Row statistics -- #}
+                    {% if fsc.hasData %}
+                        {% set row = currentView.getRow('statistics') %}
+                        {{ row.render(fsc) | raw }}
+                    {% endif %}
+                    {% if fieldCount > 30 and currentView.settings.btnSave %}
+                        <button class="btn btn-sm btn-primary" type="submit">
+                            <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">{{ trans('save') }}</span>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                {% for group in currentView.getColumns() %}
+                    {{ group.textOnly(currentView.model) | raw }}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="{{ currentView.settings.card ? 'card-footer p-2' : 'container-fluid' }}">
+            <div class="row g-2">
+                {% if fsc.hasData and currentView.settings.btnDelete %}
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-sm btn-danger"
+                                onclick="editViewDelete('{{ currentView.getViewName() }}');">
+                            <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">{{ trans('delete') }}</span>
+                        </button>
+                    </div>
+                {% endif %}
+                {% set extraClass = fsc.hasData and currentView.settings.btnDelete ? 'text-center' : '' %}
+                <div class="col {{ extraClass }}">
+                    {# -- Row actions -- #}
+                    {% set row = currentView.getRow('actions') %}
+                    {{ row.render(false, currentView.getViewName()) | raw }}
+                </div>
+                {% if currentView.settings.btnSave %}
+                    <div class="col-auto">
+                        <button id="btn-editar" class="btn btn-sm btn-primary" type="button"
+                                onclick="editViewEdit('{{ currentView.getViewName() }}');">
+                            <i class="fa-solid fa-file-pen fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">{{ trans('edit') }}</span>
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>
+
+<br/>
+
+{# -- Row footer -- #}
+<div class="row">
+    {% set row = currentView.getRow('footer') %}
+    {{ row.render(currentView.getViewName(), '', fsc) | raw }}
+</div>
+
+{# -- Modals -- #}
+{% for group in currentView.getModals() %}
+    {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
+{% endfor %}
+
+{# -- Delete Confirmation Modal -- #}
+<div class="modal fade" id="deleteConfirmModal{{ currentView.getViewName() }}" tabindex="-1"
+     aria-labelledby="deleteConfirmModalLabel{{ currentView.getViewName() }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"
+                    id="deleteConfirmModalLabel{{ currentView.getViewName() }}">{{ trans('confirm-delete') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ trans('are-you-sure') }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-times"></i> {{ trans('cancel') }}
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn{{ currentView.getViewName() }}">
+                    <i class="fa-solid fa-check"></i> {{ trans('confirm') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

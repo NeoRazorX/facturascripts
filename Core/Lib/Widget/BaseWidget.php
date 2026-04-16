@@ -177,6 +177,17 @@ class BaseWidget extends VisualItem
         return $this->show();
     }
 
+    public function textOnly($model, $title = '')
+    {
+        $this->setValue($model);
+        $labelHtml = Tools::trans($title) . ': ';
+
+        return '<div>'
+            . $labelHtml
+            . '<strong>' . $this->plainText($model) . '</strong> '
+            . '</div>';
+    }
+
     /**
      * @param object $model
      * @param Request $request
