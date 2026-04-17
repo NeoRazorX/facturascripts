@@ -26,20 +26,32 @@ namespace FacturaScripts\Core\Lib;
  */
 class InvoiceOperation
 {
+    const BENEFIT_THIRD_PARTIES = 'benefit-third-parties';
+
     const EXPORT = 'exportacion';
+
     const IMPORT = 'importacion';
+
     const INTRA_COMMUNITY = 'intracomunitaria';
+
     const INTRA_COMMUNITY_SERVICES = 'intracom-servicios';
+
     const REVERSE_CHARGE = 'inv-sujeto-pasivo';
+
     const SUCCESSIVE_TRACT = 'successive-tract';
+
     const TYPE_PURCHASE = 'purchase';
+
     const TYPE_SALE = 'sale';
+
     const WORK_CERTIFICATION = 'work-certification';
 
     /** @var array */
     private static $all = [];
+
     /** @var array */
     private static $removed = [];
+
     /** @var array */
     private static $types = [];
 
@@ -54,22 +66,9 @@ class InvoiceOperation
         }
     }
 
-    public static function remove(string $key): void
-    {
-        $fixedKey = substr($key, 0, 20);
-        unset(self::$all[$fixedKey], self::$types[$fixedKey]);
-        self::$removed[$fixedKey] = true;
-    }
-
     public static function all(): array
     {
         return self::filter();
-    }
-
-    public static function get(?string $key): ?string
-    {
-        $values = self::all();
-        return $values[$key] ?? null;
     }
 
     public static function allForPurchases(): array
@@ -82,9 +81,23 @@ class InvoiceOperation
         return self::filter(self::TYPE_SALE);
     }
 
+    public static function get(?string $key): ?string
+    {
+        $values = self::all();
+        return $values[$key] ?? null;
+    }
+
+    public static function remove(string $key): void
+    {
+        $fixedKey = substr($key, 0, 20);
+        unset(self::$all[$fixedKey], self::$types[$fixedKey]);
+        self::$removed[$fixedKey] = true;
+    }
+
     private static function defaultTypes(): array
     {
         return [
+            self::BENEFIT_THIRD_PARTIES => self::TYPE_SALE,
             self::EXPORT => self::TYPE_SALE,
             self::IMPORT => self::TYPE_PURCHASE,
             self::SUCCESSIVE_TRACT => self::TYPE_SALE,
@@ -95,6 +108,7 @@ class InvoiceOperation
     private static function filter(?string $type = null): array
     {
         $defaults = [
+            self::BENEFIT_THIRD_PARTIES => 'benefit-third-parties',
             self::INTRA_COMMUNITY => 'intra-community',
             self::INTRA_COMMUNITY_SERVICES => 'intra-community-services',
             self::REVERSE_CHARGE => 'reverse-charge',
