@@ -613,6 +613,7 @@
     "es-tax-exception-14": "Espanya: No subjecta – Art. 14 LIVA (règims duaners, dipòsits, zones franques, operacions en trànsit)",
     "es-tax-exception-20": "Espanya: Exempta Art. 20 LIVA – Exempcions interiors (sanitat, ensenyament, assegurances, banca…)",
     "es-tax-exception-21": "Espanya: Exempta Art. 21 LIVA – Exportacions a països tercers",
+    "es-tax-exception-22": "es-tax-exception-22",
     "es-tax-exception-23-24": "Espanya: Exempta Arts. 23–24 LIVA – Zones franques i dipòsits duaners",
     "es-tax-exception-25": "Espanya: Exempta - Art. 25 LIVA – Lliuraments intracomunitaris",
     "es-tax-exception-68-70": "Espanya: No subjecta – Arts. 68–70 LIVA (regles de localització de béns i serveis, B2B a UE\/estranger)",
@@ -830,6 +831,7 @@
     "image": "Imatge",
     "images": "Imatges",
     "images-added-correctly": "%count% imatges afegides correctament",
+    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
     "impacted-tax-re-subaccount": "Subcompte recàrrec repercutit",
     "impacted-tax-subaccount": "Subcompte d'IVA repercutit",
     "import": "Importa",
@@ -1677,6 +1679,7 @@
     "supplier-reference": "Referència del proveïdor",
     "suppliers": "Proveïdors",
     "support": "Suport",
+    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
     "supported-tax-re-subaccount": "Subcompte recàrrec suportat",
     "supported-tax-subaccount": "Subcompte d'IVA suportat",
     "surcharge": "Recàrrec",
@@ -1915,5 +1918,6 @@
     "zip-code": "Codi Postal",
     "zip-codes": "Codis postals",
     "zip-error-wrong-structure": "L'estructura del zip és incorrecta. Ha de contenir la carpeta del plugin i solament un plugin.",
-    "zone": "Zona"
+    "zone": "Zona",
+    "zones": "Zonas"
 }

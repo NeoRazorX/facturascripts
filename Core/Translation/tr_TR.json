@@ -613,6 +613,7 @@
     "es-tax-exception-14": "İspanya: KDV kapsamı dışında – Madde 14 LIVA (gümrük rejimleri, antrepolar, serbest bölgeler, transit işlemler)",
     "es-tax-exception-20": "İspanya: Madde 20 LIVA'ya göre muaf - İç muafiyetler (sağlık, eğitim, sigorta, bankacılık…)",
     "es-tax-exception-21": "İspanya: Muafiyet Madde 21 LIVA – Üçüncü ülkelere yapılan ihracatlar",
+    "es-tax-exception-22": "es-tax-exception-22",
     "es-tax-exception-23-24": "İspanya: Muaf – Md. 23–24 LIVA (serbest bölgeler ve gümrük antrepolar)",
     "es-tax-exception-25": "İspanya: Muaf - Md. 25 LIVA – AB içi teslimatlar",
     "es-tax-exception-68-70": "İspanya: Kapsam dışı – Md. 68–70 LIVA (mal ve hizmetlerin yer tespiti kuralları, B2B AB\/ülke dışı)",
@@ -830,6 +831,7 @@
     "image": "Görüntü",
     "images": "Görseller",
     "images-added-correctly": "%count% resim başarıyla eklendi",
+    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
     "impacted-tax-re-subaccount": "Yansıtılan ek ücret alt hesabı",
     "impacted-tax-subaccount": "Yansıtılan vergi alt hesap",
     "import": "İçe aktar",
@@ -1677,6 +1679,7 @@
     "supplier-reference": "Tedarikçi Referansı",
     "suppliers": "Tedarikçiler",
     "support": "Destek",
+    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
     "supported-tax-re-subaccount": "Desteklenen ek alt hesap",
     "supported-tax-subaccount": "Desteklenen vergi alt hesabı",
     "surcharge": "Ek ücret",
@@ -1915,5 +1918,6 @@
     "zip-code": "Posta Kodu",
     "zip-codes": "Posta kodları",
     "zip-error-wrong-structure": "Zip yapısı yanlıştır. Eklenti klasörünü ve yalnızca bir eklenti içermelidir.",
-    "zone": "Bölge"
+    "zone": "Bölge",
+    "zones": "Zonas"
 }

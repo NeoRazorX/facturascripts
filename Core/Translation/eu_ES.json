@@ -613,6 +613,7 @@
     "es-tax-exception-14": "Espainia: Ez dago BEZaren menpe – LIVAren 14. artikulua (aduana-erregimenak, biltegiak, gune frankoak, trantsito-eragiketak)",
     "es-tax-exception-20": "Espainia: Art. 20 LIVA salbuespena – Barneko salbuespenak (osasuna, hezkuntza, aseguruak, bankuak…)",
     "es-tax-exception-21": "España: Exenta Art. 21 LIVA – Exportaciones a países terceros",
+    "es-tax-exception-22": "es-tax-exception-22",
     "es-tax-exception-23-24": "España: Exenta Arts. 23–24 LIVA – Zonas francas y depósitos aduaneros",
     "es-tax-exception-25": "España: Exenta - Art. 25 LIVA – Entregas intracomunitarias",
     "es-tax-exception-68-70": "España: No sujeta – Arts. 68–70 LIVA (reglas de localización de bienes y servicios, B2B a UE\/extranjero)",
@@ -830,6 +831,7 @@
     "image": "Irudia",
     "images": "Irudiak",
     "images-added-correctly": "%count% irudi ondo gehituta",
+    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
     "impacted-tax-re-subaccount": "Inpaktuarekin duten zerga azpikontua",
     "impacted-tax-subaccount": "Jasanarazitako BEZ azpikontua",
     "import": "Inportatu",
@@ -1677,6 +1679,7 @@
     "supplier-reference": "Hornitzailearen erreferentzia",
     "suppliers": "Hornitzaileak",
     "support": "Laguntza",
+    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
     "supported-tax-re-subaccount": "Subkontu bidez ordaindutako zerga",
     "supported-tax-subaccount": "Jasandako BEZ azpikontua",
     "surcharge": "Errekargua",
@@ -1915,5 +1918,6 @@
     "zip-code": "Posta Kodea",
     "zip-codes": "Posta kodeak",
     "zip-error-wrong-structure": "Zip-aren egitura okerra da. Pluginaren karpeta eta plugin bakarra izan behar ditu.",
-    "zone": "Eremua"
+    "zone": "Eremua",
+    "zones": "Zonas"
 }

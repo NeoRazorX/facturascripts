@@ -613,6 +613,7 @@
     "es-tax-exception-14": "Spain: Not subject – Art. 14 VAT Law (customs regimes, bonded warehouses, free zones, transit operations)",
     "es-tax-exception-20": "Spain: Exempt (Art. 20 VAT Law) – Domestic exemptions (healthcare, education, insurance, banking…)",
     "es-tax-exception-21": "Spain: Exempt (Art. 21 VAT Law) – Exports to third countries",
+    "es-tax-exception-22": "es-tax-exception-22",
     "es-tax-exception-23-24": "Spain: Exempt (Arts. 23–24 VAT Law) – Free zones and customs warehouses",
     "es-tax-exception-25": "Spain: Exempt - Art. 25 VAT Law – Intra-Community supplies",
     "es-tax-exception-68-70": "Spain: Not subject - Arts. 68–70 VAT Law (place-of-supply rules for goods and services, B2B to EU\/abroad)",
@@ -830,6 +831,7 @@
     "image": "Image",
     "images": "Images",
     "images-added-correctly": "%count% images added correctly",
+    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
     "impacted-tax-re-subaccount": "Charged surcharge subaccount",
     "impacted-tax-subaccount": "Impacted tax subaccount",
     "import": "Import",
@@ -1677,6 +1679,7 @@
     "supplier-reference": "Supplier reference",
     "suppliers": "Suppliers",
     "support": "Support",
+    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
     "supported-tax-re-subaccount": "Supported surcharge subaccount",
     "supported-tax-subaccount": "Supported tax subaccount",
     "surcharge": "Surcharge",
@@ -1915,5 +1918,6 @@
     "zip-code": "Zip code",
     "zip-codes": "Zip codes",
     "zip-error-wrong-structure": "The zip structure is incorrect. It must contain the plugin folder and only one plugin.",
-    "zone": "Zone"
+    "zone": "Zone",
+    "zones": "Zonas"
 }

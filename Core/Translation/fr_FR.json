@@ -613,6 +613,7 @@
     "es-tax-exception-14": "Espagne : Non assujetti – Art. 14 LIVA (régimes douaniers, dépôts, zones franches, opérations en transit)",
     "es-tax-exception-20": "Espagne : Exonération Art. 20 LIVA – Exemptions internes (santé, enseignement, assurances, banques…)",
     "es-tax-exception-21": "Espagne : Exonération art. 21 LIVA – Exportations vers des pays tiers",
+    "es-tax-exception-22": "es-tax-exception-22",
     "es-tax-exception-23-24": "Espagne : Exonérée – Arts. 23–24 LIVA (zones franches et dépôts douaniers)",
     "es-tax-exception-25": "Espagne : Exonéré - art. 25 LIVA – Livraisons intracommunautaires",
     "es-tax-exception-68-70": "Espagne : Non assujettie – Arts. 68–70 LIVA (règles de localisation des biens et services, B2B vers UE\/étranger)",
@@ -830,6 +831,7 @@
     "image": "Image",
     "images": "Imágenes",
     "images-added-correctly": "%count% images ajoutées avec succès",
+    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
     "impacted-tax-re-subaccount": "Sous-compte de la surtaxe",
     "impacted-tax-subaccount": "Sous-compte fiscal impacté",
     "import": "Importer",
@@ -1677,6 +1679,7 @@
     "supplier-reference": "Référence du fournisseur",
     "suppliers": "Fournisseurs",
     "support": "Soutien",
+    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
     "supported-tax-re-subaccount": "Sous-compte de la surtaxe sur les intrants",
     "supported-tax-subaccount": "Sous-compte de la taxe d'amont",
     "surcharge": "Surtaxe",
@@ -1915,5 +1918,6 @@
     "zip-code": "Code postal",
     "zip-codes": "Codes postaux",
     "zip-error-wrong-structure": "Erreur dans la structure du fichier ZIP. Il doit contenir le dossier du module externe, et un seul module.",
-    "zone": "Zone"
+    "zone": "Zone",
+    "zones": "Zonas"
 }

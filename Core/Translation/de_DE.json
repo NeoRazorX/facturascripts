@@ -613,6 +613,7 @@
     "es-tax-exception-14": "Spanien: Nicht steuerpflichtig – Art. 14 LIVA (Zollregime, Lager, Freizonen, Transitvorgänge)",
     "es-tax-exception-20": "Spanien: Befreit – Art. 20 LIVA (Inlandsbefreiungen: Gesundheitswesen, Bildung, Versicherungen, Banken…)",
     "es-tax-exception-21": "Spanien: Steuerfrei - Art. 21 LIVA – Ausfuhren in Drittländer",
+    "es-tax-exception-22": "es-tax-exception-22",
     "es-tax-exception-23-24": "Spanien: Ausgenommene Künste. 23–24 LIVA – Freizonen und Zolllager",
     "es-tax-exception-25": "Spanien: Steuerfrei - Art. 25 LIVA – Innergemeinschaftliche Lieferungen",
     "es-tax-exception-68-70": "Spanien: Kein Thema – Kunst. 68–70 LIVA (Regeln für die Lokalisierung von Waren und Dienstleistungen, B2B in die EU\/Ausland)",
@@ -830,6 +831,7 @@
     "image": "Bild",
     "images": "Bilder",
     "images-added-correctly": "%count% Bilder erfolgreich hinzugefügt",
+    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
     "impacted-tax-re-subaccount": "Betroffenes Steuer-Unterkonto",
     "impacted-tax-subaccount": "Unterkonto der betroffenen Steuer",
     "import": "importieren",
@@ -1677,6 +1679,7 @@
     "supplier-reference": "Lieferantenreferenz",
     "suppliers": "Lieferanten",
     "support": "Unterstützung",
+    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
     "supported-tax-re-subaccount": "Unterkonto unterstützter Zuschlag",
     "supported-tax-subaccount": "Unterkonto für unterstützte Steuern",
     "surcharge": "Zuschlag",
@@ -1915,5 +1918,6 @@
     "zip-code": "Postleitzahl",
     "zip-codes": "Postleitzahlen",
     "zip-error-wrong-structure": "zip Fehler falsche Struktur",
-    "zone": "Zone"
+    "zone": "Zone",
+    "zones": "Zonas"
 }
