@@ -76,11 +76,11 @@
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="validate-iban" order="210">
-                <widget type="checkbox" fieldname="validate_iban"/>
-            </column>
-            <column name="vat-regime" numcolumns="3" order="220">
+            <column name="vat-regime" numcolumns="3" order="200">
                 <widget type="select" fieldname="regimeniva"/>
+            </column>
+            <column name="validate-iban" order="300">
+                <widget type="checkbox" fieldname="validate_iban"/>
             </column>
         </group>
         <group name="numericformat" title="numeric-formats" icon="fa-solid fa-info-circle" numcolumns="12">
