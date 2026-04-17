@@ -39,6 +39,11 @@ class HtmlBlock extends BaseBlock
         $this->html = $html;
     }
 
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static($attrs['html'] ?? $content);
+    }
+
     public function render(bool $footer = false): string
     {
         $this->footer = $footer;
