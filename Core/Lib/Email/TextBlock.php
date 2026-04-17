@@ -41,6 +41,15 @@ class TextBlock extends BaseBlock
         $this->text = $text;
     }
 
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static(
+            $attrs['text'] ?? $content,
+            $attrs['css'] ?? '',
+            $attrs['style'] ?? ''
+        );
+    }
+
     public function render(bool $footer = false): string
     {
         $this->footer = $footer;
