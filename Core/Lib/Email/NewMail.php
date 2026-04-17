@@ -835,5 +835,4 @@ class NewMail
 
         return [];
     }
-
 }
