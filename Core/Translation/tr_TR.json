@@ -831,7 +831,7 @@
     "image": "Görüntü",
     "images": "Görseller",
     "images-added-correctly": "%count% resim başarıyla eklendi",
-    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
+    "impacted-tax-intra-subaccount": "Etkilenen AB içi vergi alt hesabı",
     "impacted-tax-re-subaccount": "Yansıtılan ek ücret alt hesabı",
     "impacted-tax-subaccount": "Yansıtılan vergi alt hesap",
     "import": "İçe aktar",
@@ -1679,7 +1679,7 @@
     "supplier-reference": "Tedarikçi Referansı",
     "suppliers": "Tedarikçiler",
     "support": "Destek",
-    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
+    "supported-tax-intra-subaccount": "Desteklenen AB içi vergi alt hesabı",
     "supported-tax-re-subaccount": "Desteklenen ek alt hesap",
     "supported-tax-subaccount": "Desteklenen vergi alt hesabı",
     "surcharge": "Ek ücret",
@@ -1919,5 +1919,5 @@
     "zip-codes": "Posta kodları",
     "zip-error-wrong-structure": "Zip yapısı yanlıştır. Eklenti klasörünü ve yalnızca bir eklenti içermelidir.",
     "zone": "Bölge",
-    "zones": "Zonas"
+    "zones": "Bölgeler"
 }

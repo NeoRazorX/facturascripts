@@ -831,7 +831,7 @@
     "image": "Immagine",
     "images": "Immagini",
     "images-added-correctly": "%count% immagini aggiunte correttamente",
-    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
+    "impacted-tax-intra-subaccount": "Sottoconto addebitato intracomunitario",
     "impacted-tax-re-subaccount": "Sottoconto imposta dovuta",
     "impacted-tax-subaccount": "Subconto imposta impattata",
     "import": "Importa",
@@ -1679,7 +1679,7 @@
     "supplier-reference": "Riferimento del fornitore",
     "suppliers": "fornitori",
     "support": "Supporto",
-    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
+    "supported-tax-intra-subaccount": "Sottoconto supportato intracomunitario",
     "supported-tax-re-subaccount": "Subcuenta ricargo supportato",
     "supported-tax-subaccount": "Sottocount tasse supportate",
     "surcharge": "Sovraccarico",
@@ -1919,5 +1919,5 @@
     "zip-codes": "Codici postali",
     "zip-error-wrong-structure": "La struttura del file ZIP è incorretta. Può contenere solamente la cartella del plugin e solamente un plugin.",
     "zone": "Zona",
-    "zones": "Zonas"
+    "zones": "Zone"
 }

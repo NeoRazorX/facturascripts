@@ -831,7 +831,7 @@
     "image": "Obraz",
     "images": "Obrazy",
     "images-added-correctly": "%count% zdjęć zostało dodanych poprawnie",
-    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
+    "impacted-tax-intra-subaccount": "Subkonto objęte rozliczeniami wewnątrzwspólnotowymi",
     "impacted-tax-re-subaccount": "Subcuenta recargo repercutido",
     "impacted-tax-subaccount": "Podkonto podatku odsprzedanego",
     "import": "Importować",
@@ -1679,7 +1679,7 @@
     "supplier-reference": "Referencja dostawcy",
     "suppliers": "Dostawcy",
     "support": "Wsparcie",
-    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
+    "supported-tax-intra-subaccount": "Subkonto obsługujące transakcje wewnątrzwspólnotowe",
     "supported-tax-re-subaccount": "Subcuenta recargo soportado",
     "supported-tax-subaccount": "Subkonto podatku odliczonego",
     "surcharge": "Dopłata",
@@ -1919,5 +1919,5 @@
     "zip-codes": "Kody pocztowe",
     "zip-error-wrong-structure": "Błędna struktura pliku zip. Musi zawierać folder pluginu i tylko jeden plugin.",
     "zone": "Strefa",
-    "zones": "Zonas"
+    "zones": "Strefy"
 }

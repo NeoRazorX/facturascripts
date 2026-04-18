@@ -831,7 +831,7 @@
     "image": "Imagen",
     "images": "Imágenes",
     "images-added-correctly": "%count% imágenes añadidas correctamente",
-    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
+    "impacted-tax-intra-subaccount": "Podúčty s uplatněnou intrakomunitární daní",
     "impacted-tax-re-subaccount": "Postižený subúčet daně převzaté",
     "impacted-tax-subaccount": "Subcuenta impuesto repercutido",
     "import": "Importar",
@@ -1679,7 +1679,7 @@
     "supplier-reference": "Referencia de proveedor",
     "suppliers": "Proveedores",
     "support": "Podpora",
-    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
+    "supported-tax-intra-subaccount": "Podúčet podporující intrakomunitární transakce",
     "supported-tax-re-subaccount": "Podporovaný daňový podúčet",
     "supported-tax-subaccount": "Subcuenta impuesto soportado",
     "surcharge": "Recargo",
@@ -1919,5 +1919,5 @@
     "zip-codes": "Poštovní směrovací čísla",
     "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin.",
     "zone": "Zona",
-    "zones": "Zonas"
+    "zones": "Zóny"
 }

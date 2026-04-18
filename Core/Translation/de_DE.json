@@ -831,7 +831,7 @@
     "image": "Bild",
     "images": "Bilder",
     "images-added-correctly": "%count% Bilder erfolgreich hinzugefügt",
-    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
+    "impacted-tax-intra-subaccount": "Betroffenes Unterkonto (innergemeinschaftlich)",
     "impacted-tax-re-subaccount": "Betroffenes Steuer-Unterkonto",
     "impacted-tax-subaccount": "Unterkonto der betroffenen Steuer",
     "import": "importieren",
@@ -1679,7 +1679,7 @@
     "supplier-reference": "Lieferantenreferenz",
     "suppliers": "Lieferanten",
     "support": "Unterstützung",
-    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
+    "supported-tax-intra-subaccount": "Unterkonto unterstützt innergemeinschaftliche Vorgänge",
     "supported-tax-re-subaccount": "Unterkonto unterstützter Zuschlag",
     "supported-tax-subaccount": "Unterkonto für unterstützte Steuern",
     "surcharge": "Zuschlag",
@@ -1919,5 +1919,5 @@
     "zip-codes": "Postleitzahlen",
     "zip-error-wrong-structure": "zip Fehler falsche Struktur",
     "zone": "Zone",
-    "zones": "Zonas"
+    "zones": "Zonen"
 }

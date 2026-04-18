@@ -831,7 +831,7 @@
     "image": "Image",
     "images": "Imágenes",
     "images-added-correctly": "%count% images ajoutées avec succès",
-    "impacted-tax-intra-subaccount": "Subcuenta repercutido intracomunitarias",
+    "impacted-tax-intra-subaccount": "Sous-compte affecté intracommunautaire",
     "impacted-tax-re-subaccount": "Sous-compte de la surtaxe",
     "impacted-tax-subaccount": "Sous-compte fiscal impacté",
     "import": "Importer",
@@ -1679,7 +1679,7 @@
     "supplier-reference": "Référence du fournisseur",
     "suppliers": "Fournisseurs",
     "support": "Soutien",
-    "supported-tax-intra-subaccount": "Subcuenta soportado Intracomunitaria",
+    "supported-tax-intra-subaccount": "Sous-compte pris en charge intracommunautaire",
     "supported-tax-re-subaccount": "Sous-compte de la surtaxe sur les intrants",
     "supported-tax-subaccount": "Sous-compte de la taxe d'amont",
     "surcharge": "Surtaxe",
@@ -1919,5 +1919,5 @@
     "zip-codes": "Codes postaux",
     "zip-error-wrong-structure": "Erreur dans la structure du fichier ZIP. Il doit contenir le dossier du module externe, et un seul module.",
     "zone": "Zone",
-    "zones": "Zonas"
+    "zones": "Zones"
 }
