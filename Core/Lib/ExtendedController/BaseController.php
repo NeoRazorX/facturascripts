@@ -109,6 +109,8 @@ abstract class BaseController extends Controller
      * @param string $viewName
      * @param array $btnArray
      * @return BaseView
+     *
+     * @deprecated since 2026. Use $this->tab($viewName)->addButton($btnArray) instead.
      */
     public function addButton(string $viewName, array $btnArray): BaseView
     {
@@ -116,13 +118,7 @@ abstract class BaseController extends Controller
             throw new Exception('View not found: ' . $viewName);
         }
 
-        $rowType = isset($btnArray['row']) ? 'footer' : 'actions';
-        $row = $this->views[$viewName]->getRow($rowType);
-        if ($row) {
-            $row->addButton($btnArray);
-        }
-
-        return $this->tab($viewName);
+        return $this->views[$viewName]->addButton($btnArray);
     }
 
     /**

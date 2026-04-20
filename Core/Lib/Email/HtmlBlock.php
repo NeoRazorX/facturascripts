@@ -25,7 +25,7 @@ use FacturaScripts\Core\Template\ExtensionsTrait;
  * Description of HtmlBlock
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class HtmlBlock extends BaseBlock
 {
@@ -37,6 +37,11 @@ class HtmlBlock extends BaseBlock
     public function __construct(string $html)
     {
         $this->html = $html;
+    }
+
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static($attrs['html'] ?? $content);
     }
 
     public function render(bool $footer = false): string

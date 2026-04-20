@@ -82,17 +82,23 @@ class ListFacturaProveedor extends ListBusinessDocument
         ]);
         $this->addFilterCheckbox($viewName, 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
 
-        // botones
-        $this->addButtonLockInvoice($viewName);
-        $this->addButtonGenerateAccountingInvoices($viewName);
-        $this->addButtonPayInvoice($viewName);
+        // agrupamos las acciones en un dropdown
+        $this->tab($viewName)->addButtonGroup([
+            'name' => 'invoice-actions',
+            'icon' => 'fa-solid fa-circle-check',
+            'label' => 'actions'
+        ]);
+        $this->addButtonPayInvoice($viewName, 'invoice-actions');
+        $this->addButtonLockInvoice($viewName, 'invoice-actions');
+        $this->addButtonGenerateAccountingInvoices($viewName, null, 'invoice-actions');
 
         if ($this->user->admin) {
             $this->addButton($viewName, [
                 'action' => 'renumber-invoices',
                 'icon' => 'fa-solid fa-sort-numeric-down',
                 'label' => 'renumber',
-                'type' => 'modal'
+                'type' => 'modal',
+                'group' => 'invoice-actions'
             ]);
         }
     }

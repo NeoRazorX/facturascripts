@@ -50,10 +50,31 @@ final class FormaPagoTest extends TestCase
 
     public function testCreateWithNoCode(): void
     {
+        // sin código, debe usar las primeras 4 letras de la descripción
         $payment = new FormaPago();
-        $payment->descripcion = 'Test Payment Method';
+        $payment->descripcion = 'Transferencia bancaria';
         $this->assertTrue($payment->save(), 'payment-method-cant-save');
+        $this->assertEquals('TRAN', $payment->codpago);
         $this->assertTrue($payment->delete(), 'payment-method-cant-delete');
+    }
+
+    public function testCreateWithNoCodeFallsBackToDigit(): void
+    {
+        // ocupamos el código 'TRAN'
+        $payment1 = new FormaPago();
+        $payment1->codpago = 'TRAN';
+        $payment1->descripcion = 'TRAN ocupada';
+        $this->assertTrue($payment1->save(), 'payment-method-cant-save');
+
+        // al estar 'TRAN' ocupado, debe usar 'TRAN2'
+        $payment2 = new FormaPago();
+        $payment2->descripcion = 'Transferencia bancaria';
+        $this->assertTrue($payment2->save(), 'payment-method-cant-save');
+        $this->assertEquals('TRAN2', $payment2->codpago);
+
+        // eliminamos
+        $this->assertTrue($payment2->delete(), 'payment-method-cant-delete');
+        $this->assertTrue($payment1->delete(), 'payment-method-cant-delete');
     }
 
     public function testDeleteDefault(): void

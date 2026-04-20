@@ -44,21 +44,27 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonApproveDocument(string $viewName)
+    protected function addButtonApproveDocument(string $viewName, string $group = '')
     {
-        $this->addButton($viewName, [
+        $sameDateButton = [
             'action' => 'approve-document-same-date',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-calendar-check',
             'label' => 'approve-document-same-date'
-        ]);
-
-        $this->addButton($viewName, [
+        ];
+        $approveButton = [
             'action' => 'approve-document',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-check',
             'label' => 'approve-document'
-        ]);
+        ];
+        if ($group !== '') {
+            $sameDateButton['group'] = $group;
+            $approveButton['group'] = $group;
+        }
+
+        $this->addButton($viewName, $approveButton);
+        $this->addButton($viewName, $sameDateButton);
     }
 
     /**
@@ -67,7 +73,7 @@ trait ListBusinessActionTrait
      * @param string $viewName
      * @param string|null $code
      */
-    protected function addButtonGenerateAccountingInvoices(string $viewName, ?string $code = null): void
+    protected function addButtonGenerateAccountingInvoices(string $viewName, ?string $code = null, string $group = ''): void
     {
         $model = $this->views[$viewName]->model;
         if (false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
@@ -90,12 +96,17 @@ trait ListBusinessActionTrait
             return;
         }
 
-        $this->addButton($viewName, [
+        $button = [
             'action' => 'generate-accounting-entries',
             'color' => 'warning',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entries'
-        ]);
+        ];
+        if ($group !== '') {
+            $button['group'] = $group;
+        }
+
+        $this->addButton($viewName, $button);
     }
 
     /**
@@ -103,13 +114,18 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonGroupDocument(string $viewName): void
+    protected function addButtonGroupDocument(string $viewName, string $group = ''): void
     {
-        $this->addButton($viewName, [
+        $button = [
             'action' => 'group-document',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'group-or-split'
-        ]);
+        ];
+        if ($group !== '') {
+            $button['group'] = $group;
+        }
+
+        $this->addButton($viewName, $button);
     }
 
     /**
@@ -117,14 +133,19 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonLockInvoice(string $viewName): void
+    protected function addButtonLockInvoice(string $viewName, string $group = ''): void
     {
-        $this->addButton($viewName, [
+        $button = [
             'action' => 'lock-invoice',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-lock fa-fw',
             'label' => 'lock-invoice'
-        ]);
+        ];
+        if ($group !== '') {
+            $button['group'] = $group;
+        }
+
+        $this->addButton($viewName, $button);
     }
 
     /**
@@ -132,16 +153,21 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonPayInvoice(string $viewName): void
+    protected function addButtonPayInvoice(string $viewName, string $group = ''): void
     {
-        $this->addButton($viewName, [
+        $button = [
             'action' => 'pay-invoice',
             'color' => 'outline-success',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-check',
             'label' => 'paid',
             'type' => 'action'
-        ]);
+        ];
+        if ($group !== '') {
+            $button['group'] = $group;
+        }
+
+        $this->addButton($viewName, $button);
     }
 
     /**

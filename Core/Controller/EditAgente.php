@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\TotalModel;
  *
  * @author Carlos Garcia Gomez            <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal  <yopli2000@gmail.com>
- * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ * @collaborator Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class EditAgente extends ComercialContactController
 {
@@ -92,8 +92,14 @@ class EditAgente extends ComercialContactController
         $this->createCustomerListView($viewName, $model, $label)
             ->setSettings('btnPrint', true);
 
-        $this->addButtonGroupDocument($viewName);
-        $this->addButtonApproveDocument($viewName);
+        // agrupamos las acciones en un dropdown
+        $this->tab($viewName)->addButtonGroup([
+            'name' => 'doc-actions',
+            'icon' => 'fa-solid fa-circle-check',
+            'label' => 'actions'
+        ]);
+        $this->addButtonApproveDocument($viewName, 'doc-actions');
+        $this->addButtonGroupDocument($viewName, 'doc-actions');
     }
 
     protected function createEmailsView(string $viewName = 'ListEmailSent'): ListView
@@ -110,7 +116,14 @@ class EditAgente extends ComercialContactController
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices')
             ->setSettings('btnPrint', true);
 
-        $this->addButtonLockInvoice($viewName);
+        // agrupamos las acciones de facturas en un dropdown
+        $this->tab($viewName)->addButtonGroup([
+            'name' => 'invoice-actions',
+            'icon' => 'fa-solid fa-circle-check',
+            'label' => 'actions'
+        ]);
+        $this->addButtonPayInvoice($viewName, 'invoice-actions');
+        $this->addButtonLockInvoice($viewName, 'invoice-actions');
     }
 
     /**

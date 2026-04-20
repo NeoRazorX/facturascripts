@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Daniel Fernández Giménez      <hola@danielfg.es>
+ * @author Daniel Fernández Giménez      <contacto@danielfg.es>
  */
 class EditEmpresa extends EditController
 {

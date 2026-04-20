@@ -92,6 +92,7 @@ Then visit http://localhost:8000 in your browser.
 
 ## 📚 Documentation
 
+- **Official User Course** (with official certification): [facturascripts.com/cursos/curso-de-usuario](https://facturascripts.com/cursos/curso-de-usuario)
 - **User Guide**: [facturascripts.com/ayuda](https://facturascripts.com/ayuda)
 - **Developer Documentation**: [facturascripts.com/ayuda-dev](https://facturascripts.com/ayuda-dev)
 - **Roadmap**: [facturascripts.com/roadmap](https://facturascripts.com/roadmap)
@@ -124,11 +125,11 @@ If you discover a security vulnerability, please email Carlos García at [carlos
 
 ## 🔗 Useful Resources
 
-- [📹 YouTube Course (Spanish)](https://www.youtube.com/watch?v=rGopZA3ErzE&list=PLNxcJ5CWZ8V6nfeVu6vieKI_d8a_ObLfY)
 - [🧾 Free Invoicing Software](https://facturascripts.com/programa-para-hacer-facturas)
 - [📋 Free Quote Software](https://facturascripts.com/programa-de-presupuestos)
 - [📊 Free Accounting for Freelancers](https://facturascripts.com/software-contabilidad)
 - [🖨️ Ticket Printing](https://facturascripts.com/remote-printer)
+- [📹 Old YouTube Course (Spanish)](https://www.youtube.com/watch?v=rGopZA3ErzE&list=PLNxcJ5CWZ8V6nfeVu6vieKI_d8a_ObLfY)
 
 ---
 

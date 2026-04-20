@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -104,7 +104,8 @@
             </column>
             <column name="payment-method" titleurl="ListFormaPago" numcolumns="2" order="140">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"
+                            group_source="empresas" group_fieldcode="idempresa" group_title="nombrecorto"/>
                 </widget>
             </column>
             <column name="payment-days" description="desc-payment-days" numcolumns="2" order="150">

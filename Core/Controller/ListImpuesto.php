@@ -53,8 +53,8 @@ class ListImpuesto extends ListController
     {
         $this->addView($viewName, 'Retencion', 'retentions', 'fa-solid fa-minus-circle')
             ->addOrderBy(['codretencion'], 'code')
-            ->addOrderBy(['descripcion'], 'description')
-            ->addOrderBy(['porcentaje'], 'percentage', 1)
+            ->addOrderBy(['descripcion'], 'description', 1)
+            ->addOrderBy(['porcentaje'], 'percentage')
             ->addSearchFields(['descripcion', 'codretencion']);
     }
 
@@ -62,8 +62,8 @@ class ListImpuesto extends ListController
     {
         $this->addView($viewName, 'Impuesto', 'taxes', 'fa-solid fa-plus-square')
             ->addOrderBy(['codimpuesto'], 'code')
-            ->addOrderBy(['descripcion'], 'description')
-            ->addOrderBy(['iva'], 'vat', 1)
+            ->addOrderBy(['descripcion'], 'description', 1)
+            ->addOrderBy(['iva'], 'vat')
             ->addOrderBy(['recargo'], 'surcharge')
             ->addSearchFields(['descripcion', 'codimpuesto']);
     }

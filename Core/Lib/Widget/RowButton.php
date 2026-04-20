@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -116,6 +116,51 @@ class RowButton extends VisualItem
                 $onclick = $this->getOnClickValue($viewName, $jsFunction);
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
                     . '" title="' . $title . '">' . $icon . $label . '</button>';
+        }
+    }
+
+    /**
+     * Renderiza el botón como un ítem de dropdown de Bootstrap (usado
+     * dentro de grupos de botones).
+     */
+    public function renderDropdownItem(string $viewName = '', string $jsFunction = ''): string
+    {
+        if ($this->getLevel() < $this->level) {
+            return '';
+        }
+
+        if (empty($this->icon) && empty($this->label)) {
+            $this->icon = 'fa-regular fa-question-circle';
+        }
+
+        $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
+        $title = empty($this->title) ? $this->label : $this->title;
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw me-2"></i>';
+
+        $colorClass = empty($this->color) ? '' : ' ' . $this->colorToClass($this->color, 'text-');
+        $cssClass = 'dropdown-item' . $colorClass;
+
+        switch ($this->type) {
+            case 'js':
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
+                    . '" title="' . $title . '">' . $icon . $this->label . '</button>';
+
+            case 'link':
+                $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
+                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                    . ' title="' . $title . '">' . $icon . $this->label . '</a>';
+
+            case 'modal':
+                $modal = 'modal' . $this->action;
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-bs-toggle="modal"'
+                    . ' data-bs-target="#' . $modal . '" title="' . $title . '"'
+                    . ' onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
+                    . $icon . $this->label . '</button>';
+
+            default:
+                $onclick = $this->getOnClickValue($viewName, $jsFunction);
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
+                    . '" title="' . $title . '">' . $icon . $this->label . '</button>';
         }
     }
 

@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Lib;
  * This class centralizes all VAT tax exceptions and related validation rules.
  *
  * @author          Carlos García Gómez         <carlos@facturascripts.com>
- * @collaborator    Daniel Fernández Giménez    <hola@danielfg.es>
+ * @collaborator    Daniel Fernández Giménez    <contacto@danielfg.es>
  */
 class TaxExceptions
 {

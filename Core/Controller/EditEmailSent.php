@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Contacto;
  *
  * @author Raul                     <raljopa@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class EditEmailSent extends EditController
 {

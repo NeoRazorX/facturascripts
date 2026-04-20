@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,19 +57,19 @@
                             </a>
                         {% endif %}
                     {% endif %}
-                    {% if currentView.settings.btnDelete %}
+                    {% if currentView.settings.btnDelete and currentView.count > 0 %}
                         <button type="button" class="btn btn-danger"
                                 onclick="listViewDelete('{{ currentView.getViewName() }}');"
                                 title="{{ trans('delete') }}">
                             <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
                         </button>
                     {% endif %}
-                    {% if currentView.settings.btnPrint %}
+                    {% if currentView.settings.btnPrint and currentView.count > 0 %}
                         <div class="btn-group">
                             {{ _self.printButton(fsc, currentView) }}
                         </div>
                     {% endif %}
-                    {% if currentView.settings.clickable %}
+                    {% if currentView.settings.clickable and currentView.count > 1 %}
                         <button type="button" class="btn btn-light"
                                 onclick="listViewOpenTab('{{ currentView.getViewName() }}');"
                                 title="{{ trans('open-tab') }}">
@@ -174,8 +174,23 @@
                         {% endfor %}
                     </tr>
                 {% else %}
-                    <tr class="table-warning">
-                        <td colspan="{{ 1 + currentView.getColumns() | length }}">{{ trans('no-data') }}</td>
+                    <tr>
+                        <td colspan="{{ 1 + currentView.getColumns() | length }}" class="text-center p-5 text-muted">
+                            {% if currentView.query %}
+                                <div class="mb-3">
+                                    <i class="fa-solid fa-magnifying-glass fa-3x text-secondary"></i>
+                                </div>
+                                <p class="mb-0">{{ trans('no-results-found') }}</p>
+                            {% else %}
+                                <div class="mb-3">
+                                    <i class="fa-solid fa-inbox fa-3x text-secondary"></i>
+                                </div>
+                                <p class="mb-1">{{ trans('no-data-empty-list') }}</p>
+                                {% if currentView.settings.btnNew %}
+                                    <p class="mb-0 small">{{ trans('no-data-click-new') }}</p>
+                                {% endif %}
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -341,7 +356,7 @@
 
 {% macro colorsButton(currentView) %}
     {% set legend = currentView.getRow('status').legend() %}
-    {% if legend %}
+    {% if legend and currentView.count > 0 %}
         {% set viewName = currentView.getViewName() %}
         <div class="btn-group">
             <div class="dropdown">

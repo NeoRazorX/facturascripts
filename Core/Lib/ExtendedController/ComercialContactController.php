@@ -209,7 +209,7 @@ abstract class ComercialContactController extends EditController
      */
     private function createListView(string $viewName, string $model, string $label, array $fields): ListView
     {
-        $view = $this->addListView($viewName, $model, $label, 'fa-solid fa-copy')
+        $view = $this->addListView($viewName, $model, $label, 'fa-regular fa-file')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['fecha', 'hora'], 'date', 2)
             ->addOrderBy(['numero'], 'number')

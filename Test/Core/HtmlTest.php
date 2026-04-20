@@ -26,7 +26,7 @@ use Twig\TwigFunction;
 
 /**
  * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 final class HtmlTest extends TestCase
 {

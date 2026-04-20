@@ -25,7 +25,7 @@ use FacturaScripts\Core\Template\ExtensionsTrait;
  * Description of ButtonBlock
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class ButtonBlock extends BaseBlock
 {
@@ -35,14 +35,24 @@ class ButtonBlock extends BaseBlock
     protected $label;
 
     /** @var string */
-    protected $link;
+    protected $href;
 
-    public function __construct(string $label, string $link, string $css = '', string $style = '')
+    public function __construct(string $label, string $href, string $css = '', string $style = '')
     {
         $this->css = $css;
         $this->style = $style;
         $this->label = $label;
-        $this->link = $link;
+        $this->href = $href;
+    }
+
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static(
+            $attrs['label'] ?? $content,
+            $attrs['href'] ?? '',
+            $attrs['css'] ?? '',
+            $attrs['style'] ?? ''
+        );
     }
 
     public function render(bool $footer = false): string
@@ -50,16 +60,16 @@ class ButtonBlock extends BaseBlock
         $this->footer = $footer;
         $return = $this->pipe('render');
         return $return ?? '<span class="' . (empty($this->css) ? 'btn w-100' : $this->css) . '">'
-        . '<a href="' . $this->link() . '">' . $this->label . '</a></span>';
+        . '<a href="' . $this->buildHref() . '">' . $this->label . '</a></span>';
     }
 
-    protected function link(): string
+    protected function buildHref(): string
     {
-        $query = parse_url($this->link, PHP_URL_QUERY);
+        $query = parse_url($this->href, PHP_URL_QUERY);
         if ($query) {
-            return $this->link . '&verificode=' . $this->verificode;
+            return $this->href . '&verificode=' . $this->verificode;
         }
 
-        return $this->link . '?verificode=' . $this->verificode;
+        return $this->href . '?verificode=' . $this->verificode;
     }
 }

@@ -34,7 +34,7 @@ use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
- * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ * @collaborator Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class Calculator
 {

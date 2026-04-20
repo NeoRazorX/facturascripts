@@ -55,8 +55,13 @@ class ListPresupuestoProveedor extends ListBusinessDocument
     {
         $this->createViewPurchases($viewName, 'PresupuestoProveedor', 'estimations');
 
-        // añadimos botones
-        $this->addButtonGroupDocument($viewName);
-        $this->addButtonApproveDocument($viewName);
+        // agrupamos las acciones secundarias en un dropdown
+        $this->tab($viewName)->addButtonGroup([
+            'name' => 'doc-actions',
+            'icon' => 'fa-solid fa-circle-check',
+            'label' => 'actions'
+        ]);
+        $this->addButtonApproveDocument($viewName, 'doc-actions');
+        $this->addButtonGroupDocument($viewName, 'doc-actions');
     }
 }

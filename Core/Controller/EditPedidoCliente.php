@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\AjaxForms\SalesController;
+use FacturaScripts\Dinamic\Lib\AjaxForms\SalesController;
 
 /**
  * Description of EditPedidoCliente

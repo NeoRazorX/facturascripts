@@ -32,6 +32,7 @@ package-lock.json
 *.code-workspace
 .history
 
-# claude
+# IA
 CLAUDE.md
 /.claude
+.codex

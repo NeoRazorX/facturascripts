@@ -98,5 +98,4 @@ class MailNotifier
 
         return $newMail->send();
     }
-
 }

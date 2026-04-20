@@ -25,7 +25,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cuenta;
 
 /**
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class CuentaWorker extends WorkerClass
 {

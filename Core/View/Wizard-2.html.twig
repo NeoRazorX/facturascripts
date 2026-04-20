@@ -36,10 +36,9 @@
     <!-- Macros Template Imports -->
     {% import 'Macro/Forms.html.twig' as forms %}
     {% set codimpuesto = settings('default', 'codimpuesto') %}
-    {% set codretencion = settings('default', 'codretencion') %}
 
     <div class="container" style="margin-top: -100px;">
-        <form action="#" method="post" class="form" id="formWizard">
+        <form action="#" method="post" enctype="multipart/form-data" class="form" id="formWizard">
             {{ formToken() }}
             <input type="hidden" name="action" value="step2"/>
             <div class="card shadow mb-5">
@@ -54,28 +53,45 @@
                     <p>{{ trans('wizard-p') }}</p>
                     <hr/>
                     <div class="row gx-2">
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col-lg-6 col-md-6">
                             <div class="mb-3">
                                 {{ forms.simpleSelect('regimeniva', 'regimeniva', fsc.empresa.regimeniva,
                                     fsc.getRegimenIva(), trans('vat-regime')) }}
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col-lg-6 col-md-6">
                             <div class="mb-3">
                                 {{ forms.simpleSelect('codimpuesto', 'codimpuesto', codimpuesto,
                                     fsc.getSelectValues('Impuesto', true), trans('default-tax')) }}
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-6">
+                    </div>
+                    <div class="row gx-2">
+                        <div class="col-lg-6 col-md-6">
                             <div class="mb-3">
-                                <label class="mb-1">{{ trans('cost-price-policy') }}</label>
-                                <select name="costpricepolicy" class="form-select">
-                                    <option value="">------</option>
-                                    <option value="last-price">{{ trans('last-purchase-price') }}</option>
-                                    <option value="average-price">{{ trans('average-purchase-price') }}</option>
-                                    <option value="actual-price">{{ trans('actual-cost-price') }}</option>
-                                    <option value="high-price">{{ trans('high-purchase-price') }}</option>
-                                </select>
+                                {{ forms.simpleInput('invoice_start_number', 'invoice_start_number', '1', 'number',
+                                    trans('invoice-start-number'), '', {'min': '1'}) }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3">
+                                {{ forms.simpleSelect('codpago', 'codpago', settings('default', 'codpago'),
+                                    fsc.getSelectValues('FormaPago', false), trans('default-payment-method')) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gx-2">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3">
+                                {{ forms.simpleInput('bank_name', 'bank_name', '', 'text', trans('bank-name'),
+                                    'fa-solid fa-building-columns', {'maxlength': '100', 'placeholder': trans('optional')}) }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3">
+                                {{ forms.simpleInput('iban', 'iban', '', 'text', trans('iban'),
+                                    'fa-solid fa-university', {'maxlength': '34', 'placeholder': trans('optional')}) }}
+                                <small class="form-text text-muted">{{ trans('wizard-iban-help') }}</small>
                             </div>
                         </div>
                     </div>
@@ -97,18 +113,6 @@
                                            class="form-check-input"/>
                                 {% endif %}
                                 <label for="cbNoStock">{{ trans('allow-sale-without-stock-n') }}</label>
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <div class="mb-3 form-check">
-                                {% if settings('default', 'updatesupplierprices') %}
-                                    <input type="checkbox" name="updatesupplierprices" value="1"
-                                           id="cbUpdateSupplierPrices" class="form-check-input" checked/>
-                                {% else %}
-                                    <input type="checkbox" name="updatesupplierprices" value="1"
-                                           id="cbUpdateSupplierPrices" class="form-check-input"/>
-                                {% endif %}
-                                <label for="cbUpdateSupplierPrices">{{ trans('update-supplier-prices') }}</label>
                             </div>
                         </div>
                     </div>

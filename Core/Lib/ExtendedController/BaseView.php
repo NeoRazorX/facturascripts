@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -383,7 +383,9 @@ abstract class BaseView
     }
 
     /**
-     * Adds a button to the view.
+     * Añade un botón a la vista. Si se pasa la clave 'group', el botón se
+     * añade como un ítem dentro del dropdown con ese nombre (en la fila de
+     * acciones).
      *
      * @param array $btnArray
      *
@@ -391,10 +393,33 @@ abstract class BaseView
      */
     public function addButton(array $btnArray): BaseView
     {
-        $rowType = isset($btnArray['row']) ? 'footer' : 'actions';
+        if (isset($btnArray['group'])) {
+            $rowType = 'actions';
+        } else {
+            $rowType = isset($btnArray['row']) ? 'footer' : 'actions';
+        }
         $row = $this->getRow($rowType);
         if ($row) {
             $row->addButton($btnArray);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Añade un grupo de botones (dropdown) a la fila de acciones de la vista.
+     * Después se pueden añadir botones a este grupo llamando a addButton()
+     * pasando la clave 'group' con el mismo nombre.
+     *
+     * @param array $groupArray
+     *
+     * @return BaseView
+     */
+    public function addButtonGroup(array $groupArray): BaseView
+    {
+        $row = $this->getRow('actions');
+        if ($row && method_exists($row, 'addButtonGroup')) {
+            $row->addButtonGroup($groupArray);
         }
 
         return $this;

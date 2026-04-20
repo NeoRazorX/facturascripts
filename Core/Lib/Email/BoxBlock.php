@@ -25,7 +25,7 @@ use FacturaScripts\Core\Template\ExtensionsTrait;
  * Description of BoxBlock
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class BoxBlock extends BaseBlock
 {
@@ -39,6 +39,11 @@ class BoxBlock extends BaseBlock
         $this->css = $css;
         $this->style = $style;
         $this->blocks = $blocks;
+    }
+
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static([], $attrs['css'] ?? '', $attrs['style'] ?? '');
     }
 
     public function render(bool $footer = false): string
