@@ -104,7 +104,10 @@ abstract class ModelClass
         if (!DbUpdater::isTableChecked(static::tableName())) {
             $sql_insert = self::$dataBase->tableExists(static::tableName()) ? '' : $this->install();
             if (!DbUpdater::createOrUpdateTable(static::tableName(), [], $sql_insert)) {
-                throw new Exception(DbUpdater::getLastError());
+                if (Tools::config('debug')) {
+                    throw new Exception(DbUpdater::getLastError());
+                }
+                Tools::log()->critical(DbUpdater::getLastError());
             }
             $this->clearCache();
         }
