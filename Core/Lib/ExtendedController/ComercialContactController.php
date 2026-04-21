@@ -326,6 +326,9 @@ abstract class ComercialContactController extends EditController
             case 'lock-invoice':
                 return $this->lockInvoiceAction($codes, $model, $allowUpdate, $this->dataBase);
 
+            case 'pay-invoice':
+                return $this->payInvoiceAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);
+
             case 'pay-receipt':
                 return $this->payReceiptAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);
 
