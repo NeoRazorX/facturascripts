@@ -1869,7 +1869,7 @@
     "warehouses": "Armazéns",
     "warning": "<b> Atenção <\/ b>",
     "warnings": "Avisos",
-    "weak-password": "A senha deve ter pelo menos 8 caracteres, com números e letras.",
+    "weak-password": "A palavra-passe deve ter pelo menos 8 caracteres, incluindo números e letras.",
     "web": "Rede",
     "website": "Local na rede Internet",
     "wednesday": "quarta-feira",
