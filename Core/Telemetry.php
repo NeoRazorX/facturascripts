@@ -63,7 +63,7 @@ final class Telemetry
 
     public function getMetadata(): array
     {
-        if ($this->id_install) {
+        if (false === $this->ready() || empty($this->sign_key)) {
             return [];
         }
 
