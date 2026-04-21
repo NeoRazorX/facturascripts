@@ -79,6 +79,8 @@ class EditSubcuenta extends EditController
     {
         $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fa-solid fa-balance-scale')
             ->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2)
+            ->addOrderBy(['partidas.debe'], 'debit')
+            ->addOrderBy(['partidas.haber'], 'credit')
             ->addSearchFields(['partidas.concepto'])
             ->disableColumn('subaccount')
             ->setSettings('btnDelete', false);
