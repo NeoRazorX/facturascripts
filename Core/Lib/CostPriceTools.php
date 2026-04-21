@@ -77,7 +77,8 @@ class CostPriceTools
         $rows = [];
         $where = [
             new DataBaseWhere('referencia', $variant->referencia),
-            new DataBaseWhere('actualizastock', '1')
+            new DataBaseWhere('actualizastock', '1'),
+            new DataBaseWhere('pvptotal', 0, '>')
         ];
         $order = ['idlinea' => 'DESC'];
 
@@ -135,7 +136,10 @@ class CostPriceTools
     {
         $prices = [];
         $supplierProduct = new ProductoProveedor();
-        $where = [new DataBaseWhere('referencia', $variant->referencia)];
+        $where = [
+            new DataBaseWhere('referencia', $variant->referencia),
+            new DataBaseWhere('neto', 0, '>')
+        ];
         foreach ($supplierProduct->all($where, ['actualizado' => 'DESC'], 0, 0) as $prod) {
             $prices[] = $prod->neto;
         }
@@ -153,7 +157,10 @@ class CostPriceTools
     protected static function updateLastPrice(Variante $variant): void
     {
         $supplierProduct = new ProductoProveedor();
-        $where = [new DataBaseWhere('referencia', $variant->referencia)];
+        $where = [
+            new DataBaseWhere('referencia', $variant->referencia),
+            new DataBaseWhere('neto', 0, '>')
+        ];
         foreach ($supplierProduct->all($where, ['actualizado' => 'DESC'], 0, 1) as $prod) {
             $variant->coste = round($prod->neto, Producto::ROUND_DECIMALS);
             $variant->save();
@@ -169,7 +176,10 @@ class CostPriceTools
     protected static function updateHighPrice(Variante $variant): void
     {
         $supplierProduct = new ProductoProveedor();
-        $where = [new DataBaseWhere('referencia', $variant->referencia)];
+        $where = [
+            new DataBaseWhere('referencia', $variant->referencia),
+            new DataBaseWhere('neto', 0, '>')
+        ];
         foreach ($supplierProduct->all($where, ['precio' => 'DESC'], 0, 1) as $prod) {
             $variant->coste = round($prod->neto, Producto::ROUND_DECIMALS);
             $variant->save();
