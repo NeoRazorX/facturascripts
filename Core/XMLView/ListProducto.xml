@@ -59,7 +59,7 @@
             <widget type="checkbox" fieldname="ventasinstock"/>
         </column>
         <column name="price" display="right" order="210">
-            <widget type="money" fieldname="precio"/>
+            <widget type="money" fieldname="precio" totals="false"/>
         </column>
         <column name="tax" display="none" order="220">
             <widget type="select" fieldname="codimpuesto">

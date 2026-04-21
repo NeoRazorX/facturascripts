@@ -62,7 +62,7 @@
             <widget type="percentage" fieldname="margen"/>
         </column>
         <column name="price" display="right" order="170">
-            <widget type="money" fieldname="precio"/>
+            <widget type="money" fieldname="precio" totals="false"/>
         </column>
         <column name="price-with-tax" display="right" order="180">
             <widget type="money" fieldname="precio_iva"/>
