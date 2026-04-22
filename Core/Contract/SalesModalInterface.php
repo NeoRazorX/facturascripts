@@ -24,9 +24,9 @@ use FacturaScripts\Dinamic\Model\Cliente;
 
 interface SalesModalInterface
 {
-    public function apply(SalesDocument &$model, array $formData): void;
+    public function apply(SalesDocument &$model, array $formData): bool;
 
-    public function applyBefore(SalesDocument &$model, array $formData): void;
+    public function applyBefore(SalesDocument &$model, array $formData): bool;
 
     public function assets(): void;
 

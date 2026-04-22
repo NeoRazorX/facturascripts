@@ -78,7 +78,9 @@ class SalesModalHTML
     {
         // mods
         foreach (self::$mods as $mod) {
-            $mod->applyBefore($model, $formData);
+            if (false === $mod->applyBefore($model, $formData)) {
+                return;
+            }
         }
 
         self::$codalmacen = $model->codalmacen;
@@ -92,7 +94,9 @@ class SalesModalHTML
 
         // mods
         foreach (self::$mods as $mod) {
-            $mod->apply($model, $formData);
+            if (false === $mod->apply($model, $formData)) {
+                return;
+            }
         }
     }
 
