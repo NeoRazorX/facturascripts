@@ -156,6 +156,7 @@ abstract class SalesController extends PanelController
         SalesHeaderHTML::assets();
         SalesLineHTML::assets();
         SalesFooterHTML::assets();
+        SalesModalHTML::assets();
     }
 
     protected function deleteDocAction(): bool
