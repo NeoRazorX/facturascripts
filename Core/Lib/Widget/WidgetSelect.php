@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
@@ -420,6 +421,7 @@ class WidgetSelect extends BaseWidget
      */
     protected function setSourceData(array $child, bool $loadData = true)
     {
+        $where = [];
         $this->source = $child['source'];
         $this->fieldcode = $child['fieldcode'] ?? 'id';
         $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
@@ -429,12 +431,21 @@ class WidgetSelect extends BaseWidget
         $this->groupFieldcode = $child['group_fieldcode'] ?? '';
         $this->groupTitle = $child['group_title'] ?? '';
 
+        foreach (Where::stringToArray($this->fieldfilter) as $fieldfilter) {
+            // cuando el value está vacío, usar $this->value para permitir filtrar por el valor actual del widget (ej. para cargar opciones dependientes)
+            if ('' === $fieldfilter['value']) {
+                $fieldfilter['value'] = $this->value;
+            }
+            $where[] = new Where($fieldfilter['field'], $fieldfilter['value'], $fieldfilter['operator'], $fieldfilter['operation']);
+        }
+
         if ($loadData && $this->source) {
             static::$codeModel::setLimit($this->limit);
-            $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
+            $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required, $where);
 
             if (!empty($this->groupSource) && !empty($this->groupFieldcode) && !empty($this->groupTitle)) {
                 // Mapa de group_fieldcode => group_title
+                // no usar el $where porque el agrupamiento se hace sobre la tabla original, no sobre la de grupos
                 $groupLabelRows = static::$codeModel->all($this->groupSource, $this->groupFieldcode, $this->groupTitle, false);
                 $groupLabelMap = [];
                 foreach ($groupLabelRows as $row) {
@@ -443,7 +454,7 @@ class WidgetSelect extends BaseWidget
 
                 // Mapa de fieldcode => group_fieldcode (valor del campo de agrupación en cada registro)
                 static::$codeModel::setLimit($this->limit);
-                $groupFieldRows = static::$codeModel->all($this->source, $this->fieldcode, $this->groupFieldcode, false);
+                $groupFieldRows = static::$codeModel->all($this->source, $this->fieldcode, $this->groupFieldcode, false, $where);
                 $groupFieldMap = [];
                 foreach ($groupFieldRows as $row) {
                     $groupFieldMap[$row->code] = $row->description;

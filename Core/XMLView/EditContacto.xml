@@ -59,8 +59,8 @@
                 </widget>
             </column>
             <column name="agent" order="200">
-                <widget type="autocomplete" fieldname="codagente" onclick="EditAgente">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"/>
+                <widget type="select" fieldname="codagente" onclick="EditAgente">
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre" fieldfilter="debaja:0"/>
                 </widget>
             </column>
         </group>
