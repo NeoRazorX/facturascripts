@@ -104,7 +104,7 @@
             </column>
             <column name="payment-method" titleurl="ListFormaPago" numcolumns="2" order="140">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"
+                    <values source="formaspago" fieldcode="codpago" fieldfilter="activa:1" fieldtitle="descripcion"
                             group_source="empresas" group_fieldcode="idempresa" group_title="nombrecorto"/>
                 </widget>
             </column>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,17 +32,14 @@ final class Where
 {
     const FIELD_SEPARATOR = '|';
 
-    /** @var DataBase */
-    private static $db;
-
     /** @var string */
     public $fields;
 
     /** @var string */
-    public $operator;
+    public $operation;
 
     /** @var string */
-    public $operation;
+    public $operator;
 
     /** @var Where[] */
     public $subWhere;
@@ -53,6 +50,9 @@ final class Where
     /** @var mixed */
     public $value;
 
+    /** @var DataBase */
+    private static $db;
+
     public function __construct(string $fields, $value, string $operator = '=', string $operation = 'AND', bool $useField = false)
     {
         $this->fields = $fields;
@@ -60,13 +60,6 @@ final class Where
         $this->operator = $operator;
         $this->operation = $operation;
         $this->useField = $useField;
-    }
-
-    public function useField(): self
-    {
-        $this->useField = true;
-
-        return $this;
     }
 
     public static function between(string $fields, $value1, $value2): self
@@ -375,6 +368,108 @@ final class Where
         return count($fields) > 1 ? $sql . ')' : $sql;
     }
 
+    /**
+     * Parsea una cadena combinando lógica AND/OR implícita y explícita para generar un array de criterios estructurados.
+     *
+     * Convierte un string en un array de criterios estructurados. Los separadores
+     * determinan automáticamente la operación (AND/OR):
+     * - Coma (,) indica AND
+     * - Barra vertical (|) indica OR
+     *
+     * Soporta columnas simples y criterios con valores/operadores:
+     * - col                    → ['field' => 'col', 'value' => '', 'operator' => '=', 'operation' => 'AND']
+     * - col:value             → ['field' => 'col', 'value' => 'value', 'operator' => '=', 'operation' => 'AND']
+     * - col:value:operator    → ['field' => 'col', 'value' => 'value', 'operator' => '=', 'operation' => 'AND']
+     * - col:value:operator:op → ['field' => 'col', 'value' => 'value', 'operator' => '=', 'operation' => 'OR']
+     *
+     * Ejemplos:
+     *   Input:  "col1,col2"                          → AND implícito
+     *   Input:  "col1|col2"                          → OR implícito
+     *   Input:  "col:1:eq,col2:2:gt"               → AND implícito
+     *   Input:  "col:1:eq|col2:2:gt"               → OR implícito
+     *   Input:  "activa:0:eq,total:5:gt|total:33:gte:or" → AND y OR mezclados
+     *   Input:  "tabla.col:juan:like,estado:true:eq" → AND implícito
+     *   Input:  "edad:18-65:between,activo:true:eq" → AND implícito
+     *
+     * @param string|null $input Cadena con columnas y/o criterios separados por comas o pipes
+     *
+     * @return array Array de criterios estructurados, vacío si la entrada está vacía
+     */
+    public static function stringToArray(?string $input): array
+    {
+        if (empty($input)) {
+            return [];
+        }
+
+        // Validación de formato: asegura que solo contenga caracteres válidos
+        // Permite: campo.subcampo:valor:operador:operation separados por comas (AND) o pipes (OR)
+        $pattern = '/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*(?::[^:|]+){0,3}(?:[,|][a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*(?::[^:|]+){0,3})*$/';
+        if (!preg_match($pattern, trim($input))) {
+            return [];
+        }
+
+        $result = [];
+
+        // Dividir primero por pipes (|) para identificar grupos OR
+        $orGroups = preg_split('/\s*\|\s*/', trim($input));
+
+        foreach ($orGroups as $orGroupIndex => $orGroup) {
+            // Luego cada grupo por comas (,) para identificar grupos AND
+            $criteria = preg_split('/\s*,\s*/', trim($orGroup));
+
+            foreach ($criteria as $criterion) {
+                $criterion = trim($criterion);
+                if (empty($criterion)) {
+                    continue;
+                }
+
+                // Determinar la operación según el separador usado
+                // Si estamos en el primer grupo OR, usamos AND como operación por defecto
+                // Si no estamos en el primer grupo OR, usamos OR como operación por defecto
+                $defaultOperation = ($orGroupIndex === 0) ? 'AND' : 'OR';
+
+                // Dividir por colones para obtener field:value:operator:operation
+                $parts = explode(':', $criterion, 4);
+
+                $field = trim($parts[0]);
+
+                // Si solo hay el campo sin valores, devolvemos con valor vacío y operador =
+                if (count($parts) === 1) {
+                    $result[] = [
+                        'field' => $field,
+                        'value' => '',
+                        'operator' => '=',
+                        'operation' => $defaultOperation,
+                    ];
+                    continue;
+                }
+
+                // Si hay más de una parte, parseamos el resto
+                $value = isset($parts[1]) ? trim($parts[1]) : '';
+                $operatorKey = isset($parts[2]) ? trim($parts[2]) : 'eq';
+                $operation = isset($parts[3]) ? strtoupper(trim($parts[3])) : $defaultOperation;
+
+                // Verificar que el operador existe como método estático
+                if (!method_exists(self::class, $operatorKey)) {
+                    continue;
+                }
+
+                // Llamar al método estático dinámicamente para obtener la instancia Where
+                $where = self::$operatorKey($field, $value);
+
+                // Construir el array de resultado con el operador SQL real
+                $result[] = [
+                    'field' => $field,
+                    'value' => $value,
+                    'operator' => $where->operator,
+                    'operation' => $operation,
+                ];
+            }
+        }
+
+        return $result;
+    }
+
     public static function sub(array $where, string $operation = 'AND'): self
     {
         // comprobamos si el $where es un array de Where
@@ -388,6 +483,13 @@ final class Where
         $item = new self('', '', '(', $operation);
         $item->subWhere = $where;
         return $item;
+    }
+
+    public function useField(): self
+    {
+        $this->useField = true;
+
+        return $this;
     }
 
     public static function xlike(string $fields, string $value): self
