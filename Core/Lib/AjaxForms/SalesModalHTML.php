@@ -451,7 +451,12 @@ class SalesModalHTML
     /**
      * Renderiza las columnas añadidas por los mods al modal de clientes.
      *   - Primero unifica las columnas para evitar duplicados.
-     *   - Los mods deben retornar el HTML completo de la columna. <td> xxxxx </td>
+     *   - Los mods deben retornar el HTML completo de la columna incluyendo las etiquetas '<td>'.
+     *     Esto permite al mod aplicar clases e ids personalizables.
+     *     Ejemplos:
+     *        '<td> xxxxx </td>'
+     *        '<td class="myColumn"> xxxxx </td>'
+     *        '<td id="myColumnXXX"> xxxxx </td>'
      *
      * @param Cliente $cli
      * @return string
@@ -474,7 +479,7 @@ class SalesModalHTML
             foreach (self::$mods as $mod) {
                 $fieldHtml = $mod->renderField($cli, $field);
                 if ($fieldHtml !== null) {
-                    $html .= '<td>' . $fieldHtml . '</td>';
+                    $html .= $fieldHtml;
                     break;
                 }
             }
