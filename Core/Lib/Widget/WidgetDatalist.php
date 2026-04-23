@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\AssetManager;
-use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -70,28 +69,5 @@ class WidgetDatalist extends WidgetSelect
         }
         $html .= '</datalist>';
         return $html;
-    }
-
-    /**
-     * Set datasource data and Load data from Model into values array.
-     *
-     * @param array $child
-     * @param bool $loadData
-     */
-    protected function setSourceData(array $child, bool $loadData = true)
-    {
-        $this->limit = $child['limit'] ?? CodeModel::getlimit();
-        static::$codeModel::setLimit($this->limit);
-        parent::setSourceData($child);
-        /*$this->source = $child['source'];
-        $this->fieldcode = $child['fieldcode'] ?? 'id';
-        $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
-        $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
-        $this->limit = $child['limit'] ?? CodeModel::getlimit();
-        if ($loadData && $this->source) {
-            static::$codeModel::setLimit($this->limit);
-            $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, false);
-            $this->setValuesFromCodeModel($values, $this->translate);
-        }*/
     }
 }
