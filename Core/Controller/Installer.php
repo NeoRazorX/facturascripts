@@ -115,7 +115,7 @@ class Installer implements ControllerInterface
 
         if ('TRUE' === $this->request->query('phpinfo', '')) {
             /** @noinspection ForgottenDebugOutputInspection */
-            phpinfo();
+            phpinfo(INFO_GENERAL | INFO_MODULES);
             return;
         }
 
