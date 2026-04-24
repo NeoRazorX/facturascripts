@@ -888,7 +888,7 @@
     "invoice-regularized-cant-change-date": "La factura està dins d'una regularisació de %tax%. No es pot canviar la data.",
     "invoice-regularized-cant-delete": "La factura està dins d'una regularisació de %tax%. No es pot eliminar.",
     "invoice-start-number": "Nº de la primera factura",
-    "invoice-without-acc-entry": "Factura sense assentament",
+    "invoice-without-acc-entry": "Factura sense assentament comptable",
     "invoiced": "Facturat",
     "invoices": "Factures",
     "invoices-cant-generate-new-docs": "Las facturas no pueden generar nuevos documentos",
