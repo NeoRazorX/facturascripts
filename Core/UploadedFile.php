@@ -50,19 +50,21 @@ final class UploadedFile
                 if (is_array($value)) {
                     $value = $value[0];
                 }
-                $this->$key = $value;
+                $this->{$key} = $value;
             }
         }
     }
 
     public function extension(): string
     {
-        return pathinfo($this->name, PATHINFO_EXTENSION);
+        return is_null($this->name) ?
+            '' :
+            pathinfo($this->name, PATHINFO_EXTENSION);
     }
 
     public function getClientMimeType(): string
     {
-        return mime_content_type($this->tmp_name);
+        return $this->type ?? '';
     }
 
     /**
@@ -76,7 +78,7 @@ final class UploadedFile
 
     public function getClientOriginalName(): string
     {
-        return $this->name;
+        return $this->name ?? '';
     }
 
     public function getErrorMessage(): string
@@ -107,12 +109,17 @@ final class UploadedFile
 
     public function getMimeType(): string
     {
-        return mime_content_type($this->tmp_name);
+        if (is_null($this->tmp_name) || false === is_file($this->tmp_name)) {
+            return '';
+        }
+
+        $mime = mime_content_type($this->tmp_name);
+        return is_string($mime) ? $mime : '';
     }
 
     public function getPathname(): string
     {
-        return $this->tmp_name;
+        return $this->tmp_name ?? '';
     }
 
     public function getRealPath(): string
@@ -127,7 +134,7 @@ final class UploadedFile
 
     public function isUploaded(): bool
     {
-        return $this->test || is_uploaded_file($this->tmp_name);
+        return $this->test || (!is_null($this->tmp_name) && is_uploaded_file($this->tmp_name));
     }
 
     public function isValid(): bool

@@ -125,10 +125,22 @@ final class UploadedFileTest extends TestCase
         }
     }
 
+    public function testExtensionMethodWithNullName(): void
+    {
+        $file = new UploadedFile(['name' => null]);
+        $this->assertSame('', $file->extension());
+    }
+
     public function testGetClientOriginalName(): void
     {
         $file = new UploadedFile(['name' => 'original_document.pdf']);
         $this->assertEquals('original_document.pdf', $file->getClientOriginalName());
+    }
+
+    public function testGetClientOriginalNameWithNullName(): void
+    {
+        $file = new UploadedFile(['name' => null]);
+        $this->assertSame('', $file->getClientOriginalName());
     }
 
     public function testGetErrorMessage(): void
@@ -174,10 +186,14 @@ final class UploadedFileTest extends TestCase
 
     public function testGetClientMimeType(): void
     {
-        $file = new UploadedFile(['tmp_name' => $this->tempFile]);
-        $mimeType = $file->getClientMimeType();
+        $file = new UploadedFile(['type' => 'image/png']);
+        $this->assertSame('image/png', $file->getClientMimeType());
+    }
 
-        $this->assertStringContainsString('text/', $mimeType);
+    public function testGetClientMimeTypeWithNullType(): void
+    {
+        $file = new UploadedFile(['type' => null]);
+        $this->assertSame('', $file->getClientMimeType());
     }
 
     public function testGetMimeType(): void
@@ -188,10 +204,28 @@ final class UploadedFileTest extends TestCase
         $this->assertStringContainsString('text/', $mimeType);
     }
 
+    public function testGetMimeTypeWithNullPath(): void
+    {
+        $file = new UploadedFile(['tmp_name' => null]);
+        $this->assertSame('', $file->getMimeType());
+    }
+
+    public function testGetMimeTypeWithInvalidPath(): void
+    {
+        $file = new UploadedFile(['tmp_name' => $this->tempDir . '/missing-file.txt']);
+        $this->assertSame('', $file->getMimeType());
+    }
+
     public function testGetPathname(): void
     {
         $file = new UploadedFile(['tmp_name' => '/tmp/test.txt']);
         $this->assertEquals('/tmp/test.txt', $file->getPathname());
+    }
+
+    public function testGetPathnameWithNullPath(): void
+    {
+        $file = new UploadedFile(['tmp_name' => null]);
+        $this->assertSame('', $file->getPathname());
     }
 
     public function testGetRealPath(): void
@@ -210,6 +244,16 @@ final class UploadedFileTest extends TestCase
     {
         $file = new UploadedFile([
             'tmp_name' => '/tmp/non_uploaded_file.txt',
+            'test' => false
+        ]);
+
+        $this->assertFalse($file->isUploaded());
+    }
+
+    public function testIsUploadedWithNullPath(): void
+    {
+        $file = new UploadedFile([
+            'tmp_name' => null,
             'test' => false
         ]);
 
