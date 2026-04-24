@@ -172,7 +172,6 @@ final class UploadedFile
             return false;
         }
 
-        imagedestroy($image);
         return true;
     }
 

@@ -671,8 +671,6 @@ class OpenAi
                     break;
             }
 
-            imagedestroy($image);
-            imagedestroy($thumb);
         } catch (Throwable $th) {
             Tools::log('openai-image')->error('image resize error: ' . $th->getMessage());
             return '';
