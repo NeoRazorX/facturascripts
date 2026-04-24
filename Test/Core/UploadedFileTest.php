@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -150,6 +150,20 @@ final class UploadedFileTest extends TestCase
         }
     }
 
+    public function testGetErrorMessageForBlockedPhpExtensions(): void
+    {
+        foreach (['shell.php', 'shell.phtml', 'shell.PHAR'] as $fileName) {
+            $file = new UploadedFile([
+                'name' => $fileName,
+                'error' => UPLOAD_ERR_OK,
+                'tmp_name' => $this->tempFile,
+                'test' => true
+            ]);
+
+            $this->assertEquals('Executable PHP-related files are not allowed.', $file->getErrorMessage());
+        }
+    }
+
     public function testGetMaxFilesize(): void
     {
         $maxFilesize = UploadedFile::getMaxFilesize();
@@ -243,6 +257,79 @@ final class UploadedFileTest extends TestCase
         ]);
 
         $this->assertFalse($file->isValid());
+    }
+
+    public function testIsValidRejectsBlockedPhpExtensions(): void
+    {
+        foreach (['shell.php', 'shell.phtml', 'shell.PHP8'] as $fileName) {
+            $file = new UploadedFile([
+                'name' => $fileName,
+                'error' => UPLOAD_ERR_OK,
+                'tmp_name' => $this->tempFile,
+                'test' => true
+            ]);
+
+            $this->assertFalse($file->isValid());
+        }
+    }
+
+    public function testIsValidImageWithValidGif(): void
+    {
+        $imageFile = $this->tempDir . '/test-image.gif';
+        file_put_contents($imageFile, base64_decode('R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs='));
+
+        $file = new UploadedFile([
+            'name' => 'image.gif',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $imageFile,
+            'test' => true
+        ]);
+
+        $this->assertTrue($file->isValidImage());
+    }
+
+    public function testIsValidImageRejectsNonImageExtension(): void
+    {
+        $file = new UploadedFile([
+            'name' => 'document.txt',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertFalse($file->isValidImage());
+    }
+
+    public function testIsValidImageRejectsBlockedPhpExtension(): void
+    {
+        $file = new UploadedFile([
+            'name' => 'shell.php',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertFalse($file->isValidImage());
+    }
+
+    public function testIsValidImageRejectsFakeGifPayload(): void
+    {
+        $fakeGif = $this->tempDir . '/fake.gif';
+        file_put_contents($fakeGif, "GIF89a\n<?php system(\$_GET['cmd']); ?>\n");
+
+        $file = new UploadedFile([
+            'name' => 'fake.gif',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $fakeGif,
+            'test' => true
+        ]);
+
+        if (function_exists('imagecreatefromstring')) {
+            $this->assertFalse($file->isValidImage());
+            return;
+        }
+
+        $this->assertTrue($file->isValidImage());
     }
 
     public function testMoveWithValidFileInTestMode(): void

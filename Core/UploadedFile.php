@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,10 @@ namespace FacturaScripts\Core;
 
 final class UploadedFile
 {
+    private const BLOCKED_EXTENSIONS = ['phar', 'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'pht', 'phtml', 'phps'];
+    private const IMAGE_EXTENSIONS = ['gif', 'jpeg', 'jpg', 'png', 'webp'];
+    private const IMAGE_MIME_TYPES = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
+
     /** @var int */
     public $error;
 
@@ -77,6 +81,10 @@ final class UploadedFile
 
     public function getErrorMessage(): string
     {
+        if ($this->hasBlockedExtension()) {
+            return 'Executable PHP-related files are not allowed.';
+        }
+
         return match ($this->error) {
             UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
             UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
@@ -124,7 +132,41 @@ final class UploadedFile
 
     public function isValid(): bool
     {
-        return $this->error === UPLOAD_ERR_OK && $this->isUploaded();
+        return false === $this->hasBlockedExtension() &&
+            $this->error === UPLOAD_ERR_OK &&
+            $this->isUploaded();
+    }
+
+    public function isValidImage(): bool
+    {
+        if (false === $this->isValid()) {
+            return false;
+        }
+
+        if (false === in_array(strtolower($this->extension()), self::IMAGE_EXTENSIONS, true)) {
+            return false;
+        }
+
+        if (false === in_array($this->getMimeType(), self::IMAGE_MIME_TYPES, true)) {
+            return false;
+        }
+
+        if (false === function_exists('imagecreatefromstring')) {
+            return true;
+        }
+
+        $contents = @file_get_contents($this->tmp_name);
+        if (false === $contents) {
+            return false;
+        }
+
+        $image = @imagecreatefromstring($contents);
+        if (false === $image) {
+            return false;
+        }
+
+        imagedestroy($image);
+        return true;
     }
 
     public function move(string $destiny, string $destinyName): bool
@@ -185,5 +227,10 @@ final class UploadedFile
         }
 
         return $max;
+    }
+
+    private function hasBlockedExtension(): bool
+    {
+        return in_array(strtolower($this->extension()), self::BLOCKED_EXTENSIONS, true);
     }
 }

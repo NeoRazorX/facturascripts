@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -136,10 +136,11 @@ class ApiProductoImagen extends ApiController
             if (!$file->isValid()) {
                 continue;
             }
-            // si el archivo es php saltamos
-            if ($file->extension() === 'php') {
+
+            if (!$file->isValidImage()) {
                 continue;
             }
+
             $file->move('MyFiles', $file->getClientOriginalName());
             $this->model->path = $file->getClientOriginalName();
         }

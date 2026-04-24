@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -402,7 +402,7 @@ class Wizard extends Controller
             return false;
         }
 
-        if (false === in_array($uploadFile->getClientMimeType(), ['image/gif', 'image/jpeg', 'image/png'])) {
+        if (false === $uploadFile->isValidImage()) {
             Tools::log()->error('not-valid-image');
             return false;
         }
@@ -479,11 +479,6 @@ class Wizard extends Controller
 
     private function uploadLogoFile(UploadedFile $uploadFile): AttachedFile
     {
-        // exclude php files
-        if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-            return new AttachedFile();
-        }
-
         $destiny = FS_FOLDER . '/MyFiles/';
         $destinyName = $uploadFile->getClientOriginalName();
         if (file_exists($destiny . $destinyName)) {
