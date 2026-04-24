@@ -670,7 +670,6 @@ class OpenAi
                     imagegif($thumb, $thumbFile);
                     break;
             }
-
         } catch (Throwable $th) {
             Tools::log('openai-image')->error('image resize error: ' . $th->getMessage());
             return '';
