@@ -73,15 +73,9 @@ class CuentaBanco extends ModelClass
 
     public function createSubcuenta(string $codejercicio): Subcuenta
     {
-        // buscamos la cuenta especial
-        $especial = $this->loadSpecialAccount();
-        if (null === $especial) {
-            return new DinSubcuenta();
-        }
-
         // buscamos la cuenta padre en el ejercicio
-        $cuenta = $especial->getCuenta($codejercicio);
-        if (empty($cuenta->codcuenta)) {
+        $cuenta = $this->loadParentCuenta($codejercicio);
+        if (null === $cuenta) {
             return new DinSubcuenta();
         }
 
@@ -138,10 +132,7 @@ class CuentaBanco extends ModelClass
     {
         // si no hay una subcuenta definida, devolvemos la subcuenta especial
         if (empty($this->codsubcuenta)) {
-            $especial = $this->loadSpecialAccount();
-            if (null !== $especial) {
-                return $especial->getSubcuenta($codejercicio);
-            }
+            return $this->loadSpecialSubcuenta($codejercicio);
         }
 
         // buscamos la subcuenta
@@ -156,13 +147,13 @@ class CuentaBanco extends ModelClass
 
         // no la hemos encontrado, ¿La creamos?
         if ($create) {
-            $especial = $this->loadSpecialAccount();
-            if (null === $especial) {
+            $cuenta = $this->loadParentCuenta($codejercicio);
+            if (null === $cuenta) {
                 return new DinSubcuenta();
             }
 
             // creamos la subcuenta
-            return $especial->getCuenta($codejercicio)->createSubcuenta($this->codsubcuenta, $this->descripcion);
+            return $cuenta->createSubcuenta($this->codsubcuenta, $this->descripcion);
         }
 
         // devolvemos una vacía
@@ -173,10 +164,7 @@ class CuentaBanco extends ModelClass
     {
         // si no hay una subcuenta definida, devolvemos la subcuenta especial
         if (empty($this->codsubcuentagasto)) {
-            $especial = $this->loadSpecialAccount();
-            if (null !== $especial) {
-                return $especial->getSubcuenta($codejercicio);
-            }
+            return $this->loadSpecialSubcuenta($codejercicio);
         }
 
         // buscamos la subcuenta
@@ -191,32 +179,52 @@ class CuentaBanco extends ModelClass
 
         // no la hemos encontrado, ¿La creamos?
         if ($create) {
-            $especial = $this->loadSpecialAccount();
-            if (null === $especial) {
+            $cuenta = $this->loadParentCuenta($codejercicio);
+            if (null === $cuenta) {
                 return new DinSubcuenta();
             }
 
             // creamos la subcuenta
-            return $especial->getCuenta($codejercicio)->createSubcuenta($this->codsubcuentagasto, $this->descripcion);
+            return $cuenta->createSubcuenta($this->codsubcuentagasto, $this->descripcion);
         }
 
         // devolvemos una vacía
         return new DinSubcuenta();
     }
 
-    private function loadSpecialAccount(): ?DinCuentaEspecial
+    private function loadParentCuenta(string $codejercicio): ?Cuenta
     {
-        $especial = new DinCuentaEspecial();
-        if ($especial->load(static::SPECIAL_ACCOUNT)) {
-            return $especial;
-        }
+        // intentamos primero con BANCO; si no hay cuenta mapeada en el ejercicio, caemos a CAJA
+        foreach ([static::SPECIAL_ACCOUNT, static::SPECIAL_ACCOUNT_FALLBACK] as $code) {
+            $especial = new DinCuentaEspecial();
+            if (false === $especial->load($code)) {
+                continue;
+            }
 
-        // fallback para planes contables que no definen BANCO
-        if ($especial->load(static::SPECIAL_ACCOUNT_FALLBACK)) {
-            return $especial;
+            $cuenta = $especial->getCuenta($codejercicio);
+            if (!empty($cuenta->codcuenta)) {
+                return $cuenta;
+            }
         }
 
         return null;
+    }
+
+    private function loadSpecialSubcuenta(string $codejercicio): Subcuenta
+    {
+        foreach ([static::SPECIAL_ACCOUNT, static::SPECIAL_ACCOUNT_FALLBACK] as $code) {
+            $especial = new DinCuentaEspecial();
+            if (false === $especial->load($code)) {
+                continue;
+            }
+
+            $subcuenta = $especial->getSubcuenta($codejercicio);
+            if (!empty($subcuenta->codsubcuenta)) {
+                return $subcuenta;
+            }
+        }
+
+        return new DinSubcuenta();
     }
 
     public function install(): string
