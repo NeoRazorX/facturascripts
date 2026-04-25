@@ -103,6 +103,38 @@ final class AlmacenTest extends TestCase
         }
     }
 
+    public function testHtmlOnFields(): void
+    {
+        // los campos de texto deben sanearse para evitar XSS almacenado
+        $warehouse = new Almacen();
+        $warehouse->codalmacen = 'TXSS';
+        $warehouse->nombre = '<script>alert("nom")</script>';
+        $warehouse->apartado = '<b>';
+        $warehouse->ciudad = '<script>alert("ciu")</script>';
+        $warehouse->codpostal = '<i>';
+        $warehouse->direccion = '<img src=x onerror=alert(1)>';
+        $warehouse->provincia = '"><svg/onload=alert(1)>';
+        $warehouse->telefono = '<b>900</b>';
+
+        $this->assertTrue($warehouse->save(), 'warehouse-cant-save-with-html');
+
+        // ningún campo debe contener caracteres < o >
+        foreach (['nombre', 'apartado', 'ciudad', 'codpostal', 'direccion', 'provincia', 'telefono'] as $field) {
+            $this->assertStringNotContainsString('<', $warehouse->{$field}, "warehouse-{$field}-not-sanitized");
+            $this->assertStringNotContainsString('>', $warehouse->{$field}, "warehouse-{$field}-not-sanitized");
+        }
+
+        $this->assertTrue($warehouse->delete(), 'warehouse-cant-delete');
+    }
+
+    public function testBadCodalmacen(): void
+    {
+        $warehouse = new Almacen();
+        $warehouse->codalmacen = 'BAD CODE!';
+        $warehouse->nombre = 'Test';
+        $this->assertFalse($warehouse->save(), 'warehouse-saved-with-bad-code');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
