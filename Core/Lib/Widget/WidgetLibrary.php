@@ -191,7 +191,7 @@ class WidgetLibrary extends BaseWidget
                 $html .= '<div class="d-flex">'
                     . '<img loading="lazy" src="' . $file->url('download-permanent') . '" class="me-3 flex-shrink-0" alt="' . $file->filename
                     . '" width="64" height="64" style="object-fit: cover; cursor: pointer;" onclick="' . $js . '" title="' . Tools::trans('select') . '">'
-                    . '<div class="flex-grow-1 min-width-0">'
+                    . '<div class="flex-grow-1" style="min-width: 0;">'
                     . '<h6 class="text-truncate mb-1" style="cursor: pointer;" onclick="' . $js . '" title="' . Tools::trans('select') . '">' . $file->filename . '</h6>'
                     . $info
                     . '</div>'
