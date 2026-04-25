@@ -214,7 +214,6 @@ class Subcuenta extends ModelClass
         }
 
         $this->codsubcuenta = empty($this->idsubcuenta) ? $this->transformCodsubcuenta($this->codsubcuenta) : $this->codsubcuenta;
-        $this->descripcion = Tools::noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
             Tools::log()->warning('invalid-column-lenght', [
                 '%column%' => 'descripcion',
