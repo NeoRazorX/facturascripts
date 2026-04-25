@@ -41,6 +41,7 @@ class CuentaBanco extends ModelClass
     use IbanTrait;
 
     const SPECIAL_ACCOUNT = 'BANCO';
+    const SPECIAL_ACCOUNT_FALLBACK = 'CAJA';
 
     /** @var bool */
     public $activa;
@@ -73,8 +74,8 @@ class CuentaBanco extends ModelClass
     public function createSubcuenta(string $codejercicio): Subcuenta
     {
         // buscamos la cuenta especial
-        $especial = new DinCuentaEspecial();
-        if (false === $especial->load(static::SPECIAL_ACCOUNT)) {
+        $especial = $this->loadSpecialAccount();
+        if (null === $especial) {
             return new DinSubcuenta();
         }
 
@@ -135,10 +136,10 @@ class CuentaBanco extends ModelClass
 
     public function getSubcuenta(string $codejercicio, bool $create): Subcuenta
     {
-        // si no hay una subcuenta definida, devolvemos la subcuenta especial de CAJA
+        // si no hay una subcuenta definida, devolvemos la subcuenta especial
         if (empty($this->codsubcuenta)) {
-            $especial = new DinCuentaEspecial();
-            if ($especial->load(static::SPECIAL_ACCOUNT)) {
+            $especial = $this->loadSpecialAccount();
+            if (null !== $especial) {
                 return $especial->getSubcuenta($codejercicio);
             }
         }
@@ -155,9 +156,8 @@ class CuentaBanco extends ModelClass
 
         // no la hemos encontrado, ¿La creamos?
         if ($create) {
-            // buscamos la cuenta especial
-            $especial = new DinCuentaEspecial();
-            if (false === $especial->load(static::SPECIAL_ACCOUNT)) {
+            $especial = $this->loadSpecialAccount();
+            if (null === $especial) {
                 return new DinSubcuenta();
             }
 
@@ -171,10 +171,10 @@ class CuentaBanco extends ModelClass
 
     public function getSubcuentaGastos(string $codejercicio, bool $create): Subcuenta
     {
-        // si no hay una subcuenta definida, devolvemos la subcuenta especial de CAJA
+        // si no hay una subcuenta definida, devolvemos la subcuenta especial
         if (empty($this->codsubcuentagasto)) {
-            $especial = new DinCuentaEspecial();
-            if ($especial->load(static::SPECIAL_ACCOUNT)) {
+            $especial = $this->loadSpecialAccount();
+            if (null !== $especial) {
                 return $especial->getSubcuenta($codejercicio);
             }
         }
@@ -191,9 +191,8 @@ class CuentaBanco extends ModelClass
 
         // no la hemos encontrado, ¿La creamos?
         if ($create) {
-            // buscamos la cuenta especial
-            $especial = new DinCuentaEspecial();
-            if (false === $especial->load(static::SPECIAL_ACCOUNT)) {
+            $especial = $this->loadSpecialAccount();
+            if (null === $especial) {
                 return new DinSubcuenta();
             }
 
@@ -203,6 +202,21 @@ class CuentaBanco extends ModelClass
 
         // devolvemos una vacía
         return new DinSubcuenta();
+    }
+
+    private function loadSpecialAccount(): ?DinCuentaEspecial
+    {
+        $especial = new DinCuentaEspecial();
+        if ($especial->load(static::SPECIAL_ACCOUNT)) {
+            return $especial;
+        }
+
+        // fallback para planes contables que no definen BANCO
+        if ($especial->load(static::SPECIAL_ACCOUNT_FALLBACK)) {
+            return $especial;
+        }
+
+        return null;
     }
 
     public function install(): string
