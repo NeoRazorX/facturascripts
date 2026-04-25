@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,13 +19,14 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
 use FacturaScripts\Core\Model\Base\IbanTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
@@ -39,7 +40,7 @@ class CuentaBanco extends ModelClass
     use CompanyRelationTrait;
     use IbanTrait;
 
-    const SPECIAL_ACCOUNT = 'CAJA';
+    const SPECIAL_ACCOUNT = 'BANCO';
 
     /** @var bool */
     public $activa;
@@ -69,6 +70,69 @@ class CuentaBanco extends ModelClass
         $this->sufijosepa = '000';
     }
 
+    public function createSubcuenta(string $codejercicio): Subcuenta
+    {
+        // buscamos la cuenta especial
+        $especial = new DinCuentaEspecial();
+        if (false === $especial->load(static::SPECIAL_ACCOUNT)) {
+            return new DinSubcuenta();
+        }
+
+        // buscamos la cuenta padre en el ejercicio
+        $cuenta = $especial->getCuenta($codejercicio);
+        if (empty($cuenta->codcuenta)) {
+            return new DinSubcuenta();
+        }
+
+        // obtenemos un código de subcuenta libre
+        $code = $this->getFreeSubaccountCode($cuenta, $codejercicio);
+        if (empty($code)) {
+            return new DinSubcuenta();
+        }
+
+        // creamos la subcuenta
+        $subAccount = $cuenta->createSubcuenta($code, $this->descripcion);
+        if (empty($subAccount->codsubcuenta)) {
+            return new DinSubcuenta();
+        }
+
+        // guardamos el código de subcuenta
+        $this->codsubcuenta = $subAccount->codsubcuenta;
+        $this->save();
+
+        return $subAccount;
+    }
+
+    private function getFreeSubaccountCode(Cuenta $cuenta, string $codejercicio): string
+    {
+        $ejercicio = new DinEjercicio();
+        if (false === $ejercicio->load($codejercicio)) {
+            return '';
+        }
+
+        $longsub = (int)$ejercicio->longsubcuenta;
+        $prefix = $cuenta->codcuenta;
+        $padLength = $longsub - strlen($prefix);
+        if ($padLength <= 0) {
+            return '';
+        }
+
+        $subcuenta = new DinSubcuenta();
+        $max = (int)str_repeat('9', $padLength);
+        for ($num = 1; $num <= $max; $num++) {
+            $candidate = $prefix . str_pad((string)$num, $padLength, '0', STR_PAD_LEFT);
+            $where = [
+                Where::eq('codejercicio', $codejercicio),
+                Where::eq('codsubcuenta', $candidate),
+            ];
+            if (false === $subcuenta->loadWhere($where)) {
+                return $candidate;
+            }
+        }
+
+        return '';
+    }
+
     public function getSubcuenta(string $codejercicio, bool $create): Subcuenta
     {
         // si no hay una subcuenta definida, devolvemos la subcuenta especial de CAJA
@@ -82,8 +146,8 @@ class CuentaBanco extends ModelClass
         // buscamos la subcuenta
         $subcuenta = new DinSubcuenta();
         $where = [
-            new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
-            new DataBaseWhere('codejercicio', $codejercicio),
+            Where::eq('codsubcuenta', $this->codsubcuenta),
+            Where::eq('codejercicio', $codejercicio),
         ];
         if ($subcuenta->loadWhere($where)) {
             return $subcuenta;
@@ -118,8 +182,8 @@ class CuentaBanco extends ModelClass
         // buscamos la subcuenta
         $subcuenta = new DinSubcuenta();
         $where = [
-            new DataBaseWhere('codsubcuenta', $this->codsubcuentagasto),
-            new DataBaseWhere('codejercicio', $codejercicio),
+            Where::eq('codsubcuenta', $this->codsubcuentagasto),
+            Where::eq('codejercicio', $codejercicio),
         ];
         if ($subcuenta->loadWhere($where)) {
             return $subcuenta;

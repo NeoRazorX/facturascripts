@@ -388,6 +388,14 @@ class Wizard extends Controller
         $paymentMethod->codcuentabanco = $account->codcuenta;
         $paymentMethod->idempresa = $this->empresa->idempresa;
         $paymentMethod->save();
+
+        // creamos la subcuenta asociada en el ejercicio actual
+        if (empty($account->codsubcuenta)) {
+            $exerciseCode = $this->getCompanyExerciseCode();
+            if (!empty($exerciseCode)) {
+                $account->createSubcuenta($exerciseCode);
+            }
+        }
     }
 
     private function saveLogo(): bool
