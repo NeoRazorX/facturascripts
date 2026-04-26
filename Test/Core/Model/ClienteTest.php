@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -238,6 +239,34 @@ final class ClienteTest extends TestCase
         $this->assertFalse($cliente->hasColumn('columna_inexistente'), 'cliente-should-not-have-columna_inexistente');
         $this->assertFalse($cliente->hasColumn('total'), 'cliente-should-not-have-total-column');
         $this->assertFalse($cliente->hasColumn(''), 'cliente-should-not-have-empty-column');
+    }
+
+    public function testCustomerPaymentMethodClear(): void
+    {
+        // creamos una forma de pago
+        $payment = new FormaPago();
+        $payment->codpago = 'TEST';
+        $payment->descripcion = 'Test Payment Method';
+        $this->assertTrue($payment->save(), 'payment-method-cant-save');
+
+        // creamos un cliente con esa forma de pago
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345678A';
+        $cliente->codpago = 'TEST';
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        // desactivamos la forma de pago
+        $payment->activa = false;
+        $this->assertTrue($payment->save(), 'payment-method-cant-deactivate');
+
+        // recargamos el cliente y comprobamos que se ha eliminado la forma de pago
+        $cliente->reload();
+        $this->assertNull($cliente->codpago, 'cliente-payment-method-not-cleared');
+
+        // eliminamos
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
+        $this->assertTrue($payment->delete(), 'payment-method-cant-delete');
     }
 
     protected function tearDown(): void

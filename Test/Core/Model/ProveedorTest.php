@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -129,15 +130,15 @@ final class ProveedorTest extends TestCase
         $proveedor->nombre = 'Test';
         $proveedor->cifnif = '12345678A';
         $proveedor->web = 'javascript:alert(origin)';
-        $this->assertFalse($proveedor->save(), 'cliente-can-save-bad-web');
+        $this->assertFalse($proveedor->save(), 'proveedor-can-save-bad-web');
 
         // javascript con forma de url
         $proveedor->web = 'javascript://example.com//%0aalert(document.domain);//';
-        $this->assertFalse($proveedor->save(), 'cliente-can-save-bad-web-2');
+        $this->assertFalse($proveedor->save(), 'proveedor-can-save-bad-web-2');
 
         // javascript con mayúsculas
         $proveedor->web = 'jAvAsCriPt://sadas.com/%0aalert(15);//';
-        $this->assertFalse($proveedor->save(), 'cliente-can-save-bad-web-3');
+        $this->assertFalse($proveedor->save(), 'proveedor-can-save-bad-web-3');
     }
 
     public function testGoodWeb(): void
@@ -146,7 +147,7 @@ final class ProveedorTest extends TestCase
         $proveedor->nombre = 'Test';
         $proveedor->cifnif = '12345678A';
         $proveedor->web = 'https://www.example.com';
-        $this->assertTrue($proveedor->save(), 'cliente-can-save-good-web');
+        $this->assertTrue($proveedor->save(), 'proveedor-can-save-good-web');
 
         // eliminamos
         $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
@@ -196,6 +197,34 @@ final class ProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($address->delete());
         $this->assertTrue($proveedor->delete());
+    }
+
+    public function testSupplierPaymentMethodClear(): void
+    {
+        // creamos una forma de pago
+        $payment = new FormaPago();
+        $payment->codpago = 'TEST';
+        $payment->descripcion = 'Test Payment Method';
+        $this->assertTrue($payment->save(), 'payment-method-cant-save');
+
+        // creamos un proveedor con esa forma de pago
+        $supplier = new Proveedor();
+        $supplier->nombre = 'Test';
+        $supplier->cifnif = '12345678A';
+        $supplier->codpago = 'TEST';
+        $this->assertTrue($supplier->save(), 'proveedor-cant-save');
+
+        // desactivamos la forma de pago
+        $payment->activa = false;
+        $this->assertTrue($payment->save(), 'payment-method-cant-deactivate');
+
+        // recargamos el proveedor y comprobamos que se ha eliminado la forma de pago
+        $supplier->reload();
+        $this->assertNull($supplier->codpago, 'proveedor-payment-method-not-cleared');
+
+        // eliminamos
+        $this->assertTrue($supplier->delete(), 'proveedor-cant-delete');
+        $this->assertTrue($payment->delete(), 'payment-method-cant-delete');
     }
 
     protected function tearDown(): void
