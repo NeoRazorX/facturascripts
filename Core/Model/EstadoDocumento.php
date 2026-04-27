@@ -144,6 +144,17 @@ class EstadoDocumento extends ModelClass
             }
         }
 
+        // No permitimos que un estado de ventas genere un estado de compras o viceversa.
+        if (!empty($this->generadoc)) {
+            if (str_contains($this->tipodoc, 'Cliente') && str_contains($this->generadoc, 'Proveedor')) {
+                Tools::log()->warning('sales-docs-cant-generate-purchase-docs');
+                return false;
+            } elseif (str_contains($this->tipodoc, 'Proveedor') && str_contains($this->generadoc, 'Cliente')) {
+                Tools::log()->warning('purchase-docs-cant-generate-sales-docs');
+                return false;
+            }
+        }
+
         return parent::test();
     }
 
