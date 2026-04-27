@@ -19,15 +19,18 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 class WidgetSubcuenta extends WidgetText
 {
+    /** @var int|null */
+    protected $idempresa;
+
     /** @var string */
     public $match;
 
@@ -42,6 +45,9 @@ class WidgetSubcuenta extends WidgetText
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
+
+        // si el modelo tiene idempresa, lo usamos para filtrar los ejercicios del modal
+        $this->idempresa = isset($model->idempresa) && !empty($model->idempresa) ? (int)$model->idempresa : null;
 
         // obtenemos un nuevo ID cada vez
         $this->id = $this->getUniqueId();
@@ -59,7 +65,7 @@ class WidgetSubcuenta extends WidgetText
             $subcuenta = new Subcuenta();
             if (false === empty($this->value)) {
                 $subcuenta->loadWhere([
-                    new DataBaseWhere($this->match, $this->value)
+                    Where::eq($this->match, $this->value)
                 ]);
             }
 
@@ -97,9 +103,10 @@ class WidgetSubcuenta extends WidgetText
         $list = [];
         $where = [];
 
-        // si no se especifica ejercicio, usamos el primero
+        // si no se especifica ejercicio, usamos el primero (filtrado por empresa si la conocemos)
         if (empty($codejercicio)) {
-            $ejercicios = Ejercicio::all([], ['codejercicio' => 'DESC'], 0, 1);
+            $ejWhere = $this->idempresa ? [Where::eq('idempresa', $this->idempresa)] : [];
+            $ejercicios = Ejercicio::all($ejWhere, ['codejercicio' => 'DESC'], 0, 1);
             if (!empty($ejercicios)) {
                 $codejercicio = $ejercicios[0]->codejercicio;
             }
@@ -107,17 +114,17 @@ class WidgetSubcuenta extends WidgetText
 
         // cargamos y añadimos la subcuenta seleccionada
         $model = new Subcuenta();
-        if ($this->value && $model->loadWhere([new DataBaseWhere($this->match, $this->value)])) {
+        if ($this->value && $model->loadWhere([Where::eq($this->match, $this->value)])) {
             $list[] = clone $model;
-            $where[] = new DataBaseWhere($model->primaryColumn(), $model->id(), '<>');
+            $where[] = Where::notEq($model->primaryColumn(), $model->id());
         }
 
         if ($query) {
-            $where[] = new DataBaseWhere('codsubcuenta|descripcion', $query, 'LIKE');
+            $where[] = Where::like('codsubcuenta|descripcion', $query);
         }
 
         if ($codejercicio) {
-            $where[] = new DataBaseWhere('codejercicio', $codejercicio);
+            $where[] = Where::eq('codejercicio', $codejercicio);
         }
 
         switch ($sort) {
@@ -188,7 +195,7 @@ class WidgetSubcuenta extends WidgetText
         $subcuenta = new Subcuenta();
         if (false === empty($this->value)) {
             $subcuenta->loadWhere([
-                new DataBaseWhere($this->match, $this->value)
+                Where::eq($this->match, $this->value)
             ]);
         }
 
@@ -237,7 +244,8 @@ class WidgetSubcuenta extends WidgetText
     protected function renderExerciseFilter(): string
     {
         $options = [];
-        $ejercicios = Ejercicio::all([], ['codejercicio' => 'DESC']);
+        $where = $this->idempresa ? [Where::eq('idempresa', $this->idempresa)] : [];
+        $ejercicios = Ejercicio::all($where, ['codejercicio' => 'DESC']);
         $first = true;
 
         foreach ($ejercicios as $item) {
