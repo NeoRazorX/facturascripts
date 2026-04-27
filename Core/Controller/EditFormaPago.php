@@ -45,7 +45,7 @@ class EditFormaPago extends EditController
         return $data;
     }
 
-    protected function createViews(): void
+    protected function createViews()
     {
         parent::createViews();
 

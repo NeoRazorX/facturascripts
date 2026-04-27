@@ -314,12 +314,12 @@ class Wizard extends Controller
         Tools::settingsSet('default', 'site_url', Tools::siteUrl());
         Tools::settingsSave();
 
-        $this->saveInvoiceStartNumber();
-        $this->saveBankAccount();
-
         if ($this->request->input('defaultplan', '0')) {
             $this->loadDefaultAccountingPlan($this->empresa->codpais);
         }
+
+        $this->saveInvoiceStartNumber();
+        $this->saveBankAccount();
 
         // change template and redirect
         $this->setTemplate('Wizard-3');
