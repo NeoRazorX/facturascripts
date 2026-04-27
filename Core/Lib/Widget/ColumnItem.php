@@ -130,6 +130,24 @@ class ColumnItem extends VisualItem
             . '</div>';
     }
 
+    public function textOnly($model): string
+    {
+        if ($this->hidden()) {
+            return $this->widget->inputHidden($model);
+        }
+
+        $divClass = $this->getColumnClasses();
+        if (false === empty($this->class)) {
+            $divClass .= ' ' . $this->class;
+        }
+
+        $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
+        $textOnlyHtml = $this->widget->textOnly($model, $this->title);
+        return '<div' . $divID . ' class="' . $divClass . '">'
+            . $textOnlyHtml
+            . '</div>';
+    }
+
     /**
      * Returns the Bootstrap column classes based on widget type and configuration
      *
