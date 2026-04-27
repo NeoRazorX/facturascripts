@@ -33,6 +33,8 @@ use JetBrains\PhpStorm\Deprecated;
 
 abstract class ModelClass
 {
+    use ScopeTrait;
+
     /**
      * The model's attributes.
      *
@@ -227,8 +229,13 @@ abstract class ModelClass
             return false;
         }
 
+        // Apply global scopes
+        $where = [];
+        $where = static::applyGlobalScopesToWhere($where);
+
         $deleted = static::table()
             ->whereEq(static::primaryColumn(), $this->id())
+            ->where($where)
             ->delete();
         if (false === $deleted) {
             return false;
@@ -253,8 +260,13 @@ abstract class ModelClass
             return false;
         }
 
+        // Apply global scopes
+        $where = [];
+        $where = static::applyGlobalScopesToWhere($where);
+
         return static::table()
                 ->whereEq(static::primaryColumn(), $this->id())
+                ->where($where)
                 ->count() > 0;
     }
 
@@ -366,8 +378,13 @@ abstract class ModelClass
             return false;
         }
 
+        // Apply global scopes
+        $where = [];
+        $where = static::applyGlobalScopesToWhere($where);
+
         $data = static::table()
             ->whereEq(static::primaryColumn(), $code)
+            ->where($where)
             ->first();
         if (empty($data)) {
             $this->clear();
@@ -464,6 +481,9 @@ abstract class ModelClass
      */
     public function loadWhere(array $where, array $order = []): bool
     {
+        // Apply global scopes
+        $where = static::applyGlobalScopesToWhere($where);
+
         $data = static::table()
             ->where($where)
             ->orderMulti($order)
@@ -499,6 +519,9 @@ abstract class ModelClass
             $where[] = Where::regexp($field, '^-?[0-9]+$');
             $field = self::$dataBase->getEngine()->getSQL()->sql2Int($field);
         }
+
+        // Apply global scopes
+        $where = static::applyGlobalScopesToWhere($where);
 
         // Search for new code value
         $sqlWhere = Where::multiSqlLegacy($where);
@@ -682,8 +705,13 @@ abstract class ModelClass
             return false;
         }
 
+        // Apply global scopes
+        $where = [];
+        $where = static::applyGlobalScopesToWhere($where);
+
         $updated = static::table()
             ->whereEq(static::primaryColumn(), $this->id())
+            ->where($where)
             ->update($values);
         if (false === $updated) {
             return false;
@@ -834,6 +862,10 @@ abstract class ModelClass
         }
 
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
+
+        // Apply global scopes
+        $where = $modelClass::applyGlobalScopesToWhere($where);
+
         $where[] = Where::eq($foreignKey, $this->id());
         return $modelClass::all($where, $order);
     }
@@ -929,8 +961,13 @@ abstract class ModelClass
             return false;
         }
 
+        // Apply global scopes
+        $where = [];
+        $where = static::applyGlobalScopesToWhere($where);
+
         $updated = static::table()
             ->whereEq(static::primaryColumn(), $this->id())
+            ->where($where)
             ->update($this->toArray());
         if (false === $updated) {
             return false;
