@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
 use FacturaScripts\Dinamic\Model\Producto;
@@ -76,15 +76,14 @@ class CostPriceTools
 
         $rows = [];
         $where = [
-            new DataBaseWhere('referencia', $variant->referencia),
-            new DataBaseWhere('actualizastock', '1'),
-            new DataBaseWhere('pvptotal', 0, '>')
+            Where::eq('referencia', $variant->referencia),
+            Where::eq('actualizastock', '1'),
+            Where::gt('pvptotal', 0),
         ];
         $order = ['idlinea' => 'DESC'];
 
         // we collect the latest delivery notes for this product
-        $lineaAlbaran = new LineaAlbaranProveedor();
-        foreach ($lineaAlbaran->all($where, $order, 0, (int)$variant->stockfis) as $line) {
+        foreach (LineaAlbaranProveedor::all($where, $order, 0, (int)$variant->stockfis) as $line) {
             $rows[] = [
                 'time' => strtotime($line->getDocument()->fecha),
                 'quantity' => $line->cantidad,
@@ -93,8 +92,7 @@ class CostPriceTools
         }
 
         // we collect the latest invoices for this product
-        $lineaFactura = new LineaFacturaProveedor();
-        foreach ($lineaFactura->all($where, $order, 0, (int)$variant->stockfis) as $line) {
+        foreach (LineaFacturaProveedor::all($where, $order, 0, (int)$variant->stockfis) as $line) {
             $rows[] = [
                 'time' => strtotime($line->getDocument()->fecha),
                 'quantity' => $line->cantidad,
@@ -113,16 +111,16 @@ class CostPriceTools
             return 0;
         });
 
-        $buyedUnits = 0.0;
+        $units = 0.0;
         $totalCost = 0.0;
         foreach ($rows as $item) {
-            if ($buyedUnits < $variant->stockfis) {
+            if ($units < $variant->stockfis) {
                 $totalCost += $item['cost'];
-                $buyedUnits += $item['quantity'];
+                $units += $item['quantity'];
             }
         }
 
-        $newCost = empty($buyedUnits) ? 0.0 : $totalCost / $buyedUnits;
+        $newCost = empty($units) ? 0.0 : $totalCost / $units;
         $variant->coste = round($newCost, Producto::ROUND_DECIMALS);
         $variant->save();
     }
@@ -135,12 +133,11 @@ class CostPriceTools
     protected static function updateAveragePrice(Variante $variant): void
     {
         $prices = [];
-        $supplierProduct = new ProductoProveedor();
         $where = [
-            new DataBaseWhere('referencia', $variant->referencia),
-            new DataBaseWhere('neto', 0, '>')
+            Where::eq('referencia', $variant->referencia),
+            Where::gt('neto', 0),
         ];
-        foreach ($supplierProduct->all($where, ['actualizado' => 'DESC'], 0, 0) as $prod) {
+        foreach (ProductoProveedor::all($where, ['actualizado' => 'DESC'], 0, 0) as $prod) {
             $prices[] = $prod->neto;
         }
 
@@ -156,12 +153,11 @@ class CostPriceTools
      */
     protected static function updateLastPrice(Variante $variant): void
     {
-        $supplierProduct = new ProductoProveedor();
         $where = [
-            new DataBaseWhere('referencia', $variant->referencia),
-            new DataBaseWhere('neto', 0, '>')
+            Where::eq('referencia', $variant->referencia),
+            Where::gt('neto', 0),
         ];
-        foreach ($supplierProduct->all($where, ['actualizado' => 'DESC'], 0, 1) as $prod) {
+        foreach (ProductoProveedor::all($where, ['actualizado' => 'DESC'], 0, 1) as $prod) {
             $variant->coste = round($prod->neto, Producto::ROUND_DECIMALS);
             $variant->save();
             break;
@@ -175,12 +171,11 @@ class CostPriceTools
      */
     protected static function updateHighPrice(Variante $variant): void
     {
-        $supplierProduct = new ProductoProveedor();
         $where = [
-            new DataBaseWhere('referencia', $variant->referencia),
-            new DataBaseWhere('neto', 0, '>')
+            Where::eq('referencia', $variant->referencia),
+            Where::gt('neto', 0),
         ];
-        foreach ($supplierProduct->all($where, ['precio' => 'DESC'], 0, 1) as $prod) {
+        foreach (ProductoProveedor::all($where, ['precio' => 'DESC'], 0, 1) as $prod) {
             $variant->coste = round($prod->neto, Producto::ROUND_DECIMALS);
             $variant->save();
             break;
