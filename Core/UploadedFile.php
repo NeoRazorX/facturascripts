@@ -19,6 +19,11 @@
 
 namespace FacturaScripts\Core;
 
+/**
+ * Clase que se encarga de gestionar los archivos recien subidos.
+ *
+ * Contiene una amplia variedad de métodos para realizar comprobaciones y procesar los archivos recien subidos.
+ */
 final class UploadedFile
 {
     private const BLOCKED_EXTENSIONS = ['phar', 'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'pht', 'phtml', 'phps'];
@@ -55,6 +60,9 @@ final class UploadedFile
         }
     }
 
+    /**
+     * Devuelve la extensión del archivo mediante pathinfo (solo revisa el nombre, fácil de engañar)
+     */
     public function extension(): string
     {
         return is_null($this->name) ?
@@ -62,6 +70,9 @@ final class UploadedFile
             pathinfo($this->name, PATHINFO_EXTENSION);
     }
 
+    /**
+     * Devuelve el mime del archivo basandose en los bits mágicos del archivo (vía mime_content_type)
+     */
     public function getClientMimeType(): string
     {
         return $this->type ?? '';
@@ -76,11 +87,17 @@ final class UploadedFile
         return $this->extension();
     }
 
+    /**
+     * Devuelve el nombre original del archivo subido
+     */
     public function getClientOriginalName(): string
     {
         return $this->name ?? '';
     }
 
+    /**
+     * Devuelve un mensaje de error legible en caso de que la subida haya fallado.
+     */
     public function getErrorMessage(): string
     {
         if ($this->hasBlockedExtension()) {
@@ -99,6 +116,9 @@ final class UploadedFile
         };
     }
 
+    /**
+     * Devuelve el tamaño máximo de archivo que se puede subir.
+     */
     public static function getMaxFilesize(): int
     {
         $postMax = self::parseFilesize(ini_get('post_max_size'));
@@ -107,6 +127,9 @@ final class UploadedFile
         return min($postMax ?: PHP_INT_MAX, $uploadMax ?: PHP_INT_MAX);
     }
 
+    /**
+     * Devuelve el mime del archivo basandose en los bits mágicos del archivo (vía mime_content_type)
+     */
     public function getMimeType(): string
     {
         if (is_null($this->tmp_name) || false === is_file($this->tmp_name)) {
@@ -117,26 +140,41 @@ final class UploadedFile
         return is_string($mime) ? $mime : '';
     }
 
+    /**
+     * Devuelve la ruta temporal del archivo subido.
+     */
     public function getPathname(): string
     {
         return $this->tmp_name ?? '';
     }
 
+    /**
+     * Devuelve la ruta real del archivo subido.
+     */
     public function getRealPath(): string
     {
         return $this->getPathname();
     }
 
+    /**
+     * Devuelve el tamaño del archivo subido en bytes.
+     */
     public function getSize(): int
     {
         return $this->size;
     }
 
+    /**
+     * Comprueba si el archivo ha sido subido vía HTTP POST
+     */
     public function isUploaded(): bool
     {
         return $this->test || (!is_null($this->tmp_name) && is_uploaded_file($this->tmp_name));
     }
 
+    /**
+     * Comprueba si el archivo subido es válido
+     */
     public function isValid(): bool
     {
         return false === $this->hasBlockedExtension() &&
@@ -175,6 +213,12 @@ final class UploadedFile
         return true;
     }
 
+    /**
+     * Mueve el archivo subido a una nueva ubicación
+     * 
+     * @param string $destiny Ruta del directorio destino
+     * @param string $destinyName Nombre del archivo destino
+     */
     public function move(string $destiny, string $destinyName): bool
     {
         if (!$this->isValid()) {
@@ -190,6 +234,9 @@ final class UploadedFile
             move_uploaded_file($this->tmp_name, $destiny . $destinyName);
     }
 
+    /**
+     * Mueve el archivo subido a una nueva ubicación
+     */
     public function moveTo(string $targetPath): bool
     {
         if (!$this->isValid()) {
@@ -201,6 +248,11 @@ final class UploadedFile
             move_uploaded_file($this->tmp_name, $targetPath);
     }
 
+    /**
+     * Convierte una cadena de tamaño de archivo en bytes.
+     * 
+     * @param string $size Tamaño del archivo en formato legible (ej. "2M", "512K")
+     */
     private static function parseFilesize(string $size): int
     {
         if ('' === $size) {
