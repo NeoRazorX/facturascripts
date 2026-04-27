@@ -242,6 +242,9 @@ final class DataBase
             // adds the sql query to the history
             self::$miniLog->debug($sql, ['duration' => $stop - $start]);
 
+            // Log SQL query and execution time to a file when enabled
+            $this->logSqlForDebug($sql, $stop - $start);
+
             // check errors
             if (!$result || self::$engine->hasError()) {
                 self::$miniLog->error(self::$engine->errorMessage(self::$link), ['sql' => $sql]);
@@ -451,6 +454,9 @@ final class DataBase
         // add the sql query to the history
         self::$miniLog->debug($sql, ['duration' => $stop - $start]);
 
+        // Log SQL query and execution time to a file when enabled
+        $this->logSqlForDebug($sql, $stop - $start);
+
         if (!empty($result)) {
             return $result;
         }
@@ -549,5 +555,85 @@ final class DataBase
     public function version(): string
     {
         return $this->connected() ? self::$engine->version(self::$link) : '';
+    }
+
+    private function logSqlForDebug(string $sql, float $durationSeconds): void
+    {
+        $enabled = (defined('FS_DEBUG_SQL_TO_FILE') && FS_DEBUG_SQL_TO_FILE === true)
+            || (getenv('FS_DEBUG_SQL_TO_FILE') === '1');
+
+        if (!$enabled) {
+            return;
+        }
+
+        Tools::folderCheckOrCreate(Tools::folder('MyFiles', 'Debug'));
+
+        $date = date('Y-m-d');
+        $file = Tools::folder('MyFiles', 'Debug', "sql-{$date}.csv");
+
+        $timestamp  = date('c'); // ISO 8601
+        $durationMs = number_format($durationSeconds * 1000, 3, ',', '');
+        $pid        = function_exists('getmypid') ? (string) getmypid() : '';
+        $uri        = $_SERVER['REQUEST_URI'] ?? '';
+        $method     = $_SERVER['REQUEST_METHOD'] ?? '';
+
+        $sql = trim($sql);
+        $sql = preg_replace("/\r\n|\r|\n/", ' ', $sql) ?? $sql;
+
+        $header = ['timestamp', 'duration_ms', 'pid', 'method', 'uri', 'sql'];
+        $row    = [$timestamp, $durationMs, $pid, $method, $uri, $sql];
+
+        $needsHeaderMain = !is_file($file) || filesize($file) === 0;
+
+        // Intento principal
+        if ($this->appendCsvRowWithLock($file, $row, $needsHeaderMain ? $header : null)) {
+            return;
+        }
+
+        // Fallback: si el intento principal falla por concurrencia en escritura, guardamos en otro archivo
+        $fallbackFile = Tools::folder('MyFiles', 'Debug', "sql-{$date}.fallback.csv");
+        $needsHeaderFallback = !is_file($fallbackFile) || filesize($fallbackFile) === 0;
+
+        $this->appendCsvRowWithLock($fallbackFile, $row, $needsHeaderFallback ? $header : null);
+    }
+
+    /**
+     * Añade una fila CSV de forma segura.
+     * - Bloquea el archivo para evitar líneas mezcladas en concurrencia.
+     * - Escribe cabecera si se pasa.
+     * Devuelve false si no pudo escribir (p.ej. archivo bloqueado por otro proceso).
+     */
+    private function appendCsvRowWithLock(string $file, array $row, ?array $header = null): bool
+    {
+        $fp = @fopen($file, 'ab');
+        if ($fp === false) {
+            return false;
+        }
+
+        $locked = @flock($fp, LOCK_EX);
+        if (!$locked) {
+            @fclose($fp);
+            return false;
+        }
+
+        try {
+            if ($header !== null) {
+                // Cabecera
+                if (@fputcsv($fp, $header, ';') === false) {
+                    return false;
+                }
+            }
+
+            // Fila
+            if (@fputcsv($fp, $row, ';') === false) {
+                return false;
+            }
+
+            @fflush($fp);
+            return true;
+        } finally {
+            @flock($fp, LOCK_UN);
+            @fclose($fp);
+        }
     }
 }
