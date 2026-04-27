@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -125,6 +125,24 @@ class ApiKey extends ModelClass
         return null;
     }
 
+    /**
+     * Devuelve los nombres de campos que no deben exponerse en la API.
+     *
+     * @return string[]
+     */
+    public function getApiFieldsToHide(): array
+    {
+        return ['apikey'];
+    }
+
+    /**
+     * Comprueba si esta API key tiene permiso para la operación indicada sobre el recurso.
+     *
+     * @param string $resource Nombre del recurso.
+     * @param string $permission Operación: 'get', 'post', 'put' o 'delete'.
+     *
+     * @return bool
+     */
     public function hasAccess(string $resource, string $permission = 'get'): bool
     {
         if ($this->fullaccess) {
