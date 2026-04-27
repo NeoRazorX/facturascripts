@@ -24,6 +24,11 @@ use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Esta clase se debe usar para los ficheros subidos por el usuario, generalmente en la carpeta MyFiles.
+ * 
+ * Para manejar ficheros en aspectos del core o plugins usar la clase Files
+ */
 class Myfiles implements ControllerInterface
 {
     /** @var string */
@@ -71,6 +76,15 @@ class Myfiles implements ControllerInterface
         return [];
     }
 
+    /**
+     * Devuelve si un fichero es seguro para ser servido. (Debe usarse para ficheros NO subidos por el usuario)
+     * 
+     * Se debe de usar antes de devolver un fichero y en las subidas también.
+     * 
+     * @param string $filePath
+     * 
+     * @return bool true si el fichero es seguro
+     */
     public static function isFileSafe(string $filePath): bool
     {
         $parts = explode('.', $filePath);
