@@ -327,7 +327,7 @@ class CodeModel
      */
     protected static function isValidTableName(string $tableName): bool
     {
-        return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $tableName) === 1;
+        return preg_match('/^(?:Join\\\\)?[a-zA-Z_][a-zA-Z0-9_]*$/', $tableName) === 1;
     }
 
     protected static function db(): DataBase
