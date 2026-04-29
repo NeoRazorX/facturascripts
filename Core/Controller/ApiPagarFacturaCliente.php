@@ -92,9 +92,16 @@ class ApiPagarFacturaCliente extends ApiController
     {
         // marcamos todos los recibos como pagados
         foreach ($factura->getReceipts() as $receipt) {
+            $codpago = $this->request->request->get('codpago', $receipt->codpago);
+            $paymentMethodChanged = $codpago !== $receipt->codpago;
             $receipt->pagado = true;
             $receipt->fechapago = $this->request->request->get('fechapago', $receipt->fechapago);
-            $receipt->codpago = $this->request->request->get('codpago', $receipt->codpago);
+            $receipt->codpago = $codpago;
+            if ($this->request->request->has('codcuentabanco')) {
+                $receipt->codcuentabanco = $this->request->request->get('codcuentabanco') ?: null;
+            } elseif ($paymentMethodChanged || empty($receipt->codcuentabanco)) {
+                $receipt->codcuentabanco = $receipt->getPaymentMethod()->codcuentabanco;
+            }
             if (false === $receipt->save()) {
                 $this->response
                     ->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR)

@@ -55,7 +55,12 @@
                 <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
             </widget>
         </column>
-        <column name="payment-date" order="180">
+        <column name="bank-account" display="right" order="180">
+            <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco">
+                <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion"/>
+            </widget>
+        </column>
+        <column name="payment-date" order="185">
             <widget type="date" fieldname="fechapago"/>
         </column>
         <column name="expiration" display="right" order="190">

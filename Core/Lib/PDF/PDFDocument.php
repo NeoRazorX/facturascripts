@@ -121,7 +121,8 @@ abstract class PDFDocument extends PDFCore
 
         // cuenta bancaria de la empresa
         $cuentaBco = new CuentaBanco();
-        if ($payMethod->codcuentabanco && $cuentaBco->load($payMethod->codcuentabanco) && $cuentaBco->iban) {
+        $codCuentaBanco = empty($receipt->codcuentabanco) ? $payMethod->codcuentabanco : $receipt->codcuentabanco;
+        if ($codCuentaBanco && $cuentaBco->load($codCuentaBanco) && $cuentaBco->iban) {
             return $payMethod->descripcion . ' : ' . $cuentaBco->getIban(true);
         }
 

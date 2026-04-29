@@ -30,6 +30,8 @@ use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
@@ -369,6 +371,34 @@ trait CommonSalesPurchases
         return $data;
     }
 
+    protected static function getBankAccounts(BusinessDocument $model, ?string $selectedBankAccount = null): array
+    {
+        $data = [];
+        $where = [Where::eq('idempresa', $model->idempresa)];
+        foreach (CuentaBanco::all($where, ['codcuenta' => 'ASC'], 0, 0) as $bankAccount) {
+            if ($bankAccount->codcuenta != $selectedBankAccount && !$bankAccount->activa) {
+                continue;
+            }
+
+            $data[] = $bankAccount;
+        }
+
+        return $data;
+    }
+
+    protected static function getPaymentDefaultBankAccount(BusinessDocument $model): ?string
+    {
+        if (method_exists($model, 'getReceipts')) {
+            foreach ($model->getReceipts() as $receipt) {
+                if (false == $receipt->pagado && !empty($receipt->codcuentabanco)) {
+                    return $receipt->codcuentabanco;
+                }
+            }
+        }
+
+        return FormasPago::get($model->codpago)->codcuentabanco;
+    }
+
     protected static function hora(BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="hora" required' : 'disabled';
@@ -592,15 +622,35 @@ trait CommonSalesPurchases
             . '<div class="row g-2">'
             . '<div class="col-12 mb-2">'
             . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . Tools::trans('payment-method') . '</a>'
-            . '<select id="paid-payment-modal" class="form-select" required>';
+            . '<select id="paid-payment-modal" class="form-select" required onchange="let bank=document.getElementById(\'paid-bank-account-modal\'); if (bank) { bank.value = this.options[this.selectedIndex].dataset.bankAccount || \'\'; }">';
 
         foreach (static::getPaymentMethods($model) as $row) {
-            $html .= '<option value="' . $row->codpago . '"' . ($row->codpago === $model->codpago ? ' selected' : '') . '>' . $row->descripcion . '</option>';
+            $html .= '<option value="' . $row->codpago . '" data-bank-account="' . $row->codcuentabanco . '"'
+                . ($row->codpago === $model->codpago ? ' selected' : '') . '>' . $row->descripcion . '</option>';
         }
 
         $html .= '</select>'
-            . '</div>'
-            . '<div class="col-12 mb-2">'
+            . '</div>';
+
+        $selectedBankAccount = static::getPaymentDefaultBankAccount($model);
+        $bankAccounts = static::getBankAccounts($model, $selectedBankAccount);
+        if ($bankAccounts) {
+            $html .= '<div class="col-12 mb-2">'
+                . '<a href="ListFormaPago?activetab=ListCuentaBanco">' . Tools::trans('bank-account') . '</a>'
+                . '<select id="paid-bank-account-modal" class="form-select">'
+                . '<option value="">' . Tools::trans('none') . '</option>';
+
+            foreach ($bankAccounts as $bankAccount) {
+                $html .= '<option value="' . $bankAccount->codcuenta . '"'
+                    . ($bankAccount->codcuenta === $selectedBankAccount ? ' selected' : '')
+                    . '>' . $bankAccount->descripcion . '</option>';
+            }
+
+            $html .= '</select>'
+                . '</div>';
+        }
+
+        $html .= '<div class="col-12 mb-2">'
             . Tools::trans('date')
             . '<input type="date" id="paid-date-modal" value="' . date('Y-m-d') . '" class="form-control" required/>'
             . '</div>'
@@ -613,7 +663,8 @@ trait CommonSalesPurchases
             . '<button type="button" class="btn btn-primary btn-spin-action" onclick="(function(){
     let pago = document.getElementById(\'paid-payment-modal\') ? document.getElementById(\'paid-payment-modal\').value : \'\';
     let fecha = document.getElementById(\'paid-date-modal\') ? document.getElementById(\'paid-date-modal\').value : \'\';
-    prepareForm(\'save-paid\', {\'paid-payment-modal\': pago, \'paid-date-modal\': fecha, \'paid-status\': 1});
+    let banco = document.getElementById(\'paid-bank-account-modal\') ? document.getElementById(\'paid-bank-account-modal\').value : \'\';
+    prepareForm(\'save-paid\', {\'paid-payment-modal\': pago, \'paid-bank-account-modal\': banco, \'paid-date-modal\': fecha, \'paid-status\': 1});
 })()">'
             . Tools::trans('paid')
             . '</button>'
