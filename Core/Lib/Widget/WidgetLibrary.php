@@ -114,9 +114,10 @@ class WidgetLibrary extends BaseWidget
     /**
      * @param string $query
      * @param string $sort
+     * @param int $limit
      * @return AttachedFile[]
      */
-    public function files(string $query = '', string $sort = 'date-desc'): array
+    public function files(string $query = '', string $sort = 'date-desc', int $limit = 50): array
     {
         $list = [];
 
@@ -151,7 +152,7 @@ class WidgetLibrary extends BaseWidget
                 break;
         }
 
-        foreach ($model->all($where, $orderBy) as $file) {
+        foreach ($model->all($where, $orderBy, 0, $limit) as $file) {
             // excluimos el archivo seleccionado
             if ($file->idfile === $model->idfile) {
                 continue;
