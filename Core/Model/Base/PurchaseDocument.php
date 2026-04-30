@@ -24,7 +24,6 @@ use FacturaScripts\Core\Model\Proveedor as CoreProveedor;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
-use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Variante;
 
@@ -96,8 +95,6 @@ abstract class PurchaseDocument extends TransformerDocument
             $newLine->pvpunitario = $variant->coste;
             $newLine->recargo = $product->getTax()->recargo;
             $newLine->referencia = $variant->referencia;
-
-            $this->setLastSupplierPrice($newLine);
 
             Calculator::calculateLine($this, $newLine);
 
@@ -214,26 +211,4 @@ abstract class PurchaseDocument extends TransformerDocument
         return $this->codproveedor && $proveedor->load($this->codproveedor) && $this->setSubject($proveedor);
     }
 
-    /**
-     * Establece el último precio y descuentos de este proveedor.
-     *
-     * @param BusinessDocumentLine $newLine
-     */
-    protected function setLastSupplierPrice(&$newLine): void
-    {
-        $where = [
-            Where::eq('codproveedor', $this->codproveedor),
-            Where::eq('referencia', $newLine->referencia),
-            Where::gt('precio', 0)
-        ];
-        $orderBy = ['coddivisa' => 'DESC'];
-        foreach (ProductoProveedor::all($where, $orderBy) as $prod) {
-            if ($prod->coddivisa === $this->coddivisa || $prod->coddivisa === null) {
-                $newLine->dtopor = $prod->dtopor;
-                $newLine->dtopor2 = $prod->dtopor2;
-                $newLine->pvpunitario = $prod->precio;
-                return;
-            }
-        }
-    }
 }
