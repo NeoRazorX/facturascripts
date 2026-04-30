@@ -754,7 +754,7 @@ class Tools
             return '';
         }
 
-        if (strlen($text) <= $length) {
+        if (mb_strlen($text, 'UTF-8') <= $length) {
             return trim($text);
         }
 
@@ -762,7 +762,7 @@ class Tools
         $words = explode(' ', trim($text));
         $result = '';
         foreach ($words as $word) {
-            if (strlen($result . ' ' . $word . $break) <= $length) {
+            if (mb_strlen($result . ' ' . $word . $break, 'UTF-8') <= $length) {
                 $result .= $result === '' ? $word : ' ' . $word;
                 continue;
             }
