@@ -337,9 +337,46 @@ class User extends ModelClass
 
     public function setPassword($value): bool
     {
-        // si la contraseña tiene menos de 8 caracteres, o no tiene números o no tiene letras, devolvemos false
-        if (strlen($value) < 8 || !preg_match('/[0-9]/', $value) || !preg_match('/[a-zA-Z]/', $value)) {
-            return false;
+        // Password strength configurable via FS_PASSWORDS_STRENGTH (low|medium|hard)
+        $strength = defined('FS_PASSWORDS_STRENGTH') ? FS_PASSWORDS_STRENGTH : 'medium';
+
+        switch ($strength) {
+            case 'low':
+                // mínimo 6 caracteres
+                if (strlen($value) < 6) {
+                    return false;
+                }
+                break;
+
+            case 'medium':
+                // mínimo 10 caracteres, con números, letras y algún signo de puntuación
+                if (strlen($value) < 10
+                    || !preg_match('/[0-9]/', $value)
+                    || !preg_match('/[a-zA-Z]/', $value)
+                    || !preg_match('/[[:punct:]]/', $value)
+                ) {
+                    return false;
+                }
+                break;
+
+            case 'hard':
+                // mínimo 12 caracteres, números, letras, mayúsculas, minúsculas y algún signo de puntuación
+                if (strlen($value) < 12
+                    || !preg_match('/[0-9]/', $value)
+                    || !preg_match('/[A-Z]/', $value)
+                    || !preg_match('/[a-z]/', $value)
+                    || !preg_match('/[[:punct:]]/', $value)
+                ) {
+                    return false;
+                }
+                break;
+
+            default:
+                // Fallback a la validación histórica: mínimo 8, letras y números
+                if (strlen($value) < 8 || !preg_match('/[0-9]/', $value) || !preg_match('/[a-zA-Z]/', $value)) {
+                    return false;
+                }
+                break;
         }
 
         $this->password = password_hash($value, PASSWORD_DEFAULT);
