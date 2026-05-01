@@ -62,6 +62,7 @@
     "add-user": "Erabiltzaile bat gehitu",
     "additional-text": "Testu gehigarria",
     "address": "Helbidea",
+    "address-applied-to-documents-successfully": "Dirección actualizada en los documentos",
     "addresses": "Helbideak",
     "addresses-and-contacts": "Helbideak eta kontaktuak",
     "admin": "Administratzailea",
@@ -1467,7 +1468,7 @@
     "result": "Emaitza",
     "retention": "Atxikipena",
     "retentions": "Atxikipenak",
-    "reverse-charge": "Inversión de sujeto pasivo",
+    "reverse-charge": "Subjektu pasiboaren inbertsioa",
     "review-date": "Berrikusteko data",
     "right": "Eskuma",
     "risky-customer": "Bezero arriskutsua",
@@ -1923,5 +1924,5 @@
     "zip-codes": "Posta kodeak",
     "zip-error-wrong-structure": "Zip-aren egitura okerra da. Pluginaren karpeta eta plugin bakarra izan behar ditu.",
     "zone": "Eremua",
-    "zones": "Zonas"
+    "zones": "Eremuak"
 }
