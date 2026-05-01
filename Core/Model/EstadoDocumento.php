@@ -28,7 +28,7 @@ use FacturaScripts\Core\Tools;
 /**
  * Defines the status and attributes of a purchase or sale document.
  *
- * @author Francesc Pineda Segarra <francesc.pìneda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez     <carlos@facturascripts.com>
  */
 class EstadoDocumento extends ModelClass

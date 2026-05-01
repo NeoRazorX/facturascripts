@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\ApiAccess;
  * ApiKey model to manage the connection tokens through the api
  * that will be generated to synchronize different applications.
  *
- * @author Joe Nilson           <joenilson at gmail.com>
+ * @author Joe Nilson           <joenilson@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class ApiKey extends ModelClass

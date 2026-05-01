@@ -23,6 +23,11 @@ use FacturaScripts\Core\Internal\Headers;
 use FacturaScripts\Core\Internal\RequestFiles;
 use FacturaScripts\Core\Internal\SubRequest;
 
+/**
+ * Encapsula la petición HTTP entrante (cookies, archivos, cabeceras, parámetros GET/POST y cuerpo).
+ * Se construye normalmente desde las superglobales mediante createFromGlobals(),
+ * pero también admite datos arbitrarios para facilitar los tests.
+ */
 final class Request
 {
     const METHOD_GET = 'GET';
@@ -30,24 +35,27 @@ final class Request
     const METHOD_POST = 'POST';
     const METHOD_PUT = 'PUT';
 
-    /** @var SubRequest */
+    /** Cookies de la petición ($_COOKIE). @var SubRequest */
     public $cookies;
 
-    /** @var RequestFiles */
+    /** Archivos subidos ($_FILES). @var RequestFiles */
     public $files;
 
-    /** @var Headers */
+    /** Cabeceras HTTP derivadas de $_SERVER. @var Headers */
     public $headers;
 
-    /** @var SubRequest */
+    /** Parámetros de la query string ($_GET). @var SubRequest */
     public $query;
 
-    /** @var string|null */
+    /** Cuerpo crudo de la petición; si es null se lee de php://input bajo demanda. @var string|null */
     private $rawInput;
 
-    /** @var SubRequest */
+    /** Parámetros del cuerpo de la petición ($_POST y PUT/PATCH form-urlencoded). @var SubRequest */
     public $request;
 
+    /**
+     * @param array $data Claves opcionales: cookies, files, headers, query, request, input.
+     */
     public function __construct(array $data = [])
     {
         $this->cookies = new SubRequest($data['cookies'] ?? []);
@@ -74,6 +82,10 @@ final class Request
         return $result;
     }
 
+    /**
+     * Detecta el navegador a partir del User-Agent.
+     * @return string chrome, edge, firefox, safari, opera, ie o unknown.
+     */
     public function browser(): string
     {
         $userAgent = $this->userAgent();
@@ -98,11 +110,16 @@ final class Request
         return 'unknown';
     }
 
+    /** Devuelve el valor de una cookie o $default si no existe. */
     public function cookie(string $key, $default = null): ?string
     {
         return $this->cookies->get($key, $default);
     }
 
+    /**
+     * Construye una Request a partir de las superglobales del entorno PHP
+     * ($_COOKIE, $_FILES, $_SERVER, $_GET, $_POST y php://input para PUT/PATCH).
+     */
     public static function createFromGlobals(): self
     {
         return new self([
@@ -114,11 +131,13 @@ final class Request
         ]);
     }
 
+    /** Devuelve el archivo subido asociado a $key, o null si no existe. */
     public function file(string $key): ?UploadedFile
     {
         return $this->files->get($key);
     }
 
+    /** URL absoluta completa: protocolo, host, path y query string. */
     public function fullUrl(): string
     {
         return $this->protocol() . '://' . $this->host() . $this->urlWithQuery();
@@ -160,6 +179,7 @@ final class Request
         return $this->request->getAlnum($key);
     }
 
+    /** Devuelve el path de REQUEST_URI sin la query string (ej: "/admin/users"). */
     public function getBasePath(): string
     {
         $url = $_SERVER['REQUEST_URI'];
@@ -179,6 +199,7 @@ final class Request
         return $this->request->getBool($key, $default);
     }
 
+    /** Devuelve el cuerpo crudo de la petición (rawInput inyectado o php://input). */
     public function getContent(): string
     {
         return $this->rawInput ?? file_get_contents('php://input');
@@ -301,6 +322,10 @@ final class Request
         return $this->request->getUrl($key, $default);
     }
 
+    /**
+     * Comprueba que TODAS las claves indicadas estén presentes en query o request.
+     * Devuelve false si alguna falta o si no se pasa ninguna clave.
+     */
     public function has(string ...$key): bool
     {
         $found = false;
@@ -316,21 +341,25 @@ final class Request
         return $found;
     }
 
+    /** Devuelve la cabecera HTTP solicitada o $default. */
     public function header(string $key, $default = null): ?string
     {
         return $this->headers->get($key, $default);
     }
 
+    /** Host de la petición (HTTP_HOST) o cadena vacía si no se conoce. */
     public function host(): string
     {
         return $_SERVER['HTTP_HOST'] ?? '';
     }
 
+    /** Lee un valor solo del cuerpo de la petición (POST/PUT/PATCH). */
     public function input(string $key, $default = null): ?string
     {
         return $this->request->get($key, $default);
     }
 
+    /** Lee del cuerpo y, si no existe, recurre a la query string. */
     public function inputOrQuery(string $key, $default = null): ?string
     {
         return $this->request->has($key) ?
@@ -338,6 +367,10 @@ final class Request
             $this->query->get($key, $default);
     }
 
+    /**
+     * Devuelve la IP del cliente, dando prioridad a Cloudflare y X-Forwarded-For
+     * antes que REMOTE_ADDR. Si no hay nada disponible devuelve "::1".
+     */
     public function ip(): string
     {
         foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
@@ -349,11 +382,16 @@ final class Request
         return '::1';
     }
 
+    /** Comprueba si el método HTTP coincide con el indicado (GET, POST, etc.). */
     public function isMethod(string $method): bool
     {
         return $this->method() === $method;
     }
 
+    /**
+     * Decodifica el cuerpo de la petición como JSON.
+     * Si $key es null devuelve el array completo; en caso contrario el valor de esa clave o $default.
+     */
     public function json(?string $key = null, $default = null)
     {
         $input = $this->getContent();
@@ -366,11 +404,16 @@ final class Request
         return $data[$key] ?? $default;
     }
 
+    /** Devuelve el método HTTP (GET, POST, PUT, PATCH, DELETE...). */
     public function method(): string
     {
         return $_SERVER['REQUEST_METHOD'];
     }
 
+    /**
+     * Detecta el sistema operativo del cliente a partir del User-Agent.
+     * @return string windows, mac, linux, unix, sun, bsd o unknown.
+     */
     public function os(): string
     {
         $userAgent = $this->userAgent();
@@ -395,6 +438,11 @@ final class Request
         return 'unknown';
     }
 
+    /**
+     * Construye el array de datos de la petición.
+     * Para PUT/PATCH con application/x-www-form-urlencoded, PHP no rellena $_POST,
+     * así que parseamos manualmente el cuerpo desde php://input.
+     */
     public static function parseRequestData(): array
     {
         $request = $_POST;
@@ -414,16 +462,19 @@ final class Request
         return $request;
     }
 
+    /** Protocolo del servidor (p.ej. HTTP/1.1) o cadena vacía. */
     public function protocol(): string
     {
         return $_SERVER['SERVER_PROTOCOL'] ?? '';
     }
 
+    /** Lee un valor solo de la query string. */
     public function query(string $key, $default = null): ?string
     {
         return $this->query->get($key, $default);
     }
 
+    /** Lee de la query y, si no existe, recurre al cuerpo de la petición. */
     public function queryOrInput(string $key, $default = null): ?string
     {
         return $this->query->has($key) ?
@@ -431,11 +482,19 @@ final class Request
             $this->request->get($key, $default);
     }
 
+    /** Indica si la petición se ha realizado por HTTPS. */
     public function isSecure(): bool
     {
         return $this->protocol() === 'https';
     }
 
+    /**
+     * Devuelve la URL relativa de la petición, eliminada la query string y el prefijo FS_ROUTE.
+     *
+     * @param int|null $position Si es null devuelve la URL completa.
+     *                           Si es un índice, devuelve el segmento del path en esa posición
+     *                           (admite negativos para contar desde el final).
+     */
     public function url(?int $position = null): string
     {
         // si contiene '?', lo quitamos y lo que venga después
@@ -462,11 +521,13 @@ final class Request
         return $path[$position] ?? '';
     }
 
+    /** URL relativa con la query string añadida (incluye el "?" aunque esté vacía). */
     public function urlWithQuery(): string
     {
         return $this->url() . '?' . $_SERVER['QUERY_STRING'];
     }
 
+    /** User-Agent enviado por el cliente, o cadena vacía. */
     public function userAgent(): string
     {
         return $_SERVER['HTTP_USER_AGENT'] ?? '';
