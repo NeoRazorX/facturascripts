@@ -463,8 +463,15 @@ abstract class PurchasesController extends PanelController
             $receipt->nick = $this->user->nick;
             // si no está pagado, actualizamos fechapago y codpago
             if (false == $receipt->pagado) {
+                $codpago = $formData['paid-payment-modal'] ?? $model->codpago;
+                $paymentMethodChanged = $codpago !== $receipt->codpago;
                 $receipt->fechapago = $formData['paid-date-modal'] ?? Tools::date();
-                $receipt->codpago = $formData['paid-payment-modal'] ?? $model->codpago;
+                $receipt->codpago = $codpago;
+                if (array_key_exists('paid-bank-account-modal', $formData)) {
+                    $receipt->codcuentabanco = $formData['paid-bank-account-modal'] ?: null;
+                } elseif ($paymentMethodChanged || empty($receipt->codcuentabanco)) {
+                    $receipt->codcuentabanco = $receipt->getPaymentMethod()->codcuentabanco;
+                }
             }
             $receipt->pagado = (bool)$formData['paid-status'];
             if (false === $receipt->save()) {

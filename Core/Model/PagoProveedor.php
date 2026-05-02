@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Model\Base\AccEntryRelationTrait;
+use FacturaScripts\Core\Model\Base\BankAccountRelationTrait;
 use FacturaScripts\Core\Model\Base\PaymentRelationTrait;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
@@ -37,6 +38,7 @@ class PagoProveedor extends ModelClass
 {
     use ModelTrait;
     use AccEntryRelationTrait;
+    use BankAccountRelationTrait;
     use PaymentRelationTrait;
 
     /** @var bool */
@@ -111,6 +113,16 @@ class PagoProveedor extends ModelClass
     public static function tableName(): string
     {
         return 'pagosprov';
+    }
+
+    public function test(): bool
+    {
+        $this->codcuentabanco = Tools::noHtml($this->codcuentabanco);
+        if ($this->codcuentabanco === '') {
+            $this->codcuentabanco = null;
+        }
+
+        return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'List'): string

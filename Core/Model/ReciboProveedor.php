@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model\Base\BankAccountRelationTrait;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
 use FacturaScripts\Core\Model\Base\PaymentRelationTrait;
 use FacturaScripts\Core\Session;
@@ -40,6 +41,7 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 class ReciboProveedor extends ModelClass
 {
     use ModelTrait;
+    use BankAccountRelationTrait;
     use CompanyRelationTrait;
     use PaymentRelationTrait;
 
@@ -184,6 +186,7 @@ class ReciboProveedor extends ModelClass
     {
         $formaPago = new FormaPago();
         if ($formaPago->load($codpago)) {
+            $this->codcuentabanco = $formaPago->codcuentabanco;
             $this->codpago = $codpago;
             $this->pagado = $formaPago->pagado;
             $this->setExpiration($formaPago->getExpiration($this->fecha));
@@ -200,6 +203,10 @@ class ReciboProveedor extends ModelClass
 
     public function test(): bool
     {
+        $this->codcuentabanco = Tools::noHtml($this->codcuentabanco);
+        if ($this->codcuentabanco === '') {
+            $this->codcuentabanco = null;
+        }
         $this->observaciones = Tools::noHtml($this->observaciones);
 
         // asignamos el código de la factura
@@ -246,6 +253,7 @@ class ReciboProveedor extends ModelClass
         }
 
         $pago = new DinPagoProveedor();
+        $pago->codcuentabanco = $this->codcuentabanco;
         $pago->codpago = $this->codpago;
         $pago->fecha = $this->fechapago ?? $pago->fecha;
         $pago->idrecibo = $this->idrecibo;
@@ -262,6 +270,10 @@ class ReciboProveedor extends ModelClass
         }
 
         switch ($field) {
+            case 'codpago':
+                $this->updateBankAccountFromPaymentMethod();
+                return true;
+
             case 'importe':
                 return !$this->getOriginal('pagado');
 
@@ -286,6 +298,21 @@ class ReciboProveedor extends ModelClass
         $this->updateInvoice();
 
         parent::onUpdate();
+    }
+
+    protected function updateBankAccountFromPaymentMethod(): void
+    {
+        if ($this->isDirty('codcuentabanco')) {
+            return;
+        }
+
+        $oldPaymentMethod = new FormaPago();
+        $oldBankAccount = $oldPaymentMethod->load($this->getOriginal('codpago')) ?
+            $oldPaymentMethod->codcuentabanco :
+            null;
+        if (empty($this->codcuentabanco) || $this->codcuentabanco === $oldBankAccount) {
+            $this->codcuentabanco = $this->getPaymentMethod()->codcuentabanco;
+        }
     }
 
     protected function saveInsert(): bool
