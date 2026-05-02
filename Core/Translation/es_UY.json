@@ -1401,7 +1401,7 @@
     "receipt-expense-account": "Gastos en el recibo %document%",
     "receipts": "Recibos",
     "receiver": "Receptor",
-    "record-deleted-correctly": "Registro eliminado correctamente",
+    "record-deleted-correctly": "¡Registro eliminado correctamente!",
     "record-deleted-error": "Error al eliminar el registro.",
     "record-not-found": "Registro no encontrado",
     "record-save-error": "Ha ocurrido un error mientras se guardaban los datos",
