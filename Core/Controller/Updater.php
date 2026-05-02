@@ -289,6 +289,9 @@ class Updater extends Controller
             if ($build['mincore'] > $coreVersion) {
                 continue; // Requiere un core más reciente
             }
+            if ($build['maxcore'] > 0 && $build['maxcore'] < $coreVersion) {
+                continue; // Build demasiado antigua para el core actual
+            }
 
             $item = [
                 'description' => Tools::trans('plugin-update', [
