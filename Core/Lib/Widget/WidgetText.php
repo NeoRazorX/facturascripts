@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * Description of WidgetText
  *
@@ -54,5 +56,10 @@ class WidgetText extends BaseWidget
     {
         $params = $this->maxlength > 0 ? ' maxlength="' . $this->maxlength . '"' : '';
         return $params . parent::inputHtmlExtraParams();
+    }
+
+    protected function show()
+    {
+        return is_null($this->value) ? '-' : Tools::noHtml((string)$this->value);
     }
 }

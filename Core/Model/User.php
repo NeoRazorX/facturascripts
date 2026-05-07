@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -242,6 +242,16 @@ class User extends ModelClass
     }
 
     /**
+     * Devuelve los nombres de campos que no deben exponerse en la API.
+     *
+     * @return string[]
+     */
+    public function getApiFieldsToHide(): array
+    {
+        return ['password', 'logkey', 'two_factor_secret_key'];
+    }
+
+    /**
      * Devuelve los roles asignados al usuario.
      *
      * @return Role[]
@@ -369,7 +379,7 @@ class User extends ModelClass
         }
 
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
-        $this->lastbrowser = substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200);
+        $this->lastbrowser = mb_substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200, 'UTF-8');
 
         // escapamos el html de lastip y comprobamos que no excede los 40 caracteres
         $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 40);

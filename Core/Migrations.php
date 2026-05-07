@@ -41,13 +41,40 @@ use FacturaScripts\Dinamic\Model\LogMessage;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Serie;
 
+/**
+ * Ejecutor de migraciones del núcleo y de los plugins.
+ *
+ * Cada migración es una pequeña tarea idempotente que arregla datos heredados o ajusta el esquema
+ * tras un cambio incompatible (por ejemplo, desvincular registros huérfanos, normalizar valores
+ * de excepciones de IVA o forzar la creación/comprobación de una tabla instanciando su modelo).
+ *
+ * Las migraciones se identifican por nombre y solo se ejecutan una vez: el listado de las ya
+ * aplicadas se guarda en `MyFiles/migrations.json`. Si el JSON se borra, todas las migraciones
+ * volverán a ejecutarse, por eso cada una está pensada para ser segura de re-ejecutar (comprueba
+ * existencia de tablas/columnas, sólo actúa si hay datos a corregir, etc.).
+ *
+ * Las migraciones del núcleo se registran en `run()`. Los plugins pueden registrar las suyas
+ * extendiendo `MigrationClass` y llamando a `runPluginMigration()` / `runPluginMigrations()`
+ * desde su inicialización.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 final class Migrations
 {
+    /** Nombre del fichero JSON, dentro de MyFiles, donde se persisten las migraciones ya ejecutadas. */
     const FILE_NAME = 'migrations.json';
 
-    /** @var DataBase */
+    /** Conexión perezosa a la base de datos, compartida entre todas las migraciones de la ejecución. @var DataBase */
     private static $database;
 
+    /**
+     * Ejecuta todas las migraciones del núcleo en el orden definido.
+     *
+     * Cada migración se invoca a través de `runMigration()`, que se encarga de saltarla si ya
+     * había sido aplicada anteriormente. El orden importa: hay migraciones que dependen de que
+     * otras hayan creado/normalizado datos antes (por ejemplo, las que desvinculan registros
+     * huérfanos asumen que las tablas referenciadas ya existen).
+     */
     public static function run(): void
     {
         self::runMigration('clearLogs', [self::class, 'clearLogs']);
@@ -62,9 +89,13 @@ final class Migrations
     }
 
     /**
-     * Execute a plugin migration
+     * Ejecuta una migración de plugin si no se había ejecutado previamente.
      *
-     * @param MigrationClass $migration The migration instance
+     * El nombre completo (que se compara contra el registro persistido) lo proporciona la propia
+     * migración mediante `getFullMigrationName()`, lo que permite a cada plugin elegir un esquema
+     * de nombrado que evite colisiones con otros plugins o con el núcleo.
+     *
+     * @param MigrationClass $migration instancia ya construida de la migración a ejecutar
      */
     public static function runPluginMigration(MigrationClass $migration): void
     {
@@ -79,9 +110,12 @@ final class Migrations
     }
 
     /**
-     * Execute multiple plugin migrations
+     * Ejecuta una lista de migraciones de plugin en el orden recibido.
      *
-     * @param array<MigrationClass> $migrations Array of migration instances
+     * Es un simple atajo sobre `runPluginMigration()`; cada migración decide individualmente
+     * si debe ejecutarse según el registro persistido.
+     *
+     * @param array<MigrationClass> $migrations migraciones a ejecutar, en orden
      */
     public static function runPluginMigrations(array $migrations): void
     {
@@ -90,6 +124,13 @@ final class Migrations
         }
     }
 
+    /**
+     * Purga logs antiguos del canal "master" cuando la tabla supera 20.000 filas.
+     *
+     * Si el canal master tiene menos de 20.000 registros no se hace nada. En caso contrario,
+     * se borran las entradas con más de un mes de antigüedad para evitar que la tabla siga
+     * creciendo y degrade el rendimiento de las consultas que la usan (página de logs, etc.).
+     */
     private static function clearLogs(): void
     {
         $logModel = new LogMessage();
@@ -104,6 +145,7 @@ final class Migrations
         self::db()->exec($sql);
     }
 
+    /** Devuelve la conexión a base de datos, abriéndola la primera vez (singleton perezoso interno). */
     private static function db(): DataBase
     {
         if (self::$database === null) {
@@ -114,7 +156,14 @@ final class Migrations
         return self::$database;
     }
 
-    // versión 2025.01, fecha 02-12-2025
+    /**
+     * Pone a NULL los `codagente` huérfanos en documentos y entidades relacionadas.
+     *
+     * Versión 2025.01, fecha 02-12-2025. Se instancia el modelo `Agente` para forzar la creación
+     * o comprobación de la tabla `agentes` antes de la limpieza. A partir de ahí, en cada tabla
+     * existente se anulan los códigos de agente que ya no aparecen en `agentes`, evitando claves
+     * foráneas rotas que romperían validaciones posteriores.
+     */
     private static function fixAgentes(): void
     {
         // forzamos la comprobación de la tabla agentes
@@ -136,7 +185,12 @@ final class Migrations
         }
     }
 
-    // versión 2025.01, fecha 02-12-2025
+    /**
+     * Desvincula las api_keys cuyo `nick` apunta a un usuario que ya no existe.
+     *
+     * Versión 2025.01, fecha 02-12-2025. Si alguna de las dos tablas (`api_keys` o `users`)
+     * todavía no existe, la migración no hace nada y se da por aplicada en la siguiente vuelta.
+     */
     private static function fixApiKeysUsers(): void
     {
         // verificamos que existan ambas tablas
@@ -151,7 +205,15 @@ final class Migrations
         self::db()->exec($sql);
     }
 
-    // versión 2026.01, fecha 06-03-2026
+    /**
+     * Rellena `clientes.operacion` a partir de `clientes.excepcioniva` cuando viene vacía.
+     *
+     * Versión 2026.01, fecha 06-03-2026. Con la nueva validación, ciertas excepciones de IVA
+     * (exportaciones y operaciones intracomunitarias) requieren que el cliente tenga informada
+     * la operación. Para no romper a clientes ya existentes, esta migración mapea las excepciones
+     * conocidas a su operación correspondiente, pero sólo cuando la columna `operacion` está NULL
+     * (no se sobrescriben valores ya configurados manualmente).
+     */
     private static function fixClientesOperationFromVatException(): void
     {
         if (false === self::db()->tableExists('clientes')) {
@@ -178,6 +240,12 @@ final class Migrations
         }
     }
 
+    /**
+     * Pone a NULL los `codtrans` huérfanos en documentos de venta.
+     *
+     * Se instancia `AgenciaTransporte` para asegurar que la tabla `agenciastrans` existe y, a
+     * continuación, se anulan los códigos de agencia que ya no se encuentran en ella.
+     */
     private static function fixAgenciasTransporte(): void
     {
         // forzamos la comprobación de la tabla agenciastransporte
@@ -196,7 +264,15 @@ final class Migrations
         }
     }
 
-    // versión 2024.5, fecha 15-04-2024
+    /**
+     * Recupera formas de pago referenciadas pero inexistentes recreándolas como inactivas.
+     *
+     * Versión 2024.5, fecha 15-04-2024. En lugar de anular los `codpago` huérfanos (lo que
+     * perdería la trazabilidad histórica de los documentos), se reconstruyen los registros
+     * faltantes en `formaspago` con `activa=false` y descripción "deleted". Si el modelo no
+     * puede guardarlos (por ejemplo por validaciones), se recurre a un INSERT directo por SQL
+     * para garantizar que la integridad referencial queda restaurada.
+     */
     private static function fixFormasPago(): void
     {
         // forzamos la comprobación de la tabla formas_pago
@@ -232,7 +308,14 @@ final class Migrations
         }
     }
 
-    // versión 2024.5, fecha 16-04-2024
+    /**
+     * Anula `idfacturarect` en facturas que rectifican a una factura inexistente.
+     *
+     * Versión 2024.5, fecha 16-04-2024. La subconsulta se envuelve en otro SELECT (alias
+     * `subquery`) para sortear la limitación de MySQL que impide referenciar la misma tabla
+     * que se está actualizando dentro de un IN/NOT IN; ese rodeo hace que MySQL la materialice
+     * y la trate como una fuente independiente.
+     */
     private static function fixRectifiedInvoices(): void
     {
         // ponemos a null el idfacturarect de las facturas que rectifiquen a una factura que no existe
@@ -249,7 +332,13 @@ final class Migrations
         }
     }
 
-    // version 2023.06, fecha 07-10-2023
+    /**
+     * Marca con tipo "R" la serie configurada como rectificativa en el panel de control.
+     *
+     * Versión 2023.06, fecha 07-10-2023. Antes la serie rectificativa se identificaba sólo por
+     * el ajuste `default.codserierec`; ahora cada serie lleva además un campo `tipo`. Si no hay
+     * serie configurada, la migración no hace nada.
+     */
     private static function fixSeries(): void
     {
         // forzamos la comprobación de la tabla series
@@ -265,7 +354,15 @@ final class Migrations
         self::db()->exec($sqlUpdate);
     }
 
-    // TODO: añadir versión y fecha de lanzamiento
+    /**
+     * Renombra códigos antiguos de excepción de IVA a su nuevo identificador en todas las tablas afectadas.
+     *
+     * TODO: añadir versión y fecha de lanzamiento. Se instancian primero los modelos para forzar
+     * la creación/comprobación de las tablas, y después se aplica un UPDATE con CASE que mapea los
+     * códigos heredados (`ES_N1`, `ES_ART_7`, etc.) a los nuevos (`ES_7`, `ES_84`, ...). Las tablas
+     * sin la columna `excepcioniva` se saltan, lo que permite que la migración sea segura aunque
+     * algún plugin haya alterado el esquema.
+     */
     private static function fixTaxException(): void
     {
         // forzamos la comprobación de las tablas
@@ -323,6 +420,13 @@ final class Migrations
         }
     }
 
+    /**
+     * Devuelve la lista de migraciones ya ejecutadas, leyéndola del fichero JSON.
+     *
+     * Cualquier problema (fichero ausente, lectura fallida o JSON corrupto) se trata como
+     * "no hay migraciones ejecutadas", lo que provoca que se reintenten todas. Por eso cada
+     * migración debe ser idempotente.
+     */
     private static function getExecutedMigrations(): array
     {
         $file = Tools::folder('MyFiles', self::FILE_NAME);
@@ -339,12 +443,20 @@ final class Migrations
         return is_array($data) ? $data : [];
     }
 
+    /** Indica si la migración con ese nombre ya consta como ejecutada en el JSON de control. */
     private static function isMigrationExecuted(string $migrationName): bool
     {
         $executed = self::getExecutedMigrations();
         return in_array($migrationName, $executed, true);
     }
 
+    /**
+     * Registra una migración como ejecutada, persistiendo el cambio en `MyFiles/migrations.json`.
+     *
+     * Si el nombre ya estaba registrado no se hace nada. Antes de escribir se asegura que el
+     * directorio MyFiles existe; el JSON se guarda con `JSON_PRETTY_PRINT` para que sea legible
+     * y diffeable a mano.
+     */
     private static function markMigrationAsExecuted(string $migrationName): void
     {
         $executed = self::getExecutedMigrations();
@@ -361,6 +473,13 @@ final class Migrations
         );
     }
 
+    /**
+     * Ejecuta el callback indicado y marca la migración como aplicada, salvo que ya lo estuviera.
+     *
+     * Es el único punto por el que pasan todas las migraciones del núcleo. Si el callback lanza
+     * una excepción, la migración no se marcará como ejecutada y se reintentará en el próximo
+     * arranque.
+     */
     private static function runMigration(string $migrationName, callable $callback): void
     {
         if (self::isMigrationExecuted($migrationName)) {

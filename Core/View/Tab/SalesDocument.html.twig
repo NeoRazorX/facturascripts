@@ -158,9 +158,17 @@
 
             findProduct();
         }).catch(function (error) {
-            alert('error');
             console.warn(error);
             animateSpinner('remove', false);
+            if (error && typeof error.text === 'function') {
+                error.text().then(function (body) {
+                    alert((error.status ? error.status + ' ' : '') + (body || error.statusText || 'error'));
+                }).catch(function () {
+                    alert((error.status ? error.status + ' ' : '') + (error.statusText || 'error'));
+                });
+            } else {
+                alert(error && error.message ? error.message : 'error');
+            }
         });
 
         return false;
@@ -228,9 +236,17 @@
                 animateSpinner('remove', true);
             }
         }).catch(function (error) {
-            alert('error');
             console.warn(error);
             animateSpinner('remove', false);
+            if (error && typeof error.text === 'function') {
+                error.text().then(function (body) {
+                    alert((error.status ? error.status + ' ' : '') + (body || error.statusText || 'error'));
+                }).catch(function () {
+                    alert((error.status ? error.status + ' ' : '') + (error.statusText || 'error'));
+                });
+            } else {
+                alert(error && error.message ? error.message : 'error');
+            }
         });
 
         return false;
