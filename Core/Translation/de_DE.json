@@ -1626,6 +1626,8 @@
     "status-name-valid-length": "Ungültiger Statusname Muss zwischen 1 und 20 Zeichen lang sein.",
     "status-value-is-number": "El campo estado debe ser numérico.",
     "stock": "Stock",
+    "stock-count": "Bestandszählung",
+    "stock-counts": "Bestandszählungen",
     "stock-transfer": "Bestandsübertragung",
     "stock-transfers": "Bestandübertragungen",
     "stockmax": "Lager max.",

@@ -1626,6 +1626,8 @@
     "status-name-valid-length": "Invalid status name. Must be between 1 and 20 characteres.",
     "status-value-is-number": "The field state must be a number.",
     "stock": "Stock",
+    "stock-count": "Stock count",
+    "stock-counts": "Stock counts",
     "stock-transfer": "stock transfer",
     "stock-transfers": "stock transfers",
     "stockmax": "Stock max.",

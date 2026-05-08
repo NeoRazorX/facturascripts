@@ -1626,6 +1626,8 @@
     "status-name-valid-length": "Geçersiz durum adı (1 ile 20 karakter arasında olmalıdır).",
     "status-value-is-number": "Durum alanı sayısal olmalıdır.",
     "stock": "Stok",
+    "stock-count": "Stok sayımı",
+    "stock-counts": "Stok sayımları",
     "stock-transfer": "Stok Transferi",
     "stock-transfers": "Stok transferleri",
     "stockmax": "Maks. Stok",

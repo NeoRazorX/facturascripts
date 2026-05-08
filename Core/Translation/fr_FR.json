@@ -1626,6 +1626,8 @@
     "status-name-valid-length": "Nom d'état incorrect Doit être entre 1 et 20 caractères.",
     "status-value-is-number": "L'état du champ doit être un nombre.",
     "stock": "Stock",
+    "stock-count": "Inventaire",
+    "stock-counts": "Inventaires",
     "stock-transfer": "Transfert de stock",
     "stock-transfers": "Transferts de stock",
     "stockmax": "Stock max.",

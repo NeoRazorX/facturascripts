@@ -1626,6 +1626,8 @@
     "status-name-valid-length": "Nome do status inválido. Deve ter entre 1 e 20 caracteres.",
     "status-value-is-number": "El campo estado deve ser numérico.",
     "stock": "estoque",
+    "stock-count": "Contagem de estoque",
+    "stock-counts": "Contagens",
     "stock-transfer": "Transferência de stock",
     "stock-transfers": "Transferências de stock",
     "stockmax": "Estoque max.",

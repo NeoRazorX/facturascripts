@@ -1626,6 +1626,8 @@
     "status-name-valid-length": "Nome dello stato non valido. Deve essere compreso tra 1 e 20 caratteri.",
     "status-value-is-number": "Il campo è stato sereno.",
     "stock": "Azione",
+    "stock-count": "Conteggio dello stock",
+    "stock-counts": "conteggi di magazzino",
     "stock-transfer": "trasferimento di magazzino",
     "stock-transfers": "trasferimenti di magazzino",
     "stockmax": "Magazzino max",

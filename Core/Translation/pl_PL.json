@@ -1626,6 +1626,8 @@
     "status-name-valid-length": "Nieprawidłowa nazwa statusu (musi zawierać od 1 do 20 znaków).",
     "status-value-is-number": "Pole statusu musi być liczbą.",
     "stock": "Zapas",
+    "stock-count": "Liczba produktów na magazynie",
+    "stock-counts": "Liczba zapasów",
     "stock-transfer": "Transfer towarów",
     "stock-transfers": "Przeniesienia zapasów",
     "stockmax": "Max zapasów",

@@ -1626,6 +1626,8 @@
     "status-name-valid-length": "Nome de estado non válido. Debe estar entre 1 e 20 caracteres.",
     "status-value-is-number": "O campo debe ser numérico.",
     "stock": "Stock",
+    "stock-count": "Conteos de stock",
+    "stock-counts": "Conteos",
     "stock-transfer": "Transferencia de stock",
     "stock-transfers": "Transferencias de stock",
     "stockmax": "Stock máx.",

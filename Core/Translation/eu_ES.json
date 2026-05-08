@@ -1626,6 +1626,8 @@
     "status-name-valid-length": "Egoeraren izen baliogabea (1 eta 20 karaktere artean egon behar du).",
     "status-value-is-number": "Egoera eremua zenbakia izan behar du.",
     "stock": "Stocka",
+    "stock-count": "Stock kopurua",
+    "stock-counts": "Zenbaketak",
     "stock-transfer": "stock transferentzia",
     "stock-transfers": "stock transferentziak",
     "stockmax": "Gehienezko stocka",

@@ -1626,6 +1626,8 @@
     "status-name-valid-length": "Nom d'estat no vàlid. Ha de tenir entre 1 i 20 caràcters.",
     "status-value-is-number": "El camp estat ha de ser numèric.",
     "stock": "Estoc",
+    "stock-count": "Conteo d'estoc",
+    "stock-counts": "Conteos",
     "stock-transfer": "Transferència d'existències",
     "stock-transfers": "Transferències d'existències",
     "stockmax": "Estoc màx.",
