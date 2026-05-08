@@ -259,11 +259,22 @@ class CSVExport extends ExportBase
         foreach ($data as $row) {
             $line = [];
             foreach ($row as $cell) {
-                $line[] = is_string($cell) ? $this->getDelimiter() . $cell . $this->getDelimiter() : $cell;
+                $line[] = is_string($cell) ? $this->formatCell($cell) : $cell;
             }
 
             $this->csv[] = implode($this->separator, $line);
         }
+    }
+
+    private function formatCell(string $cell): string
+    {
+        $cell = $this->escapeSpreadsheetFormula($cell);
+        $delimiter = $this->getDelimiter();
+        if ($delimiter === '') {
+            return $cell;
+        }
+
+        return $delimiter . str_replace($delimiter, $delimiter . $delimiter, $cell) . $delimiter;
     }
 
     /**
@@ -274,7 +285,7 @@ class CSVExport extends ExportBase
     {
         $headers = [];
         foreach ($fields as $field) {
-            $headers[] = $this->getDelimiter() . $field . $this->getDelimiter();
+            $headers[] = $this->formatCell((string)$field);
         }
         $this->csv[] = implode($this->separator, $headers);
     }

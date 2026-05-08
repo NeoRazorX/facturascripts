@@ -33,6 +33,8 @@ use FacturaScripts\Dinamic\Model\FormatoDocumento;
  */
 abstract class ExportBase
 {
+    private const SPREADSHEET_FORMULA_TRIGGERS = ['=', '+', '-', '@', "\t", "\r"];
+
     /** @var string */
     private $fileName;
 
@@ -202,6 +204,26 @@ abstract class ExportBase
         }
 
         return $data;
+    }
+
+    protected function escapeSpreadsheetFormula(string $value): string
+    {
+        if ($value === '') {
+            return $value;
+        }
+
+        return in_array($value[0], self::SPREADSHEET_FORMULA_TRIGGERS, true) ? "'" . $value : $value;
+    }
+
+    protected function escapeSpreadsheetFormulaRow(array $row): array
+    {
+        foreach ($row as $key => $value) {
+            if (is_string($value)) {
+                $row[$key] = $this->escapeSpreadsheetFormula($value);
+            }
+        }
+
+        return $row;
     }
 
     /**
