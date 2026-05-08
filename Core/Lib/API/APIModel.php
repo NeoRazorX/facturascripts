@@ -20,11 +20,11 @@
 namespace FacturaScripts\Core\Lib\API;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * APIModel is the class for any API Model Resource in Dinamic/Model folder.
@@ -226,7 +226,7 @@ class APIModel extends APIResourceClass
      * @param array $operation
      * @param string $defaultOperation
      *
-     * @return DataBaseWhere[]
+     * @return Where[]
      */
     private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
     {
@@ -291,7 +291,13 @@ class APIModel extends APIResourceClass
                 $operation[$key] = $defaultOperation;
             }
 
-            $where[] = new DataBaseWhere($field, $value, $operator, $operation[$key]);
+            // solo aceptamos identificadores simples (columna o tabla.columna)
+            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                Tools::log('api')->warning('api: invalid filter field name: ' . $field);
+                continue;
+            }
+
+            $where[] = new Where($field, $value, $operator, $operation[$key]);
         }
 
         return $where;

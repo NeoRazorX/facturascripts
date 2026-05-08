@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core\Controller;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ProductoImagen;
 
 class ApiProductoImagen extends ApiController
@@ -236,7 +236,13 @@ class ApiProductoImagen extends ApiController
                 $operation[$key] = $defaultOperation;
             }
 
-            $where[] = new DataBaseWhere($field, $value, $operator, $operation[$key]);
+            // solo aceptamos identificadores simples (columna o tabla.columna)
+            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                Tools::log('api')->warning('api: invalid filter field name: ' . $field);
+                continue;
+            }
+
+            $where[] = new Where($field, $value, $operator, $operation[$key]);
         }
 
         return $where;
