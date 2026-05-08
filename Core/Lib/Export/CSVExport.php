@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Where;
 
 /**
  * Class to export data to CSV format.
@@ -89,7 +89,7 @@ class CSVExport extends ExportBase
      * Adds a new page with a table listing the model data.
      *
      * @param ModelClass $model
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns

@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\PDF\PDFDocument;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 
@@ -78,7 +78,7 @@ class PDFExport extends PDFDocument
      * Adds a new page with a table listing the model's data.
      *
      * @param ModelClass $model
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns

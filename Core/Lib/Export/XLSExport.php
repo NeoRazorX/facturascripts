@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use XLSXWriter;
 
 /**
@@ -77,7 +77,7 @@ class XLSExport extends ExportBase
      * Adds a new page with a table listing all models data.
      *
      * @param ModelClass $model
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
