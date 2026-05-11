@@ -187,12 +187,14 @@ final class Telemetry
         // hacemos una petición a la url de telemetría
         $request = Http::post(self::TELEMETRY_URL, $params)->setTimeout(3);
         if ($request->failed()) {
+            $this->save();
             return false;
         }
 
         // comprobamos que la petición ha devuelto un json
         $data = $request->json();
         if (empty($data) || !isset($data['ok']) || !$data['ok']) {
+            $this->save();
             return false;
         }
 
