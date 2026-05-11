@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Partida as DinPartida;
 use FacturaScripts\Dinamic\Model\RegularizacionImpuesto as DinRegularizacionImpuesto;
 
 /**
- * The accounting entry. It is related to an exercise and consists of games.
+ * La clase del asiento contable. Está relacionada con un ejercicio y consta de partidas.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
@@ -47,14 +47,14 @@ class Asiento extends ModelClass
     const RENUMBER_LIMIT = 1000;
 
     /**
-     * Accounting channel. For statistics purpose.
+     * Canal contable. Para fines estadísticos.
      *
      * @var int
      */
     public $canal;
 
     /**
-     * Accounting entry concept.
+     * Concepto del asiento contable.
      *
      * @var string
      */
@@ -64,21 +64,21 @@ class Asiento extends ModelClass
     public $debe = 0.0;
 
     /**
-     * Document associated with the accounting entry.
+     * Documento asociado con el asiento contable.
      *
      * @var string
      */
     public $documento;
 
     /**
-     * True if it is editable, but false.
+     * True si es editable, false en caso contrario.
      *
      * @var bool
      */
     public $editable;
 
     /**
-     * Date of the accounting entry.
+     * Fecha del asiento contable.
      *
      * @var string
      */
@@ -95,45 +95,45 @@ class Asiento extends ModelClass
     public $idasiento;
 
     /**
-     * Diary identifier.
+     * Identificador del diario contable.
      *
      * @var int
      */
     public $iddiario;
 
     /**
-     * Foreign Key with Empresas table.
+     * Foreign Key de la tabla Empresas.
      *
      * @var int
      */
     public $idempresa;
 
     /**
-     * Amount of the accounting entry.
+     * Importe del asiento contable.
      *
      * @var float|int
      */
     public $importe;
 
     /**
-     * Accounting entry number. It will be modified when renumbering.
+     * Número de asiento contable. Se modificará al renumerar.
      *
      * @var string
      */
     public $numero;
 
     /**
-     * It establishes whether the accounting entry is of a special operation:
-     * - opening
-     * - regularization
-     * - closing
+     * Establece si el asiento contable es de una operación especial:
+     * - apertura:          opening
+     * - regularización:    regularization
+     * - cierre:            closing
      *
      * @var string
      */
     public $operacion;
 
     /**
-     * Accumulate the amounts of the detail in the document
+     * Acumula los importes del detalle en el documento
      *
      * @param array $detail
      */
@@ -230,7 +230,7 @@ class Asiento extends ModelClass
     }
 
     /**
-     * Initializes the total fields
+     * Inicializa los campos totales
      */
     public function initTotals()
     {
@@ -246,9 +246,9 @@ class Asiento extends ModelClass
     }
 
     /**
-     * Returns TRUE if accounting entry is balanced.
+     * Comprueba que el asiento está balanceado.
      *
-     * @return bool
+     * @return bool Devuelve TRUE si el asiento está balanceado.
      */
     public function isBalanced(): bool
     {
@@ -264,7 +264,7 @@ class Asiento extends ModelClass
     }
 
     /**
-     * Returns the following code for the reported field or the primary key of the model.
+     * Devuelve el siguiente código para el campo reportado o la clave primaria del modelo.
      *
      * @param string $field
      * @param array $where
@@ -290,7 +290,7 @@ class Asiento extends ModelClass
     }
 
     /**
-     * Renumber the accounting entries of the given exercise.
+     * Renumera los asientos contables del ejercicio indicado.
      *
      * @param string $codejercicio
      *
@@ -412,7 +412,7 @@ class Asiento extends ModelClass
     }
 
     /**
-     * Update accounting entry numbers.
+     * Actualiza los números de los asientos contables.
      *
      * @param array $entries
      * @param int $number
