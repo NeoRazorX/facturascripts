@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -90,8 +90,10 @@ class PaymentToAccounting
 
     protected function customerPaymentAccountingEntry(): bool
     {
-        // creamos el asiento
+        // creamos el asiento; el bypass de regularización es necesario porque un pago
+        // legítimo puede tener fecha dentro de un período de IVA ya regularizado
         $entry = new DinAsiento();
+        $entry->disableRegularizationCheck();
 
         $concept = $this->payment->importe > 0 ?
             Tools::trans('customer-payment-concept', ['%document%' => $this->receipt->getCode()]) :
@@ -208,8 +210,10 @@ class PaymentToAccounting
 
     protected function supplierPaymentAccountingEntry(): bool
     {
-        // Create account entry header
+        // creamos el asiento; el bypass de regularización es necesario porque un pago
+        // legítimo puede tener fecha dentro de un período de IVA ya regularizado
         $entry = new DinAsiento();
+        $entry->disableRegularizationCheck();
 
         $concept = $this->payment->importe > 0 ?
             Tools::trans('supplier-payment-concept', ['%document%' => $this->receipt->getCode()]) :
