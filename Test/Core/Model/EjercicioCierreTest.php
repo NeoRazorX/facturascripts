@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\RegularizacionImpuesto;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -178,6 +179,83 @@ final class EjercicioCierreTest extends TestCase
         $this->assertTrue($facturaCompra->delete());
         $this->assertTrue($facturaCompra->getSubject()->getDefaultAddress()->delete());
         $this->assertTrue($facturaCompra->getSubject()->delete());
+        $this->assertTrue($ejercicio->delete());
+        $this->assertTrue($empresa->delete());
+    }
+
+    public function testCloseExerciseWithLockedRegularization(): void
+    {
+        // creamos una nueva empresa
+        $empresa = $this->getRandomCompany();
+        $this->assertTrue($empresa->save());
+
+        // obtenemos el almacén por defecto
+        $almacen = new Almacen();
+        $whereAlmacen = [new DataBaseWhere('idempresa', $empresa->idempresa)];
+        $this->assertTrue($almacen->loadWhere($whereAlmacen));
+
+        // creamos el ejercicio para 2022
+        $ejercicio = new Ejercicio();
+        $ejercicio->codejercicio = $ejercicio->newCode();
+        $ejercicio->fechainicio = '2022-01-01';
+        $ejercicio->fechafin = '2022-12-31';
+        $ejercicio->idempresa = $empresa->idempresa;
+        $ejercicio->nombre = '2022';
+        $this->assertTrue($ejercicio->save());
+
+        // copiamos el plan contable
+        $filePath = FS_FOLDER . '/Core/Data/Codpais/' . Paises::default()->codpais . '/defaultPlan.csv';
+        $planImport = new AccountingPlanImport();
+        $planImport->importCSV($filePath, $ejercicio->codejercicio);
+
+        // creamos facturas para generar asientos en enero 2022
+        $facturaCompra = $this->getRandomSupplierInvoice('2022-01-04', $almacen->codalmacen);
+        $this->assertTrue($facturaCompra->exists());
+
+        $facturaVenta = $this->getRandomCustomerInvoice('2022-01-05', $almacen->codalmacen);
+        $this->assertTrue($facturaVenta->exists());
+
+        // creamos una regularización con bloquear = true (T1 cubre enero)
+        $reg = new RegularizacionImpuesto();
+        $reg->codejercicio = $ejercicio->codejercicio;
+        $reg->idempresa = $empresa->idempresa;
+        $reg->bloquear = true;
+        $this->assertTrue($reg->save());
+
+        // el cierre debe completarse aunque haya una regularización bloqueada
+        $data = [
+            'journalClosing' => '',
+            'journalOpening' => '',
+            'copySubAccounts' => true,
+        ];
+        $closing = new ClosingToAcounting();
+        $this->assertTrue($ejercicio->reload());
+        $this->assertTrue($closing->exec($ejercicio, $data));
+
+        // comprobamos que el ejercicio quedó cerrado
+        $this->assertTrue($ejercicio->reload());
+        $this->assertFalse($ejercicio->isOpened());
+
+        // reabrimos para poder limpiar
+        $ejercicio->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+        $this->assertTrue($ejercicio->save());
+
+        // eliminamos facturas
+        $this->assertTrue($facturaVenta->delete());
+        $this->assertTrue($facturaVenta->getSubject()->getDefaultAddress()->delete());
+        $this->assertTrue($facturaVenta->getSubject()->delete());
+        $this->assertTrue($facturaCompra->delete());
+        $this->assertTrue($facturaCompra->getSubject()->getDefaultAddress()->delete());
+        $this->assertTrue($facturaCompra->getSubject()->delete());
+
+        // eliminamos asientos del ejercicio
+        $whereExercise = [new DataBaseWhere('codejercicio', $ejercicio->codejercicio)];
+        foreach (Asiento::all($whereExercise, [], 0, 0) as $asiento) {
+            $this->assertTrue($asiento->delete());
+        }
+
+        // eliminamos regularización, ejercicio y empresa
+        $this->assertTrue($reg->delete());
         $this->assertTrue($ejercicio->delete());
         $this->assertTrue($empresa->delete());
     }

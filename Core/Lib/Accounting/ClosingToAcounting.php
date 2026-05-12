@@ -23,10 +23,12 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Dinamic\Model\RegularizacionImpuesto;
 
 /**
  * Class that performs accounting closures
@@ -142,6 +144,7 @@ class ClosingToAcounting
 
         try {
             $this->updateSpecialAccounts();
+            $this->unlockRegularizations();
 
             if ($this->execCloseInvoices() && $this->execRegularization() && $this->execClosing() && $this->execOpening()) {
                 $this->exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
@@ -290,6 +293,20 @@ class ClosingToAcounting
     {
         $regularization = new AccountingClosingRegularization();
         return $regularization->exec($this->exercise, $this->journalClosing);
+    }
+
+    /** Unlock tax regularizations so the closing entry can be saved inside the transaction. */
+    protected function unlockRegularizations(): void
+    {
+        $where = [
+            Where::eq('codejercicio', $this->exercise->codejercicio),
+            Where::eq('bloquear', true),
+        ];
+
+        foreach ((new RegularizacionImpuesto())->all($where) as $reg) {
+            $reg->bloquear = false;
+            $reg->save();
+        }
     }
 
     /**
