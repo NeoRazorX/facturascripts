@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -123,7 +123,7 @@ class ProductoImagen extends ModelClass
 
         // si la extensión no está entre las permitidas terminamos
         $ext = pathinfo($file->getFullPath(), PATHINFO_EXTENSION);
-        if (false === in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
+        if (false === in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
             return '';
         }
 

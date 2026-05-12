@@ -78,7 +78,7 @@ class Files implements ControllerInterface
         $safe = [
             'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'ics', 'jpeg',
             'jpg', 'js', 'json', 'map', 'md', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png',
-            'pptx', 'sql', 'svg', 'ttf', 'txt', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
+            'pptx', 'sql', 'svg', 'ttf', 'txt', 'webm', 'webp', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
     }
