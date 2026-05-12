@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
@@ -128,27 +128,27 @@ class WidgetVariante extends WidgetText
     {
         $list = [];
         $where = [
-            new DataBaseWhere('productos.bloqueado', false),
+            Where::eq('productos.bloqueado', false),
         ];
 
         // cargamos y añadimos la variante seleccionada
         $model = new Variante();
         if ($this->value && $model->load($this->value)) {
             $list[] = $model;
-            $where[] = new DataBaseWhere('variantes.referencia', $model->referencia, '<>');
+            $where[] = Where::notEq('variantes.referencia', $model->referencia);
         }
 
         $joinModel = new VarianteProducto();
         if ($query) {
-            $where[] = new DataBaseWhere('variantes.referencia|productos.descripcion', $query, 'LIKE');
+            $where[] = Where::like('variantes.referencia|productos.descripcion', $query);
         }
 
         if ($codfabricante) {
-            $where[] = new DataBaseWhere('codfabricante', $codfabricante);
+            $where[] = Where::eq('codfabricante', $codfabricante);
         }
 
         if ($codfamilia) {
-            $where[] = new DataBaseWhere('codfamilia', $codfamilia);
+            $where[] = Where::eq('codfamilia', $codfamilia);
         }
 
         switch ($sort) {
