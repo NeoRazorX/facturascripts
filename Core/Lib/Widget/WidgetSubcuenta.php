@@ -26,15 +26,18 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
+/**
+ * Widget para seleccionar una subcuenta desde un modal con búsqueda.
+ */
 class WidgetSubcuenta extends WidgetText
 {
-    /** @var int|null */
+    /** @var int|null Empresa usada para filtrar los ejercicios disponibles. */
     protected $idempresa;
 
-    /** @var string */
+    /** @var string Campo de la subcuenta usado para comparar y guardar el valor seleccionado. */
     public $match;
 
-    /** @param array $data */
+    /** @param array $data Configuración del widget. */
     public function __construct($data)
     {
         parent::__construct($data);
@@ -59,7 +62,8 @@ class WidgetSubcuenta extends WidgetText
         $labelHtml = $this->onclickHtml($label, $titleurl);
         $icon = empty($this->icon) ? 'fa-solid fa-book' : $this->icon;
 
-        $safeValue = Tools::noHtml($this->value);
+        $safeValue = $this->escapeHtml($this->value);
+        $safeText = ($this->value === null || $this->value === '') ? Tools::trans('select') : $safeValue;
 
         if ($this->readonly()) {
             $subcuenta = new Subcuenta();
@@ -72,8 +76,8 @@ class WidgetSubcuenta extends WidgetText
             return '<div class="mb-3 d-grid">'
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $safeValue . '">'
                 . $labelHtml
-                . '<a href="' . $subcuenta->url() . '" class="btn btn-outline-secondary">'
-                . '<i class="' . $icon . ' fa-fw"></i> ' . ($safeValue ?? Tools::trans('select'))
+                . '<a href="' . $this->escapeHtml($subcuenta->url()) . '" class="btn btn-outline-secondary">'
+                . '<i class="' . $icon . ' fa-fw"></i> ' . $safeText
                 . '</a>'
                 . $descriptionHtml
                 . '</div>';
@@ -84,7 +88,7 @@ class WidgetSubcuenta extends WidgetText
             . $labelHtml
             . '<a href="#" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
-            . '<span id="modal_span_' . $this->id . '">' . ($safeValue ?? Tools::trans('select')) . '</span>'
+            . '<span id="modal_span_' . $this->id . '">' . $safeText . '</span>'
             . '</a>'
             . $descriptionHtml
             . '</div>';
@@ -93,10 +97,10 @@ class WidgetSubcuenta extends WidgetText
     }
 
     /**
-     * @param string $query
-     * @param string $codejercicio
-     * @param string $sort
-     * @return Subcuenta[]
+     * @param string $query Texto de búsqueda.
+     * @param string $codejercicio Código del ejercicio para filtrar.
+     * @param string $sort Orden aplicado a los resultados.
+     * @return Subcuenta[] Subcuentas encontradas.
      */
     public function subcuentas(string $query = '', string $codejercicio = '', string $sort = 'ref-asc'): array
     {
@@ -178,8 +182,8 @@ class WidgetSubcuenta extends WidgetText
     }
 
     /**
-     * @param object $model
-     * @param Request $request
+     * @param object $model Modelo donde se guarda el valor seleccionado.
+     * @param Request $request Petición con los datos del formulario.
      */
     public function processFormData(&$model, $request)
     {
@@ -199,7 +203,7 @@ class WidgetSubcuenta extends WidgetText
             ]);
         }
 
-        return '<td class="' . $class . '">' . $this->onclickHtml($subcuenta->nombre ?? $this->value) . '</td>';
+        return '<td class="' . $class . '">' . $this->onclickHtml($this->escapeHtml($subcuenta->nombre ?? $this->value)) . '</td>';
     }
 
     protected function assets(): void
@@ -250,7 +254,7 @@ class WidgetSubcuenta extends WidgetText
 
         foreach ($ejercicios as $item) {
             $selected = $first ? ' selected' : '';
-            $options[] = '<option value="' . $item->codejercicio . '"' . $selected . '>' . $item->nombre . '</option>';
+            $options[] = '<option value="' . $this->escapeHtml($item->codejercicio) . '"' . $selected . '>' . $this->escapeHtml($item->nombre) . '</option>';
             $first = false;
         }
 
@@ -291,16 +295,19 @@ class WidgetSubcuenta extends WidgetText
     {
         $items = [];
         foreach ($this->subcuentas() as $item) {
-            $match = $item->{$this->match};
+            $match = $this->escapeHtml($item->{$this->match});
+            $code = $this->escapeHtml($item->codsubcuenta);
+            $description = $this->escapeHtml($item->descripcion);
+            $url = $this->escapeHtml($item->url());
             $saldoClass = $item->saldo < 0 ? ' text-danger' : '';
-            $items[] = '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'' . $match . '\');">'
+            $items[] = '<tr class="clickableRow widget-subaccount-option" data-widget-subaccount-id="' . $this->id . '" data-widget-subaccount-value="' . $match . '">'
                 . '<td class="text-center">'
-                . '<a href="' . $item->url() . '" target="_blank" onclick="event.stopPropagation();">'
+                . '<a href="' . $url . '" target="_blank" class="widget-subaccount-link">'
                 . '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
                 . '</a>'
                 . '</td>'
-                . '<td><b>' . $item->codsubcuenta . '</b></td>'
-                . '<td>' . $item->descripcion . '</td>'
+                . '<td><b>' . $code . '</b></td>'
+                . '<td>' . $description . '</td>'
                 . '<td class="text-end' . $saldoClass . '">' . Tools::number($item->saldo) . '</td>'
                 . '</tr>';
         }
@@ -323,7 +330,7 @@ class WidgetSubcuenta extends WidgetText
     protected function renderNewSubaccountBtn(): string
     {
         $subcuenta = new Subcuenta();
-        return '<a href="' . $subcuenta->url('new') . '" target="_blank" class="btn btn-success">'
+        return '<a href="' . $this->escapeHtml($subcuenta->url('new')) . '" target="_blank" class="btn btn-success">'
             . '<i class="fa-solid fa-plus me-1"></i> ' . Tools::trans('new-subaccount')
             . '</a>';
     }

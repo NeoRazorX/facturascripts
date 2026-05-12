@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,12 +29,15 @@ use FacturaScripts\Dinamic\Model\Join\VarianteProducto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Variante;
 
+/**
+ * Widget para seleccionar una variante de producto desde un modal con búsqueda.
+ */
 class WidgetVariante extends WidgetText
 {
-    /** @var string */
+    /** @var string Campo de la variante usado para comparar y guardar el valor seleccionado. */
     public $match;
 
-    /** @param array $data */
+    /** @param array $data Configuración del widget. */
     public function __construct($data)
     {
         parent::__construct($data);
@@ -59,26 +62,28 @@ class WidgetVariante extends WidgetText
         // hay que cargar el producto para mostrar su referencia
         $variante = new Variante();
         if ($this->value !== null && $variante->loadWhereEq($this->match, $this->value) && $this->onclick === 'EditProducto') {
-            $labelHtml = '<a href="' . Tools::config('route') . '/' . $variante->url() . '">' . $label . '</a>';
+            $labelHtml = '<a href="' . $this->escapeHtml(Tools::config('route') . '/' . $variante->url()) . '">' . $label . '</a>';
         }
 
+        $safeValue = $this->escapeHtml($this->value);
+        $safeReference = $this->escapeHtml($variante->referencia ?? Tools::trans('select'));
         if ($this->readonly()) {
             return '<div class="mb-3 d-grid">'
-                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $safeValue . '">'
                 . $labelHtml
-                . '<a href="' . $variante->url() . '" class="btn btn-outline-secondary">'
-                . '<i class="' . $icon . ' fa-fw"></i> ' . ($variante->referencia ?? Tools::trans('select'))
+                . '<a href="' . $this->escapeHtml($variante->url()) . '" class="btn btn-outline-secondary">'
+                . '<i class="' . $icon . ' fa-fw"></i> ' . $safeReference
                 . '</a>'
                 . $descriptionHtml
                 . '</div>';
         }
 
         return '<div class="mb-3 d-grid">'
-            . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+            . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $safeValue . '">'
             . $labelHtml
             . '<a href="#" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
-            . '<span id="modal_span_' . $this->id . '">' . ($variante->referencia ?? Tools::trans('select')) . '</span>'
+            . '<span id="modal_span_' . $this->id . '">' . $safeReference . '</span>'
             . '</a>'
             . $descriptionHtml
             . '</div>'
@@ -86,8 +91,8 @@ class WidgetVariante extends WidgetText
     }
 
     /**
-     * @param object $model
-     * @param Request $request
+     * @param object $model Modelo donde se guarda el valor seleccionado.
+     * @param Request $request Petición con los datos del formulario.
      */
     public function processFormData(&$model, $request)
     {
@@ -104,20 +109,20 @@ class WidgetVariante extends WidgetText
         $variante = new Variante();
         if ($this->value !== null && $variante->loadWhereEq($this->match, $this->value) && $this->onclick === 'EditProducto') {
             return '<td class="' . $class . '">'
-                . '<a href="' . Tools::config('route') . '/' . $variante->url() . '" class="cancelClickable">'
-                . $variante->referencia . '</a>'
+                . '<a href="' . $this->escapeHtml(Tools::config('route') . '/' . $variante->url()) . '" class="cancelClickable">'
+                . $this->escapeHtml($variante->referencia) . '</a>'
                 . '</td>';
         }
 
-        return '<td class="' . $class . '">' . $this->onclickHtml($variante->referencia) . '</td>';
+        return '<td class="' . $class . '">' . $this->onclickHtml($this->escapeHtml($variante->referencia)) . '</td>';
     }
 
     /**
-     * @param string $query
-     * @param string $codfabricante
-     * @param string $codfamilia
-     * @param string $sort
-     * @return Variante[]
+     * @param string $query Texto de búsqueda.
+     * @param string $codfabricante Código del fabricante para filtrar.
+     * @param string $codfamilia Código de la familia para filtrar.
+     * @param string $sort Orden aplicado a los resultados.
+     * @return Variante[] Variantes encontradas.
      */
     public function variantes(string $query = '', string $codfabricante = '', string $codfamilia = '', string $sort = 'ref-asc'): array
     {
@@ -194,7 +199,7 @@ class WidgetVariante extends WidgetText
         ];
 
         foreach (Familia::all([], ['descripcion' => 'ASC']) as $item) {
-            $options[] = '<option value="' . $item->codfamilia . '">' . $item->descripcion . '</option>';
+            $options[] = '<option value="' . $this->escapeHtml($item->codfamilia) . '">' . $this->escapeHtml($item->descripcion) . '</option>';
         }
 
         return '<select class="form-select mb-2" id="modal_' . $this->id . '_fam" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
@@ -210,7 +215,7 @@ class WidgetVariante extends WidgetText
         ];
 
         foreach (Fabricante::all([], ['nombre' => 'ASC']) as $item) {
-            $options[] = '<option value="' . $item->codfabricante . '">' . $item->nombre . '</option>';
+            $options[] = '<option value="' . $this->escapeHtml($item->codfabricante) . '">' . $this->escapeHtml($item->nombre) . '</option>';
         }
 
         return '<select class="form-select mb-2" id="modal_' . $this->id . '_fab" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
@@ -267,7 +272,7 @@ class WidgetVariante extends WidgetText
     protected function renderNewProductBtn(): string
     {
         $producto = new Producto();
-        return '<a href="' . $producto->url('new') . '" target="_blank" class="btn btn-success">'
+        return '<a href="' . $this->escapeHtml($producto->url('new')) . '" target="_blank" class="btn btn-success">'
             . '<i class="fa-solid fa-plus me-1"></i> ' . Tools::trans('new-product')
             . '</a>';
     }
@@ -299,8 +304,10 @@ class WidgetVariante extends WidgetText
     {
         $items = [];
         foreach ($this->variantes() as $item) {
-            $match = $item->{$this->match};
-            $description = Tools::textBreak($item->description(), 300);
+            $match = $this->escapeHtml($item->{$this->match});
+            $description = $this->escapeHtml(Tools::textBreak($item->description(), 300));
+            $reference = $this->escapeHtml($item->referencia);
+            $url = $this->escapeHtml($item->url());
 
             // Determinar la clase de color para el precio
             $priceClass = '';
@@ -318,13 +325,13 @@ class WidgetVariante extends WidgetText
                 $stockClass = ' text-warning';
             }
 
-            $items[] = '<tr class="clickableRow" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'' . $match . '\');">'
+            $items[] = '<tr class="clickableRow widget-variante-option" data-widget-variante-id="' . $this->id . '" data-widget-variante-value="' . $match . '">'
                 . '<td class="text-center">'
-                . '<a href="' . $item->url() . '" target="_blank" onclick="event.stopPropagation();">'
+                . '<a href="' . $url . '" target="_blank" class="widget-variante-link">'
                 . '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
                 . '</a>'
                 . '</td>'
-                . '<td><b>' . $item->referencia . '</b> ' . $description . '</td>'
+                . '<td><b>' . $reference . '</b> ' . $description . '</td>'
                 . '<td class="text-end text-nowrap' . $priceClass . '">' . Tools::money($item->precio) . '</td>'
                 . '<td class="text-end text-nowrap' . $stockClass . '">' . Tools::number($item->stockfis, 0) . '</td>'
                 . '</tr>';
