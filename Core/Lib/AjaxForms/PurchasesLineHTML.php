@@ -129,10 +129,10 @@ class PurchasesLineHTML
             $map['iva_' . $idlinea] = $line->iva;
 
             // total
-            $map['linetotal_' . $idlinea] = self::subtotalValue($line, $model);
+            $map['linetotal_' . $idlinea] = Tools::round(self::subtotalValue($line, $model));
 
             // neto
-            $map['lineneto_' . $idlinea] = $line->pvptotal;
+            $map['lineneto_' . $idlinea] = Tools::round($line->pvptotal);
         }
 
         // mods

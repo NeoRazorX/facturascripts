@@ -77,7 +77,7 @@ abstract class ApiController implements ControllerInterface
         }
 
         if ($this->request->header('REQUEST_METHOD') == 'OPTIONS') {
-            $allowHeaders = $this->request->header('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
+            $allowHeaders = $this->request->header('HTTP_ACCESS_CONTROL_REQUEST_HEADERS', '');
 
             $this->response
                 ->header('Access-Control-Allow-Origin', '*')

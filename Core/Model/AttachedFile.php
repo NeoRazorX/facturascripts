@@ -219,13 +219,13 @@ class AttachedFile extends ModelClass
     protected function fixFileName(string $original): string
     {
         $fixed = Tools::noHtml($original);
-        if (strlen($fixed) <= static::MAX_FILENAME_LEN) {
+        if (mb_strlen($fixed, 'UTF-8') <= static::MAX_FILENAME_LEN) {
             return empty($fixed) ? '' : strtolower($fixed);
         }
 
         $parts = explode('.', strtolower($fixed));
         $extension = count($parts) > 1 ? end($parts) : '';
-        $name = substr($fixed, 0, static::MAX_FILENAME_LEN - strlen('.' . $extension));
+        $name = mb_substr($fixed, 0, static::MAX_FILENAME_LEN - mb_strlen('.' . $extension, 'UTF-8'), 'UTF-8');
         return $name . '.' . $extension;
     }
 

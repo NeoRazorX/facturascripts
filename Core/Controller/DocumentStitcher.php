@@ -84,7 +84,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Runs the controller's private logic.
+     * Ejecuta la lógica privada del controlador.
      *
      * @param Response $response
      * @param User $user
@@ -108,7 +108,7 @@ class DocumentStitcher extends Controller
 
         $statusCode = $this->request->input('status', '');
         if ($statusCode) {
-            // validate form request?
+            // ¿validar el token del formulario?
             if (false === $this->validateFormToken()) {
                 return;
             }
@@ -186,8 +186,10 @@ class DocumentStitcher extends Controller
      * @param array $newLines
      * @param array $quantities
      * @param int $idestado
+     *
+     * @return bool
      */
-    protected function breakDownLines(&$doc, &$docLines, &$newLines, &$quantities, $idestado): void
+    protected function breakDownLines(&$doc, &$docLines, &$newLines, &$quantities, $idestado): bool
     {
         $full = true;
         foreach ($docLines as $line) {
@@ -209,21 +211,21 @@ class DocumentStitcher extends Controller
             $doc->setDocumentGeneration(false);
             $doc->idestado = $idestado;
             if (false === $doc->save()) {
-                $this->dataBase->rollback();
                 Tools::log()->error('record-save-error');
-                return;
+                return false;
             }
         }
 
-        // we get the lines again in case they have been updated
+        // volvemos a obtener las líneas por si han sido actualizadas
         foreach ($doc->getLines() as $line) {
             $line->servido += $quantities[$line->id()];
             if (false === $line->save()) {
-                $this->dataBase->rollback();
                 Tools::log()->error('record-save-error');
-                return;
+                return false;
             }
         }
+
+        return true;
     }
 
     protected function closeDocuments(int $idestado): void
@@ -245,7 +247,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Generates a new document with this data.
+     * Genera un nuevo documento con estos datos.
      *
      * @param int $idestado
      */
@@ -253,11 +255,20 @@ class DocumentStitcher extends Controller
     {
         $this->dataBase->beginTransaction();
 
-        // group needed data
+        // agrupamos los datos necesarios
         $newLines = [];
-        $properties = ['fecha' => $this->request->input('fecha', '')];
+        $properties = [];
         $prototype = null;
         $quantities = [];
+
+        $newDate = $this->request->input('fecha', '');
+        if (!empty($newDate)) {
+            $properties['fecha'] = $newDate;
+            if (strtotime($newDate) === strtotime(Tools::date())) {
+                $properties['hora'] = Tools::hour();
+            }
+        }
+
         foreach ($this->documents as $doc) {
             $lines = $doc->getLines();
 
@@ -272,8 +283,11 @@ class DocumentStitcher extends Controller
                 $this->addInfoLine($newLines, $doc);
             }
 
-            // we break down quantities and lines
-            $this->breakDownLines($doc, $lines, $newLines, $quantities, $idestado);
+            // desglosamos las cantidades y líneas
+            if (false === $this->breakDownLines($doc, $lines, $newLines, $quantities, $idestado)) {
+                $this->dataBase->rollback();
+                return;
+            }
         }
 
         if (null === $prototype || empty($newLines)) {
@@ -281,13 +295,13 @@ class DocumentStitcher extends Controller
             return;
         }
 
-        // allow plugins to do stuff on the prototype before save
+        // permitimos a los plugins actuar sobre el prototipo antes de guardar
         if (false === $this->pipe('checkPrototype', $prototype, $newLines)) {
             $this->dataBase->rollback();
             return;
         }
 
-        // generate new document
+        // generamos el nuevo documento
         $generator = new BusinessDocumentGenerator();
         $newClass = $this->getGenerateClass($idestado);
         if (empty($newClass)) {
@@ -303,7 +317,7 @@ class DocumentStitcher extends Controller
 
         $this->dataBase->commit();
 
-        // redirect to the new document
+        // redirigimos al nuevo documento
         foreach ($generator->getLastDocs() as $doc) {
             $this->redirect($doc->url());
             Tools::log()->notice('record-updated-correctly');
@@ -312,7 +326,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Returns documents keys.
+     * Devuelve las claves de los documentos.
      *
      * @return array
      */
@@ -348,7 +362,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Returns the name of the new class to generate from this status.
+     * Devuelve el nombre de la nueva clase a generar a partir de este estado.
      *
      * @param int $idestado
      *
@@ -362,7 +376,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Returns model name.
+     * Devuelve el nombre del modelo.
      *
      * @return string
      */
@@ -372,7 +386,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Loads selected documents.
+     * Carga los documentos seleccionados.
      */
     protected function loadDocuments(): void
     {
@@ -388,7 +402,7 @@ class DocumentStitcher extends Controller
             }
         }
 
-        // sort by date
+        // ordenamos por fecha
         uasort($this->documents, function ($doc1, $doc2) {
             if (strtotime($doc1->fecha . ' ' . $doc1->hora) > strtotime($doc2->fecha . ' ' . $doc2->hora)) {
                 return 1;

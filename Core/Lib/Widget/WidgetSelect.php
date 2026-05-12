@@ -506,11 +506,11 @@ class WidgetSelect extends BaseWidget
             }
 
             $txt = implode(', ', $array);
-            if (strlen($txt) < 20) {
+            if (mb_strlen($txt, 'UTF-8') < 20) {
                 return $txt;
             }
 
-            $txtBreak = substr($txt, 0, 20);
+            $txtBreak = mb_substr($txt, 0, 20, 'UTF-8');
             return '<span data-bs-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,11 +20,11 @@
 namespace FacturaScripts\Core\Lib\API;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * APIModel is the class for any API Model Resource in Dinamic/Model folder.
@@ -54,7 +54,8 @@ class APIModel extends APIResourceClass
         }
 
         if ($this->model->delete()) {
-            $this->setOk(Tools::trans('record-deleted-correctly'), $this->model->toArray());
+            $hidden = $this->model->getApiFieldsToHide();
+            $this->setOk(Tools::trans('record-deleted-correctly'), $this->filterHidden($this->model->toArray(), $hidden));
             return true;
         }
 
@@ -74,10 +75,15 @@ class APIModel extends APIResourceClass
             return $this->listAll();
         }
 
+        $hidden = $this->model->getApiFieldsToHide();
+
         // model schema
         if ($this->params[0] === 'schema') {
             $data = [];
             foreach ($this->model->getModelFields() as $key => $value) {
+                if (in_array($key, $hidden, true)) {
+                    continue;
+                }
                 $data[$key] = [
                     'type' => $value['type'],
                     'default' => $value['default'],
@@ -94,7 +100,7 @@ class APIModel extends APIResourceClass
             return false;
         }
 
-        $this->returnResult($this->model->toArray(true));
+        $this->returnResult($this->filterHidden($this->model->toArray(true), $hidden));
         return true;
     }
 
@@ -220,7 +226,7 @@ class APIModel extends APIResourceClass
      * @param array $operation
      * @param string $defaultOperation
      *
-     * @return DataBaseWhere[]
+     * @return Where[]
      */
     private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
     {
@@ -285,7 +291,13 @@ class APIModel extends APIResourceClass
                 $operation[$key] = $defaultOperation;
             }
 
-            $where[] = new DataBaseWhere($field, $value, $operator, $operation[$key]);
+            // solo aceptamos identificadores simples (columna o tabla.columna)
+            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                Tools::log('api')->warning('api: invalid filter field name: ' . $field);
+                continue;
+            }
+
+            $where[] = new Where($field, $value, $operator, $operation[$key]);
         }
 
         return $where;
@@ -301,9 +313,10 @@ class APIModel extends APIResourceClass
 
         // obtenemos los registros
         $data = [];
+        $hidden = $this->model->getApiFieldsToHide();
         $where = $this->getWhereValues($filter, $operation);
         foreach ($this->model->all($where, $order, $offset, $limit) as $item) {
-            $data[] = $item->toArray(true);
+            $data[] = $this->filterHidden($item->toArray(true), $hidden);
         }
 
         // obtenemos el count y lo ponemos en el header
@@ -340,8 +353,10 @@ class APIModel extends APIResourceClass
 
     private function saveResource(): bool
     {
+        $hidden = $this->model->getApiFieldsToHide();
+
         if ($this->model->save()) {
-            $this->setOk(Tools::trans('record-updated-correctly'), $this->model->toArray(true));
+            $this->setOk(Tools::trans('record-updated-correctly'), $this->filterHidden($this->model->toArray(true), $hidden));
             return true;
         }
 
@@ -350,7 +365,15 @@ class APIModel extends APIResourceClass
             $message .= ' - ' . $log['message'];
         }
 
-        $this->setError($message, $this->model->toArray(true));
+        $this->setError($message, $this->filterHidden($this->model->toArray(true), $hidden));
         return false;
+    }
+
+    private function filterHidden(array $data, array $hidden): array
+    {
+        foreach ($hidden as $field) {
+            unset($data[$field]);
+        }
+        return $data;
     }
 }

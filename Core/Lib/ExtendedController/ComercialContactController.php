@@ -237,7 +237,7 @@ abstract class ComercialContactController extends EditController
             ->addOrderBy(['vencimiento'], 'expiration', 2)
             ->addOrderBy(['importe'], 'amount')
             ->addSearchFields(['codigofactura', 'observaciones'])
-            ->addFilterPeriod('period-f', 'fecha', 'fecha')
+            ->addFilterPeriod('period-f', 'date', 'fecha')
             ->addFilterPeriod('period-v', 'expiration', 'vencimiento')
             ->addButton([
                 'action' => 'pay-receipt',

@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
@@ -58,25 +57,25 @@ class EditUser extends EditController
 
     private function allowUpdate(): bool
     {
-        // preload user data
+        // precargamos los datos del usuario
         $user = new User();
         $code = $this->request->queryOrInput('code');
         if (false === $user->load($code)) {
-            // user not found, maybe it is a new user, so only admin can create it
+            // usuario no encontrado, puede ser un usuario nuevo, así que solo admin puede crearlo
             return $this->user->admin;
         }
 
-        // admin can update all users
+        // admin puede actualizar todos los usuarios
         if ($this->user->admin) {
             return true;
         }
 
-        // non-admin users can only update their own data
+        // los usuarios no admin solo pueden actualizar sus propios datos
         return $user->nick === $this->user->nick;
     }
 
     /**
-     * Load views
+     * Carga las vistas
      */
     protected function createViews()
     {
@@ -84,15 +83,15 @@ class EditUser extends EditController
 
         $this->setTabsPosition('top');
 
-        // add roles tab
+        // añadimos la pestaña de roles
         if ($this->user->admin) {
             $this->createViewsRole();
         }
 
-        // add page options tab
+        // añadimos la pestaña de opciones de página
         $this->createViewsPageOptions();
 
-        // add emails tab
+        // añadimos la pestaña de emails
         $this->createViewsEmails();
     }
 
@@ -124,7 +123,7 @@ class EditUser extends EditController
 
     protected function deleteAction(): bool
     {
-        // only admin can delete users
+        // solo el admin puede borrar usuarios
         $this->permissions->allowDelete = $this->user->admin;
 
         return parent::deleteAction();
@@ -134,26 +133,26 @@ class EditUser extends EditController
     {
         $this->permissions->allowUpdate = $this->allowUpdate();
 
-        // prevent nick change: nick is immutable once created
+        // impedimos cambiar el nick: el nick es inmutable una vez creado
         $code = $this->request->input('code', '');
         if ($code !== '' && $this->request->input('nick', $code) !== $code) {
             Tools::log()->warning('not-allowed-modify');
             return false;
         }
 
-        // prevent some user changes
+        // impedimos algunos cambios del propio usuario
         if ($this->request->input('code', '') === $this->user->nick) {
             if ($this->user->admin != (bool)$this->request->input('admin')) {
-                // prevent user from becoming admin
+                // impedimos que el usuario se convierta en admin
                 $this->permissions->allowUpdate = false;
             } elseif ($this->user->enabled != (bool)$this->request->input('enabled')) {
-                // prevent user from disabling himself
+                // impedimos que el usuario se deshabilite a sí mismo
                 $this->permissions->allowUpdate = false;
             }
         }
         $result = parent::editAction();
 
-        // Are we changing user language?
+        // ¿estamos cambiando el idioma del usuario?
         if ($result && $this->tab('EditUser')->model->nick === $this->user->nick) {
             Tools::lang()->setLang($this->tab('EditUser')->model->langcode);
 
@@ -191,7 +190,7 @@ class EditUser extends EditController
     }
 
     /**
-     * Return a list of pages where user has access.
+     * Devuelve la lista de páginas a las que el usuario tiene acceso.
      *
      * @param User $user
      *
@@ -230,15 +229,14 @@ class EditUser extends EditController
 
     protected function insertAction(): bool
     {
-        // only admin can create users
+        // solo el admin puede crear usuarios
         $this->permissions->allowUpdate = $this->user->admin;
 
         return parent::insertAction();
     }
 
     /**
-     *
-     * Load view data procedure
+     * Procedimiento de carga de datos de la vista
      *
      * @param string $viewName
      * @param BaseView $view
@@ -250,7 +248,7 @@ class EditUser extends EditController
 
         switch ($viewName) {
             case 'EditRoleUser':
-                $where = [new DataBaseWhere('nick', $nick)];
+                $where = [Where::eq('nick', $nick)];
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;
 
@@ -265,29 +263,31 @@ class EditUser extends EditController
                 $this->loadHomepageValues();
                 $this->loadLanguageValues();
 
-                // disable company column if there is only one company
+                // deshabilitamos la columna de empresa si solo hay una empresa
                 if ($this->empresa->count() < 2) {
                     $view->disableColumn('company');
                 }
 
-                // disable warehouse column if there is only one company
+                // deshabilitamos la columna de almacén si solo hay un almacén
                 $almacen = new Almacen();
                 if ($almacen->count() < 2) {
                     $view->disableColumn('warehouse');
                 }
 
-                // disable options and print buttons
+                // deshabilitamos los botones de opciones e imprimir
                 $view->setSettings('btnOptions', false)
                     ->setSettings('btnPrint', false);
 
                 if ($view->model->nick == $this->user->nick) {
-                    // prevent user self-destruction
+                    // impedimos que el usuario se autodestruya
                     $view->setSettings('btnDelete', false);
                 }
 
-                // two-factor authentication
-                if ($view->model->two_factor_enabled) {
-                    $this->addButton($viewName, [
+                // autenticación en dos pasos (solo para usuarios existentes)
+                if (false === $view->model->exists()) {
+                    // nada
+                } elseif ($view->model->two_factor_enabled) {
+                    $view->addButton([
                         'action' => 'two-factor-disable',
                         'color' => 'warning',
                         'confirm' => true,
@@ -295,7 +295,7 @@ class EditUser extends EditController
                         'label' => 'two-factor-auth-disable',
                     ]);
                 } else {
-                    $this->addButton($viewName, [
+                    $view->addButton([
                         'action' => 'two-factor-enable',
                         'color' => 'info',
                         'icon' => 'fa-solid fa-shield-halved',
@@ -303,21 +303,21 @@ class EditUser extends EditController
                     ]);
                 }
 
-                // if the user is admin, hide the EditRoleUser tab
+                // si el usuario es admin, ocultamos la pestaña EditRoleUser
                 if ($view->model->admin && array_key_exists('EditRoleUser', $this->views)) {
                     $this->setSettings('EditRoleUser', 'active', false);
                 }
                 break;
 
             case 'ListEmailSent':
-                $where = [new DataBaseWhere('nick', $nick)];
+                $where = [Where::eq('nick', $nick)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListPageOption':
                 $where = [
-                    new DataBaseWhere('nick', $nick),
-                    new DataBaseWhere('nick', null, 'IS', 'OR'),
+                    Where::eq('nick', $nick),
+                    Where::orIsNull('nick'),
                 ];
                 $view->loadData('', $where);
                 break;
@@ -325,7 +325,7 @@ class EditUser extends EditController
     }
 
     /**
-     * Load a list of pages where user has access that can be set as homepage.
+     * Carga la lista de páginas a las que el usuario tiene acceso y que pueden establecerse como página de inicio.
      */
     protected function loadHomepageValues(): void
     {
@@ -342,7 +342,7 @@ class EditUser extends EditController
     }
 
     /**
-     * Load the available language values from translator.
+     * Carga los idiomas disponibles desde el traductor.
      */
     protected function loadLanguageValues(): void
     {
@@ -366,7 +366,7 @@ class EditUser extends EditController
             return;
         }
 
-        // load user from code
+        // cargamos el usuario por código
         $user = new User();
         $code = $this->request->input('code');
         if (false === $user->load($code)) {
@@ -374,13 +374,13 @@ class EditUser extends EditController
             return;
         }
 
-        // disable two-factor authentication
+        // deshabilitamos la autenticación en dos pasos
         if (false === $user->disableTwoFactor()) {
             Tools::log()->error('record-save-error');
             return;
         }
 
-        // save the user with two-factor disabled
+        // guardamos el usuario con la autenticación en dos pasos deshabilitada
         if (false === $user->save()) {
             Tools::log()->error('record-save-error');
             return;
@@ -409,7 +409,7 @@ class EditUser extends EditController
             return;
         }
 
-        // load the two-factor setup template
+        // cargamos la plantilla de configuración de la autenticación en dos pasos
         $this->setTemplate('EditUserTwoFactor');
     }
 
@@ -422,7 +422,7 @@ class EditUser extends EditController
             return;
         }
 
-        // load user from code
+        // cargamos el usuario por código
         $user = new User();
         $code = $this->request->queryOrInput('code');
         if (false === $user->load($code)) {
@@ -430,21 +430,21 @@ class EditUser extends EditController
             return;
         }
 
-        // set the two-factor secret key
+        // establecemos la clave secreta de la autenticación en dos pasos
         $secretKey = $this->request->input('two_factor_secret_key', '');
         if (empty($user->enableTwoFactor($secretKey))) {
             Tools::log()->error('two-factor-secret-key-empty');
             return;
         }
 
-        // verify the two-factor code
+        // verificamos el código de la autenticación en dos pasos
         $twoFactorCode = $this->request->input('two_factor_code', '');
         if (false === $user->verifyTwoFactorCode($twoFactorCode)) {
             Tools::log()->error('two-factor-code-invalid');
             return;
         }
 
-        // save the user with two-factor enabled
+        // guardamos el usuario con la autenticación en dos pasos habilitada
         if (false === $user->save()) {
             Tools::log()->error('record-save-error');
             return;

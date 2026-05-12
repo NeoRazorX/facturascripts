@@ -126,14 +126,28 @@
                         {{ formToken() }}
                         <input type="hidden" name="model" value="{{ fsc.modelName }}">
                         <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
+                        {% set morePaymentMethods = [] %}
+                        {% for doc in fsc.moreDocuments %}
+                            {% set pm = doc.getPaymentMethod() %}
+                            {% if pm.codpago and pm.codpago not in morePaymentMethods | keys %}
+                                {% set morePaymentMethods = morePaymentMethods | merge({(pm.codpago): pm.descripcion}) %}
+                            {% endif %}
+                        {% endfor %}
                         <div class="card border-success shadow mb-2">
-                            <div class="card-body p-2">
+                            <div class="card-body p-2 d-flex flex-wrap align-items-center gap-2">
                                 <button class="btn btn-spin-action btn-sm btn-outline-success" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#moreDocsCollapse" aria-expanded="false">
                                     <i class="fa-solid fa-plus-square fa-fw" aria-hidden="true"></i>
                                     {{ trans('more') }}
                                 </button>
-                                &nbsp; {{ trans('group-more-docs-p') }}
+                                <span class="flex-grow-1">{{ trans('group-more-docs-p') }}</span>
+                                <select id="moreDocsPaymentFilter" class="form-select form-select-sm w-auto"
+                                        onchange="filterMoreDocsByPayment(this.value);">
+                                    <option value="">{{ trans('payment-method') }}: {{ trans('all') }}</option>
+                                    {% for codpago, descripcion in morePaymentMethods %}
+                                        <option value="{{ codpago }}">{{ descripcion }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="collapse" id="moreDocsCollapse">
                                 <div class="table-responsive">
@@ -150,7 +164,7 @@
                                         </thead>
                                         <tbody>
                                         {% for doc in fsc.moreDocuments %}
-                                            <tr>
+                                            <tr data-codpago="{{ doc.codpago }}">
                                                 <td class="text-center" width="50">
                                                     <div class="form-check">
                                                         <input type="checkbox" class="form-check-input"
@@ -232,6 +246,21 @@
             }
 
             return false;
+        }
+
+        function filterMoreDocsByPayment(codpago) {
+            const rows = document.querySelectorAll('#moreDocsCollapse tbody tr[data-codpago]');
+            rows.forEach(function (row) {
+                if (codpago === '' || row.getAttribute('data-codpago') === codpago) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                    const cb = row.querySelector('input[name="newcodes[]"]');
+                    if (cb) {
+                        cb.checked = false;
+                    }
+                }
+            });
         }
 
         function sendFormData(status) {

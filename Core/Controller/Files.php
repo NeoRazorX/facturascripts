@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,9 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Controlador para servir archivos estáticos desde las carpetas públicas del sistema.
+ */
 class Files implements ControllerInterface
 {
     /** @var string */
@@ -42,6 +45,10 @@ class Files implements ControllerInterface
 
         $this->filePath = Tools::folder() . $url;
 
+        if (false !== strpos($url, '..')) {
+            throw new KernelException('UnsafeFolder', $url);
+        }
+
         if (false === is_file($this->filePath)) {
             throw new KernelException(
                 'FileNotFound',
@@ -49,10 +56,12 @@ class Files implements ControllerInterface
             );
         }
 
-        if (false === $this->isFolderSafe($url)) {
+        $realPath = realpath($this->filePath);
+        if (false === $realPath || false === $this->isFolderSafe($realPath)) {
             throw new KernelException('UnsafeFolder', $url);
         }
 
+        $this->filePath = $realPath;
         if (false === $this->isFileSafe($this->filePath)) {
             throw new KernelException('UnsafeFile', $url);
         }
@@ -77,8 +86,14 @@ class Files implements ControllerInterface
     public static function isFolderSafe(string $filePath): bool
     {
         $safeFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins', 'MyFiles/Public'];
+        $realPath = realpath($filePath);
+        if (false === $realPath) {
+            return false;
+        }
+
         foreach ($safeFolders as $folder) {
-            if ('/' . $folder === substr($filePath, 0, 1 + strlen($folder))) {
+            $safePath = realpath(Tools::folder($folder));
+            if (false !== $safePath && 0 === strpos($realPath, rtrim($safePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR)) {
                 return true;
             }
         }
@@ -95,12 +110,12 @@ class Files implements ControllerInterface
         header('Content-Type: ' . $this->getMime($this->filePath));
         header('Cache-Control: public, max-age=604800');
 
-        // disable the buffer if enabled
+        // desactivamos el buffer si está activo
         if (ob_get_contents()) {
             ob_end_flush();
         }
 
-        // force to download svg files to prevent XSS attacks
+        // forzamos la descarga de archivos svg para evitar ataques XSS
         if (strpos($this->filePath, '.svg') !== false) {
             header('Content-Disposition: attachment; filename="' . basename($this->filePath) . '"');
         }

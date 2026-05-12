@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 
 /**
@@ -33,6 +33,8 @@ use FacturaScripts\Dinamic\Model\FormatoDocumento;
  */
 abstract class ExportBase
 {
+    private const SPREADSHEET_FORMULA_TRIGGERS = ['=', '+', '-', '@', "\t", "\r"];
+
     /** @var string */
     private $fileName;
 
@@ -204,6 +206,26 @@ abstract class ExportBase
         return $data;
     }
 
+    protected function escapeSpreadsheetFormula(string $value): string
+    {
+        if ($value === '') {
+            return $value;
+        }
+
+        return in_array($value[0], self::SPREADSHEET_FORMULA_TRIGGERS, true) ? "'" . $value : $value;
+    }
+
+    protected function escapeSpreadsheetFormulaRow(array $row): array
+    {
+        foreach ($row as $key => $value) {
+            if (is_string($value)) {
+                $row[$key] = $this->escapeSpreadsheetFormula($value);
+            }
+        }
+
+        return $row;
+    }
+
     /**
      * @param BusinessDocument $model
      *
@@ -213,8 +235,8 @@ abstract class ExportBase
     {
         $documentFormat = new FormatoDocumento();
         $where = [
-            new DataBaseWhere('autoaplicar', true),
-            new DataBaseWhere('idempresa', $model->idempresa)
+            Where::eq('autoaplicar', true),
+            Where::eq('idempresa', $model->idempresa)
         ];
         foreach ($documentFormat->all($where, ['tipodoc' => 'DESC', 'codserie' => 'DESC']) as $format) {
             if ($format->tipodoc === $model->modelClassName() && $format->codserie === $model->codserie) {

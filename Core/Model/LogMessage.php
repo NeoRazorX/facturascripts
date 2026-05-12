@@ -155,8 +155,8 @@ class LogMessage extends ModelClass
         $this->context = Tools::noHtml($this->context);
         $this->ip = Tools::noHtml($this->ip);
         $this->message = Tools::noHtml($this->message);
-        if (strlen($this->message) > static::MAX_MESSAGE_LEN) {
-            $this->message = substr($this->message, 0, static::MAX_MESSAGE_LEN);
+        if (mb_strlen($this->message, 'UTF-8') > static::MAX_MESSAGE_LEN) {
+            $this->message = mb_substr($this->message, 0, static::MAX_MESSAGE_LEN, 'UTF-8');
         }
 
         $this->model = Tools::noHtml($this->model);

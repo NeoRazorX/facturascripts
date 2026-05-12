@@ -149,7 +149,7 @@ class EmailSent extends ModelClass
     public function test(): bool
     {
         $body = Tools::noHtml($this->body);
-        $this->body = strlen($body ?? '') > 5000 ? substr($body, 0, 4997) . '...' : $body;
+        $this->body = mb_strlen($body ?? '', 'UTF-8') > 5000 ? mb_substr($body, 0, 4997, 'UTF-8') . '...' : $body;
 
         $this->html = Tools::noHtml($this->html);
         $this->subject = Tools::noHtml($this->subject);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -314,12 +314,12 @@ class Wizard extends Controller
         Tools::settingsSet('default', 'site_url', Tools::siteUrl());
         Tools::settingsSave();
 
-        $this->saveInvoiceStartNumber();
-        $this->saveBankAccount();
-
         if ($this->request->input('defaultplan', '0')) {
             $this->loadDefaultAccountingPlan($this->empresa->codpais);
         }
+
+        $this->saveInvoiceStartNumber();
+        $this->saveBankAccount();
 
         // change template and redirect
         $this->setTemplate('Wizard-3');
@@ -388,6 +388,14 @@ class Wizard extends Controller
         $paymentMethod->codcuentabanco = $account->codcuenta;
         $paymentMethod->idempresa = $this->empresa->idempresa;
         $paymentMethod->save();
+
+        // creamos la subcuenta asociada en el ejercicio actual
+        if (empty($account->codsubcuenta)) {
+            $exerciseCode = $this->getCompanyExerciseCode();
+            if (!empty($exerciseCode)) {
+                $account->createSubcuenta($exerciseCode);
+            }
+        }
     }
 
     private function saveLogo(): bool
@@ -402,7 +410,7 @@ class Wizard extends Controller
             return false;
         }
 
-        if (false === in_array($uploadFile->getClientMimeType(), ['image/gif', 'image/jpeg', 'image/png'])) {
+        if (false === $uploadFile->isValidImage()) {
             Tools::log()->error('not-valid-image');
             return false;
         }
@@ -479,11 +487,6 @@ class Wizard extends Controller
 
     private function uploadLogoFile(UploadedFile $uploadFile): AttachedFile
     {
-        // exclude php files
-        if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-            return new AttachedFile();
-        }
-
         $destiny = FS_FOLDER . '/MyFiles/';
         $destinyName = $uploadFile->getClientOriginalName();
         if (file_exists($destiny . $destinyName)) {

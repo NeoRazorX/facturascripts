@@ -37,6 +37,10 @@ class Login implements ControllerInterface
     const MAX_INCIDENT_COUNT = 6;
     const USER_LIST = 'login-user-list';
 
+    // Hash bcrypt fijo para igualar tiempos cuando el usuario no existe.
+    // Nunca podrá verificarse contra ninguna contraseña real.
+    const DUMMY_PASSWORD_HASH = '$2y$12$ye/68ONwKIM9/446.2a5G.GFcYDXB0hxLxQr2YFl1BhQ1wjoHM6Fu';
+
     /** @var Empresa */
     public $empresa;
 
@@ -181,14 +185,9 @@ class Login implements ControllerInterface
         }
 
         $user = new User();
-        if (false === $user->load($username)) {
-            Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($username)]);
+        if (false === $user->load($username) || false === $user->enabled) {
+            Tools::log()->warning('login-password-fail');
             $this->saveIncident(Session::getClientIp(), $username);
-            return;
-        }
-
-        if (false === $user->enabled) {
-            Tools::log()->warning('login-user-disabled');
             return;
         }
 
@@ -292,17 +291,15 @@ class Login implements ControllerInterface
 
         $user = new User();
         if (false === $user->load($userName)) {
-            Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($userName)]);
-            $this->saveIncident(Session::getClientIp());
+            // ejecutamos un password_verify falso para igualar tiempos
+            // y evitar enumeración de usuarios por timing
+            password_verify($password, self::DUMMY_PASSWORD_HASH);
+            Tools::log()->warning('login-password-fail');
+            $this->saveIncident(Session::getClientIp(), $userName);
             return;
         }
 
-        if (false === $user->enabled) {
-            Tools::log()->warning('login-user-disabled');
-            return;
-        }
-
-        if (false === $user->verifyPassword($password)) {
+        if (false === $user->enabled || false === $user->verifyPassword($password)) {
             Tools::log()->warning('login-password-fail');
             $this->saveIncident(Session::getClientIp(), $userName);
             return;
@@ -319,16 +316,11 @@ class Login implements ControllerInterface
 
     protected function twoFactorValidationAction(Request $request): void
     {
+        $userName = $request->input('fsNick');
         $user = new User();
-        if (!$user->load($request->input('fsNick'))) {
-            Tools::log()->warning('user-not-found');
-            $this->saveIncident(Session::getClientIp());
-            return;
-        }
-
-        if (!$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))) {
+        if (!$user->load($userName) || !$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))) {
             Tools::log()->warning('two-factor-code-invalid');
-            $this->saveIncident(Session::getClientIp(), $user->nick);
+            $this->saveIncident(Session::getClientIp(), $userName);
             return;
         }
 

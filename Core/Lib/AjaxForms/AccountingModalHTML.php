@@ -54,11 +54,13 @@ class AccountingModalHTML
         $tbody = '';
         foreach (static::getSubaccounts($model) as $subaccount) {
             $cssClass = $subaccount->saldo > 0 ? 'table-success clickableRow' : 'clickableRow';
+            $code = static::html($subaccount->codsubcuenta);
+            $description = static::html($subaccount->descripcion);
             $onclick = '$(\'#findSubaccountModal\').modal(\'hide\');'
-                . ' return newLineAction(\'' . $subaccount->codsubcuenta . '\');';
+                . ' return newLineAction(this.dataset.subaccount);';
 
-            $tbody .= '<tr class="' . $cssClass . '" onclick="' . $onclick . '">'
-                . '<td><b>' . $subaccount->codsubcuenta . '</b> ' . $subaccount->descripcion . '</td>'
+            $tbody .= '<tr class="' . $cssClass . '" data-subaccount="' . $code . '" onclick="' . $onclick . '">'
+                . '<td><b>' . $code . '</b> ' . $description . '</td>'
                 . '<td class="text-end">' . Tools::money($subaccount->saldo) . '</td>'
                 . '</tr>';
         }
@@ -103,6 +105,12 @@ class AccountingModalHTML
         }
 
         return Subcuenta::all($where, $order);
+    }
+
+    protected static function html(?string $text): string
+    {
+        $decoded = html_entity_decode($text ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return htmlspecialchars($decoded, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
     protected static function modalSubaccount(Asiento $model): string

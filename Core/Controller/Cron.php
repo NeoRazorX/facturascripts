@@ -164,7 +164,7 @@ END;
         ob_flush();
 
         $query = LogMessage::table()
-            ->whereNotEq('channel', 'audit')
+            ->whereNotIn('channel', ['audit', 'docs'])
             ->whereLt('time', $minDate);
 
         if (false === $query->delete()) {

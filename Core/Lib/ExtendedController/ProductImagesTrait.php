@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,8 +59,10 @@ trait ProductImagesTrait
                 continue;
             }
 
-            if (false === strpos($uploadFile->getMimeType(), 'image/')) {
-                Tools::log()->error('file-not-supported');
+            if (false === $uploadFile->isValidImage()) {
+                Tools::log()->error(
+                    str_starts_with($uploadFile->getMimeType(), 'image/') ? 'not-valid-image' : 'file-not-supported'
+                );
                 continue;
             }
 
