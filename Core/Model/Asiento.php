@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -132,6 +132,13 @@ class Asiento extends ModelClass
      */
     public $operacion;
 
+    /** 
+     * Permite saltarse el bloqueo de regularización de IVA al guardar o eliminar
+     * 
+     * @var bool 
+     */
+    protected $disable_regularization_check = false;
+
     /**
      * Accumulate the amounts of the detail in the document
      *
@@ -184,6 +191,16 @@ class Asiento extends ModelClass
         return true;
     }
 
+    /**
+     * Desactiva la comprobación de regularización de IVA para este asiento.
+     * Usar solo en entradas generadas automáticamente por el sistema (pagos, etc.)
+     * donde el bloqueo de período no debe impedir la creación del asiento.
+     */
+    public function disableRegularizationCheck(bool $value = true): void
+    {
+        $this->disable_regularization_check = $value;
+    }
+
     public function editable(): bool
     {
         $exercise = $this->getExercise();
@@ -192,11 +209,13 @@ class Asiento extends ModelClass
             return false;
         }
 
-        $reg = new DinRegularizacionImpuesto();
-        $reg->idempresa = $this->idempresa;
-        if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
-            Tools::log()->warning('accounting-within-regularization');
-            return false;
+        if (false === $this->disable_regularization_check) {
+            $reg = new DinRegularizacionImpuesto();
+            $reg->idempresa = $this->idempresa;
+            if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
+                Tools::log()->warning('accounting-within-regularization');
+                return false;
+            }
         }
 
         return $this->editable || $this->getOriginal('editable');
