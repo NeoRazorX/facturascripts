@@ -72,12 +72,6 @@ class CodeModel
      */
     public static function all(string $tableName, string $fieldCode, string $fieldDescription, bool $addEmpty = true, array $where = []): array
     {
-        // validar nombre de tabla para prevenir SQL injection
-        if (false === self::isValidTableName($tableName)) {
-            Tools::log()->error('invalid-table-name: ' . $tableName);
-            return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
-        }
-
         // validar nombres de campos para prevenir SQL injection
         if (false === self::isValidFieldName($fieldCode)) {
             Tools::log()->error('invalid-field-name: ' . $fieldCode);
@@ -87,30 +81,38 @@ class CodeModel
             return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
         }
 
-        // check cache
-        $cacheKey = $addEmpty ?
-            'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription . '-empty' :
-            'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription;
-        $result = Cache::get($cacheKey);
-        if (empty($where) && is_array($result)) {
-            return $result;
-        }
-
         // initialize
         $result = [];
         if ($addEmpty) {
             $result[] = new static(['code' => null, 'description' => '------']);
         }
 
-        // is a table or a model?
+        // is a model? (admite Join\Nombre)
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
             $model = new $modelClass();
-            if ($model->modelClassName() === $tableName) {
-                return method_exists($model, 'codeModelAll') ?
-                    array_merge($result, $model->codeModelAll($fieldCode)) :
-                    array_merge($result, self::codeModelAll($model, $fieldCode));
+            if (method_exists($model, 'codeModelAll')) {
+                return array_merge($result, $model->codeModelAll($fieldCode));
             }
+            if (method_exists($model, 'modelClassName')
+                && $model->modelClassName() === self::modelBaseName($tableName)) {
+                return array_merge($result, self::codeModelAll($model, $fieldCode));
+            }
+        }
+
+        // validar nombre de tabla para prevenir SQL injection
+        if (false === self::isValidTableName($tableName)) {
+            Tools::log()->error('invalid-table-name: ' . $tableName);
+            return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
+        }
+
+        // check cache
+        $cacheKey = $addEmpty ?
+            'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription . '-empty' :
+            'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription;
+        $cached = Cache::get($cacheKey);
+        if (empty($where) && is_array($cached)) {
+            return $cached;
         }
 
         // check table
@@ -254,19 +256,23 @@ class CodeModel
      */
     public static function search(string $tableName, string $fieldCode, string $fieldDescription, string $query, array $where = []): array
     {
+        // is a model? (admite Join\Nombre)
+        $modelClass = self::MODEL_NAMESPACE . $tableName;
+        if (class_exists($modelClass)) {
+            $model = new $modelClass();
+            if (method_exists($model, 'codeModelSearch')) {
+                return $model->codeModelSearch($query, $fieldCode, $where);
+            }
+            if (method_exists($model, 'modelClassName')
+                && $model->modelClassName() === self::modelBaseName($tableName)) {
+                return self::codeModelSearch($model, $query, $fieldCode, $where);
+            }
+        }
+
         // validar nombre de tabla para prevenir SQL injection
         if (false === self::isValidTableName($tableName)) {
             Tools::log()->error('invalid-table-name: ' . $tableName);
             return [];
-        }
-
-        // is a table or a model?
-        $modelClass = self::MODEL_NAMESPACE . $tableName;
-        if (class_exists($modelClass)) {
-            $model = new $modelClass();
-            return method_exists($model, 'codeModelSearch') ?
-                $model->codeModelSearch($query, $fieldCode, $where) :
-                self::codeModelSearch($model, $query, $fieldCode, $where);
         }
 
         $fields = $fieldCode . '|' . $fieldDescription;
@@ -328,6 +334,16 @@ class CodeModel
     protected static function isValidTableName(string $tableName): bool
     {
         return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $tableName) === 1;
+    }
+
+    /**
+     * Devuelve el basename de un modelo (ej: "Join\PartidaAsiento" -> "PartidaAsiento")
+     * para comparar contra modelClassName().
+     */
+    protected static function modelBaseName(string $tableName): string
+    {
+        $parts = explode('\\', $tableName);
+        return end($parts);
     }
 
     protected static function db(): DataBase

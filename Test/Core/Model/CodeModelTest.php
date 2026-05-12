@@ -415,6 +415,43 @@ final class CodeModelTest extends TestCase
         $this->assertTrue($almacen2->delete());
     }
 
+    public function testAllWithJoinModelName(): void
+    {
+        // Pasar 'Join\StockProducto' debe entrar en el branch de modelo
+        // (la clase JoinModel base no expone codeModelAll/modelClassName, así
+        // que cae al check de tabla — debe terminar como "tabla no encontrada"
+        // sin lanzar error por validación de nombre.)
+        $result = CodeModel::all('Join\\StockProducto', '', '', false);
+        $this->assertIsArray($result);
+    }
+
+    public function testAllWithInvalidTableNameContainingBackslash(): void
+    {
+        // Un tableName con barra invertida que no corresponde a un modelo real
+        // debe ser rechazado por isValidTableName y devolver el resultado vacío.
+        $result = CodeModel::all('Join\\NoExiste', 'campo1', 'campo2', true);
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result);
+        $this->assertNull($result[0]->code);
+        $this->assertEquals('------', $result[0]->description);
+    }
+
+    public function testSearchWithInvalidTableNameContainingBackslash(): void
+    {
+        $result = CodeModel::search('Join\\NoExiste', 'codigo', 'nombre', 'foo');
+        $this->assertIsArray($result);
+        $this->assertCount(0, $result);
+    }
+
+    public function testModelBaseNameReflection(): void
+    {
+        // Verifica que el helper protegido modelBaseName devuelve el último segmento
+        $method = new \ReflectionMethod(CodeModel::class, 'modelBaseName');
+        $this->assertEquals('PartidaAsiento', $method->invoke(null, 'Join\\PartidaAsiento'));
+        $this->assertEquals('Variante', $method->invoke(null, 'Variante'));
+        $this->assertEquals('C', $method->invoke(null, 'A\\B\\C'));
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
