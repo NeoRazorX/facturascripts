@@ -415,6 +415,40 @@ final class CodeModelTest extends TestCase
         $this->assertTrue($almacen2->delete());
     }
 
+    public function testGetWithEmptyTableName(): void
+    {
+        $codeModel = new CodeModel();
+        $result = $codeModel->get('', 'codalmacen', 'X', 'nombre');
+        $this->assertEquals('', $result->code);
+        $this->assertEquals('', $result->description);
+    }
+
+    public function testGetWithEmptyFieldCode(): void
+    {
+        // En el branch de tabla, fieldCode vacío no puede construir WHERE válido
+        $codeModel = new CodeModel();
+        $result = $codeModel->get('almacenes', '', 'X', 'nombre');
+        $this->assertEquals('', $result->code);
+        $this->assertEquals('', $result->description);
+    }
+
+    public function testGetWithInvalidTableName(): void
+    {
+        // Nombre de tabla con caracteres inválidos: debe rechazarse
+        $codeModel = new CodeModel();
+        $result = $codeModel->get('almacenes; DROP TABLE x--', 'codalmacen', 'X', 'nombre');
+        $this->assertEquals('', $result->code);
+        $this->assertEquals('', $result->description);
+    }
+
+    public function testGetWithInvalidFieldName(): void
+    {
+        $codeModel = new CodeModel();
+        $result = $codeModel->get('almacenes', 'codalmacen OR 1=1', 'X', 'nombre');
+        $this->assertEquals('', $result->code);
+        $this->assertEquals('', $result->description);
+    }
+
     public function testAllWithJoinModelName(): void
     {
         // Pasar 'Join\StockProducto' debe entrar en el branch de modelo
