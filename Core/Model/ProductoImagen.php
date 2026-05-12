@@ -29,7 +29,9 @@ use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use Throwable;
 
 /**
- * Description of ProductoImagen
+ * Modelo que representa una imagen asociada a un producto.
+ * Gestiona el archivo adjunto y la generación de miniaturas
+ * (thumbnails) en disco bajo MyFiles/Tmp/Thumbnails.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author José Antonio Cuello Principal <yopli2000@gmail.com>
@@ -59,8 +61,7 @@ class ProductoImagen extends ModelClass
     {
         parent::__construct($data);
 
-        // Inicialmente el orden es el id
-        // hasta que se asigne un orden en concreto.
+        // por defecto el orden es el id hasta que se asigne uno concreto
         $this->orden = $this->orden ?? $this->id;
     }
 
@@ -70,13 +71,13 @@ class ProductoImagen extends ModelClass
             return false;
         }
 
-        // obtenemos el nombre de la imagen sin la extension
+        // obtenemos el nombre del archivo sin la extensión
         $name = pathinfo($this->getFile()->filename, PATHINFO_FILENAME);
         if (empty($name)) {
             return true;
         }
 
-        // buscamos todas las imágenes que empiecen por el mismo nombre y las eliminamos
+        // borramos todas las miniaturas que empiecen por ese nombre
         $path = FS_FOLDER . self::THUMBNAIL_PATH;
         if (file_exists($path)) {
             foreach (scandir($path) as $file) {
@@ -110,34 +111,35 @@ class ProductoImagen extends ModelClass
 
     public function getThumbnail(int $width = 100, int $height = 100, bool $token = false, bool $permaToken = false): string
     {
-        // comprobamos si no existe la imagen
+        // si el archivo no existe no podemos generar miniatura
         $file = $this->getFile();
         if (false === $file->exists() || false === file_exists($file->getFullPath())) {
             return '';
         }
 
-        // comprobamos si existe el directorio
+        // creamos el directorio de miniaturas si no existe
         if (false === file_exists(FS_FOLDER . self::THUMBNAIL_PATH)) {
             mkdir(FS_FOLDER . self::THUMBNAIL_PATH, 0755, true);
         }
 
-        // si la extensión no está entre las permitidas terminamos
+        // solo se generan miniaturas para gif, jpg, jpeg y png
+        // (webp se ha excluido porque da problemas al embeberse en PDFs)
         $ext = pathinfo($file->getFullPath(), PATHINFO_EXTENSION);
-        if (false === in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+        if (false === in_array($ext, ['gif', 'jpg', 'jpeg', 'png'])) {
             return '';
         }
 
-        // creamos el nuevo nombre del archivo
+        // construimos el nombre de la miniatura
         $thumbName = pathinfo($file->filename, PATHINFO_FILENAME) . '_' . $width . 'x' . $height . '.' . $ext;
 
-        // si el archivo existe lo devolvemos
+        // si ya existe la devolvemos sin regenerarla
         $thumbFile = self::THUMBNAIL_PATH . $thumbName;
         if (file_exists(FS_FOLDER . $thumbFile)) {
             return $this->getThumbnailPath($thumbFile, $token, $permaToken);
         }
 
         try {
-            // redimensionamos la imagen proporcionalmente
+            // redimensionamos manteniendo la proporción
             $image = imagecreatefromstring(file_get_contents($file->getFullPath()));
             $imageWidth = imagesx($image);
             $imageHeight = imagesy($image);
@@ -150,8 +152,12 @@ class ProductoImagen extends ModelClass
             $thumb = imagecreatetruecolor($width, $height);
             imagecopyresampled($thumb, $image, 0, 0, 0, 0, $width, $height, $imageWidth, $imageHeight);
 
-            // guardamos la imagen según la extensión
+            // guardamos la miniatura con el formato correspondiente
             switch ($ext) {
+                case 'gif':
+                    imagegif($thumb, FS_FOLDER . $thumbFile);
+                    break;
+
                 case 'jpg':
                 case 'jpeg':
                     imagejpeg($thumb, FS_FOLDER . $thumbFile, 90);
@@ -159,10 +165,6 @@ class ProductoImagen extends ModelClass
 
                 case 'png':
                     imagepng($thumb, FS_FOLDER . $thumbFile);
-                    break;
-
-                case 'gif':
-                    imagegif($thumb, FS_FOLDER . $thumbFile);
                     break;
             }
         } catch (Throwable $th) {
@@ -190,7 +192,7 @@ class ProductoImagen extends ModelClass
 
     public function test(): bool
     {
-        // si el archivo no es una imagen, devolvemos false
+        // rechazamos el guardado si el archivo asociado no es una imagen
         if (false === $this->getFile()->isImage()) {
             Tools::log()->error('not-valid-image');
             return false;

@@ -32,7 +32,8 @@
                 <widget type="password" fieldname="password" icon="fa-solid fa-key"/>
             </column>
             <column name="logo" order="120">
-                <widget type="library" fieldname="idlogo" icon="fa-solid fa-image" onclick="EditAttachedFile" accept=".jpg,.jpeg,.png,.webp"/>
+                <widget type="library" fieldname="idlogo" icon="fa-solid fa-image" onclick="EditAttachedFile"
+                        accept=".gif,.jpg,.jpeg,.png,.webp"/>
             </column>
             <column name="email-signature" numcolumns="12" order="130">
                 <widget type="textarea" fieldname="signature"/>
