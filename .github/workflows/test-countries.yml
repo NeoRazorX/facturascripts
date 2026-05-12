@@ -41,7 +41,7 @@ jobs:
             timezone: America/Mexico_City
         database:
           - type: mysql
-            version: '8.0'
+            version: '8.1'
             port: 3306
       fail-fast: false
 

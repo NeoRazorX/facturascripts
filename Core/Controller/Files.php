@@ -45,6 +45,10 @@ class Files implements ControllerInterface
 
         $this->filePath = Tools::folder() . $url;
 
+        if (false !== strpos($url, '..')) {
+            throw new KernelException('UnsafeFolder', $url);
+        }
+
         if (false === is_file($this->filePath)) {
             throw new KernelException(
                 'FileNotFound',
