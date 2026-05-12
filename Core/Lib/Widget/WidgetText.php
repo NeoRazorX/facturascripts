@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,8 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of WidgetText
+ * Widget para campos de texto de una sola línea, con soporte para
+ * longitud mínima y máxima.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Jose Antonio Cuello  <yopli2000@gmail.com>
@@ -29,35 +30,30 @@ use FacturaScripts\Core\Tools;
 class WidgetText extends BaseWidget
 {
     /**
-     * Indicates the maximum length of characters.
-     * 0 -> indeterminate
+     * Longitud máxima de caracteres.
+     * 0 -> sin límite
      *
      * @var int
      */
     protected $maxlength;
 
     /**
-     * Indicates the minim length of characters.
-     * 0 -> indeterminate
+     * Longitud mínima de caracteres.
+     * 0 -> sin límite
      *
      * @var int
      */
     protected $minlength;
 
-    /**
-     * Class constructor
-     *
-     * @param array $data
-     */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         parent::__construct($data);
-        $this->maxlength = $data['maxlength'] ?? $data['max'] ?? 0;
-        $this->minlength = $data['minlength'] ?? $data['min'] ?? 0;
+        $this->maxlength = (int)($data['maxlength'] ?? $data['max'] ?? 0);
+        $this->minlength = (int)($data['minlength'] ?? $data['min'] ?? 0);
     }
 
     /**
-     * Add extra attributes to HTML input field
+     * Añade atributos extra al input HTML.
      *
      * @return string
      */
@@ -78,6 +74,6 @@ class WidgetText extends BaseWidget
 
     protected function show()
     {
-        return is_null($this->value) ? '-' : Tools::noHtml((string)$this->value);
+        return $this->value === null ? '-' : Tools::noHtml((string)$this->value);
     }
 }
