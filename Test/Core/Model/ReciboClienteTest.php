@@ -19,12 +19,15 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Lib\Accounting\PaymentToAccounting;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ReceiptGenerator;
 use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Model\CuentaBanco;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\ReciboCliente;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -472,8 +475,165 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
+    public function testChangePaymentMethodUpdatesBankAccount(): void
+    {
+        $firstBank = $this->getTestBankAccount('First customer bank', '5720001101');
+        $secondBank = $this->getTestBankAccount('Second customer bank', '5720001102');
+        $customBank = $this->getTestBankAccount('Custom customer bank', '5720001103');
+
+        $firstPayMethod = $this->getTestPaymentMethod('first-test', $firstBank);
+        $secondPayMethod = $this->getTestPaymentMethod('second-test', $secondBank);
+
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->codpago = $firstPayMethod->codpago;
+        $this->assertTrue($invoice->save(), 'can-not-create-invoice');
+
+        $line = $invoice->getNewLine();
+        $line->cantidad = 1;
+        $line->descripcion = 'test';
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save(), 'cant-add-invoice-line');
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        $receipt = $invoice->getReceipts()[0];
+        $this->assertEquals($firstBank->codcuenta, $receipt->codcuentabanco, 'bad-first-receipt-bank');
+
+        $receipt->codpago = $secondPayMethod->codpago;
+        $this->assertTrue($receipt->save(), 'can-not-change-receipt-payment-method');
+        $this->assertEquals($secondBank->codcuenta, $receipt->codcuentabanco, 'bad-second-receipt-bank');
+
+        $receipt->codcuentabanco = $customBank->codcuenta;
+        $this->assertTrue($receipt->save(), 'can-not-set-custom-receipt-bank');
+
+        $receipt->codpago = $firstPayMethod->codpago;
+        $this->assertTrue($receipt->save(), 'can-not-change-receipt-payment-method-again');
+        $this->assertEquals($customBank->codcuenta, $receipt->codcuentabanco, 'custom-bank-should-be-preserved');
+
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($customer->delete(), 'can-not-delete-customer');
+        $this->assertTrue($secondPayMethod->delete(), 'can-not-delete-second-forma-pago');
+        $this->assertTrue($firstPayMethod->delete(), 'can-not-delete-first-forma-pago');
+        $this->assertTrue($customBank->delete(), 'custom-bank-cant-delete');
+        $this->assertTrue($secondBank->delete(), 'second-bank-cant-delete');
+        $this->assertTrue($firstBank->delete(), 'first-bank-cant-delete');
+    }
+
+    public function testPayReceiptUsesReceiptBankAccount(): void
+    {
+        $defaultBank = $this->getTestBankAccount('Default customer bank', '5720001001');
+        $receiptBank = $this->getTestBankAccount('Receipt customer bank', '5720001002');
+
+        $payMethod = new FormaPago();
+        $payMethod->codcuentabanco = $defaultBank->codcuenta;
+        $payMethod->descripcion = 'test';
+        $payMethod->plazovencimiento = 0;
+        $payMethod->tipovencimiento = 'days';
+        $this->assertTrue($payMethod->save(), 'cant-save-forma-pago');
+
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->codpago = $payMethod->codpago;
+        $this->assertTrue($invoice->save(), 'can-not-create-invoice');
+
+        $line = $invoice->getNewLine();
+        $line->cantidad = 1;
+        $line->descripcion = 'test';
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save(), 'cant-add-invoice-line');
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $this->assertEquals($defaultBank->codcuenta, $receipts[0]->codcuentabanco, 'bad-default-receipt-bank');
+
+        $receipts[0]->codcuentabanco = $receiptBank->codcuenta;
+        $receipts[0]->pagado = true;
+        $this->assertTrue($receipts[0]->save(), 'can-not-set-paid-receipt');
+
+        $payments = $receipts[0]->getPayments();
+        $this->assertCount(1, $payments, 'should-have-one-payment');
+        $this->assertEquals($receiptBank->codcuenta, $payments[0]->codcuentabanco, 'bad-payment-bank');
+
+        $lines = $payments[0]->getAccountingEntry()->getLines();
+        $subaccounts = array_column($lines, 'codsubcuenta');
+        $this->assertContains($receiptBank->codsubcuenta, $subaccounts, 'missing-receipt-bank-accounting-line');
+        $this->assertNotContains($defaultBank->codsubcuenta, $subaccounts, 'default-bank-should-not-be-used');
+
+        $this->deleteAccountingEntry($payments[0]);
+        $payments[0]->codcuentabanco = '';
+        $this->assertTrue($payments[0]->save(), 'can-not-clear-payment-bank');
+        $this->assertNull($payments[0]->codcuentabanco, 'empty-payment-bank-should-be-null');
+        $this->assertTrue((new PaymentToAccounting())->generate($payments[0]), 'can-not-regenerate-payment-entry');
+        $this->assertAccountingEntryBank($payments[0], $receiptBank, $defaultBank);
+        $this->deleteAccountingEntry($payments[0]);
+
+        $receipts[0]->codcuentabanco = '';
+        $this->assertTrue($receipts[0]->save(), 'can-not-clear-receipt-bank');
+        $this->assertNull($receipts[0]->codcuentabanco, 'empty-receipt-bank-should-be-null');
+        $this->assertTrue((new PaymentToAccounting())->generate($payments[0]), 'can-not-regenerate-default-entry');
+        $this->assertAccountingEntryBank($payments[0], $defaultBank, $receiptBank);
+        $this->deleteAccountingEntry($payments[0]);
+
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($customer->delete(), 'can-not-delete-customer');
+        $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
+        $this->assertTrue($receiptBank->delete(), 'receipt-bank-cant-delete');
+        $this->assertTrue($defaultBank->delete(), 'default-bank-cant-delete');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
+    }
+
+    private function assertAccountingEntryBank($payment, CuentaBanco $expectedBank, CuentaBanco $unexpectedBank): void
+    {
+        $lines = $payment->getAccountingEntry()->getLines();
+        $subaccounts = array_column($lines, 'codsubcuenta');
+        $this->assertContains($expectedBank->codsubcuenta, $subaccounts, 'missing-expected-bank-accounting-line');
+        $this->assertNotContains($unexpectedBank->codsubcuenta, $subaccounts, 'unexpected-bank-accounting-line');
+    }
+
+    private function deleteAccountingEntry($payment): void
+    {
+        $entry = $payment->getAccountingEntry();
+        $entry->editable = true;
+        $this->assertTrue($entry->delete(), 'payment-entry-cant-delete');
+        $payment->idasiento = null;
+    }
+
+    private function getTestPaymentMethod(string $description, CuentaBanco $bank): FormaPago
+    {
+        $payMethod = new FormaPago();
+        $payMethod->codcuentabanco = $bank->codcuenta;
+        $payMethod->descripcion = $description;
+        $payMethod->plazovencimiento = 0;
+        $payMethod->tipovencimiento = 'days';
+        $this->assertTrue($payMethod->save(), 'cant-save-forma-pago');
+
+        return $payMethod;
+    }
+
+    private function getTestBankAccount(string $description, string $codsubcuenta): CuentaBanco
+    {
+        $bank = new CuentaBanco();
+        $bank->codcuenta = (string)mt_rand(100000, 999999);
+        $bank->codsubcuenta = $codsubcuenta;
+        $bank->descripcion = $description;
+        $bank->idempresa = Tools::settings('default', 'idempresa');
+        $this->assertTrue($bank->save(), 'bank-cant-save');
+
+        return $bank;
     }
 }

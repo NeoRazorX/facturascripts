@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Model\Base\AccEntryRelationTrait;
+use FacturaScripts\Core\Model\Base\BankAccountRelationTrait;
 use FacturaScripts\Core\Model\Base\PaymentRelationTrait;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
@@ -37,6 +38,7 @@ class PagoCliente extends ModelClass
 {
     use ModelTrait;
     use AccEntryRelationTrait;
+    use BankAccountRelationTrait;
     use PaymentRelationTrait;
 
     /** @var string */
@@ -125,6 +127,10 @@ class PagoCliente extends ModelClass
 
     public function test(): bool
     {
+        $this->codcuentabanco = Tools::noHtml($this->codcuentabanco);
+        if ($this->codcuentabanco === '') {
+            $this->codcuentabanco = null;
+        }
         $this->customid = Tools::noHtml($this->customid);
         $this->customstatus = Tools::noHtml($this->customstatus);
 

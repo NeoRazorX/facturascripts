@@ -45,7 +45,12 @@
                 <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
             </widget>
         </column>
-        <column name="user" display="right" order="170">
+        <column name="bank-account" order="170">
+            <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco">
+                <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion" />
+            </widget>
+        </column>
+        <column name="user" display="right" order="180">
             <widget type="select" fieldname="nick">
                 <values source="users" fieldcode="nick" fieldtitle="nick" />
             </widget>

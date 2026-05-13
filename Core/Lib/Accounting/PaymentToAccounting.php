@@ -20,12 +20,15 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Model\Asiento;
+use FacturaScripts\Core\Model\CuentaBanco;
 use FacturaScripts\Core\Model\PagoCliente;
 use FacturaScripts\Core\Model\PagoProveedor;
 use FacturaScripts\Core\Model\ReciboCliente;
 use FacturaScripts\Core\Model\ReciboProveedor;
+use FacturaScripts\Core\Model\Subcuenta;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
+use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
@@ -150,7 +153,7 @@ class PaymentToAccounting
 
     protected function customerPaymentBankLine(Asiento &$entry): bool
     {
-        $account = $this->payment->getPaymentMethod()->getSubcuenta($this->exercise->codejercicio, true);
+        $account = $this->getPaymentBankSubcuenta();
         if (false === $account->exists()) {
             Tools::log()->warning('payment-method-account-not-found', [
                 '%paymentMethod%' => $this->payment->getPaymentMethod()->descripcion,
@@ -173,7 +176,7 @@ class PaymentToAccounting
             return true;
         }
 
-        $account = $this->payment->getPaymentMethod()->getSubcuentaGastos($this->exercise->codejercicio, true);
+        $account = $this->getPaymentBankSubcuenta(true);
         if (false === $account->exists()) {
             Tools::log()->warning('payment-expense-account-not-found', [
                 '%paymentMethod%' => $this->payment->getPaymentMethod()->descripcion,
@@ -259,7 +262,7 @@ class PaymentToAccounting
 
     protected function supplierPaymentBankLine(Asiento &$entry): bool
     {
-        $account = $this->payment->getPaymentMethod()->getSubcuenta($this->exercise->codejercicio, true);
+        $account = $this->getPaymentBankSubcuenta();
         if (false === $account->exists()) {
             Tools::log()->warning('payment-method-account-not-found', [
                 '%paymentMethod%' => $this->payment->getPaymentMethod()->descripcion,
@@ -289,6 +292,27 @@ class PaymentToAccounting
         $newLine->debe = max($this->payment->importe, 0);
         $newLine->haber = $this->payment->importe < 0 ? abs($this->payment->importe) : 0;
         return $newLine->save();
+    }
+
+    protected function getPaymentBankAccount(): CuentaBanco
+    {
+        foreach ([$this->payment->codcuentabanco, $this->receipt->codcuentabanco] as $code) {
+            $bank = new DinCuentaBanco();
+            if ($code && $bank->load($code)) {
+                return $bank;
+            }
+        }
+
+        return $this->payment->getPaymentMethod()->getBankAccount();
+    }
+
+    protected function getPaymentBankSubcuenta(bool $expense = false): Subcuenta
+    {
+        $bank = $this->getPaymentBankAccount();
+
+        return $expense ?
+            $bank->getSubcuentaGastos($this->exercise->codejercicio, true) :
+            $bank->getSubcuenta($this->exercise->codejercicio, true);
     }
 
     protected function setCommonData(Asiento &$entry, string $concept, $invoice): void

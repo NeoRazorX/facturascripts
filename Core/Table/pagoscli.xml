@@ -10,6 +10,10 @@
         <type>character varying(10)</type>
     </column>
     <column>
+        <name>codcuentabanco</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
         <name>customid</name>
         <type>character varying(30)</type>
     </column>
@@ -65,5 +69,9 @@
     <constraint>
         <name>ca_pagoscli_recibo</name>
         <type>FOREIGN KEY (idrecibo) REFERENCES recibospagoscli (idrecibo) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_pagoscli_cuentasbanco</name>
+        <type>FOREIGN KEY (codcuentabanco) REFERENCES cuentasbanco (codcuenta) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>
