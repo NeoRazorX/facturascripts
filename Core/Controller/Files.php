@@ -56,11 +56,14 @@ class Files implements ControllerInterface
             );
         }
 
-        $realPath = realpath($this->filePath);
-        if (false === $realPath || false === $this->isFolderSafe($realPath)) {
+        if (false === $this->isFolderSafe($this->filePath)) {
             throw new KernelException('UnsafeFolder', $url);
         }
 
+        $realPath = realpath($this->filePath);
+        if (false === $realPath) {
+            throw new KernelException('FileNotFound', Tools::trans('file-not-found', ['%fileName%' => $url]));
+        }
         $this->filePath = $realPath;
         if (false === $this->isFileSafe($this->filePath)) {
             throw new KernelException('UnsafeFile', $url);
@@ -85,15 +88,10 @@ class Files implements ControllerInterface
 
     public static function isFolderSafe(string $filePath): bool
     {
-        $safeFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins', 'MyFiles/Public'];
-        $realPath = realpath($filePath);
-        if (false === $realPath) {
-            return false;
-        }
-
+        $safeFolders = ['Core', 'Dinamic', 'Plugins', 'node_modules', 'vendor'];
         foreach ($safeFolders as $folder) {
-            $safePath = realpath(Tools::folder($folder));
-            if (false !== $safePath && 0 === strpos($realPath, rtrim($safePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR)) {
+            $basePrefix = rtrim(Tools::folder($folder), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            if (0 === strpos($filePath, $basePrefix)) {
                 return true;
             }
         }
