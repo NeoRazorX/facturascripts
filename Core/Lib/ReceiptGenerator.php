@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -271,11 +271,12 @@ class ReceiptGenerator
         foreach ($receipts as $receipt) {
             // try to update open receipts
             if ($receipt->pagado === false) {
-                if (empty($amount) && $receipt->coddivisa === $invoice->coddivisa) {
+                if (empty($amount) && $receipt->coddivisa === $invoice->coddivisa && $receipt->fecha === $invoice->fecha) {
                     continue;
                 }
                 $receipt->importe += $amount;
                 $receipt->coddivisa = $invoice->coddivisa;
+                $receipt->fecha = $invoice->fecha;
                 return $receipt->save();
             }
 
@@ -306,11 +307,12 @@ class ReceiptGenerator
         foreach ($receipts as $receipt) {
             // try to update open receipts
             if ($receipt->pagado === false) {
-                if (empty($amount) && $receipt->coddivisa === $invoice->coddivisa) {
+                if (empty($amount) && $receipt->coddivisa === $invoice->coddivisa && $receipt->fecha === $invoice->fecha) {
                     continue;
                 }
                 $receipt->importe += $amount;
                 $receipt->coddivisa = $invoice->coddivisa;
+                $receipt->fecha = $invoice->fecha;
                 return $receipt->save();
             }
 
