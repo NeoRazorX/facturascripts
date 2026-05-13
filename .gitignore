@@ -36,3 +36,4 @@ package-lock.json
 CLAUDE.md
 /.claude
 .codex
+/fs-claude-plugin/
