@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,21 +23,30 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
- * Widget de autocompletar: input de texto con sugerencias asíncronas desde un origen
- * de datos (modelo o tabla). A diferencia de WidgetSelect, no precarga la lista de
- * valores: el controlador resuelve las coincidencias bajo demanda mientras el usuario
- * escribe (ver autocompleteAction en BaseController).
+ * Description of WidgetAutocomplete
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class WidgetAutocomplete extends WidgetSelect
 {
-    /** Texto descriptivo del valor seleccionado (lo que se muestra en el input). */
+    /**
+     * Name of the field by which it is filtered.
+     *
+     * @var string
+     */
+    protected $fieldfilter;
+
+    /**
+     * Descriptive text of the selected value
+     *
+     * @var string
+     */
     protected $selected = null;
 
     /**
-     * Si es true, el usuario solo puede elegir un valor existente en la lista de
-     * sugerencias. Si es false, se admite cualquier texto libre como valor.
+     * Indicates whether a value should be selected strictly from the list
+     * of values or whether the user can enter a new or different value
+     * from the list.
      *
      * @var bool
      */
@@ -88,23 +97,29 @@ class WidgetAutocomplete extends WidgetSelect
             . '</div>';
     }
 
-    /** Fija el texto descriptivo que se mostrará en el input para el valor seleccionado. */
+    /**
+     * Set a descriptive text for the selected value
+     *
+     * @param string $text
+     */
     public function setSelected($text)
     {
         $this->selected = $text;
     }
 
     /**
-     * Devuelve el texto descriptivo del valor seleccionado. Si no se ha fijado
-     * uno explícito con setSelected(), lo resuelve consultando el CodeModel
-     * (busca el fieldtitle correspondiente al fieldcode actual).
+     * Get the descriptive text of the selected value
+     *
+     * @return string
      */
     protected function getSelected()
     {
         return empty($this->selected) ? static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle) : $this->selected;
     }
 
-    /** Registra los assets de jQuery UI y el JS del widget en el AssetManager. */
+    /**
+     * Adds assets to the asset manager.
+     */
     protected function assets(): void
     {
         $route = Tools::config('route');
@@ -114,9 +129,7 @@ class WidgetAutocomplete extends WidgetSelect
     }
 
     /**
-     * Devuelve el HTML del botón que aparece a la izquierda del input: una lupa
-     * decorativa si el widget es de solo lectura, o un botón para limpiar el
-     * valor seleccionado y reenviar el formulario en otro caso.
+     * @return string
      */
     protected function inputGroupClearBtn()
     {
@@ -131,9 +144,10 @@ class WidgetAutocomplete extends WidgetSelect
     }
 
     /**
-     * Genera el <input> visible del widget. Vuelca en data-* todo lo que el JS de
-     * autocompletar necesita para consultar al servidor (source, fieldcode,
-     * fieldtitle, fieldfilter y strict).
+     * @param string $type
+     * @param string $extraClass
+     *
+     * @return string
      */
     protected function inputHtml($type = 'text', $extraClass = 'widget-autocomplete')
     {
@@ -149,16 +163,19 @@ class WidgetAutocomplete extends WidgetSelect
     }
 
     /**
-     * Configura el origen de datos. Fuerza $loadData = false al delegar en el
-     * padre: el autocompletar no precarga la lista de valores, los resuelve
-     * bajo demanda el controlador a partir de lo que escribe el usuario.
+     * Set datasource data and Load data from Model into values array
      */
     protected function setSourceData(array $child, bool $loadData = true)
     {
+        // The values are filled in automatically by the view controller
+        // according to the information entered by the user.
         parent::setSourceData($child, false);
+        $this->fieldfilter = $child['fieldfilter'] ?? '';
     }
 
-    /** Serializa el flag strict como '1' / '0' para el atributo data-strict. */
+    /**
+     * @return string
+     */
     protected function strictStr()
     {
         return $this->strict ? '1' : '0';
