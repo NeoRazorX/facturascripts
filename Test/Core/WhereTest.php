@@ -449,6 +449,60 @@ final class WhereTest extends TestCase
         $this->assertEquals(DataBaseWhere::getSQLWhere($whereAnd2Or3And2), Where::multiSqlLegacy($whereAnd2Or3And2));
     }
 
+    public function testParseFieldFilter(): void
+    {
+        // cadena vacía
+        $this->assertEquals([], Where::parseFieldFilter(''));
+
+        // solo AND (separador ,)
+        $this->assertEquals(
+            ['a' => 'AND', 'b' => 'AND', 'c' => 'AND'],
+            Where::parseFieldFilter('a,b,c')
+        );
+
+        // solo OR (separador |)
+        $this->assertEquals(
+            ['a' => 'OR', 'b' => 'OR', 'c' => 'OR'],
+            Where::parseFieldFilter('a|b|c')
+        );
+
+        // mixto: los tokens que contienen el otro separador se descartan
+        $this->assertEquals(
+            ['a' => 'AND', 'c' => 'OR'],
+            Where::parseFieldFilter('a,b|c')
+        );
+
+        // campo con punto (tabla.columna) es válido; nota: al no haber separador
+        // el segundo bucle (|) sobrescribe al primero, así que queda como OR
+        // (mismo comportamiento que DataBaseWhere::applyOperation)
+        $this->assertEquals(
+            ['tabla.campo' => 'OR'],
+            Where::parseFieldFilter('tabla.campo')
+        );
+
+        // nombre inválido: caracteres no permitidos → devuelve []
+        $this->assertEquals([], Where::parseFieldFilter('a; DROP TABLE users'));
+
+        // nombre inválido: empieza por dígito → devuelve []
+        $this->assertEquals([], Where::parseFieldFilter('1abc'));
+
+        // nombre inválido: espacios → devuelve []
+        $this->assertEquals([], Where::parseFieldFilter('a b'));
+
+        // si algún campo es inválido, se descarta todo el conjunto
+        $this->assertEquals([], Where::parseFieldFilter('valido,otro--malo'));
+
+        // equivalencia con DataBaseWhere::applyOperation para entradas válidas
+        $cases = ['name', 'name,nick', 'name|nick', 'name,nick|email', 'a.b,c.d'];
+        foreach ($cases as $input) {
+            $this->assertEquals(
+                DataBaseWhere::applyOperation($input),
+                Where::parseFieldFilter($input),
+                "parseFieldFilter difiere de applyOperation para: {$input}"
+            );
+        }
+    }
+
     private function db(): DataBase
     {
         if (null === $this->db) {

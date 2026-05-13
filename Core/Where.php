@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core;
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 
 /**
  * Representa una cláusula WHERE de SQL y la traduce a un fragmento seguro de SQL para usarla
@@ -400,6 +401,41 @@ final class Where
     public static function orXlike(string $fields, string $value): self
     {
         return new self($fields, $value, 'XLIKE', 'OR');
+    }
+
+    /**
+     * Parsea una lista de campos con operadores ('|' = OR, ',' = AND) y devuelve
+     * un array [campo => 'AND'|'OR'] indicando cómo unir cada campo con el previo.
+     * Valida los nombres de campo para prevenir SQL injection: si alguno no es válido,
+     * registra una advertencia y devuelve un array vacío.
+     * Útil para procesar el parámetro `fieldfilter` de autocompletar / select.
+     */
+    public static function parseFieldFilter(string $fields): array
+    {
+        if (empty($fields)) {
+            return [];
+        }
+
+        $result = [];
+        foreach (explode(',', $fields) as $field) {
+            if ($field !== '' && strpos($field, '|') === false) {
+                $result[$field] = 'AND';
+            }
+        }
+        foreach (explode('|', $fields) as $field) {
+            if ($field !== '' && strpos($field, ',') === false) {
+                $result[$field] = 'OR';
+            }
+        }
+
+        foreach (array_keys($result) as $field) {
+            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                Tools::log()->warning('invalid-field-filter-name', ['%fieldName%' => $field]);
+                return [];
+            }
+        }
+
+        return $result;
     }
 
     /** Crea `campo REGEXP value` (la sintaxis exacta depende del motor, vía `getOperator`). */

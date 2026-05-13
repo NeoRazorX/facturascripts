@@ -22,11 +22,11 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
@@ -253,14 +253,9 @@ abstract class BaseController extends Controller
         }
 
         $where = [];
-        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
-            // validar nombre de campo para prevenir SQL injection
-            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
-                Tools::log()->warning('autocomplete: invalid field filter name');
-                return [];
-            }
+        foreach (Where::parseFieldFilter($data['fieldfilter'] ?? '') as $field => $operation) {
             $value = $this->request->queryOrInput($field);
-            $where[] = new DataBaseWhere($field, $value, '=', $operation);
+            $where[] = Where::column($field, $value, '=', $operation);
         }
 
         $results = [];
@@ -322,13 +317,8 @@ abstract class BaseController extends Controller
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
 
         $where = [];
-        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
-            // validar nombre de campo para prevenir SQL injection
-            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
-                Tools::log()->warning('datalist: invalid field filter name');
-                return [];
-            }
-            $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
+        foreach (Where::parseFieldFilter($data['fieldfilter'] ?? '') as $field => $operation) {
+            $where[] = Where::column($field, $data['term'], '=', $operation);
         }
 
         $results = [];
@@ -479,13 +469,8 @@ abstract class BaseController extends Controller
         }
 
         $where = [];
-        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
-            // validar nombre de campo para prevenir SQL injection
-            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
-                Tools::log()->warning('select: invalid field filter name');
-                return [];
-            }
-            $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
+        foreach (Where::parseFieldFilter($data['fieldfilter'] ?? '') as $field => $operation) {
+            $where[] = Where::column($field, $data['term'], '=', $operation);
         }
 
         $results = [];
