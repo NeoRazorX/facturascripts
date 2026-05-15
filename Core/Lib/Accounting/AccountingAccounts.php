@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\CuentaBanco;
@@ -232,8 +232,8 @@ class AccountingAccounts
     public function getSpecialAccount(string $specialAccount)
     {
         $where = [
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-            new DataBaseWhere('codcuentaesp', $specialAccount)
+            Where::eq('codejercicio', $this->exercise->codejercicio),
+            Where::eq('codcuentaesp', $specialAccount)
         ];
         $orderBy = ['codcuenta' => 'ASC'];
 
@@ -253,8 +253,8 @@ class AccountingAccounts
     public function getSpecialSubAccount(string $specialAccount)
     {
         $where = [
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-            new DataBaseWhere('codcuentaesp', $specialAccount)
+            Where::eq('codejercicio', $this->exercise->codejercicio),
+            Where::eq('codcuentaesp', $specialAccount)
         ];
         $orderBy = ['codsubcuenta' => 'ASC'];
 
@@ -281,8 +281,8 @@ class AccountingAccounts
     public function getSubAccount(string $code)
     {
         $where = [
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-            new DataBaseWhere('codsubcuenta', $code)
+            Where::eq('codejercicio', $this->exercise->codejercicio),
+            Where::eq('codsubcuenta', $code)
         ];
 
         $subAccount = new Subcuenta();
@@ -386,7 +386,7 @@ class AccountingAccounts
         // search special account in accounts and return the first sub-account
         $account = $this->getSpecialAccount($specialAccount);
         $firstSubaccount = new Subcuenta();
-        $firstSubaccount->loadWhere([new DataBaseWhere('idcuenta', $account->idcuenta)], ['idsubcuenta' => 'ASC']);
+        $firstSubaccount->loadWhere([Where::eq('idcuenta', $account->idcuenta)], ['idsubcuenta' => 'ASC']);
         return $firstSubaccount;
     }
 }

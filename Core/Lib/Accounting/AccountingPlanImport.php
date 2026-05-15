@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
@@ -149,8 +149,8 @@ class AccountingPlanImport
         // the account exists?
         $account = new Cuenta();
         $where = [
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-            new DataBaseWhere('codcuenta', $code)
+            Where::eq('codejercicio', $this->exercise->codejercicio),
+            Where::eq('codcuenta', $code)
         ];
         if ($account->loadWhere($where)) {
             return true;
@@ -172,8 +172,8 @@ class AccountingPlanImport
         // the subaccount exists?
         $subaccount = new Subcuenta();
         $where = [
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-            new DataBaseWhere('codsubcuenta', $code)
+            Where::eq('codejercicio', $this->exercise->codejercicio),
+            Where::eq('codsubcuenta', $code)
         ];
         if ($subaccount->loadWhere($where)) {
             return true;

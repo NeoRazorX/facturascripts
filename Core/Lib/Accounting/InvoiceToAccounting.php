@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
@@ -504,7 +504,7 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        $where = [new DataBaseWhere('codejercicio', $this->document->codejercicio)];
+        $where = [Where::eq('codejercicio', $this->document->codejercicio)];
         if (0 === Cuenta::count($where)) {
             Tools::log()->warning('accounting-data-missing', ['%exerciseName%' => $this->document->codejercicio]);
             return false;

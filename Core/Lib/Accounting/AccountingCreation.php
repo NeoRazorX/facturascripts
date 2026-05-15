@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -87,8 +87,8 @@ class AccountingCreation
         // account already exists?
         $newAccount = new Cuenta();
         $where = [
-            new DataBaseWhere('codcuenta', $account->codcuenta),
-            new DataBaseWhere('codejercicio', $codejercicio)
+            Where::eq('codcuenta', $account->codcuenta),
+            Where::eq('codejercicio', $codejercicio)
         ];
         if ($newAccount->loadWhere($where)) {
             return $newAccount;
@@ -127,8 +127,8 @@ class AccountingCreation
 
         $newSubaccount = new Subcuenta();
         $where = [
-            new DataBaseWhere('codsubcuenta', $subAccount->codsubcuenta),
-            new DataBaseWhere('codejercicio', $codejercicio)
+            Where::eq('codsubcuenta', $subAccount->codsubcuenta),
+            Where::eq('codejercicio', $codejercicio)
         ];
         if ($newSubaccount->loadWhere($where)) {
             return $newSubaccount;
@@ -251,8 +251,8 @@ class AccountingCreation
         // añadimos también los 100 siguientes números al total de subcuentas
         $subcuenta = new Subcuenta();
         $whereTotal = [
-            new DataBaseWhere('codcuenta', $account->codcuenta),
-            new DataBaseWhere('codejercicio', $account->codejercicio)
+            Where::eq('codcuenta', $account->codcuenta),
+            Where::eq('codejercicio', $account->codejercicio)
         ];
         $total = $subcuenta->count($whereTotal);
         if ($total > 99) {
@@ -267,7 +267,7 @@ class AccountingCreation
             }
 
             // comprobamos que esta subcuenta no esté en uso en otro cliente o proveedor
-            $where = [new DataBaseWhere('codsubcuenta', $newCode)];
+            $where = [Where::eq('codsubcuenta', $newCode)];
             $count = $subject->count($where);
             if ($count > 0) {
                 continue;
@@ -275,8 +275,8 @@ class AccountingCreation
 
             // si la subcuenta no existe, la elegimos
             $where = [
-                new DataBaseWhere('codejercicio', $account->codejercicio),
-                new DataBaseWhere('codsubcuenta', $newCode)
+                Where::eq('codejercicio', $account->codejercicio),
+                Where::eq('codsubcuenta', $newCode)
             ];
             if (false === $subcuenta->loadWhere($where)) {
                 return $newCode;

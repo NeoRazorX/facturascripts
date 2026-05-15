@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
@@ -238,7 +238,7 @@ class AccountingClosingOpening extends AccountingClosingBase
         $this->newExercise->save();
 
         // copy accounts
-        $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
+        $where = [Where::eq('codejercicio', $this->exercise->codejercicio)];
         foreach (Cuenta::all($where, ['codcuenta' => 'ASC']) as $account) {
             $newAccount = $accounting->copyAccountToExercise($account, $this->newExercise->codejercicio);
             if (!$newAccount->exists()) {
