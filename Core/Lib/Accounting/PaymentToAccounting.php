@@ -105,7 +105,7 @@ class PaymentToAccounting
         $this->setCommonData($entry, $concept, $invoice);
         $entry->importe += $this->payment->gastos;
         if (false === $entry->save()) {
-            Tools::log()->warning('accounting-entry-error');
+            Tools::log()->warning('accounting-entry-error', ['%document%' => $this->receipt->getCode()]);
             return false;
         }
 
@@ -194,7 +194,7 @@ class PaymentToAccounting
         $account = $this->receipt->getSubject()->getSubcuenta($this->exercise->codejercicio, true);
         if (false === $account->exists()) {
             Tools::log()->warning('customer-account-not-found', [
-                '%customer%' => $this->receipt->getSubject()->nombre,
+                '%customer%' => $this->receipt->getSubject()->codcliente,
                 '%exercise%' => $this->exercise->codejercicio
             ]);
             return false;
@@ -222,7 +222,7 @@ class PaymentToAccounting
 
         $this->setCommonData($entry, $concept, $invoice);
         if (false === $entry->save()) {
-            Tools::log()->warning('accounting-entry-error');
+            Tools::log()->warning('accounting-entry-error', ['%document%' => $this->receipt->getCode()]);
             return false;
         }
 
@@ -279,7 +279,7 @@ class PaymentToAccounting
         $account = $this->receipt->getSubject()->getSubcuenta($this->exercise->codejercicio, true);
         if (false === $account->exists()) {
             Tools::log()->warning('supplier-account-not-found', [
-                '%supplier%' => $this->receipt->getSubject()->nombre,
+                '%supplier%' => $this->receipt->getSubject()->codproveedor,
                 '%exercise%' => $this->exercise->codejercicio
             ]);
             return false;
