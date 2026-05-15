@@ -32,7 +32,9 @@ use ParseCsv\Csv;
 use SimpleXMLElement;
 
 /**
- * Description of AccountingPlanImport
+ * Importa un plan contable (cuentas y subcuentas) en un ejercicio desde un fichero
+ * CSV o XML, dentro de una transacción. Actualiza primero la tabla de cuentas
+ * especiales y, si algo falla, revierte todos los cambios.
  *
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @author       Raul Jimenez             <comercial@nazcanetworks.com>
@@ -46,7 +48,7 @@ class AccountingPlanImport
     protected $dataBase;
 
     /**
-     * Exercise related to the accounting plan.
+     * Ejercicio sobre el que se importa el plan contable.
      *
      * @var Ejercicio
      */
@@ -57,14 +59,16 @@ class AccountingPlanImport
         $this->dataBase = new DataBase();
         $this->exercise = new Ejercicio();
 
-        // force table checks before any transaction
+        // forzamos la comprobación/creación de tablas antes de abrir la transacción,
+        // porque dentro de la transacción los CREATE TABLE no se pueden hacer
         new Cuenta();
         new CuentaEspecial();
         new Subcuenta();
     }
 
     /**
-     * Import data from CSV file.
+     * Importa el plan contable desde un fichero CSV en el ejercicio indicado.
+     * Todo el proceso se ejecuta en una transacción: si algo falla, se revierte.
      */
     public function importCSV(string $filePath, string $codejercicio): bool
     {
@@ -97,7 +101,9 @@ class AccountingPlanImport
     }
 
     /**
-     * Import data from XML file.
+     * Importa el plan contable desde un fichero XML en el ejercicio indicado,
+     * procesando en orden grupos, epígrafes, cuentas y subcuentas dentro de una
+     * transacción. Si algo falla, se revierte todo.
      */
     public function importXML(string $filePath, string $codejercicio): bool
     {
@@ -142,11 +148,11 @@ class AccountingPlanImport
     }
 
     /**
-     * Insert/update and account in accounting plan.
+     * Crea una cuenta en el ejercicio si no existe. Si ya existe con ese código,
+     * la deja como está (no actualiza descripción ni cuenta especial).
      */
     protected function createAccount(string $code, string $definition, ?string $parentCode = '', ?string $codcuentaesp = ''): bool
     {
-        // the account exists?
         $account = new Cuenta();
         $where = [
             Where::eq('codejercicio', $this->exercise->codejercicio),
@@ -165,11 +171,11 @@ class AccountingPlanImport
     }
 
     /**
-     * Insert or update an account in accounting Plan.
+     * Crea una subcuenta en el ejercicio si no existe, ajustando además la
+     * longitud de subcuenta del ejercicio al tamaño del primer código importado.
      */
     protected function createSubaccount(string $code, string $description, string $parentCode, ?string $codcuentaesp = ''): bool
     {
-        // the subaccount exists?
         $subaccount = new Subcuenta();
         $where = [
             Where::eq('codejercicio', $this->exercise->codejercicio),
@@ -179,7 +185,7 @@ class AccountingPlanImport
             return true;
         }
 
-        // update exercise configuration
+        // alineamos la longitud de subcuenta del ejercicio con el código que se está importando
         if ($this->exercise->longsubcuenta != strlen($code)) {
             $this->exercise->longsubcuenta = strlen($code);
             if (false === $this->exercise->save()) {
@@ -196,7 +202,8 @@ class AccountingPlanImport
     }
 
     /**
-     * returns an array width the content of xml file
+     * Devuelve el contenido del XML como SimpleXMLElement, o un array vacío si el
+     * fichero no existe.
      *
      * @param string $filePath
      *
@@ -212,7 +219,7 @@ class AccountingPlanImport
     }
 
     /**
-     * insert Cuenta of accounting plan
+     * Importa las cuentas del XML (nodo <cuenta>) creándolas bajo su epígrafe.
      */
     protected function importCuenta(SimpleXMLElement $data): bool
     {
@@ -226,7 +233,7 @@ class AccountingPlanImport
     }
 
     /**
-     * insert Epigrafe of accounting plan
+     * Importa los epígrafes del XML (nodo <epigrafes>) creándolos bajo su grupo.
      */
     protected function importEpigrafe(SimpleXMLElement $data): bool
     {
@@ -240,7 +247,7 @@ class AccountingPlanImport
     }
 
     /**
-     * Insert Groups of accounting plan
+     * Importa los grupos del XML (nodo <grupo_epigrafes>) como cuentas raíz.
      */
     protected function importEpigrafeGroup(SimpleXMLElement $data): bool
     {
@@ -254,7 +261,7 @@ class AccountingPlanImport
     }
 
     /**
-     * Import subaccounts of accounting plan
+     * Importa las subcuentas del XML (nodo <subcuenta>) bajo su cuenta padre.
      */
     protected function importSubcuenta(SimpleXMLElement $data): bool
     {
@@ -268,7 +275,10 @@ class AccountingPlanImport
     }
 
     /**
-     * Load accounting plan from CSV File and imports in accounting plan.
+     * Lee el CSV (código, descripción, cuenta especial) y, deduciendo los niveles
+     * de la jerarquía por la longitud de los códigos, crea cuentas para la longitud
+     * mínima e intermedia, y subcuentas para la longitud máxima. El padre de cada
+     * código se localiza buscando otro código que sea prefijo suyo.
      */
     protected function processCsvData(string $filePath): bool
     {
@@ -334,7 +344,8 @@ class AccountingPlanImport
     }
 
     /**
-     * Search the parent of account in accounting Plan.
+     * Devuelve el código padre del código indicado: el código más largo de la lista
+     * que sea prefijo del actual (sin incluirlo a sí mismo).
      */
     protected function searchParent(array &$accountCodes, string $account): string
     {
@@ -352,9 +363,11 @@ class AccountingPlanImport
     }
 
     /**
-     * Update special accounts from data file.
+     * Actualiza la tabla de cuentas especiales desde el CSV de datos por defecto
+     * (Core/Data) antes de importar el plan, para que los códigos de cuenta
+     * especial referenciados estén disponibles.
      */
-    protected function updateSpecialAccounts()
+    protected function updateSpecialAccounts(): void
     {
         $sql = CSVImport::updateTableSQL(CuentaEspecial::tableName());
         if (!empty($sql) && $this->dataBase->tableExists(CuentaEspecial::tableName())) {

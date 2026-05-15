@@ -38,8 +38,8 @@ use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Class for the generation of accounting entries of a sale/purchase document
- * and the settlement of your receipts.
+ * Clase para la generación de asientos contables a partir de un documento
+ * de venta/compra y la liquidación de sus recibos.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -58,14 +58,16 @@ class InvoiceToAccounting extends AccountingClass
     protected $document;
 
     /**
-     * Document Subtotals Lines array
+     * Subtotales del documento calculados con Calculator::getSubtotals.
+     * Claves: 'iva' (array por tipo de IVA con neto/iva/recargo/totaliva/totalrecargo/codimpuesto),
+     * 'irpf' (porcentaje) y 'totalirpf' (importe).
      *
      * @var array
      */
     protected $subtotals;
 
     /**
-     * Method to launch the accounting process
+     * Método para lanzar el proceso de contabilización
      *
      * @param FacturaCliente|FacturaProveedor $model
      */
@@ -88,7 +90,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the customer line to the accounting entry
+     * Añade la línea del cliente al asiento y guarda su subcuenta como contrapartida
+     * para las siguientes líneas (IVA, IRPF, mercancía).
      *
      * @param Asiento $entry
      *
@@ -118,8 +121,9 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the goods purchase line to the accounting entry.
-     * Make one line for each product/family purchase subaccount.
+     * Añade la línea de compra de mercancías al asiento, una por cada subcuenta de
+     * producto/familia. En facturas rectificativas usa la cuenta especial DEVCOM si
+     * está configurada; en caso contrario cae a COMPRA.
      *
      * @param Asiento $entry
      *
@@ -151,8 +155,9 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the goods sales line to the accounting entry.
-     * Make one line for each product/family sale subaccount.
+     * Añade la línea de venta de mercancías al asiento, una por cada subcuenta de
+     * producto/familia. En facturas rectificativas usa la cuenta especial DEVVEN si
+     * está configurada; en caso contrario cae a VENTAS.
      *
      * @param Asiento $entry
      *
@@ -242,7 +247,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the purchase line to the accounting entry
+     * Añade la línea de impuestos de compras al asiento contable
      *
      * @param Asiento $entry
      *
@@ -257,7 +262,6 @@ class InvoiceToAccounting extends AccountingClass
         ]);
 
         foreach ($this->subtotals['iva'] as $value) {
-            // buscamos el impuesto
             $tax = Impuestos::get($value['codimpuesto']);
 
             // si es intracomunitaria o ISP, añadimos autorepercusión con cuentas intra
@@ -279,7 +283,8 @@ class InvoiceToAccounting extends AccountingClass
                     return false;
                 }
 
-                // calculamos el importe del IVA
+                // recalculamos el IVA: en autorepercusión la base no lleva IVA repercutido en el documento,
+                // así que aquí lo derivamos del neto y forzamos el recargo a 0
                 $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
                 $value['totalrecargo'] = 0.0;
                 $done = $this->addTaxLine($entry, $subAccountSup, $this->counterpart, true, $value) &&
@@ -350,7 +355,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the supplied line to the accounting entry
+     * Añade la línea de suplidos de ventas al asiento contable
      *
      * @param Asiento $entry
      *
@@ -372,7 +377,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the sales line to the accounting entry
+     * Añade la línea de impuestos de ventas al asiento contable
      *
      * @param Asiento $entry
      *
@@ -434,7 +439,6 @@ class InvoiceToAccounting extends AccountingClass
                 return false;
             }
 
-            // add tax lines
             $done = $this->addTaxLine($entry, $subAccOut, $this->counterpart, false, $value) &&
                 $this->addSurchargeLine($entry, $subAccOutSurcharge, $this->counterpart, false, $value);
             if (false === $done) {
@@ -445,6 +449,9 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Añade la línea del proveedor al asiento y guarda su subcuenta como contrapartida
+     * para las siguientes líneas (IVA, IRPF, mercancía).
+     *
      * @param Asiento $entry
      *
      * @return bool
@@ -473,7 +480,9 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Perform the initial checks to continue with the accounting process
+     * Comprobaciones previas a la contabilización: el documento no está ya contabilizado,
+     * tiene total, el ejercicio existe y está abierto, tiene plan contable, los subtotales
+     * se calculan correctamente y hay cuentas dadas de alta en ese ejercicio.
      *
      * @return bool
      */
@@ -520,7 +529,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Generate the accounting entry for a purchase document.
+     * Genera el asiento contable para un documento de compra.
      */
     protected function purchaseAccountingEntry(): void
     {
@@ -589,7 +598,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Generate the accounting entry for a sales document.
+     * Genera el asiento contable para un documento de venta.
      */
     protected function salesAccountingEntry(): void
     {
@@ -658,7 +667,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Assign the document data to the accounting entry
+     * Asigna al asiento los datos básicos del documento (ejercicio, concepto, fecha,
+     * empresa, importe) y copia el diario y el canal analítico desde la Serie.
      *
      * @param Asiento $entry
      * @param string $concept
@@ -672,7 +682,6 @@ class InvoiceToAccounting extends AccountingClass
         $entry->idempresa = $this->document->idempresa;
         $entry->importe = $this->document->total;
 
-        // Assign analytical data defined in Serie model
         $serie = new Serie();
         $serie->load($this->document->codserie);
 
