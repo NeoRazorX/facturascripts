@@ -1350,6 +1350,7 @@
     "percentage-surcharge": "% R.E.",
     "percentage-vat": "% Impuesto",
     "period": "Periodo",
+    "permissions-by-page": "Permisos por página",
     "personalized": "Personalizado",
     "pgsql-endpoint": "Endpoint PostgreSQL",
     "pgsql-ssl-mode": "Modo SSL PostgreSQL",
