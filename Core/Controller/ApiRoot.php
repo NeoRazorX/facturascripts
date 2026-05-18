@@ -40,6 +40,11 @@ class ApiRoot extends ApiController
         self::$custom_resources[] = $name;
     }
 
+    public static function getCustomResources(): array
+    {
+        return self::$custom_resources;
+    }
+
     protected function exposeResources(array &$map): void
     {
         $json = ['resources' => self::$custom_resources];
@@ -47,15 +52,11 @@ class ApiRoot extends ApiController
             $json['resources'][] = $key;
         }
 
-        // ordenamos
+        // eliminamos duplicados y ordenamos
+        $json['resources'] = array_unique($json['resources']);
         sort($json['resources']);
 
         $this->response->json($json);
-    }
-
-    public static function getCustomResources(): array
-    {
-        return self::$custom_resources;
     }
 
     protected function getResourcesMap(): array
