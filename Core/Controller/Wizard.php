@@ -205,7 +205,6 @@ class Wizard extends Controller
     private function saveAddress(string $codpais): void
     {
         $this->empresa->apartado = $this->request->input('apartado', '');
-        $this->empresa->cifnif = $this->request->input('cifnif', '');
         $this->empresa->ciudad = $this->request->input('ciudad', '');
         $this->empresa->codpais = $codpais;
         $this->empresa->codpostal = $this->request->input('codpostal', '');
@@ -216,10 +215,6 @@ class Wizard extends Controller
         $this->empresa->provincia = $this->request->input('provincia', '');
         $this->empresa->telefono1 = $this->request->input('telefono1', '');
         $this->empresa->telefono2 = $this->request->input('telefono2', '');
-        $this->empresa->tipoidfiscal = $this->request->input('tipoidfiscal', '');
-        if (empty($this->empresa->tipoidfiscal)) {
-            $this->empresa->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
-        }
         $this->empresa->save();
 
         // assigns warehouse?
@@ -301,6 +296,11 @@ class Wizard extends Controller
             return;
         }
 
+        $this->empresa->cifnif = $this->request->input('cifnif', '');
+        $this->empresa->tipoidfiscal = $this->request->input('tipoidfiscal', '');
+        if (empty($this->empresa->tipoidfiscal)) {
+            $this->empresa->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
+        }
         $this->empresa->regimeniva = $this->request->input('regimeniva');
         $this->empresa->save();
 

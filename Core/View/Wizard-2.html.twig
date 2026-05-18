@@ -55,6 +55,20 @@
                     <div class="row gx-2">
                         <div class="col-lg-6 col-md-6">
                             <div class="mb-3">
+                                {{ forms.simpleSelect('tipoidfiscal', 'tipoidfiscal', fsc.empresa.tipoidfiscal ?: settings('default', 'tipoidfiscal'),
+                                    fsc.getSelectValues('IdentificadorFiscal', true), trans('fiscal-id')) }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3">
+                                {{ forms.simpleInput('cifnif', 'cifnif', fsc.empresa.cifnif, 'text', trans('fiscal-number'),
+                                    '', {'maxlength': '30'}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gx-2">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3">
                                 {{ forms.simpleSelect('regimeniva', 'regimeniva', fsc.empresa.regimeniva,
                                     fsc.getRegimenIva(), trans('vat-regime')) }}
                             </div>
