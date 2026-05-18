@@ -20,13 +20,26 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
- * Defines the status and attributes of a purchase or sale document.
+ * Define los estados y atributos de los documentos de compra y venta
+ * (presupuestos, pedidos, albaranes y facturas).
+ *
+ * Cada estado pertenece a un tipo de documento (campo `tipodoc`) y controla:
+ * - si el documento es editable o queda bloqueado,
+ * - si actualiza el stock de los productos (`actualizastock`: 0 ninguno,
+ *   1 suma, -1 resta, 2 suma y descuenta pendientes, -2 resta y descuenta),
+ * - si al aplicarse genera otro documento del tipo indicado en `generadoc`
+ *   (por ejemplo, pasar de presupuesto a pedido). En ese caso el estado
+ *   no es editable ni puede actualizar stock: lo hará el documento destino.
+ *
+ * Solo puede existir un estado predeterminado por `tipodoc`, y éste debe ser
+ * editable. Los estados marcados como `bloquear` no se pueden modificar ni
+ * eliminar una vez guardados.
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez     <carlos@facturascripts.com>
@@ -134,7 +147,7 @@ class EstadoDocumento extends ModelClass
             return false;
         }
 
-        // No permitimos que un estado predeterminado sea bloqueado.
+        // si genera otro documento, no puede ser editable
         if (!empty($this->generadoc)) {
             $this->editable = false;
 
@@ -184,8 +197,8 @@ class EstadoDocumento extends ModelClass
 
         // establecemos el primer estado como predeterminado
         $where = [
-            new DataBaseWhere('editable', true),
-            new DataBaseWhere('tipodoc', $this->tipodoc)
+            Where::eq('editable', true),
+            Where::eq('tipodoc', $this->tipodoc),
         ];
         foreach ($this->all($where) as $item) {
             $sql = "UPDATE " . static::tableName() . " SET predeterminado = true"
@@ -200,8 +213,8 @@ class EstadoDocumento extends ModelClass
     {
         if ($this->predeterminado) {
             $where = [
-                new DataBaseWhere('editable', true),
-                new DataBaseWhere('tipodoc', $this->tipodoc)
+                Where::eq('editable', true),
+                Where::eq('tipodoc', $this->tipodoc),
             ];
             foreach ($this->all($where) as $item) {
                 $sql = "UPDATE " . static::tableName() . " SET predeterminado = true"
@@ -227,8 +240,8 @@ class EstadoDocumento extends ModelClass
     {
         if (empty($this->idestado)) {
             /**
-             * postgresql does not correctly update the serial when inserting the values from a csv.
-             * So we use this to get the new id manually.
+             * postgresql no actualiza correctamente el serial al insertar los valores desde un csv.
+             * Por eso usamos esto para obtener el nuevo id manualmente.
              */
             $this->idestado = $this->newCode();
         }
