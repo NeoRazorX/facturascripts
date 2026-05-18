@@ -1739,6 +1739,7 @@
     "status": "Status",
     "status-document": "Status document",
     "status-name-valid-length": "Invalid status name. Must be between 1 and 20 characteres.",
+    "status-with-generadoc-cant-update-stock": "A status that generates another document can't update stock. The destination document will update the stock.",
     "status-value-is-number": "The field state must be a number.",
     "stock": "Stock",
     "stock-count": "Stock count",

@@ -142,6 +142,12 @@ class EstadoDocumento extends ModelClass
                 Tools::log()->warning('invoices-cant-generate-new-docs');
                 return false;
             }
+
+            // si genera otro documento, no puede actualizar stock (lo hará el documento destino)
+            if (!empty($this->actualizastock)) {
+                Tools::log()->warning('status-with-generadoc-cant-update-stock');
+                return false;
+            }
         }
 
         return parent::test();

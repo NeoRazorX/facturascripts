@@ -154,6 +154,24 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertFalse($status->save(), 'invalid-estado-documento-for-purchase-invoice-can-save');
     }
 
+    public function testCanNotUpdateStockWithGeneration(): void
+    {
+        // un estado que genera otro documento no debe poder actualizar stock
+        $status = new EstadoDocumento();
+        $status->actualizastock = 1;
+        $status->generadoc = 'PedidoProveedor';
+        $status->nombre = 'Generate';
+        $status->tipodoc = 'PresupuestoCliente';
+        $this->assertFalse($status->save(), 'estado-documento-with-generadoc-cant-update-stock');
+
+        // sin actualizar stock sí se puede guardar
+        $status->actualizastock = 0;
+        $this->assertTrue($status->save(), 'estado-documento-cant-save');
+
+        // delete
+        $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
+    }
+
     /**
      * No permitir crear estados predeterminados y no editables.
      */
