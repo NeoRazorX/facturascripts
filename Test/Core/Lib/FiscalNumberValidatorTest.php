@@ -51,6 +51,10 @@ class FiscalNumberValidatorTest extends TestCase
             ['type' => 'DNI', 'number' => '25296158S', 'expected' => false],
             ['type' => 'NIF', 'number' => '74003828V', 'expected' => true],
             ['type' => 'NIF', 'number' => '74003828J', 'expected' => false],
+            // NIF con formato CIF (RD 1065/2007: CIF unificado bajo NIF)
+            ['type' => 'NIF', 'number' => 'B26636894', 'expected' => true],
+            ['type' => 'NIF', 'number' => 'P4698162G', 'expected' => true],
+            ['type' => 'NIF', 'number' => 'B26636890', 'expected' => false],
             ['type' => 'NIE', 'number' => 'Y1234567X', 'expected' => true],
             ['type' => 'CI', 'number' => '1718137159', 'expected' => true],
             ['type' => 'CI', 'number' => '1784567890', 'expected' => false],
@@ -89,15 +93,38 @@ class FiscalNumberValidatorTest extends TestCase
 
     public function testValidateSpainDni(): void
     {
-        $valid = ['25296158E', '74003828V', '36155837K'];
+        $valid = [
+            '25296158E', '74003828V', '36155837K',
+            // NIE válidos (X/Y/Z)
+            'X1234567L', 'Y1234567X',
+            // 8 dígitos sin letra: la función calcula y acepta
+            '25296158',
+        ];
         foreach ($valid as $number) {
-            $this->assertTrue(FiscalNumberValidator::isValidSpainDNI($number));
+            $this->assertTrue(
+                FiscalNumberValidator::isValidSpainDNI($number),
+                sprintf('Expected valid DNI/NIE: %s', $number)
+            );
         }
 
-        $invalid = ['25296158S', '74003828J', '12345678B', '12345678C'];
+        $invalid = [
+            // checksum incorrecto
+            '25296158S', '74003828J', '12345678B', '12345678C',
+            // longitud inválida
+            '', '1234567', '123456789012', '12345678EX',
+            // primer carácter no permitido (ni dígito ni X/Y/Z) — regresión
+            'B12345678Z', 'A2345678X', 'Q2345678T',
+            // cuerpo con caracteres no numéricos
+            '1234A678Z', '+2345678X',
+        ];
         foreach ($invalid as $number) {
-            $this->assertFalse(FiscalNumberValidator::isValidSpainDNI($number));
+            $this->assertFalse(
+                FiscalNumberValidator::isValidSpainDNI($number),
+                sprintf('Expected invalid DNI/NIE: %s', $number)
+            );
         }
+
+        $this->assertFalse(FiscalNumberValidator::isValidSpainDNI(null));
     }
 
     public function testValidateEcuadorCi(): void
