@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\GruposClientes;
 use FacturaScripts\Core\DataSrc\Impuestos;
@@ -31,7 +32,6 @@ use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
-use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
  * Description of ListBusinessDocument
@@ -44,8 +44,7 @@ abstract class ListBusinessDocument extends ListController
 
     protected function addColorStatus(string $viewName, string $modelName): void
     {
-        $where = [new DataBaseWhere('tipodoc', $modelName)];
-        foreach (EstadoDocumento::all($where) as $status) {
+        foreach (EstadosDocumentos::byTipoDoc($modelName) as $status) {
             if ($status->color) {
                 $this->addColor($viewName, 'idestado', $status->idestado, $status->color, $status->nombre);
             }

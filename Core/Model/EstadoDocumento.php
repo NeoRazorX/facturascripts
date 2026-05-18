@@ -20,6 +20,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -89,6 +90,12 @@ class EstadoDocumento extends ModelClass
         $this->bloquear = false;
         $this->editable = true;
         $this->predeterminado = false;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        EstadosDocumentos::clear();
     }
 
     public function delete(): bool

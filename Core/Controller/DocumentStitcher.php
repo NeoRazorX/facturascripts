@@ -22,12 +22,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\CodeModel;
-use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -55,12 +55,8 @@ class DocumentStitcher extends Controller
     public function getAvailableStatus(): array
     {
         $status = [];
-        $where = [
-            new DataBaseWhere('activo', true),
-            new DataBaseWhere('tipodoc', $this->modelName)
-        ];
-        foreach (EstadoDocumento::all($where) as $docState) {
-            if ($docState->generadoc) {
+        foreach (EstadosDocumentos::byTipoDoc($this->modelName) as $docState) {
+            if ($docState->activo && $docState->generadoc) {
                 $status[] = $docState;
             }
         }
@@ -370,9 +366,7 @@ class DocumentStitcher extends Controller
      */
     protected function getGenerateClass(int $idestado): ?string
     {
-        $estado = new EstadoDocumento();
-        $estado->load($idestado);
-        return $estado->generadoc;
+        return EstadosDocumentos::get($idestado)->generadoc;
     }
 
     /**
