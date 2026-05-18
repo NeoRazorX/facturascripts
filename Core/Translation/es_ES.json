@@ -1384,7 +1384,7 @@
     "plugin-folder-not-equal-name": "La carpeta del plugin (%folderName%) no se llama igual que el plugin (%pluginName%)",
     "plugin-ini-file-not-found": "No se ha encontrado el archivo ini del plugin '%pluginName%'",
     "plugin-installation-disabled": "La instalación de plugins está desactivada en este servidor",
-    "plugin-installed": "Plugin '%pluginName%' instalado",
+    "plugin-installed": "podira dePlugin '%pluginName%' instalado",
     "plugin-need-update": "El plugin %plugin% necesitará actualización para funcionar con la nueva versión de FacturaScripts.",
     "plugin-need-update-but": "El plugin %plugin% todavía no tiene actualización compatible.",
     "plugin-needed": "Se requiere el plugin %pluginName%.",

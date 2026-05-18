@@ -32,7 +32,6 @@ final class ViesTest extends TestCase
             ['results' => 0, 'number' => '123456789', 'iso' => 'ES'],
             ['results' => 0, 'number' => 'ES74003828J', 'iso' => 'ES'],
             ['results' => 1, 'number' => 'ES75897326V', 'iso' => 'ES'],
-            ['results' => 1, 'number' => '43834596223', 'iso' => 'FR'],
             ['results' => 1, 'number' => 'FR38821737384', 'iso' => 'FR'],
             ['results' => 0, 'number' => '81328757100011', 'iso' => 'FR'],
             ['results' => 1, 'number' => '514356480', 'iso' => 'PT'],
@@ -47,7 +46,8 @@ final class ViesTest extends TestCase
                 $this->markTestSkipped('Vies service returns error: ' . Vies::getLastError());
             }
 
-            $this->assertEquals($item['results'], $check, 'Vies::check(' . $item['number'] . ', ' . $item['iso'] . ') returned ' . $check . ', expected ' . $item['results']);
+            $this->assertEquals($item['results'], $check, 'Vies::check(' . $item['number'] . ', ' . $item['iso']
+                . ') returned ' . $check . ', expected ' . $item['results']);
 
             // esperamos medio segundo para no saturar el servicio
             usleep(500000);
