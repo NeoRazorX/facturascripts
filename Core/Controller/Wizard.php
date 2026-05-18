@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -100,17 +101,30 @@ class Wizard extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
+        if ($this->isInstalled()) {
+            throw new KernelException('PageNotFound', $this->url());
+        }
+
         $action = $this->request->inputOrQuery('action', '');
         switch ($action) {
             case 'step1':
+                if ($this->isStepCompleted('step1')) {
+                    throw new KernelException('PageNotFound', $this->url());
+                }
                 $this->saveStep1();
                 break;
 
             case 'step2':
+                if ($this->isStepCompleted('step2')) {
+                    throw new KernelException('PageNotFound', $this->url());
+                }
                 $this->saveStep2();
                 break;
 
             case 'step3':
+                if ($this->isStepCompleted('step3')) {
+                    throw new KernelException('PageNotFound', $this->url());
+                }
                 $this->saveStep3();
                 break;
 
@@ -119,7 +133,82 @@ class Wizard extends Controller
                     $this->empresa->email = $this->user->email;
                     $this->empresa->save();
                 }
+
+                $progress = $this->readWizardProgress();
+                switch ($progress['current_step'] ?? '') {
+                    case 'step2':
+                        $this->setTemplate('Wizard-2');
+                        break;
+                    case 'step3':
+                        $this->setTemplate('Wizard-3');
+                        break;
+                }
         }
+    }
+
+    /** Devuelve la ruta al fichero de estado del progreso del wizard (MyFiles/wizard_progress.json). */
+    private static function wizardStateFile(): string
+    {
+        return Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'wizard_progress.json';
+    }
+
+    /**
+     * Lee el progreso del wizard desde el fichero de estado.
+     * Devuelve un array vacío si el fichero todavía no existe.
+     */
+    private function readWizardProgress(): array
+    {
+        $file = self::wizardStateFile();
+        if (!file_exists($file)) {
+            return [];
+        }
+        return json_decode(file_get_contents($file), true) ?? [];
+    }
+
+    /**
+     * Devuelve true si el wizard ya ha sido completado.
+     * Las instalaciones antiguas (sin fichero de estado) se detectan comprobando que
+     * la homepage del usuario ya no es 'Wizard', cambio que ocurre al finalizar el step3.
+     */
+    private function isInstalled(): bool
+    {
+        // retrocompatibilidad: el usuario sale del wizard con homepage != 'Wizard'
+        if ($this->user->homepage !== 'Wizard') {
+            return true;
+        }
+
+        return $this->isStepCompleted('step3');
+    }
+
+    /**
+     * Devuelve true si el paso indicado está marcado como completado en el fichero de progreso.
+     *
+     * @param string $step step1 | step2 | step3
+     */
+    private function isStepCompleted(string $step): bool
+    {
+        $data = $this->readWizardProgress();
+        return ($data[$step]['completed'] ?? false) === true;
+    }
+
+    /**
+     * Marca el paso indicado como completado en el fichero de progreso, registrando
+     * la fecha de finalización y la versión de FacturaScripts. Avanza current_step
+     * al siguiente paso pendiente (null tras el step3).
+     *
+     * @param string $step step1 | step2 | step3
+     */
+    private function completeWizardStep(string $step): void
+    {
+        $next = ['step1' => 'step2', 'step2' => 'step3'];
+        $data = $this->readWizardProgress();
+        $data[$step] = [
+            'completed'    => true,
+            'completed_at' => date('c'),
+            'version'      => \FacturaScripts\Core\Kernel::version(),
+        ];
+        $data['current_step'] = $next[$step] ?? null;
+        file_put_contents(self::wizardStateFile(), json_encode($data, JSON_PRETTY_PRINT));
     }
 
     protected function finalRedirect(): void
@@ -291,7 +380,8 @@ class Wizard extends Controller
             return;
         }
 
-        // change template
+        // complete and change template
+        $this->completeWizardStep('step1');
         $this->setTemplate('Wizard-2');
     }
 
@@ -321,7 +411,8 @@ class Wizard extends Controller
         $this->saveInvoiceStartNumber();
         $this->saveBankAccount();
 
-        // change template and redirect
+        // complete and change template and redirect (for refreshing)
+        $this->completeWizardStep('step2');
         $this->setTemplate('Wizard-3');
         $this->redirect($this->url() . '?action=step3', 2);
     }
@@ -355,7 +446,8 @@ class Wizard extends Controller
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : static::NEW_DEFAULT_PAGE;
         $this->user->save();
 
-        // change template and redirect
+        // complete and change template and redirect
+        $this->completeWizardStep('step3');
         $this->setTemplate('Wizard-3');
         $this->finalRedirect();
     }
