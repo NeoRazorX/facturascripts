@@ -102,47 +102,40 @@ class Wizard extends Controller
         parent::privateCore($response, $user, $permissions);
 
         if ($this->isInstalled()) {
-            throw new KernelException('PageNotFound', $this->url());
+            throw new KernelException('AlreadyInstalled', Tools::trans('wizard-already-completed'));
         }
 
         $action = $this->request->inputOrQuery('action', '');
-        switch ($action) {
-            case 'step1':
-                if ($this->isStepCompleted('step1')) {
-                    throw new KernelException('PageNotFound', $this->url());
-                }
-                $this->saveStep1();
-                break;
+        $currentStep = $this->readWizardProgress()['current_step'] ?? '';
 
-            case 'step2':
-                if ($this->isStepCompleted('step2')) {
-                    throw new KernelException('PageNotFound', $this->url());
-                }
-                $this->saveStep2();
-                break;
+        // seleccionar la siguiente acción correctamente
+        if ($action === 'step1' && empty($currentStep)) {
+            $this->saveStep1();
+        } elseif ($action === 'step2' && $currentStep === 'step2') {
+            $this->saveStep2();
+        } elseif ($action === 'step3' && $currentStep === 'step3') {
+            $this->saveStep3();
+        } else {
+            if (!empty($action)) {
+                Tools::log()->error('wizard-invalid-step', [
+                    '%action%' => $action,
+                    '%step%' => $currentStep ?: 'step1',
+                ]);
+            }
 
-            case 'step3':
-                if ($this->isStepCompleted('step3')) {
-                    throw new KernelException('PageNotFound', $this->url());
-                }
-                $this->saveStep3();
-                break;
+            if (empty($this->empresa->email) && $this->user->email) {
+                $this->empresa->email = $this->user->email;
+                $this->empresa->save();
+            }
 
-            default:
-                if (empty($this->empresa->email) && $this->user->email) {
-                    $this->empresa->email = $this->user->email;
-                    $this->empresa->save();
-                }
-
-                $progress = $this->readWizardProgress();
-                switch ($progress['current_step'] ?? '') {
-                    case 'step2':
-                        $this->setTemplate('Wizard-2');
-                        break;
-                    case 'step3':
-                        $this->setTemplate('Wizard-3');
-                        break;
-                }
+            switch ($currentStep) {
+                case 'step2':
+                    $this->setTemplate('Wizard-2');
+                    break;
+                case 'step3':
+                    $this->setTemplate('Wizard-3');
+                    break;
+            }
         }
     }
 
