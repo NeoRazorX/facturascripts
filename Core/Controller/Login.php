@@ -373,11 +373,8 @@ class Login implements ControllerInterface
         // save cookies
         $this->saveCookies($user, $request);
 
-        // redirect to the user's main page
-        if (empty($user->homepage)) {
-            $user->homepage = Tools::config('route') . '/';
-        }
-        header('Location: ' . $user->homepage);
+        // redirect to the user's main page; homepageUrl() devuelve un nombre de controlador seguro
+        header('Location: ' . $user->homepageUrl());
     }
 
     protected function logoutAction(Request $request): void

@@ -305,6 +305,36 @@ class User extends ModelClass
             . "',TRUE,TRUE,'1','1','" . $lang . "','Wizard','99');";
     }
 
+    /**
+     * Devuelve un nombre de pagina seguro para redirigir tras login.
+     * Si la homepage del usuario no es un nombre de controlador valido o no existe en la tabla pages,
+     * se devuelve la homepage por defecto de la instalacion (o 'Dashboard' como ultimo recurso).
+     * Nunca devuelve una URL absoluta ni un path arbitrario, para evitar open-redirect.
+     */
+    public function homepageUrl(): string
+    {
+        $default = Tools::settings('default', 'homepage', 'Dashboard');
+        if (!self::isSafePageName($default)) {
+            $default = 'Dashboard';
+        }
+
+        if (!self::isSafePageName($this->homepage ?? '')) {
+            return $default;
+        }
+
+        $page = new DinPage();
+        if (false === $page->load($this->homepage)) {
+            return $default;
+        }
+
+        return $this->homepage;
+    }
+
+    private static function isSafePageName(string $name): bool
+    {
+        return $name !== '' && 1 === preg_match('/^[A-Za-z][A-Za-z0-9_]{0,49}$/', $name);
+    }
+
     public function newLogkey(string $ipAddress, string $browser = ''): string
     {
         $this->updateActivity($ipAddress, $browser);
@@ -367,6 +397,15 @@ class User extends ModelClass
         if ($this->email && false === filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             Tools::log()->warning('not-valid-email', ['%email%' => $this->email]);
             $this->email = null;
+            return false;
+        }
+
+        // homepage es FK a pages.name: siempre un nombre de controlador alfanumerico.
+        // Rechazamos cualquier otra cosa para evitar open-redirect al usarlo como Location tras login.
+        if (!empty($this->homepage) && false === self::isSafePageName($this->homepage)) {
+            Tools::log()->warning('invalid-alphanumeric-code', [
+                '%value%' => $this->homepage, '%column%' => 'homepage', '%min%' => '1', '%max%' => '50',
+            ]);
             return false;
         }
 
