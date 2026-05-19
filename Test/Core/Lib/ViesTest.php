@@ -24,33 +24,131 @@ use PHPUnit\Framework\TestCase;
 
 final class ViesTest extends TestCase
 {
-    public function testCheck(): void
+    protected function setUp(): void
     {
-        $data = [
-            ['results' => -1, 'number' => '', 'iso' => ''],
-            ['results' => -1, 'number' => '123', 'iso' => ''],
-            ['results' => 0, 'number' => '123456789', 'iso' => 'ES'],
-            ['results' => 0, 'number' => 'ES74003828J', 'iso' => 'ES'],
-            ['results' => 1, 'number' => 'ES75897326V', 'iso' => 'ES'],
-            ['results' => 1, 'number' => 'FR38821737384', 'iso' => 'FR'],
-            ['results' => 0, 'number' => '81328757100011', 'iso' => 'FR'],
-            ['results' => 1, 'number' => '514356480', 'iso' => 'PT'],
-            ['results' => 1, 'number' => '513969144', 'iso' => 'PT'],
-            ['results' => 0, 'number' => '513967144', 'iso' => 'PT'],
+        Vies::simulateViesResponse(null);
+    }
+
+    protected function tearDown(): void
+    {
+        Vies::simulateViesResponse(null);
+    }
+
+    public function testSimulateResponse(): void
+    {
+        // sin simulación, los flags se ignoran y el método decide normalmente;
+        // con simulación, check() debe devolver el valor simulado sin tocar SOAP.
+        Vies::simulateViesResponse(Vies::RESULT_VALID);
+        $this->assertSame(Vies::RESULT_VALID, Vies::check('75897326V', 'ES'));
+
+        Vies::simulateViesResponse(Vies::RESULT_INVALID);
+        $this->assertSame(Vies::RESULT_INVALID, Vies::check('75897326V', 'ES'));
+
+        Vies::simulateViesResponse(Vies::RESULT_ERROR);
+        $this->assertSame(Vies::RESULT_ERROR, Vies::check('75897326V', 'ES'));
+
+        // la simulación cortocircuita incluso entradas que normalmente fallarían
+        // en la validación local (codiso vacío, cifnif corto, país no UE).
+        Vies::simulateViesResponse(Vies::RESULT_VALID);
+        $this->assertSame(Vies::RESULT_VALID, Vies::check('', ''));
+        $this->assertSame(Vies::RESULT_VALID, Vies::check('1', 'US'));
+
+        // al desactivarla, vuelve el comportamiento normal: codiso inválido => ERROR.
+        Vies::simulateViesResponse(null);
+        $this->assertSame(Vies::RESULT_ERROR, Vies::check('75897326V', ''));
+    }
+
+    public function testCheckValidation(): void
+    {
+        // sin simulación: estos casos deben cortar en la validación local
+        // y devolver RESULT_ERROR sin llegar a SOAP.
+
+        // codiso vacío
+        $this->assertSame(Vies::RESULT_ERROR, Vies::check('75897326V', '', false));
+
+        // codiso con longitud != 2
+        $this->assertSame(Vies::RESULT_ERROR, Vies::check('75897326V', 'ESP', false));
+        $this->assertSame(Vies::RESULT_ERROR, Vies::check('75897326V', 'E', false));
+
+        // codiso no UE
+        $this->assertSame(Vies::RESULT_ERROR, Vies::check('123456789', 'US', false));
+        $this->assertSame(Vies::RESULT_ERROR, Vies::check('123456789', 'MX', false));
+
+        // cifnif corto puro
+        $this->assertSame(Vies::RESULT_ERROR, Vies::check('12', 'ES', false));
+
+        // cifnif corto tras quitar el prefijo ISO (regresión: antes del reorden
+        // de ifs esta entrada llegaba a VIES con '12' como vatNumber).
+        $this->assertSame(Vies::RESULT_ERROR, Vies::check('ES12', 'ES', false));
+    }
+
+    /**
+     * @dataProvider normalizeProvider
+     */
+    public function testNormalize(string $expected, string $cifnif, string $codiso): void
+    {
+        $this->assertSame($expected, Vies::normalize($cifnif, $codiso));
+    }
+
+    public function normalizeProvider(): array
+    {
+        return [
+            'sin prefijo'                  => ['75897326V', '75897326V', 'ES'],
+            'con prefijo ES'               => ['75897326V', 'ES75897326V', 'ES'],
+            'con guiones'                  => ['75897326V', 'ES-75897326-V', 'ES'],
+            'con puntos y espacios'        => ['75897326V', ' ES 758.97326 V ', 'ES'],
+            'minúsculas con prefijo'       => ['75897326V', 'es75897326v', 'ES'],
+            'caracteres mixtos'            => ['75897326V', 'es_758/97326\\v', 'ES'],
+            'codiso distinto, no se quita' => ['ES75897326V', 'ES75897326V', 'FR'],
+            'cadena vacía'                 => ['', '', 'ES'],
+            'sólo prefijo'                 => ['', 'ES', 'ES'],
+            'XI con prefijo'               => ['123456789', 'XI123456789', 'XI'],
         ];
+    }
 
-        foreach ($data as $item) {
-            $check = Vies::check($item['number'], $item['iso']);
+    public function testNorthernIrelandIsEu(): void
+    {
+        // XI (Irlanda del Norte) debe estar reconocido como código UE para VIES.
+        $this->assertContains('XI', Vies::EU_COUNTRIES);
+    }
 
-            if ($check == -1 && $item['results'] != -1) {
-                $this->markTestSkipped('Vies service returns error: ' . Vies::getLastError());
-            }
+    /**
+     * @group integration
+     * @dataProvider viesCasesProvider
+     */
+    public function testCheckIntegration(int $expected, string $number, string $iso): void
+    {
+        $check = Vies::check($number, $iso, false);
 
-            $this->assertEquals($item['results'], $check, 'Vies::check(' . $item['number'] . ', ' . $item['iso']
-                . ') returned ' . $check . ', expected ' . $item['results']);
-
-            // esperamos medio segundo para no saturar el servicio
-            usleep(500000);
+        // si esperábamos un resultado distinto de ERROR y VIES respondió ERROR,
+        // saltamos sólo este caso (red caída, rate-limit, etc.).
+        if ($check === Vies::RESULT_ERROR && $expected !== Vies::RESULT_ERROR) {
+            $this->markTestSkipped('Vies service returns error: ' . Vies::getLastError());
         }
+
+        $this->assertSame(
+            $expected,
+            $check,
+            "Vies::check({$number}, {$iso}) returned {$check}, expected {$expected}"
+        );
+
+        // no saturamos el servicio
+        usleep(500000);
+    }
+
+    public function viesCasesProvider(): array
+    {
+        return [
+            'iso vacío'              => [Vies::RESULT_ERROR, '', ''],
+            'iso vacío con número'   => [Vies::RESULT_ERROR, '123', ''],
+            'ES inválido'            => [Vies::RESULT_INVALID, '123456789', 'ES'],
+            'ES inválido con prefijo' => [Vies::RESULT_INVALID, 'ES74003828J', 'ES'],
+            'ES válido con prefijo'  => [Vies::RESULT_VALID, 'ES75897326V', 'ES'],
+            'FR válido con prefijo'  => [Vies::RESULT_VALID, 'FR38821737384', 'FR'],
+            'FR inválido'            => [Vies::RESULT_INVALID, '81328757100011', 'FR'],
+            'PT válido 1'            => [Vies::RESULT_VALID, '514356480', 'PT'],
+            'PT válido 2'            => [Vies::RESULT_VALID, '513969144', 'PT'],
+            'PT inválido'            => [Vies::RESULT_INVALID, '513967144', 'PT'],
+        ];
     }
 }
