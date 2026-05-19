@@ -386,6 +386,20 @@ class Login implements ControllerInterface
             return;
         }
 
+        // invalidamos la logkey en el servidor para que la cookie robada no siga siendo válida
+        $cookieNick = $request->cookie('fsNick', '');
+        $cookieLogkey = $request->cookie('fsLogkey', '');
+        if ($cookieNick && $cookieLogkey) {
+            $user = new User();
+            if ($user->load($cookieNick) && $user->verifyLogkey($cookieLogkey)) {
+                $user->newLogkey(Session::getClientIp(), $request->userAgent());
+                $user->save();
+            }
+        }
+
+        // limpiamos la sesión del lado servidor
+        Session::set('user', null);
+
         // remove cookies (mismos atributos que en saveCookies para que el navegador acepte el borrado)
         $path = Tools::config('route', '/');
         $secure = $request->isSecure();
