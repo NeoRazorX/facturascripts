@@ -386,11 +386,20 @@ class Login implements ControllerInterface
             return;
         }
 
-        // remove cookies
+        // remove cookies (mismos atributos que en saveCookies para que el navegador acepte el borrado)
         $path = Tools::config('route', '/');
-        setcookie('fsNick', '', time() - 3600, $path);
-        setcookie('fsLogkey', '', time() - 3600, $path);
-        setcookie('fsLang', '', time() - 3600, $path);
+        $secure = $request->isSecure();
+        $options = [
+            'expires' => time() - 3600,
+            'path' => $path,
+            'domain' => '',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ];
+        setcookie('fsNick', '', $options);
+        setcookie('fsLogkey', '', $options);
+        setcookie('fsLang', '', $options);
 
         // restart token
         $multiRequestProtection = new MultiRequestProtection();
@@ -401,12 +410,17 @@ class Login implements ControllerInterface
 
     protected function saveCookies(User $user, Request $request): void
     {
-        $expiration = time() + (int)Tools::config('cookies_expire', 31536000);
-        $path = Tools::config('route', '/');
-        $secure = $request->isSecure();
+        $options = [
+            'expires' => time() + (int)Tools::config('cookies_expire', 31536000),
+            'path' => Tools::config('route', '/'),
+            'domain' => '',
+            'secure' => $request->isSecure(),
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ];
 
-        setcookie('fsNick', $user->nick, $expiration, $path, '', $secure, true);
-        setcookie('fsLogkey', $user->logkey, $expiration, $path, '', $secure, true);
-        setcookie('fsLang', $user->langcode, $expiration, $path, '', $secure, true);
+        setcookie('fsNick', $user->nick, $options);
+        setcookie('fsLogkey', $user->logkey, $options);
+        setcookie('fsLang', $user->langcode, $options);
     }
 }
