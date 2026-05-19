@@ -230,6 +230,9 @@ class APIModel extends APIResourceClass
      */
     private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
     {
+        $allowedFields = array_keys($this->model->getModelFields());
+        $hidden = $this->model->getApiFieldsToHide();
+
         $where = [];
         foreach ($filter as $key => $value) {
             $field = $key;
@@ -297,6 +300,13 @@ class APIModel extends APIResourceClass
                 continue;
             }
 
+            // la columna debe existir en el modelo y no estar oculta
+            $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
+            if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
+                Tools::log('api')->warning('api: filter field not allowed: ' . $field);
+                continue;
+            }
+
             $where[] = new Where($field, $value, $operator, $operation[$key]);
         }
 
@@ -314,6 +324,7 @@ class APIModel extends APIResourceClass
         // obtenemos los registros
         $data = [];
         $hidden = $this->model->getApiFieldsToHide();
+        $order = $this->filterOrder($order, $hidden);
         $where = $this->getWhereValues($filter, $operation);
         foreach ($this->model->all($where, $order, $offset, $limit) as $item) {
             $data[] = $this->filterHidden($item->toArray(true), $hidden);
@@ -367,6 +378,36 @@ class APIModel extends APIResourceClass
 
         $this->setError($message, $this->filterHidden($this->model->toArray(true), $hidden));
         return false;
+    }
+
+    private function filterOrder(array $order, array $hidden): array
+    {
+        $allowedFields = array_keys($this->model->getModelFields());
+        $result = [];
+        foreach ($order as $key => $value) {
+            // admitimos prefijos integer:, lower:, upper:
+            $field = $key;
+            foreach (['integer:', 'lower:', 'upper:'] as $prefix) {
+                if (str_starts_with($field, $prefix)) {
+                    $field = substr($field, strlen($prefix));
+                    break;
+                }
+            }
+
+            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                Tools::log('api')->warning('api: invalid sort field name: ' . $field);
+                continue;
+            }
+
+            $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
+            if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
+                Tools::log('api')->warning('api: sort field not allowed: ' . $field);
+                continue;
+            }
+
+            $result[$key] = $value;
+        }
+        return $result;
     }
 
     private function filterHidden(array $data, array $hidden): array
