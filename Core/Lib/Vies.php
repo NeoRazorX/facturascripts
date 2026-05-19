@@ -67,6 +67,9 @@ class Vies
     /** Respuesta simulada para tests; cuando es distinta de null, {@see check()} la devuelve sin tocar la red. */
     private static $simulatedResponse = null;
 
+    /** Respuesta simulada para {@see fetch()}; cuando es distinta de null se devuelve sin tocar la red. */
+    private static $simulatedFetchResponse = null;
+
     /**
      * Fija una respuesta fija que {@see check()} devolverá sin tocar la red.
      * Pensado exclusivamente para tests; pasar null para restaurar el comportamiento real.
@@ -76,6 +79,17 @@ class Vies
     public static function simulateViesResponse(?int $response): void
     {
         self::$simulatedResponse = $response;
+    }
+
+    /**
+     * Fija una respuesta fija que {@see fetch()} devolverá sin tocar la red.
+     * Pensado exclusivamente para tests; pasar null para restaurar el comportamiento real.
+     *
+     * @param array|null $response array con claves valid/name/address (o null en errores), o null para desactivar
+     */
+    public static function simulateFetchResponse(?array $response): void
+    {
+        self::$simulatedFetchResponse = $response;
     }
 
     /**
@@ -95,19 +109,62 @@ class Vies
             return self::$simulatedResponse;
         }
 
+        $vatNumber = self::prepare($cifnif, $codiso, $msg);
+        if ($vatNumber === null) {
+            return self::RESULT_ERROR;
+        }
+
+        return static::getViesInfo($vatNumber, $codiso, $msg);
+    }
+
+    /**
+     * Consulta VIES y devuelve los datos del titular del NIF intracomunitario.
+     * Junto al flag `valid` se incluye razón social y dirección si el país las
+     * publica (varios estados miembros las devuelven vacías por privacidad).
+     *
+     * @param string $cifnif número de IVA (con o sin prefijo ISO)
+     * @param string $codiso código ISO de país en mayúsculas y dos caracteres
+     * @param bool   $msg    si true, registra warnings en el log ante errores de validación
+     *
+     * @return array|null array con claves `valid` (bool), `name` (string), `address` (string),
+     *                    o null si no se pudo completar la consulta
+     */
+    public static function fetch(string $cifnif, string $codiso, bool $msg = true): ?array
+    {
+        if (self::$simulatedFetchResponse !== null) {
+            return self::$simulatedFetchResponse;
+        }
+
+        $vatNumber = self::prepare($cifnif, $codiso, $msg);
+        if ($vatNumber === null) {
+            return null;
+        }
+
+        return static::fetchViesInfo($vatNumber, $codiso, $msg);
+    }
+
+    /**
+     * Aplica las validaciones previas comunes a {@see check()} y {@see fetch()}:
+     * extensión SOAP disponible, código ISO con formato correcto y perteneciente
+     * a la UE, y longitud mínima del cifnif tras normalizar.
+     *
+     * @return string|null cifnif normalizado listo para enviar a VIES, o null si alguna validación falla
+     */
+    private static function prepare(string $cifnif, string $codiso, bool $msg): ?string
+    {
         if (false === extension_loaded('soap')) {
             static::setMessage($msg, 'soap-extension-not-installed');
-            return self::RESULT_ERROR;
+            return null;
         }
 
         if (empty($codiso) || strlen($codiso) !== 2) {
             static::setMessage($msg, 'invalid-iso-code', ['%iso-code%' => $codiso]);
-            return self::RESULT_ERROR;
+            return null;
         }
 
         if (!in_array($codiso, self::EU_COUNTRIES)) {
             static::setMessage($msg, 'country-not-in-eu', ['%codiso%' => $codiso]);
-            return self::RESULT_ERROR;
+            return null;
         }
 
         $cifnif = self::normalize($cifnif, $codiso);
@@ -115,10 +172,10 @@ class Vies
         // longitud mínima razonable de un VAT comunitario tras quitar el prefijo ISO
         if (strlen($cifnif) < 5) {
             static::setMessage($msg, 'vat-number-is-short', ['%vat-number%' => $cifnif]);
-            return self::RESULT_ERROR;
+            return null;
         }
 
-        return static::getViesInfo($cifnif, $codiso, $msg);
+        return $cifnif;
     }
 
     /**
@@ -195,6 +252,49 @@ class Vies
 
         static::setMessage($msg, 'error-checking-vat-number', ['%vat-number%' => $vatNumber]);
         return self::RESULT_ERROR;
+    }
+
+    /**
+     * Llama a VIES y devuelve un array con `valid`, `name` y `address`.
+     * Devuelve null sólo si la llamada SOAP falla; un NIF con formato correcto
+     * pero inexistente devuelve `['valid' => false, ...]`, no null.
+     */
+    private static function fetchViesInfo(string $vatNumber, string $codiso, bool $msg): ?array
+    {
+        self::$lastError = '';
+
+        try {
+            $context = stream_context_create([
+                'http' => ['timeout' => self::VIES_TIMEOUT],
+            ]);
+            $client = new SoapClient(self::VIES_URL, [
+                'exceptions' => true,
+                'connection_timeout' => self::VIES_TIMEOUT,
+                'cache_wsdl' => WSDL_CACHE_BOTH,
+                'stream_context' => $context,
+            ]);
+            $response = $client->checkVat([
+                'countryCode' => $codiso,
+                'vatNumber' => $vatNumber,
+            ]);
+
+            return [
+                'valid' => !empty($response->valid),
+                'name' => isset($response->name) ? (string)$response->name : '',
+                'address' => isset($response->address) ? (string)$response->address : '',
+            ];
+        } catch (Exception $ex) {
+            Tools::log('VatInfoFinder')->error($ex->getCode() . ' - ' . $ex->getMessage());
+            self::$lastError = $ex->getMessage();
+
+            // INVALID_INPUT: NIF mal formado. Reportamos como inválido sin nombre/dirección.
+            if ($ex->getMessage() == 'INVALID_INPUT') {
+                return ['valid' => false, 'name' => '', 'address' => ''];
+            }
+        }
+
+        static::setMessage($msg, 'error-checking-vat-number', ['%vat-number%' => $vatNumber]);
+        return null;
     }
 
     private static function setMessage(bool $msg, string $txt, array $context = []): void

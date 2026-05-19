@@ -27,11 +27,13 @@ final class ViesTest extends TestCase
     protected function setUp(): void
     {
         Vies::simulateViesResponse(null);
+        Vies::simulateFetchResponse(null);
     }
 
     protected function tearDown(): void
     {
         Vies::simulateViesResponse(null);
+        Vies::simulateFetchResponse(null);
     }
 
     public function testSimulateResponse(): void
@@ -56,6 +58,38 @@ final class ViesTest extends TestCase
         // al desactivarla, vuelve el comportamiento normal: codiso inválido => ERROR.
         Vies::simulateViesResponse(null);
         $this->assertSame(Vies::RESULT_ERROR, Vies::check('75897326V', ''));
+    }
+
+    public function testSimulateFetchResponse(): void
+    {
+        // con simulación, fetch() devuelve el array fijado sin tocar SOAP.
+        $fake = ['valid' => true, 'name' => 'ACME SA', 'address' => 'C/ Mayor 1'];
+        Vies::simulateFetchResponse($fake);
+        $this->assertSame($fake, Vies::fetch('75897326V', 'ES'));
+
+        // un NIF inválido simulado devuelve array con valid=false, no null.
+        $invalid = ['valid' => false, 'name' => '', 'address' => ''];
+        Vies::simulateFetchResponse($invalid);
+        $this->assertSame($invalid, Vies::fetch('75897326V', 'ES'));
+
+        // cortocircuita incluso entradas que normalmente fallarían en la validación local.
+        Vies::simulateFetchResponse($fake);
+        $this->assertSame($fake, Vies::fetch('', ''));
+
+        // al desactivarla, validación local: codiso inválido => null.
+        Vies::simulateFetchResponse(null);
+        $this->assertNull(Vies::fetch('75897326V', '', false));
+    }
+
+    public function testFetchValidation(): void
+    {
+        // mismas ramas locales que testCheckValidation pero para fetch():
+        // todas deben devolver null antes de tocar SOAP.
+        $this->assertNull(Vies::fetch('75897326V', '', false));
+        $this->assertNull(Vies::fetch('75897326V', 'ESP', false));
+        $this->assertNull(Vies::fetch('123456789', 'US', false));
+        $this->assertNull(Vies::fetch('12', 'ES', false));
+        $this->assertNull(Vies::fetch('ES12', 'ES', false));
     }
 
     public function testCheckValidation(): void
@@ -150,5 +184,26 @@ final class ViesTest extends TestCase
             'PT válido 2'            => [Vies::RESULT_VALID, '513969144', 'PT'],
             'PT inválido'            => [Vies::RESULT_INVALID, '513967144', 'PT'],
         ];
+    }
+
+    /**
+     * @group integration
+     */
+    public function testFetchIntegration(): void
+    {
+        $info = Vies::fetch('ES75897326V', 'ES', false);
+
+        if ($info === null) {
+            $this->markTestSkipped('Vies service returns error: ' . Vies::getLastError());
+        }
+
+        $this->assertArrayHasKey('valid', $info);
+        $this->assertArrayHasKey('name', $info);
+        $this->assertArrayHasKey('address', $info);
+        $this->assertTrue($info['valid']);
+        // España publica nombre y dirección, así que esperamos algo no vacío.
+        $this->assertNotSame('', $info['name']);
+
+        usleep(500000);
     }
 }
