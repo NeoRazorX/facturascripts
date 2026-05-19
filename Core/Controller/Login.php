@@ -30,6 +30,17 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
 
+/**
+ * Controlador de la pantalla de login. Es el unico controlador que se ejecuta sin sesion previa,
+ * por lo que concentra todos los puntos de entrada anonimos: alta de sesion (login), validacion
+ * del segundo factor (2FA), cierre de sesion (logout) y cambio de contrasena por emergencia
+ * usando la contrasena de base de datos.
+ *
+ * Incluye la proteccion contra fuerza bruta basada en listas por IP y por usuario en cache,
+ * con un umbral de MAX_INCIDENT_COUNT incidentes en una ventana de INCIDENT_EXPIRATION_TIME
+ * segundos. El flujo de 2FA exige un nonce escrito por loginAction tras validar la contrasena,
+ * para evitar que el endpoint de validacion del codigo se use como puerta trasera sin password.
+ */
 class Login implements ControllerInterface
 {
     const INCIDENT_EXPIRATION_TIME = 600;
@@ -105,35 +116,35 @@ class Login implements ControllerInterface
 
     public function saveIncident(string $ip, string $user = '', ?int $time = null): void
     {
-        // add the current IP to the list
+        // anadimos la IP actual a la lista
         $ipList = $this->getIpList();
         $ipList[] = [
             'ip' => $ip,
             'time' => ($time ?? time())
         ];
 
-        // save the list in cache
+        // guardamos la lista en cache
         Cache::set(self::IP_LIST, $ipList);
 
-        // if the user is not empty, save the incident
+        // si el usuario esta vacio (incidente solo por IP), no tocamos la lista de usuarios
         if (empty($user)) {
             return;
         }
 
-        // add the current user to the list
+        // anadimos el usuario actual a la lista
         $userList = $this->getUserList();
         $userList[] = [
             'user' => $user,
             'time' => ($time ?? time())
         ];
 
-        // save the list in cache
+        // guardamos la lista en cache
         Cache::set(self::USER_LIST, $userList);
     }
 
     public function userHasManyIncidents(string $ip, string $username = ''): bool
     {
-        // get ip count on the list
+        // contamos los incidentes para la IP
         $ipCount = 0;
         foreach ($this->getIpList() as $item) {
             if ($item['ip'] === $ip) {
@@ -144,7 +155,7 @@ class Login implements ControllerInterface
             return true;
         }
 
-        // get user count on the list
+        // contamos los incidentes para el usuario
         $userCount = 0;
         foreach ($this->getUserList() as $item) {
             if ($item['user'] === $username) {
@@ -244,7 +255,7 @@ class Login implements ControllerInterface
             return [];
         }
 
-        // remove expired items
+        // descartamos los incidentes ya expirados
         $newList = [];
         foreach ($ipList as $item) {
             if (time() - $item['time'] < self::INCIDENT_EXPIRATION_TIME) {
@@ -261,7 +272,7 @@ class Login implements ControllerInterface
             return [];
         }
 
-        // remove expired items
+        // descartamos los incidentes ya expirados
         $newList = [];
         foreach ($userList as $item) {
             if (time() - $item['time'] < self::INCIDENT_EXPIRATION_TIME) {
@@ -284,7 +295,7 @@ class Login implements ControllerInterface
             return;
         }
 
-        // check if the user is in the incident list
+        // si la IP o el usuario acumulan demasiados incidentes recientes, bloqueamos
         if ($this->userHasManyIncidents(Session::getClientIp(), $userName)) {
             Tools::log()->warning('ip-banned');
             return;
@@ -361,7 +372,7 @@ class Login implements ControllerInterface
 
     protected function updateUserAndRedirect(User $user, string $ip, Request $request): void
     {
-        // update user data
+        // actualizamos los datos del usuario y abrimos sesion
         Session::set('user', $user);
         $browser = $request->userAgent();
         $user->newLogkey($ip, $browser);
@@ -370,10 +381,10 @@ class Login implements ControllerInterface
             return;
         }
 
-        // save cookies
+        // guardamos las cookies de sesion
         $this->saveCookies($user, $request);
 
-        // redirect to the user's main page; homepageUrl() devuelve un nombre de controlador seguro
+        // redirigimos a la pagina de inicio del usuario; homepageUrl() devuelve un nombre de controlador seguro
         header('Location: ' . $user->homepageUrl());
     }
 
@@ -397,7 +408,7 @@ class Login implements ControllerInterface
         // limpiamos la sesión del lado servidor
         Session::set('user', null);
 
-        // remove cookies (mismos atributos que en saveCookies para que el navegador acepte el borrado)
+        // borramos las cookies con los mismos atributos que en saveCookies para que el navegador acepte el borrado
         $path = Tools::config('route', '/');
         $secure = $request->isSecure();
         $options = [
@@ -412,7 +423,7 @@ class Login implements ControllerInterface
         setcookie('fsLogkey', '', $options);
         setcookie('fsLang', '', $options);
 
-        // restart token
+        // regeneramos la semilla del token anti-CSRF
         $multiRequestProtection = new MultiRequestProtection();
         $multiRequestProtection->clearSeed();
 
