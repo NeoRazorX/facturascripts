@@ -35,6 +35,7 @@ class Login implements ControllerInterface
     const INCIDENT_EXPIRATION_TIME = 600;
     const IP_LIST = 'login-ip-list';
     const MAX_INCIDENT_COUNT = 6;
+    const TWO_FACTOR_PENDING_TTL = 300;
     const USER_LIST = 'login-user-list';
 
     // Hash bcrypt fijo para igualar tiempos cuando el usuario no existe.
@@ -306,6 +307,7 @@ class Login implements ControllerInterface
         }
 
         if ($user->two_factor_enabled) {
+            Cache::set($this->twoFactorPendingKey(Session::getClientIp(), $user->nick), time());
             $this->two_factor_user = $user->nick;
             $this->template = 'Login/TwoFactor.html.twig';
             return;
@@ -314,17 +316,47 @@ class Login implements ControllerInterface
         $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
+    protected function twoFactorPendingKey(string $ip, string $userName): string
+    {
+        return 'login-2fa-pending-' . sha1($ip . '|' . $userName);
+    }
+
     protected function twoFactorValidationAction(Request $request): void
     {
-        $userName = $request->input('fsNick');
-        $user = new User();
-        if (!$user->load($userName) || !$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))) {
-            Tools::log()->warning('two-factor-code-invalid');
-            $this->saveIncident(Session::getClientIp(), $userName);
+        if (false === $this->validateFormToken($request)) {
             return;
         }
 
-        $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
+        $userName = $request->input('fsNick');
+        $ip = Session::getClientIp();
+
+        // rate-limit antes de hacer cualquier trabajo
+        if ($this->userHasManyIncidents($ip, $userName)) {
+            Tools::log()->warning('ip-banned');
+            return;
+        }
+
+        // exigimos que loginAction se haya completado con éxito recientemente
+        $pendingKey = $this->twoFactorPendingKey($ip, $userName);
+        $pendingAt = Cache::get($pendingKey);
+        if (!is_int($pendingAt) || time() - $pendingAt > self::TWO_FACTOR_PENDING_TTL) {
+            Tools::log()->warning('login-password-fail');
+            $this->saveIncident($ip, $userName);
+            return;
+        }
+
+        $user = new User();
+        if (!$user->load($userName) || false === $user->enabled
+            || !$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))) {
+            Tools::log()->warning('two-factor-code-invalid');
+            $this->saveIncident($ip, $userName);
+            return;
+        }
+
+        // consumimos el nonce: un único intento exitoso por password-step
+        Cache::delete($pendingKey);
+
+        $this->updateUserAndRedirect($user, $ip, $request);
     }
 
     protected function updateUserAndRedirect(User $user, string $ip, Request $request): void

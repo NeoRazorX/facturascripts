@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,121 +24,152 @@ use PHPUnit\Framework\TestCase;
 
 final class LoginTest extends TestCase
 {
+    /** @var Login */
+    private $controller;
+
+    protected function setUp(): void
+    {
+        $this->controller = new Login('Login', '/login');
+        $this->controller->clearIncidents();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->controller->clearIncidents();
+    }
+
     public function testBlockIP(): void
     {
-        // inicializamos el controlador
-        $controller = new Login('Login', '/login');
-
-        // bloqueamos la IP 5 veces y comprobamos que no se bloquea
+        // bloqueamos la IP MAX_INCIDENT_COUNT - 1 veces y comprobamos que no se bloquea
         $ip = $this->getRandomIp();
-        for ($i = 0; $i < 5; $i++) {
-            $controller->saveIncident($ip);
-            $this->assertFalse($controller->userHasManyIncidents($ip));
+        for ($i = 0; $i < Login::MAX_INCIDENT_COUNT - 1; $i++) {
+            $this->controller->saveIncident($ip);
+            $this->assertFalse($this->controller->userHasManyIncidents($ip));
         }
 
-        // bloqueamos la IP por sexta vez y comprobamos que se bloquea
-        $controller->saveIncident($ip);
-        $this->assertTrue($controller->userHasManyIncidents($ip));
+        // alcanzamos el umbral exacto y comprobamos que se bloquea
+        $this->controller->saveIncident($ip);
+        $this->assertTrue($this->controller->userHasManyIncidents($ip));
 
-        // bloqueamos la IP por séptima vez y comprobamos que se bloquea
-        $controller->saveIncident($ip);
-        $this->assertTrue($controller->userHasManyIncidents($ip));
+        // un incidente adicional sigue bloqueado
+        $this->controller->saveIncident($ip);
+        $this->assertTrue($this->controller->userHasManyIncidents($ip));
 
         // limpiamos la lista de IP bloqueadas
-        $controller->clearIncidents();
+        $this->controller->clearIncidents();
 
         // comprobamos que la IP ya no está bloqueada
-        $this->assertFalse($controller->userHasManyIncidents($ip));
+        $this->assertFalse($this->controller->userHasManyIncidents($ip));
     }
 
     public function testBlockIPExpired(): void
     {
-        // inicializamos el controlador
-        $controller = new Login('Login', '/login');
-
-        // bloqueamos la IP 10 veces cpn fecha de hace 2 horas y comprobamos que no se bloquea
+        // bloqueamos la IP 10 veces con fecha de hace 2 horas y comprobamos que no se bloquea
         $ip = $this->getRandomIp();
         for ($i = 0; $i < 10; $i++) {
-            $controller->saveIncident($ip, '', strtotime('-2 hours'));
-            $this->assertFalse($controller->userHasManyIncidents($ip));
+            $this->controller->saveIncident($ip, '', strtotime('-2 hours'));
+            $this->assertFalse($this->controller->userHasManyIncidents($ip));
         }
 
-        // bloqueamos la IP 5 veces más, con fecha actual, y comprobamos que no se bloquea
-        for ($i = 0; $i < 5; $i++) {
-            $controller->saveIncident($ip);
-            $this->assertFalse($controller->userHasManyIncidents($ip));
+        // bloqueamos la IP MAX_INCIDENT_COUNT - 1 veces más, con fecha actual, y comprobamos que no se bloquea
+        for ($i = 0; $i < Login::MAX_INCIDENT_COUNT - 1; $i++) {
+            $this->controller->saveIncident($ip);
+            $this->assertFalse($this->controller->userHasManyIncidents($ip));
         }
 
         // bloqueamos la IP una vez más, con fecha actual, y comprobamos que se bloquea
-        $controller->saveIncident($ip);
-        $this->assertTrue($controller->userHasManyIncidents($ip));
-
-        // limpiamos la lista de IP bloqueadas
-        $controller->clearIncidents();
-
-        // comprobamos que la IP ya no está bloqueada
-        $this->assertFalse($controller->userHasManyIncidents($ip));
+        $this->controller->saveIncident($ip);
+        $this->assertTrue($this->controller->userHasManyIncidents($ip));
     }
 
     public function testBlockUser(): void
     {
-        // inicializamos el controlador
-        $controller = new Login('Login', '/login');
-
-        // bloqueamos el usuario 5 veces, con IPs distintas y comprobamos que no se bloquea
+        // bloqueamos el usuario MAX_INCIDENT_COUNT - 1 veces, con IPs distintas, y comprobamos que no se bloquea
         $user = 'user1';
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < Login::MAX_INCIDENT_COUNT - 1; $i++) {
             $ip = $this->getRandomIp();
-            $controller->saveIncident($ip, $user);
-            $this->assertFalse($controller->userHasManyIncidents($ip, $user));
+            $this->controller->saveIncident($ip, $user);
+            $this->assertFalse($this->controller->userHasManyIncidents($ip, $user));
         }
 
-        // bloqueamos el usuario por sexta vez, con IPs distintas, y comprobamos que se bloquea
+        // alcanzamos el umbral exacto y comprobamos que se bloquea
         $ip = $this->getRandomIp();
-        $controller->saveIncident($ip, $user);
-        $this->assertTrue($controller->userHasManyIncidents($ip, $user));
+        $this->controller->saveIncident($ip, $user);
+        $this->assertTrue($this->controller->userHasManyIncidents($ip, $user));
 
-        // bloqueamos el usuario por séptima vez, con IPs distintas, y comprobamos que se bloquea
+        // un incidente adicional sigue bloqueado
         $ip = $this->getRandomIp();
-        $controller->saveIncident($ip, $user);
-
-        // limpiamos la lista de IP bloqueadas
-        $controller->clearIncidents();
-
-        // comprobamos que el usuario ya no está bloqueado
-        $this->assertFalse($controller->userHasManyIncidents($ip, $user));
+        $this->controller->saveIncident($ip, $user);
+        $this->assertTrue($this->controller->userHasManyIncidents($ip, $user));
     }
 
     public function testBlockUserExpired(): void
     {
-        // inicializamos el controlador
-        $controller = new Login('Login', '/login');
-
-        // bloqueamos el usuario 10 veces, con IPs distintas, con fecha de hace 2 horas y comprobamos que no se bloquea
+        // bloqueamos el usuario 10 veces, con IPs distintas y fecha de hace 2 horas
         $user = 'user2';
         for ($i = 0; $i < 10; $i++) {
             $ip = $this->getRandomIp();
-            $controller->saveIncident($ip, $user, strtotime('-2 hours'));
-            $this->assertFalse($controller->userHasManyIncidents($ip, $user));
+            $this->controller->saveIncident($ip, $user, strtotime('-2 hours'));
+            $this->assertFalse($this->controller->userHasManyIncidents($ip, $user));
         }
 
-        // bloqueamos el usuario 5 veces más, con IPs distintas, con fecha actual, y comprobamos que no se bloquea
-        for ($i = 0; $i < 5; $i++) {
+        // bloqueamos el usuario MAX_INCIDENT_COUNT - 1 veces más, con IPs distintas y fecha actual
+        for ($i = 0; $i < Login::MAX_INCIDENT_COUNT - 1; $i++) {
             $ip = $this->getRandomIp();
-            $controller->saveIncident($ip, $user);
-            $this->assertFalse($controller->userHasManyIncidents($ip, $user));
+            $this->controller->saveIncident($ip, $user);
+            $this->assertFalse($this->controller->userHasManyIncidents($ip, $user));
         }
 
-        // bloqueamos el usuario una vez más, con IPs distintas, con fecha actual, y comprobamos que se bloquea
+        // alcanzamos el umbral exacto y comprobamos que se bloquea
         $ip = $this->getRandomIp();
-        $controller->saveIncident($ip, $user);
-        $this->assertTrue($controller->userHasManyIncidents($ip, $user));
+        $this->controller->saveIncident($ip, $user);
+        $this->assertTrue($this->controller->userHasManyIncidents($ip, $user));
+    }
 
-        // limpiamos la lista de IP bloqueadas
-        $controller->clearIncidents();
+    public function testSaveIncidentWithoutUserOnlyAffectsIpList(): void
+    {
+        // varios incidentes sin usuario no deben acumular contador por usuario
+        $ip = $this->getRandomIp();
+        $user = 'ghost';
+        for ($i = 0; $i < Login::MAX_INCIDENT_COUNT; $i++) {
+            $this->controller->saveIncident($ip);
+        }
 
-        // comprobamos que el usuario ya no está bloqueado
-        $this->assertFalse($controller->userHasManyIncidents($ip, $user));
+        // la IP sí está bloqueada
+        $this->assertTrue($this->controller->userHasManyIncidents($ip));
+
+        // pero un usuario no relacionado consultado desde otra IP no
+        $this->assertFalse($this->controller->userHasManyIncidents($this->getRandomIp(), $user));
+    }
+
+    public function testIncidentsAreIndependentBetweenUsers(): void
+    {
+        // un usuario acumula incidentes hasta justo por debajo del umbral
+        $ip = $this->getRandomIp();
+        $userA = 'alice';
+        $userB = 'bob';
+        for ($i = 0; $i < Login::MAX_INCIDENT_COUNT - 1; $i++) {
+            $this->controller->saveIncident($this->getRandomIp(), $userA);
+        }
+
+        // otro usuario, consultado desde una IP nueva, no debe verse afectado
+        $this->assertFalse($this->controller->userHasManyIncidents($ip, $userB));
+    }
+
+    public function testClearIncidentsRemovesBothLists(): void
+    {
+        $ip = $this->getRandomIp();
+        $user = 'carol';
+        for ($i = 0; $i < Login::MAX_INCIDENT_COUNT; $i++) {
+            $this->controller->saveIncident($ip, $user);
+        }
+        $this->assertTrue($this->controller->userHasManyIncidents($ip));
+        $this->assertTrue($this->controller->userHasManyIncidents($ip, $user));
+
+        $this->controller->clearIncidents();
+
+        $this->assertFalse($this->controller->userHasManyIncidents($ip));
+        $this->assertFalse($this->controller->userHasManyIncidents($ip, $user));
     }
 
     private function getRandomIp(): string
