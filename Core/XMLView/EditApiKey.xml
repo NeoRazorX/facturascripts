@@ -25,24 +25,29 @@
             <column name="code" display="none" order="100">
                 <widget type="text" fieldname="id"/>
             </column>
-            <column name="description" numcolumns="3" order="110">
+            <column name="description" order="110">
                 <widget type="text" fieldname="description" required="true"/>
             </column>
-            <column name="api-key" numcolumns="3" order="120">
+            <column name="api-key" order="120">
                 <widget type="password" fieldname="apikey" required="true"/>
             </column>
-            <column name="user" titleurl="ListUser" numcolumns="2" order="130">
+            <column name="user" titleurl="ListUser" order="130">
                 <widget type="select" fieldname="nick" onclick="EditUser" readonly="true" required="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick"/>
                 </widget>
             </column>
-            <column name="created" numcolumns="2" order="140">
+            <column name="created" order="140">
                 <widget type="date" fieldname="creationdate" readonly="true"/>
             </column>
-            <column name="last-activity" numcolumns="2" order="150">
+            <column name="last-activity" order="150">
                 <widget type="datetime" fieldname="lastactivity" readonly="true"/>
             </column>
-            <column name="enabled" numcolumns="2" order="160">
+            <column name="last-ip" order="155">
+                <widget type="text" fieldname="lastip" readonly="true"/>
+            </column>
+        </group>
+        <group name="advanced" numcolumns="12">
+            <column name="enabled" order="160">
                 <widget type="checkbox" fieldname="enabled"/>
             </column>
             <column name="full-access" order="170">

@@ -420,8 +420,8 @@ class User extends ModelClass
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
         $this->lastbrowser = mb_substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200, 'UTF-8');
 
-        // escapamos el html de lastip y comprobamos que no excede los 40 caracteres
-        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 40);
+        // escapamos el html de lastip y comprobamos que no excede los 45 caracteres
+        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 45);
 
         if ($this->admin) {
             $this->level = 99;

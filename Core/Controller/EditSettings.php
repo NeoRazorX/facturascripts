@@ -163,7 +163,9 @@ class EditSettings extends PanelController
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['creationdate', 'id'], 'date', 2)
             ->addOrderBy(['lastactivity', 'id'], 'last-activity')
-            ->addSearchFields(['description', 'apikey', 'nick']);
+            ->addSearchFields(['description', 'apikey', 'nick'])
+            ->addFilterCheckbox('enabled', 'enabled', 'enabled')
+            ->addFilterCheckbox('fullaccess', 'full-access', 'fullaccess');
     }
 
     protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal'): void
