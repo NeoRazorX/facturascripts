@@ -49,7 +49,7 @@ FacturaScripts es un **software ERP y de contabilidad de código abierto** integ
 ## 🚀 Inicio Rápido
 
 ### Requisitos del Sistema
-- PHP 8.0 o superior
+- PHP 8.1 o superior
 - MySQL/MariaDB o PostgreSQL
 - Composer
 - Node.js y npm
