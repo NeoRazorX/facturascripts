@@ -88,7 +88,10 @@ class EditProducto extends EditController
             ->addOrderBy(['servido'], 'quantity-served')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['pvptotal'], 'amount')
-            ->addOrderBy(['idlinea'], 'code', 2);
+            ->addOrderBy(['idlinea'], 'code', 2)
+            ->addFilterSelect('referencia', 'reference', 'referencia', [])
+            ->addFilterNumber('cantidad-gt', 'quantity', 'cantidad', '>=')
+            ->addFilterNumber('cantidad-lt', 'quantity', 'cantidad', '<=');
 
         // ocultamos la columna product
         $this->views[$viewName]->disableColumn('product');
@@ -108,7 +111,10 @@ class EditProducto extends EditController
             ->addOrderBy(['servido'], 'quantity-served')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['pvptotal'], 'amount')
-            ->addOrderBy(['idlinea'], 'code', 2);
+            ->addOrderBy(['idlinea'], 'code', 2)
+            ->addFilterSelect('referencia', 'reference', 'referencia', [])
+            ->addFilterNumber('cantidad-gt', 'quantity', 'cantidad', '>=')
+            ->addFilterNumber('cantidad-lt', 'quantity', 'cantidad', '<=');
 
         // ocultamos la columna product
         $this->views[$viewName]->disableColumn('product');
@@ -235,6 +241,20 @@ class EditProducto extends EditController
         }
     }
 
+    protected function loadReferenceFilter(BaseView $view, $idproducto): void
+    {
+        if (!isset($view->filters['referencia'])) {
+            return;
+        }
+
+        $values = [['code' => '', 'description' => '------']];
+        $where = [Where::eq('idproducto', $idproducto)];
+        foreach ($this->codeModel->all('variantes', 'referencia', 'referencia', false, $where) as $code) {
+            $values[] = ['code' => $code->code, 'description' => $code->description];
+        }
+        $view->filters['referencia']->values = $values;
+    }
+
     protected function loadCustomReferenceWidget(string $viewName): void
     {
         $references = [];
@@ -308,12 +328,14 @@ class EditProducto extends EditController
                 break;
 
             case 'ListLineaPedidoCliente':
+                $this->loadReferenceFilter($view, $id);
                 $where[] = Where::eq('actualizastock', -2);
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
                 break;
 
             case 'ListLineaPedidoProveedor':
+                $this->loadReferenceFilter($view, $id);
                 $where[] = Where::eq('actualizastock', 2);
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
