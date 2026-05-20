@@ -228,7 +228,7 @@ class APIModel extends APIResourceClass
      *
      * @return Where[]
      */
-    private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
+    private function getWhereValues($filter, $operation, $defaultOperation = 'AND', array &$badFields = []): array
     {
         $allowedFields = array_keys($this->model->getModelFields());
         $hidden = $this->model->getApiFieldsToHide();
@@ -296,14 +296,14 @@ class APIModel extends APIResourceClass
 
             // solo aceptamos identificadores simples (columna o tabla.columna)
             if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
-                Tools::log('api')->warning('api: invalid filter field name: ' . $field);
+                $badFields[] = $field;
                 continue;
             }
 
             // la columna debe existir en el modelo y no estar oculta
             $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
             if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
-                Tools::log('api')->warning('api: filter field not allowed: ' . $field);
+                $badFields[] = $field;
                 continue;
             }
 
@@ -324,8 +324,13 @@ class APIModel extends APIResourceClass
         // obtenemos los registros
         $data = [];
         $hidden = $this->model->getApiFieldsToHide();
-        $order = $this->filterOrder($order, $hidden);
-        $where = $this->getWhereValues($filter, $operation);
+        $badFields = [];
+        $order = $this->filterOrder($order, $hidden, $badFields);
+        $where = $this->getWhereValues($filter, $operation, 'AND', $badFields);
+        if (!empty($badFields)) {
+            $this->setError('api: fields not allowed: ' . implode(', ', array_unique($badFields)));
+            return false;
+        }
         foreach ($this->model->all($where, $order, $offset, $limit) as $item) {
             $data[] = $this->filterHidden($item->toArray(true), $hidden);
         }
@@ -380,7 +385,7 @@ class APIModel extends APIResourceClass
         return false;
     }
 
-    private function filterOrder(array $order, array $hidden): array
+    private function filterOrder(array $order, array $hidden, array &$badFields = []): array
     {
         $allowedFields = array_keys($this->model->getModelFields());
         $result = [];
@@ -395,13 +400,13 @@ class APIModel extends APIResourceClass
             }
 
             if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
-                Tools::log('api')->warning('api: invalid sort field name: ' . $field);
+                $badFields[] = $key;
                 continue;
             }
 
             $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
             if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
-                Tools::log('api')->warning('api: sort field not allowed: ' . $field);
+                $badFields[] = $key;
                 continue;
             }
 
