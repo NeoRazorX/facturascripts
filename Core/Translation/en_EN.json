@@ -844,7 +844,7 @@
     "group-by-year-unixtime": "Group by year (unixtime)",
     "group-more-docs-p": "If you wish you can group together with other documents of this client \/ supplier",
     "group-name": "Group name",
-    "group-not-found": "Grupo no encontrado",
+    "group-not-found": "Group not found",
     "group-or-split": "Group or split",
     "group-or-split-p": "This wizard allows you to generate a new document from the lines of others. Select the quantities you want to use, the date of the new document and press the generate button.",
     "grouping-type": "Group",
