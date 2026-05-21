@@ -358,8 +358,15 @@ class ApiSetupWizard extends ApiController
             $this->loadDefaultAccountingPlan($this->empresa->codpais);
         }
 
-        $this->saveInvoiceStartNumber((int)($data['invoice_start_number'] ?? '1'));
-        $this->saveBankAccount($data['iban'] ?? '', $data['bank_name'] ?? '');
+        $error = $this->saveInvoiceStartNumber((int)($data['invoice_start_number'] ?? '1'));
+        if (!empty($error)) {
+            return $error;
+        }
+
+        $error = $this->saveBankAccount($data['iban'] ?? '', $data['bank_name'] ?? '');
+        if (!empty($error)) {
+            return $error;
+        }
 
         return '';
     }
@@ -552,16 +559,17 @@ class ApiSetupWizard extends ApiController
      * Crea la secuencia si no existe. Ignorado si $startNumber < 2.
      *
      * @param int $startNumber
+     * @return string Vacío si todo fue bien, key de traducción si hubo error.
      */
-    private function saveInvoiceStartNumber(int $startNumber): void
+    private function saveInvoiceStartNumber(int $startNumber): string
     {
         if ($startNumber < 2) {
-            return;
+            return '';
         }
 
         $exerciseCode = $this->getCompanyExerciseCode();
         if (empty($exerciseCode)) {
-            return;
+            return '';
         }
 
         $secuencia = new SecuenciaDocumento();
@@ -577,10 +585,12 @@ class ApiSetupWizard extends ApiController
             $sec->inicio  = $startNumber;
             $sec->numero  = $startNumber;
             $sec->patron  = 'F{EJE}{SERIE}{NUM}';
-            $sec->save();
+            if (!$sec->save()) {
+                return Tools::trans('api-wizard-sequence-save-error');
+            }
         }
         if ($found) {
-            return;
+            return '';
         }
 
         $secuencia->codejercicio = $exerciseCode;
@@ -591,7 +601,11 @@ class ApiSetupWizard extends ApiController
         $secuencia->patron       = 'F{EJE}{SERIE}{NUM}';
         $secuencia->tipodoc      = 'FacturaCliente';
         $secuencia->usarhuecos   = true;
-        $secuencia->save();
+        if (!$secuencia->save()) {
+            return Tools::trans('api-wizard-sequence-save-error');
+        }
+
+        return '';
     }
 
     /**
@@ -601,16 +615,17 @@ class ApiSetupWizard extends ApiController
      *
      * @param string $iban
      * @param string $bankName Nombre descriptivo; si está vacío se usa el nombre corto de la empresa.
+     * @return string Vacío si todo fue bien, key de traducción si hubo error.
      */
-    private function saveBankAccount(string $iban, string $bankName): void
+    private function saveBankAccount(string $iban, string $bankName): string
     {
         if (empty($iban) && empty($bankName)) {
-            return;
+            return '';
         }
 
         $paymentMethod = $this->getTransferPaymentMethod();
         if (!$paymentMethod->exists()) {
-            return;
+            return '';
         }
 
         $account = new CuentaBanco();
@@ -622,12 +637,14 @@ class ApiSetupWizard extends ApiController
         $account->iban        = $iban;
         $account->idempresa   = $this->empresa->idempresa;
         if (!$account->save()) {
-            return;
+            return Tools::trans('api-wizard-bank-account-save-error');
         }
 
         $paymentMethod->codcuentabanco = $account->codcuenta;
         $paymentMethod->idempresa      = $this->empresa->idempresa;
-        $paymentMethod->save();
+        if (!$paymentMethod->save()) {
+            return Tools::trans('api-wizard-payment-method-save-error');
+        }
 
         if (empty($account->codsubcuenta)) {
             $exerciseCode = $this->getCompanyExerciseCode();
@@ -635,6 +652,8 @@ class ApiSetupWizard extends ApiController
                 $account->createSubcuenta($exerciseCode);
             }
         }
+
+        return '';
     }
 
     /**
