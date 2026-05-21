@@ -43,11 +43,13 @@ use FacturaScripts\Dinamic\Model\User;
 
 /**
  * Endpoint REST para completar la instalación de FacturaScripts sin interfaz web.
- * Lógica independiente de Wizard, adaptada para recibir datos vía JSON.
- * El estado se persiste en MyFiles/wizard_progress.json.
  *
- * ── Requisito previo: config.php ──
- *   El Installer debe haberse ejecutado y config.php debe contener al menos:
+ * Permite automatizar el proceso de post-instalación (configurar empresa, parámetros
+ * fiscales y despliegue final de modelos/plugins) enviando datos vía JSON en lugar de
+ * usar el asistente web (Wizard). El estado se persiste en MyFiles/wizard_progress.json
+ * para tolerancia a fallos y coordinación con el Wizard web.
+ * 
+ * El config.php debe contener al menos:
  *
  *     define('FS_DB_TYPE',      'mysql');          // motor: mysql | postgresql
  *     define('FS_DB_HOST',      'localhost');       // host de la base de datos
@@ -59,48 +61,39 @@ use FacturaScripts\Dinamic\Model\User;
  *     define('FS_INITIAL_PASS', 'admin');           // contraseña del administrador
  *     define('FS_API_KEY',      'clave-secreta');   // habilita la API y sirve como token
  *
- *   Sin FS_API_KEY la API está desactivada y este endpoint devuelve 503.
- *   FS_INITIAL_USER/FS_INITIAL_PASS determinan las credenciales del admin
- *   que el Installer inserta en la BD al crear la tabla fs_users.
+ * El flujo es el siguiente:
+ * 
+ *  1) POST: un json con los datos
+ *   Campos obligatorios:
+ *     empresa       string    Nombre completo de la empresa.
+ *     email         string    Email de contacto.
  *
- * Autenticación: X-Auth-Token: <FS_API_KEY> en todas las peticiones.
+ *   Campos opcionales:
+ *     password          string    Nueva contraseña para el usuario administrador.
+ *     repassword        string    Confirmación de contraseña.
+ *     codpais           string    Código ISO 3166-1 alpha-3. Ej: "ESP", "MEX", "ARG".
+ *     cifnif            string    CIF, NIF o RFC de la empresa.
+ *     tipoidfiscal      string    Tipo de identificador fiscal según el país.
+ *     personafisica     bool      true si la empresa es una persona física.
+ *     direccion         string    Dirección fiscal.
+ *     codpostal         string    Código postal.
+ *     ciudad            string    Ciudad.
+ *     provincia         string    Provincia o estado.
+ *     apartado          string    Apartado de correos.
+ *     telefono1         string    Teléfono principal.
+ *     telefono2         string    Teléfono secundario.
+ *     regimeniva        string    Régimen de IVA. Ej: "General", "Exento", "Recargo".
+ *     codimpuesto       string    Código del impuesto por defecto. Ej: "IVA21", "IVA10".
+ *     codpago           string    Código de la forma de pago por defecto. Ej: "CONT", "TRANS".
+ *     ventasinstock     bool      Permitir ventas sin stock. Default: false.
+ *     defaultplan       bool      Importar el plan contable del país configurado. Default: false.
+ *     invoice_start_number  int   Número de inicio para las facturas. Default: 1.
+ *     iban              string    IBAN de la cuenta bancaria principal.
+ *     bank_name         string    Nombre descriptivo del banco. 
+ * 
+ *  2) GET sondeando hasta se reciba {"status":"installed"}.
  *
- * ── POST ──
- *   Envía todo el formulario de una vez. Configura empresa y parámetros fiscales
- *   (pasos 1 y 2). Devuelve {current_step: "step3"} cuando está listo para el GET.
- *
- *   Obligatorios:
- *     empresa       string    Nombre completo de la empresa
- *     email         string    Email de contacto (obligatorio si no hay uno guardado)
- *
- *   Opcionales:
- *     password      string    Nueva contraseña para el usuario administrador
- *     repassword    string    Confirmación de la nueva contraseña (si se omite, se usa password)
- *     codpais       string    Código ISO 3166-1 alpha-3 del país. Ej: "ESP", "MEX", "ARG"
- *     cifnif        string    CIF, NIF o RFC de la empresa
- *     tipoidfiscal  string    Tipo de identificador fiscal según el país
- *     personafisica bool      true si la empresa es una persona física
- *     direccion     string    Dirección fiscal
- *     codpostal     string    Código postal
- *     ciudad        string    Ciudad
- *     provincia     string    Provincia o estado
- *     apartado      string    Apartado de correos
- *     telefono1     string    Teléfono principal
- *     telefono2     string    Teléfono secundario
- *     regimeniva    string    Régimen de IVA. Ej: "General", "Exento", "Recargo"
- *     codimpuesto   string    Código del impuesto por defecto. Ej: "IVA21", "IVA10"
- *     codpago       string    Código de la forma de pago por defecto. Ej: "CONT", "TRANS"
- *     ventasinstock bool      Permitir ventas sin stock. Default: false
- *     defaultplan   bool      Importar el plan contable del país configurado. Default: false
- *     invoice_start_number int  Número de inicio para las facturas. Default: 1
- *     iban          string    IBAN de la cuenta bancaria principal
- *     bank_name     string    Nombre descriptivo del banco
- *
- * ── GET ──
- *   Devuelve el estado actual de la instalación.
- *   Si el POST ya completó los pasos 1 y 2 (current_step = "step3"), el GET
- *   ejecuta el despliegue final (modelos, plugins, rol por defecto) y devuelve
- *   {status: "installed"} cuando termina.
+ *   Configura empresa (paso 1) y parámetros fiscales (paso 2).
  *
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
@@ -114,6 +107,9 @@ class ApiSetupWizard extends ApiController
     /** @var User|false */
     private $user = false;
 
+    /**
+     * Instancia las dependencias que ApiAccess necesita antes de llamar al constructor del padre.
+     */
     public function __construct(string $className, string $url = '')
     {
         // Dependencias de la ApiAccess (necesario para que este funcione)
@@ -129,6 +125,10 @@ class ApiSetupWizard extends ApiController
         parent::__construct($className, $url);
     }
 
+    /**
+     * Punto de entrada del endpoint. Verifica que no haya otra instalación en curso
+     * y despacha a handleGet() o handlePost() según el método HTTP.
+     */
     protected function runResource(): void
     {
         $this->empresa = $this->loadDefaultEmpresa();
@@ -164,7 +164,10 @@ class ApiSetupWizard extends ApiController
         }
     }
 
-    /** Devuelve el estado actual. Si current_step === 'step3', ejecuta el despliegue final. */
+    /**
+     * Devuelve el estado actual. Si current_step === 'step3', ejecuta el despliegue final
+     * y responde con {status:"installed"} o HTTP 500 según el resultado.
+     */
     private function handleGet(): void
     {
         $progress = $this->readWizardProgress();
@@ -198,11 +201,15 @@ class ApiSetupWizard extends ApiController
         }
     }
 
-    /** Recibe todo el formulario de golpe y ejecuta step1 + step2 secuencialmente. */
+    /**
+     * Recibe el formulario completo y ejecuta step1 y step2 en orden.
+     * Los pasos ya completados se omiten para permitir reintentos.
+     */
     private function handlePost(): void
     {
         $body = $this->request->json() ?? [];
 
+        // registrar este endpoint como agente responsable de la instalación
         $progress = $this->readWizardProgress();
         if (empty($progress['installAgent'])) {
             $progress['installAgent'] = 'apiWizard';
@@ -255,6 +262,11 @@ class ApiSetupWizard extends ApiController
         ]);
     }
 
+    /**
+     * Carga la empresa predeterminada desde la configuración o la primera disponible en BD.
+     *
+     * @return Empresa
+     */
     private function loadDefaultEmpresa(): Empresa
     {
         $empresa = new Empresa();
@@ -268,10 +280,12 @@ class ApiSetupWizard extends ApiController
         return empty($list) ? new Empresa() : $list[0];
     }
 
-    // =========================================================================
-    // Lógica de instalación (inspirada en Wizard, independiente de él)
-    // =========================================================================
-
+    /**
+     * Paso 1: configura el país, inicializa modelos auxiliares, guarda la dirección
+     * fiscal y, si se proporcionaron, la contraseña y el email del admin.
+     *
+     * @param array $data Cuerpo JSON del POST.
+     */
     private function saveStep1(array $data): void
     {
         $codpais = $data['codpais'] ?? $this->empresa->codpais;
@@ -282,7 +296,7 @@ class ApiSetupWizard extends ApiController
         $this->saveAddress($codpais, $data);
 
         $pass = $data['password'] ?? '';
-        if ('' !== $pass && false === $this->saveNewPassword($pass, $data['repassword'] ?? $pass)) {
+        if ('' !== $pass && false === $this->saveNewPassword($pass, $data['repassword'])) {
             return;
         }
 
@@ -294,6 +308,12 @@ class ApiSetupWizard extends ApiController
         $this->completeWizardStep('step1');
     }
 
+    /**
+     * Paso 2: guarda régimen de IVA, impuesto y forma de pago por defecto,
+     * ventas sin stock, plan contable, número de inicio de facturas y cuenta bancaria.
+     *
+     * @param array $data Cuerpo JSON del POST.
+     */
     private function saveStep2(array $data): void
     {
         $this->empresa->regimeniva = $data['regimeniva'] ?? null;
@@ -319,6 +339,11 @@ class ApiSetupWizard extends ApiController
         $this->completeWizardStep('step2');
     }
 
+    /**
+     * Paso 3: inicializa todos los modelos (crea tablas), despliega plugins,
+     * asigna el rol de empleado como predeterminado y actualiza la homepage del admin.
+     * Se invoca automáticamente desde el GET cuando current_step === 'step3'.
+     */
     private function saveStep3(): void
     {
         $modelNames = [];
@@ -346,6 +371,11 @@ class ApiSetupWizard extends ApiController
         $this->completeWizardStep('step3');
     }
 
+    /**
+     * Carga los valores predeterminados del país desde Dinamic/Data/Codpais/<codpais>/default.json.
+     *
+     * @param string $codpais Código ISO 3166-1 alpha-3.
+     */
     private function preSetAppSettings(string $codpais): void
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/default.json';
@@ -363,6 +393,11 @@ class ApiSetupWizard extends ApiController
         Tools::settingsSave();
     }
 
+    /**
+     * Instancia los modelos indicados para que el ORM cree sus tablas si no existen.
+     *
+     * @param array $names Nombres de modelo sin namespace, ej.: ['Impuesto', 'Serie'].
+     */
     private function initModels(array $names): void
     {
         foreach ($names as $name) {
@@ -371,6 +406,13 @@ class ApiSetupWizard extends ApiController
         }
     }
 
+    /**
+     * Guarda la dirección fiscal de la empresa y sincroniza el almacén asociado
+     * (o crea uno nuevo si no existe ninguno).
+     *
+     * @param string $codpais Código ISO 3166-1 alpha-3.
+     * @param array  $data    Campos de dirección del POST.
+     */
     private function saveAddress(string $codpais, array $data): void
     {
         $this->empresa->apartado = $data['apartado'] ?? '';
@@ -404,6 +446,12 @@ class ApiSetupWizard extends ApiController
         $this->setWarehouse($almacen, $codpais);
     }
 
+    /**
+     * Asigna el email a empresa y usuario solo si no tienen ya uno guardado.
+     *
+     * @param string $email
+     * @return bool true si ambos guardados tuvieron éxito.
+     */
     private function saveEmail(string $email): bool
     {
         if (empty($this->empresa->email)) {
@@ -417,6 +465,13 @@ class ApiSetupWizard extends ApiController
         return $this->empresa->save() && $this->user->save();
     }
 
+    /**
+     * Cambia la contraseña del usuario administrador.
+     *
+     * @param string $pass
+     * @param string $repass Confirmación
+     * @return bool true si el guardado tuvo éxito.
+     */
     private function saveNewPassword(string $pass, string $repass): bool
     {
         $this->user->newPassword  = $pass;
@@ -424,6 +479,12 @@ class ApiSetupWizard extends ApiController
         return $this->user->save();
     }
 
+    /**
+     * Importa el plan contable del país desde Dinamic/Data/Codpais/<codpais>/defaultPlan.csv.
+     * No hace nada si el fichero no existe, la BD es de 2017 o ya hay cuentas.
+     *
+     * @param string $codpais Código ISO 3166-1 alpha-3.
+     */
     private function loadDefaultAccountingPlan(string $codpais): void
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
@@ -447,6 +508,12 @@ class ApiSetupWizard extends ApiController
         }
     }
 
+    /**
+     * Configura el número de inicio de la secuencia de FacturaCliente (serie A).
+     * Crea la secuencia si no existe. Ignorado si $startNumber < 2.
+     *
+     * @param int $startNumber
+     */
     private function saveInvoiceStartNumber(int $startNumber): void
     {
         if ($startNumber < 2) {
@@ -488,6 +555,14 @@ class ApiSetupWizard extends ApiController
         $secuencia->save();
     }
 
+    /**
+     * Crea o actualiza la cuenta bancaria principal y la asocia a la forma de pago TRANS.
+     * Genera la subcuenta contable si el ejercicio está disponible.
+     * No hace nada si $iban y $bankName están ambos vacíos.
+     *
+     * @param string $iban
+     * @param string $bankName Nombre descriptivo; si está vacío se usa el nombre corto de la empresa.
+     */
     private function saveBankAccount(string $iban, string $bankName): void
     {
         if (empty($iban) && empty($bankName)) {
@@ -523,6 +598,12 @@ class ApiSetupWizard extends ApiController
         }
     }
 
+    /**
+     * Sincroniza el almacén con la dirección de la empresa y lo registra como predeterminado.
+     *
+     * @param Almacen $almacen
+     * @param string  $codpais Código ISO 3166-1 alpha-3.
+     */
     private function setWarehouse(Almacen $almacen, string $codpais): void
     {
         $almacen->ciudad    = $this->empresa->ciudad;
@@ -539,6 +620,12 @@ class ApiSetupWizard extends ApiController
         Tools::settingsSave();
     }
 
+    /**
+     * Devuelve la forma de pago TRANS (transferencia bancaria).
+     * La crea con valores predeterminados si no existe.
+     *
+     * @return FormaPago
+     */
     private function getTransferPaymentMethod(): FormaPago
     {
         $paymentMethod = new FormaPago();
@@ -555,6 +642,12 @@ class ApiSetupWizard extends ApiController
         return $paymentMethod;
     }
 
+    /**
+     * Devuelve el código del primer ejercicio fiscal activo de la empresa,
+     * o cadena vacía si no hay ninguno.
+     *
+     * @return string
+     */
     private function getCompanyExerciseCode(): string
     {
         foreach ($this->empresa->getExercises() as $exercise) {
@@ -564,26 +657,43 @@ class ApiSetupWizard extends ApiController
         return '';
     }
 
-    // =========================================================================
-    // Progreso del wizard (estado en MyFiles/wizard_progress.json)
-    // =========================================================================
-
+    /**
+     * Ruta al fichero de estado compartido con el Wizard web.
+     *
+     * @return string
+     */
     private static function wizardStateFile(): string
     {
         return Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'wizard_progress.json';
     }
 
+    /**
+     * Lee wizard_progress.json y devuelve su contenido, o [] si no existe.
+     *
+     * @return array
+     */
     private function readWizardProgress(): array
     {
         $file = self::wizardStateFile();
         return file_exists($file) ? (json_decode(file_get_contents($file), true) ?? []) : [];
     }
 
+    /**
+     * Indica si el paso dado está marcado como completado en el fichero de progreso.
+     *
+     * @param string $step 'step1', 'step2' o 'step3'.
+     * @return bool
+     */
     private function isStepCompleted(string $step): bool
     {
         return ($this->readWizardProgress()[$step]['completed'] ?? false) === true;
     }
 
+    /**
+     * Marca el paso como completado y avanza current_step al siguiente (null tras step3).
+     *
+     * @param string $step 'step1', 'step2' o 'step3'.
+     */
     private function completeWizardStep(string $step): void
     {
         $next = ['step1' => 'step2', 'step2' => 'step3'];
@@ -597,6 +707,12 @@ class ApiSetupWizard extends ApiController
         file_put_contents(self::wizardStateFile(), json_encode($data, JSON_PRETTY_PRINT));
     }
 
+    /**
+     * Comprueba si la instalación ya fue completada, tanto por fichero de progreso
+     * como por el indicador de homepage (compatibilidad con instalaciones antiguas).
+     *
+     * @return bool
+     */
     private function checkIsInstalled(): bool
     {
         if ($this->isStepCompleted('step3')) {
@@ -610,7 +726,13 @@ class ApiSetupWizard extends ApiController
     // Validaciones
     // =========================================================================
 
-    /** Valida los campos obligatorios del paso 1. Devuelve array de mensajes de error. */
+    /**
+     * Valida los campos obligatorios del paso 1.
+     * 'empresa' siempre es requerido; 'email' solo si ni empresa ni usuario tienen uno guardado.
+     *
+     * @param array $body Datos del POST.
+     * @return array Mensajes de error traducidos; vacío si la validación pasa.
+     */
     private function validateStep1(array $body): array
     {
         $errors = [];
