@@ -40,7 +40,17 @@ use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Description of Wizard
+ * Asistente de instalación web de FacturaScripts.
+ *
+ * Guía al administrador por tres pasos para configurar la empresa (step1),
+ * los parámetros fiscales y contables (step2) y desplegar todos los modelos
+ * y plugins (step3).
+ *
+ * El fichero de estado MyFiles/wizard_progress.json es compartido con
+ * ApiSetupWizard (Core/Controller/ApiSetupWizard.php), que expone el mismo
+ * flujo de instalación a través de la API REST. El campo 'installAgent' del
+ * fichero indica qué agente tomó el control ('wizard' o 'apiWizard') e impide
+ * que ambos se ejecuten simultáneamente.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -108,6 +118,8 @@ class Wizard extends Controller
         $progress = $this->readWizardProgress();
         $agent = $progress['installAgent'] ?? '';
 
+        // Si ApiSetupWizard ya tomó el control, impedimos continuar desde la web
+        // para evitar que dos agentes sobreescriban el mismo estado de instalación.
         if ($agent === 'apiWizard') {
             throw new KernelException('AlreadyInstalled', Tools::trans(
                 'installation-managed-by-api',
@@ -115,6 +127,8 @@ class Wizard extends Controller
             ));
         }
 
+        // Registrar este agente (Wizard web) como responsable de la instalación
+        // si todavía no hay ninguno asignado.
         if (empty($agent)) {
             $progress['installAgent'] = 'wizard';
             file_put_contents(self::wizardStateFile(), json_encode($progress, JSON_PRETTY_PRINT));
@@ -123,7 +137,8 @@ class Wizard extends Controller
         $action = $this->request->inputOrQuery('action', '');
         $currentStep = $progress['current_step'] ?? '';
 
-        // seleccionar la siguiente acción correctamente
+        // Ejecutar únicamente el paso que corresponde al estado actual para evitar
+        // que el usuario salte pasos recargando la URL con un action incorrecto.
         if ($action === 'step1' && empty($currentStep)) {
             $this->saveStep1();
         } elseif ($action === 'step2' && $currentStep === 'step2') {
@@ -131,6 +146,8 @@ class Wizard extends Controller
         } elseif ($action === 'step3' && $currentStep === 'step3') {
             $this->saveStep3();
         } else {
+            // Si llegó un action pero no cuadra con el step actual, registrar el error
+            // (el usuario probablemente recargó una URL obsoleta o manipuló el formulario).
             if (!empty($action)) {
                 Tools::log()->error('wizard-invalid-step', [
                     '%action%' => $action,
@@ -192,6 +209,7 @@ class Wizard extends Controller
      * Devuelve true si el paso indicado está marcado como completado en el fichero de progreso.
      *
      * @param string $step step1 | step2 | step3
+     * @return bool true si el paso está completado.
      */
     private function isStepCompleted(string $step): bool
     {
