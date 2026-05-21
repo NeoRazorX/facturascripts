@@ -722,9 +722,6 @@ class ApiSetupWizard extends ApiController
         return !empty($users) && $users[0]->homepage !== 'Wizard';
     }
 
-    // =========================================================================
-    // Validaciones
-    // =========================================================================
 
     /**
      * Valida los campos obligatorios del paso 1.
