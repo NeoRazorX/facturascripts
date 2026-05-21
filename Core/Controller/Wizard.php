@@ -105,8 +105,23 @@ class Wizard extends Controller
             throw new KernelException('AlreadyInstalled', Tools::trans('wizard-already-completed'));
         }
 
+        $progress = $this->readWizardProgress();
+        $agent = $progress['installAgent'] ?? '';
+
+        if ($agent === 'apiWizard') {
+            throw new KernelException('AlreadyInstalled', Tools::trans(
+                'installation-managed-by-api',
+                ['%url%' => Tools::siteUrl()]
+            ));
+        }
+
+        if (empty($agent)) {
+            $progress['installAgent'] = 'wizard';
+            file_put_contents(self::wizardStateFile(), json_encode($progress, JSON_PRETTY_PRINT));
+        }
+
         $action = $this->request->inputOrQuery('action', '');
-        $currentStep = $this->readWizardProgress()['current_step'] ?? '';
+        $currentStep = $progress['current_step'] ?? '';
 
         // seleccionar la siguiente acción correctamente
         if ($action === 'step1' && empty($currentStep)) {
