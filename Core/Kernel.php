@@ -386,6 +386,7 @@ final class Kernel
             '/node_modules/*' => 'Files',
             '/Plugins/*' => 'Files',
             '/Updater' => 'Updater',
+            '/Wizard' => 'Wizard',
         ];
 
         foreach ($routes as $route => $controller) {
