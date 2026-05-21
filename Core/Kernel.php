@@ -375,6 +375,7 @@ final class Kernel
             '/api/3/plugins/*' => 'ApiPlugins',
             '/api/3/productoimagenes' => 'ApiProductoImagen',
             '/api/3/productoimagenes/*' => 'ApiProductoImagen',
+            '/api/3/setupWizard' => 'ApiSetupWizard',
             '/api/3/uploadFiles' => 'ApiUploadFiles',
             '/api/*' => 'ApiRoot',
             '/Core/Assets/*' => 'Files',
