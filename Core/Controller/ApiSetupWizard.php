@@ -509,7 +509,7 @@ class ApiSetupWizard extends ApiController
         }
 
         $this->user->newPassword  = $pass;
-        $this->user->newPassword2 = $pass;
+        $this->user->newPassword2 = $repass;
         if (!$this->user->save()) {
             return Tools::trans('api-wizard-password-save-error');
         }
