@@ -185,20 +185,24 @@ class ApiSetupWizard extends ApiController
         if (empty($users)) {
             $this->response
                 ->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR)
-                ->json(['status' => 'error', 'message' => 'admin-user-not-found']);
+                ->json(['status' => 'error', 'step' => 'step3', 'message' => 'admin-user-not-found']);
             return;
         }
         $this->user = $users[0];
 
-        $this->saveStep3();
-
-        if ($this->isStepCompleted('step3')) {
-            $this->response->json(['status' => 'installed', 'message' => Tools::trans('record-updated-correctly')]);
-        } else {
+        $this->db()->beginTransaction();
+        $error = $this->saveStep3();
+        if (!empty($error)) {
+            $this->db()->rollBack();
             $this->response
                 ->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR)
-                ->json(['status' => 'error', 'step' => 'step3', 'message' => Tools::trans('record-save-error')]);
+                ->json(['status' => 'error', 'step' => 'step3', 'message' => $error]);
+            return;
         }
+        $this->db()->commit();
+
+        $this->completeWizardStep('step3');
+        $this->response->json(['status' => 'installed', 'message' => Tools::trans('record-updated-correctly')]);
     }
 
     /**
@@ -221,7 +225,7 @@ class ApiSetupWizard extends ApiController
             if (empty($users)) {
                 $this->response
                     ->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR)
-                    ->json(['status' => 'error', 'message' => 'admin-user-not-found']);
+                    ->json(['status' => 'error', 'step' => 'step1', 'message' => 'admin-user-not-found']);
                 return;
             }
             $this->user = $users[0];
@@ -234,25 +238,31 @@ class ApiSetupWizard extends ApiController
                 return;
             }
 
-            $this->saveStep1($body);
-
-            if (!$this->isStepCompleted('step1')) {
+            $this->db()->beginTransaction();
+            $error = $this->saveStep1($body);
+            if (!empty($error)) {
+                $this->db()->rollBack();
                 $this->response
                     ->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR)
-                    ->json(['status' => 'error', 'step' => 'step1', 'message' => Tools::trans('record-save-error')]);
+                    ->json(['status' => 'error', 'step' => 'step1', 'message' => $error]);
                 return;
             }
+            $this->db()->commit();
+            $this->completeWizardStep('step1');
         }
 
         if (!$this->isStepCompleted('step2')) {
-            $this->saveStep2($body);
-
-            if (!$this->isStepCompleted('step2')) {
+            $this->db()->beginTransaction();
+            $error = $this->saveStep2($body);
+            if (!empty($error)) {
+                $this->db()->rollBack();
                 $this->response
                     ->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR)
-                    ->json(['status' => 'error', 'step' => 'step2', 'message' => Tools::trans('record-save-error')]);
+                    ->json(['status' => 'error', 'step' => 'step2', 'message' => $error]);
                 return;
             }
+            $this->db()->commit();
+            $this->completeWizardStep('step2');
         }
 
         $this->response->json([
@@ -285,27 +295,38 @@ class ApiSetupWizard extends ApiController
      * fiscal y, si se proporcionaron, la contraseña y el email del admin.
      *
      * @param array $data Cuerpo JSON del POST.
+     * @return string Vacío si todo fue bien, key de traducción si hubo error.
      */
-    private function saveStep1(array $data): void
+    private function saveStep1(array $data): string
     {
         $codpais = $data['codpais'] ?? $this->empresa->codpais;
         $this->preSetAppSettings($codpais);
 
         $this->initModels(['AttachedFile', 'Diario', 'EstadoDocumento', 'FormaPago',
             'Impuesto', 'Retencion', 'Serie', 'Provincia']);
-        $this->saveAddress($codpais, $data);
+
+        $error = $this->saveAddress($codpais, $data);
+        if (!empty($error)) {
+            return $error;
+        }
 
         $pass = $data['password'] ?? '';
-        if ('' !== $pass && false === $this->saveNewPassword($pass, $data['repassword'])) {
-            return;
+        if ('' !== $pass) {
+            $error = $this->saveNewPassword($pass, $data['repassword'] ?? '');
+            if (!empty($error)) {
+                return $error;
+            }
         }
 
         $email = $data['email'] ?? '';
-        if ('' !== $email && false === $this->saveEmail($email)) {
-            return;
+        if ('' !== $email) {
+            $error = $this->saveEmail($email);
+            if (!empty($error)) {
+                return $error;
+            }
         }
 
-        $this->completeWizardStep('step1');
+        return '';
     }
 
     /**
@@ -313,11 +334,14 @@ class ApiSetupWizard extends ApiController
      * ventas sin stock, plan contable, número de inicio de facturas y cuenta bancaria.
      *
      * @param array $data Cuerpo JSON del POST.
+     * @return string Vacío si todo fue bien, key de traducción si hubo error.
      */
-    private function saveStep2(array $data): void
+    private function saveStep2(array $data): string
     {
         $this->empresa->regimeniva = $data['regimeniva'] ?? null;
-        $this->empresa->save();
+        if (!$this->empresa->save()) {
+            return Tools::trans('api-wizard-step2-company-save-error');
+        }
 
         $codimpuesto = $data['codimpuesto'] ?? null;
         Tools::settingsSet('default', 'codimpuesto', empty($codimpuesto) ? null : $codimpuesto);
@@ -336,15 +360,17 @@ class ApiSetupWizard extends ApiController
         $this->saveInvoiceStartNumber((int)($data['invoice_start_number'] ?? '1'));
         $this->saveBankAccount($data['iban'] ?? '', $data['bank_name'] ?? '');
 
-        $this->completeWizardStep('step2');
+        return '';
     }
 
     /**
      * Paso 3: inicializa todos los modelos (crea tablas), despliega plugins,
      * asigna el rol de empleado como predeterminado y actualiza la homepage del admin.
      * Se invoca automáticamente desde el GET cuando current_step === 'step3'.
+     *
+     * @return string Vacío si todo fue bien, key de traducción si hubo error.
      */
-    private function saveStep3(): void
+    private function saveStep3(): string
     {
         $modelNames = [];
         $modelsFolder = Tools::folder('Dinamic', 'Model');
@@ -366,9 +392,11 @@ class ApiSetupWizard extends ApiController
         }
 
         $this->user->homepage = $this->db()->tableExists('fs_users') ? 'AdminPlugins' : self::NEW_DEFAULT_PAGE;
-        $this->user->save();
+        if (!$this->user->save()) {
+            return Tools::trans('api-wizard-admin-user-save-error');
+        }
 
-        $this->completeWizardStep('step3');
+        return '';
     }
 
     /**
@@ -412,8 +440,9 @@ class ApiSetupWizard extends ApiController
      *
      * @param string $codpais Código ISO 3166-1 alpha-3.
      * @param array  $data    Campos de dirección del POST.
+     * @return string Vacío si todo fue bien, key de traducción si hubo error.
      */
-    private function saveAddress(string $codpais, array $data): void
+    private function saveAddress(string $codpais, array $data): string
     {
         $this->empresa->apartado = $data['apartado'] ?? '';
         $this->empresa->cifnif = $data['cifnif'] ?? '';
@@ -431,7 +460,9 @@ class ApiSetupWizard extends ApiController
         if (empty($this->empresa->tipoidfiscal)) {
             $this->empresa->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
         }
-        $this->empresa->save();
+        if (!$this->empresa->save()) {
+            return Tools::trans('api-wizard-step1-company-save-error');
+        }
 
         $where = [
             Where::eq('idempresa', $this->empresa->idempresa),
@@ -439,44 +470,51 @@ class ApiSetupWizard extends ApiController
         ];
         foreach (Almacen::all($where) as $almacen) {
             $this->setWarehouse($almacen, $codpais);
-            return;
+            return '';
         }
 
         $almacen = new Almacen();
         $this->setWarehouse($almacen, $codpais);
+        return '';
     }
 
     /**
-     * Asigna el email a empresa y usuario solo si no tienen ya uno guardado.
-     *
      * @param string $email
-     * @return bool true si ambos guardados tuvieron éxito.
+     * @return string Vacío si todo fue bien, key de traducción si hubo error.
      */
-    private function saveEmail(string $email): bool
+    private function saveEmail(string $email): string
     {
         if (empty($this->empresa->email)) {
             $this->empresa->email = $email;
         }
-
         if (empty($this->user->email)) {
             $this->user->email = $email;
         }
+        if (!$this->empresa->save() || !$this->user->save()) {
+            return Tools::trans('api-wizard-email-save-error');
+        }
 
-        return $this->empresa->save() && $this->user->save();
+        return '';
     }
 
     /**
-     * Cambia la contraseña del usuario administrador.
-     *
      * @param string $pass
-     * @param string $repass Confirmación
-     * @return bool true si el guardado tuvo éxito.
+     * @param string $repass
+     * @return string Vacío si todo fue bien, key de traducción si hubo error.
      */
-    private function saveNewPassword(string $pass, string $repass): bool
+    private function saveNewPassword(string $pass, string $repass): string
     {
+        if ($pass !== $repass) {
+            return Tools::trans('api-wizard-passwords-must-match');
+        }
+
         $this->user->newPassword  = $pass;
-        $this->user->newPassword2 = $repass;
-        return $this->user->save();
+        $this->user->newPassword2 = $pass;
+        if (!$this->user->save()) {
+            return Tools::trans('api-wizard-password-save-error');
+        }
+
+        return '';
     }
 
     /**
@@ -708,18 +746,23 @@ class ApiSetupWizard extends ApiController
     }
 
     /**
-     * Comprueba si la instalación ya fue completada, tanto por fichero de progreso
-     * como por el indicador de homepage (compatibilidad con instalaciones antiguas).
+     * Comprueba si la instalación ya fue completada.
+     * Retrocompatibilidad: instalaciones previas al fichero de progreso se detectan
+     * comprobando que la homepage del admin ya no sea 'Wizard' (igual que en Wizard.php).
      *
      * @return bool
      */
     private function checkIsInstalled(): bool
     {
-        if ($this->isStepCompleted('step3')) {
+        // Retrocompatibilidad: instalaciones antiguas sin fichero de progreso.
+        // El wizard cambia la homepage al completar el step3; si ya no es 'Wizard',
+        // la instalación está hecha aunque no exista wizard_progress.json.
+        $users = (new User())->all([Where::eq('admin', true)], [], 0, 1);
+        if (!empty($users) && $users[0]->homepage !== 'Wizard') {
             return true;
         }
-        $users = (new User())->all([Where::eq('admin', true)], [], 0, 1);
-        return !empty($users) && $users[0]->homepage !== 'Wizard';
+
+        return $this->isStepCompleted('step3');
     }
 
 
