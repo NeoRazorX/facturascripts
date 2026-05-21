@@ -322,25 +322,27 @@ final class FacturaProveedorTest extends TestCase
         $invoice->setSubject($supplier);
         $this->assertTrue($invoice->save(), 'cant-create-invoice');
 
-        // añadimos una línea
+        // añadimos una línea con recargo
         $firstLine = $invoice->getNewLine();
         $firstLine->cantidad = 2;
         $firstLine->pvpunitario = 100;
+        $firstLine->iva = 21;
+        $firstLine->recargo = 5.2;
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
         $lines = $invoice->getLines();
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
-        // comprobamos los totales: el proveedor tiene RE pero la empresa no,
-        // así que en compras no se aplica recargo
+        // comprobamos los totales: el proveedor tiene RE, así que se aplica recargo
+        // aunque la empresa no lo tenga (caso de empresas con varias actividades).
         $this->assertEquals(200, $invoice->neto, 'bad-neto');
         $this->assertEquals(200, $invoice->netosindto, 'bad-netosindto');
         $this->assertEquals(42, $invoice->totaliva, 'bad-totaliva');
-        $this->assertEquals(0, $invoice->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(10.4, $invoice->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0, $invoice->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0, $invoice->totalsuplidos, 'bad-totalsuplidos');
-        $this->assertEquals(242, $invoice->total, 'bad-total');
+        $this->assertEquals(252.4, $invoice->total, 'bad-total');
 
         // comprobamos el asiento
         $entry = $invoice->getAccountingEntry();
