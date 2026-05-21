@@ -36,6 +36,7 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\Page;
+use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Role;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 use FacturaScripts\Dinamic\Model\Serie;
@@ -783,6 +784,13 @@ class ApiSetupWizard extends ApiController
 
         if (empty($this->empresa->email) && empty($this->user->email) && empty($body['email'])) {
             $errors[] = Tools::trans('field-can-not-be-null', ['%fieldName%' => 'email']);
+        }
+
+        if (!empty($body['codpais'])) {
+            $pais = new Pais();
+            if (!$pais->load($body['codpais'])) {
+                $errors[] = Tools::trans('field-can-not-be-null', ['%fieldName%' => 'codpais']);
+            }
         }
 
         return $errors;
