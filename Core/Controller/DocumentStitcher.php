@@ -229,6 +229,13 @@ class DocumentStitcher extends Controller
 
     protected function closeDocuments(int $idestado): void
     {
+        foreach ($this->documents as $doc) {
+            if (false === $doc->editable) {
+                Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
+                return;
+            }
+        }
+
         $this->db()->beginTransaction();
 
         foreach ($this->documents as $doc) {
@@ -252,6 +259,13 @@ class DocumentStitcher extends Controller
      */
     protected function generateNewDocument(int $idestado): void
     {
+        foreach ($this->documents as $doc) {
+            if (false === $doc->editable) {
+                Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
+                return;
+            }
+        }
+
         $this->db()->beginTransaction();
 
         // agrupamos los datos necesarios
