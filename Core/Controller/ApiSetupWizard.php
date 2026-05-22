@@ -789,17 +789,17 @@ class ApiSetupWizard extends ApiController
         $errors = [];
 
         if (empty($body['empresa'])) {
-            $errors[] = Tools::trans('field-can-not-be-null', ['%fieldName%' => 'empresa']);
+            $errors[] = Tools::trans('field-can-not-be-null', ['%fieldName%' => 'empresa', '%tableName%' => 'empresas']);
         }
 
         if (empty($this->empresa->email) && empty($this->user->email) && empty($body['email'])) {
-            $errors[] = Tools::trans('field-can-not-be-null', ['%fieldName%' => 'email']);
+            $errors[] = Tools::trans('field-can-not-be-null', ['%fieldName%' => 'email', '%tableName%' => 'empresas']);
         }
 
         if (!empty($body['codpais'])) {
             $pais = new Pais();
             if (!$pais->load($body['codpais'])) {
-                $errors[] = Tools::trans('field-can-not-be-null', ['%fieldName%' => 'codpais']);
+                $errors[] = Tools::trans('field-can-not-be-null', ['%fieldName%' => 'codpais', '%tableName%' => 'paises']);
             }
         }
 
