@@ -191,6 +191,17 @@ class ApiSetupWizard extends ApiController
         }
         $this->user = $users[0];
 
+        // modelos del step3: todos los modelos dinámicos que aún no tengan tabla
+        $modelNames = [];
+        foreach (Tools::folderScan(Tools::folder('Dinamic', 'Model')) as $fileName) {
+            if ('.php' === substr($fileName, -4)) {
+                $modelNames[] = substr($fileName, 0, -4);
+            }
+        }
+        if (false === $this->db()->tableExists('fs_users')) {
+            $this->initModels($modelNames);
+        }
+
         $this->db()->beginTransaction();
         $error = $this->saveStep3();
         if (!empty($error)) {
@@ -239,6 +250,13 @@ class ApiSetupWizard extends ApiController
                 return;
             }
 
+            // crear tablas antes de abrir la transacción
+            $codpais = $body['codpais'] ?? $this->empresa->codpais;
+            $this->preSetAppSettings($codpais);
+            // modelos del step1: configuración base, formas de pago, impuestos y almacén
+            $this->initModels(['Almacen', 'AttachedFile', 'Diario', 'EstadoDocumento',
+                'FormaPago', 'Impuesto', 'Retencion', 'Serie', 'Provincia']);
+
             $this->db()->beginTransaction();
             $error = $this->saveStep1($body);
             if (!empty($error)) {
@@ -253,6 +271,9 @@ class ApiSetupWizard extends ApiController
         }
 
         if (!$this->isStepCompleted('step2')) {
+            // modelos del step2: plan contable, secuencias y cuenta bancaria
+            $this->initModels(['Cuenta', 'CuentaBanco', 'Ejercicio', 'SecuenciaDocumento']);
+
             $this->db()->beginTransaction();
             $error = $this->saveStep2($body);
             if (!empty($error)) {
@@ -301,10 +322,6 @@ class ApiSetupWizard extends ApiController
     private function saveStep1(array $data): string
     {
         $codpais = $data['codpais'] ?? $this->empresa->codpais;
-        $this->preSetAppSettings($codpais);
-
-        $this->initModels(['AttachedFile', 'Diario', 'EstadoDocumento', 'FormaPago',
-            'Impuesto', 'Retencion', 'Serie', 'Provincia']);
 
         $error = $this->saveAddress($codpais, $data);
         if (!empty($error)) {
@@ -380,17 +397,6 @@ class ApiSetupWizard extends ApiController
      */
     private function saveStep3(): string
     {
-        $modelNames = [];
-        $modelsFolder = Tools::folder('Dinamic', 'Model');
-        foreach (Tools::folderScan($modelsFolder) as $fileName) {
-            if ('.php' === substr($fileName, -4)) {
-                $modelNames[] = substr($fileName, 0, -4);
-            }
-        }
-        if (false === $this->db()->tableExists('fs_users')) {
-            $this->initModels($modelNames);
-        }
-
         Plugins::deploy(true, true);
 
         $role = new Role();
