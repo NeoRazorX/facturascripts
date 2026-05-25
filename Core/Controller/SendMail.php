@@ -176,6 +176,26 @@ class SendMail extends Controller
         return NewMail::splitEmails($this->request->input($field, ''));
     }
 
+    protected function getShortCodes($model): array
+    {
+        $shortCodes = [
+            '{code}' => $model->codigo,
+            '{name}' => $model->hasColumn('nombrecliente') ? $model->nombrecliente : $model->nombre,
+            '{date}' => $model->fecha,
+            '{total}' => $model->total,
+            '{number2}' => $model->hasColumn('numero2') ? $model->numero2 : $model->numproveedor,
+            '{contact_name}' => '',
+            '{contact_surname}' => '',
+        ];
+
+        if ($model->hasColumn('idcontactofact') && $contacto = Contacto::find($model->idcontactofact)) {
+            $shortCodes['{contact_name}'] = $contacto->nombre;
+            $shortCodes['{contact_surname}'] = $contacto->apellidos;
+        }
+
+        return $shortCodes;
+    }
+
     protected function loadDataDefault($model): void
     {
         // si el email ya tiene asunto o cuerpo, no hacemos nada
@@ -194,24 +214,9 @@ class SendMail extends Controller
         ];
         if ($notificationModel->loadWhere($where)) {
             // hemos encontrado una notificación, usamos su asunto y cuerpo
-            $shortCodes = ['{code}', '{name}', '{date}', '{total}', '{number2}', '{contact_name}', '{contact_surname}'];
-            $shortValues = [$model->codigo, '', $model->fecha, $model->total, '', '', ''];
-
-            $shortValues[1] = $model->hasColumn('nombrecliente')
-                ? $model->nombrecliente
-                : $model->nombre;
-
-            $shortValues[4] = $model->hasColumn('numero2')
-                ? $model->numero2
-                : $model->numproveedor;
-
-            if ($model->hasColumn('idcontactofact') && $contacto = Contacto::find($model->idcontactofact)) {
-                $shortValues[5] = $contacto->nombre;
-                $shortValues[6] = $contacto->apellidos;
-            }
-
-            $subject = str_replace($shortCodes, $shortValues, $notificationModel->subject);
-            $body = str_replace($shortCodes, $shortValues, $notificationModel->body);
+            $shortCodes = $this->getShortCodes($model);
+            $subject = str_replace(array_keys($shortCodes), array_values($shortCodes), $notificationModel->subject);
+            $body = str_replace(array_keys($shortCodes), array_values($shortCodes), $notificationModel->body);
         } else {
             // si no hay notificación, usamos los datos de las traducciones
             switch ($model->modelClassName()) {
@@ -323,9 +328,22 @@ class SendMail extends Controller
             return false;
         }
 
+        $emailSubject = $this->request->input('email-subject', '');
+        $emailBody = $this->request->input('email-body', '');
+
+        $className = self::MODEL_NAMESPACE . $this->request->queryOrInput('modelClassName', '');
+        if (class_exists($className)) {
+            $model = new $className();
+            if ($model->load($this->request->queryOrInput('modelCode', ''))) {
+                $shortCodes = $this->getShortCodes($model);
+                $emailSubject = str_replace(array_keys($shortCodes), array_values($shortCodes), $emailSubject);
+                $emailBody = str_replace(array_keys($shortCodes), array_values($shortCodes), $emailBody);
+            }
+        }
+
         $this->newMail->setMailbox($emailFrom)
-            ->subject($this->request->input('email-subject', ''))
-            ->body($this->request->input('email-body', ''));
+            ->subject($emailSubject)
+            ->body($emailBody);
 
         // solo añadimos los emails que no estén ya en la lista
         $emailAddedTo = $this->newMail->getToAddresses();
