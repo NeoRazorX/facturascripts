@@ -190,6 +190,11 @@ abstract class PurchaseDocument extends TransformerDocument
         return 'codproveedor';
     }
 
+    public static function dontCopyFields(): array
+    {
+        return array_merge(parent::dontCopyFields(), ['numproveedor']);
+    }
+
     /**
      * Devuelve True si no hay errores en los valores de las propiedades.
      *
