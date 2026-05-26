@@ -206,9 +206,11 @@ class CodeModel
                     return new static();
                 }
                 if ($model->loadWhereEq($fieldCode, $code)) {
+                    $codeAlias = self::stripTablePrefix($fieldCode);
+                    $descAlias = self::stripTablePrefix($fieldDescription);
                     return new static([
-                        'code' => $model->{$fieldCode},
-                        'description' => empty($fieldDescription) ? (string)$model->{$fieldCode} : (string)$model->{$fieldDescription},
+                        'code' => $model->{$codeAlias},
+                        'description' => empty($descAlias) ? (string)$model->{$codeAlias} : (string)$model->{$descAlias},
                     ]);
                 }
                 return new static();
@@ -322,13 +324,21 @@ class CodeModel
     {
         $results = [];
         $class = get_class($model);
+        $codeAlias = self::stripTablePrefix($fieldCode);
+        $descAlias = self::stripTablePrefix($fieldDescription);
         foreach ($class::all($where, [], 0, self::getLimit()) as $row) {
             $results[] = new static([
-                'code' => $row->{$fieldCode},
-                'description' => empty($fieldDescription) ? (string)$row->{$fieldCode} : (string)$row->{$fieldDescription},
+                'code' => $row->{$codeAlias},
+                'description' => empty($descAlias) ? (string)$row->{$codeAlias} : (string)$row->{$descAlias},
             ]);
         }
         return $results;
+    }
+
+    private static function stripTablePrefix(string $field): string
+    {
+        $dot = strrpos($field, '.');
+        return $dot === false ? $field : substr($field, $dot + 1);
     }
 
     private static function codeModelSearch(mixed $model, string $query, string $fieldCode, array $where): array
