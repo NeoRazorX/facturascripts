@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Lib;
 
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Calculator;
@@ -54,6 +55,11 @@ final class InvoiceToAccountingTest extends TestCase
      */
     public function testSalesInvoiceWithTextLineHasNoZeroAccountingEntries(): void
     {
+        // tiene que ser un test con contabilidad española para probar estos pasos
+        if (Paises::default()->codpais !== 'ESP') {
+            $this->markTestSkipped('Test only applicable to the Spanish accounting plan.');
+        }
+
         // Creamos el cliente y la factura para obtener el codejercicio
         $customer = $this->getRandomCustomer();
         $this->assertTrue($customer->save(), 'cant-save-customer');
