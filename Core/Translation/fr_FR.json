@@ -420,7 +420,7 @@
     "customer-invoice": "Facture client",
     "customer-invoice-deleted-successfully": "Facture de vente %docCode supprimé avec succès.",
     "customer-invoices": "Factures client",
-    "customer-line-error": "Erreur dans la ligne du client",
+    "customer-line-error": "Erreur sur la ligne client",
     "customer-not-found": "Client non trouvé",
     "customer-order": "Commande du client",
     "customer-orders": "Commandes client",

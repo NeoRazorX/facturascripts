@@ -1365,7 +1365,7 @@
     "php-extensions": "Rozszerzenia PHP",
     "php-extensions-required": "Wymagane rozszerzenia PHP",
     "php-mysql-not-found": "No se ha encontrado la extensión PHP para MySQL",
-    "php-postgresql-not-found": "No se ha encontrado la extensión PHP para PostgreSQL",
+    "php-postgresql-not-found": "Nie znaleziono rozszerzenia PHP dla PostgreSQL",
     "php-support-end": "Wsparcie dla PHP %current% wkrótce się kończy. Proszę zaktualizować PHP do wersji %min% lub wyższej.",
     "php-version-too-new": "Zaleca się użycie wersji PHP pomiędzy %min_version% a %max_version%. Obecnie masz %version%",
     "physical-stock": "Alyz fizyczny",
