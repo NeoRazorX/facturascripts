@@ -192,30 +192,31 @@ final class ClienteTest extends TestCase
         $cliente->cifnif = '';
         $this->assertTrue($cliente->save());
 
-        $check1 = $cliente->checkVies();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
-        }
-        $this->assertFalse($check1);
+        // simulamos respuesta de VIES en lugar de pegarle al servicio real:
+        // los tests del modelo sólo deben verificar que checkVies() mapea
+        // RESULT_VALID -> true y cualquier otro resultado -> false.
+        try {
+            // sin cifnif (o cualquier error de VIES) -> false
+            Vies::simulateViesResponse(Vies::RESULT_ERROR);
+            $this->assertFalse($cliente->checkVies());
 
-        // asignamos dirección de Portugal
-        $address = $cliente->getDefaultAddress();
-        $address->codpais = 'PRT';
-        $this->assertTrue($address->save());
+            // asignamos dirección de Portugal
+            $address = $cliente->getDefaultAddress();
+            $address->codpais = 'PRT';
+            $this->assertTrue($address->save());
 
-        // asignamos un cifnif incorrecto
-        $cliente->cifnif = '12345678A';
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
-        }
-        $this->assertFalse($cliente->checkVies());
+            // cifnif inválido -> false
+            $cliente->cifnif = '12345678A';
+            Vies::simulateViesResponse(Vies::RESULT_INVALID);
+            $this->assertFalse($cliente->checkVies());
 
-        // asignamos un cifnif correcto
-        $cliente->cifnif = '503297887';
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+            // cifnif válido -> true
+            $cliente->cifnif = '503297887';
+            Vies::simulateViesResponse(Vies::RESULT_VALID);
+            $this->assertTrue($cliente->checkVies());
+        } finally {
+            Vies::simulateViesResponse(null);
         }
-        $this->assertTrue($cliente->checkVies());
 
         // eliminamos
         $this->assertTrue($address->delete());

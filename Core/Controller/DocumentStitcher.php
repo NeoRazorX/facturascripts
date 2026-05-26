@@ -21,17 +21,20 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\CodeModel;
-use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Class DocumentStitcher
+ * Controlador que permite agrupar o partir documentos de venta o compra
+ * (presupuestos, pedidos y albaranes) para generar un nuevo documento
+ * a partir de las líneas seleccionadas, o cerrar los documentos cambiando
+ * su estado. No admite facturas.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
@@ -55,12 +58,8 @@ class DocumentStitcher extends Controller
     public function getAvailableStatus(): array
     {
         $status = [];
-        $where = [
-            new DataBaseWhere('activo', true),
-            new DataBaseWhere('tipodoc', $this->modelName)
-        ];
-        foreach (EstadoDocumento::all($where) as $docState) {
-            if ($docState->generadoc) {
+        foreach (EstadosDocumentos::byTipoDoc($this->modelName) as $docState) {
+            if ($docState->activo && $docState->generadoc) {
                 $status[] = $docState;
             }
         }
@@ -230,19 +229,26 @@ class DocumentStitcher extends Controller
 
     protected function closeDocuments(int $idestado): void
     {
-        $this->dataBase->beginTransaction();
+        foreach ($this->documents as $doc) {
+            if (false === $doc->editable) {
+                Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
+                return;
+            }
+        }
+
+        $this->db()->beginTransaction();
 
         foreach ($this->documents as $doc) {
             $doc->setDocumentGeneration(false);
             $doc->idestado = $idestado;
             if (false === $doc->save()) {
-                $this->dataBase->rollback();
+                $this->db()->rollback();
                 Tools::log()->error('record-save-error');
                 return;
             }
         }
 
-        $this->dataBase->commit();
+        $this->db()->commit();
         Tools::log()->notice('record-updated-correctly');
     }
 
@@ -253,7 +259,14 @@ class DocumentStitcher extends Controller
      */
     protected function generateNewDocument(int $idestado): void
     {
-        $this->dataBase->beginTransaction();
+        foreach ($this->documents as $doc) {
+            if (false === $doc->editable) {
+                Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
+                return;
+            }
+        }
+
+        $this->db()->beginTransaction();
 
         // agrupamos los datos necesarios
         $newLines = [];
@@ -285,19 +298,19 @@ class DocumentStitcher extends Controller
 
             // desglosamos las cantidades y líneas
             if (false === $this->breakDownLines($doc, $lines, $newLines, $quantities, $idestado)) {
-                $this->dataBase->rollback();
+                $this->db()->rollback();
                 return;
             }
         }
 
         if (null === $prototype || empty($newLines)) {
-            $this->dataBase->rollback();
+            $this->db()->rollback();
             return;
         }
 
         // permitimos a los plugins actuar sobre el prototipo antes de guardar
         if (false === $this->pipe('checkPrototype', $prototype, $newLines)) {
-            $this->dataBase->rollback();
+            $this->db()->rollback();
             return;
         }
 
@@ -305,17 +318,17 @@ class DocumentStitcher extends Controller
         $generator = new BusinessDocumentGenerator();
         $newClass = $this->getGenerateClass($idestado);
         if (empty($newClass)) {
-            $this->dataBase->rollback();
+            $this->db()->rollback();
             return;
         }
 
         if (false === $generator->generate($prototype, $newClass, $newLines, $quantities, $properties)) {
-            $this->dataBase->rollback();
+            $this->db()->rollback();
             Tools::log()->error('record-save-error');
             return;
         }
 
-        $this->dataBase->commit();
+        $this->db()->commit();
 
         // redirigimos al nuevo documento
         foreach ($generator->getLastDocs() as $doc) {
@@ -370,9 +383,7 @@ class DocumentStitcher extends Controller
      */
     protected function getGenerateClass(int $idestado): ?string
     {
-        $estado = new EstadoDocumento();
-        $estado->load($idestado);
-        return $estado->generadoc;
+        return EstadosDocumentos::get($idestado)->generadoc;
     }
 
     /**
@@ -423,14 +434,14 @@ class DocumentStitcher extends Controller
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         $model = new $modelClass();
         $where = [
-            new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen),
-            new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
-            new DataBaseWhere('codserie', $this->documents[0]->codserie),
-            new DataBaseWhere('dtopor1', $this->documents[0]->dtopor1),
-            new DataBaseWhere('dtopor2', $this->documents[0]->dtopor2),
-            new DataBaseWhere('editable', true),
-            new DataBaseWhere('idempresa', $this->documents[0]->idempresa),
-            new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
+            Where::eq('codalmacen', $this->documents[0]->codalmacen),
+            Where::eq('coddivisa', $this->documents[0]->coddivisa),
+            Where::eq('codserie', $this->documents[0]->codserie),
+            Where::eq('dtopor1', $this->documents[0]->dtopor1),
+            Where::eq('dtopor2', $this->documents[0]->dtopor2),
+            Where::eq('editable', true),
+            Where::eq('idempresa', $this->documents[0]->idempresa),
+            Where::eq($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
         ];
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
         foreach ($model->all($where, $orderBy, 0, 0) as $doc) {

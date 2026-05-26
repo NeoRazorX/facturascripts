@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -238,8 +238,8 @@ abstract class AccountingClosingBase
     private function deleteAccountEntry($exercise, $type): bool
     {
         $where = [
-            new DataBaseWhere('codejercicio', $exercise->codejercicio),
-            new DataBaseWhere('operacion', $type),
+            Where::eq('codejercicio', $exercise->codejercicio),
+            Where::eq('operacion', $type),
         ];
 
         foreach (Asiento::all($where) as $row) {

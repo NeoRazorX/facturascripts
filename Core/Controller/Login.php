@@ -30,11 +30,23 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
 
+/**
+ * Controlador de la pantalla de login. Es el unico controlador que se ejecuta sin sesion previa,
+ * por lo que concentra todos los puntos de entrada anonimos: alta de sesion (login), validacion
+ * del segundo factor (2FA), cierre de sesion (logout) y cambio de contrasena por emergencia
+ * usando la contrasena de base de datos.
+ *
+ * Incluye la proteccion contra fuerza bruta basada en listas por IP y por usuario en cache,
+ * con un umbral de MAX_INCIDENT_COUNT incidentes en una ventana de INCIDENT_EXPIRATION_TIME
+ * segundos. El flujo de 2FA exige un nonce escrito por loginAction tras validar la contrasena,
+ * para evitar que el endpoint de validacion del codigo se use como puerta trasera sin password.
+ */
 class Login implements ControllerInterface
 {
     const INCIDENT_EXPIRATION_TIME = 600;
     const IP_LIST = 'login-ip-list';
     const MAX_INCIDENT_COUNT = 6;
+    const TWO_FACTOR_PENDING_TTL = 300;
     const USER_LIST = 'login-user-list';
 
     // Hash bcrypt fijo para igualar tiempos cuando el usuario no existe.
@@ -104,35 +116,35 @@ class Login implements ControllerInterface
 
     public function saveIncident(string $ip, string $user = '', ?int $time = null): void
     {
-        // add the current IP to the list
+        // anadimos la IP actual a la lista
         $ipList = $this->getIpList();
         $ipList[] = [
             'ip' => $ip,
             'time' => ($time ?? time())
         ];
 
-        // save the list in cache
+        // guardamos la lista en cache
         Cache::set(self::IP_LIST, $ipList);
 
-        // if the user is not empty, save the incident
+        // si el usuario esta vacio (incidente solo por IP), no tocamos la lista de usuarios
         if (empty($user)) {
             return;
         }
 
-        // add the current user to the list
+        // anadimos el usuario actual a la lista
         $userList = $this->getUserList();
         $userList[] = [
             'user' => $user,
             'time' => ($time ?? time())
         ];
 
-        // save the list in cache
+        // guardamos la lista en cache
         Cache::set(self::USER_LIST, $userList);
     }
 
     public function userHasManyIncidents(string $ip, string $username = ''): bool
     {
-        // get ip count on the list
+        // contamos los incidentes para la IP
         $ipCount = 0;
         foreach ($this->getIpList() as $item) {
             if ($item['ip'] === $ip) {
@@ -143,7 +155,7 @@ class Login implements ControllerInterface
             return true;
         }
 
-        // get user count on the list
+        // contamos los incidentes para el usuario
         $userCount = 0;
         foreach ($this->getUserList() as $item) {
             if ($item['user'] === $username) {
@@ -243,7 +255,7 @@ class Login implements ControllerInterface
             return [];
         }
 
-        // remove expired items
+        // descartamos los incidentes ya expirados
         $newList = [];
         foreach ($ipList as $item) {
             if (time() - $item['time'] < self::INCIDENT_EXPIRATION_TIME) {
@@ -260,7 +272,7 @@ class Login implements ControllerInterface
             return [];
         }
 
-        // remove expired items
+        // descartamos los incidentes ya expirados
         $newList = [];
         foreach ($userList as $item) {
             if (time() - $item['time'] < self::INCIDENT_EXPIRATION_TIME) {
@@ -283,7 +295,7 @@ class Login implements ControllerInterface
             return;
         }
 
-        // check if the user is in the incident list
+        // si la IP o el usuario acumulan demasiados incidentes recientes, bloqueamos
         if ($this->userHasManyIncidents(Session::getClientIp(), $userName)) {
             Tools::log()->warning('ip-banned');
             return;
@@ -306,6 +318,7 @@ class Login implements ControllerInterface
         }
 
         if ($user->two_factor_enabled) {
+            Cache::set($this->twoFactorPendingKey(Session::getClientIp(), $user->nick), time());
             $this->two_factor_user = $user->nick;
             $this->template = 'Login/TwoFactor.html.twig';
             return;
@@ -314,22 +327,52 @@ class Login implements ControllerInterface
         $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
+    protected function twoFactorPendingKey(string $ip, string $userName): string
+    {
+        return 'login-2fa-pending-' . sha1($ip . '|' . $userName);
+    }
+
     protected function twoFactorValidationAction(Request $request): void
     {
-        $userName = $request->input('fsNick');
-        $user = new User();
-        if (!$user->load($userName) || !$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))) {
-            Tools::log()->warning('two-factor-code-invalid');
-            $this->saveIncident(Session::getClientIp(), $userName);
+        if (false === $this->validateFormToken($request)) {
             return;
         }
 
-        $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
+        $userName = $request->input('fsNick');
+        $ip = Session::getClientIp();
+
+        // rate-limit antes de hacer cualquier trabajo
+        if ($this->userHasManyIncidents($ip, $userName)) {
+            Tools::log()->warning('ip-banned');
+            return;
+        }
+
+        // exigimos que loginAction se haya completado con éxito recientemente
+        $pendingKey = $this->twoFactorPendingKey($ip, $userName);
+        $pendingAt = Cache::get($pendingKey);
+        if (!is_int($pendingAt) || time() - $pendingAt > self::TWO_FACTOR_PENDING_TTL) {
+            Tools::log()->warning('login-password-fail');
+            $this->saveIncident($ip, $userName);
+            return;
+        }
+
+        $user = new User();
+        if (!$user->load($userName) || false === $user->enabled
+            || !$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))) {
+            Tools::log()->warning('two-factor-code-invalid');
+            $this->saveIncident($ip, $userName);
+            return;
+        }
+
+        // consumimos el nonce: un único intento exitoso por password-step
+        Cache::delete($pendingKey);
+
+        $this->updateUserAndRedirect($user, $ip, $request);
     }
 
     protected function updateUserAndRedirect(User $user, string $ip, Request $request): void
     {
-        // update user data
+        // actualizamos los datos del usuario y abrimos sesion
         Session::set('user', $user);
         $browser = $request->userAgent();
         $user->newLogkey($ip, $browser);
@@ -338,14 +381,11 @@ class Login implements ControllerInterface
             return;
         }
 
-        // save cookies
+        // guardamos las cookies de sesion
         $this->saveCookies($user, $request);
 
-        // redirect to the user's main page
-        if (empty($user->homepage)) {
-            $user->homepage = Tools::config('route') . '/';
-        }
-        header('Location: ' . $user->homepage);
+        // redirigimos a la pagina de inicio del usuario; homepageUrl() devuelve un nombre de controlador seguro
+        header('Location: ' . $user->homepageUrl());
     }
 
     protected function logoutAction(Request $request): void
@@ -354,13 +394,36 @@ class Login implements ControllerInterface
             return;
         }
 
-        // remove cookies
-        $path = Tools::config('route', '/');
-        setcookie('fsNick', '', time() - 3600, $path);
-        setcookie('fsLogkey', '', time() - 3600, $path);
-        setcookie('fsLang', '', time() - 3600, $path);
+        // invalidamos la logkey en el servidor para que la cookie robada no siga siendo válida
+        $cookieNick = $request->cookie('fsNick', '');
+        $cookieLogkey = $request->cookie('fsLogkey', '');
+        if ($cookieNick && $cookieLogkey) {
+            $user = new User();
+            if ($user->load($cookieNick) && $user->verifyLogkey($cookieLogkey)) {
+                $user->newLogkey(Session::getClientIp(), $request->userAgent());
+                $user->save();
+            }
+        }
 
-        // restart token
+        // limpiamos la sesión del lado servidor
+        Session::set('user', null);
+
+        // borramos las cookies con los mismos atributos que en saveCookies para que el navegador acepte el borrado
+        $path = Tools::config('route', '/');
+        $secure = $request->isSecure();
+        $options = [
+            'expires' => time() - 3600,
+            'path' => $path,
+            'domain' => '',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ];
+        setcookie('fsNick', '', $options);
+        setcookie('fsLogkey', '', $options);
+        setcookie('fsLang', '', $options);
+
+        // regeneramos la semilla del token anti-CSRF
         $multiRequestProtection = new MultiRequestProtection();
         $multiRequestProtection->clearSeed();
 
@@ -369,12 +432,17 @@ class Login implements ControllerInterface
 
     protected function saveCookies(User $user, Request $request): void
     {
-        $expiration = time() + (int)Tools::config('cookies_expire', 31536000);
-        $path = Tools::config('route', '/');
-        $secure = $request->isSecure();
+        $options = [
+            'expires' => time() + (int)Tools::config('cookies_expire', 31536000),
+            'path' => Tools::config('route', '/'),
+            'domain' => '',
+            'secure' => $request->isSecure(),
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ];
 
-        setcookie('fsNick', $user->nick, $expiration, $path, '', $secure, true);
-        setcookie('fsLogkey', $user->logkey, $expiration, $path, '', $secure, true);
-        setcookie('fsLang', $user->langcode, $expiration, $path, '', $secure, true);
+        setcookie('fsNick', $user->nick, $options);
+        setcookie('fsLogkey', $user->logkey, $options);
+        setcookie('fsLang', $user->langcode, $options);
     }
 }

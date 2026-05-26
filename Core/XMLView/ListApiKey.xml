@@ -47,6 +47,9 @@
         <column name="last-activity" display="right" order="170">
             <widget type="datetime" fieldname="lastactivity"/>
         </column>
+        <column name="last-ip" display="none" order="180">
+            <widget type="text" fieldname="lastip"/>
+        </column>
     </columns>
     <rows>
         <row type="status">

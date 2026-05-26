@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
@@ -45,11 +46,6 @@ abstract class TransformerDocument extends BusinessDocument
      * @var bool
      */
     public $editable;
-
-    /**
-     * @var EstadoDocumento[]
-     */
-    private static $estados;
 
     /**
      * Estado del documento, del modelo EstadoDocumento.
@@ -228,18 +224,7 @@ abstract class TransformerDocument extends BusinessDocument
      */
     public function getAvailableStatus(): array
     {
-        if (null === self::$estados) {
-            self::$estados = EstadoDocumento::all([], ['idestado' => 'ASC'], 0, 0);
-        }
-
-        $available = [];
-        foreach (self::$estados as $status) {
-            if ($status->tipodoc === $this->modelClassName()) {
-                $available[] = $status;
-            }
-        }
-
-        return $available;
+        return EstadosDocumentos::byTipoDoc($this->modelClassName());
     }
 
     /**
@@ -249,9 +234,7 @@ abstract class TransformerDocument extends BusinessDocument
      */
     public function getStatus(): EstadoDocumento
     {
-        $status = new EstadoDocumento();
-        $status->load($this->idestado);
-        return $status;
+        return EstadosDocumentos::get($this->idestado);
     }
 
     /**

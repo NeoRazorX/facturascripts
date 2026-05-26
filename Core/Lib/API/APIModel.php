@@ -228,8 +228,11 @@ class APIModel extends APIResourceClass
      *
      * @return Where[]
      */
-    private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
+    private function getWhereValues($filter, $operation, $defaultOperation = 'AND', array &$badFields = []): array
     {
+        $allowedFields = array_keys($this->model->getModelFields());
+        $hidden = $this->model->getApiFieldsToHide();
+
         $where = [];
         foreach ($filter as $key => $value) {
             $field = $key;
@@ -293,7 +296,14 @@ class APIModel extends APIResourceClass
 
             // solo aceptamos identificadores simples (columna o tabla.columna)
             if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
-                Tools::log('api')->warning('api: invalid filter field name: ' . $field);
+                $badFields[] = $field;
+                continue;
+            }
+
+            // la columna debe existir en el modelo y no estar oculta
+            $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
+            if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
+                $badFields[] = $field;
                 continue;
             }
 
@@ -314,7 +324,13 @@ class APIModel extends APIResourceClass
         // obtenemos los registros
         $data = [];
         $hidden = $this->model->getApiFieldsToHide();
-        $where = $this->getWhereValues($filter, $operation);
+        $badFields = [];
+        $order = $this->filterOrder($order, $hidden, $badFields);
+        $where = $this->getWhereValues($filter, $operation, 'AND', $badFields);
+        if (!empty($badFields)) {
+            $this->setError('api: fields not allowed: ' . implode(', ', array_unique($badFields)));
+            return false;
+        }
         foreach ($this->model->all($where, $order, $offset, $limit) as $item) {
             $data[] = $this->filterHidden($item->toArray(true), $hidden);
         }
@@ -367,6 +383,36 @@ class APIModel extends APIResourceClass
 
         $this->setError($message, $this->filterHidden($this->model->toArray(true), $hidden));
         return false;
+    }
+
+    private function filterOrder(array $order, array $hidden, array &$badFields = []): array
+    {
+        $allowedFields = array_keys($this->model->getModelFields());
+        $result = [];
+        foreach ($order as $key => $value) {
+            // admitimos prefijos integer:, lower:, upper:
+            $field = $key;
+            foreach (['integer:', 'lower:', 'upper:'] as $prefix) {
+                if (str_starts_with($field, $prefix)) {
+                    $field = substr($field, strlen($prefix));
+                    break;
+                }
+            }
+
+            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                $badFields[] = $key;
+                continue;
+            }
+
+            $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
+            if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
+                $badFields[] = $key;
+                continue;
+            }
+
+            $result[$key] = $value;
+        }
+        return $result;
     }
 
     private function filterHidden(array $data, array $hidden): array

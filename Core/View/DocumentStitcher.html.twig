@@ -263,7 +263,12 @@
             });
         }
 
+        let formDocStitcherSubmitted = false;
         function sendFormData(status) {
+            if (formDocStitcherSubmitted) {
+                return;
+            }
+            formDocStitcherSubmitted = true;
             animateSpinner('add');
             document.formDocStitcher.status.value = status;
             document.formDocStitcher.submit();

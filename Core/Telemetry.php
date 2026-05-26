@@ -253,9 +253,9 @@ final class Telemetry
 
     private function save(): bool
     {
-        // restamos un jitter aleatorio (hasta 1 día) para desincronizar las
+        // sumamos un jitter aleatorio (hasta 1 día) para desincronizar las
         // peticiones entre instalaciones y evitar picos en los mismos días/horas
-        $this->last_update = time() - mt_rand(0, 86400);
+        $this->last_update = time() + mt_rand(0, 86400);
 
         Tools::settingsSet('default', 'telemetryinstall', $this->id_install);
         Tools::settingsSet('default', 'telemetrykey', $this->sign_key);

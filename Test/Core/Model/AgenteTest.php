@@ -115,27 +115,24 @@ final class AgenteTest extends TestCase
         $agent->codagente = 'Test';
         $agent->nombre = 'Test Agent';
 
-        $check1 = $agent->checkVies();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
-        }
-        $this->assertFalse($check1);
+        // simulamos respuesta de VIES en lugar de pegarle al servicio real.
+        try {
+            // sin cifnif (o error de VIES) -> false
+            Vies::simulateViesResponse(Vies::RESULT_ERROR);
+            $this->assertFalse($agent->checkVies());
 
-        // asignamos un nif incorrecto
-        $agent->cifnif = '12345678A';
-        $check2 = $agent->checkVies();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
-        }
-        $this->assertFalse($check2);
+            // nif inválido -> false
+            $agent->cifnif = '12345678A';
+            Vies::simulateViesResponse(Vies::RESULT_INVALID);
+            $this->assertFalse($agent->checkVies());
 
-        // asignamos un cif correcto
-        $agent->cifnif = 'B87533303';
-        $check3 = $agent->checkVies();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+            // cif válido -> true
+            $agent->cifnif = 'B87533303';
+            Vies::simulateViesResponse(Vies::RESULT_VALID);
+            $this->assertTrue($agent->checkVies());
+        } finally {
+            Vies::simulateViesResponse(null);
         }
-        $this->assertTrue($check3);
     }
 
     protected function tearDown(): void

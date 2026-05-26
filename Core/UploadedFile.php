@@ -40,7 +40,10 @@ namespace FacturaScripts\Core;
 final class UploadedFile
 {
     /** Extensiones bloqueadas para evitar la ejecución de código PHP servido desde uploads. */
-    private const BLOCKED_EXTENSIONS = ['phar', 'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'pht', 'phtml', 'phps'];
+    private const BLOCKED_EXTENSIONS = [
+        'htaccess', 'htm', 'html', 'phar', 'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'pht', 'phtm',
+        'phtml', 'phps', 'shtml'
+    ];
 
     /** Extensiones admitidas como imagen válida en `isValidImage()`. */
     private const IMAGE_EXTENSIONS = ['gif', 'jpeg', 'jpg', 'png', 'webp'];
@@ -132,10 +135,10 @@ final class UploadedFile
         return $this->extension();
     }
 
-    /** Nombre original del fichero tal como lo envió el cliente, o cadena vacía si no hay. */
+    /** Nombre original normalizado sin componentes de ruta, o cadena vacía si no hay. */
     public function getClientOriginalName(): string
     {
-        return $this->name ?? '';
+        return self::sanitizeFileName($this->name ?? '');
     }
 
     /**
@@ -148,7 +151,7 @@ final class UploadedFile
     public function getErrorMessage(): string
     {
         if ($this->hasBlockedExtension()) {
-            return 'Executable PHP-related files are not allowed.';
+            return 'Executable or unsafe files are not allowed.';
         }
 
         return match ($this->error) {
@@ -294,6 +297,11 @@ final class UploadedFile
             return false;
         }
 
+        $destinyName = self::sanitizeFileName($destinyName);
+        if ('' === $destinyName) {
+            return false;
+        }
+
         if (substr($destiny, -1) !== DIRECTORY_SEPARATOR) {
             $destiny .= DIRECTORY_SEPARATOR;
         }
@@ -315,6 +323,18 @@ final class UploadedFile
         if (!$this->isValid()) {
             return false;
         }
+
+        if (self::hasParentDirectorySegment($targetPath)) {
+            return false;
+        }
+
+        $targetDir = dirname($targetPath);
+        $targetName = self::sanitizeFileName($targetPath);
+        if ('' === $targetName) {
+            return false;
+        }
+
+        $targetPath = $targetDir . DIRECTORY_SEPARATOR . $targetName;
 
         return $this->test ?
             rename($this->tmp_name, $targetPath) :
@@ -360,6 +380,20 @@ final class UploadedFile
         }
 
         return $max;
+    }
+
+    private static function hasParentDirectorySegment(string $path): bool
+    {
+        return in_array('..', preg_split('/[\/\\\\]+/', $path), true);
+    }
+
+    private static function sanitizeFileName(string $fileName): string
+    {
+        $fileName = str_replace("\0", '', $fileName);
+        $fileName = str_replace('\\', '/', $fileName);
+        $fileName = basename($fileName);
+
+        return in_array($fileName, ['.', '..'], true) ? '' : $fileName;
     }
 
     /** Indica si la extensión del fichero está en la lista negra de extensiones ejecutables como PHP. */

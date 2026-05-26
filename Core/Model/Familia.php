@@ -236,7 +236,10 @@ class Familia extends ModelClass
         if ($this->codsubcuentacom) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentacom)];
             if (false === $subAccount->loadWhere($where)) {
-                Tools::log()->warning('purchases-subaccount-not-found');
+                Tools::log()->warning('family-purchases-subaccount-not-found', [
+                    '%family%' => $this->codfamilia,
+                    '%subaccount%' => $this->codsubcuentacom
+                ]);
                 return false;
             }
         }

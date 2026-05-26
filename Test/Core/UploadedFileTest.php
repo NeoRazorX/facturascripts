@@ -39,19 +39,8 @@ final class UploadedFileTest extends TestCase
 
     protected function tearDown(): void
     {
-        if (file_exists($this->tempFile)) {
-            unlink($this->tempFile);
-        }
-
-        $files = glob($this->tempDir . '/*');
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                unlink($file);
-            }
-        }
-
         if (is_dir($this->tempDir)) {
-            rmdir($this->tempDir);
+            $this->removeDirectory($this->tempDir);
         }
     }
 
@@ -143,6 +132,21 @@ final class UploadedFileTest extends TestCase
         $this->assertSame('', $file->getClientOriginalName());
     }
 
+    public function testGetClientOriginalNameSanitizesPathComponents(): void
+    {
+        $testCases = [
+            '../Dinamic/Assets/traversed.txt' => 'traversed.txt',
+            '..\\Dinamic\\Assets\\traversed.txt' => 'traversed.txt',
+            '/tmp/uploads/document.pdf' => 'document.pdf',
+            'C:\\temp\\uploads\\document.pdf' => 'document.pdf'
+        ];
+
+        foreach ($testCases as $originalName => $expectedName) {
+            $file = new UploadedFile(['name' => $originalName]);
+            $this->assertSame($expectedName, $file->getClientOriginalName());
+        }
+    }
+
     public function testGetErrorMessage(): void
     {
         $errorCases = [
@@ -172,7 +176,7 @@ final class UploadedFileTest extends TestCase
                 'test' => true
             ]);
 
-            $this->assertEquals('Executable PHP-related files are not allowed.', $file->getErrorMessage());
+            $this->assertEquals('Executable or unsafe files are not allowed.', $file->getErrorMessage());
         }
     }
 
@@ -305,7 +309,7 @@ final class UploadedFileTest extends TestCase
 
     public function testIsValidRejectsBlockedPhpExtensions(): void
     {
-        foreach (['shell.php', 'shell.phtml', 'shell.PHP8'] as $fileName) {
+        foreach (['shell.php', 'shell.phtml', 'shell.PHP8', '.htaccess', 'page.html', 'page.shtml'] as $fileName) {
             $file = new UploadedFile([
                 'name' => $fileName,
                 'error' => UPLOAD_ERR_OK,
@@ -423,6 +427,39 @@ final class UploadedFileTest extends TestCase
         $this->assertFalse($result);
     }
 
+    public function testMoveSanitizesDestinyName(): void
+    {
+        $myFilesDir = $this->tempDir . '/MyFiles';
+        $assetsDir = $this->tempDir . '/Dinamic/Assets';
+        mkdir($myFilesDir);
+        mkdir($this->tempDir . '/Dinamic');
+        mkdir($assetsDir);
+
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $result = $file->move($myFilesDir, '../Dinamic/Assets/traversed.txt');
+
+        $this->assertTrue($result);
+        $this->assertFileExists($myFilesDir . '/traversed.txt');
+        $this->assertFileDoesNotExist($assetsDir . '/traversed.txt');
+    }
+
+    public function testMoveRejectsEmptyDestinyName(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertFalse($file->move($this->tempDir, '../'));
+        $this->assertFileExists($this->tempFile);
+    }
+
     public function testMoveToWithValidFileInTestMode(): void
     {
         $file = new UploadedFile([
@@ -451,6 +488,22 @@ final class UploadedFileTest extends TestCase
         $result = $file->moveTo($targetPath);
 
         $this->assertFalse($result);
+        $this->assertFileDoesNotExist($targetPath);
+    }
+
+    public function testMoveToRejectsParentDirectorySegments(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $targetPath = $this->tempDir . '/../traversed.txt';
+        $result = $file->moveTo($targetPath);
+
+        $this->assertFalse($result);
+        $this->assertFileExists($this->tempFile);
         $this->assertFileDoesNotExist($targetPath);
     }
 
@@ -486,5 +539,19 @@ final class UploadedFileTest extends TestCase
 
         $result = $method->invoke(null, $input);
         $this->assertEquals($expected, $result);
+    }
+
+    private function removeDirectory(string $dir): void
+    {
+        foreach (scandir($dir) as $item) {
+            if ('.' === $item || '..' === $item) {
+                continue;
+            }
+
+            $path = $dir . DIRECTORY_SEPARATOR . $item;
+            is_dir($path) ? $this->removeDirectory($path) : unlink($path);
+        }
+
+        rmdir($dir);
     }
 }

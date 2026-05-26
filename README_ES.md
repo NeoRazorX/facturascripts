@@ -49,7 +49,7 @@ FacturaScripts es un **software ERP y de contabilidad de código abierto** integ
 ## 🚀 Inicio Rápido
 
 ### Requisitos del Sistema
-- PHP 8.0 o superior
+- PHP 8.1 o superior
 - MySQL/MariaDB o PostgreSQL
 - Composer
 - Node.js y npm
@@ -121,7 +121,7 @@ vendor/bin/phpstan analyse Core
 
 ### 🔒 Vulnerabilidades de Seguridad
 
-Si descubres una vulnerabilidad de seguridad, por favor envía un correo electrónico a Carlos García a [carlos@facturascripts.com](mailto:carlos@facturascripts.com)
+Por favor, reporta las vulnerabilidades de seguridad de forma **privada** usando el botón [Report a vulnerability](https://github.com/FacturaScripts/facturascripts/security/advisories/new) de GitHub. No abras issues públicas para asuntos de seguridad. Consulta [SECURITY.md](SECURITY.md) para más detalles.
 
 ## 🔗 Recursos Útiles
 
