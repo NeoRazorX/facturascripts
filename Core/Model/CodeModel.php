@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
@@ -99,6 +100,9 @@ class CodeModel
             if (method_exists($model, 'modelClassName')
                 && $model->modelClassName() === self::modelBaseName($tableName)) {
                 return array_merge($result, self::codeModelAll($model, $fieldCode));
+            }
+            if ($model instanceof JoinModel) {
+                return array_merge($result, self::joinModelAll($model, $fieldCode, $fieldDescription, $where));
             }
         }
 
@@ -197,6 +201,18 @@ class CodeModel
                 }
                 return new static();
             }
+            if ($model instanceof JoinModel) {
+                if (empty($fieldCode)) {
+                    return new static();
+                }
+                if ($model->loadWhereEq($fieldCode, $code)) {
+                    return new static([
+                        'code' => $model->{$fieldCode},
+                        'description' => empty($fieldDescription) ? (string)$model->{$fieldCode} : (string)$model->{$fieldDescription},
+                    ]);
+                }
+                return new static();
+            }
         }
 
         // validamos el nombre de tabla para evitar SQL injection
@@ -265,6 +281,11 @@ class CodeModel
                 && $model->modelClassName() === self::modelBaseName($tableName)) {
                 return self::codeModelSearch($model, $query, $fieldCode, $where);
             }
+            if ($model instanceof JoinModel) {
+                $fields = $fieldCode . '|' . $fieldDescription;
+                $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
+                return self::joinModelAll($model, $fieldCode, $fieldDescription, $where);
+            }
         }
 
         // validamos el nombre de tabla para evitar SQL injection
@@ -294,6 +315,19 @@ class CodeModel
             $results[] = new static($d);
         }
 
+        return $results;
+    }
+
+    private static function joinModelAll(JoinModel $model, string $fieldCode, string $fieldDescription, array $where): array
+    {
+        $results = [];
+        $class = get_class($model);
+        foreach ($class::all($where, [], 0, self::getLimit()) as $row) {
+            $results[] = new static([
+                'code' => $row->{$fieldCode},
+                'description' => empty($fieldDescription) ? (string)$row->{$fieldCode} : (string)$row->{$fieldDescription},
+            ]);
+        }
         return $results;
     }
 
