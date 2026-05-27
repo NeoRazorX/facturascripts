@@ -578,6 +578,7 @@
     "duplicate-customer-name-or-cif": "Existe un cliente con el mismo nombre o CIF\/NIF",
     "duplicate-record": "Registro duplicado",
     "duplicated-reference": "Referencia '%reference%' duplicada",
+    "duplicated-supplier-reference": "La referencia de proveedor '%refproveedor%' del proveedor '%codproveedor%' ya está vinculada a otro producto",
     "duplicated-request": "Petición duplicada",
     "duration": "Duración",
     "edit": "Editar",
