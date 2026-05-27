@@ -496,7 +496,11 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
-        if ($this->getModel()->editable && false === $this->saveDocAction(false)) {
+        $formData = json_decode($this->request->input('data'), true);
+        $currentModel = $this->getModel();
+        $formIdestado = isset($formData['idestado']) ? (int)$formData['idestado'] : $currentModel->idestado;
+
+        if ($currentModel->editable && $formIdestado === $currentModel->idestado && false === $this->saveDocAction(false)) {
             return false;
         }
 
