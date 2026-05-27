@@ -125,7 +125,7 @@ class ProductoImagen extends ModelClass
         // solo se generan miniaturas para gif, jpg, jpeg y png
         // (webp se ha excluido porque da problemas al embeberse en PDFs)
         $ext = pathinfo($file->getFullPath(), PATHINFO_EXTENSION);
-        if (false === in_array($ext, ['gif', 'jpg', 'jpeg', 'png'])) {
+        if (false === in_array($ext, ['gif', 'jpg', 'jpeg', 'png', 'webp'])) {
             return '';
         }
 
@@ -161,6 +161,10 @@ class ProductoImagen extends ModelClass
                 case 'jpg':
                 case 'jpeg':
                     imagejpeg($thumb, FS_FOLDER . $thumbFile, 90);
+                    break;
+
+                case 'webp':
+                    imagewebp($thumb, FS_FOLDER . $thumbFile, 90);
                     break;
 
                 case 'png':
