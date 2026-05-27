@@ -375,6 +375,14 @@ abstract class PurchasesController extends PanelController
 
         $model = $this->getModel();
         $formData = json_decode($this->request->input('data'), true);
+
+        if (isset($formData['idestado']) && (int)$formData['idestado'] !== $model->idestado) {
+            $this->db()->rollback();
+            Tools::log()->warning('document-state-changed');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
         PurchasesHeaderHTML::apply($model, $formData);
         PurchasesFooterHTML::apply($model, $formData);
 

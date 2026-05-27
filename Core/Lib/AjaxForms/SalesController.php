@@ -390,6 +390,14 @@ abstract class SalesController extends PanelController
 
         $model = $this->getModel();
         $formData = json_decode($this->request->input('data'), true);
+
+        if (isset($formData['idestado']) && (int)$formData['idestado'] !== $model->idestado) {
+            $this->db()->rollback();
+            Tools::log()->warning('document-state-changed');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
         SalesHeaderHTML::apply($model, $formData);
         SalesFooterHTML::apply($model, $formData);
 

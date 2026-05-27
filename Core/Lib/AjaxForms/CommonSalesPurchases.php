@@ -433,6 +433,7 @@ trait CommonSalesPurchases
             . '<div class="dropdown-menu dropdown-menu-right">' . implode('', $options) . '</div>'
             . '</div>'
             . '</div>'
+            . '<input type="hidden" name="idestado" value="' . $model->idestado . '">'
             . '</div>';
     }
 

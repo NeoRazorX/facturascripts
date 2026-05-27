@@ -480,6 +480,7 @@
     "default-retention": "Retención predeterminada",
     "default-role": "Grupo de usuario pred.",
     "default-status-non-editable": "El estado predeterminado no es editable",
+    "document-state-changed": "El estado del documento ha cambiado. Recarga la página antes de guardar.",
     "default-tax": "Impuesto predeterminado",
     "default-to-company-email": "Por defecto al email de la empresa",
     "default-to-config-email": "Por defecto al email de la configuración",
