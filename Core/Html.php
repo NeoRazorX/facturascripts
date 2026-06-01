@@ -309,6 +309,13 @@ final class Html
         });
     }
 
+    private static function sessionFunction(): TwigFunction
+    {
+        return new TwigFunction('session', function (string $key, $default = null) {
+            return Session::get($key) ?? $default;
+        });
+    }
+
     private static function settingsFunction(): TwigFunction
     {
         return new TwigFunction('settings', function (string $group, string $property, $default = null) {
@@ -379,6 +386,7 @@ final class Html
         self::$twig->addFunction(self::moneyFunction());
         self::$twig->addFunction(self::myFilesUrlFunction());
         self::$twig->addFunction(self::numberFunction());
+        self::$twig->addFunction(self::sessionFunction());
         self::$twig->addFunction(self::settingsFunction());
         self::$twig->addFunction(self::transFunction());
         self::$twig->addFunction(self::bytesFunction());
