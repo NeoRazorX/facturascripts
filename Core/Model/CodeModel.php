@@ -97,8 +97,10 @@ class CodeModel
             if (method_exists($model, 'codeModelAll')) {
                 return array_merge($result, $model->codeModelAll($fieldCode));
             }
-            if (method_exists($model, 'modelClassName')
-                && $model->modelClassName() === self::modelBaseName($tableName)) {
+            if (
+                method_exists($model, 'modelClassName')
+                && $model->modelClassName() === self::modelBaseName($tableName)
+            ) {
                 return array_merge($result, self::codeModelAll($model, $fieldCode));
             }
             if ($model instanceof JoinModel) {
@@ -193,8 +195,10 @@ class CodeModel
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
             $model = new $modelClass();
-            if (method_exists($model, 'modelClassName')
-                && $model->modelClassName() === self::modelBaseName($tableName)) {
+            if (
+                method_exists($model, 'modelClassName')
+                && $model->modelClassName() === self::modelBaseName($tableName)
+            ) {
                 $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
                 if ($model->loadWhereEq($field, $code)) {
                     return new static(['code' => $model->{$field}, 'description' => $model->primaryDescription()]);
@@ -279,8 +283,10 @@ class CodeModel
             if (method_exists($model, 'codeModelSearch')) {
                 return $model->codeModelSearch($query, $fieldCode, $where);
             }
-            if (method_exists($model, 'modelClassName')
-                && $model->modelClassName() === self::modelBaseName($tableName)) {
+            if (
+                method_exists($model, 'modelClassName')
+                && $model->modelClassName() === self::modelBaseName($tableName)
+            ) {
                 return self::codeModelSearch($model, $query, $fieldCode, $where);
             }
             if ($model instanceof JoinModel) {
