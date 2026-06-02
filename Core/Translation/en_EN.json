@@ -1223,6 +1223,7 @@
     "no-selected-item": "No selected item",
     "no-stock": "Do not control stock",
     "no-updates-now": "No updates at this time.",
+    "no-user-specified": "No user specified",
     "no-works-to-invoice": "There are no jobs to invoice",
     "non-editable-accounting-entry": "Non-editable accounting entry",
     "non-editable-columns": "Non editable columns: %columns%",

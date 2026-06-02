@@ -160,6 +160,12 @@ class User extends ModelClass
      */
     public function can(string $pageName, string $permission = 'access'): bool
     {
+        // si el usuario no existe (nick vacío), no puede acceder a nada
+        if (empty($this->nick)) {
+            Tools::log()->warning('no-user-specified');
+            return false;
+        }
+
         // si está desactivado, no puede acceder a nada
         if (false === $this->enabled) {
             return false;
