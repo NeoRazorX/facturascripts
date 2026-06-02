@@ -88,6 +88,14 @@ abstract class Controller implements ControllerInterface
         return $this->className;
     }
 
+    /**
+     * Devuelve los datos básicos de esta página (nombre, título, icono, menú, etc.).
+     *
+     * Esta función solamente sirve para eso. No se debe añadir aquí ningún otro código,
+     * ya que en este punto el usuario ni siquiera se ha logueado todavía.
+     *
+     * @return array
+     */
     public function getPageData(): array
     {
         return [
@@ -242,14 +250,14 @@ abstract class Controller implements ControllerInterface
             $this->multiRequestProtection = new MultiRequestProtection();
         }
 
-        // valid request?
+        // ¿petición válida?
         $token = $this->request()->inputOrQuery('multireqtoken', '');
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
             Tools::log()->warning('invalid-request');
             return false;
         }
 
-        // duplicated request?
+        // ¿petición duplicada?
         if ($this->multiRequestProtection->tokenExist($token)) {
             Tools::log()->warning('duplicated-request');
             return false;
