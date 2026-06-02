@@ -1581,7 +1581,7 @@
     "role-is-empty": "Rol boş",
     "role-not-found": "Rol '%code%' bulunamadı",
     "role-page-not-found": "Rol '%codrole%'e ait '%pagename%' sayfası bulunamadı",
-    "role-user-not-found": "Usuario '%nick%' del rol '%codrole%' no encontrado",
+    "role-user-not-found": "Rol '%codrole%' içindeki '%nick%' kullanıcısı bulunamadı",
     "roles": "Gruplar",
     "rules": "Kurallar",
     "run": "Çalıştır",
