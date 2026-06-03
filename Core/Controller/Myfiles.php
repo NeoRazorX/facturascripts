@@ -73,7 +73,7 @@ class Myfiles implements ControllerInterface
 
         // obtenemos el parámetro myft
         $fixedFilePath = substr($decodedUrl, 1);
-        $token = Request::createFromGlobals()->query->get('myft');
+        $token = filter_input(INPUT_GET, 'myft');
         if (empty($token) || false === MyFilesToken::validate($fixedFilePath, $token)) {
             throw new KernelException('MyfilesTokenError', $fixedFilePath);
         }
