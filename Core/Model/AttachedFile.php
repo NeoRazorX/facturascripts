@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use finfo;
 
 /**
@@ -59,12 +59,16 @@ class AttachedFile extends ModelClass
     public $path;
 
     /** @var int */
+    public $downloads;
+
+    /** @var int */
     public $size;
 
     public function clear(): void
     {
         parent::clear();
         $this->date = Tools::date();
+        $this->downloads = 0;
         $this->hour = Tools::hour();
         $this->size = 0;
     }
@@ -79,7 +83,7 @@ class AttachedFile extends ModelClass
         }
 
         // eliminamos las relaciones con los productos
-        $where = [new DataBaseWhere('idfile', $this->idfile)];
+        $where = [Where::eq('idfile', $this->idfile)];
         foreach (ProductoImagen::all($where, [], 0, 0) as $productoImage) {
             $productoImage->delete();
         }
