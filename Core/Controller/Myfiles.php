@@ -19,9 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\MyFilesToken;
+use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -70,10 +72,12 @@ class Myfiles implements ControllerInterface
 
         // obtenemos el parámetro myft
         $fixedFilePath = substr($decodedUrl, 1);
-        $token = filter_input(INPUT_GET, 'myft');
+        $token = $this->getQueryString('myft');
         if (empty($token) || false === MyFilesToken::validate($fixedFilePath, $token)) {
             throw new KernelException('MyfilesTokenError', $fixedFilePath);
         }
+
+        $this->increaseDownloadCount($fixedFilePath);
     }
 
     public function getPageData(): array
@@ -133,6 +137,40 @@ class Myfiles implements ControllerInterface
         }
 
         return mime_content_type($filePath);
+    }
+
+    private function getQueryBool(string $key): ?bool
+    {
+        if (array_key_exists($key, $_GET)) {
+            return filter_var($_GET[$key], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+        }
+
+        return filter_input(INPUT_GET, $key, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+    }
+
+    private function getQueryString(string $key): ?string
+    {
+        if (array_key_exists($key, $_GET)) {
+            return is_scalar($_GET[$key]) ? (string)$_GET[$key] : null;
+        }
+
+        $value = filter_input(INPUT_GET, $key);
+        return is_string($value) ? $value : null;
+    }
+
+    private function increaseDownloadCount(string $path): void
+    {
+        if ($this->getQueryBool('embed') === true) {
+            return;
+        }
+
+        $attachedFile = new AttachedFile();
+        if (false === $attachedFile->loadFromCode('', [new DataBaseWhere('path', $path)])) {
+            return;
+        }
+
+        $attachedFile->downloads++;
+        $attachedFile->save();
     }
 
     private function shouldForceDownload(string $filePath): bool

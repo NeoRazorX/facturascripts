@@ -36,10 +36,13 @@
         <column name="size" display="right" order="140">
             <widget type="bytes" fieldname="size" decimal="0"/>
         </column>
-        <column name="date" display="right" order="150">
+        <column name="downloads" display="right" order="150">
+            <widget type="number" fieldname="downloads" decimal="0"/>
+        </column>
+        <column name="date" display="right" order="160">
             <widget type="date" fieldname="date"/>
         </column>
-        <column name="hour" display="right" order="160">
+        <column name="hour" display="right" order="170">
             <widget type="text" fieldname="hour"/>
         </column>
     </columns>

@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Controller;
 use FacturaScripts\Core\Controller\Files;
 use FacturaScripts\Core\Controller\Myfiles;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
@@ -79,10 +80,60 @@ final class StaticFilesTest extends TestCase
         new Myfiles('Myfiles', '/MyFiles/Public/' . self::$testFolder . '/public.pdf');
     }
 
+    public function testMyfilesControllerCountsRealDownloads(): void
+    {
+        $file = $this->createAttachedFile('download.pdf');
+        $_GET['myft'] = $this->getTokenFromUrl($file->url('download-permanent'));
+
+        try {
+            new Myfiles('Myfiles', '/' . $file->path);
+            $reloaded = new AttachedFile();
+            $this->assertTrue($reloaded->loadFromCode($file->idfile), 'attached-file-not-found');
+            $this->assertEquals(1, $reloaded->downloads, 'download-counter-not-incremented');
+        } finally {
+            unset($_GET['myft'], $_GET['embed']);
+            $this->assertTrue($file->delete(), 'can-not-delete-attached-file');
+        }
+    }
+
+    public function testMyfilesControllerIgnoresEmbeddedPreviewDownloads(): void
+    {
+        $file = $this->createAttachedFile('preview.pdf');
+        $_GET['myft'] = $this->getTokenFromUrl($file->url('download-permanent'));
+        $_GET['embed'] = 'true';
+
+        try {
+            new Myfiles('Myfiles', '/' . $file->path);
+            $reloaded = new AttachedFile();
+            $this->assertTrue($reloaded->loadFromCode($file->idfile), 'attached-file-not-found');
+            $this->assertEquals(0, $reloaded->downloads, 'embed-preview-counted-as-download');
+        } finally {
+            unset($_GET['myft'], $_GET['embed']);
+            $this->assertTrue($file->delete(), 'can-not-delete-attached-file');
+        }
+    }
+
     private function createFile(string ...$path): void
     {
         $filePath = Tools::folder(...$path);
         Tools::folderCheckOrCreate(dirname($filePath));
         file_put_contents($filePath, 'test');
+    }
+
+    private function createAttachedFile(string $name): AttachedFile
+    {
+        $name = uniqid('', true) . '_' . $name;
+        $this->createFile('MyFiles', $name);
+
+        $file = new AttachedFile();
+        $file->path = $name;
+        $this->assertTrue($file->save(), 'can-not-save-attached-file');
+        return $file;
+    }
+
+    private function getTokenFromUrl(string $url): string
+    {
+        parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $query);
+        return $query['myft'] ?? '';
     }
 }
