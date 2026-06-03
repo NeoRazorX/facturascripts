@@ -45,6 +45,9 @@ class OpenAi
     /** @var int */
     protected $total_tokens = 0;
 
+    /**
+     * Inicializa el cliente con la API Key de OpenAI.
+     */
     public function __construct(string $api_key)
     {
         $this->api_key = $api_key;
@@ -54,6 +57,9 @@ class OpenAi
         }
     }
 
+    /**
+     * Crea un nuevo asistente con los parámetros indicados.
+     */
     public function assistantCreate(array $params): array
     {
         $response = Http::post(self::ASSISTANTS_URL, json_encode($params))
@@ -71,6 +77,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Devuelve los datos del asistente indicado.
+     */
     public function assistantRead(string $idAssistant): array
     {
         $response = Http::get(self::ASSISTANTS_URL . '/' . $idAssistant)
@@ -88,6 +97,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Actualiza el asistente indicado con los parámetros recibidos.
+     */
     public function assistantUpdate(string $idAssistant, array $params)
     {
         $response = Http::post(self::ASSISTANTS_URL . '/' . $idAssistant, json_encode($params))
@@ -105,7 +117,10 @@ class OpenAi
         return $response->json();
     }
 
-    public function audio(string $input, string $voice = 'alloy', string $format = 'mp3', string $model = 'tts-1'): string
+    /**
+     * Convierte texto en audio (texto a voz) y guarda el archivo en MyFiles, devolviendo su ruta.
+     */
+    public function audio(string $input, string $voice = 'alloy', string $format = 'mp3', string $model = 'gpt-4o-mini-tts'): string
     {
         $data = [
             'model' => $model,
@@ -133,11 +148,19 @@ class OpenAi
         return 'MyFiles/' . $filename;
     }
 
+    /**
+     * Convierte texto en audio. Se mantiene por compatibilidad.
+     *
+     * @deprecated since 2026, gpt-4o-mini-tts no tiene variante HD. Usar audio() en su lugar.
+     */
     public function audioHD(string $input, string $voice = 'alloy', string $format = 'mp3'): string
     {
-        return $this->audio($input, $voice, $format, 'tts-1-hd');
+        return $this->audio($input, $voice, $format, 'gpt-4o-mini-tts');
     }
 
+    /**
+     * Transcribe a texto el archivo de audio indicado.
+     */
     public function audioTranscript(CURLFile $file, string $model = 'gpt-4o-transcribe'): string
     {
         $data = [
@@ -159,6 +182,9 @@ class OpenAi
         return $response->json()['text'] ?? '';
     }
 
+    /**
+     * Envía una conversación al modelo de chat y devuelve la respuesta como texto.
+     */
     public function chat(array $messages, string $user = '', string $model = 'gpt-5-mini'): string
     {
         $params = new stdClass();
@@ -191,6 +217,9 @@ class OpenAi
         return $json['choices'][0]['message']['content'];
     }
 
+    /**
+     * Envía una conversación al modelo de chat forzando un formato de respuesta y la devuelve como array.
+     */
     public function chatJson(array $messages, array $response_format, string $user = '', string $model = 'gpt-5-mini'): array
     {
         $params = new stdClass();
@@ -225,6 +254,9 @@ class OpenAi
     }
 
 
+    /**
+     * Elimina el archivo indicado de OpenAI.
+     */
     public function fileDelete(string $id_file): bool
     {
         $response = Http::delete(self::FILES_URL . '/' . $id_file)
@@ -239,6 +271,9 @@ class OpenAi
         return true;
     }
 
+    /**
+     * Devuelve la lista de archivos subidos a OpenAI.
+     */
     public function fileList(): array
     {
         $response = Http::get(self::FILES_URL)
@@ -254,6 +289,9 @@ class OpenAi
         return empty($json) || empty($json['data']) ? [] : $json['data'];
     }
 
+    /**
+     * Devuelve los datos del archivo indicado.
+     */
     public function fileRead(string $id_file): array
     {
         $response = Http::get(self::FILES_URL . '/' . $id_file)
@@ -268,6 +306,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Sube un archivo a OpenAI para el propósito indicado.
+     */
     public function fileUpload(CURLFile $file, string $purpose = 'assistants'): array
     {
         $data = [
@@ -289,12 +330,18 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Devuelve el total de tokens consumidos en la última petición de chat.
+     */
     public function getTotalTokens(): int
     {
         return $this->total_tokens;
     }
 
-    public function image(string $prompt, int $width = 1024, int $height = 1024, int $count = 1, string $model = 'gpt-image-1-mini', array $options = []): string
+    /**
+     * Genera una imagen a partir del prompt, la guarda en MyFiles y devuelve su ruta.
+     */
+    public function image(string $prompt, int $width = 1024, int $height = 1024, int $count = 1, string $model = 'gpt-image-2-mini', array $options = []): string
     {
         $resize = false;
         $data = [
@@ -339,28 +386,18 @@ class OpenAi
         $file_name = 'image_' . uniqid() . '.' . $format;
         $file_path = 'MyFiles/' . $file_name;
 
-        // La API puede devolver la imagen como URL o como base64
-        if (isset($json['data'][0]['url'])) {
-            // Formato URL (DALL-E y algunos GPT Image)
-            $url = $json['data'][0]['url'];
-            $image = file_get_contents($url);
-            if (file_put_contents($file_path, $image) === false) {
-                Tools::log()->error('image generation error: saving image from url');
-                return '';
-            }
-        } elseif (isset($json['data'][0]['b64_json'])) {
-            // Formato base64 (GPT Image)
-            $b64_data = $json['data'][0]['b64_json'];
-            $image = base64_decode($b64_data);
-            if (file_put_contents($file_path, $image) === false) {
-                Tools::log()->error('image generation error: saving image from base64');
-                return '';
-            }
-        } else {
-            Tools::log()->error('image generation error: no image url or base64', [
+        // gpt-image devuelve la imagen en base64
+        if (false === isset($json['data'][0]['b64_json'])) {
+            Tools::log()->error('image generation error: no image base64', [
                 'response' => $json,
                 'model' => $model
             ]);
+            return '';
+        }
+
+        $image = base64_decode($json['data'][0]['b64_json']);
+        if (file_put_contents($file_path, $image) === false) {
+            Tools::log()->error('image generation error: saving image from base64');
             return '';
         }
 
@@ -376,11 +413,17 @@ class OpenAi
         return $file_path;
     }
 
+    /**
+     * Crea y devuelve una nueva instancia del cliente.
+     */
     public static function init(string $api_key): self
     {
         return new OpenAi($api_key);
     }
 
+    /**
+     * Añade un mensaje de sistema a la conversación.
+     */
     public function setSystemMessage(array &$messages, string $message): self
     {
         $messages[] = ['role' => 'system', 'content' => $message];
@@ -388,12 +431,18 @@ class OpenAi
         return $this;
     }
 
+    /**
+     * Establece el tiempo máximo de espera (en segundos) de las peticiones.
+     */
     public function setTimeout(int $timeout): self
     {
         $this->timeout = $timeout;
         return $this;
     }
 
+    /**
+     * Añade un mensaje de usuario a la conversación.
+     */
     public function setUserMessage(array &$messages, string $message): self
     {
         $messages[] = ['role' => 'user', 'content' => $message];
@@ -401,6 +450,9 @@ class OpenAi
         return $this;
     }
 
+    /**
+     * Crea un nuevo hilo de conversación.
+     */
     public function threadCreate(): array
     {
         $response = Http::post(self::THREADS_URL)
@@ -418,6 +470,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Devuelve los mensajes del hilo indicado.
+     */
     public function threadMessages(string $id_thread, string $id_run = ''): array
     {
         $data = empty($id_run) ? [] : ['run_id' => $id_run];
@@ -435,6 +490,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Añade un mensaje al hilo indicado.
+     */
     public function threadMessageCreate(array $message, string $id_thread): array
     {
         $response = Http::post(self::THREADS_URL . '/' . $id_thread . '/messages', json_encode($message))
@@ -452,6 +510,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Devuelve los datos del hilo indicado.
+     */
     public function threadRead(string $id_thread): array
     {
         $response = Http::get(self::THREADS_URL . '/' . $id_thread)
@@ -468,6 +529,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Ejecuta el asistente indicado sobre el hilo.
+     */
     public function threadRun(string $id_thread, string $id_assistant): array
     {
         $data = ['assistant_id' => $id_assistant];
@@ -486,6 +550,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Envía los resultados de las herramientas requeridas por una ejecución en curso.
+     */
     public function threadRunSubmitToolOutputs(string $id_thread, string $id_run, array $outputs): array
     {
         $data = ['tool_outputs' => $outputs];
@@ -504,6 +571,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Devuelve el estado de la ejecución indicada del hilo.
+     */
     public function threadRunRead(string $id_thread, string $id_run): array
     {
         $response = Http::get(self::THREADS_URL . '/' . $id_thread . '/runs/' . $id_run)
@@ -520,6 +590,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Crea un nuevo almacén de vectores (vector store).
+     */
     public function vectorCreate(array $data): array
     {
         $response = Http::post(self::VECTOR_URL, json_encode($data))
@@ -537,6 +610,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Devuelve los archivos del almacén de vectores indicado.
+     */
     public function vectorFiles(string $idVector, array $data = []): array
     {
         $response = Http::get(self::VECTOR_URL . '/' . $idVector . '/files', $data)
@@ -554,6 +630,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Elimina un archivo del almacén de vectores indicado.
+     */
     public function vectorFileDelete(string $idVector, string $idFile): bool
     {
         $response = Http::delete(self::VECTOR_URL . '/' . $idVector . '/files/' . $idFile)
@@ -571,6 +650,9 @@ class OpenAi
         return true;
     }
 
+    /**
+     * Devuelve los datos del almacén de vectores indicado.
+     */
     public function vectorRead(string $idVector): array
     {
         $response = Http::get(self::VECTOR_URL . '/' . $idVector)
@@ -588,6 +670,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Añade un archivo al almacén de vectores indicado.
+     */
     public function vectorFile(string $id_vector, string $id_file): array
     {
         $data = ['file_id' => $id_file];
@@ -606,6 +691,9 @@ class OpenAi
         return $response->json();
     }
 
+    /**
+     * Devuelve un tamaño de imagen válido para el modelo; si no lo es, marca $resize para redimensionar después.
+     */
     private function getImageSize(bool &$resize, int $width, int $height): string
     {
         // Tamaños soportados por GPT Image: 1024x1024, 1536x1024, 1024x1536
@@ -635,6 +723,9 @@ class OpenAi
         return $size;
     }
 
+    /**
+     * Redimensiona la imagen al tamaño indicado y devuelve la ruta del nuevo archivo.
+     */
     private function imageResize(string $filePath, int $width, int $height): string
     {
         try {
