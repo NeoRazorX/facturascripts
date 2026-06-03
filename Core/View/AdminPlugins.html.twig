@@ -246,15 +246,23 @@
 
             $(document).ready(function () {
                 searchList('#querySearchPlugin', '#all-plugins .wrapper-card', '.card-title, .card-text');
-                searchList('#querySearchInstalledPlugins', '#installed-plugins .item-plugin', '.plugin-name');
+                searchList('#querySearchInstalledPlugins', '#installed-plugins .item-plugin', '.plugin-name, .plugin-description');
 
-                // botones para limpiar los buscadores
-                $('#clearSearchInstalledPlugins').on('click', function () {
-                    $('#querySearchInstalledPlugins').val('').trigger('keyup').focus();
-                });
-                $('#clearSearchPlugin').on('click', function () {
-                    $('#querySearchPlugin').val('').trigger('keyup').focus();
-                });
+                // botones para limpiar los buscadores, visibles solo cuando hay texto
+                function setupClearButton(input, button) {
+                    const $input = $(input);
+                    const $button = $(button);
+                    $input.on('input', function () {
+                        $button.toggleClass('d-none', this.value.length === 0);
+                    });
+                    $button.on('click', function () {
+                        $input.val('').trigger('keyup').focus();
+                        $button.addClass('d-none');
+                    });
+                }
+
+                setupClearButton('#querySearchInstalledPlugins', '#clearSearchInstalledPlugins');
+                setupClearButton('#querySearchPlugin', '#clearSearchPlugin');
 
                 // si los archivos son demasiado grandes, no se pueden subir
                 $("#f_add_plugins").submit(function (e) {
@@ -332,7 +340,7 @@
             </span>
             <input type="text" class="form-control border-start-0" id="querySearchPlugin"
                    placeholder="{{ trans('search') }}"/>
-            <button class="btn btn-outline-secondary" type="button" id="clearSearchPlugin"
+            <button class="btn btn-outline-secondary d-none" type="button" id="clearSearchPlugin"
                     title="{{ trans('clear') }}">
                 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
@@ -386,7 +394,7 @@
             </span>
             <input type="text" class="form-control border-start-0" id="querySearchInstalledPlugins"
                    placeholder="{{ trans('search') }}"/>
-            <button class="btn btn-outline-secondary" type="button" id="clearSearchInstalledPlugins"
+            <button class="btn btn-outline-secondary d-none" type="button" id="clearSearchInstalledPlugins"
                     title="{{ trans('clear') }}">
                 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
@@ -477,7 +485,7 @@
                 v{{ plugin.version }}
             {% endif %}
         </td>
-        <td>
+        <td class="plugin-description">
             {{ plugin.description | nl2br }}
             {% if plugin.forja('url', '') %}
                 <a href="{{ plugin.forja('url', '') }}" target="_blank" class="ms-2">
