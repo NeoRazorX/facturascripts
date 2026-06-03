@@ -6,6 +6,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
@@ -29,6 +30,13 @@ class EditFacturaProveedor extends PurchasesController
     public function getModelClassName(): string
     {
         return 'FacturaProveedor';
+    }
+
+    public function paymentMethods(): array
+    {
+        return array_filter(FormasPago::all(), function ($method) {
+            return $method->activa;
+        });
     }
 
     public function getPageData(): array
@@ -364,17 +372,26 @@ class EditFacturaProveedor extends PurchasesController
             return true;
         }
 
-        // si la factura estaba pagada, marcamos los recibos de la nueva como pagados
-        if ($invoice->pagada) {
-            foreach ($newRefund->getReceipts() as $receipt) {
-                $receipt->pagado = true;
-                $receipt->save();
-            }
+        if (false === $this->updateRefundInvoicePayment(
+            $invoice,
+            $this->request->input('codpago_original', $invoice->codpago),
+            $this->request->input('pagada_original', false)
+        )) {
+            Tools::log()->error('record-save-error');
+            $this->dataBase->rollback();
+            return true;
         }
 
-        // asignamos el estado de la factura
+        $codpagoRectificativa = $this->request->input('codpago_rectificativa', $newRefund->codpago);
         $newRefund->idestado = $this->request->input('idestado');
+
         if (false === $newRefund->save()) {
+            Tools::log()->error('record-save-error');
+            $this->dataBase->rollback();
+            return true;
+        }
+
+        if (false === $this->updateRefundInvoicePayment($newRefund, $codpagoRectificativa, $this->request->input('pagada_rectificativa', false))) {
             Tools::log()->error('record-save-error');
             $this->dataBase->rollback();
             return true;
@@ -384,6 +401,24 @@ class EditFacturaProveedor extends PurchasesController
         Tools::log()->notice('record-updated-correctly');
         $this->redirect($newRefund->url() . '&action=save-ok');
         return false;
+    }
+
+    private function updateRefundInvoicePayment(FacturaProveedor $invoice, string $codpago, bool $paid): bool
+    {
+        if (false === $invoice->savePaymentMethod($codpago)) {
+            return false;
+        }
+
+        foreach ($invoice->getReceipts() as $receipt) {
+            $receipt->setPaymentMethod($codpago);
+            $receipt->pagado = $paid;
+            if (false === $receipt->save()) {
+                return false;
+            }
+        }
+
+        $invoice->reload();
+        return true;
     }
 
     /**

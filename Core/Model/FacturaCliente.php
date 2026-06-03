@@ -139,6 +139,20 @@ class FacturaCliente extends SalesDocument
         return 'facturascli';
     }
 
+    public function savePaymentMethod(string $codpago): bool
+    {
+        $formaPago = new FormaPago();
+        if (false === $formaPago->load($codpago)) {
+            return false;
+        }
+
+        if (false === $this->update(['codpago' => $codpago])) {
+            return false;
+        }
+
+        return $this->reload();
+    }
+
     protected function saveInsert(): bool
     {
         return $this->testDate() && parent::saveInsert();
