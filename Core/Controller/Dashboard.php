@@ -102,11 +102,11 @@ class Dashboard extends Controller
 
         $this->loadExtensions();
 
-        // comprobamos si la instalación está registrada
-        $this->registered = Telemetry::init()->ready();
+        // comprobamos si la instalación está registrada (solo para administradores)
+        $this->registered = $user->admin === false || Telemetry::init()->ready();
 
-        // comprobamos si hay actualizaciones disponibles
-        $this->updated = Forja::canUpdateCore() === false;
+        // comprobamos si hay actualizaciones disponibles (solo para administradores)
+        $this->updated = $user->admin === false || Forja::canUpdateCore() === false;
     }
 
     public function showBackupWarning(): bool
