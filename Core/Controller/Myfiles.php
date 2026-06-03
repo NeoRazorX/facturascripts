@@ -41,6 +41,8 @@ class Myfiles implements ControllerInterface
             return;
         }
 
+        $request = Request::createFromGlobals();
+
         // ¿La url empieza por /MyFiles/?
         if (strpos($url, '/MyFiles/') !== 0) {
             return;
@@ -73,12 +75,12 @@ class Myfiles implements ControllerInterface
 
         // obtenemos el parámetro myft
         $fixedFilePath = substr($decodedUrl, 1);
-        $token = filter_input(INPUT_GET, 'myft');
+        $token = $request->query->get('myft');
         if (empty($token) || false === MyFilesToken::validate($fixedFilePath, $token)) {
             throw new KernelException('MyfilesTokenError', $fixedFilePath);
         }
 
-        $this->increaseDownloadCount($fixedFilePath);
+        $this->increaseDownloadCount($request, $fixedFilePath);
     }
 
     public function getPageData(): array
@@ -143,9 +145,8 @@ class Myfiles implements ControllerInterface
     // Este método solo suma descargas reales.
     // Las previsualizaciones embebidas usan la misma ruta con embed=true
     // para evitar que el contador sume solo al mostrar el archivo.
-    private function increaseDownloadCount(string $path): void
+    private function increaseDownloadCount(Request $request, string $path): void
     {
-        $request = Request::createFromGlobals();
         if ($request->query->getBool('embed') === true) {
             return;
         }
