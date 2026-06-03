@@ -22,9 +22,9 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 
@@ -390,23 +390,25 @@ abstract class ListController extends BaseController
      */
     protected function getOwnerFilter($model): array
     {
-        $where = [];
+        // si el modelo y el usuario tienen agente, comprobamos solo el agente
+        if ($model->hasColumn('codagente') &&
+            false === empty($this->user->codagente)
+        ) {
+            return [ new DataBaseWhere('codagente', $this->user->codagente) ];
+        }
 
-        if (property_exists($model, 'nick')) {
+        // si el modelo tiene nick, comprobamos nick
+        if ($model->hasColumn('nick')) {
             // DatabaseWhere applies parentheses grouping the ORs
-            // result: (`nick` = 'username' OR `nick` IS NULL OR `codagente` = 'agent') AND [... user filters]
-            $where[] = new DataBaseWhere('nick', $this->user->nick);
-            $where[] = new DataBaseWhere('nick', null, 'IS', 'OR');
-            if (property_exists($model, 'codagente') && $this->user->codagente) {
-                $where[] = new DataBaseWhere('codagente', $this->user->codagente, '=', 'OR');
-            }
-            return $where;
+            // result: (`nick` = 'username' OR `nick` IS NULL) AND [... user filters]
+            return [
+                new DataBaseWhere('nick', $this->user->nick),
+                new DataBaseWhere('nick', null, 'IS', 'OR')
+            ];
         }
 
-        if (property_exists($model, 'codagente')) {
-            $where[] = new DataBaseWhere('codagente', $this->user->codagente);
-        }
-        return $where;
+        // nada que filtrar
+        return [];
     }
 
     /**

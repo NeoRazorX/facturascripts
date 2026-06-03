@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
-use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -287,24 +287,20 @@ abstract class BaseController extends Controller
      */
     protected function checkOwnerData($model): bool
     {
-        if (false === $this->permissions->onlyOwnerData || empty($model->primaryColumnValue())) {
+        if (false === $this->permissions->onlyOwnerData || empty($model->id())) {
             return true;
         }
 
-        // si el modelo tiene nick, comprobamos nick
-        if (property_exists($model, 'nick')) {
-            if (null === $model->nick || $model->nick === $this->user->nick) {
-                return true;
-            }
-            if (property_exists($model, 'codagente') && $this->user->codagente) {
-                return $model->codagente === $this->user->codagente;
-            }
-            return false;
+        // si el modelo y el usuario tienen agente, comprobamos el agente
+        if ($model->hasColumn('codagente') &&
+            false === empty($this->user->codagente)
+        ) {
+            return $model->codagente === $this->user->codagente;
         }
 
-        // si el modelo tiene agente, comprobamos agente
-        if (property_exists($model, 'codagente')) {
-            return $model->codagente === $this->user->codagente;
+        // si el modelo tiene nick, comprobamos nick
+        if ($model->hasColumn('nick')) {
+            return $model->nick === $this->user->nick;
         }
 
         // si no hay nada en que apoyarse, permitimos
