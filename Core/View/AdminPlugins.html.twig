@@ -44,14 +44,14 @@
                 {% if config('disable_add_plugins', false) == false %}
                     <button class="btn btn-spin-action btn-sm btn-success" type="button" data-bs-toggle="modal"
                             data-bs-target="#modalAddPlugin">
-                        <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
+                        <i class="fa-solid fa-plus fa-fw me-1" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ trans('add') }}</span>
                     </button>
                 {% endif %}
                 <div class="btn-group">
                     <a href="{{ fsc.url() }}?action=rebuild&multireqtoken={{ formToken(false) }}"
                        onclick="animateSpinner('add')" class="btn btn-spin-action btn-sm btn-warning">
-                        <i class="fa-solid fa-hammer fa-fw" aria-hidden="true"></i>
+                        <i class="fa-solid fa-hammer fa-fw me-1" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ trans('rebuild') }}</span>
                     </a>
                 </div>
@@ -76,7 +76,7 @@
         {% if config('disable_add_plugins', false) == false %}
             <li class="nav-item">
                 <a class="nav-link" id="allPluginsTab" data-bs-toggle="tab" href="#all" role="tab">
-                    <i class="fa-solid fa-boxes fa-fw" aria-hidden="true"></i>
+                    <i class="fa-solid fa-boxes fa-fw me-1" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">{{ trans('more-plugins') }}</span>
                     {% if fsc.remotePluginList | length > 0 %}
                         <span class="badge bg-secondary">{{ fsc.remotePluginList | length }}</span>
@@ -334,7 +334,7 @@
 
 {% macro showAllPlugins(fsc) %}
     <div class="p-2">
-        <div class="input-group shadow-sm">
+        <div class="input-group">
             <span class="input-group-text bg-white">
                 <i class="fa-solid fa-magnifying-glass text-muted" aria-hidden="true"></i>
             </span>
@@ -365,7 +365,7 @@
                     </div>
                     <div class="card-footer p-2 bg-transparent d-flex align-items-center justify-content-between">
                         <a href="{{ plugin.url }}" class="btn btn-sm btn-success" target="_blank">
-                            <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i> {{ trans('add') }}
+                            <i class="fa-solid fa-plus fa-fw me-1" aria-hidden="true"></i> {{ trans('add') }}
                         </a>
                         <span class="text-danger small" title="{{ trans('health') }}">
                             {{ _self.healthStatus(plugin.health) }}
@@ -386,9 +386,10 @@
 
 {% macro showInstalledPlugins(fsc) %}
     {% set enabledList = fsc.pluginList | filter(plugin => plugin.enabled) | sort((a, b) => a.order <=> b.order) %}
-    {% set disabledList = fsc.pluginList | filter(plugin => plugin.enabled == false) %}
+    {% set disabledList = fsc.pluginList | filter(plugin => plugin.enabled == false and plugin.compatible) %}
+    {% set incompatibleList = fsc.pluginList | filter(plugin => plugin.enabled == false and plugin.compatible == false) %}
     <div class="m-2 mb-3">
-        <div class="input-group shadow-sm">
+        <div class="input-group">
             <span class="input-group-text bg-white">
                 <i class="fa-solid fa-magnifying-glass text-muted" aria-hidden="true"></i>
             </span>
@@ -414,7 +415,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% if enabledList is empty and disabledList is empty %}
+                {% if enabledList is empty and disabledList is empty and incompatibleList is empty %}
                     <tr class="table-warning">
                         <td colspan="5"><b>{{ trans('no-data') }}</b></td>
                     </tr>
@@ -438,6 +439,17 @@
                         </td>
                     </tr>
                     {% for plugin in disabledList %}
+                        {{ _self.pluginRow(plugin, fsc.url()) }}
+                    {% endfor %}
+                {% endif %}
+                {% if incompatibleList is not empty %}
+                    <tr class="table-danger">
+                        <td colspan="5" class="fw-bold text-uppercase small">
+                            <i class="fa-solid fa-ban fa-fw" aria-hidden="true"></i>
+                            {{ trans('incompatible-plugins') }} <span class="badge bg-danger">{{ incompatibleList | length }}</span>
+                        </td>
+                    </tr>
+                    {% for plugin in incompatibleList %}
                         {{ _self.pluginRow(plugin, fsc.url()) }}
                     {% endfor %}
                 {% endif %}
@@ -505,7 +517,7 @@
         <td class="text-end text-nowrap">
             {% if plugin.hasUpdate() %}
                 <a href="Updater" class="btn btn-spin-action btn-sm btn-info" title="{{ trans('update') }}">
-                    <i class="fa-solid fa-cloud-download-alt" aria-hidden="true"></i>
+                    <i class="fa-solid fa-cloud-download-alt me-1" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">{{ trans('update') }}</span>
                 </a>
             {% endif %}
