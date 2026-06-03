@@ -249,6 +249,10 @@ abstract class BaseController extends Controller
     {
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'strict', 'term']);
         if ($data['source'] == '') {
+            // sin source necesitamos el nombre de la vista y el campo para localizar el widget
+            if (empty($data['formname']) || empty($data['field']) || false === isset($this->views[$data['formname']])) {
+                return [];
+            }
             return $this->getAutocompleteValues($data['formname'], $data['field']);
         }
 
