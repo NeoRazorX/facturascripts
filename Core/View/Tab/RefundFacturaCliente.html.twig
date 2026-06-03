@@ -81,6 +81,34 @@
                     <div class="card-body">
                         <p>{{ trans('rectified-invoice-p') }}</p>
                         <div class="row g-2 align-items-end">
+                            <div class="col bg-light border rounded">
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" name="pagada_original" id="pagada_original" value="true" class="form-check-input">
+                                    <label class="form-check-label" for="pagada_original">{{ trans('mark-original-invoice-as-paid') }}</label>
+                                </div>
+                                <div class="mb-3">
+                                    {{ trans('payment-method') }}
+                                    <select name="codpago_original" class="form-select">
+                                        {% for paymethod in fsc.paymentMethods() %}
+                                            <option value="{{ paymethod.codpago }}"{{ paymethod.codpago == firstView.model.codpago ? ' selected' : '' }}>{{ paymethod.descripcion }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col bg-light border rounded">
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" name="pagada_rectificativa" id="pagada_rectificativa" value="true" class="form-check-input">
+                                    <label class="form-check-label" for="pagada_rectificativa">{{ trans('mark-rectifying-invoice-as-paid') }}</label>
+                                </div>
+                                <div class="mb-3">
+                                    {{ trans('payment-method') }}
+                                    <select name="codpago_rectificativa" class="form-select">
+                                        {% for paymethod in fsc.paymentMethods() %}
+                                            <option value="{{ paymethod.codpago }}"{{ paymethod.codpago == firstView.model.codpago ? ' selected' : '' }}>{{ paymethod.descripcion }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-sm-6 col-md-4 col-lg">
                                 <div class="mb-3">
                                     {{ trans('serie') }}
