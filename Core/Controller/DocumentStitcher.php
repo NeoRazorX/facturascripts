@@ -21,12 +21,12 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Lib\ListFilter\PeriodFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\SelectFilter;
@@ -469,14 +469,14 @@ class DocumentStitcher extends Controller
 
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         $model = new $modelClass();
-        $this->where[] = new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen);
-        $this->where[] = new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa);
-        $this->where[] = new DataBaseWhere('codserie', $this->documents[0]->codserie);
-        $this->where[] = new DataBaseWhere('dtopor1', $this->documents[0]->dtopor1);
-        $this->where[] = new DataBaseWhere('dtopor2', $this->documents[0]->dtopor2);
-        $this->where[] = new DataBaseWhere('editable', true);
-        $this->where[] = new DataBaseWhere('idempresa', $this->documents[0]->idempresa);
-        $this->where[] = new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue());
+        $this->where[] = Where::eq('codalmacen', $this->documents[0]->codalmacen);
+        $this->where[] = Where::eq('coddivisa', $this->documents[0]->coddivisa);
+        $this->where[] = Where::eq('codserie', $this->documents[0]->codserie);
+        $this->where[] = Where::eq('dtopor1', $this->documents[0]->dtopor1);
+        $this->where[] = Where::eq('dtopor2', $this->documents[0]->dtopor2);
+        $this->where[] = Where::eq('editable', true);
+        $this->where[] = Where::eq('idempresa', $this->documents[0]->idempresa);
+        $this->where[] = Where::eq($model->subjectColumn(), $this->documents[0]->subjectColumnValue());
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
         foreach ($model->all($this->where, $orderBy, 0, 0) as $doc) {
             if (false === in_array($doc->id(), $this->getCodes())) {
