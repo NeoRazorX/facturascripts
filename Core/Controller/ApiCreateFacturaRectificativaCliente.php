@@ -102,6 +102,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
                     $this->db()->rollback();
                     return null;
                 }
+                break;
             }
         }
 

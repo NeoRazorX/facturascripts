@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,42 +18,62 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Tools;
+
 /**
- * Description of WidgetText
+ * Widget para campos de texto de una sola línea, con soporte para
+ * longitud mínima y máxima.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  */
 class WidgetText extends BaseWidget
 {
-
     /**
-     * Indicates the maximum length of characters.
-     * 0 -> indeterminate
+     * Longitud máxima de caracteres.
+     * 0 -> sin límite
      *
      * @var int
      */
     protected $maxlength;
 
     /**
-     * Class constructor
+     * Longitud mínima de caracteres.
+     * 0 -> sin límite
      *
-     * @param array $data
+     * @var int
      */
-    public function __construct($data)
+    protected $minlength;
+
+    public function __construct(array $data)
     {
         parent::__construct($data);
-        $this->maxlength = $data['maxlength'] ?? 0;
+        $this->maxlength = (int)($data['maxlength'] ?? $data['max'] ?? 0);
+        $this->minlength = (int)($data['minlength'] ?? $data['min'] ?? 0);
     }
 
     /**
-     * Add extra attributes to html input field
+     * Añade atributos extra al input HTML.
      *
      * @return string
      */
-    protected function inputHtmlExtraParams()
+    protected function inputHtmlExtraParams(): string
     {
-        $params = $this->maxlength > 0 ? ' maxlength="' . $this->maxlength . '"' : '';
+        $params = '';
+
+        if ($this->maxlength > 0) {
+            $params .= ' maxlength="' . $this->maxlength . '"';
+        }
+
+        if ($this->minlength > 0) {
+            $params .= ' minlength="' . $this->minlength . '"';
+        }
+
         return $params . parent::inputHtmlExtraParams();
+    }
+
+    protected function show()
+    {
+        return $this->value === null ? '-' : Tools::noHtml((string)$this->value);
     }
 }

@@ -125,7 +125,12 @@ class Almacen extends ModelClass
 
     public function test(): bool
     {
+        $this->apartado = Tools::noHtml($this->apartado);
+        $this->ciudad = Tools::noHtml($this->ciudad);
+        $this->codpostal = Tools::noHtml($this->codpostal);
+        $this->direccion = Tools::noHtml($this->direccion);
         $this->nombre = Tools::noHtml($this->nombre);
+        $this->provincia = Tools::noHtml($this->provincia);
         $this->telefono = Tools::noHtml($this->telefono);
 
         if (!empty($this->codalmacen) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {

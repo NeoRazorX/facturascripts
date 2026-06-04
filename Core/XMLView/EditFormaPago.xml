@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,29 +41,29 @@
                     <values title="years">years</values>
                 </widget>
             </column>
-        </group>
-        <group name="advanced" numcolumns="12" valign="bottom">
-            <column name="company" numcolumns="2" titleurl="ListEmpresa" order="100">
+            <column name="company" numcolumns="2" titleurl="ListEmpresa" order="140">
                 <widget type="select" fieldname="idempresa" onclick="EditEmpresa" readonly="dinamic" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
             </column>
-            <column name="bank-account" numcolumns="2" titleurl="ListFormaPago?activetab=ListCuentaBanco" order="110">
+            <column name="bank-account" numcolumns="2" titleurl="ListFormaPago?activetab=ListCuentaBanco" order="150">
                 <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco" parent="idempresa">
                     <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion"
                             fieldfilter="idempresa"/>
                 </widget>
             </column>
-            <column name="active" order="120">
+        </group>
+        <group name="advanced" numcolumns="12" valign="bottom">
+            <column name="active" order="100">
                 <widget type="checkbox" fieldname="activa"/>
             </column>
-            <column name="domiciled" order="120">
+            <column name="domiciled" order="110">
                 <widget type="checkbox" fieldname="domiciliado"/>
             </column>
-            <column name="paid" order="130">
+            <column name="paid" order="120">
                 <widget type="checkbox" fieldname="pagado"/>
             </column>
-            <column name="print-bank-data" order="140">
+            <column name="print-bank-data" order="130">
                 <widget type="checkbox" fieldname="imprimir"/>
             </column>
         </group>

@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
 /**
  * Defines the relationship between a user and a role.
  *
- * @author Joe Nilson            <joenilson at gmail.com>
+ * @author Joe Nilson            <joenilson@gmail.com>
  * @author Carlos García Gómez   <carlos@facturascripts.com>
  */
 class RoleUser extends ModelClass

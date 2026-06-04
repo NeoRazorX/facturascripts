@@ -1,16 +1,16 @@
 <?php
 /**
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\AjaxForms\SalesController;
-use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
+use FacturaScripts\Dinamic\Lib\AjaxForms\SalesController;
+use FacturaScripts\Dinamic\Lib\Calculator;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
@@ -325,6 +325,7 @@ class EditFacturaCliente extends SalesController
                     $this->dataBase->rollback();
                     return true;
                 }
+                break;
             }
         }
 

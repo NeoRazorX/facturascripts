@@ -144,7 +144,7 @@ class Controller implements ControllerInterface
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
 
-        $this->checkPhpVersion(8.0);
+        $this->checkPhpVersion(8.1);
     }
 
     /**
@@ -363,11 +363,18 @@ class Controller implements ControllerInterface
         }
 
         // Verificar si el usuario está activado
-        $cookiesExpire = time() + Tools::config('cookies_expire');
+        $deleteCookieOptions = [
+            'expires' => time() - 3600,
+            'path' => Tools::config('route', '/'),
+            'domain' => '',
+            'secure' => $this->request->isSecure(),
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ];
         if (false === $user->enabled) {
             // Si el usuario está desactivado, registrar advertencia, eliminar cookie y fallar autenticación
             Tools::log()->warning('login-user-disabled', ['%nick%' => htmlspecialchars($cookieNick)]);
-            setcookie('fsNick', '', $cookiesExpire, Tools::config('route', '/'));
+            setcookie('fsNick', '', $deleteCookieOptions);
             return false;
         }
 
@@ -376,7 +383,7 @@ class Controller implements ControllerInterface
         if (false === $user->verifyLogkey($logKey)) {
             // Si la logkey no es válida, registrar advertencia, eliminar cookie y fallar autenticación
             Tools::log()->warning('login-cookie-fail');
-            setcookie('fsNick', '', $cookiesExpire, Tools::config('route', '/'));
+            setcookie('fsNick', '', $deleteCookieOptions);
             return false;
         }
 

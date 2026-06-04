@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Core\Model\Base\JoinModel;
+use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Dinamic\Model\Producto;
 
 /**
@@ -31,12 +31,6 @@ use FacturaScripts\Dinamic\Model\Producto;
  */
 class StockProducto extends JoinModel
 {
-    /**
-     * Class constructor.
-     * Set master model for controller actions.
-     *
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         parent::__construct($data);
@@ -51,11 +45,6 @@ class StockProducto extends JoinModel
         return $fields;
     }
 
-    /**
-     * List of fields or columns to select clausule.
-     *
-     * @return array
-     */
     protected function getFields(): array
     {
         return [

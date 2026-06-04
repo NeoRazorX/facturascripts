@@ -28,7 +28,6 @@ use PHPUnit\Framework\TestCase;
  */
 class TranslationTest extends TestCase
 {
-
     /**
      * @var string
      */

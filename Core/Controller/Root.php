@@ -27,7 +27,7 @@ class Root extends Controller
     public function getPageData(): array
     {
         $data = parent::getPageData();
-        $data['menu'] = 'reports';
+        $data['menu'] = 'admin';
         $data['title'] = Empresas::default()->nombrecorto ?? 'FacturaScripts';
         $data['icon'] = 'fa-solid fa-home';
         $data['showonmenu'] = false;
@@ -38,13 +38,11 @@ class Root extends Controller
     {
         parent::run();
 
-        // si el usuario tiene homepage y es distinta de Root, redirigimos
-        if (!empty($this->user->homepage) && $this->user->homepage !== 'Root') {
-            $this->response()->redirect($this->user->homepage)->send();
-            return;
+        // homepageUrl ya garantiza un nombre de controlador valido, asi evitamos open-redirect
+        $homepage = $this->user->homepageUrl();
+        if ($homepage === 'Root') {
+            $homepage = 'Dashboard';
         }
-
-        // si no tiene homepage, redireccionamos al Dashboard
-        $this->response()->redirect('Dashboard')->send();
+        $this->response()->redirect($homepage)->send();
     }
 }

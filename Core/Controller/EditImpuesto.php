@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\OperacionIVA;
+use FacturaScripts\Dinamic\Lib\TaxExceptions;
 
 /**
  * Controller to edit a single item from the Impuesto model
@@ -50,9 +51,10 @@ class EditImpuesto extends EditController
     /**
      * Create the view to display.
      */
-    protected function createViews()
+    protected function createViews(): void
     {
         parent::createViews();
+
         $this->setTabsPosition('bottom');
 
         $this->createViewsZones();
@@ -62,35 +64,31 @@ class EditImpuesto extends EditController
 
     protected function createViewsAccounts(string $viewName = 'ListSubcuenta'): void
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-folder-open');
-        $this->views[$viewName]->addOrderBy(['codejercicio', 'codsubcuenta'], 'code', 2);
-        $this->views[$viewName]->addOrderBy(['codejercicio', 'descripcion'], 'description');
-        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
-        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
-
-        // desactivamos los botones de nuevo y eliminar
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-folder-open')
+            ->addOrderBy(['codejercicio', 'codsubcuenta'], 'code', 2)
+            ->addOrderBy(['codejercicio', 'descripcion'], 'description')
+            ->addOrderBy(['saldo'], 'balance')
+            ->addSearchFields(['codsubcuenta', 'descripcion'])
+            ->setSettings('btnNew', false)
+            ->setSettings('btnDelete', false);
     }
 
     protected function createViewsProducts(string $viewName = 'ListProducto'): void
     {
-        $this->addListView($viewName, 'Producto', 'products', 'fa-solid fa-cubes');
-        $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
-        $this->views[$viewName]->addOrderBy(['precio'], 'price');
-        $this->views[$viewName]->addOrderBy(['stockfis'], 'stock');
-        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion', 'observaciones']);
-
-        // desactivamos los botones de nuevo y eliminar
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
+        $this->addListView($viewName, 'Producto', 'products', 'fa-solid fa-cubes')
+            ->addOrderBy(['referencia'], 'reference', 1)
+            ->addOrderBy(['precio'], 'price')
+            ->addOrderBy(['stockfis'], 'stock')
+            ->addSearchFields(['referencia', 'descripcion', 'observaciones'])
+            ->setSettings('btnNew', false)
+            ->setSettings('btnDelete', false);
     }
 
     protected function createViewsZones(string $viewName = 'EditImpuestoZona'): void
     {
-        $this->addEditListView($viewName, 'ImpuestoZona', 'exceptions', 'fa-solid fa-globe-americas');
-        $this->views[$viewName]->disableColumn('tax');
-        $this->views[$viewName]->setInLine(true);
+        $this->addEditListView($viewName, 'ImpuestoZona', 'zones', 'fa-solid fa-globe-americas')
+            ->setInLine(true)
+            ->disableColumn('tax');
     }
 
     /**
@@ -108,6 +106,7 @@ class EditImpuesto extends EditController
             case 'EditImpuestoZona':
                 $where = [new DataBaseWhere('codimpuesto', $code)];
                 $view->loadData('', $where, ['prioridad' => 'DESC']);
+                $this->loadVatExceptions($viewName);
                 break;
 
             case 'ListProducto':
@@ -136,6 +135,14 @@ class EditImpuesto extends EditController
                 parent::loadData($viewName, $view);
                 $this->loadOperations($viewName);
                 break;
+        }
+    }
+
+    protected function loadVatExceptions(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('vat-exception');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(TaxExceptions::all(), true, true);
         }
     }
 

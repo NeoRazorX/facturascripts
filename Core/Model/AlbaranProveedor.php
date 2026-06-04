@@ -66,12 +66,16 @@ class AlbaranProveedor extends PurchaseDocument
     public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idalbaran', 'servido'])
     {
         $newLine = new LineaAlbaran();
+        $newLine->actualizastock = $this->getStatus()->actualizastock;
+        $newLine->excepcioniva = $this->getSubject()->excepcioniva;
         $newLine->idalbaran = $this->idalbaran;
         $newLine->irpf = $this->irpf;
-        $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
 
-        Calculator::calculateLine($this, $newLine);
+        // si no viene de getNewProductLine(), calculamos la línea
+        if (empty($data['referencia'] ?? '')) {
+            Calculator::calculateLine($this, $newLine);
+        }
 
         // allow extensions
         $this->pipe('getNewLine', $newLine, $data, $exclude);

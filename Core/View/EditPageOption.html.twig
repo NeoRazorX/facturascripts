@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -84,23 +84,41 @@
                         <input type="hidden" name="action" value="save"/>
                         <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
                         <input type="hidden" name="nick" value="{{ fsc.selectedUser }}"/>
+                        {% set showWidth = fsc.selectedViewName starts with 'List' ? false : true %}
                         <div class="table-responsive">
                             <table class="table table-sm table-hover mb-0">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('title') }}</th>
                                     <th class="text-center">{{ trans('display') }}</th>
-                                    <th>{{ trans('level') }}</th>
-                                    <th>{{ trans('readonly') }}</th>
                                     <th width="150">{{ trans('decimals') }}</th>
-                                    <th>{{ trans('width') }}</th>
-                                    <th class="text-end" width="130">{{ trans('sort') }}</th>
+                                    <th>
+                                        <i class="fa-solid fa-user-shield"></i>
+                                        {{ trans('user-level') }}
+                                    </th>
+                                    <th>{{ trans('editable') }}</th>
+                                    {% if showWidth %}
+                                        <th>{{ trans('width') }}</th>
+                                    {% endif %}
+                                    <th class="text-end" width="130">
+                                        {{ trans('sort') }}
+                                        <i class="fa-solid fa-sort-numeric-down" title="{{ trans('sort') }}"></i>
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
+                                {% set colspan = showWidth ? 7 : 6 %}
                                 {% for group in fsc.columns %}
+                                    <tr class="table-light">
+                                        <th colspan="{{ colspan }}">
+                                            {% if group.icon %}
+                                                <i class="{{ group.icon }}"></i>
+                                            {% endif %}
+                                            {{ trans(group.title) }}
+                                        </th>
+                                    </tr>
                                     {% for col in group.columns %}
-                                        {{ _self.editGroupColumn(col) }}
+                                        {{ _self.editGroupColumn(col, showWidth) }}
                                     {% endfor %}
                                 {% endfor %}
                                 </tbody>
@@ -183,7 +201,7 @@
     </script>
 {% endblock %}
 
-{% macro editGroupColumn(col) %}
+{% macro editGroupColumn(col, showWidth = true) %}
     <tr>
         <td title="{{ trans('title') }}">
             <input type="text" class="form-control" name="{{ col.name }}-title"
@@ -192,36 +210,38 @@
         <td class="text-center">
             {{ _self.editGroupColumnDisplay(col) }}
         </td>
-        <td title="{{ trans('level') }}">
-            <input type="number" class="form-control" name="{{ col.name }}-level" min="0" max="99" step="1"
-                   value="{{ col.level }}"/>
-        </td>
-        <td title="{{ trans('readonly') }}">
-            {{ simpleSelect(
-                col.name ~ '-readonly',
-                col.name ~ '-readonly',
-                col.widget.readonly,
-                {'true':trans('yes'), 'false':trans('no'), 'dinamic':trans('auto')},
-                FALSE,
-                FALSE,
-                {}) }}
-        </td>
         <td title="{{ trans('decimals') }}">
             {% if col.widget.gridFormat() is not empty %}
                 <input type="number" name="{{ col.name }}-decimal" min="0" max="7" step="1"
                        value="{{ col.widget.decimal }}" class="form-control"/>
             {% endif %}
         </td>
-        <td title="{{ trans('width') }}">
+        <td title="{{ trans('user-level') }}">
+            <input type="number" class="form-control" name="{{ col.name }}-level" min="0" max="99" step="1"
+                   value="{{ col.level }}" title="{{ trans('user-level-help') }}"/>
+        </td>
+        <td title="{{ trans('editable') }}">
             {{ simpleSelect(
-                col.name ~ '-numcolumns',
-                col.name ~ '-numcolumns',
-                col.numcolumns,
-                {'0':trans('auto'), '1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9', '10':'10', '11':'11', '12':'12'},
+                col.name ~ '-readonly',
+                col.name ~ '-readonly',
+                col.widget.readonly,
+                {'false':trans('editable'), 'dinamic':trans('editable-if-empty'), 'true':trans('not-editable')},
                 FALSE,
                 FALSE,
                 {}) }}
         </td>
+        {% if showWidth %}
+            <td title="{{ trans('width') }}">
+                {{ simpleSelect(
+                    col.name ~ '-numcolumns',
+                    col.name ~ '-numcolumns',
+                    col.numcolumns,
+                    {'0':trans('auto'), '1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9', '10':'10', '11':'11', '12':'12'},
+                    FALSE,
+                    FALSE,
+                    {}) }}
+            </td>
+        {% endif %}
         <td title="{{ trans('sort') }}">
             <input type="number" name="{{ col.name }}-order" value="{{ col.order }}" class="form-control text-end"/>
         </td>

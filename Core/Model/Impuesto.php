@@ -55,6 +55,12 @@ class Impuesto extends ModelClass
     public $codsubcuentarep;
 
     /**
+     * Código de la subcuenta de IVA repercutido intracomunitario.
+     * @var string
+     */
+    public $codsubcuentarepintra;
+
+    /**
      * Código de la subcuenta de recargo de equivalencia para el IVA repercutido.
      * @var string
      */
@@ -65,6 +71,12 @@ class Impuesto extends ModelClass
      * @var string
      */
     public $codsubcuentasop;
+
+    /**
+     * Código de la subcuenta de IVA soportado intracomunitario.
+     * @var string
+     */
+    public $codsubcuentasopintra;
 
     /**
      * Código de la subcuenta de recargo de equivalencia para el IVA soportado.
@@ -112,6 +124,13 @@ class Impuesto extends ModelClass
         return parent::delete();
     }
 
+    public function getInputIntraTaxAccount(string $codejercicio): DinSubcuenta
+    {
+        return $this->codsubcuentasopintra ?
+            $this->getSubAccount($codejercicio, $this->codsubcuentasopintra, static::SPECIAL_TAX_SUPPORTED_ACCOUNT) :
+            $this->getInputTaxAccount($codejercicio);
+    }
+
     public function getInputSurchargeAccount(string $codejercicio): DinSubcuenta
     {
         // si tenemos una cuenta definida, la devolvemos
@@ -126,6 +145,13 @@ class Impuesto extends ModelClass
         return $this->codsubcuentasop ?
             $this->getSubAccount($codejercicio, $this->codsubcuentasop, static::SPECIAL_TAX_SUPPORTED_ACCOUNT) :
             $this->getSpecialSubAccount($codejercicio, static::SPECIAL_TAX_SUPPORTED_ACCOUNT);
+    }
+
+    public function getOutputIntraTaxAccount(string $codejercicio): DinSubcuenta
+    {
+        return $this->codsubcuentarepintra ?
+            $this->getSubAccount($codejercicio, $this->codsubcuentarepintra, static::SPECIAL_TAX_IMPACTED_ACCOUNT) :
+            $this->getOutputTaxAccount($codejercicio);
     }
 
     public function getOutputSurchargeAccount(string $codejercicio): DinSubcuenta
@@ -171,8 +197,10 @@ class Impuesto extends ModelClass
         }
 
         $this->codsubcuentarep = empty($this->codsubcuentarep) ? null : $this->codsubcuentarep;
+        $this->codsubcuentarepintra = empty($this->codsubcuentarepintra) ? null : $this->codsubcuentarepintra;
         $this->codsubcuentarepre = empty($this->codsubcuentarepre) ? null : $this->codsubcuentarepre;
         $this->codsubcuentasop = empty($this->codsubcuentasop) ? null : $this->codsubcuentasop;
+        $this->codsubcuentasopintra = empty($this->codsubcuentasopintra) ? null : $this->codsubcuentasopintra;
         $this->codsubcuentasopre = empty($this->codsubcuentasopre) ? null : $this->codsubcuentasopre;
         $this->descripcion = Tools::noHtml($this->descripcion);
 
@@ -240,11 +268,47 @@ class Impuesto extends ModelClass
 
     protected function saveInsert(): bool
     {
-        // si no se ha asignado un código, lo generamos
         if (empty($this->codimpuesto)) {
-            $this->codimpuesto = (string)$this->newCode();
+            $this->codimpuesto = $this->newLetterCode();
         }
 
         return parent::saveInsert();
+    }
+
+    private function newLetterCode(): string
+    {
+        $desc = preg_replace('/[^A-Z]/i', '', strtoupper($this->descripcion ?? ''));
+        $pct = (int)$this->iva;
+
+        // try 3 letters + percentage
+        $prefix3 = substr($desc, 0, 3);
+        if (strlen($prefix3) === 3) {
+            $candidate = $prefix3 . $pct;
+            if (false === $this->codimpuestoExists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        // try 4 letters + percentage
+        $prefix4 = substr($desc, 0, 4);
+        if (strlen($prefix4) === 4) {
+            $candidate = $prefix4 . $pct;
+            if (false === $this->codimpuestoExists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return (string)$this->newCode();
+    }
+
+    private function codimpuestoExists(string $codimpuesto): bool
+    {
+        foreach (Impuestos::all() as $impuesto) {
+            if (strtoupper($impuesto->codimpuesto) === strtoupper($codimpuesto)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

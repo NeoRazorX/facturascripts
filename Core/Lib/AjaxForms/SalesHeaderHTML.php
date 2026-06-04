@@ -36,7 +36,7 @@ use FacturaScripts\Dinamic\Model\Provincia;
  * Description of SalesHeaderHTML
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class SalesHeaderHTML
 {
@@ -78,9 +78,11 @@ class SalesHeaderHTML
                     return;
                 }
             }
-        } elseif (isset($formData['action'], $formData['codcliente']) &&
+        } elseif (
+            isset($formData['action'], $formData['codcliente']) &&
             $formData['action'] === 'set-customer' &&
-            $cliente->load($formData['codcliente'])) {
+            $cliente->load($formData['codcliente'])
+        ) {
             // existing record and change customer
             $model->setSubject($cliente);
             return;

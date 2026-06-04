@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -247,7 +247,10 @@ class Updater extends Controller
             }
 
             $item = [
-                'description' => Tools::trans('core-update', ['%version%' => $build['version']]),
+                'description' => Tools::trans('core-update', [
+                    '%currentVersion%' => self::getCoreVersion(),
+                    '%version%' => $build['version']
+                ]),
                 'downloaded' => file_exists(Tools::folder($fileName)),
                 'filename' => $fileName,
                 'id' => Forja::CORE_PROJECT_ID,
@@ -286,10 +289,14 @@ class Updater extends Controller
             if ($build['mincore'] > $coreVersion) {
                 continue; // Requiere un core más reciente
             }
+            if ($build['maxcore'] > 0 && $build['maxcore'] < $coreVersion) {
+                continue; // Build demasiado antigua para el core actual
+            }
 
             $item = [
                 'description' => Tools::trans('plugin-update', [
                     '%pluginName%' => $plugin->name,
+                    '%currentVersion%' => $plugin->version,
                     '%version%' => $build['version']
                 ]),
                 'downloaded' => file_exists(Tools::folder($fileName)),

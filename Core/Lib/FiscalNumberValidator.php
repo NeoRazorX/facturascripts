@@ -61,7 +61,7 @@ class FiscalNumberValidator
             $number = str_replace('-', '', $number);
         }
 
-        if (strlen($number) != 9) {
+        if (mb_strlen($number) != 9) {
             return false;
         }
 
@@ -86,58 +86,65 @@ class FiscalNumberValidator
 
     public static function isValidSpainCIF(?string $cif): bool
     {
-        if (empty($cif) || strlen($cif) !== 9 || false === is_numeric(substr($cif, 1, 7))) {
+        if (empty($cif) || mb_strlen($cif) !== 9 || false === ctype_digit(mb_substr($cif, 1, 7))) {
             return false;
         }
 
-        $first = substr($cif, 0, 1);
+        $first = mb_substr($cif, 0, 1);
         $prefix = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'N', 'P', 'Q', 'R', 'S', 'U', 'V', 'W'];
         if (false === in_array($first, $prefix)) {
             return false;
         }
 
-        $sumA = intval(substr($cif, 2, 1)) + intval(substr($cif, 4, 1)) + intval(substr($cif, 6, 1));
-        $sumB = static::sumDigits(intval(substr($cif, 1, 1)) * 2) +
-            static::sumDigits(intval(substr($cif, 3, 1)) * 2) +
-            static::sumDigits(intval(substr($cif, 5, 1)) * 2) +
-            static::sumDigits(intval(substr($cif, 7, 1)) * 2);
+        $sumA = intval(mb_substr($cif, 2, 1)) + intval(mb_substr($cif, 4, 1)) + intval(mb_substr($cif, 6, 1));
+        $sumB = static::sumDigits(intval(mb_substr($cif, 1, 1)) * 2) +
+            static::sumDigits(intval(mb_substr($cif, 3, 1)) * 2) +
+            static::sumDigits(intval(mb_substr($cif, 5, 1)) * 2) +
+            static::sumDigits(intval(mb_substr($cif, 7, 1)) * 2);
         $sumC = $sumA + $sumB;
-        $digE = intval(substr($sumC, -1));
+        $digE = intval(mb_substr((string)$sumC, -1));
         $dc = empty($digE) ? 0 : 10 - $digE;
 
-        if (substr($cif, -1) === (string)$dc) {
+        if (mb_substr($cif, -1) === (string)$dc) {
             return true;
         }
 
-        return substr($cif, -1) === substr('JABCDEFGHI', $dc, 1);
+        return mb_substr($cif, -1) === mb_substr('JABCDEFGHI', $dc, 1);
     }
 
     public static function isValidSpainDNI(?string $dni): bool
     {
-        if (empty($dni) || strlen($dni) < 8 || false === is_numeric(substr($dni, 1, 7))) {
+        if (empty($dni)) {
+            return false;
+        }
+
+        $len = mb_strlen($dni);
+        if ($len !== 9 && !($len === 8 && is_numeric($dni))) {
+            return false;
+        }
+
+        if (false === ctype_digit(mb_substr($dni, 1, 7))) {
             return false;
         }
 
         if (is_numeric($dni)) {
             $mod = intval(intval($dni) % 23);
-            $dni .= substr('TRWAGMYFPDXBNJZSQVHLCKE', $mod, 1);
+            $dni .= mb_substr('TRWAGMYFPDXBNJZSQVHLCKE', $mod, 1);
         }
 
-        $number = filter_var($dni, FILTER_SANITIZE_NUMBER_INT);
-        $first = substr($dni, 0, 1);
-        switch ($first) {
-            case 'Y':
-                $number = '1' . $number;
-                break;
+        $first = mb_substr($dni, 0, 1);
 
-            case 'Z':
-                $number = '2' . $number;
-                break;
+        // primer carácter: dígito (DNI) o X/Y/Z (NIE)
+        if (false === ctype_digit($first) && false === in_array($first, ['X', 'Y', 'Z'], true)) {
+            return false;
         }
+
+        $prefix = ['X' => '0', 'Y' => '1', 'Z' => '2'];
+        $number = (ctype_digit($first) ? $first : $prefix[$first]) . mb_substr($dni, 1, 7);
 
         $mod = intval(intval($number) % 23);
-        $letter = substr('TRWAGMYFPDXBNJZSQVHLCKE', $mod, 1);
-        return substr($dni, -1) === $letter;
+        $letter = mb_substr('TRWAGMYFPDXBNJZSQVHLCKE', $mod, 1);
+        return mb_substr($dni, -1) === $letter;
     }
 
     /**
@@ -171,8 +178,12 @@ class FiscalNumberValidator
 
             case 'dni':
             case 'nie':
-            case 'nif':
                 return static::isValidSpainDNI($upperNumber);
+
+            case 'nif':
+                // desde el RD 1065/2007 el NIF engloba DNI/NIE y el antiguo CIF
+                return static::isValidSpainDNI($upperNumber)
+                    || static::isValidSpainCIF($upperNumber);
 
             case 'rfc':
                 return static::isValidRFC($upperNumber);
@@ -192,10 +203,11 @@ class FiscalNumberValidator
 
     private static function sumDigits(int $num): int
     {
-        if (strlen($num) === 1) {
-            return intval($num);
+        $str = (string)$num;
+        if (mb_strlen($str) === 1) {
+            return intval($str);
         }
 
-        return intval(substr($num, 0, 1)) + intval(substr($num, 1, 1));
+        return intval(mb_substr($str, 0, 1)) + intval(mb_substr($str, 1, 1));
     }
 }

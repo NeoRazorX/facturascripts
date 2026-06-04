@@ -219,6 +219,9 @@ class EditAsiento extends PanelController
             case 'save-doc':
                 return $this->saveDocAction();
 
+            case 'sort-files':
+                return $this->sortFilesAction();
+
             case 'unlink-file':
                 return $this->unlinkFileAction();
 

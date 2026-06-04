@@ -37,13 +37,18 @@ function widgetSelectGetData(select, parent) {
         success: function (results) {
             select.html('');
             results.forEach(function (element) {
-                let selected = (element.key == select.attr('value')) ? 'selected' : '';
+                let selected = (element.key === select.attr('value')) ? 'selected' : '';
                 let key = (element.key == null) ? '' : element.key;
                 select.append('<option value="' + key + '" ' + selected + '>' + element.value + '</option>');
             });
             select.change();
         },
-        error: function (msg) {
+        error: function (msg, textStatus, errorThrown) {
+            console.log('widgetSelectGetData AJAX ERROR');
+            console.log('status:', msg.status);
+            console.log('textStatus:', textStatus);
+            console.log('errorThrown:', errorThrown);
+            console.log('responseText:', msg.responseText);
             alert(msg.status + " " + msg.responseText);
         }
     });
@@ -68,7 +73,7 @@ $(document).ready(function () {
                 widgetSelectGetData(select, parent);
             });
         } else if (parent.attr('type') === 'hidden') {
-            var hiddenInput = document.querySelector("[name='" + parentStr + "']");
+            let hiddenInput = document.querySelector("[name='" + parentStr + "']");
             hiddenInput.addEventListener('change', function () {
                 widgetSelectGetData(select, parent);
             });

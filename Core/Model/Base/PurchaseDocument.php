@@ -19,38 +19,39 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Proveedor as CoreProveedor;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Description of PurchaseDocument
+ * Documento de compra.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 abstract class PurchaseDocument extends TransformerDocument
 {
     /**
-     * Supplier code for this document.
+     * Código de proveedor de este documento.
      *
      * @var string
      */
     public $codproveedor;
 
     /**
-     * Provider's name.
+     * Nombre del proveedor.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Supplier's document number, if any.
-     * May contain letters.
+     * Número de documento del proveedor, si lo tiene.
+     * Puede contener letras.
      *
      * @var string
      */
@@ -60,14 +61,14 @@ abstract class PurchaseDocument extends TransformerDocument
     {
         parent::clear();
 
-        // select default currency
+        // seleccionamos la divisa por defecto
         $coddivisa = Tools::settings('default', 'coddivisa');
         $this->setCurrency($coddivisa, true);
     }
 
     /**
-     * Returns a new document line with the data of the product. Finds product
-     * by reference or barcode.
+     * Devuelve una nueva línea de documento con los datos del producto.
+     * Busca el producto por referencia o código de barras.
      *
      * @param string $reference
      *
@@ -82,13 +83,14 @@ abstract class PurchaseDocument extends TransformerDocument
         }
 
         $variant = new Variante();
-        $where1 = [new DataBaseWhere('referencia', Tools::noHtml($reference))];
-        $where2 = [new DataBaseWhere('codbarras', Tools::noHtml($reference))];
+        $where1 = [Where::eq('referencia', Tools::noHtml($reference))];
+        $where2 = [Where::eq('codbarras', Tools::noHtml($reference))];
         if ($variant->loadWhere($where1) || $variant->loadWhere($where2)) {
             $product = $variant->getProducto();
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
             $newLine->descripcion = $variant->description();
+            $newLine->excepcioniva = $product->excepcioniva ?? $newLine->excepcioniva;
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $product->getTax()->iva;
             $newLine->pvpunitario = $variant->coste;
@@ -97,7 +99,9 @@ abstract class PurchaseDocument extends TransformerDocument
 
             $this->setLastSupplierPrice($newLine);
 
-            // allow extensions
+            Calculator::calculateLine($this, $newLine);
+
+            // permitimos extensiones
             $this->pipe('getNewProductLine', $newLine, $variant, $product);
         }
 
@@ -116,17 +120,17 @@ abstract class PurchaseDocument extends TransformerDocument
 
     public function install(): string
     {
-        // we need to call parent first
+        // necesitamos llamar primero al padre
         $result = parent::install();
 
-        // needed dependencies
+        // dependencias necesarias
         new Proveedor();
 
         return $result;
     }
 
     /**
-     * Sets the author for this document.
+     * Establece el autor de este documento.
      *
      * @param User $user
      *
@@ -143,14 +147,14 @@ abstract class PurchaseDocument extends TransformerDocument
         $this->idempresa = $user->idempresa ?? $this->idempresa;
         $this->nick = $user->nick;
 
-        // allow extensions
+        // permitimos extensiones
         $this->pipe('setAuthor', $user);
 
         return true;
     }
 
     /**
-     * Assign the supplier to the document.
+     * Asigna el proveedor al documento.
      *
      * @param CoreProveedor $subject
      *
@@ -162,19 +166,20 @@ abstract class PurchaseDocument extends TransformerDocument
             return false;
         }
 
-        // supplier model
+        // modelo de proveedor
         $this->codproveedor = $subject->codproveedor;
         $this->nombre = $subject->razonsocial;
         $this->cifnif = $subject->cifnif ?? '';
 
-        // commercial data
+        // datos comerciales
         if (empty($this->id())) {
             $this->codpago = $subject->codpago ?? $this->codpago;
             $this->codserie = $subject->codserie ?? $this->codserie;
             $this->irpf = $subject->irpf() ?? $this->irpf;
+            $this->operacion = $subject->operacion ?? $this->operacion;
         }
 
-        // allow extensions
+        // permitimos extensiones
         $this->pipe('setSubject', $subject);
 
         return true;
@@ -186,7 +191,7 @@ abstract class PurchaseDocument extends TransformerDocument
     }
 
     /**
-     * Returns True if there is no errors on properties values.
+     * Devuelve True si no hay errores en los valores de las propiedades.
      *
      * @return bool
      */
@@ -199,7 +204,7 @@ abstract class PurchaseDocument extends TransformerDocument
     }
 
     /**
-     * Updates subjects data in this document.
+     * Actualiza los datos del sujeto en este documento.
      *
      * @return bool
      */
@@ -210,16 +215,16 @@ abstract class PurchaseDocument extends TransformerDocument
     }
 
     /**
-     * Sets the last price and discounts from this supplier.
+     * Establece el último precio y descuentos de este proveedor.
      *
      * @param BusinessDocumentLine $newLine
      */
     protected function setLastSupplierPrice(&$newLine): void
     {
         $where = [
-            new DataBaseWhere('codproveedor', $this->codproveedor),
-            new DataBaseWhere('referencia', $newLine->referencia),
-            new DataBaseWhere('precio', 0, '>')
+            Where::eq('codproveedor', $this->codproveedor),
+            Where::eq('referencia', $newLine->referencia),
+            Where::gt('precio', 0)
         ];
         $orderBy = ['coddivisa' => 'DESC'];
         foreach (ProductoProveedor::all($where, $orderBy) as $prod) {

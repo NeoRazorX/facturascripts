@@ -322,17 +322,20 @@ final class FacturaProveedorTest extends TestCase
         $invoice->setSubject($supplier);
         $this->assertTrue($invoice->save(), 'cant-create-invoice');
 
-        // añadimos una línea
+        // añadimos una línea con recargo
         $firstLine = $invoice->getNewLine();
         $firstLine->cantidad = 2;
         $firstLine->pvpunitario = 100;
+        $firstLine->iva = 21;
+        $firstLine->recargo = 5.2;
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
         $lines = $invoice->getLines();
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
-        // comprobamos los totales
+        // comprobamos los totales: el proveedor tiene RE, así que se aplica recargo
+        // aunque la empresa no lo tenga (caso de empresas con varias actividades).
         $this->assertEquals(200, $invoice->neto, 'bad-neto');
         $this->assertEquals(200, $invoice->netosindto, 'bad-netosindto');
         $this->assertEquals(42, $invoice->totaliva, 'bad-totaliva');
@@ -387,14 +390,15 @@ final class FacturaProveedorTest extends TestCase
         $lines = $invoice->getLines();
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
-        // comprobamos los totales
+        // comprobamos los totales: la empresa tiene RE,
+        // así que en compras sí se aplica recargo
         $this->assertEquals(100, $invoice->neto, 'bad-neto');
         $this->assertEquals(100, $invoice->netosindto, 'bad-netosindto');
         $this->assertEquals(21, $invoice->totaliva, 'bad-totaliva');
-        $this->assertEquals(0, $invoice->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(5.2, $invoice->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0, $invoice->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0, $invoice->totalsuplidos, 'bad-totalsuplidos');
-        $this->assertEquals(121, $invoice->total, 'bad-total');
+        $this->assertEquals(126.2, $invoice->total, 'bad-total');
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
@@ -646,11 +650,6 @@ final class FacturaProveedorTest extends TestCase
             $this->markTestSkipped('country-is-not-spain');
         }
 
-        // comprobamos si el VIES funciona
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service is not available');
-        }
-
         // establecemos la empresa en España con un cif español
         $company = Empresas::default();
         $company->codpais = 'ESP';
@@ -669,31 +668,36 @@ final class FacturaProveedorTest extends TestCase
         // creamos una factura
         $invoice = new FacturaProveedor();
         $invoice->setSubject($supplier);
-        $this->assertTrue($invoice->setIntracomunitaria());
 
-        // comprobamos que la operación es intracomunitaria
-        $this->assertEquals(InvoiceOperation::INTRA_COMMUNITY, $invoice->operacion);
+        // simulamos VIES: setIntracomunitaria() consulta a Vies para empresa
+        // y documento; con ambos válidos debe devolver true. Los casos no UE
+        // cortan antes de tocar la red, así que la simulación es indiferente.
+        try {
+            Vies::simulateViesResponse(Vies::RESULT_VALID);
+            $this->assertTrue($invoice->setIntracomunitaria());
 
-        // quitamos la operación
-        $invoice->operacion = null;
+            // comprobamos que la operación es intracomunitaria
+            $this->assertEquals(InvoiceOperation::INTRA_COMMUNITY, $invoice->operacion);
 
-        // cambiamos la empresa a Perú
-        $company->codpais = 'PER';
-        $this->assertTrue($company->save());
+            // quitamos la operación
+            $invoice->operacion = null;
 
-        // comprobamos que no se puede establecer la operación
-        $this->assertFalse($invoice->setIntracomunitaria());
+            // cambiamos la empresa a Perú (no UE) -> false sin tocar VIES
+            $company->codpais = 'PER';
+            $this->assertTrue($company->save());
+            $this->assertFalse($invoice->setIntracomunitaria());
 
-        // volvemos a España
-        $company->codpais = 'ESP';
-        $this->assertTrue($company->save());
+            // volvemos a España
+            $company->codpais = 'ESP';
+            $this->assertTrue($company->save());
 
-        // cambiamos el proveedor a España
-        $address->codpais = 'ESP';
-        $this->assertTrue($address->save());
-
-        // comprobamos que no se puede establecer la operación
-        $this->assertFalse($invoice->setIntracomunitaria());
+            // proveedor también a España: mismo país que la empresa -> false
+            $address->codpais = 'ESP';
+            $this->assertTrue($address->save());
+            $this->assertFalse($invoice->setIntracomunitaria());
+        } finally {
+            Vies::simulateViesResponse(null);
+        }
 
         // eliminamos
         $this->assertTrue($invoice->delete());

@@ -78,17 +78,34 @@ final class RetencionTest extends TestCase
 
     public function testCreateWithoutCode(): void
     {
-        // creamos una retención sin código
+        // sin código, debe usar 3 letras de la descripción + porcentaje
         $retencion = new Retencion();
-        $retencion->descripcion = 'Test Retención Sin Código';
+        $retencion->descripcion = 'Test Retención';
         $retencion->porcentaje = 20;
         $this->assertTrue($retencion->save());
+        $this->assertEquals('TES20', $retencion->codretencion);
+        $this->assertTrue($retencion->delete());
+    }
 
-        // comprobamos que se ha asignado un código automáticamente
-        $this->assertNotEmpty($retencion->codretencion);
+    public function testCreateWithoutCodeFallsBackTo4Letters(): void
+    {
+        // ocupamos 'TES15'
+        $retencion1 = new Retencion();
+        $retencion1->codretencion = 'TES15';
+        $retencion1->descripcion = 'TES15 ocupado';
+        $retencion1->porcentaje = 15;
+        $this->assertTrue($retencion1->save());
+
+        // al estar 'TES15' ocupado, debe usar 'TEST15' (4 letras + porcentaje)
+        $retencion2 = new Retencion();
+        $retencion2->descripcion = 'Test Retención';
+        $retencion2->porcentaje = 15;
+        $this->assertTrue($retencion2->save());
+        $this->assertEquals('TEST15', $retencion2->codretencion);
 
         // eliminamos
-        $this->assertTrue($retencion->delete());
+        $this->assertTrue($retencion2->delete());
+        $this->assertTrue($retencion1->delete());
     }
 
     protected function tearDown(): void

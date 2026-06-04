@@ -78,6 +78,10 @@
         <type>integer</type>
     </column>
     <column>
+        <name>idestado_ant</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>idpresupuesto</name>
         <type>serial</type>
         <null>NO</null>
@@ -177,6 +181,10 @@
     <constraint>
         <name>ca_presupuestosprov_idestado</name>
         <type>FOREIGN KEY (idestado) REFERENCES estados_documentos (idestado) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_presupuestosprov_idestado_ant</name>
+        <type>FOREIGN KEY (idestado_ant) REFERENCES estados_documentos (idestado) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_presupuestosprov_codproveedor</name>

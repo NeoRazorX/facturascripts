@@ -24,35 +24,64 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Permite crear cláusulas WHERE para consultas SQL.
+ * Representa una cláusula WHERE de SQL y la traduce a un fragmento seguro de SQL para usarla
+ * con la conexión de FacturaScripts.
+ *
+ * Cada instancia describe una condición simple (campo + operador + valor) o un grupo anidado
+ * (operador `(` con `subWhere`). Las condiciones se construyen con los factory estáticos
+ * (`Where::eq`, `Where::like`, `Where::in`, `Where::between`, sus variantes `or*`, etc.) y se
+ * combinan con `Where::multiSql()` o `Where::multiSqlLegacy()`, esta última también acepta los
+ * antiguos `DataBaseWhere` para compatibilidad.
+ *
+ * Detalles no triviales:
+ * - El campo admite varios nombres separados por `|` (FIELD_SEPARATOR): se generan condiciones
+ *   sobre cada campo unidas con OR y agrupadas entre paréntesis.
+ * - Los nombres de campo se escapan con `escapeColumn()`, salvo si llevan paréntesis (se asume
+ *   expresión SQL válida ya formada por el llamador) o si usan los prefijos `integer:` (cast a
+ *   entero) o `lower:` (envuelve el campo en LOWER(...)).
+ * - Los valores se serializan con `var2str()`, así que las APIs estándar son seguras frente a
+ *   inyección. El prefijo `field:` solo se interpreta como referencia a otra columna cuando se
+ *   activa `useField()`; en caso contrario se trata como literal.
+ * - Con operador `=` o `!=`, un valor null se traduce automáticamente a `IS NULL` / `IS NOT NULL`.
+ * - `LIKE` y `NOT LIKE` aplican `LOWER(...)` a ambos lados y, si el patrón no contiene `%`, lo
+ *   envuelven con `%...%` automáticamente.
+ * - `XLIKE` divide el valor por espacios y combina cada palabra con LIKE unidas por AND
+ *   (búsqueda multipalabra).
+ * - `IN` / `NOT IN` aceptan array, lista separada por comas o, si el string empieza por SELECT,
+ *   una subconsulta literal.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 final class Where
 {
+    /** Separador para indicar varios campos en `$fields`; produce condiciones unidas por OR. */
     const FIELD_SEPARATOR = '|';
 
-    /** @var DataBase */
+    /** Conexión compartida perezosa, instanciada en el primer uso. @var DataBase */
     private static $db;
 
-    /** @var string */
+    /** Nombre del campo (o varios separados por FIELD_SEPARATOR). @var string */
     public $fields;
 
-    /** @var string */
+    /** Operador SQL: `=`, `!=`, `<`, `>`, `LIKE`, `IN`, `BETWEEN`, `XLIKE`, ... o `(` para grupos. @var string */
     public $operator;
 
-    /** @var string */
+    /** Conector con la cláusula previa al concatenar: `AND` u `OR`. @var string */
     public $operation;
 
-    /** @var Where[] */
+    /** Cláusulas hijas cuando el operador es `(` (grupo anidado). @var Where[] */
     public $subWhere;
 
-    /** @var bool */
+    /** Si es true, los valores con prefijo `field:` se interpretan como nombre de columna. @var bool */
     public $useField;
 
-    /** @var mixed */
+    /** Valor a comparar; puede ser escalar, array (IN/BETWEEN) o null (se traduce a IS NULL). @var mixed */
     public $value;
 
+    /**
+     * Construye una cláusula simple. En general es preferible usar los factory estáticos
+     * (`eq`, `like`, `in`, ...) en lugar de instanciar directamente.
+     */
     public function __construct(string $fields, $value, string $operator = '=', string $operation = 'AND', bool $useField = false)
     {
         $this->fields = $fields;
@@ -62,6 +91,13 @@ final class Where
         $this->useField = $useField;
     }
 
+    /**
+     * Habilita la interpretación del prefijo `field:` en los valores para esta condición.
+     *
+     * Sin activar este flag, un valor como `'field:otra_columna'` se trata como string literal
+     * y se escapa; con el flag activo, se traduce a una referencia escapada a esa columna,
+     * permitiendo comparaciones campo-contra-campo.
+     */
     public function useField(): self
     {
         $this->useField = true;
@@ -69,61 +105,89 @@ final class Where
         return $this;
     }
 
+    /** Crea `campo BETWEEN value1 AND value2`. */
     public static function between(string $fields, $value1, $value2): self
     {
         return new self($fields, [$value1, $value2], 'BETWEEN');
     }
 
+    /** Factory genérico que permite especificar operador y conector arbitrarios. */
     public static function column(string $fields, $value, string $operator = '=', string $operation = 'AND'): self
     {
         return new self($fields, $value, $operator, $operation);
     }
 
+    /** Crea `campo = value` (o `campo IS NULL` si value es null). */
     public static function eq(string $fields, $value): self
     {
         return new self($fields, $value, '=');
     }
 
+    /** Crea `campo > value`. */
     public static function gt(string $fields, $value): self
     {
         return new self($fields, $value, '>');
     }
 
+    /** Crea `campo >= value`. */
     public static function gte(string $fields, $value): self
     {
         return new self($fields, $value, '>=');
     }
 
+    /**
+     * Crea `campo IN (...)`.
+     *
+     * `$values` puede ser un array, una lista separada por comas o un string que empiece
+     * por `SELECT` para incrustar una subconsulta literal.
+     */
     public static function in(string $fields, $values): self
     {
         return new self($fields, $values, 'IN');
     }
 
+    /** Crea `campo IS NOT NULL`. */
     public static function isNotNull(string $fields): self
     {
         return new self($fields, null, 'IS NOT');
     }
 
+    /** Crea `campo IS NULL`. */
     public static function isNull(string $fields): self
     {
         return new self($fields, null, 'IS');
     }
 
+    /**
+     * Crea `LOWER(campo) LIKE LOWER('%value%')`.
+     *
+     * Si `$value` ya contiene comodines `%`, se respetan tal cual; en caso contrario, se
+     * envuelve automáticamente con `%...%`.
+     */
     public static function like(string $fields, string $value): self
     {
         return new self($fields, $value, 'LIKE');
     }
 
+    /** Crea `campo < value`. */
     public static function lt(string $fields, $value): self
     {
         return new self($fields, $value, '<');
     }
 
+    /** Crea `campo <= value`. */
     public static function lte(string $fields, $value): self
     {
         return new self($fields, $value, '<=');
     }
 
+    /**
+     * Convierte un array de cláusulas Where en el SQL combinado, sin el prefijo `WHERE`.
+     *
+     * El conector entre cláusulas (AND/OR) se toma del campo `operation` de cada elemento; el
+     * de la primera se ignora. Los grupos anidados (operador `(`) se renderizan recursivamente
+     * entre paréntesis. Lanza Exception si algún elemento no es una instancia de Where.
+     */
     public static function multiSql(array $where): string
     {
         $sql = '';
@@ -148,6 +212,14 @@ final class Where
         return $sql;
     }
 
+    /**
+     * Variante de `multiSql()` para código legacy: acepta también instancias de `DataBaseWhere`
+     * y devuelve el SQL ya prefijado con ` WHERE ` (cadena vacía si el array está vacío).
+     *
+     * Como los antiguos `DataBaseWhere` no soportaban grupos explícitos, esta función agrupa
+     * automáticamente con paréntesis las secuencias consecutivas en las que el siguiente
+     * elemento usa `operation = 'OR'`, replicando la precedencia que se asumía históricamente.
+     */
     public static function multiSqlLegacy(array $where): string
     {
         $sql = '';
@@ -198,121 +270,151 @@ final class Where
         return empty($sql) ? '' : ' WHERE ' . $sql;
     }
 
+    /** Crea `campo NOT BETWEEN value1 AND value2`. */
     public static function notBetween(string $fields, $value1, $value2): self
     {
         return new self($fields, [$value1, $value2], 'NOT BETWEEN');
     }
 
+    /** Crea `campo != value` (o `campo IS NOT NULL` si value es null). */
     public static function notEq(string $fields, $value): self
     {
         return new self($fields, $value, '!=');
     }
 
+    /** Crea `campo NOT IN (...)`. Mismas reglas de `$values` que `in()`. */
     public static function notIn(string $fields, $values): self
     {
         return new self($fields, $values, 'NOT IN');
     }
 
+    /** Crea `LOWER(campo) NOT LIKE LOWER('%value%')` con el mismo manejo de comodines que `like()`. */
     public static function notLike(string $fields, string $value): self
     {
         return new self($fields, $value, 'NOT LIKE');
     }
 
+    /** Variante genérica con conector OR. */
     public static function or(string $fields, $value, string $operator = '='): self
     {
         return new self($fields, $value, $operator, 'OR');
     }
 
+    /** Equivale a `between()` pero unido a la cláusula previa con OR. */
     public static function orBetween(string $fields, $value1, $value2): self
     {
         return new self($fields, [$value1, $value2], 'BETWEEN', 'OR');
     }
 
+    /** Equivale a `eq()` pero unido a la cláusula previa con OR. */
     public static function orEq(string $fields, $value): self
     {
         return new self($fields, $value, '=', 'OR');
     }
 
+    /** Equivale a `gt()` pero unido a la cláusula previa con OR. */
     public static function orGt(string $fields, $value): self
     {
         return new self($fields, $value, '>', 'OR');
     }
 
+    /** Equivale a `gte()` pero unido a la cláusula previa con OR. */
     public static function orGte(string $fields, $value): self
     {
         return new self($fields, $value, '>=', 'OR');
     }
 
+    /** Equivale a `in()` pero unido a la cláusula previa con OR. */
     public static function orIn(string $fields, $values): self
     {
         return new self($fields, $values, 'IN', 'OR');
     }
 
+    /** Equivale a `isNotNull()` pero unido a la cláusula previa con OR. */
     public static function orIsNotNull(string $fields): self
     {
         return new self($fields, null, 'IS NOT', 'OR');
     }
 
+    /** Equivale a `isNull()` pero unido a la cláusula previa con OR. */
     public static function orIsNull(string $fields): self
     {
         return new self($fields, null, 'IS', 'OR');
     }
 
+    /** Equivale a `like()` pero unido a la cláusula previa con OR. */
     public static function orLike(string $fields, string $value): self
     {
         return new self($fields, $value, 'LIKE', 'OR');
     }
 
+    /** Equivale a `lt()` pero unido a la cláusula previa con OR. */
     public static function orLt(string $fields, $value): self
     {
         return new self($fields, $value, '<', 'OR');
     }
 
+    /** Equivale a `lte()` pero unido a la cláusula previa con OR. */
     public static function orLte(string $fields, $value): self
     {
         return new self($fields, $value, '<=', 'OR');
     }
 
+    /** Equivale a `notBetween()` pero unido a la cláusula previa con OR. */
     public static function orNotBetween(string $fields, $value1, $value2): self
     {
         return new self($fields, [$value1, $value2], 'NOT BETWEEN', 'OR');
     }
 
+    /** Equivale a `notEq()` pero unido a la cláusula previa con OR. */
     public static function orNotEq(string $fields, $value): self
     {
         return new self($fields, $value, '!=', 'OR');
     }
 
+    /** Equivale a `notIn()` pero unido a la cláusula previa con OR. */
     public static function orNotIn(string $fields, $values): self
     {
         return new self($fields, $values, 'NOT IN', 'OR');
     }
 
+    /** Equivale a `notLike()` pero unido a la cláusula previa con OR. */
     public static function orNotLike(string $fields, string $value): self
     {
         return new self($fields, $value, 'NOT LIKE', 'OR');
     }
 
+    /** Equivale a `regexp()` pero unido a la cláusula previa con OR. */
     public static function orRegexp(string $fields, string $value): self
     {
         return new self($fields, $value, 'REGEXP', 'OR');
     }
 
+    /** Equivale a `sub()` pero unido a la cláusula previa con OR. */
     public static function orSub(array $where): self
     {
         return self::sub($where, 'OR');
     }
 
+    /** Equivale a `xlike()` pero unido a la cláusula previa con OR. */
     public static function orXlike(string $fields, string $value): self
     {
         return new self($fields, $value, 'XLIKE', 'OR');
     }
 
+    /** Crea `campo REGEXP value` (la sintaxis exacta depende del motor, vía `getOperator`). */
     public static function regexp(string $fields, string $value): self
     {
         return new self($fields, $value, 'REGEXP');
     }
 
+    /**
+     * Renderiza esta cláusula simple como SQL (sin prefijo `WHERE` ni el conector `operation`).
+     *
+     * Si `$fields` contiene varios campos separados por `|`, se generan condiciones por cada
+     * uno unidas con OR y rodeadas de paréntesis. Los grupos (operador `(`) no se procesan aquí,
+     * sino en `multiSql()`.
+     */
     public function sql(): string
     {
         $fields = explode(self::FIELD_SEPARATOR, $this->fields);
@@ -375,6 +477,13 @@ final class Where
         return count($fields) > 1 ? $sql . ')' : $sql;
     }
 
+    /**
+     * Agrupa varias cláusulas en una sub-condición que se renderizará entre paréntesis.
+     *
+     * Internamente devuelve una instancia con operador `(` y `subWhere` apuntando al array
+     * de hijos; `multiSql()` la detecta y delega recursivamente. Lanza Exception si algún
+     * elemento del array no es Where.
+     */
     public static function sub(array $where, string $operation = 'AND'): self
     {
         // comprobamos si el $where es un array de Where
@@ -390,6 +499,10 @@ final class Where
         return $item;
     }
 
+    /**
+     * Crea una búsqueda multipalabra: divide `$value` por espacios y aplica un LIKE a cada
+     * palabra, combinándolos con AND (la fila debe contener todas las palabras).
+     */
     public static function xlike(string $fields, string $value): self
     {
         return new self($fields, $value, 'XLIKE');

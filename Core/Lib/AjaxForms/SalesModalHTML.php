@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -94,14 +94,16 @@ class SalesModalHTML
         $tbody = '';
         foreach (static::getProducts() as $row) {
             $cssClass = $row['nostock'] ? 'table-info clickableRow' : ($row['disponible'] > 0 ? 'clickableRow' : 'table-warning clickableRow');
+            $reference = static::html($row['referencia']);
             $description = Tools::textBreak($row['descripcion'], 120)
                 . static::idatributovalor($row['idatributovalor1'])
                 . static::idatributovalor($row['idatributovalor2'])
                 . static::idatributovalor($row['idatributovalor3'])
                 . static::idatributovalor($row['idatributovalor4']);
-            $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
-                . ' return salesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
-                . '<td><b>' . $row['referencia'] . '</b> ' . $description . '</td>'
+            $tbody .= '<tr class="' . $cssClass . '" data-reference="' . $reference
+                . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
+                . ' return salesFormAction(\'add-product\', this.dataset.reference);">'
+                . '<td><b>' . $reference . '</b> ' . $description . '</td>'
                 . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>';
 
             if (self::$vendido) {
@@ -183,6 +185,12 @@ class SalesModalHTML
             }
             return Cliente::all($where, ['LOWER(nombre)' => 'ASC'], 0, 50);
         });
+    }
+
+    protected static function html(?string $text): string
+    {
+        $decoded = html_entity_decode($text ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return htmlspecialchars($decoded, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
     protected static function getProducts(): array

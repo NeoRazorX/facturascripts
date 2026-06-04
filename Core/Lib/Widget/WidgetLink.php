@@ -29,7 +29,6 @@ use FacturaScripts\Core\Validator;
  */
 class WidgetLink extends WidgetText
 {
-
     /**
      * @param string $inside
      * @param string $titleurl

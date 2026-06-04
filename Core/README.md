@@ -10,7 +10,10 @@ Todos estos archivos pueden ser reemplazados en los plugins.
 ## Base
 Aquí están las clases críticas de la aplicación que **no pueden ser reemplazadas mediante plugins**.
 Estas clases se moverán paulatinamente a la carpeta Core durante el proceso de refactorización
-y la carpeta será eliminada en 2026.
+y la carpeta será eliminada a lo largo de 2027.
+
+## Contract
+En esta carpeta se encuentran las interfaces y contratos que definen las APIs públicas de la aplicación.
 
 ## Controller
 En esta carpeta se encuentran los controladores de la aplicación. Todos los controladores
@@ -24,8 +27,18 @@ Todos los archivos pueden ser reemplazados en los plugins.
 En esta carpeta se encuentran algunos repositorios o cachés de acceso rápido para modelos muy utilizados.
 Estas clases **no pueden ser reemplazadas mediante plugins**.
 
+## Error
+En esta carpeta se encuentran los controladores de error de la aplicación (páginas 404, 500, etc.).
+
+## Internal
+Aquí se encuentran clases internas del núcleo de la aplicación que **no pueden ser reemplazadas mediante plugins**.
+
 ## Lib
 Aquí se encuentran clases auxiliares y servicios. Estas clases pueden ser reemplazadas o extendidas mediante plugins.
+
+## Mod
+En esta carpeta se encuentran modificadores que permiten alterar el comportamiento de partes concretas
+de la aplicación desde plugins.
 
 ## Model
 En esta carpeta se encuentran los modelos de la aplicación. Todos los modelos pueden ser reemplazados o extendidos mediante plugins.
@@ -34,6 +47,10 @@ En esta carpeta se encuentran los modelos de la aplicación. Todos los modelos p
 Aquí están los archivos xml que definen las tablas de la base de datos.
 Todos los archivos pueden ser reemplazados en los plugins.
 
+## Template
+Aquí se encuentran las clases base PHP (controladores, cron, workers, migraciones, etc.) que sirven
+de plantilla para extender el comportamiento del núcleo desde plugins.
+
 ## Translation
 En esta carpeta se encuentran los archivos json de traducción de la aplicación.
 Estos archivos pueden ser extendidos mediante plugins.
@@ -41,6 +58,10 @@ Estos archivos pueden ser extendidos mediante plugins.
 ## View
 Aquí están las plantillas twig de la aplicación, para todas aquellas partes que se generan mediante HTML.
 Todas las vistas pueden ser reemplazadas o extendidas mediante plugins.
+
+## Worker
+En esta carpeta se encuentran los workers que procesan eventos en segundo plano.
+Pueden ser añadidos o reemplazados mediante plugins.
 
 ## XMLView
 En esta carpeta se encuentran los archivos XML que definen los listados y formularios de la aplicación.

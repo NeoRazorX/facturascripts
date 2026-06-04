@@ -87,8 +87,10 @@ class CustomerRiskTools
     public static function getInvoicesRisk(string $codcliente, ?int $idempresa = null): float
     {
         // comprobamos que las tablas facturascli y recibospagoscli existen
-        if (!static::dataBase()->tableExists('facturascli') ||
-            !static::dataBase()->tableExists('recibospagoscli')) {
+        if (
+            !static::dataBase()->tableExists('facturascli') ||
+            !static::dataBase()->tableExists('recibospagoscli')
+        ) {
             return 0.0;
         }
 

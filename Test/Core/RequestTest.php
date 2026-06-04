@@ -537,7 +537,7 @@ final class RequestTest extends TestCase
             $request = $this->createRequest(['headers' => $_SERVER]);
 
             // La clase Request usa Tools::config('route') internamente
-            // Como no podemos modificar esa configuración aquí, 
+            // Como no podemos modificar esa configuración aquí,
             // solo probamos que el método funciona
             $this->assertIsString($request->url());
         } finally {

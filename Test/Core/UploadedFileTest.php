@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,19 +39,8 @@ final class UploadedFileTest extends TestCase
 
     protected function tearDown(): void
     {
-        if (file_exists($this->tempFile)) {
-            unlink($this->tempFile);
-        }
-
-        $files = glob($this->tempDir . '/*');
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                unlink($file);
-            }
-        }
-
         if (is_dir($this->tempDir)) {
-            rmdir($this->tempDir);
+            $this->removeDirectory($this->tempDir);
         }
     }
 
@@ -125,10 +114,37 @@ final class UploadedFileTest extends TestCase
         }
     }
 
+    public function testExtensionMethodWithNullName(): void
+    {
+        $file = new UploadedFile(['name' => null]);
+        $this->assertSame('', $file->extension());
+    }
+
     public function testGetClientOriginalName(): void
     {
         $file = new UploadedFile(['name' => 'original_document.pdf']);
         $this->assertEquals('original_document.pdf', $file->getClientOriginalName());
+    }
+
+    public function testGetClientOriginalNameWithNullName(): void
+    {
+        $file = new UploadedFile(['name' => null]);
+        $this->assertSame('', $file->getClientOriginalName());
+    }
+
+    public function testGetClientOriginalNameSanitizesPathComponents(): void
+    {
+        $testCases = [
+            '../Dinamic/Assets/traversed.txt' => 'traversed.txt',
+            '..\\Dinamic\\Assets\\traversed.txt' => 'traversed.txt',
+            '/tmp/uploads/document.pdf' => 'document.pdf',
+            'C:\\temp\\uploads\\document.pdf' => 'document.pdf'
+        ];
+
+        foreach ($testCases as $originalName => $expectedName) {
+            $file = new UploadedFile(['name' => $originalName]);
+            $this->assertSame($expectedName, $file->getClientOriginalName());
+        }
     }
 
     public function testGetErrorMessage(): void
@@ -150,6 +166,20 @@ final class UploadedFileTest extends TestCase
         }
     }
 
+    public function testGetErrorMessageForBlockedPhpExtensions(): void
+    {
+        foreach (['shell.php', 'shell.phtml', 'shell.PHAR'] as $fileName) {
+            $file = new UploadedFile([
+                'name' => $fileName,
+                'error' => UPLOAD_ERR_OK,
+                'tmp_name' => $this->tempFile,
+                'test' => true
+            ]);
+
+            $this->assertEquals('Executable or unsafe files are not allowed.', $file->getErrorMessage());
+        }
+    }
+
     public function testGetMaxFilesize(): void
     {
         $maxFilesize = UploadedFile::getMaxFilesize();
@@ -160,10 +190,14 @@ final class UploadedFileTest extends TestCase
 
     public function testGetClientMimeType(): void
     {
-        $file = new UploadedFile(['tmp_name' => $this->tempFile]);
-        $mimeType = $file->getClientMimeType();
+        $file = new UploadedFile(['type' => 'image/png']);
+        $this->assertSame('image/png', $file->getClientMimeType());
+    }
 
-        $this->assertStringContainsString('text/', $mimeType);
+    public function testGetClientMimeTypeWithNullType(): void
+    {
+        $file = new UploadedFile(['type' => null]);
+        $this->assertSame('', $file->getClientMimeType());
     }
 
     public function testGetMimeType(): void
@@ -174,10 +208,28 @@ final class UploadedFileTest extends TestCase
         $this->assertStringContainsString('text/', $mimeType);
     }
 
+    public function testGetMimeTypeWithNullPath(): void
+    {
+        $file = new UploadedFile(['tmp_name' => null]);
+        $this->assertSame('', $file->getMimeType());
+    }
+
+    public function testGetMimeTypeWithInvalidPath(): void
+    {
+        $file = new UploadedFile(['tmp_name' => $this->tempDir . '/missing-file.txt']);
+        $this->assertSame('', $file->getMimeType());
+    }
+
     public function testGetPathname(): void
     {
         $file = new UploadedFile(['tmp_name' => '/tmp/test.txt']);
         $this->assertEquals('/tmp/test.txt', $file->getPathname());
+    }
+
+    public function testGetPathnameWithNullPath(): void
+    {
+        $file = new UploadedFile(['tmp_name' => null]);
+        $this->assertSame('', $file->getPathname());
     }
 
     public function testGetRealPath(): void
@@ -196,6 +248,16 @@ final class UploadedFileTest extends TestCase
     {
         $file = new UploadedFile([
             'tmp_name' => '/tmp/non_uploaded_file.txt',
+            'test' => false
+        ]);
+
+        $this->assertFalse($file->isUploaded());
+    }
+
+    public function testIsUploadedWithNullPath(): void
+    {
+        $file = new UploadedFile([
+            'tmp_name' => null,
             'test' => false
         ]);
 
@@ -245,6 +307,79 @@ final class UploadedFileTest extends TestCase
         $this->assertFalse($file->isValid());
     }
 
+    public function testIsValidRejectsBlockedPhpExtensions(): void
+    {
+        foreach (['shell.php', 'shell.phtml', 'shell.PHP8', '.htaccess', 'page.html', 'page.shtml'] as $fileName) {
+            $file = new UploadedFile([
+                'name' => $fileName,
+                'error' => UPLOAD_ERR_OK,
+                'tmp_name' => $this->tempFile,
+                'test' => true
+            ]);
+
+            $this->assertFalse($file->isValid());
+        }
+    }
+
+    public function testIsValidImageWithValidGif(): void
+    {
+        $imageFile = $this->tempDir . '/test-image.gif';
+        file_put_contents($imageFile, base64_decode('R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs='));
+
+        $file = new UploadedFile([
+            'name' => 'image.gif',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $imageFile,
+            'test' => true
+        ]);
+
+        $this->assertTrue($file->isValidImage());
+    }
+
+    public function testIsValidImageRejectsNonImageExtension(): void
+    {
+        $file = new UploadedFile([
+            'name' => 'document.txt',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertFalse($file->isValidImage());
+    }
+
+    public function testIsValidImageRejectsBlockedPhpExtension(): void
+    {
+        $file = new UploadedFile([
+            'name' => 'shell.php',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertFalse($file->isValidImage());
+    }
+
+    public function testIsValidImageRejectsFakeGifPayload(): void
+    {
+        $fakeGif = $this->tempDir . '/fake.gif';
+        file_put_contents($fakeGif, "GIF89a\n<?php system(\$_GET['cmd']); ?>\n");
+
+        $file = new UploadedFile([
+            'name' => 'fake.gif',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $fakeGif,
+            'test' => true
+        ]);
+
+        if (function_exists('imagecreatefromstring')) {
+            $this->assertFalse($file->isValidImage());
+            return;
+        }
+
+        $this->assertTrue($file->isValidImage());
+    }
+
     public function testMoveWithValidFileInTestMode(): void
     {
         $file = new UploadedFile([
@@ -292,6 +427,39 @@ final class UploadedFileTest extends TestCase
         $this->assertFalse($result);
     }
 
+    public function testMoveSanitizesDestinyName(): void
+    {
+        $myFilesDir = $this->tempDir . '/MyFiles';
+        $assetsDir = $this->tempDir . '/Dinamic/Assets';
+        mkdir($myFilesDir);
+        mkdir($this->tempDir . '/Dinamic');
+        mkdir($assetsDir);
+
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $result = $file->move($myFilesDir, '../Dinamic/Assets/traversed.txt');
+
+        $this->assertTrue($result);
+        $this->assertFileExists($myFilesDir . '/traversed.txt');
+        $this->assertFileDoesNotExist($assetsDir . '/traversed.txt');
+    }
+
+    public function testMoveRejectsEmptyDestinyName(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertFalse($file->move($this->tempDir, '../'));
+        $this->assertFileExists($this->tempFile);
+    }
+
     public function testMoveToWithValidFileInTestMode(): void
     {
         $file = new UploadedFile([
@@ -320,6 +488,22 @@ final class UploadedFileTest extends TestCase
         $result = $file->moveTo($targetPath);
 
         $this->assertFalse($result);
+        $this->assertFileDoesNotExist($targetPath);
+    }
+
+    public function testMoveToRejectsParentDirectorySegments(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $targetPath = $this->tempDir . '/../traversed.txt';
+        $result = $file->moveTo($targetPath);
+
+        $this->assertFalse($result);
+        $this->assertFileExists($this->tempFile);
         $this->assertFileDoesNotExist($targetPath);
     }
 
@@ -355,5 +539,19 @@ final class UploadedFileTest extends TestCase
 
         $result = $method->invoke(null, $input);
         $this->assertEquals($expected, $result);
+    }
+
+    private function removeDirectory(string $dir): void
+    {
+        foreach (scandir($dir) as $item) {
+            if ('.' === $item || '..' === $item) {
+                continue;
+            }
+
+            $path = $dir . DIRECTORY_SEPARATOR . $item;
+            is_dir($path) ? $this->removeDirectory($path) : unlink($path);
+        }
+
+        rmdir($dir);
     }
 }

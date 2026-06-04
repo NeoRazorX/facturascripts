@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -50,12 +50,6 @@ trait DocFilesTrait
                 continue;
             } elseif (false === $uploadFile->isValid()) {
                 Tools::log()->error($uploadFile->getErrorMessage());
-                continue;
-            }
-
-            // exclude php files
-            if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                Tools::log()->error(Tools::trans('php-files-blocked'));
                 continue;
             }
 
@@ -125,8 +119,10 @@ trait DocFilesTrait
         }
 
         $modelId = $fileRelation->modelid ?? $fileRelation->modelcode;
-        if ($modelId != $this->request->query('code') ||
-            $fileRelation->model !== $this->getModelClassName()) {
+        if (
+            $modelId != $this->request->query('code') ||
+            $fileRelation->model !== $this->getModelClassName()
+        ) {
             Tools::log()->warning('not-allowed-delete');
             return true;
         }
@@ -161,8 +157,10 @@ trait DocFilesTrait
             return true;
         }
 
-        if ($fileRelation->modelcode != $this->request->query('code') ||
-            $fileRelation->model !== $this->getModelClassName()) {
+        if (
+            $fileRelation->modelcode != $this->request->query('code') ||
+            $fileRelation->model !== $this->getModelClassName()
+        ) {
             Tools::log()->warning('not-allowed-modify');
             return true;
         }
@@ -190,7 +188,7 @@ trait DocFilesTrait
         $where[] = is_numeric($modelid) ?
             new DataBaseWhere('modelid|modelcode', $modelid) :
             new DataBaseWhere('modelcode', $modelid);
-        $view->loadData('', $where, ['creationdate' => 'DESC']);
+        $view->loadData('', $where, ['orden' => 'ASC', 'creationdate' => 'DESC']);
     }
 
     private function unlinkFileAction(): bool
@@ -250,5 +248,32 @@ trait DocFilesTrait
         }
 
         return true;
+    }
+
+    private function sortFilesAction(): bool
+    {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $idsOrdenadas = $this->request->request->getArray('orden');
+        if (false === empty($idsOrdenadas)) {
+            $orden = 1;
+            foreach ($idsOrdenadas as $id_archivo) {
+                $archivo = new AttachedFileRelation();
+                $archivo->load($id_archivo);
+                $archivo->orden = $orden;
+                if ($archivo->save()) {
+                    $orden++;
+                }
+            }
+        }
+
+        $this->setTemplate(false);
+
+        $this->response->json(['status' => 'ok']);
+
+        return false;
     }
 }

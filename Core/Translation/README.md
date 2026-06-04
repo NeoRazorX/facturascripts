@@ -1,6 +1,6 @@
 # Advertencia / Warning
 - Por favor, **no modifique** estos archivos manualmente. Utilice la web https://facturascripts.com/traducciones
-- Please, **do not modify** these files manually. Use the web https://facturascripts.com/traductions
+- Please, **do not modify** these files manually. Use the web https://facturascripts.com/traducciones
 
 ## updater.php
 - Este script descarga automáticamente las traducciones de facturascripts.com

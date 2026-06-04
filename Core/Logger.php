@@ -636,10 +636,12 @@ final class Logger
         foreach ($this->current_channels as $channel) {
             // Si encontramos este mensaje en el log, incrementamos el contador
             foreach (self::$data as $key => $value) {
-                if ($value['channel'] === $channel && $value['level'] === $level &&
+                if (
+                    $value['channel'] === $channel && $value['level'] === $level &&
                     $value['message'] === $trans_message &&
                     empty(array_diff_assoc($value['context'], $final_context)) &&
-                    empty(array_diff_assoc($final_context, $value['context']))) {
+                    empty(array_diff_assoc($final_context, $value['context']))
+                ) {
                     self::$data[$key]['count']++;
                     continue 2;
                 }

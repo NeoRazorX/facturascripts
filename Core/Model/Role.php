@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Model\RoleUser as DinRoleUser;
 /**
  * Define a permission package to quickly assign users.
  *
- * @author Joe Nilson           <joenilson at gmail.com>
+ * @author Joe Nilson           <joenilson@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class Role extends ModelClass

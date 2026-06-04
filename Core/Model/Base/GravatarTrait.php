@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Model\Base;
  * Description of GravatarTrait
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 trait GravatarTrait
 {

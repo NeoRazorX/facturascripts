@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\AlbaranCliente;
@@ -345,8 +344,7 @@ final class AlbaranClienteTest extends TestCase
 
         // obtenemos el almacén de la empresa 2
         $warehouse = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadWhere($where);
+        $warehouse->loadWhereEq('idempresa', $company2->idempresa);
 
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -371,8 +369,11 @@ final class AlbaranClienteTest extends TestCase
             }
 
             // al cambiar el estado genera una nueva factura
+            $previous = $doc->idestado;
             $doc->idestado = $status->idestado;
             $this->assertTrue($doc->save(), 'albaran-cant-save');
+            $this->assertEquals($previous, $doc->idestado_ant, 'albaran-bad-previous-status');
+            $this->assertEquals($previous, $doc->getPreviousStatus()->idestado, 'albaran-bad-previous-status-model');
 
             // comprobamos que la factura se ha creado
             $children = $doc->childrenDocuments();
@@ -382,6 +383,7 @@ final class AlbaranClienteTest extends TestCase
                 $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'factura-bad-idempresa');
                 $this->assertEquals($company2->idempresa, $child->idempresa, 'factura-bad-idempresa');
             }
+            break;
         }
 
         // eliminamos
@@ -390,6 +392,8 @@ final class AlbaranClienteTest extends TestCase
         foreach ($children as $child) {
             $this->assertTrue($child->delete(), 'factura-cant-delete');
         }
+        $this->assertTrue($doc->reload(), 'albaran-cant-reload');
+        $this->assertEquals($previous, $doc->idestado, 'albaran-bad-restored-status');
         $this->assertTrue($doc->delete(), 'albaran-cant-delete');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');

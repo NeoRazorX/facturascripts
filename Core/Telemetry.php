@@ -63,7 +63,7 @@ final class Telemetry
 
     public function getMetadata(): array
     {
-        if ($this->id_install) {
+        if (false === $this->ready() || empty($this->sign_key)) {
             return [];
         }
 
@@ -187,12 +187,14 @@ final class Telemetry
         // hacemos una petición a la url de telemetría
         $request = Http::post(self::TELEMETRY_URL, $params)->setTimeout(3);
         if ($request->failed()) {
+            $this->save();
             return false;
         }
 
         // comprobamos que la petición ha devuelto un json
         $data = $request->json();
         if (empty($data) || !isset($data['ok']) || !$data['ok']) {
+            $this->save();
             return false;
         }
 
@@ -251,7 +253,9 @@ final class Telemetry
 
     private function save(): bool
     {
-        $this->last_update = time();
+        // sumamos un jitter aleatorio (hasta 1 día) para desincronizar las
+        // peticiones entre instalaciones y evitar picos en los mismos días/horas
+        $this->last_update = time() + mt_rand(0, 86400);
 
         Tools::settingsSet('default', 'telemetryinstall', $this->id_install);
         Tools::settingsSet('default', 'telemetrykey', $this->sign_key);

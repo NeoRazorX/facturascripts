@@ -868,7 +868,8 @@ final class FacturaClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($customer->getDefaultAddress()->delete());
-        $this->assertTrue($customer->delete());;
+        $this->assertTrue($customer->delete());
+        ;
     }
 
     public function testSetIntraCommunity(): void
@@ -876,11 +877,6 @@ final class FacturaClienteTest extends TestCase
         // si el país no es España, saltamos el test
         if (Tools::config('codpais') !== 'ESP') {
             $this->markTestSkipped('country-is-not-spain');
-        }
-
-        // comprobamos primero si el VIES funciona
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service is not available');
         }
 
         // establecemos la empresa en España con un cif español
@@ -902,34 +898,35 @@ final class FacturaClienteTest extends TestCase
         $invoice = new FacturaCliente();
         $invoice->setSubject($customer);
 
-        $check = $invoice->setIntracomunitaria();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        // simulamos VIES en lugar de pegarle al servicio real:
+        // setIntracomunitaria() consulta a Vies tanto para la empresa como
+        // para el documento; con ambos válidos debe devolver true.
+        try {
+            Vies::simulateViesResponse(Vies::RESULT_VALID);
+            $this->assertTrue($invoice->setIntracomunitaria());
+
+            // comprobamos que se ha establecido el tipo de operación
+            $this->assertEquals(InvoiceOperation::INTRA_COMMUNITY, $invoice->operacion);
+
+            // quitamos la operación
+            $invoice->operacion = null;
+
+            // cambiamos el país de la empresa a Colombia (no UE):
+            // setIntracomunitaria() debe cortar antes de llegar a VIES.
+            $company->codpais = 'COL';
+            $this->assertTrue($company->save());
+            $this->assertFalse($invoice->setIntracomunitaria());
+
+            // volvemos a poner España
+            $company->codpais = 'ESP';
+            $this->assertTrue($company->save());
+
+            // cambiamos el país de la factura a Perú (no UE) -> false sin tocar VIES
+            $invoice->codpais = 'PER';
+            $this->assertFalse($invoice->setIntracomunitaria());
+        } finally {
+            Vies::simulateViesResponse(null);
         }
-        $this->assertTrue($check);
-
-        // comprobamos que se ha establecido el tipo de operación
-        $this->assertEquals(InvoiceOperation::INTRA_COMMUNITY, $invoice->operacion);
-
-        // quitamos la operación
-        $invoice->operacion = null;
-
-        // cambiamos el país de la empresa a Colombia
-        $company->codpais = 'COL';
-        $this->assertTrue($company->save());
-
-        // comprobamos que ya no se puede asignar intracomunitaria
-        $this->assertFalse($invoice->setIntracomunitaria());
-
-        // volvemos a poner España
-        $company->codpais = 'ESP';
-        $this->assertTrue($company->save());
-
-        // cambiamos el país de la factura a Perú
-        $invoice->codpais = 'PER';
-
-        // comprobamos que ya no se puede asignar intracomunitaria
-        $this->assertFalse($invoice->setIntracomunitaria());
 
         // eliminamos
         $this->assertTrue($invoice->delete());

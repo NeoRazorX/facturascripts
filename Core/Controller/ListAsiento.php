@@ -46,14 +46,19 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addLockButton(string $viewName): void
+    protected function addLockButton(string $viewName, string $group = ''): void
     {
-        $this->addButton($viewName, [
+        $button = [
             'action' => 'lock-entries',
             'confirm' => true,
             'icon' => 'fa-solid fa-lock',
             'label' => 'lock-entry'
-        ]);
+        ];
+        if ($group !== '') {
+            $button['group'] = $group;
+        }
+
+        $this->addButton($viewName, $button);
     }
 
     /**
@@ -61,14 +66,19 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addRenumberButton(string $viewName): void
+    protected function addRenumberButton(string $viewName, string $group = ''): void
     {
-        $this->addButton($viewName, [
+        $button = [
             'action' => 'renumber',
             'icon' => 'fa-solid fa-sort-numeric-down',
             'label' => 'renumber',
             'type' => 'modal'
-        ]);
+        ];
+        if ($group !== '') {
+            $button['group'] = $group;
+        }
+
+        $this->addButton($viewName, $button);
     }
 
     /**
@@ -123,10 +133,15 @@ class ListAsiento extends ListController
             $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
         }
 
-        // botones
+        // agrupamos las acciones en un dropdown
         if ($this->permissions->allowUpdate) {
-            $this->addLockButton($viewName);
-            $this->addRenumberButton($viewName);
+            $this->tab($viewName)->addButtonGroup([
+                'name' => 'entry-actions',
+                'icon' => 'fa-solid fa-circle-check',
+                'label' => 'actions'
+            ]);
+            $this->addLockButton($viewName, 'entry-actions');
+            $this->addRenumberButton($viewName, 'entry-actions');
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\JoinModel;
+use FacturaScripts\Core\Template\JoinModel;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Tarifa;
 use FacturaScripts\Dinamic\Model\Variante;
@@ -42,7 +42,6 @@ use FacturaScripts\Dinamic\Model\Variante;
  */
 class TarifaProducto extends JoinModel
 {
-
     /** @var Tarifa[] */
     private static $rates = [];
 
@@ -55,11 +54,6 @@ class TarifaProducto extends JoinModel
         new Variante();
     }
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
     public function __get($name)
     {
         return $name === 'preciotarifa' ? $this->priceInRate() : parent::__get($name);
@@ -79,25 +73,21 @@ class TarifaProducto extends JoinModel
         return $rate;
     }
 
+    public function id()
+    {
+        return $this->idproducto;
+    }
+
     public function priceInRate(): float
     {
         // intentamos obtener la variante para aplicar mejor la tarifa
         $variant = new Variante();
-        $where = [new DataBaseWhere('referencia', $this->referencia)];
-        if ($variant->loadWhere($where)) {
+        if ($variant->loadWhere([Where::eq('referencia', $this->referencia)])) {
             $product = $variant->getProducto();
             return $this->getRate()->applyTo($variant, $product);
         }
 
         return $this->getRate()->apply((float)$this->coste, (float)$this->precio);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function primaryColumnValue()
-    {
-        return $this->idproducto;
     }
 
     protected function getFields(): array

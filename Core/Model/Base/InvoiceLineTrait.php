@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
 trait InvoiceLineTrait
@@ -35,7 +35,7 @@ trait InvoiceLineTrait
 
         // comprobamos líneas de facturas rectificativas
         $quantity = 0.0;
-        $where = [new DataBaseWhere('idlinearect', $this->idlinea)];
+        $where = [Where::eq('idlinearect', $this->idlinea)];
         foreach (self::all($where, [], 0, 0) as $line) {
             $quantity += abs($line->cantidad);
         }
@@ -45,9 +45,9 @@ trait InvoiceLineTrait
 
         // comprobamos líneas relacionadas
         $whereTrans = [
-            new DataBaseWhere('model1', $this->getDocument()->modelClassName()),
-            new DataBaseWhere('iddoc1', $this->idfactura),
-            new DataBaseWhere('idlinea1', $this->idlinea)
+            Where::eq('model1', $this->getDocument()->modelClassName()),
+            Where::eq('iddoc1', $this->idfactura),
+            Where::eq('idlinea1', $this->idlinea)
         ];
         foreach (DocTransformation::all($whereTrans, [], 0, 0) as $docTrans) {
             $quantity += abs($docTrans->cantidad);

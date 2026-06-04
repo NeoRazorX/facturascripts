@@ -232,6 +232,8 @@ class CronJob extends ModelClass
             $logData = [
                 'jobname' => $this->jobname,
                 'pluginname' => $this->pluginname,
+                'file' => defined('FS_FOLDER') ? str_replace(FS_FOLDER, '', $e->getFile()) : $e->getFile(),
+                'line' => $e->getLine(),
             ];
 
             if ($e instanceof Error) {

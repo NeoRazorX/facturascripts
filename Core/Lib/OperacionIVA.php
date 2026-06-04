@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Lib;
 /**
  * This class centralizes all operations related to taxes.
  *
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class OperacionIVA
 {

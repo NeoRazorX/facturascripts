@@ -140,9 +140,41 @@ class Serie extends ModelClass
     protected function saveInsert(): bool
     {
         if (empty($this->codserie)) {
-            $this->codserie = (string)$this->newCode();
+            $this->codserie = $this->newLetterCode();
         }
 
         return parent::saveInsert();
+    }
+
+    private function newLetterCode(): string
+    {
+        // try prefixes from the description (1 to 4 chars)
+        $desc = preg_replace('/[^A-Z0-9_\+\.\-]/i', '', strtoupper($this->descripcion ?? ''));
+        for ($len = 1; $len <= 4; $len++) {
+            $candidate = substr($desc, 0, $len);
+            if (strlen($candidate) === $len && false === $this->codserieExists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        // fall back to A-Z
+        for ($letter = 'A'; $letter <= 'Z'; $letter++) {
+            if (false === $this->codserieExists($letter)) {
+                return $letter;
+            }
+        }
+
+        return (string)$this->newCode();
+    }
+
+    private function codserieExists(string $codserie): bool
+    {
+        foreach (Series::all() as $serie) {
+            if (strtoupper($serie->codserie) === strtoupper($codserie)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

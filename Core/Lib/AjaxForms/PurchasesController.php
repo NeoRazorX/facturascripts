@@ -32,6 +32,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Variante;
+use Throwable;
 
 /**
  * Description of PurchasesController
@@ -228,6 +229,9 @@ abstract class PurchasesController extends PanelController
 
             case 'save-status':
                 return $this->saveStatusAction();
+
+            case 'sort-files':
+                return $this->sortFilesAction();
 
             case 'unlink-file':
                 return $this->unlinkFileAction();
@@ -492,8 +496,16 @@ abstract class PurchasesController extends PanelController
 
         $model = $this->getModel();
         $model->idestado = (int)$this->request->input('selectedLine');
-        if (false === $model->save()) {
+
+        try {
+            if (false === $model->save()) {
+                $this->db()->rollback();
+                $this->sendJsonWithLogs(['ok' => false]);
+                return false;
+            }
+        } catch (Throwable $e) {
             $this->db()->rollback();
+            Tools::log()->error($e->getMessage());
             $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }

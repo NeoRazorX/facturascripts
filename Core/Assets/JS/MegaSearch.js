@@ -64,34 +64,69 @@ function reloadClickableRow() {
     });
 }
 
+function appendSearchResults(key, val, items) {
+    $("#v-pills-tab").append("<a class='nav-link text-nowrap' id='v-pills-" + key + "-tab' data-bs-toggle='pill' href='#v-pills-"
+            + key + "' role='tab' aria-controls='v-pills-" + key + "' aria-expanded='true'>\n\
+        <i class='" + val.icon + " fa-fw me-1 d-none d-lg-inline-block'></i>\n\
+        <span class='d-inline d-lg-inline'>" + val.title + "</span>\n\
+        <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>" + items.length + "</span>\n\
+    </a>");
+
+    var tableHTML = "<thead><tr>";
+    $.each(val.columns, function (key3, val3) {
+        tableHTML += "<th>" + val3 + "</th>";
+    });
+    tableHTML += "<tr></thead>";
+    $.each(items, function (key3, val3) {
+        tableHTML += val3;
+    });
+
+    $("#v-pills-tabContent").append("<div class='tab-pane fade' id='v-pills-" + key + "' role='tabpanel' aria-labelledby='v-pills-" + key + "-tab'>\n\
+        <div class='card shadow'><div class='table-responsive'>\n\
+        <table class='table table-striped table-hover mb-0'>" + tableHTML + "</table>\n\
+        </div>\n\</div>\n\</div>");
+
+    $("#v-pills-tab a:first").tab("show");
+    reloadClickableRow();
+    $("#no-data-msg").hide();
+}
+
+function updateSearchProgress(completed, total) {
+    var progress = $("#mega-search-progress");
+    if (progress.length === 0 || total < 1) {
+        return;
+    }
+
+    var percent = Math.round((completed / total) * 100);
+    $("#mega-search-progress-counter").text(completed + " / " + total);
+    progress.attr("aria-valuenow", completed);
+    $("#mega-search-progress-bar")
+        .css("width", percent + "%")
+        .attr("aria-valuenow", completed);
+
+    if (completed >= total) {
+        $("#mega-search-progress-bar").removeClass("progress-bar-animated");
+        $("#mega-search-progress-spinner")
+            .removeClass("spinner-border spinner-border-sm text-primary")
+            .addClass("fa-solid fa-check text-success");
+
+        if ($("#v-pills-tab a").length === 0) {
+            $("#no-data-msg").removeClass("d-none").show();
+        }
+
+        window.setTimeout(function () {
+            $("#mega-search-status-row").fadeOut();
+        }, 400);
+    }
+}
+
 function searchOnSection(url) {
     $.getJSON(url, function (json) {
         $.each(json, function (key, val) {
             var items = json2tr(val.results);
 
             if (items.length > 0) {
-                $("#v-pills-tab").append("<a class='nav-link' id='v-pills-" + key + "-tab' data-bs-toggle='pill' href='#v-pills-"
-                        + key + "' role='tab' aria-controls='v-pills-" + key + "' aria-expanded='true'>\n\
-                    <span class='badge bg-secondary float-end'>" + items.length + "</span>\n\
-                    <i class='" + val.icon + " fa-fw'></i>\n\
-                    " + val.title + "\n\
-                </a>");
-                var tableHTML = "<thead><tr>";
-                $.each(val.columns, function (key3, val3) {
-                    tableHTML += "<th>" + val3 + "</th>";
-                });
-                tableHTML += "<tr></thead>";
-                $.each(items, function (key3, val3) {
-                    tableHTML += val3;
-                });
-                $("#v-pills-tabContent").append("<div class='tab-pane fade' id='v-pills-" + key + "' role='tabpanel' aria-labelledby='v-pills-" + key + "-tab'>\n\
-                    <div class='card shadow'><div class='table-responsive'>\n\
-                    <table class='table table-striped table-hover mb-0'>" + tableHTML + "</table>\n\
-                    </div>\n\</div>\n\</div>");
-                $("#v-pills-tab a:first").tab("show");
-                reloadClickableRow();
-
-                $("#no-data-msg").hide();
+                appendSearchResults(key, val, items);
             }
         });
     });
@@ -105,6 +140,8 @@ function searchOnSection(url) {
 function searchOnSections(sections) {
     var urls = Object.values(sections);
     var index = 0;
+    var completed = 0;
+    var total = urls.length;
 
     function searchNext() {
         if (index < urls.length) {
@@ -116,36 +153,23 @@ function searchOnSections(sections) {
                     var items = json2tr(val.results);
 
                     if (items.length > 0) {
-                        $("#v-pills-tab").append("<a class='nav-link text-nowrap' id='v-pills-" + key + "-tab' data-bs-toggle='pill' href='#v-pills-"
-                                + key + "' role='tab' aria-controls='v-pills-" + key + "' aria-expanded='true'>\n\
-                            <i class='" + val.icon + " fa-fw me-1 d-none d-lg-inline-block'></i>\n\
-                            <span class='d-inline d-lg-inline'>" + val.title + "</span>\n\
-                            <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>" + items.length + "</span>\n\
-                        </a>");
-                        var tableHTML = "<thead><tr>";
-                        $.each(val.columns, function (key3, val3) {
-                            tableHTML += "<th>" + val3 + "</th>";
-                        });
-                        tableHTML += "<tr></thead>";
-                        $.each(items, function (key3, val3) {
-                            tableHTML += val3;
-                        });
-                        $("#v-pills-tabContent").append("<div class='tab-pane fade' id='v-pills-" + key + "' role='tabpanel' aria-labelledby='v-pills-" + key + "-tab'>\n\
-                            <div class='card shadow'><div class='table-responsive'>\n\
-                            <table class='table table-striped table-hover mb-0'>" + tableHTML + "</table>\n\
-                            </div>\n\</div>\n\</div>");
-                        $("#v-pills-tab a:first").tab("show");
-                        reloadClickableRow();
-
-                        $("#no-data-msg").hide();
+                        appendSearchResults(key, val, items);
                     }
                 });
             }).always(function() {
+                completed++;
+                updateSearchProgress(completed, total);
+
                 // Continue with next search regardless of success or failure
                 searchNext();
             });
+
+            return;
         }
+
+        updateSearchProgress(completed, total);
     }
 
+    updateSearchProgress(completed, total);
     searchNext();
 }

@@ -25,7 +25,7 @@ use FacturaScripts\Core\Template\ExtensionsTrait;
  * Description of TableBlock
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class TableBlock extends BaseBlock
 {
@@ -43,6 +43,11 @@ class TableBlock extends BaseBlock
         $this->style = $style;
         $this->header = $header;
         $this->rows = $rows;
+    }
+
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static([], [], $attrs['css'] ?? '', $attrs['style'] ?? '');
     }
 
     public function render(bool $footer = false): string

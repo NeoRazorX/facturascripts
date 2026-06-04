@@ -129,7 +129,7 @@ final class ToolsTest extends TestCase
         $expected = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . 'CRM';
         $this->assertEquals($expected, Tools::folder('Plugins', 'CRM'));
         $this->assertEquals($expected, Tools::folder(Tools::folder('Plugins'), 'CRM'));
-        
+
         // test con múltiples niveles de anidación
         $expected2 = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . 'CRM' . DIRECTORY_SEPARATOR . 'Config';
         $this->assertEquals($expected2, Tools::folder('Plugins', 'CRM', 'Config'));

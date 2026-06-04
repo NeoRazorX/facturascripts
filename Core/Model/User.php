@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,7 +39,7 @@ use FacturaScripts\Dinamic\Model\Serie as DinSerie;
  * Usuario de FacturaScripts.
  *
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
- * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ * @collaborator Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class User extends ModelClass
 {
@@ -242,6 +242,16 @@ class User extends ModelClass
     }
 
     /**
+     * Devuelve los nombres de campos que no deben exponerse en la API.
+     *
+     * @return string[]
+     */
+    public function getApiFieldsToHide(): array
+    {
+        return ['password', 'logkey', 'two_factor_secret_key'];
+    }
+
+    /**
      * Devuelve los roles asignados al usuario.
      *
      * @return Role[]
@@ -293,6 +303,36 @@ class User extends ModelClass
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,email,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
             . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT) . "','" . $email
             . "',TRUE,TRUE,'1','1','" . $lang . "','Wizard','99');";
+    }
+
+    /**
+     * Devuelve un nombre de pagina seguro para redirigir tras login.
+     * Si la homepage del usuario no es un nombre de controlador valido o no existe en la tabla pages,
+     * se devuelve la homepage por defecto de la instalacion (o 'Dashboard' como ultimo recurso).
+     * Nunca devuelve una URL absoluta ni un path arbitrario, para evitar open-redirect.
+     */
+    public function homepageUrl(): string
+    {
+        $default = Tools::settings('default', 'homepage', 'Dashboard');
+        if (!self::isSafePageName($default)) {
+            $default = 'Dashboard';
+        }
+
+        if (!self::isSafePageName($this->homepage ?? '')) {
+            return $default;
+        }
+
+        $page = new DinPage();
+        if (false === $page->load($this->homepage)) {
+            return $default;
+        }
+
+        return $this->homepage;
+    }
+
+    private static function isSafePageName(string $name): bool
+    {
+        return $name !== '' && 1 === preg_match('/^[A-Za-z][A-Za-z0-9_]{0,49}$/', $name);
     }
 
     public function newLogkey(string $ipAddress, string $browser = ''): string
@@ -360,6 +400,15 @@ class User extends ModelClass
             return false;
         }
 
+        // homepage es FK a pages.name: siempre un nombre de controlador alfanumerico.
+        // Rechazamos cualquier otra cosa para evitar open-redirect al usarlo como Location tras login.
+        if (!empty($this->homepage) && false === self::isSafePageName($this->homepage)) {
+            Tools::log()->warning('invalid-alphanumeric-code', [
+                '%value%' => $this->homepage, '%column%' => 'homepage', '%min%' => '1', '%max%' => '50',
+            ]);
+            return false;
+        }
+
         if (empty($this->creationdate)) {
             $this->creationdate = Tools::date();
         }
@@ -369,10 +418,10 @@ class User extends ModelClass
         }
 
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
-        $this->lastbrowser = substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200);
+        $this->lastbrowser = mb_substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200, 'UTF-8');
 
-        // escapamos el html de lastip y comprobamos que no excede los 40 caracteres
-        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 40);
+        // escapamos el html de lastip y comprobamos que no excede los 45 caracteres
+        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 45);
 
         if ($this->admin) {
             $this->level = 99;

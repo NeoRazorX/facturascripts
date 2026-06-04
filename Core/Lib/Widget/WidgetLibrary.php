@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -114,9 +114,10 @@ class WidgetLibrary extends BaseWidget
     /**
      * @param string $query
      * @param string $sort
+     * @param int $limit
      * @return AttachedFile[]
      */
-    public function files(string $query = '', string $sort = 'date-desc'): array
+    public function files(string $query = '', string $sort = 'date-desc', int $limit = 50): array
     {
         $list = [];
 
@@ -151,7 +152,7 @@ class WidgetLibrary extends BaseWidget
                 break;
         }
 
-        foreach ($model->all($where, $orderBy) as $file) {
+        foreach ($model->all($where, $orderBy, 0, $limit) as $file) {
             // excluimos el archivo seleccionado
             if ($file->idfile === $model->idfile) {
                 continue;
@@ -191,7 +192,7 @@ class WidgetLibrary extends BaseWidget
                 $html .= '<div class="d-flex">'
                     . '<img loading="lazy" src="' . $file->url('download-permanent') . '" class="me-3 flex-shrink-0" alt="' . $file->filename
                     . '" width="64" height="64" style="object-fit: cover; cursor: pointer;" onclick="' . $js . '" title="' . Tools::trans('select') . '">'
-                    . '<div class="flex-grow-1 min-width-0">'
+                    . '<div class="flex-grow-1" style="min-width: 0;">'
                     . '<h6 class="text-truncate mb-1" style="cursor: pointer;" onclick="' . $js . '" title="' . Tools::trans('select') . '">' . $file->filename . '</h6>'
                     . $info
                     . '</div>'
@@ -212,11 +213,6 @@ class WidgetLibrary extends BaseWidget
     public function uploadFile(UploadedFile $uploadFile): AttachedFile
     {
         if (false === $uploadFile->isValid()) {
-            return new AttachedFile();
-        }
-
-        // exclude php files
-        if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
             return new AttachedFile();
         }
 

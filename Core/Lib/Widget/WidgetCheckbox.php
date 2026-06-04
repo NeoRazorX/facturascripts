@@ -50,7 +50,7 @@ class WidgetCheckbox extends BaseWidget
             . '" class="' . $class . '"' . $checked . $readonly . $tabindex . '/>';
         $labelHtml = '<label for="' . $id . '">' . Tools::trans($title) . '</label>';
         $descriptionHtml = empty($description) ? '' :
-            '<small class="form-text text-muted">' . Tools::trans($description) . '</small>';
+            '<div class="form-text text-muted">' . Tools::trans($description) . '</div>';
 
         return '<div class="form-check pe-3 mb-3">'
             . $inputHtml

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,16 +19,16 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
 /**
- * Accounting year. It is the period in which accounting entry, invoices, delivery notes are grouped ...
+ * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes, etc.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -39,74 +39,34 @@ class Ejercicio extends ModelClass
     const EXERCISE_STATUS_OPEN = 'ABIERTO';
     const EXERCISE_STATUS_CLOSED = 'CERRADO';
 
-    /**
-     * Primary key. Varchar(4).
-     *
-     * @var string
-     */
+    /** Clave primaria. Varchar(4). */
     public $codejercicio;
 
-    /**
-     * Exercise status: ABIERTO|CERRADO
-     *
-     * @var string
-     */
+    /** Estado del ejercicio: ABIERTO|CERRADO */
     public $estado;
 
-    /**
-     * End date of the exercise.
-     *
-     * @var string with date format
-     */
+    /** Fecha de fin del ejercicio. */
     public $fechafin;
 
-    /**
-     * Start date of the exercise.
-     *
-     * @var string with date format
-     */
+    /** Fecha de inicio del ejercicio. */
     public $fechainicio;
 
-    /**
-     * Accounting entry ID of the year end.
-     *
-     * @var int
-     */
+    /** ID del asiento de cierre. */
     public $idasientocierre;
 
-    /**
-     * Profit and loss entry ID.
-     *
-     * @var int
-     */
+    /** ID del asiento de pérdidas y ganancias. */
     public $idasientopyg;
 
-    /**
-     * Opening accounting entry ID.
-     *
-     * @var int
-     */
+    /** ID del asiento de apertura. */
     public $idasientoapertura;
 
-    /**
-     * Foreign Key with Empresas table.
-     *
-     * @var int
-     */
+    /** Clave ajena de la tabla Empresas. */
     public $idempresa;
 
-    /**
-     * Length of characters of the subaccounts assigned.
-     *
-     * @var int
-     */
+    /** Longitud en caracteres de las subcuentas asignadas. */
     public $longsubcuenta;
 
-    /**
-     * Name of the exercise.
-     *
-     * @var string
-     */
+    /** Nombre del ejercicio. */
     public $nombre;
 
     public function clear(): void
@@ -126,14 +86,7 @@ class Ejercicio extends ModelClass
         Ejercicios::clear();
     }
 
-    /**
-     * Returns the date closest to $date that is within the range of this exercise.
-     *
-     * @param string $fecha
-     * @param bool $showError
-     *
-     * @return string
-     */
+    /** Devuelve la fecha más cercana a $fecha que esté dentro del rango de este ejercicio. */
     public function getBestFecha(string $fecha, bool $showError = false): string
     {
         $fecha2 = strtotime($fecha);
@@ -158,14 +111,13 @@ class Ejercicio extends ModelClass
 
     public function hasAccountingPlan(): bool
     {
-        $subcuenta = new Subcuenta();
-        $where = [new DataBaseWhere('codejercicio', $this->codejercicio)];
-        return $subcuenta->count($where) > 0;
+        $where = [Where::eq('codejercicio', $this->codejercicio)];
+        return Subcuenta::count($where) > 0;
     }
 
     public function install(): string
     {
-        // needed dependencies
+        // dependencias necesarias
         new DinEmpresa();
 
         $code = $year = "'" . date('Y') . "'";
@@ -177,13 +129,7 @@ class Ejercicio extends ModelClass
             . ' VALUES (' . $code . ',' . $year . ',' . $start . ',' . $end . ',' . $state . ',10,1);';
     }
 
-    /**
-     * Check if the indicated date is within the period of the exercise dates
-     *
-     * @param string $dateToCheck (string with date format)
-     *
-     * @return bool
-     */
+    /** Comprueba si la fecha indicada está dentro del periodo del ejercicio. */
     public function inRange(string $dateToCheck): bool
     {
         $start = strtotime($this->fechainicio);
@@ -192,37 +138,24 @@ class Ejercicio extends ModelClass
         return $date >= $start && $date <= $end;
     }
 
-    /**
-     * Returns the state of the exercise OPEN -> true | CLOSED -> false
-     *
-     * @return bool
-     */
+    /** Devuelve true si el ejercicio está abierto. */
     public function isOpened(): bool
     {
         return $this->estado === self::EXERCISE_STATUS_OPEN;
     }
 
-    /**
-     * Load the exercise for the indicated date. If it does not exist, create it.
-     * <bold>Need the company id to be correctly informed</bold>
-     *
-     * @param string $date
-     * @param bool $onlyOpened
-     * @param bool $create
-     *
-     * @return bool
-     */
+    /** Carga el ejercicio para la fecha indicada. Si no existe, lo crea. Requiere idempresa informado. */
     public function loadFromDate(string $date, bool $onlyOpened = true, bool $create = true): bool
     {
-        // we need this data because loadfromcode() makes a clear()
+        // guardamos estos datos porque loadFromCode() hace un clear()
         $idempresa = $this->idempresa;
         $long = $this->longsubcuenta;
 
-        // Search for fiscal year for date
+        // buscamos el ejercicio para la fecha
         $where = [
-            new DataBaseWhere('idempresa', $this->idempresa),
-            new DataBaseWhere('fechainicio', $date, '<='),
-            new DataBaseWhere('fechafin', $date, '>=')
+            Where::eq('idempresa', $this->idempresa),
+            Where::lte('fechainicio', $date),
+            Where::gte('fechafin', $date),
         ];
 
         $order = [$this->primaryColumn() => 'DESC'];
@@ -233,7 +166,7 @@ class Ejercicio extends ModelClass
         $this->idempresa = $idempresa;
         $this->longsubcuenta = $long;
 
-        // If must be register
+        // si no existe, lo creamos
         if ($create && strtotime($date) >= 1) {
             return $this->createNew($date);
         }
@@ -241,15 +174,7 @@ class Ejercicio extends ModelClass
         return false;
     }
 
-    /**
-     * Returns the following code for the reported field or the primary key of the model.
-     * (Formatted to 4 digits)
-     *
-     * @param string $field
-     * @param array $where
-     *
-     * @return string
-     */
+    /** Devuelve el siguiente código para el campo o la clave primaria del modelo, formateado a 4 dígitos. */
     public function newCode(string $field = '', array $where = [])
     {
         $newCode = parent::newCode($field, $where);
@@ -304,11 +229,7 @@ class Ejercicio extends ModelClass
         return false;
     }
 
-    /**
-     * Returns the value of the year of the exercise.
-     *
-     * @return string en formato año
-     */
+    /** Devuelve el año del ejercicio. */
     public function year(): string
     {
         return date('Y', strtotime($this->fechainicio));
@@ -318,21 +239,30 @@ class Ejercicio extends ModelClass
     {
         $date2 = strtotime($date);
 
-        $this->codejercicio = date('Y', $date2);
+        $year = date('Y', $date2);
+        $year2 = date('y', $date2);
+
+        $this->codejercicio = $year;
         $this->fechainicio = date('1-1-Y', $date2);
         $this->fechafin = date('31-12-Y', $date2);
-        $this->nombre = date('Y', $date2);
+        $this->nombre = $year;
 
-        // if there are more than one company, we add the company name
+        // si hay más de una empresa, añadimos el nombre de la empresa
         if (count(Empresas::all()) > 1) {
             $this->nombre = Empresas::get($this->idempresa)->nombrecorto . ' ' . $this->nombre;
         }
 
-        // for non-default companies we try to use range from 0001 to 9999
-        if ($this->idempresa != Tools::settings('default', 'idempresa')) {
-            $new = new static();
-            for ($num = 1; $num < 1000; $num++) {
-                $code = sprintf('%04s', (int)$num);
+        // códigos alternativos: año, 00+yy, 0+idempresa+yy, 0001-9999
+        $new = new static();
+        if ($this->exists()) {
+            $this->codejercicio = '00' . $year2;
+        }
+        if ($this->exists()) {
+            $this->codejercicio = sprintf('%04s', '0' . $this->idempresa . $year2);
+        }
+        if ($this->exists()) {
+            for ($num = 1; $num < 10000; $num++) {
+                $code = sprintf('%04s', $num);
                 if (false === $new->load($code)) {
                     $this->codejercicio = $code;
                     break;
@@ -340,16 +270,12 @@ class Ejercicio extends ModelClass
             }
         }
 
-        if ($this->exists()) {
-            $this->codejercicio = $this->newCode();
-        }
-
         return $this->save();
     }
 
     protected function saveInsert(): bool
     {
-        $where = [new DataBaseWhere('idempresa', $this->idempresa)];
+        $where = [Where::eq('idempresa', $this->idempresa)];
         foreach ($this->all($where, [], 0, 0) as $ejercicio) {
             if ($this->inRange($ejercicio->fechainicio) || $this->inRange($ejercicio->fechafin)) {
                 Tools::log()->warning(

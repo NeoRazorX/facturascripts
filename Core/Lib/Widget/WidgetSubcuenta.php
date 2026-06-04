@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,19 +19,25 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
+/**
+ * Widget para seleccionar una subcuenta desde un modal con búsqueda.
+ */
 class WidgetSubcuenta extends WidgetText
 {
-    /** @var string */
+    /** @var int|null Empresa usada para filtrar los ejercicios disponibles. */
+    protected $idempresa;
+
+    /** @var string Campo de la subcuenta usado para comparar y guardar el valor seleccionado. */
     public $match;
 
-    /** @param array $data */
+    /** @param array $data Configuración del widget. */
     public function __construct($data)
     {
         parent::__construct($data);
@@ -43,6 +49,9 @@ class WidgetSubcuenta extends WidgetText
     {
         $this->setValue($model);
 
+        // si el modelo tiene idempresa, lo usamos para filtrar los ejercicios del modal
+        $this->idempresa = isset($model->idempresa) && !empty($model->idempresa) ? (int)$model->idempresa : null;
+
         // obtenemos un nuevo ID cada vez
         $this->id = $this->getUniqueId();
 
@@ -53,31 +62,33 @@ class WidgetSubcuenta extends WidgetText
         $labelHtml = $this->onclickHtml($label, $titleurl);
         $icon = empty($this->icon) ? 'fa-solid fa-book' : $this->icon;
 
-        // hay que cargar la subcuenta para mostrar su nombre
-        $subcuenta = new Subcuenta();
-        if (false === empty($this->value)) {
-            $subcuenta->loadWhere([
-                new DataBaseWhere($this->match, $this->value)
-            ]);
-        }
+        $safeValue = $this->escapeHtml($this->value);
+        $safeText = ($this->value === null || $this->value === '') ? Tools::trans('select') : $safeValue;
 
         if ($this->readonly()) {
+            $subcuenta = new Subcuenta();
+            if (false === empty($this->value)) {
+                $subcuenta->loadWhere([
+                    Where::eq($this->match, $this->value)
+                ]);
+            }
+
             return '<div class="mb-3 d-grid">'
-                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $safeValue . '">'
                 . $labelHtml
-                . '<a href="' . $subcuenta->url() . '" class="btn btn-outline-secondary">'
-                . '<i class="' . $icon . ' fa-fw"></i> ' . ($subcuenta->nombre ?? $this->value ?? Tools::trans('select'))
+                . '<a href="' . $this->escapeHtml($subcuenta->url()) . '" class="btn btn-outline-secondary">'
+                . '<i class="' . $icon . ' fa-fw"></i> ' . $safeText
                 . '</a>'
                 . $descriptionHtml
                 . '</div>';
         }
 
         $html = '<div class="mb-3 d-grid">'
-            . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+            . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $safeValue . '">'
             . $labelHtml
             . '<a href="#" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
-            . '<span id="modal_span_' . $this->id . '">' . ($subcuenta->nombre ?? $this->value ?? Tools::trans('select')) . '</span>'
+            . '<span id="modal_span_' . $this->id . '">' . $safeText . '</span>'
             . '</a>'
             . $descriptionHtml
             . '</div>';
@@ -86,19 +97,20 @@ class WidgetSubcuenta extends WidgetText
     }
 
     /**
-     * @param string $query
-     * @param string $codejercicio
-     * @param string $sort
-     * @return Subcuenta[]
+     * @param string $query Texto de búsqueda.
+     * @param string $codejercicio Código del ejercicio para filtrar.
+     * @param string $sort Orden aplicado a los resultados.
+     * @return Subcuenta[] Subcuentas encontradas.
      */
     public function subcuentas(string $query = '', string $codejercicio = '', string $sort = 'ref-asc'): array
     {
         $list = [];
         $where = [];
 
-        // si no se especifica ejercicio, usamos el primero
+        // si no se especifica ejercicio, usamos el primero (filtrado por empresa si la conocemos)
         if (empty($codejercicio)) {
-            $ejercicios = Ejercicio::all([], ['codejercicio' => 'DESC'], 0, 1);
+            $ejWhere = $this->idempresa ? [Where::eq('idempresa', $this->idempresa)] : [];
+            $ejercicios = Ejercicio::all($ejWhere, ['codejercicio' => 'DESC'], 0, 1);
             if (!empty($ejercicios)) {
                 $codejercicio = $ejercicios[0]->codejercicio;
             }
@@ -106,17 +118,17 @@ class WidgetSubcuenta extends WidgetText
 
         // cargamos y añadimos la subcuenta seleccionada
         $model = new Subcuenta();
-        if ($this->value && $model->loadWhere([new DataBaseWhere($this->match, $this->value)])) {
+        if ($this->value && $model->loadWhere([Where::eq($this->match, $this->value)])) {
             $list[] = clone $model;
-            $where[] = new DataBaseWhere($model->primaryColumn(), $model->id, '<>');
+            $where[] = Where::notEq($model->primaryColumn(), $model->id());
         }
 
         if ($query) {
-            $where[] = new DataBaseWhere('codsubcuenta|descripcion', $query, 'LIKE');
+            $where[] = Where::like('codsubcuenta|descripcion', $query);
         }
 
         if ($codejercicio) {
-            $where[] = new DataBaseWhere('codejercicio', $codejercicio);
+            $where[] = Where::eq('codejercicio', $codejercicio);
         }
 
         switch ($sort) {
@@ -170,8 +182,8 @@ class WidgetSubcuenta extends WidgetText
     }
 
     /**
-     * @param object $model
-     * @param Request $request
+     * @param object $model Modelo donde se guarda el valor seleccionado.
+     * @param Request $request Petición con los datos del formulario.
      */
     public function processFormData(&$model, $request)
     {
@@ -187,37 +199,11 @@ class WidgetSubcuenta extends WidgetText
         $subcuenta = new Subcuenta();
         if (false === empty($this->value)) {
             $subcuenta->loadWhere([
-                new DataBaseWhere($this->match, $this->value)
+                Where::eq($this->match, $this->value)
             ]);
         }
 
-        return '<td class="' . $class . '">' . $this->onclickHtml($subcuenta->nombre ?? $this->value) . '</td>';
-    }
-
-    public function search(string $query, string $codejercicio, string $sort): array
-    {
-        $where = [];
-        if (false === empty($query)) {
-            $where[] = new DataBaseWhere('codsubcuenta', $query, 'LIKE');
-            $where[] = new DataBaseWhere('descripcion', $query, 'LIKE');
-        }
-
-        if (false === empty($codejercicio)) {
-            $where[] = new DataBaseWhere('codejercicio', $codejercicio);
-        }
-
-        switch ($sort) {
-            case 'cod-desc':
-                $orderBy = ['codsubcuenta' => 'DESC'];
-                break;
-
-            default:
-                $orderBy = ['codsubcuenta' => 'ASC'];
-                break;
-        }
-
-        $subcuenta = new Subcuenta();
-        return $subcuenta->fetchAll($where, $orderBy, 0, 100);
+        return '<td class="' . $class . '">' . $this->onclickHtml($this->escapeHtml($subcuenta->nombre ?? $this->value)) . '</td>';
     }
 
     protected function assets(): void
@@ -262,12 +248,13 @@ class WidgetSubcuenta extends WidgetText
     protected function renderExerciseFilter(): string
     {
         $options = [];
-        $ejercicios = Ejercicio::all([], ['codejercicio' => 'DESC']);
+        $where = $this->idempresa ? [Where::eq('idempresa', $this->idempresa)] : [];
+        $ejercicios = Ejercicio::all($where, ['codejercicio' => 'DESC']);
         $first = true;
 
         foreach ($ejercicios as $item) {
             $selected = $first ? ' selected' : '';
-            $options[] = '<option value="' . $item->codejercicio . '"' . $selected . '>' . $item->nombre . '</option>';
+            $options[] = '<option value="' . $this->escapeHtml($item->codejercicio) . '"' . $selected . '>' . $this->escapeHtml($item->nombre) . '</option>';
             $first = false;
         }
 
@@ -308,16 +295,19 @@ class WidgetSubcuenta extends WidgetText
     {
         $items = [];
         foreach ($this->subcuentas() as $item) {
-            $match = $item->codsubcuenta;
+            $match = $this->escapeHtml($item->{$this->match});
+            $code = $this->escapeHtml($item->codsubcuenta);
+            $description = $this->escapeHtml($item->descripcion);
+            $url = $this->escapeHtml($item->url());
             $saldoClass = $item->saldo < 0 ? ' text-danger' : '';
-            $items[] = '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'' . $match . '\');">'
+            $items[] = '<tr class="clickableRow widget-subaccount-option" data-widget-subaccount-id="' . $this->id . '" data-widget-subaccount-value="' . $match . '">'
                 . '<td class="text-center">'
-                . '<a href="' . $item->url() . '" target="_blank" onclick="event.stopPropagation();">'
+                . '<a href="' . $url . '" target="_blank" class="widget-subaccount-link">'
                 . '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
                 . '</a>'
                 . '</td>'
-                . '<td><b>' . $item->codsubcuenta . '</b></td>'
-                . '<td>' . $item->descripcion . '</td>'
+                . '<td><b>' . $code . '</b></td>'
+                . '<td>' . $description . '</td>'
                 . '<td class="text-end' . $saldoClass . '">' . Tools::number($item->saldo) . '</td>'
                 . '</tr>';
         }
@@ -340,7 +330,7 @@ class WidgetSubcuenta extends WidgetText
     protected function renderNewSubaccountBtn(): string
     {
         $subcuenta = new Subcuenta();
-        return '<a href="' . $subcuenta->url('new') . '" target="_blank" class="btn btn-success">'
+        return '<a href="' . $this->escapeHtml($subcuenta->url('new')) . '" target="_blank" class="btn btn-success">'
             . '<i class="fa-solid fa-plus me-1"></i> ' . Tools::trans('new-subaccount')
             . '</a>';
     }

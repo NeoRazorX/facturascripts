@@ -84,12 +84,16 @@ class PresupuestoCliente extends SalesDocument
     public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpresupuesto', 'servido'])
     {
         $newLine = new LineaPresupuesto();
+        $newLine->actualizastock = $this->getStatus()->actualizastock;
+        $newLine->excepcioniva = $this->getSubject()->excepcioniva;
         $newLine->idpresupuesto = $this->idpresupuesto;
         $newLine->irpf = $this->irpf;
-        $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
 
-        Calculator::calculateLine($this, $newLine);
+        // si no viene de getNewProductLine(), calculamos la línea
+        if (empty($data['referencia'] ?? '')) {
+            Calculator::calculateLine($this, $newLine);
+        }
 
         // allow extensions
         $this->pipe('getNewLine', $newLine, $data, $exclude);

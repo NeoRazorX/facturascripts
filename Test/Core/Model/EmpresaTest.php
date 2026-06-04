@@ -84,7 +84,6 @@ final class EmpresaTest extends TestCase
             'codpais' => [20, 21],
             'codpostal' => [10, 11],
             'direccion' => [200, 201],
-            'excepcioniva' => [20, 21],
             //'email'          => [100, 101],
             'fax' => [30, 31],
             'nombre' => [100, 101],

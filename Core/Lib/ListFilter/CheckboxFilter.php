@@ -28,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class CheckboxFilter extends BaseFilter
 {
-
     /**
      * @var DataBaseWhere[]
      */

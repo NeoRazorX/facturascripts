@@ -45,6 +45,11 @@
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion" />
                 </widget>
             </column>
+            <column name="vat-exception" order="145">
+                <widget type="select" fieldname="excepcioniva">
+                    <values/>
+                </widget>
+            </column>
             <column name="priority" order="150">
                 <widget type="number" fieldname="prioridad" icon="fa-solid fa-sort-numeric-down-alt" required="true" />
             </column>

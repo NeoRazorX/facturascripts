@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Base;
  */
 class Utils
 {
-
     /**
      * Convert a variable with binary content to text.
      * It does it in base64.

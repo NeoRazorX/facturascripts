@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,9 +22,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Core\Lib\ExtendedController\EditListView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -38,7 +41,7 @@ use FacturaScripts\Dinamic\Model\PresupuestoCliente;
  * @author       Carlos García Gómez           <carlos@facturascripts.com>
  * @author       Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author       Fco. Antonio Moreno Pérez     <famphuelva@gmail.com>
- * @collaborator Daniel Fernández Giménez      <hola@danielfg.es>
+ * @collaborator Daniel Fernández Giménez      <contacto@danielfg.es>
  */
 class EditCliente extends ComercialContactController
 {
@@ -100,27 +103,38 @@ class EditCliente extends ComercialContactController
 
     protected function createDocumentView(string $viewName, string $model, string $label): void
     {
-        $this->createCustomerListView($viewName, $model, $label);
+        $this->createCustomerListView($viewName, $model, $label)
+            ->setSettings('btnPrint', true);
 
-        // botones
-        $this->setSettings($viewName, 'btnPrint', true);
-        $this->addButtonGroupDocument($viewName);
-        $this->addButtonApproveDocument($viewName);
+        // agrupamos las acciones en un dropdown
+        $this->tab($viewName)->addButtonGroup([
+            'name' => 'doc-actions',
+            'icon' => 'fa-solid fa-circle-check',
+            'label' => 'actions'
+        ]);
+        $this->addButtonApproveDocument($viewName, 'doc-actions');
+        $this->addButtonGroupDocument($viewName, 'doc-actions');
     }
 
     protected function createInvoiceView(string $viewName): void
     {
-        $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
+        $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices')
+            ->setSettings('btnPrint', true);
 
-        // botones
-        $this->setSettings($viewName, 'btnPrint', true);
-        $this->addButtonLockInvoice($viewName);
+        // agrupamos las acciones de facturas en un dropdown
+        $this->tab($viewName)->addButtonGroup([
+            'name' => 'invoice-actions',
+            'icon' => 'fa-solid fa-circle-check',
+            'label' => 'actions'
+        ]);
+        $this->addButtonPayInvoice($viewName, 'invoice-actions');
+        $this->addButtonLockInvoice($viewName, 'invoice-actions');
     }
 
     /**
      * Crea todas las vista de EditCliente y sus paneles
      */
-    protected function createViews()
+    protected function createViews(): void
     {
         parent::createViews();
 
@@ -155,17 +169,16 @@ class EditCliente extends ComercialContactController
     /**
      * Crea el panel de 'Direcciones y contactos' con el botón de Aplicar a documentos
      */
-    protected function createContactsView(string $viewName = 'EditDireccionContacto'): void
+    protected function createContactsView(string $viewName = 'EditDireccionContacto'): EditListView
     {
-        parent::createContactsView($viewName);
-
-        $this->addButton($viewName, [
-            'action' => 'update-docs-address',
-            'color' => 'warning',
-            'confirm' => true,
-            'icon' => 'fa-solid fa-pencil',
-            'label' => 'update-docs-address'
-        ]);
+        return parent::createContactsView($viewName)
+            ->addButton([
+                'action' => 'update-docs-address',
+                'color' => 'warning',
+                'confirm' => true,
+                'icon' => 'fa-solid fa-pencil',
+                'label' => 'update-docs-address'
+            ]);
     }
 
     protected function editAction(): bool
@@ -173,9 +186,6 @@ class EditCliente extends ComercialContactController
         $return = parent::editAction();
         if ($return && $this->active === $this->getMainViewName()) {
             $this->checkSubaccountLength($this->getModel()->codsubcuenta);
-
-            // update contact email and phones when customer email or phones are updated
-            $this->updateContact($this->views[$this->active]->model);
         }
 
         return $return;
@@ -235,7 +245,7 @@ class EditCliente extends ComercialContactController
 
             case 'ListFacturaCliente':
                 $view->loadData('', $where);
-                $this->addButtonGenerateAccountingInvoices($viewName, $codcliente);
+                $this->addButtonGenerateAccountingInvoices($viewName, $codcliente, 'invoice-actions');
                 break;
 
             case 'ListAlbaranCliente':
@@ -255,6 +265,7 @@ class EditCliente extends ComercialContactController
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
                 $this->loadExceptionVat($viewName);
+                $this->loadOperationValues($viewName);
                 break;
 
             default:
@@ -267,7 +278,15 @@ class EditCliente extends ComercialContactController
     {
         $column = $this->views[$viewName]->columnForName('vat-exception');
         if ($column && $column->widget->getType() === 'select') {
-            $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
+            $column->widget->setValuesFromArrayKeys(TaxExceptions::all(), true, true);
+        }
+    }
+
+    protected function loadOperationValues(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('operation');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(InvoiceOperation::allForSales(), true, true);
         }
     }
 
@@ -361,7 +380,6 @@ class EditCliente extends ComercialContactController
         ];
         // para cada documento de venta
         foreach (['AlbaranCliente', 'FacturaCliente', 'PedidoCliente', 'PresupuestoCliente'] as $modelName) {
-
             // obtener el documento de venta correspondiente
             $salesDocuments = [];
             switch ($modelName) {

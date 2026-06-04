@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\ApiAccess;
  * ApiKey model to manage the connection tokens through the api
  * that will be generated to synchronize different applications.
  *
- * @author Joe Nilson           <joenilson at gmail.com>
+ * @author Joe Nilson           <joenilson@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class ApiKey extends ModelClass
@@ -56,6 +56,9 @@ class ApiKey extends ModelClass
 
     /** @var string */
     public $lastactivity;
+
+    /** @var string */
+    public $lastip;
 
     /** @var string */
     public $nick;
@@ -125,6 +128,24 @@ class ApiKey extends ModelClass
         return null;
     }
 
+    /**
+     * Devuelve los nombres de campos que no deben exponerse en la API.
+     *
+     * @return string[]
+     */
+    public function getApiFieldsToHide(): array
+    {
+        return ['apikey'];
+    }
+
+    /**
+     * Comprueba si esta API key tiene permiso para la operación indicada sobre el recurso.
+     *
+     * @param string $resource Nombre del recurso.
+     * @param string $permission Operación: 'get', 'post', 'put' o 'delete'.
+     *
+     * @return bool
+     */
     public function hasAccess(string $resource, string $permission = 'get'): bool
     {
         if ($this->fullaccess) {
@@ -169,9 +190,10 @@ class ApiKey extends ModelClass
         return parent::test();
     }
 
-    public function updateActivity(): bool
+    public function updateActivity(?string $ip = null): bool
     {
         $this->lastactivity = Tools::dateTime();
+        $this->lastip = $ip;
         return $this->save();
     }
 

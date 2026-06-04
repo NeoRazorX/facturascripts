@@ -63,16 +63,37 @@ final class SerieTest extends TestCase
 
     public function testCreateWithoutCode(): void
     {
-        // creamos una serie sin código
+        // creamos una serie sin código, con descripción que empieza por T
         $serie = new Serie();
-        $serie->descripcion = 'Serie sin código';
+        $serie->descripcion = 'Test serie';
         $this->assertTrue($serie->save());
 
-        // comprobamos que se ha asignado un código automáticamente
-        $this->assertNotEmpty($serie->codserie);
+        // comprobamos que se ha asignado un código automáticamente usando la primera letra de la descripción
+        $this->assertEquals('T', $serie->codserie);
 
         // eliminamos
         $this->assertTrue($serie->delete());
+    }
+
+    public function testCreateWithoutCodeFallsBackToMoreLetters(): void
+    {
+        // ocupamos el código de 1 letra 'T'
+        $serie1 = new Serie();
+        $serie1->codserie = 'T';
+        $serie1->descripcion = 'T ocupada';
+        $this->assertTrue($serie1->save());
+
+        // creamos otra serie sin código con descripción que empieza por T
+        $serie2 = new Serie();
+        $serie2->descripcion = 'Test serie';
+        $this->assertTrue($serie2->save());
+
+        // al estar 'T' ocupada, debe usar 'TE' (primeras 2 letras de la descripción)
+        $this->assertEquals('TE', $serie2->codserie);
+
+        // eliminamos
+        $this->assertTrue($serie1->delete());
+        $this->assertTrue($serie2->delete());
     }
 
     public function testDescriptionSanitization(): void

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,16 +97,19 @@ class PurchasesModalHTML
         foreach (static::getProducts() as $row) {
             $cssClass = $row['nostock'] ? 'table-info clickableRow' : ($row['disponible'] > 0 ? 'clickableRow' : 'table-warning clickableRow');
             $cost = $row['neto'] ?? $row['coste'];
+            $reference = static::html($row['referencia']);
+            $providerReference = static::html($row['refproveedor']);
             $label = empty($row['refproveedor']) || $row['refproveedor'] === $row['referencia'] ?
-                '<b>' . $row['referencia'] . '</b>' :
-                '<b>' . $row['referencia'] . '</b> <span class="badge bg-light">' . $row['refproveedor'] . '</span>';
+                '<b>' . $reference . '</b>' :
+                '<b>' . $reference . '</b> <span class="badge bg-light">' . $providerReference . '</span>';
             $description = Tools::textBreak($row['descripcion'], 120)
                 . static::idatributovalor($row['idatributovalor1'])
                 . static::idatributovalor($row['idatributovalor2'])
                 . static::idatributovalor($row['idatributovalor3'])
                 . static::idatributovalor($row['idatributovalor4']);
-            $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
-                . ' return purchasesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
+            $tbody .= '<tr class="' . $cssClass . '" data-reference="' . $reference
+                . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
+                . ' return purchasesFormAction(\'add-product\', this.dataset.reference);">'
                 . '<td>' . $label . ' ' . $description . '</td>'
                 . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($cost)) . '</td>'
                 . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
@@ -159,6 +162,12 @@ class PurchasesModalHTML
 
         return '<select name="fp_codfamilia" class="form-select" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
             . $options . '</select>';
+    }
+
+    protected static function html(?string $text): string
+    {
+        $decoded = html_entity_decode($text ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return htmlspecialchars($decoded, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
     protected static function getProducts(): array

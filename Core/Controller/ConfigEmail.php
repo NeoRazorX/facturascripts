@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\EmailNotification;
 /**
  * Controller to edit main settings
  *
- * @author Daniel Fernández Giménez  <hola@danielfg.es>
+ * @author Daniel Fernández Giménez  <contacto@danielfg.es>
  * @author Carlos Garcia Gomez       <carlos@facturascripts.com>
  */
 class ConfigEmail extends PanelController
@@ -219,7 +219,6 @@ class ConfigEmail extends PanelController
             case 'enable-notification':
                 $this->enableNotificationAction(true);
                 break;
-
         }
 
         return parent::execPreviousAction($action);
@@ -231,7 +230,8 @@ class ConfigEmail extends PanelController
         $host = (string)parse_url($siteUrl, PHP_URL_HOST);
 
         // si termina en localhost, local o empieza con 127
-        if (str_ends_with($host, 'localhost')
+        if (
+            str_ends_with($host, 'localhost')
             || str_ends_with($host, 'local')
             || str_starts_with($host, '127.')
         ) {

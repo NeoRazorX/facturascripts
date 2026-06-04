@@ -326,9 +326,11 @@ class ApiCreateDocument extends ApiController
 
     protected function processInvoicePaid(BusinessDocument &$doc): void
     {
-        if ($doc->hasColumn('idfactura') &&
+        if (
+            $doc->hasColumn('idfactura') &&
             $doc->hasColumn('pagada') &&
-            $this->request->request->getBool('pagada', false)) {
+            $this->request->request->getBool('pagada', false)
+        ) {
             foreach ($doc->getReceipts() as $receipt) {
                 $receipt->pagado = true;
                 $receipt->save();

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Core\Lib\Calculator;
@@ -268,8 +267,7 @@ final class PresupuestoClienteTest extends TestCase
 
         // obtenemos el almacén de la empresa 2
         $warehouse = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadWhere($where);
+        $warehouse->loadWhereEq('idempresa', $company2->idempresa);
 
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -294,8 +292,11 @@ final class PresupuestoClienteTest extends TestCase
             }
 
             // al cambiar el estado genera un nuevo pedido
+            $previous = $doc->idestado;
             $doc->idestado = $status->idestado;
             $this->assertTrue($doc->save(), 'pedido-cant-save');
+            $this->assertEquals($previous, $doc->idestado_ant, 'presupuesto-bad-previous-status');
+            $this->assertEquals($previous, $doc->getPreviousStatus()->idestado, 'presupuesto-bad-previous-status-model');
 
             // comprobamos que el pedido se ha creado
             $children = $doc->childrenDocuments();
@@ -305,6 +306,7 @@ final class PresupuestoClienteTest extends TestCase
                 $this->assertEquals($company2->idempresa, $child->idempresa, 'pedido-bad-idempresa');
                 $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'pedido-bad-idempresa');
             }
+            break;
         }
 
         // eliminamos
@@ -425,8 +427,12 @@ final class PresupuestoClienteTest extends TestCase
             }
 
             // al cambiar el estado genera un nuevo pedido
+            $previous = $doc->idestado;
             $doc->idestado = $status->idestado;
             $this->assertTrue($doc->save(), 'pedido-cant-save');
+            $this->assertEquals($previous, $doc->idestado_ant, 'presupuesto-bad-previous-status');
+            $this->assertEquals($previous, $doc->getPreviousStatus()->idestado, 'presupuesto-bad-previous-status-model');
+            break;
         }
 
         // comprobamos que el pedido se ha creado
@@ -506,6 +512,91 @@ final class PresupuestoClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($pedidos[0]->delete(), 'pedido-cant-delete');
+        $this->assertTrue($doc->delete(), 'presupuesto-cant-delete');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+    }
+
+    // testear la función de obtener el descuento total
+    public function testGetTotalDiscounts(): void
+    {
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save());
+
+        // creamos un presupuesto y le asignamos el cliente
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setSubject($subject));
+        $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente');
+
+        // añadimos una línea
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->descripcion = 'Linea de prueba';
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save(), 'can-not-save-line');
+
+        // 1. Caso sin descuentos
+        $doc->dtopor1 = 0;
+        $line->dtopor = 0;
+        $this->assertTrue($line->save());
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+        $this->assertEquals(0, $doc->getTotalDiscounts(), 'bad-total-discounts-none');
+
+        // 2. Caso con descuentos globales solamente
+        $doc->dtopor1 = 10;
+        $line->dtopor = 0;
+        $this->assertTrue($line->save());
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+        $this->assertEquals(10, $doc->getTotalDiscounts(), 'bad-total-discounts-global');
+
+        // 3. Caso con descuentos en lineas solamente
+        $doc->dtopor1 = 0;
+        $line->dtopor = 10;
+        $this->assertTrue($line->save());
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+        $this->assertEquals(10, $doc->getTotalDiscounts(), 'bad-total-discounts-line');
+
+        // 4. Caso con descuentos en lineas y globales
+        $doc->dtopor1 = 10;
+        $doc->dtopor2 = 0;
+        $line->dtopor = 10;
+        $this->assertTrue($line->save());
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+        $this->assertEquals(19, $doc->getTotalDiscounts(), 'bad-total-discounts-both');
+
+        // 5. Caso con segundo descuento global solamente
+        $doc->dtopor1 = 0;
+        $doc->dtopor2 = 10;
+        $line->dtopor = 0;
+        $this->assertTrue($line->save());
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+        $this->assertEquals(10, $doc->getTotalDiscounts(), 'bad-total-discounts-global-2');
+
+        // 6. Caso con ambos descuentos globales
+        $doc->dtopor1 = 10;
+        $doc->dtopor2 = 10;
+        $line->dtopor = 0;
+        $this->assertTrue($line->save());
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+        $this->assertEquals(19, $doc->getTotalDiscounts(), 'bad-total-discounts-global-both');
+
+        // 7. Caso con todos los descuentos (ambos globales y en línea)
+        $doc->dtopor1 = 10;
+        $doc->dtopor2 = 10;
+        $line->dtopor = 10;
+        $this->assertTrue($line->save());
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+        $this->assertEquals(27.1, $doc->getTotalDiscounts(), 'bad-total-discounts-all');
+
+        // eliminamos
         $this->assertTrue($doc->delete(), 'presupuesto-cant-delete');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');

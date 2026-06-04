@@ -136,6 +136,21 @@ class DocTransformation extends ModelClass
         return new LineaAlbaranCliente();
     }
 
+    /**
+     * @return BusinessDocumentLine
+     */
+    public function getChildLine(): BusinessDocumentLine
+    {
+        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model2;
+        if (class_exists($modelClass)) {
+            $line = new $modelClass();
+            $line->loadFromCode($this->idlinea2);
+            return $line;
+        }
+
+        return new LineaAlbaranCliente();
+    }
+
     public static function tableName(): string
     {
         return 'doctransformations';

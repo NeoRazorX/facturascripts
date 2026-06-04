@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
@@ -27,7 +26,8 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\ProductoImagen;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxExceptions;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Atributo;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
@@ -88,7 +88,10 @@ class EditProducto extends EditController
             ->addOrderBy(['servido'], 'quantity-served')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['pvptotal'], 'amount')
-            ->addOrderBy(['idlinea'], 'code', 2);
+            ->addOrderBy(['idlinea'], 'code', 2)
+            ->addFilterSelect('referencia', 'reference', 'referencia', [])
+            ->addFilterNumber('cantidad-gt', 'quantity', 'cantidad', '>=')
+            ->addFilterNumber('cantidad-lt', 'quantity', 'cantidad', '<=');
 
         // ocultamos la columna product
         $this->views[$viewName]->disableColumn('product');
@@ -108,7 +111,10 @@ class EditProducto extends EditController
             ->addOrderBy(['servido'], 'quantity-served')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['pvptotal'], 'amount')
-            ->addOrderBy(['idlinea'], 'code', 2);
+            ->addOrderBy(['idlinea'], 'code', 2)
+            ->addFilterSelect('referencia', 'reference', 'referencia', [])
+            ->addFilterNumber('cantidad-gt', 'quantity', 'cantidad', '>=')
+            ->addFilterNumber('cantidad-lt', 'quantity', 'cantidad', '<=');
 
         // ocultamos la columna product
         $this->views[$viewName]->disableColumn('product');
@@ -183,6 +189,9 @@ class EditProducto extends EditController
 
             case 'unlink-file':
                 return $this->unlinkFileAction();
+
+            case 'sort-files':
+                return $this->sortFilesAction();
         }
 
         return parent::execPreviousAction($action);
@@ -206,49 +215,51 @@ class EditProducto extends EditController
         $columnsName = ['attribute-value-1', 'attribute-value-2', 'attribute-value-3', 'attribute-value-4'];
         foreach ($columnsName as $key => $colName) {
             $column = $this->views[$viewName]->columnForName($colName);
-            if ($column && $column->widget->getType() === 'select') {
-                // Obtenemos los atributos con número de selector ($key + 1)
-                $atributos = Atributo::all([
-                    new DataBaseWhere('num_selector', ($key + 1)),
-                ]);
-
-                // si no hay ninguno, obtenemos los que tienen número de selector 0
-                if (count($atributos) === 0) {
-                    $atributos = Atributo::all([
-                        new DataBaseWhere('num_selector', 0),
-                    ]);
-                }
-
-                $valoresAtributos = [];
-
-                foreach ($atributos as $atributo) {
-                    // si ya tenemos valore, añadimos un separador
-                    if (count($valoresAtributos) > 0) {
-                        $valoresAtributos[] = [
-                            'value' => '',
-                            'title' => '------',
-                        ];
-                    }
-
-                    // agregamos al array con los campos que se usaran en el select.
-                    foreach ($atributo->getValores() as $valor) {
-                        $valoresAtributos[] = [
-                            'value' => $valor->id,
-                            'title' => $valor->descripcion,
-                        ];
-                    }
-                }
-
-                $column->widget->setValuesFromArray($valoresAtributos, false, true);
+            if (empty($column) || $column->widget->getType() !== 'select') {
+                continue;
             }
+
+            // Cargamos los atributos del selector concreto (num_selector = posición)
+            // y también los genéricos (num_selector = 0), que aparecen en todos los selectores
+            $atributos = Atributo::all([
+                Where::eq('num_selector', $key + 1),
+                Where::orEq('num_selector', 0),
+            ], ['nombre' => 'ASC']);
+
+            $valoresAtributos = [];
+            foreach ($atributos as $atributo) {
+                foreach ($atributo->getValues() as $valor) {
+                    $valoresAtributos[] = [
+                        'value' => $valor->id,
+                        'title' => $valor->valor,
+                        'group' => $atributo->nombre,
+                    ];
+                }
+            }
+
+            $column->widget->setValuesFromArray($valoresAtributos, false, true, 'value', 'title', 'group');
         }
+    }
+
+    protected function loadReferenceFilter(BaseView $view, $idproducto): void
+    {
+        if (!isset($view->filters['referencia'])) {
+            return;
+        }
+
+        $values = [['code' => '', 'description' => '------']];
+        $where = [Where::eq('idproducto', $idproducto)];
+        foreach ($this->codeModel->all('variantes', 'referencia', 'referencia', false, $where) as $code) {
+            $values[] = ['code' => $code->code, 'description' => $code->description];
+        }
+        $view->filters['referencia']->values = $values;
     }
 
     protected function loadCustomReferenceWidget(string $viewName): void
     {
         $references = [];
         $id = $this->getViewModelValue('EditProducto', 'idproducto');
-        $where = [new DataBaseWhere('idproducto', $id)];
+        $where = [Where::eq('idproducto', $id)];
         $values = $this->codeModel->all('variantes', 'referencia', 'referencia', false, $where);
         foreach ($values as $code) {
             $references[] = ['value' => $code->code, 'title' => $code->description];
@@ -269,7 +280,7 @@ class EditProducto extends EditController
     protected function loadData($viewName, $view)
     {
         $id = $this->getViewModelValue('EditProducto', 'idproducto');
-        $where = [new DataBaseWhere('idproducto', $id)];
+        $where = [Where::eq('idproducto', $id)];
 
         switch ($viewName) {
             case 'docfiles':
@@ -317,13 +328,15 @@ class EditProducto extends EditController
                 break;
 
             case 'ListLineaPedidoCliente':
-                $where[] = new DataBaseWhere('actualizastock', -2);
+                $this->loadReferenceFilter($view, $id);
+                $where[] = Where::eq('actualizastock', -2);
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
                 break;
 
             case 'ListLineaPedidoProveedor':
-                $where[] = new DataBaseWhere('actualizastock', 2);
+                $this->loadReferenceFilter($view, $id);
+                $where[] = Where::eq('actualizastock', 2);
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
                 break;
@@ -342,7 +355,7 @@ class EditProducto extends EditController
     {
         $column = $this->views[$viewName]->columnForName('vat-exception');
         if ($column && $column->widget->getType() === 'select') {
-            $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
+            $column->widget->setValuesFromArrayKeys(TaxExceptions::all(), true, true);
         }
     }
 

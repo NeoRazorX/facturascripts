@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\Variante;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Daniel Fernández Giménez      <hola@danielfg.es>
+ * @author Daniel Fernández Giménez      <contacto@danielfg.es>
  */
 class PurchasesLineHTML
 {
@@ -129,10 +129,10 @@ class PurchasesLineHTML
             $map['iva_' . $idlinea] = $line->iva;
 
             // total
-            $map['linetotal_' . $idlinea] = self::subtotalValue($line, $model);
+            $map['linetotal_' . $idlinea] = Tools::round(self::subtotalValue($line, $model));
 
             // neto
-            $map['lineneto_' . $idlinea] = $line->pvptotal;
+            $map['lineneto_' . $idlinea] = Tools::round($line->pvptotal);
         }
 
         // mods

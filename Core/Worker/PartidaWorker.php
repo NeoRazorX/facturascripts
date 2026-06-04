@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\Join\PartidaAsiento;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class PartidaWorker extends WorkerClass
 {

@@ -81,17 +81,34 @@ final class ImpuestoTest extends TestCase
 
     public function testCreateWithoutCode(): void
     {
-        // creamos un impuesto sin código
+        // sin código, debe usar 3 letras de la descripción + porcentaje
         $impuesto = new Impuesto();
-        $impuesto->descripcion = 'Test IVA Sin Código';
+        $impuesto->descripcion = 'Test IVA';
         $impuesto->iva = 15.0;
         $this->assertTrue($impuesto->save());
+        $this->assertEquals('TES15', $impuesto->codimpuesto);
+        $this->assertTrue($impuesto->delete());
+    }
 
-        // comprobamos que se ha asignado un código automáticamente
-        $this->assertNotEmpty($impuesto->codimpuesto);
+    public function testCreateWithoutCodeFallsBackTo4Letters(): void
+    {
+        // ocupamos 'TES21'
+        $impuesto1 = new Impuesto();
+        $impuesto1->codimpuesto = 'TES21';
+        $impuesto1->descripcion = 'TES21 ocupado';
+        $impuesto1->iva = 21.0;
+        $this->assertTrue($impuesto1->save());
+
+        // al estar 'TES21' ocupado, debe usar 'TEST21' (4 letras + porcentaje)
+        $impuesto2 = new Impuesto();
+        $impuesto2->descripcion = 'Test IVA';
+        $impuesto2->iva = 21.0;
+        $this->assertTrue($impuesto2->save());
+        $this->assertEquals('TEST21', $impuesto2->codimpuesto);
 
         // eliminamos
-        $this->assertTrue($impuesto->delete());
+        $this->assertTrue($impuesto2->delete());
+        $this->assertTrue($impuesto1->delete());
     }
 
     public function testClear(): void

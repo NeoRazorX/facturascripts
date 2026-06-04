@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Export\CSVExport;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -32,7 +32,6 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 class AccountingPlanExport
 {
-
     /**
      * Export accounting plan data to CSV file.
      *
@@ -60,7 +59,7 @@ class AccountingPlanExport
         $data = [];
 
         $cuentaModel = new Cuenta();
-        $where = [new DataBaseWhere('codejercicio', $code)];
+        $where = [Where::eq('codejercicio', $code)];
         foreach ($cuentaModel->all($where, ['codcuenta' => 'ASC'], 0, 0) as $cuenta) {
             $data[] = [
                 'cuenta' => $cuenta->codcuenta,
@@ -82,7 +81,7 @@ class AccountingPlanExport
         $data = [];
 
         $subcuentaModel = new Subcuenta();
-        $where = [new DataBaseWhere('codejercicio', $code)];
+        $where = [Where::eq('codejercicio', $code)];
         foreach ($subcuentaModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subcuenta) {
             $data[] = [
                 'cuenta' => $subcuenta->codsubcuenta,

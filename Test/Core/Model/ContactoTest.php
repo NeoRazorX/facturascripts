@@ -249,27 +249,24 @@ final class ContactoTest extends TestCase
         $contact = new Contacto();
         $contact->nombre = 'Test';
 
-        $check1 = $contact->checkVies();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
-        }
-        $this->assertFalse($check1);
+        // simulamos respuesta de VIES en lugar de pegarle al servicio real.
+        try {
+            // sin cifnif (o error de VIES) -> false
+            Vies::simulateViesResponse(Vies::RESULT_ERROR);
+            $this->assertFalse($contact->checkVies());
 
-        // asignamos un cif/nif incorrecto
-        $contact->cifnif = '123456789';
-        $check2 = $contact->checkVies();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
-        }
-        $this->assertFalse($check2);
+            // cifnif inválido -> false
+            $contact->cifnif = '123456789';
+            Vies::simulateViesResponse(Vies::RESULT_INVALID);
+            $this->assertFalse($contact->checkVies());
 
-        // asignamos un cif/nif correcto
-        $contact->cifnif = 'ESB01563311';
-        $check3 = $contact->checkVies();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+            // cifnif válido -> true
+            $contact->cifnif = 'ESB01563311';
+            Vies::simulateViesResponse(Vies::RESULT_VALID);
+            $this->assertTrue($contact->checkVies());
+        } finally {
+            Vies::simulateViesResponse(null);
         }
-        $this->assertTrue($check3);
     }
 
     public function testCodeModelSearch(): void
