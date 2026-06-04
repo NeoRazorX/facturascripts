@@ -105,6 +105,92 @@
                     </div>
                 </div>
             </div>
+            {% if fsc.documents | length > 0 %}
+                {% set sum_neto = 0 %}
+                {% set sum_netosindto = 0 %}
+                {% set sum_iva = 0 %}
+                {% set sum_irpf = 0 %}
+                {% set sum_suplidos = 0 %}
+                {% set sum_recargo = 0 %}
+                {% set sum_total = 0 %}
+                {% set has_irpf = false %}
+                {% set has_suplidos = false %}
+                {% set has_recargo = false %}
+                {% set has_dto = false %}
+                {% for doc in fsc.documents %}
+                    {% set sum_neto = sum_neto + doc.neto %}
+                    {% set sum_netosindto = sum_netosindto + doc.netosindto %}
+                    {% set sum_iva = sum_iva + doc.totaliva %}
+                    {% set sum_total = sum_total + doc.total %}
+                    {% if doc.totalirpf is defined and doc.totalirpf != 0 %}
+                        {% set has_irpf = true %}
+                        {% set sum_irpf = sum_irpf + doc.totalirpf %}
+                    {% endif %}
+                    {% if doc.totalsuplidos is defined and doc.totalsuplidos != 0 %}
+                        {% set has_suplidos = true %}
+                        {% set sum_suplidos = sum_suplidos + doc.totalsuplidos %}
+                    {% endif %}
+                    {% if doc.totalrecargo is defined and doc.totalrecargo != 0 %}
+                        {% set has_recargo = true %}
+                        {% set sum_recargo = sum_recargo + doc.totalrecargo %}
+                    {% endif %}
+                    {% if (doc.dtopor1 is defined and doc.dtopor1 != 0) or (doc.dtopor2 is defined and doc.dtopor2 != 0) %}
+                        {% set has_dto = true %}
+                    {% endif %}
+                {% endfor %}
+                <div class="row g-2 mt-1 mb-2">
+                    {% if has_dto %}
+                        <div class="col-sm-6 col-md-4 col-lg">
+                            <div class="mb-2">
+                                {{ trans('subtotal') }}
+                                <input type="text" value="{{ money(sum_netosindto) }}" class="form-control" disabled/>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="col-sm-6 col-md-4 col-lg">
+                        <div class="mb-2">
+                            {{ trans('net') }}
+                            <input type="text" value="{{ money(sum_neto) }}" class="form-control" disabled/>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4 col-lg">
+                        <div class="mb-2">
+                            {{ trans('taxes') }}
+                            <input type="text" value="{{ money(sum_iva) }}" class="form-control" disabled/>
+                        </div>
+                    </div>
+                    {% if has_irpf %}
+                        <div class="col-sm-6 col-md-4 col-lg">
+                            <div class="mb-2">
+                                {{ trans('irpf') }}
+                                <input type="text" value="{{ money(sum_irpf) }}" class="form-control" disabled/>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if has_suplidos %}
+                        <div class="col-sm-6 col-md-4 col-lg">
+                            <div class="mb-2">
+                                {{ trans('supplied-amount') }}
+                                <input type="text" value="{{ money(sum_suplidos) }}" class="form-control" disabled/>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if has_recargo %}
+                        <div class="col-sm-6 col-md-4 col-lg">
+                            <div class="mb-2">
+                                {{ trans('re') }}
+                                <input type="text" value="{{ money(sum_recargo) }}" class="form-control" disabled/>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="col-sm-6 col-md-4 col-lg">
+                        <div class="mb-2">
+                            {{ trans('total') }}
+                            <input type="text" value="{{ money(sum_total) }}" class="form-control" disabled/>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
             <div class="row">
                 <div class="col mt-3">
                     {% for doc in fsc.documents %}
@@ -139,13 +225,13 @@
                                     <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
                                     <input type="hidden" name="action" value="search">
                                     <div id="form{{ fsc.getViewName() }}Filters"
-                                         class="form-row align-items-center border-bottom mb-3">
+                                         class="row g-2 align-items-center border-bottom mb-3">
                                         {% for filterName, filter in fsc.filters %}
                                             {{ filter.render() | raw }}
                                         {% endfor %}
                                         {% if fsc.filters|length > 0 %}
                                             <div class="col-auto">
-                                                <div class="form-group">
+                                                <div class="mb-3">
                                                     <button type="submit" class="btn btn-secondary"
                                                             title="{{ trans('search') }}">
                                                         <i class="fa-solid fa-search"></i>
