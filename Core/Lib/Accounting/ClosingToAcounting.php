@@ -27,6 +27,7 @@ use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Class that performs accounting closures
@@ -141,9 +142,16 @@ class ClosingToAcounting
         self::$dataBase->beginTransaction();
 
         try {
+            $subcuenta = new Subcuenta();
+            $numSubcuentas = $subcuenta->count([Where::eq('codejercicio', $this->exercise->codejercicio)]);
             $this->updateSpecialAccounts();
 
-            if ($this->execCloseInvoices() && $this->execRegularization() && $this->execClosing() && $this->execOpening()) {
+            $success = $this->execCloseInvoices($numSubcuentas > 0);
+            if ($success && $numSubcuentas > 0) {
+                $success = $this->execRegularization() && $this->execClosing() && $this->execOpening();
+            }
+
+            if ($success) {
                 $this->exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
                 $this->exercise->save();
                 self::$dataBase->commit();
@@ -196,7 +204,7 @@ class ClosingToAcounting
      *
      * @return bool
      */
-    protected function execCloseInvoices(): bool
+    protected function execCloseInvoices(bool $requireAccounting = true): bool
     {
         // find customer invoices without accounting entry
         $customerInvoice = new FacturaCliente();
@@ -205,7 +213,7 @@ class ClosingToAcounting
             Where::isNull('idasiento'),
             Where::notEq('total', 0)
         ];
-        if ($customerInvoice->count($whereMissing) > 0) {
+        if ($requireAccounting && $customerInvoice->count($whereMissing) > 0) {
             Tools::log()->warning('invoice-without-acc-entry');
             return false;
         }
@@ -233,7 +241,7 @@ class ClosingToAcounting
 
         // find supplier invoices without accounting entry
         $supplierInvoice = new FacturaProveedor();
-        if ($supplierInvoice->count($whereMissing) > 0) {
+        if ($requireAccounting && $supplierInvoice->count($whereMissing) > 0) {
             Tools::log()->warning('invoice-without-acc-entry');
             return false;
         }
