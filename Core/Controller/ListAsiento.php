@@ -104,7 +104,8 @@ class ListAsiento extends ListController
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha')
             ->addFilterNumber('min-total', 'amount', 'importe', '>=')
             ->addFilterNumber('max-total', 'amount', 'importe', '<=')
-            ->addFilterCheckbox('editable');
+            ->addFilterCheckbox('editable')
+            ->addFilterCheckbox('no-channel', 'no-channel', 'canal', '=', null);
 
         // filtro de operación
         $operaciones = [

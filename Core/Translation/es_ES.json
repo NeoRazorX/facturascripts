@@ -266,6 +266,7 @@
     "changed-status-to": "Cambio de estado, antes %oldStatus%, ahora %newStatus%",
     "changed-user-to": "Se ha cambiado el usuario %oldUser% por el usuario %newUser%",
     "channel": "Canal",
+    "no-channel": "Sin canal",
     "charge": "Cobrar",
     "charge-date": "Fecha cargo",
     "chart": "Gráfico",
