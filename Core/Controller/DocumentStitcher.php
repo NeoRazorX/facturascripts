@@ -27,7 +27,6 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Lib\ListFilter\PeriodFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\SelectFilter;
