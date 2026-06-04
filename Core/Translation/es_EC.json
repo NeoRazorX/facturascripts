@@ -903,6 +903,7 @@
     "income-and-expenses": "Ingresos y Gastos",
     "incomes": "Ingresos",
     "incompatible-document": "Documento incompatible: %code%. Para poder agrupar documentos deben tener el mismo cliente o proveedor, serie, almacén, divisa y descuentos globales.",
+    "incompatible-plugins": "Plugins incompatibles",
     "incompatible-with-facturascripts": "Incompatible con la versión %version% de FacturaScripts",
     "incorrect-accounting-amount": "El importe del asiento es incorrecto.",
     "info": "Información",

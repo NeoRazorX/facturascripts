@@ -903,6 +903,7 @@
     "income-and-expenses": "Receitas e Despesas",
     "incomes": "Receitas",
     "incompatible-document": "Documento incompatível: %code%. Para agrupar documentos, eles devem ter o mesmo cliente ou fornecedor, série, armazém, moeda e descontos globais.",
+    "incompatible-plugins": "Plugins incompatibles",
     "incompatible-with-facturascripts": "Não é compatível com FacturaScripts %version%",
     "incorrect-accounting-amount": "O montante da entrada contabilística está incorreto.",
     "info": "Informação",
