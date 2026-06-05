@@ -1241,7 +1241,7 @@
     "not-allowed-delete": "Nie masz uprawnień do usunięcia",
     "not-allowed-modify": "Nie masz uprawnień do modyfikacji",
     "not-allowed-update": "Aktualizacja niedozwolona",
-    "not-editable": "No editable",
+    "not-editable": "Nieedytowalne",
     "not-enough-stock": "Nie ma wystarczającej ilości zapasów %reference%",
     "not-passed-integrity-check": "Niektóre pliki nie przeszły weryfikacji integralności ... <br\/>Możesz <a class='alert-link' target='_blank' href='IntegritySystemCheck'>uzyskać więcej szczegółów tutaj<\/a>.",
     "not-public": "Niepubliczny",

@@ -931,7 +931,7 @@
     "invalid-date-there-are-invoices-before": "Data inválida: %date%. A fatura %other% é anterior a esta e no entanto tem data posterior: %other-date%. Toda a fatura deve ter uma data anterior ou igual à seguinte.",
     "invalid-email-bcc": "Endereço de e-mail CCO inválido: '%email%'",
     "invalid-email-cc": "Endereço de e-mail CC inválido: '%email%'",
-    "invalid-email-from": "Dirección de email del remitente no válida: '%email%'",
+    "invalid-email-from": "Endereço de e-mail do remetente inválido: '%email%'",
     "invalid-email-to": "Endereço de e-mail do destinatário inválido: '%email%'",
     "invalid-iban": "i",
     "invalid-iso-code": "Código ISO '%iso-code%' não válido",

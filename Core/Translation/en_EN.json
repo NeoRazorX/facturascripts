@@ -96,7 +96,7 @@
     "allow-import": "Allow import",
     "allow-marketing": "allow marketing",
     "allow-post-data": "Allow POST",
-    "allow-put-data": "Allow PUT",
+    "allow-put-data": "Allow MODIFY",
     "allow-sale-without-stock": "Allow sale without stock",
     "allow-sale-without-stock-n": "Allow out-of-stock sale on new products",
     "allow-update": "Allow update",
