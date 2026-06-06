@@ -445,6 +445,7 @@ class Updater extends Controller
             Plugins::deploy(true, false);
             Cache::clear();
             $this->setTemplate(false);
+            $this->response->setContent('reloading...');
             $this->redirect($this->getClassName() . '?action=post-update&init=' . $init, 3);
         }
     }
