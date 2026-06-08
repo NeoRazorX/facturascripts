@@ -1911,7 +1911,7 @@
     "two-factor-auth-enabled": "Dvoufázové ověření je aktivováno",
     "two-factor-auth-p": "Nastavte aplikaci Google Authenticator pomocí QR, zadejte sem kód a stiskněte ověřit pro dokončení procesu aktivace.",
     "two-factor-code": "Kód dvoufaktorového ověření",
-    "two-factor-code-invalid": "Neplatný kód dvoufaktorového ověření",
+    "two-factor-code-invalid": "Neplatný dvoufaktorový kód",
     "two-factor-enabled": "Aktivovat dvoufázovou autentizaci",
     "two-factor-secret-key-empty": "Tajný klíč dvoufaktorového ověření je prázdný",
     "type": "Tipo",
