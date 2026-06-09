@@ -1081,7 +1081,7 @@
     "login-to-continue-p": "Bu işlemi sürdürmek için oturum açmanız gerekiyor. Lütfen oturum açın veya bir hesap oluşturun.",
     "login-user-disabled": "Kullanıcı '%nick%' devre dışı bırakıldı",
     "login-user-not-found": "Kullanıcı bulunamadı: %nick%",
-    "login-user-not-saved": "No se ha podido guardar el usuario al iniciar sesión",
+    "login-user-not-saved": "Giriş yaparken kullanıcı kaydedilemedi",
     "logo": "Logotype",
     "logout": "Oturumu Kapat",
     "logout-ok": "Oturum başarıyla kapatıldı.",

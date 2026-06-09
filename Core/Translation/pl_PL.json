@@ -648,7 +648,7 @@
     "error-reading-file": "Błąd podczas odczytu pliku '%fileName%'",
     "error-saving-lines": "Bład podczas zapisywania linii",
     "error-saving-stock": "Błąd podczas zapisywania zapasów!",
-    "error-set-date": "Błąd ustawiania daty",
+    "error-set-date": "Błąd podczas ustawiania daty",
     "error-to-innodb": "Błąd podczas konwersji tabeli do InnoDB.",
     "error-updating-product-stock": "Błąd podczas aktualizacji stanu magazynowego produktu!",
     "error-verifying-code": "Błąd podczas weryfikacji kodu",

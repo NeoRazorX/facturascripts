@@ -86,9 +86,9 @@ trait ListBusinessActionTrait
             new DataBaseWhere('total', 0, '!=')
         ];
 
-        if (false === empty($code) && property_exists($model, 'codcliente')) {
+        if (false === empty($code) && $model->hasColumn('codcliente')) {
             $where[] = new DataBaseWhere('codcliente', $code);
-        } elseif (false === empty($code) && property_exists($model, 'codproveedor')) {
+        } elseif (false === empty($code) && $model->hasColumn('codproveedor')) {
             $where[] = new DataBaseWhere('codproveedor', $code);
         }
 
