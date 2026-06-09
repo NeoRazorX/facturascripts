@@ -113,7 +113,7 @@ final class Kernel
         }
 
         // cargamos el idioma almacenado en la cookie o el predeterminado
-        $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', 'es_ES');
+        $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', Tools::env('FS_LANG', 'es_ES'));
         Translator::setDefaultLang($lang);
 
         // cargamos los mods
