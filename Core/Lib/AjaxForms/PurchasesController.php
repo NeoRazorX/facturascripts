@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
@@ -30,6 +31,7 @@ use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Variante;
 use Throwable;
@@ -126,6 +128,30 @@ abstract class PurchasesController extends PanelController
                 'key' => Tools::fixHtml($value->code),
                 'value' => Tools::fixHtml($value->description)
             ];
+        }
+
+        // buscar también por referencia del proveedor
+        if (!empty($query)) {
+            $addedRefs = array_column($list, 'key');
+            $whereProv = [Where::like('refproveedor', $query . '%')];
+            foreach (ProductoProveedor::all($whereProv, [], 0, 10) as $prodProv) {
+                if (in_array($prodProv->referencia, $addedRefs)) {
+                    continue;
+                }
+                $variant2 = new Variante();
+                if (!$variant2->loadWhere([Where::eq('referencia', $prodProv->referencia)])) {
+                    continue;
+                }
+                $product = $variant2->getProducto();
+                if ($product->bloqueado || !$product->secompra) {
+                    continue;
+                }
+                $addedRefs[] = $prodProv->referencia;
+                $list[] = [
+                    'key' => Tools::fixHtml($prodProv->referencia),
+                    'value' => Tools::fixHtml($variant2->description())
+                ];
+            }
         }
 
         if (empty($list)) {
