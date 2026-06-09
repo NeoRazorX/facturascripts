@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -202,7 +202,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
@@ -318,7 +318,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
@@ -425,7 +425,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
