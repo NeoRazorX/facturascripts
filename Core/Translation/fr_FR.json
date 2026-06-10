@@ -473,7 +473,6 @@
     "db-type-not-recognized": "Connexion de type de base de données non reconnue. Doit être MySQL ou PostgreSQL",
     "db-user": "Base de données de l'utilisateur",
     "debit": "Débit",
-    "debug-mode": "Mode débogage",
     "december": "Décembre",
     "decimal-separator": "Séparateur décimal",
     "decimals": "Décimales",

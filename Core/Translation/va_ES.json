@@ -473,7 +473,6 @@
     "db-type-not-recognized": "No es reconeix el tipo de conexió a la base de senyes. Ha de ser MySQL o PostgreSQL",
     "db-user": "Usuari de la base de senyes",
     "debit": "Deure",
-    "debug-mode": "Modo de depuració",
     "december": "Desembre",
     "decimal-separator": "Separador de decimals",
     "decimals": "Decimals",
