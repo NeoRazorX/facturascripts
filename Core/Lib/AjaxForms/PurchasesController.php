@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
@@ -497,13 +498,21 @@ abstract class PurchasesController extends PanelController
         $model = $this->getModel();
         $model->idestado = (int)$this->request->input('selectedLine');
 
+        $formData = json_decode($this->request->input('data'), true);
+        $newDocDate = $this->request->input('new-doc-date') ?? ($formData['new-doc-date'] ?? null);
+        if ($newDocDate) {
+            BusinessDocumentGenerator::setNewDocDate($newDocDate);
+        }
+
         try {
             if (false === $model->save()) {
+                BusinessDocumentGenerator::setNewDocDate(null);
                 $this->db()->rollback();
                 $this->sendJsonWithLogs(['ok' => false]);
                 return false;
             }
         } catch (Throwable $e) {
+            BusinessDocumentGenerator::setNewDocDate(null);
             $this->db()->rollback();
             Tools::log()->error($e->getMessage());
             $this->sendJsonWithLogs(['ok' => false]);

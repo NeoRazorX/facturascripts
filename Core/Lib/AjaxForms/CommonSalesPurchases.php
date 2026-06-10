@@ -405,15 +405,25 @@ trait CommonSalesPurchases
 
         // añadimos los estados posibles
         $options = [];
+        $modals = [];
         foreach ($model->getAvailableStatus() as $sta) {
             // si está seleccionado o no activo, lo saltamos
             if ($sta->idestado === $model->idestado || false === $sta->activo) {
                 continue;
             }
 
-            $options[] = '<a class="dropdown-item' . static::idestadoTextColor($sta) . '"'
-                . ' href="#" onclick="return ' . $jsName . '(\'save-status\', \'' . $sta->idestado . '\', this);">'
-                . '<i class="' . static::idestadoIcon($sta, true) . ' fa-fw"></i> ' . $sta->nombre . '</a>';
+            if ($sta->generadoc) {
+                // abrimos un modal para pedir la fecha del nuevo documento
+                $modalId = 'modalNewDocDate-' . $sta->idestado;
+                $options[] = '<a class="dropdown-item' . static::idestadoTextColor($sta) . '"'
+                    . ' href="#" data-bs-toggle="modal" data-bs-target="#' . $modalId . '">'
+                    . '<i class="' . static::idestadoIcon($sta, true) . ' fa-fw"></i> ' . $sta->nombre . '</a>';
+                $modals[] = static::modalNewDocDate($sta->idestado, $sta->nombre, $modalId, $jsName);
+            } else {
+                $options[] = '<a class="dropdown-item' . static::idestadoTextColor($sta) . '"'
+                    . ' href="#" onclick="return ' . $jsName . '(\'save-status\', \'' . $sta->idestado . '\', this);">'
+                    . '<i class="' . static::idestadoIcon($sta, true) . ' fa-fw"></i> ' . $sta->nombre . '</a>';
+            }
         }
 
         // añadimos la opción de agrupar o partir (excepto facturas y documentos no editables)
@@ -433,7 +443,8 @@ trait CommonSalesPurchases
             . '<div class="dropdown-menu dropdown-menu-right">' . implode('', $options) . '</div>'
             . '</div>'
             . '</div>'
-            . '</div>';
+            . '</div>'
+            . implode('', $modals);
     }
 
     protected static function idestadoIcon(EstadoDocumento $status, bool $alternative = false): string
@@ -454,6 +465,37 @@ trait CommonSalesPurchases
         }
 
         return false === $status->editable && empty($status->actualizastock) ? ' text-danger' : '';
+    }
+
+    protected static function modalNewDocDate(int $idestado, string $nombre, string $modalId, string $jsName): string
+    {
+        return '<div class="modal fade" id="' . $modalId . '" tabindex="-1" aria-hidden="true">'
+            . '<div class="modal-dialog modal-dialog-centered">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title"><i class="fa-solid fa-forward fa-fw"></i> ' . $nombre . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' . Tools::trans('close') . '"></button>'
+            . '</div>'
+            . '<div class="modal-body">'
+            . '<div class="mb-2">'
+            . Tools::trans('date')
+            . '<input type="date" id="new-doc-date-' . $idestado . '" value="' . date('Y-m-d') . '" class="form-control" required/>'
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer">'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Tools::trans('close') . '</button>'
+            . '<button type="button" class="btn btn-success btn-spin-action" data-bs-dismiss="modal" onclick="(function(){'
+            . 'var fecha = document.getElementById(\'new-doc-date-' . $idestado . '\').value;'
+            . 'var form = document.forms[\'salesForm\'] || document.forms[\'purchasesForm\'];'
+            . 'var input = document.createElement(\'input\');'
+            . 'input.type = \'hidden\'; input.name = \'new-doc-date\'; input.value = fecha;'
+            . 'form.appendChild(input);'
+            . $jsName . '(\'save-status\', \'' . $idestado . '\');'
+            . '})()">' . Tools::trans('accept') . '</button>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>';
     }
 
     public static function modalDocList(array $documents, string $title, string $id): string
