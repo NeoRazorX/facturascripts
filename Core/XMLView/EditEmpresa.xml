@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,7 +46,7 @@
         </group>
         <group name="address" numcolumns="12">
             <column name="address" numcolumns="10" order="100">
-                <widget type="text" fieldname="direccion" maxlength="100" icon="fa-solid fa-map-marked" required="true"/>
+                <widget type="text" fieldname="direccion" maxlength="200" icon="fa-solid fa-map-marked" required="true"/>
             </column>
             <column name="post-office-box" numcolumns="2" order="110">
                 <widget type="text" fieldname="apartado" maxlength="10"/>
@@ -99,12 +99,7 @@
                     <values/>
                 </widget>
             </column>
-            <column name="vat-exception" numcolumns="3" order="120">
-                <widget type="select" fieldname="excepcioniva">
-                    <values/>
-                </widget>
-            </column>
-            <column name="logo" order="130">
+            <column name="logo" numcolumns="3" order="130">
                 <widget type="library" fieldname="idlogo" icon="fa-solid fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
             </column>
             <column name="observations" numcolumns="12" order="140">

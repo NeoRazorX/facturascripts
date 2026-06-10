@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -76,12 +76,12 @@
             <div class="col">
                 <div class="card border-warning shadow mb-4">
                     <div class="card-header bg-warning">
-                        <i class="fa-solid fa-share fa-fw" aria-hidden="true"></i> {{ trans('new-refund') }}
+                        <i class="fa-solid fa-share me-1" aria-hidden="true"></i> {{ trans('new-refund') }}
                     </div>
                     <div class="card-body">
                         <p>{{ trans('rectified-invoice-p') }}</p>
-                        <div class="row align-items-end">
-                            <div class="col-sm">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-sm-6 col-md-3 col-lg">
                                 <div class="mb-3">
                                     {{ trans('serie') }}
                                     <select name="codserie" class="form-select">
@@ -101,20 +101,20 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-sm">
+                            <div class="col-sm-6 col-md-3 col-lg">
                                 <div class="mb-3">
                                     {{ trans('date') }}
                                     <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}"
                                            class="form-control" required>
                                 </div>
                             </div>
-                            <div class="col-sm">
+                            <div class="col-sm-6 col-md-3 col-lg">
                                 <div class="mb-3">
                                     {{ trans('numsupplier') }}
                                     <input type="text" name="numproveedor" class="form-control" maxlength="50">
                                 </div>
                             </div>
-                            <div class="col-sm">
+                            <div class="col-sm-6 col-md-3 col-lg">
                                 <div class="mb-3">
                                     {{ trans('status') }}
                                     <select name="idestado" class="form-select">
@@ -132,26 +132,32 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-sm text-end">
+                            <div class="col-auto">
                                 <div class="btn-group mb-3">
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fa-solid fa-check-square fa-fw"></i> {{ trans('select') }}
+                                            <i class="fa-solid fa-check-square me-1"></i>
+                                            {{ trans('select') }}
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <a class="dropdown-item" href="#" onClick="return refundNone();">
-                                                <i class="far fa-square fa-fw"></i> {{ trans('select-none') }}
+                                                <i class="fa-regular fa-square fa-fw me-1"></i>
+                                                {{ trans('select-none') }}
                                             </a>
                                             <a class="dropdown-item" href="#" onClick="return refundAll();">
-                                                <i class="fa-solid fa-square fa-fw"></i> {{ trans('select-all') }}
+                                                <i class="fa-solid fa-square fa-fw me-1"></i>
+                                                {{ trans('select-all') }}
                                             </a>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-auto">
                                 <div class="btn-group mb-3">
-                                    <button type="submit" class="btn btn-spin-action btn-warning ms-3">
-                                        <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+                                    <button type="submit" class="btn btn-spin-action btn-warning">
+                                        <i class="fa-solid fa-save me-1" aria-hidden="true"></i>
+                                        {{ trans('save') }}
                                     </button>
                                 </div>
                             </div>

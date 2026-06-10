@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,12 @@ namespace FacturaScripts\Test\Core\Lib;
 use FacturaScripts\Core\Lib\CodePatterns;
 use FacturaScripts\Core\Model\PedidoCliente;
 use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
 final class CodePatternsTest extends TestCase
 {
-    public function testDefault()
+    public function testDefault(): void
     {
         $order = new PedidoCliente();
         $order->codejercicio = '2021';
@@ -37,7 +38,7 @@ final class CodePatternsTest extends TestCase
         $this->assertEquals('PED2021A1', $code, 'different-code');
     }
 
-    public function testZeroNum()
+    public function testZeroNum(): void
     {
         $order = new PedidoCliente();
         $order->codejercicio = '2021';
@@ -48,7 +49,7 @@ final class CodePatternsTest extends TestCase
         $this->assertEquals('PED2021A000022', $code, 'different-code');
     }
 
-    public function testEje2()
+    public function testEje2(): void
     {
         $order = new PedidoCliente();
         $order->codejercicio = '2022';
@@ -59,7 +60,7 @@ final class CodePatternsTest extends TestCase
         $this->assertEquals('PED22A000555', $code, 'different-code');
     }
 
-    public function testZeroSerie()
+    public function testZeroSerie(): void
     {
         $order = new PedidoCliente();
         $order->codejercicio = '2022';
@@ -70,7 +71,7 @@ final class CodePatternsTest extends TestCase
         $this->assertEquals('220C009999', $code, 'different-code');
     }
 
-    public function testAnyoMesDiaNum()
+    public function testAnyoMesDiaNum(): void
     {
         $order = new PedidoCliente();
         $order->codejercicio = '2022';
@@ -82,7 +83,7 @@ final class CodePatternsTest extends TestCase
         $this->assertEquals('2021-11-23-777', $code, 'different-code');
     }
 
-    public function testNombreMesNum()
+    public function testNombreMesNum(): void
     {
         $order = new PedidoCliente();
         $order->codejercicio = '2020';
@@ -91,10 +92,22 @@ final class CodePatternsTest extends TestCase
         $order->numero = '123';
 
         $code = CodePatterns::trans('{SERIE}-{NOMBREMES}-{NUM}', $order);
-        $this->assertEquals('A-Marzo-123', $code, 'different-code');
+        $this->assertEquals('A-' . Tools::trans('march') . '-123', $code, 'different-code');
     }
 
-    public function testDateNum()
+    public function testAnyo2MesDiaNum(): void
+    {
+        $order = new PedidoCliente();
+        $order->codejercicio = '2022';
+        $order->codserie = 'C';
+        $order->fecha = '23-11-2021';
+        $order->numero = '777';
+
+        $code = CodePatterns::trans('{ANYO2}-{MES}-{DIA}-{NUM}', $order);
+        $this->assertEquals('21-11-23-777', $code, 'different-code');
+    }
+
+    public function testDateNum(): void
     {
         $order = new PedidoCliente();
         $order->codejercicio = '2020';
@@ -107,7 +120,7 @@ final class CodePatternsTest extends TestCase
         $this->assertEquals('A87-02-03-2021-11:22:33', $code, 'different-code');
     }
 
-    public function testDateTimeNum()
+    public function testDateTimeNum(): void
     {
         $order = new PedidoCliente();
         $order->codejercicio = '2020';
@@ -120,7 +133,7 @@ final class CodePatternsTest extends TestCase
         $this->assertEquals('Z88-07-07-2020 15:16:17', $code, 'different-code');
     }
 
-    public function testFilters()
+    public function testFilters(): void
     {
         $order = new PedidoCliente();
         $order->codejercicio = '2020';
@@ -137,7 +150,7 @@ final class CodePatternsTest extends TestCase
         $this->assertEquals('PEd2020Z63ccc', $code3, 'uc-first-fail');
     }
 
-    public function testNoBusinessDoc()
+    public function testNoBusinessDoc(): void
     {
         $product = new Producto();
         $product->actualizado = '03-04-2021 11:33:55';

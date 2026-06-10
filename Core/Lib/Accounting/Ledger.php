@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,9 +47,21 @@ class Ledger
     /** @var string */
     protected $format;
 
+    /** @var int */
+    protected $decimals;
+
+    /** @var string */
+    protected $decimalSep;
+
+    /** @var string */
+    protected $thousandsSep;
+
     public function __construct()
     {
         $this->dataBase = new DataBase();
+        $this->decimals = (int)Tools::settings('default', 'decimals', 2);
+        $this->decimalSep = Tools::settings('default', 'decimal_separator', ',');
+        $this->thousandsSep = Tools::settings('default', 'thousands_separator', ' ');
 
         // needed dependencies
         new Partida();
@@ -124,17 +136,13 @@ class Ledger
 
     protected function formatMoney(float $value, bool $bold): string
     {
-        $decimals = Tools::settings('default', 'decimals', 2);
-        $decimalSep = Tools::settings('default', 'decimal_separator', ',');
-        $thousandsSep = Tools::settings('default', 'thousands_separator', ' ');
-
         if ($this->format != 'PDF') {
-            return number_format($value, $decimals, '.', '');
+            return number_format($value, $this->decimals, '.', '');
         }
 
         return $bold ?
-            '<b>' . number_format($value, $decimals, $decimalSep, $thousandsSep) . '</b>' :
-            number_format($value, $decimals, $decimalSep, $thousandsSep);
+            '<b>' . number_format($value, $this->decimals, $this->decimalSep, $this->thousandsSep) . '</b>' :
+            number_format($value, $this->decimals, $this->decimalSep, $this->thousandsSep);
     }
 
     protected function getData(array $params = []): array

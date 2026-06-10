@@ -22,52 +22,77 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ProvinciaTest extends TestCase
 {
     use LogErrorsTrait;
+    use RandomDataTrait;
 
-    public function testDataInstalled()
+    public function testDataInstalled(): void
     {
-        $state = new Provincia();
-        $this->assertNotEmpty($state->all(), 'state-data-not-installed-from-csv');
+        $this->assertNotEmpty(Provincia::all(), 'state-data-not-installed-from-csv');
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
-        $state = new Provincia();
-        $state->provincia = 'Test';
-        $state->codpais = 'ESP';
-        $this->assertTrue($state->save(), 'state-cant-save');
-        $this->assertTrue($state->exists(), 'state-cant-persist');
+        // creamos un pais
+        $country = $this->getRandomCountry();
+        $this->assertTrue($country->save());
+
+        $province = new Provincia();
+        $province->provincia = 'Test';
+        $province->codpais = $country->codpais;
+        $this->assertTrue($province->save(), 'state-cant-save');
+        $this->assertTrue($province->exists(), 'state-cant-persist');
 
         // eliminamos
-        $this->assertTrue($state->delete(), 'state-cant-delete');
+        $this->assertTrue($province->delete());
+        $this->assertTrue($country->delete());
     }
 
-    public function testCreateWithoutCountry()
+    public function testCreateWithoutCountry(): void
     {
-        $state = new Provincia();
-        $state->provincia = 'Test without country';
-        $state->codpais = 'XXX';
-        $this->assertFalse($state->save(), 'state-can-save');
+        $province = new Provincia();
+        $province->provincia = 'Test without country';
+        $province->codpais = 'XXX';
+        $this->assertFalse($province->save());
     }
 
-    public function testCreateHtml()
+    public function testCreateHtml(): void
     {
         // creamos contenido con html
-        $state = new Provincia();
-        $state->codpais = 'ESP';
-        $state->provincia = '<b>Test Html</b>';
-        $this->assertTrue($state->save(), 'state-cant-save');
+        $province = new Provincia();
+        $province->codpais = 'ESP';
+        $province->provincia = '<b>Test Html</b>';
+        $this->assertTrue($province->save());
 
         // comprobamos que el html ha sido escapado
         $noHtml = Tools::noHtml('<b>Test Html</b>');
-        $this->assertEquals($noHtml, $state->provincia, 'state-wrong-html');
+        $this->assertEquals($noHtml, $province->provincia, 'state-wrong-html');
 
         // eliminamos
-        $this->assertTrue($state->delete(), 'state-cant-delete');
+        $this->assertTrue($province->delete());
+    }
+
+    public function testDeleteCountry(): void
+    {
+        // creamos un pais
+        $country = $this->getRandomCountry();
+        $this->assertTrue($country->save());
+
+        // creamos una provincia
+        $province = new Provincia();
+        $province->provincia = 'Test';
+        $province->codpais = $country->codpais;
+        $this->assertTrue($province->save());
+
+        // eliminamos el pais
+        $this->assertTrue($country->delete());
+
+        // comprobamos que la provincia se ha eliminado
+        $this->assertFalse($province->exists());
     }
 
     protected function tearDown(): void

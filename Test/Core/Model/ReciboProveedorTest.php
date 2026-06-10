@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,7 +42,7 @@ class ReciboProveedorTest extends TestCase
         self::installAccountingPlan();
     }
 
-    public function testCreateInvoiceCreateReceipt()
+    public function testCreateInvoiceCreateReceipt(): void
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();
@@ -68,7 +68,7 @@ class ReciboProveedorTest extends TestCase
         }
     }
 
-    public function testCreateInvoiceOnPastDate()
+    public function testCreateInvoiceOnPastDate(): void
     {
         // creamos una factura de ayer
         $yesterday = date(ModelCore::DATE_STYLE, strtotime('-1 day'));
@@ -96,7 +96,7 @@ class ReciboProveedorTest extends TestCase
         }
     }
 
-    public function testCreatePaidInvoiceOnPastDate()
+    public function testCreatePaidInvoiceOnPastDate(): void
     {
         // creamos una forma de pago pagada
         $payMethod = new FormaPago();
@@ -147,7 +147,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
-    public function testCreatePaidInvoiceOnPastDateWithTimeLimit()
+    public function testCreatePaidInvoiceOnPastDateWithTimeLimit(): void
     {
         // creamos una forma de pago pagada con vencimiento a 10 días
         $payMethod = new FormaPago();
@@ -199,7 +199,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
-    public function testReceiptsTotalGreaterThanInvoice()
+    public function testReceiptsTotalGreaterThanInvoice(): void
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();
@@ -227,7 +227,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testUpdateAndCreateReceipts()
+    public function testUpdateAndCreateReceipts(): void
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();
@@ -264,7 +264,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testUpdateReceiptsUpdateInvoice()
+    public function testUpdateReceiptsUpdateInvoice(): void
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();
@@ -332,7 +332,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testUpdateInvoiceWithPaidReceipt()
+    public function testUpdateInvoiceWithPaidReceipt(): void
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();
@@ -365,6 +365,44 @@ class ReciboProveedorTest extends TestCase
 
         // comprobamos que solamente hay un recibo
         $this->assertCount(1, $invoice->getReceipts(), 'bad-invoice-receipts-count');
+
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testPayReceiptCreatesPayment(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomSupplierInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // comprobamos que existe un recibo impagado
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $this->assertFalse($receipts[0]->pagado, 'receipt-should-be-unpaid');
+
+        // comprobamos que no hay pagos
+        $this->assertCount(0, $receipts[0]->getPayments(), 'should-have-no-payments');
+
+        // marcamos el recibo como pagado
+        $receipts[0]->pagado = true;
+        $this->assertTrue($receipts[0]->save(), 'can-not-set-paid-receipt');
+
+        // comprobamos que se ha creado un pago
+        $payments = $receipts[0]->getPayments();
+        $this->assertCount(1, $payments, 'should-have-one-payment');
+        $this->assertEquals($receipts[0]->importe, $payments[0]->importe, 'bad-payment-amount');
+        $this->assertEquals($receipts[0]->idrecibo, $payments[0]->idrecibo, 'bad-payment-receipt-id');
+
+        // comprobamos que el pago tiene un asiento
+        $this->assertNotEmpty($payments[0]->idasiento, 'payment-should-have-accounting-entry');
 
         // obtenemos el subject
         $subject = $invoice->getSubject();

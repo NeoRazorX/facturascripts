@@ -55,7 +55,12 @@ $(document).ready(function () {
                         });
                         response(values);
                     },
-                    error: function (msg) {
+                    error: function (msg, textStatus, errorThrown) {
+                        console.log('widget-autocomplete AJAX ERROR');
+                        console.log('status:', msg.status);
+                        console.log('textStatus:', textStatus);
+                        console.log('errorThrown:', errorThrown);
+                        console.log('responseText:', msg.responseText);
                         alert(msg.status + " " + msg.responseText);
                     }
                 });

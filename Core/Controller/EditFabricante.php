@@ -58,7 +58,7 @@ class EditFabricante extends EditController
                 continue;
             }
 
-            $product->codfabricante = $this->request->query->get('code');
+            $product->codfabricante = $this->request->query('code');
             if ($product->save()) {
                 $num++;
             }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,14 +21,16 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\CuentaBancoProveedor;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CuentaBancoProveedorTest extends TestCase
 {
+    use LogErrorsTrait;
     use RandomDataTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         // creamos un proveedor
         $proveedor = $this->getRandomSupplier();
@@ -41,7 +43,7 @@ final class CuentaBancoProveedorTest extends TestCase
         $this->assertTrue($cuenta->save(), 'cuenta-cant-save');
 
         // comprobamos que se ha guardado correctamente
-        $this->assertNotNull($cuenta->primaryColumnValue(), 'cuenta-not-stored');
+        $this->assertNotNull($cuenta->id(), 'cuenta-not-stored');
         $this->assertTrue($cuenta->exists(), 'cuenta-cant-persist');
 
         // eliminamos
@@ -50,7 +52,7 @@ final class CuentaBancoProveedorTest extends TestCase
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
-    public function testCreateWithoutSupplier()
+    public function testCreateWithoutSupplier(): void
     {
         // creamos una cuenta bancaria
         $cuenta = new CuentaBancoProveedor();
@@ -58,7 +60,7 @@ final class CuentaBancoProveedorTest extends TestCase
         $this->assertFalse($cuenta->save(), 'cuenta-can-save');
     }
 
-    public function testHtmlOnFields()
+    public function testHtmlOnFields(): void
     {
         // desactivamos la validación de IBAN
         Tools::settingsSet('default', 'validate_iban', '0');
@@ -86,7 +88,7 @@ final class CuentaBancoProveedorTest extends TestCase
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
-    public function testDeleteWithSupplier()
+    public function testDeleteWithSupplier(): void
     {
         // creamos un proveedor
         $proveedor = $this->getRandomSupplier();
@@ -106,7 +108,7 @@ final class CuentaBancoProveedorTest extends TestCase
         $this->assertFalse($cuenta->exists(), 'cuenta-persist');
     }
 
-    public function testValidateIban()
+    public function testValidateIban(): void
     {
         // activamos la validación de IBAN
         Tools::settingsSet('default', 'validate_iban', '1');
@@ -133,5 +135,10 @@ final class CuentaBancoProveedorTest extends TestCase
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
         $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

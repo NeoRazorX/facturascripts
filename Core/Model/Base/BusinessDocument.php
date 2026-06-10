@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,10 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\Model\LogMessage;
+use FacturaScripts\Core\Template\ModelClass as NewModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
@@ -30,13 +31,14 @@ use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Description of BusinessDocument
+ * Documento de negocio base (presupuestos, pedidos, albaranes, facturas).
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class BusinessDocument extends ModelOnChangeClass
+abstract class BusinessDocument extends NewModelClass
 {
     use CompanyRelationTrait;
     use CurrencyRelationTrait;
@@ -46,21 +48,21 @@ abstract class BusinessDocument extends ModelOnChangeClass
     use IntracomunitariaTrait;
 
     /**
-     * VAT number of the customer or supplier.
+     * CIF/NIF del cliente o proveedor.
      *
      * @var string
      */
     public $cifnif;
 
     /**
-     * Warehouse in which the merchandise enters.
+     * Almacén del documento.
      *
      * @var string
      */
     public $codalmacen;
 
     /**
-     * Unique identifier for humans.
+     * Identificador único para humanos.
      *
      * @var string
      */
@@ -72,177 +74,177 @@ abstract class BusinessDocument extends ModelOnChangeClass
         'totaliva', 'totalrecargo', 'totalsuplidos'];
 
     /**
-     * Percentage of discount.
+     * Porcentaje de descuento.
      *
      * @var float
      */
     public $dtopor1;
 
     /**
-     * Percentage of discount.
+     * Porcentaje de descuento.
      *
      * @var float
      */
     public $dtopor2;
 
     /**
-     * Date of the document.
+     * Fecha del documento.
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * Date on which the document was sent by email.
+     * Fecha en la que se envió el documento por email.
      *
      * @var string
      */
     public $femail;
 
     /**
-     * Document time.
+     * Hora del documento.
      *
      * @var string
      */
     public $hora;
 
     /**
-     * Default retention for this document. Each line can have a different retention.
+     * Retención por defecto del documento. Cada línea puede tener una retención diferente.
      *
      * @var float|int
      */
     public $irpf;
 
     /**
-     * Sum of the pvptotal of lines. Total of the document before taxes.
+     * Suma del pvptotal de las líneas. Total del documento antes de impuestos.
      *
      * @var float|int
      */
     public $neto;
 
     /**
-     * Sum of the pvptotal of lines. Total of the document before taxes and global discounts.
+     * Suma del pvptotal de las líneas. Total del documento antes de impuestos y descuentos globales.
      *
      * @var float|int
      */
     public $netosindto;
 
     /**
-     * User who created this document. User model.
+     * Usuario que creó este documento. Modelo User.
      *
      * @var string
      */
     public $nick;
 
     /**
-     * Number of the document. Unique within the series.
+     * Número del documento. Único dentro de la serie.
      *
      * @var string
      */
     public $numero;
 
     /**
-     * Number of attached documents.
+     * Número de documentos adjuntos.
      *
      * @var int
      */
     public $numdocs;
 
     /**
-     * Notes of the document.
+     * Observaciones del documento.
      *
      * @var string
      */
     public $observaciones;
 
     /**
-     * Total sum of the document, with taxes.
+     * Suma total del documento, con impuestos.
      *
      * @var float|int
      */
     public $total;
 
     /**
-     * Sum of the VAT of the lines.
+     * Suma del IVA de las líneas.
      *
      * @var float|int
      */
     public $totaliva;
 
     /**
-     * Total expressed in euros, if it were not the currency of the document.
+     * Total expresado en euros, si no fuera la divisa del documento.
      * totaleuros = total / tasaconv
-     * It is not necessary to fill it, when doing save() the value is calculated.
+     * No es necesario rellenarlo, al hacer save() se calcula el valor.
      *
      * @var float|int
      */
     public $totaleuros;
 
     /**
-     * Total sum of the IRPF withholdings of the lines.
+     * Suma total de las retenciones de IRPF de las líneas.
      *
      * @var float|int
      */
     public $totalirpf;
 
     /**
-     * Total sum of the equivalence surcharge of the lines.
+     * Suma total del recargo de equivalencia de las líneas.
      *
      * @var float|int
      */
     public $totalrecargo;
 
     /**
-     * Total sum of supplied lines.
+     * Suma total de las líneas de suplidos.
      *
      * @var float|int
      */
     public $totalsuplidos;
 
     /**
-     * Returns the lines associated with the document.
+     * Devuelve las líneas asociadas al documento.
      */
     abstract public function getLines(): array;
 
     /**
-     * Returns a new line for this business document.
+     * Devuelve una nueva línea para este documento.
      */
     abstract public function getNewLine(array $data = [], array $exclude = []);
 
     /**
-     * Returns a new line for this business document completed with the product data.
+     * Devuelve una nueva línea para este documento completada con los datos del producto.
      */
     abstract public function getNewProductLine($reference);
 
     /**
-     * Returns the subject of this document.
+     * Devuelve el sujeto de este documento.
      */
     abstract public function getSubject();
 
     /**
-     * Sets the author for this document.
+     * Establece el autor de este documento.
      */
     abstract public function setAuthor($user): bool;
 
     /**
-     * Sets subject for this document.
+     * Establece el sujeto de este documento.
      */
     abstract public function setSubject($subject): bool;
 
     /**
-     * Returns the name of the column for subject.
+     * Devuelve el nombre de la columna del sujeto.
      */
     abstract public function subjectColumn();
 
     /**
-     * Updates subjects data in this document.
+     * Actualiza los datos del sujeto en este documento.
      */
     abstract public function updateSubject(): bool;
 
     /**
-     * Reset the values of all model properties.
+     * Restablece los valores de todas las propiedades del modelo.
      */
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
 
@@ -280,20 +282,25 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
     public function getAttachedFiles(): array
     {
-        $relationModel = new AttachedFileRelation();
-        $where = [new DataBaseWhere('model', $this->modelClassName())];
-        $where[] = is_numeric($this->primaryColumnValue()) ?
-            new DataBaseWhere('modelid|modelcode', $this->primaryColumnValue()) :
-            new DataBaseWhere('modelcode', $this->primaryColumnValue());
-        return $relationModel->all($where, ['creationdate' => 'DESC'], 0, 0);
+        $where = [Where::eq('model', $this->modelClassName())];
+        $where[] = is_numeric($this->id()) ?
+            Where::eq('modelid|modelcode', $this->id()) :
+            Where::eq('modelcode', $this->id());
+
+        return AttachedFileRelation::all($where, ['creationdate' => 'DESC'], 0, 0);
+    }
+
+    public function getAuditChannel(): string
+    {
+        return LogMessage::DOCS_CHANNEL;
     }
 
     /**
-     * Returns the Equivalent Unified Discount.
+     * Devuelve el Descuento Unificado Equivalente.
      *
      * @return float
      */
-    public function getEUDiscount()
+    public function getEUDiscount(): float
     {
         $eud = 1.0;
         foreach ([$this->dtopor1, $this->dtopor2] as $dto) {
@@ -304,20 +311,43 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
+     * Devuelve el descuento total de todo el documento.
+     * Este cálculo tiene en cuenta tanto los descuentos globales aplicados al documento
+     * como los descuentos individuales aplicados en cada una de las líneas.
+     *
+     * OJO, sin tener en cuenta impuestos.
+     * Se redondea el resultado con los decimales configurados por el sistema para evitar problemas de precisión en coma flotante.
+     *
+     * @return float Descuento total calculado.
+     */
+    public function getTotalDiscounts(): float
+    {
+        $netoNoDto = 0.0;
+        foreach ($this->getLines() as $line) {
+            // sumar las lineas sin descuentos
+            $netoNoDto += $line->pvpsindto;
+        }
+
+        // devolver el neto (total con descuento sin impuestos) - sumaLineasSinDto
+        return Tools::round($netoNoDto - $this->neto);
+    }
+
+    /**
+     * Esta función se ejecuta al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará después de la creación de la tabla. Útil para insertar valores
+     * por defecto.
      *
      * @return string
      */
     public function install(): string
     {
-        // needed dependencies
+        // dependencias necesarias
         new Serie();
         new Ejercicio();
         new Almacen();
         new Divisa();
         new FormaPago();
+        new User();
 
         return parent::install();
     }
@@ -328,7 +358,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * Returns the description of the column that is the model's primary key.
+     * Devuelve la descripción de la columna que es la clave primaria del modelo.
      *
      * @return string
      */
@@ -338,18 +368,18 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * Stores the model data in the database.
+     * Guarda los datos del modelo en la base de datos.
      *
      * @return bool
      */
     public function save(): bool
     {
-        // check accounting exercise
+        // comprobamos el ejercicio contable
         if (empty($this->codejercicio)) {
             $this->setDate($this->fecha, $this->hora);
         }
 
-        // empty code?
+        // ¿código vacío?
         if (empty($this->codigo)) {
             BusinessDocumentCode::setNewCode($this);
         }
@@ -358,7 +388,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * Assign the date and find an accounting exercise.
+     * Asigna la fecha y busca un ejercicio contable.
      *
      * @param string $date
      * @param string $hour
@@ -367,7 +397,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     public function setDate(string $date, string $hour): bool
     {
-        // force check of warehouse-company relation
+        // forzamos la comprobación de la relación almacén-empresa
         if (false === $this->setWarehouse($this->codalmacen)) {
             return false;
         }
@@ -386,7 +416,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * Sets warehouse and company for this document.
+     * Establece el almacén y la empresa de este documento.
      *
      * @param string $codalmacen
      *
@@ -406,16 +436,13 @@ abstract class BusinessDocument extends ModelOnChangeClass
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function subjectColumnValue()
+    public function subjectColumnValue(): string
     {
-        return $this->{$this->subjectColumn()};
+        return $this->{$this->subjectColumn()} ?? '';
     }
 
     /**
-     * Returns True if there is no errors on properties values.
+     * Devuelve True si no hay errores en los valores de las propiedades.
      *
      * @return bool
      */
@@ -423,29 +450,30 @@ abstract class BusinessDocument extends ModelOnChangeClass
     {
         $this->observaciones = Tools::noHtml($this->observaciones);
 
-        // check number
+        // comprobamos el número
         if ((int)$this->numero < 1) {
             Tools::log()->error('invalid-number', ['%number%' => $this->numero]);
             return false;
         }
 
-        // check exercise and date
-        if (false === $this->hasChanged('fecha') && false === $this->getExercise()->inRange($this->fecha)) {
+        // comprobamos el ejercicio y la fecha
+        if ((empty($this->id()) || !$this->isDirty('fecha')) && false === $this->getExercise()->inRange($this->fecha)) {
             Tools::log()->error('date-out-of-exercise-range', ['%exerciseName%' => $this->codejercicio]);
             return false;
         }
 
-        // check total
+        // comprobamos el total
+        $decimals = Tools::settings('default', 'decimales', 2);
         $total = $this->neto + $this->totalsuplidos + $this->totaliva - $this->totalirpf + $this->totalrecargo;
-        if (false === Utils::floatcmp($this->total, $total, FS_NF0, true)) {
+        if (false === Tools::floatCmp($this->total, $total, $decimals, true)) {
             Tools::log()->error('bad-total-error');
             return false;
         }
 
         /**
-         * We use the euro as a bridge currency when adding, compare
-         * or convert amounts in several currencies. For this reason we need
-         * many decimals.
+         * Usamos el euro como divisa puente al sumar, comparar
+         * o convertir importes en varias divisas. Por eso necesitamos
+         * muchos decimales.
          */
         $this->totaleuros = empty($this->tasaconv) ? 0 : round($this->total / $this->tasaconv, 5);
 
@@ -453,18 +481,18 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * Check changed fields before update the database.
+     * Comprueba los campos modificados antes de actualizar la base de datos.
      *
      * @param string $field
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'codalmacen':
                 foreach ($this->getLines() as $line) {
-                    $line->transfer($this->previousData['codalmacen'], $this->codalmacen);
+                    $line->transfer($this->getOriginal('codalmacen'), $this->codalmacen);
                 }
                 break;
 
@@ -493,40 +521,24 @@ abstract class BusinessDocument extends ModelOnChangeClass
         return parent::onChange($field);
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate(array $values = []): bool
+    protected function saveUpdate(): bool
     {
-        if (false === parent::saveUpdate($values)) {
+        if (false === parent::saveUpdate()) {
             return false;
         }
 
-        // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->info('updated-model', [
-            '%model%' => $this->modelClassName(),
-            '%key%' => $this->primaryColumnValue(),
-            '%desc%' => $this->primaryDescription(),
-            'model-class' => $this->modelClassName(),
-            'model-code' => $this->primaryColumnValue(),
-            'model-data' => $this->toArray()
-        ]);
-        return true;
-    }
+        if ($this->isDirty()) {
+            // añadimos el log de auditoría
+            Tools::log($this->getAuditChannel())->info('updated-model', [
+                '%model%' => $this->modelClassName(),
+                '%key%' => $this->id(),
+                '%desc%' => $this->primaryDescription(),
+                'model-class' => $this->modelClassName(),
+                'model-code' => $this->id(),
+                'model-data' => $this->getDirty()
+            ]);
+        }
 
-    /**
-     * Sets fields to be watched.
-     *
-     * @param array $fields
-     */
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = [
-            'codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'numero',
-            'operacion', 'total'
-        ];
-        parent::setPreviousData(array_merge($more, $fields));
+        return true;
     }
 }

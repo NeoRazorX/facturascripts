@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,18 +20,34 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\EstadosDocumentos;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
- * Defines the status and attributes of a purchase or sale document.
+ * Define los estados y atributos de los documentos de compra y venta
+ * (presupuestos, pedidos, albaranes y facturas).
  *
- * @author Francesc Pineda Segarra <francesc.pìneda.segarra@gmail.com>
+ * Cada estado pertenece a un tipo de documento (campo `tipodoc`) y controla:
+ * - si el documento es editable o queda bloqueado,
+ * - si actualiza el stock de los productos (`actualizastock`: 0 ninguno,
+ *   1 suma, -1 resta, 2 suma y descuenta pendientes, -2 resta y descuenta),
+ * - si al aplicarse genera otro documento del tipo indicado en `generadoc`
+ *   (por ejemplo, pasar de presupuesto a pedido). En ese caso el estado
+ *   no es editable ni puede actualizar stock: lo hará el documento destino.
+ *
+ * Solo puede existir un estado predeterminado por `tipodoc`, y éste debe ser
+ * editable. Los estados marcados como `bloquear` no se pueden modificar ni
+ * eliminar una vez guardados.
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez     <carlos@facturascripts.com>
  */
-class EstadoDocumento extends Base\ModelOnChangeClass
+class EstadoDocumento extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /** @var bool */
     public $activo;
@@ -66,7 +82,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
     /** @var string */
     public $tipodoc;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->activo = true;
@@ -74,6 +90,12 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         $this->bloquear = false;
         $this->editable = true;
         $this->predeterminado = false;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        EstadosDocumentos::clear();
     }
 
     public function delete(): bool
@@ -132,12 +154,18 @@ class EstadoDocumento extends Base\ModelOnChangeClass
             return false;
         }
 
-        // No permitimos que un estado predeterminado sea bloqueado.
+        // si genera otro documento, no puede ser editable
         if (!empty($this->generadoc)) {
             $this->editable = false;
 
             if (in_array($this->tipodoc, ['FacturaCliente', 'FacturaProveedor'])) {
                 Tools::log()->warning('invoices-cant-generate-new-docs');
+                return false;
+            }
+
+            // si genera otro documento, no puede actualizar stock (lo hará el documento destino)
+            if (!empty($this->actualizastock)) {
+                Tools::log()->warning('status-with-generadoc-cant-update-stock');
                 return false;
             }
         }
@@ -150,14 +178,9 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::url($type, $list);
     }
 
-    /**
-     * @param string $field
-     *
-     * @return bool
-     */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
-        if ($this->bloquear && $this->previousData['bloquear']) {
+        if ($this->bloquear && $this->getOriginal('bloquear')) {
             Tools::log()->warning('locked');
             return false;
         }
@@ -174,68 +197,62 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         if ($this->predeterminado) {
             $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
                 . " WHERE predeterminado = true"
-                . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
-                . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
-            return self::$dataBase->exec($sql);
+                . " AND tipodoc = " . self::db()->var2str($this->tipodoc)
+                . " AND idestado != " . self::db()->var2str($this->idestado) . ";";
+            return self::db()->exec($sql);
         }
 
         // establecemos el primer estado como predeterminado
         $where = [
-            new DataBaseWhere('editable', true),
-            new DataBaseWhere('tipodoc', $this->tipodoc)
+            Where::eq('editable', true),
+            Where::eq('tipodoc', $this->tipodoc),
         ];
         foreach ($this->all($where) as $item) {
             $sql = "UPDATE " . static::tableName() . " SET predeterminado = true"
-                . " WHERE idestado = " . self::$dataBase->var2str($item->idestado) . ";";
-            return self::$dataBase->exec($sql);
+                . " WHERE idestado = " . self::db()->var2str($item->idestado) . ";";
+            return self::db()->exec($sql);
         }
 
         return false;
     }
 
-    protected function onDelete()
+    protected function onDelete(): void
     {
         if ($this->predeterminado) {
             $where = [
-                new DataBaseWhere('editable', true),
-                new DataBaseWhere('tipodoc', $this->tipodoc)
+                Where::eq('editable', true),
+                Where::eq('tipodoc', $this->tipodoc),
             ];
             foreach ($this->all($where) as $item) {
                 $sql = "UPDATE " . static::tableName() . " SET predeterminado = true"
-                    . " WHERE idestado = " . self::$dataBase->var2str($item->idestado) . ";";
-                self::$dataBase->exec($sql);
+                    . " WHERE idestado = " . self::db()->var2str($item->idestado) . ";";
+                self::db()->exec($sql);
                 break;
             }
         }
     }
 
-    protected function onInsert()
+    protected function onInsert(): void
     {
         if ($this->predeterminado) {
             $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
                 . " WHERE predeterminado = true"
-                . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
-                . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
-            self::$dataBase->exec($sql);
+                . " AND tipodoc = " . self::db()->var2str($this->tipodoc)
+                . " AND idestado != " . self::db()->var2str($this->idestado) . ";";
+            self::db()->exec($sql);
         }
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->idestado)) {
             /**
-             * postgresql does not correctly update the serial when inserting the values from a csv.
-             * So we use this to get the new id manually.
+             * postgresql no actualiza correctamente el serial al insertar los valores desde un csv.
+             * Por eso usamos esto para obtener el nuevo id manualmente.
              */
             $this->idestado = $this->newCode();
         }
 
-        return parent::saveInsert($values);
-    }
-
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['actualizastock', 'bloquear', 'editable', 'generadoc', 'predeterminado', 'tipodoc'];
-        parent::setPreviousData(array_merge($more, $fields));
+        return parent::saveInsert();
     }
 }

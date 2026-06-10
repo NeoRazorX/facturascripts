@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,28 +19,30 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\Template\Controller;
 
 class Root extends Controller
 {
     public function getPageData(): array
     {
         $data = parent::getPageData();
-        $data['menu'] = 'reports';
+        $data['menu'] = 'admin';
         $data['title'] = Empresas::default()->nombrecorto ?? 'FacturaScripts';
         $data['icon'] = 'fa-solid fa-home';
         $data['showonmenu'] = false;
         return $data;
     }
 
-    public function privateCore(&$response, $user, $permissions)
+    public function run(): void
     {
-        parent::privateCore($response, $user, $permissions);
+        parent::run();
 
-        // si el usuario tiene homepage y es distinta de Root, redirigimos
-        if (!empty($this->user->homepage) && $this->user->homepage !== 'Root') {
-            $this->redirect($this->user->homepage);
+        // homepageUrl ya garantiza un nombre de controlador valido, asi evitamos open-redirect
+        $homepage = $this->user->homepageUrl();
+        if ($homepage === 'Root') {
+            $homepage = 'Dashboard';
         }
+        $this->response()->redirect($homepage)->send();
     }
 }

@@ -154,6 +154,7 @@ abstract class InitClass
         $sql = CSVImport::updateTableSQL($tableName);
         if ($sql) {
             $dataBase = new DataBase();
+            $dataBase->connect();
             $dataBase->exec($sql);
         }
     }

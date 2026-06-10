@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use XLSXWriter;
 
 /**
@@ -62,12 +62,12 @@ class XLSExport extends ExportBase
         }
 
         $lineRows = $this->getCursorRawData($cursor);
-        $this->writer->writeSheet($lineRows, Tools::lang()->trans('lines'), $lineHeaders);
+        $this->writer->writeSheet($lineRows, Tools::trans('lines'), $this->escapeSpreadsheetFormulaHeaders($lineHeaders));
 
         // modelo
         $headers = $this->getModelHeaders($model);
         $rows = $this->getCursorRawData([$model]);
-        $this->writer->writeSheet($rows, $model->primaryDescription(), $headers);
+        $this->writer->writeSheet($rows, $model->primaryDescription(), $this->escapeSpreadsheetFormulaHeaders($headers));
 
         // no continuamos con la exportación del resto de pestañas
         return false;
@@ -77,7 +77,7 @@ class XLSExport extends ExportBase
      * Adds a new page with a table listing all models data.
      *
      * @param ModelClass $model
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -94,12 +94,12 @@ class XLSExport extends ExportBase
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
             // no hay datos, añadimos solamente la cabecera
-            $this->writer->writeSheet([], $name, $headers);
+            $this->writer->writeSheet([], $name, $this->escapeSpreadsheetFormulaHeaders($headers));
             return true;
         }
 
         // hay datos, añadimos primero la cabecera
-        $this->writer->writeSheetHeader($name, $headers);
+        $this->writer->writeSheetHeader($name, $this->escapeSpreadsheetFormulaHeaders($headers));
 
         // añadimos los datos
         while (!empty($cursor)) {
@@ -129,7 +129,7 @@ class XLSExport extends ExportBase
     {
         $headers = $this->getModelHeaders($model);
         $rows = $this->getCursorRawData([$model]);
-        $this->writer->writeSheet($rows, $title, $headers);
+        $this->writer->writeSheet($rows, $title, $this->escapeSpreadsheetFormulaHeaders($headers));
         return true;
     }
 
@@ -148,9 +148,9 @@ class XLSExport extends ExportBase
         $this->numSheets++;
         $sheetName = 'sheet' . $this->numSheets;
 
-        $this->writer->writeSheetRow($sheetName, $headers);
+        $this->writer->writeSheetRow($sheetName, $this->escapeSpreadsheetFormulaRow($headers));
         foreach ($rows as $row) {
-            $this->writer->writeSheetRow($sheetName, $row);
+            $this->writer->writeSheetRow($sheetName, $this->escapeSpreadsheetFormulaRow($row));
         }
 
         return true;
@@ -197,8 +197,8 @@ class XLSExport extends ExportBase
      */
     public function show(Response &$response)
     {
-        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=' . $this->getFileName() . '.xlsx');
+        $response->headers->set('Content-Type', 'application/octet-stream');
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $this->getFileName() . '.xlsx');
         $response->setContent($this->getDoc());
     }
 
@@ -228,11 +228,23 @@ class XLSExport extends ExportBase
         $data = parent::getCursorRawData($cursor, $fields);
         foreach ($data as $num => $row) {
             foreach ($row as $key => $value) {
-                $data[$num][$key] = Tools::fixHtml($value);
+                $value = Tools::fixHtml($value);
+                $data[$num][$key] = is_string($value) ? $this->escapeSpreadsheetFormula($value) : $value;
             }
         }
 
         return $data;
+    }
+
+    private function escapeSpreadsheetFormulaHeaders(array $headers): array
+    {
+        $result = [];
+        foreach ($headers as $key => $value) {
+            $key = is_string($key) ? $this->escapeSpreadsheetFormula($key) : $key;
+            $result[$key] = $value;
+        }
+
+        return $result;
     }
 
     /**

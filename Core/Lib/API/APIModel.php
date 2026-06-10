@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,11 +20,11 @@
 namespace FacturaScripts\Core\Lib\API;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * APIModel is the class for any API Model Resource in Dinamic/Model folder.
@@ -48,17 +48,18 @@ class APIModel extends APIResourceClass
      */
     public function doDELETE(): bool
     {
-        if (empty($this->params) || false === $this->model->loadFromCode($this->params[0])) {
-            $this->setError(Tools::lang()->trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
+        if (empty($this->params) || false === $this->model->load($this->params[0])) {
+            $this->setError(Tools::trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
             return false;
         }
 
         if ($this->model->delete()) {
-            $this->setOk(Tools::lang()->trans('record-deleted-correctly'), $this->model->toArray());
+            $hidden = $this->model->getApiFieldsToHide();
+            $this->setOk(Tools::trans('record-deleted-correctly'), $this->filterHidden($this->model->toArray(), $hidden));
             return true;
         }
 
-        $this->setError(Tools::lang()->trans('record-deleted-error'));
+        $this->setError(Tools::trans('record-deleted-error'));
         return false;
     }
 
@@ -74,10 +75,15 @@ class APIModel extends APIResourceClass
             return $this->listAll();
         }
 
+        $hidden = $this->model->getApiFieldsToHide();
+
         // model schema
         if ($this->params[0] === 'schema') {
             $data = [];
             foreach ($this->model->getModelFields() as $key => $value) {
+                if (in_array($key, $hidden, true)) {
+                    continue;
+                }
                 $data[$key] = [
                     'type' => $value['type'],
                     'default' => $value['default'],
@@ -89,12 +95,12 @@ class APIModel extends APIResourceClass
         }
 
         // record not found
-        if (false === $this->model->loadFromCode($this->params[0])) {
-            $this->setError(Tools::lang()->trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
+        if (false === $this->model->load($this->params[0])) {
+            $this->setError(Tools::trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
             return false;
         }
 
-        $this->returnResult($this->model->toArray());
+        $this->returnResult($this->filterHidden($this->model->toArray(true), $hidden));
         return true;
     }
 
@@ -110,16 +116,16 @@ class APIModel extends APIResourceClass
 
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
-        if ($this->model->loadFromCode($code)) {
-            $this->setError(Tools::lang()->trans('duplicate-record'), $this->model->toArray());
+        if ($this->model->load($code)) {
+            $this->setError(Tools::trans('duplicate-record'), $this->model->toArray());
             return false;
         } elseif (empty($values)) {
-            $this->setError(Tools::lang()->trans('no-data-received-form'));
+            $this->setError(Tools::trans('no-data-received-form'));
             return false;
         }
 
         foreach ($values as $key => $value) {
-            $this->model->{$key} = $value;
+            $this->model->{$key} = $value === 'null' ? null : $value;
         }
 
         return $this->saveResource();
@@ -137,16 +143,16 @@ class APIModel extends APIResourceClass
 
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
-        if (false === $this->model->loadFromCode($code)) {
-            $this->setError(Tools::lang()->trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
+        if (false === $this->model->load($code)) {
+            $this->setError(Tools::trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
             return false;
         } elseif (empty($values)) {
-            $this->setError(Tools::lang()->trans('no-data-received-form'));
+            $this->setError(Tools::trans('no-data-received-form'));
             return false;
         }
 
         foreach ($values as $key => $value) {
-            $this->model->{$key} = $value;
+            $this->model->{$key} = $value === 'null' ? null : $value;
         }
 
         return $this->saveResource();
@@ -184,21 +190,6 @@ class APIModel extends APIResourceClass
     }
 
     /**
-     * This method is equivalent to $this->request->get($key, $default),
-     * but always return an array, as expected for some parameters like operation, filter or sort.
-     *
-     * @param string $key
-     * @param string $default
-     *
-     * @return array
-     */
-    private function getRequestArray($key, $default = ''): array
-    {
-        $array = $this->request->get($key, $default);
-        return is_array($array) ? $array : []; // if is string has bad format
-    }
-
-    /**
      * Load resource map from a folder
      *
      * @param string $folder
@@ -207,10 +198,19 @@ class APIModel extends APIResourceClass
      */
     private function getResourcesFromFolder($folder): array
     {
+        // Modelos que no deben exponerse en la API
+        $excludedModels = ['CodeModel', 'TotalModel'];
+
         $resources = [];
         foreach (scandir(FS_FOLDER . '/Dinamic/' . $folder, SCANDIR_SORT_ASCENDING) as $fName) {
             if (substr($fName, -4) === '.php') {
                 $modelName = substr($fName, 0, -4);
+
+                // Excluir modelos auxiliares
+                if (in_array($modelName, $excludedModels, true)) {
+                    continue;
+                }
+
                 $plural = $this->pluralize($modelName);
                 $resources[$plural] = $this->setResource($modelName);
             }
@@ -226,10 +226,13 @@ class APIModel extends APIResourceClass
      * @param array $operation
      * @param string $defaultOperation
      *
-     * @return DataBaseWhere[]
+     * @return Where[]
      */
-    private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
+    private function getWhereValues($filter, $operation, $defaultOperation = 'AND', array &$badFields = []): array
     {
+        $allowedFields = array_keys($this->model->getModelFields());
+        $hidden = $this->model->getApiFieldsToHide();
+
         $where = [];
         foreach ($filter as $key => $value) {
             $field = $key;
@@ -269,6 +272,16 @@ class APIModel extends APIResourceClass
                     break;
             }
 
+            if (substr($key, -5) == '_null') {
+                $field = substr($key, 0, -5);
+                $operator = 'IS';
+                $value = null;
+            } elseif (substr($key, -8) == '_notnull') {
+                $field = substr($key, 0, -8);
+                $operator = 'IS NOT';
+                $value = null;
+            }
+
             if (substr($key, -5) == '_like') {
                 $field = substr($key, 0, -5);
                 $operator = 'LIKE';
@@ -281,7 +294,20 @@ class APIModel extends APIResourceClass
                 $operation[$key] = $defaultOperation;
             }
 
-            $where[] = new DataBaseWhere($field, $value, $operator, $operation[$key]);
+            // solo aceptamos identificadores simples (columna o tabla.columna)
+            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                $badFields[] = $field;
+                continue;
+            }
+
+            // la columna debe existir en el modelo y no estar oculta
+            $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
+            if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
+                $badFields[] = $field;
+                continue;
+            }
+
+            $where[] = new Where($field, $value, $operator, $operation[$key]);
         }
 
         return $where;
@@ -289,19 +315,29 @@ class APIModel extends APIResourceClass
 
     protected function listAll(): bool
     {
-        $filter = $this->getRequestArray('filter');
-        $limit = (int)$this->request->get('limit', 50);
-        $offset = (int)$this->request->get('offset', 0);
-        $operation = $this->getRequestArray('operation');
-        $order = $this->getRequestArray('sort');
+        $filter = $this->request->query->getArray('filter');
+        $limit = $this->request->query->getInt('limit', 50);
+        $offset = $this->request->query->getInt('offset', 0);
+        $operation = $this->request->query->getArray('operation');
+        $order = $this->request->query->getArray('sort');
 
         // obtenemos los registros
-        $where = $this->getWhereValues($filter, $operation);
-        $data = $this->model->all($where, $order, $offset, $limit);
+        $data = [];
+        $hidden = $this->model->getApiFieldsToHide();
+        $badFields = [];
+        $order = $this->filterOrder($order, $hidden, $badFields);
+        $where = $this->getWhereValues($filter, $operation, 'AND', $badFields);
+        if (!empty($badFields)) {
+            $this->setError('api: fields not allowed: ' . implode(', ', array_unique($badFields)));
+            return false;
+        }
+        foreach ($this->model->all($where, $order, $offset, $limit) as $item) {
+            $data[] = $this->filterHidden($item->toArray(true), $hidden);
+        }
 
         // obtenemos el count y lo ponemos en el header
         $count = $this->model->count($where);
-        $this->response->headers->set('X-Total-Count', $count);
+        $this->response->header('X-Total-Count', $count);
 
         $this->returnResult($data);
         return true;
@@ -333,17 +369,57 @@ class APIModel extends APIResourceClass
 
     private function saveResource(): bool
     {
+        $hidden = $this->model->getApiFieldsToHide();
+
         if ($this->model->save()) {
-            $this->setOk(Tools::lang()->trans('record-updated-correctly'), $this->model->toArray());
+            $this->setOk(Tools::trans('record-updated-correctly'), $this->filterHidden($this->model->toArray(true), $hidden));
             return true;
         }
 
-        $message = Tools::lang()->trans('record-save-error');
+        $message = Tools::trans('record-save-error');
         foreach (Tools::log()->read('', ['critical', 'error', 'info', 'notice', 'warning']) as $log) {
             $message .= ' - ' . $log['message'];
         }
 
-        $this->setError($message, $this->model->toArray());
+        $this->setError($message, $this->filterHidden($this->model->toArray(true), $hidden));
         return false;
+    }
+
+    private function filterOrder(array $order, array $hidden, array &$badFields = []): array
+    {
+        $allowedFields = array_keys($this->model->getModelFields());
+        $result = [];
+        foreach ($order as $key => $value) {
+            // admitimos prefijos integer:, lower:, upper:
+            $field = $key;
+            foreach (['integer:', 'lower:', 'upper:'] as $prefix) {
+                if (str_starts_with($field, $prefix)) {
+                    $field = substr($field, strlen($prefix));
+                    break;
+                }
+            }
+
+            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                $badFields[] = $key;
+                continue;
+            }
+
+            $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
+            if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
+                $badFields[] = $key;
+                continue;
+            }
+
+            $result[$key] = $value;
+        }
+        return $result;
+    }
+
+    private function filterHidden(array $data, array $hidden): array
+    {
+        foreach ($hidden as $field) {
+            unset($data[$field]);
+        }
+        return $data;
     }
 }

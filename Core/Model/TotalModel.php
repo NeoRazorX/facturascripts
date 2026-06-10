@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,43 +20,26 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
- * Auxiliary model to load a list of totals
- * with or without grouping by code.
+ * Modelo auxiliar para cargar una lista de totales,
+ * con o sin agrupación por código.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class TotalModel
 {
-
-    /**
-     * It provides direct access to the database.
-     *
-     * @var DataBase
-     */
+    /** @var DataBase */
     private static $dataBase;
 
-    /**
-     * Value of the code field of the model read.
-     *
-     * @var string
-     */
+    /** @var string */
     public $code;
 
-    /**
-     * Total values of the fields of the read model.
-     *
-     * @var array
-     */
+    /** @var array */
     public $totals;
 
-    /**
-     * Constructor and class initializer
-     *
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         $this->code = '';
@@ -72,46 +55,66 @@ class TotalModel
     }
 
     /**
-     * Load a list of TotalModel (code and fields of statistics) for the indicated table.
+     * Carga una lista de TotalModel (código y campos de estadísticas) para la tabla indicada.
      *
      * @param string $tableName
-     * @param DataBaseWhere[] $where
+     * @param array $where
      * @param array $fieldList (['key' => 'SUM(total)', 'key2' => 'MAX(total)' ...])
-     * @param string $fieldCode (for multiples rows agruped by field code)
+     * @param string $fieldCode (para múltiples filas agrupadas por el campo código)
      *
      * @return static[]
      */
-    public static function all($tableName, $where, $fieldList, $fieldCode = ''): array
+    public static function all(string $tableName, array $where, array $fieldList, string $fieldCode = ''): array
     {
+        // validamos el nombre de tabla para evitar SQL injection
+        if (false === self::isValidTableName($tableName)) {
+            Tools::log()->error('invalid-table-name: ' . $tableName);
+            return self::emptyResult($fieldList);
+        }
+
+        // validamos el campo código (puede ser vacío)
+        if (false === self::isValidFieldName($fieldCode)) {
+            Tools::log()->error('invalid-field-name: ' . $fieldCode);
+            return self::emptyResult($fieldList);
+        }
+
+        // validamos las claves y valores de fieldList
+        foreach ($fieldList as $alias => $expression) {
+            if (
+                false === self::isValidAlias((string)$alias)
+                || false === self::isValidAggregate((string)$expression)
+            ) {
+                Tools::log()->error('invalid-field-list: ' . $alias . ' => ' . $expression);
+                return self::emptyResult($fieldList);
+            }
+        }
+
         $result = [];
-        if (static::dataBase()->tableExists($tableName)) {
-            $sql = 'SELECT ' . static::getFieldSQL($fieldCode, $fieldList);
+        if (self::dataBase()->tableExists($tableName)) {
+            $sql = 'SELECT ' . self::getFieldSQL($fieldCode, $fieldList);
             $groupby = empty($fieldCode) ? ';' : ' GROUP BY 1 ORDER BY 1;';
 
-            $sqlWhere = DataBaseWhere::getSQLWhere($where);
-            $sql .= ' FROM ' . $tableName . $sqlWhere . $groupby;
-            $data = static::dataBase()->select($sql);
+            $sql .= ' FROM ' . self::dataBase()->escapeColumn($tableName) . Where::multiSqlLegacy($where) . $groupby;
+            $data = self::dataBase()->select($sql);
             foreach ($data as $row) {
                 $result[] = new static($row);
             }
         }
 
-        // if it is empty we are obliged to always return a record with the totals to zero
+        // si el resultado está vacío, devolvemos siempre un registro con los totales a cero
         if (empty($result)) {
-            $item = new static();
-            $item->clearTotals(\array_keys($fieldList));
-            return [$item];
+            return self::emptyResult($fieldList);
         }
 
         return $result;
     }
 
     /**
-     * Reset the totals to 0.0
+     * Reinicia los totales a 0.0.
      *
      * @param array $totalFields
      */
-    public function clearTotals(array $totalFields)
+    public function clearTotals(array $totalFields): void
     {
         foreach ($totalFields as $fieldName) {
             $this->totals[$fieldName] = 0.0;
@@ -120,13 +123,23 @@ class TotalModel
 
     public static function sum(string $tableName, string $fieldName, array $where): float
     {
-        if (false === static::dataBase()->tableExists($tableName)) {
+        // validamos nombres para evitar SQL injection
+        if (false === self::isValidTableName($tableName)) {
+            Tools::log()->error('invalid-table-name: ' . $tableName);
+            return 0.0;
+        }
+        if (false === self::isValidFieldName($fieldName) || empty($fieldName)) {
+            Tools::log()->error('invalid-field-name: ' . $fieldName);
             return 0.0;
         }
 
-        $sql = 'SELECT SUM(' . static::dataBase()->escapeColumn($fieldName) . ') as sum'
-            . ' FROM ' . static::dataBase()->escapeColumn($tableName) . DataBaseWhere::getSQLWhere($where);
-        foreach (static::dataBase()->select($sql) as $row) {
+        if (false === self::dataBase()->tableExists($tableName)) {
+            return 0.0;
+        }
+
+        $sql = 'SELECT SUM(' . self::dataBase()->escapeColumn($fieldName) . ') as sum'
+            . ' FROM ' . self::dataBase()->escapeColumn($tableName) . Where::multiSqlLegacy($where);
+        foreach (self::dataBase()->select($sql) as $row) {
             return (float)$row['sum'];
         }
         return 0.0;
@@ -136,13 +149,27 @@ class TotalModel
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
+            self::$dataBase->connect();
         }
 
         return self::$dataBase;
     }
 
     /**
-     * Returns the / fields as part of the SQL query.
+     * Devuelve un resultado con los totales a cero para los campos indicados.
+     *
+     * @param array $fieldList
+     * @return static[]
+     */
+    private static function emptyResult(array $fieldList): array
+    {
+        $item = new static();
+        $item->clearTotals(array_keys($fieldList));
+        return [$item];
+    }
+
+    /**
+     * Devuelve los campos como parte de la consulta SQL.
      *
      * @param string $fieldCode
      * @param array $fieldList
@@ -160,10 +187,71 @@ class TotalModel
         }
 
         foreach ($fieldList as $fieldName => $fieldSQL) {
-            $result .= $comma . $fieldSQL . ' AS ' . $fieldName;
+            $result .= $comma . $fieldSQL . ' AS ' . self::dataBase()->escapeColumn($fieldName);
             $comma = ', ';
         }
 
         return $result;
+    }
+
+    /**
+     * Valida una expresión agregada del tipo SUM(campo), COUNT(*), AVG(tabla.campo), etc.
+     */
+    private static function isValidAggregate(string $expression): bool
+    {
+        $expression = trim($expression);
+        $ident = '[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?';
+        return preg_match('/^(SUM|AVG|MIN|MAX|COUNT)\(\s*(\*|' . $ident . ')\s*\)$/i', $expression) === 1;
+    }
+
+    /**
+     * Valida un alias de columna. Solo permite letras, números y guiones bajos.
+     */
+    private static function isValidAlias(string $alias): bool
+    {
+        return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $alias) === 1;
+    }
+
+    /**
+     * Valida un nombre de campo. Permite identificadores simples,
+     * tabla.campo y las funciones lower(), upper(), substring(), concat().
+     */
+    private static function isValidFieldName(string $fieldName): bool
+    {
+        if ($fieldName === '') {
+            return true;
+        }
+
+        $fieldName = trim($fieldName);
+        $ident = '[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?';
+
+        if (preg_match('/^' . $ident . '$/', $fieldName)) {
+            return true;
+        }
+
+        if (preg_match('/^(lower|upper)\((' . $ident . ')\)$/i', $fieldName)) {
+            return true;
+        }
+
+        if (preg_match('/^substring\((' . $ident . '),\s*(\d+)\s*,\s*(\d+)\s*\)$/i', $fieldName, $m)) {
+            $start = (int)$m[2];
+            $len = (int)$m[3];
+            return $start >= 1 && $len >= 1 && $len <= 1000;
+        }
+
+        $arg = "(?:$ident|'[^']*')";
+        if (preg_match('/^concat\(\s*' . $arg . '(?:\s*,\s*' . $arg . ')+\s*\)$/i', $fieldName)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Valida un nombre de tabla. Solo permite letras, números y guiones bajos.
+     */
+    private static function isValidTableName(string $tableName): bool
+    {
+        return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $tableName) === 1;
     }
 }

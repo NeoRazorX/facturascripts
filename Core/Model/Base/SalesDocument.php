@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,12 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Cliente as CoreCliente;
 use FacturaScripts\Core\Model\Contacto as CoreContacto;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\Agente;
@@ -35,135 +36,136 @@ use FacturaScripts\Dinamic\Model\Tarifa;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Description of SalesDocument
+ * Documento de venta.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 abstract class SalesDocument extends TransformerDocument
 {
     /**
-     * Mailbox of the client.
+     * Apartado de correos del cliente.
      *
      * @var string
      */
     public $apartado;
 
     /**
-     * Customer's city.
+     * Ciudad del cliente.
      *
      * @var string
      */
     public $ciudad;
 
     /**
-     * Agent who created this document. Agente model.
+     * Agente que creó este documento. Modelo Agente.
      *
      * @var string
      */
     public $codagente;
 
     /**
-     * Customer of this document.
+     * Cliente de este documento.
      *
      * @var string
      */
     public $codcliente;
 
     /**
-     * Shipping tracking code.
+     * Código de seguimiento del envío.
      *
      * @var string
      */
     public $codigoenv;
 
     /**
-     * Customer's country.
+     * País del cliente.
      *
      * @var string
      */
     public $codpais;
 
     /**
-     * Customer's postal code.
+     * Código postal del cliente.
      *
      * @var string
      */
     public $codpostal;
 
     /**
-     * Shipping code for the shipment.
+     * Código de transporte del envío.
      *
      * @var string
      */
     public $codtrans;
 
     /**
-     * Customer's address
+     * Dirección del cliente.
      *
      * @var string
      */
     public $direccion;
 
     /**
-     * ID of contact for shippment.
+     * ID del contacto de envío.
      *
      * @var int
      */
     public $idcontactoenv;
 
     /**
-     * ID of contact for invoice.
+     * ID del contacto de facturación.
      *
      * @var int
      */
     public $idcontactofact;
 
     /**
-     * Customer name.
+     * Nombre del cliente.
      *
      * @var string
      */
     public $nombrecliente;
 
     /**
-     * Optional number available to the user.
+     * Número opcional disponible para el usuario.
      *
      * @var string
      */
     public $numero2;
 
     /**
-     * Customer's province.
+     * Provincia del cliente.
      *
      * @var string
      */
     public $provincia;
 
     /**
-     * sum total of the benefits of the lines.
+     * Suma total del beneficio de las líneas.
      *
      * @var float
      */
     public $totalbeneficio;
 
     /**
-     * total sum of the costs of the lines.
+     * Suma total del coste de las líneas.
      *
      * @var float
      */
     public $totalcoste;
 
     /**
-     * Reset the values of all model properties.
+     * Restablece los valores de todas las propiedades del modelo.
      */
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
+
         $this->direccion = '';
         $this->totalbeneficio = 0.0;
         $this->totalcoste = 0.0;
 
-        // select default currency
+        // seleccionamos la divisa por defecto
         $coddivisa = Tools::settings('default', 'coddivisa');
         $this->setCurrency($coddivisa, false);
     }
@@ -171,7 +173,7 @@ abstract class SalesDocument extends TransformerDocument
     public function country(): string
     {
         $country = new Pais();
-        if ($country->loadFromCode($this->codpais)) {
+        if ($country->load($this->codpais)) {
             return Tools::fixHtml($country->nombre) ?? '';
         }
 
@@ -184,21 +186,25 @@ abstract class SalesDocument extends TransformerDocument
             return parent::delete();
         }
 
-        if (parent::delete()) {
-            // update customer risk
-            $customer = $this->getSubject();
-            $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
-            $customer->save();
-
-            return true;
+        if (false === parent::delete()) {
+            return false;
         }
 
-        return false;
+        if (!empty($this->codcliente)) {
+            // actualizamos el riesgo del cliente
+            $customer = $this->getSubject();
+            $customer->riesgoalcanzado = empty($customer->id()) ?
+                0.00 :
+                CustomerRiskTools::getCurrent($customer->id());
+            $customer->save();
+        }
+
+        return true;
     }
 
     /**
-     * Returns a new document line with the data of the product. Finds product
-     * by reference or barcode.
+     * Devuelve una nueva línea de documento con los datos del producto.
+     * Busca el producto por referencia o código de barras.
      *
      * @param string $reference
      *
@@ -213,21 +219,24 @@ abstract class SalesDocument extends TransformerDocument
         }
 
         $variant = new Variante();
-        $where1 = [new DataBaseWhere('referencia', Tools::noHtml($reference))];
-        $where2 = [new DataBaseWhere('codbarras', Tools::noHtml($reference))];
-        if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
+        $where1 = [Where::eq('referencia', Tools::noHtml($reference))];
+        $where2 = [Where::eq('codbarras', Tools::noHtml($reference))];
+        if ($variant->loadWhere($where1) || $variant->loadWhere($where2)) {
             $product = $variant->getProducto();
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
             $newLine->coste = $variant->coste;
             $newLine->descripcion = $variant->description();
+            $newLine->excepcioniva = $product->excepcioniva ?? $newLine->excepcioniva;
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $product->getTax()->iva;
             $newLine->pvpunitario = $this->getRate()->applyTo($variant, $product);
             $newLine->recargo = $product->getTax()->recargo;
             $newLine->referencia = $variant->referencia;
 
-            // allow extensions
+            Calculator::calculateLine($this, $newLine);
+
+            // permitimos extensiones
             $this->pipe('getNewProductLine', $newLine, $variant, $product);
         }
 
@@ -238,13 +247,13 @@ abstract class SalesDocument extends TransformerDocument
     {
         $rate = new Tarifa();
         $subject = $this->getSubject();
-        if ($subject->codtarifa && $rate->loadFromCode($subject->codtarifa)) {
+        if ($subject->codtarifa && $rate->load($subject->codtarifa)) {
             return $rate;
         }
 
         $group = new GrupoClientes();
-        if ($subject->codgrupo && $group->loadFromCode($subject->codgrupo) && $group->codtarifa) {
-            $rate->loadFromCode($group->codtarifa);
+        if ($subject->codgrupo && $group->load($subject->codgrupo) && $group->codtarifa) {
+            $rate->load($group->codtarifa);
         }
 
         return $rate;
@@ -256,16 +265,16 @@ abstract class SalesDocument extends TransformerDocument
     public function getSubject()
     {
         $cliente = new Cliente();
-        $cliente->loadFromCode($this->codcliente);
+        $cliente->load($this->codcliente);
         return $cliente;
     }
 
     public function install(): string
     {
-        // we need to call parent first
+        // necesitamos llamar primero al padre
         $result = parent::install();
 
-        // needed dependencies
+        // dependencias necesarias
         new AgenciaTransporte();
         new Agente();
         new Cliente();
@@ -279,30 +288,32 @@ abstract class SalesDocument extends TransformerDocument
             return parent::save();
         }
 
-        // check if the customer has exceeded the maximum risk
+        // comprobamos si el cliente ha superado el riesgo máximo
         $customer = $this->getSubject();
         if ($customer->riesgomax && $customer->riesgoalcanzado > $customer->riesgomax) {
             Tools::log()->warning('customer-reached-maximum-risk');
             return false;
-        } elseif (empty($customer->primaryColumnValue())) {
+        } elseif (empty($customer->id())) {
             return parent::save();
         }
 
-        if (parent::save()) {
-            // reload customer after save
-            $updatedCustomer = $this->getSubject();
-
-            // update customer risk
-            $updatedCustomer->riesgoalcanzado = CustomerRiskTools::getCurrent($updatedCustomer->primaryColumnValue());
-            $updatedCustomer->save();
-            return true;
+        if (false === parent::save()) {
+            return false;
         }
 
-        return false;
+        // recargamos el cliente después de guardar
+        $updatedCustomer = $this->getSubject();
+        if ($updatedCustomer->id() !== null) {
+            // actualizamos el riesgo del cliente
+            $updatedCustomer->riesgoalcanzado = CustomerRiskTools::getCurrent($updatedCustomer->id());
+            $updatedCustomer->save();
+        }
+
+        return true;
     }
 
     /**
-     * Sets the author for this document.
+     * Establece el autor de este documento.
      *
      * @param User $user
      *
@@ -316,16 +327,18 @@ abstract class SalesDocument extends TransformerDocument
 
         $this->codagente = $user->codagente ?? $this->codagente;
         $this->codalmacen = $user->codalmacen ?? $this->codalmacen;
+        $this->codserie = $user->codserie ?? $this->codserie;
         $this->idempresa = $user->idempresa ?? $this->idempresa;
         $this->nick = $user->nick;
 
-        // allow extensions
+        // permitimos extensiones
         $this->pipe('setAuthor', $user);
+
         return true;
     }
 
     /**
-     * Assign the customer to the document.
+     * Asigna el cliente al documento.
      *
      * @param CoreCliente|CoreContacto $subject
      *
@@ -344,8 +357,9 @@ abstract class SalesDocument extends TransformerDocument
                 break;
         }
 
-        // allow extensions
+        // permitimos extensiones
         $this->pipe('setSubject', $subject);
+
         return $return;
     }
 
@@ -355,7 +369,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * Returns True if there is no errors on properties values.
+     * Devuelve True si no hay errores en los valores de las propiedades.
      *
      * @return bool
      */
@@ -374,22 +388,17 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * Updates subjects data in this document.
+     * Actualiza los datos del sujeto en este documento.
      *
      * @return bool
      */
     public function updateSubject(): bool
     {
         $cliente = new Cliente();
-        return $this->codcliente && $cliente->loadFromCode($this->codcliente) && $this->setSubject($cliente);
+        return $this->codcliente && $cliente->load($this->codcliente) && $this->setSubject($cliente);
     }
 
-    /**
-     * @param string $field
-     *
-     * @return bool
-     */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         if (false === parent::onChange($field)) {
             return false;
@@ -399,12 +408,12 @@ abstract class SalesDocument extends TransformerDocument
             return true;
         }
 
-        // after parent checks
+        // después de las comprobaciones del padre
         $contact = new Contacto();
         switch ($field) {
             case 'direccion':
-                // if address is changed and customer billing address is empty, then save new values
-                if ($this->direccion && $contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
+                // si la dirección cambia y la dirección de facturación del cliente está vacía, guardamos los nuevos valores
+                if ($this->direccion && $contact->load($this->idcontactofact) && empty($contact->direccion)) {
                     $contact->apartado = $this->apartado;
                     $contact->ciudad = $this->ciudad;
                     $contact->codpais = $this->codpais;
@@ -416,8 +425,8 @@ abstract class SalesDocument extends TransformerDocument
                 break;
 
             case 'idcontactofact':
-                // if billing address is changed, then change all billing fields
-                if ($contact->loadFromCode($this->idcontactofact)) {
+                // si cambia la dirección de facturación, cambiamos todos los campos de facturación
+                if ($contact->load($this->idcontactofact)) {
                     $this->apartado = $contact->apartado;
                     $this->ciudad = $contact->ciudad;
                     $this->codpais = $contact->codpais;
@@ -432,11 +441,11 @@ abstract class SalesDocument extends TransformerDocument
         return true;
     }
 
-    protected function onInsert()
+    protected function onInsert(): void
     {
-        // if billing address is empty, then save new values
+        // si la dirección de facturación está vacía, guardamos los nuevos valores
         $contact = new Contacto();
-        if ($this->direccion && $contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
+        if ($this->direccion && $contact->load($this->idcontactofact) && empty($contact->direccion)) {
             $contact->apartado = $this->apartado;
             $contact->ciudad = $this->ciudad;
             $contact->codpais = $this->codpais;
@@ -450,17 +459,18 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * This method is called after a record is updated on the database (saveUpdate).
+     * Este método se ejecuta después de actualizar un registro en la base de datos (saveUpdate).
      */
-    protected function onUpdate()
+    protected function onUpdate(): void
     {
-        if ($this->previousData['codcliente'] !== $this->codcliente) {
+        if ($this->isDirty('codcliente')) {
             $customer = new Cliente();
-            if ($customer->loadFromCode($this->previousData['codcliente'])) {
-                $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
+            if ($customer->load($this->getOriginal('codcliente'))) {
+                $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->id());
                 $customer->save();
             }
         }
+
         parent::onUpdate();
     }
 
@@ -482,6 +492,7 @@ abstract class SalesDocument extends TransformerDocument
         $this->idcontactofact = $subject->idcontacto;
         $this->nombrecliente = empty($subject->empresa) ? $subject->fullName() : $subject->empresa;
         $this->provincia = $subject->provincia;
+
         return true;
     }
 
@@ -496,15 +507,16 @@ abstract class SalesDocument extends TransformerDocument
         $this->codcliente = $subject->codcliente;
         $this->nombrecliente = $subject->razonsocial;
 
-        // commercial data
-        if (empty($this->primaryColumnValue())) {
+        // datos comerciales
+        if (empty($this->id())) {
             $this->codagente = $this->codagente ?? $subject->codagente;
             $this->codpago = $subject->codpago ?? $this->codpago;
             $this->codserie = $subject->codserie ?? $this->codserie;
             $this->irpf = $subject->irpf() ?? $this->irpf;
+            $this->operacion = $subject->operacion ?? $this->operacion;
         }
 
-        // billing address
+        // dirección de facturación
         $billingAddress = $subject->getDefaultAddress('billing');
         $this->codpais = $billingAddress->codpais;
         $this->provincia = $billingAddress->provincia;
@@ -514,14 +526,9 @@ abstract class SalesDocument extends TransformerDocument
         $this->apartado = $billingAddress->apartado;
         $this->idcontactofact = $billingAddress->idcontacto;
 
-        // shipping address
+        // dirección de envío
         $this->idcontactoenv = $subject->getDefaultAddress('shipping')->idcontacto;
-        return true;
-    }
 
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['codagente', 'codcliente', 'direccion', 'idcontactofact'];
-        parent::setPreviousData(array_merge($more, $fields));
+        return true;
     }
 }

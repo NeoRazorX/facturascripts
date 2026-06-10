@@ -85,8 +85,10 @@ class MAILExport extends ParentClass
     {
         $fileName = $this->getFileName() . '_mail_' . time() . '.pdf';
         $filePath = FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName;
-        if (false === Tools::folderCheckOrCreate(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH) ||
-            false === file_put_contents($filePath, $this->getDoc())) {
+        if (
+            false === Tools::folderCheckOrCreate(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH) ||
+            false === file_put_contents($filePath, $this->getDoc())
+        ) {
             Tools::log()->error('folder-not-writable');
             return;
         }

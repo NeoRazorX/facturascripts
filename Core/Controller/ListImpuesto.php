@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Lib\OperacionIVA;
 
 /**
  * Controller to list the items in the Impuesto model
@@ -42,7 +43,7 @@ class ListImpuesto extends ListController
     /**
      * Load views
      */
-    protected function createViews()
+    protected function createViews(): void
     {
         $this->createViewsTax();
         $this->createViewsRetention();
@@ -50,9 +51,10 @@ class ListImpuesto extends ListController
 
     protected function createViewsRetention(string $viewName = 'ListRetencion'): void
     {
-        $this->addView($viewName, 'Retencion', 'retentions', 'fa-solid fa-plus-square')
+        $this->addView($viewName, 'Retencion', 'retentions', 'fa-solid fa-minus-circle')
             ->addOrderBy(['codretencion'], 'code')
-            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['descripcion'], 'description', 1)
+            ->addOrderBy(['porcentaje'], 'percentage')
             ->addSearchFields(['descripcion', 'codretencion']);
     }
 
@@ -60,7 +62,25 @@ class ListImpuesto extends ListController
     {
         $this->addView($viewName, 'Impuesto', 'taxes', 'fa-solid fa-plus-square')
             ->addOrderBy(['codimpuesto'], 'code')
-            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['descripcion'], 'description', 1)
+            ->addOrderBy(['iva'], 'vat')
+            ->addOrderBy(['recargo'], 'surcharge')
             ->addSearchFields(['descripcion', 'codimpuesto']);
+    }
+
+    protected function loadData($viewName, $view)
+    {
+        parent::loadData($viewName, $view);
+        if ($viewName === $this->getMainViewName()) {
+            $this->loadOperations($viewName);
+        }
+    }
+
+    protected function loadOperations(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('operation');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(OperacionIVA::all(), true, true);
+        }
     }
 }

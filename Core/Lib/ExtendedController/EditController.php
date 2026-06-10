@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,18 +69,20 @@ abstract class EditController extends PanelController
     protected function exportAction()
     {
         // comprobamos permisos
-        if (false === $this->views[$this->active]->settings['btnPrint'] ||
-            false === $this->permissions->allowExport) {
+        if (
+            false === $this->views[$this->active]->settings['btnPrint'] ||
+            false === $this->permissions->allowExport
+        ) {
             Tools::log()->warning('no-print-permission');
             return;
         }
 
         $this->setTemplate(false);
         $this->exportManager->newDoc(
-            $this->request->get('option', ''),
+            $this->request->queryOrInput('option', ''),
             $this->title,
-            (int)$this->request->request->get('idformat', ''),
-            $this->request->request->get('langcode', '')
+            (int)$this->request->input('idformat', ''),
+            $this->request->input('langcode', '')
         );
 
         // recorremos las pestañas para ver qué imprimir
@@ -90,7 +92,7 @@ abstract class EditController extends PanelController
             }
 
             // si tenemos una pestaña activa, excluimos las demás
-            $activeTab = $this->request->get('activetab', '');
+            $activeTab = $this->request->inputOrQuery('activetab', '');
             if (!empty($activeTab) && $activeTab !== $name) {
                 continue;
             }
@@ -120,8 +122,8 @@ abstract class EditController extends PanelController
                  * We need the identifier to load the model. It's almost always code,
                  * but sometimes it's not.
                  */
-                $primaryKey = $this->request->request->get($view->model->primaryColumn());
-                $code = $this->request->query->get('code', $primaryKey);
+                $primaryKey = $this->request->input($view->model->primaryColumn());
+                $code = $this->request->query('code', $primaryKey);
                 $view->loadData($code);
 
                 // User can access to data?
@@ -131,7 +133,7 @@ abstract class EditController extends PanelController
                 }
 
                 // Data not found?
-                $action = $this->request->request->get('action', '');
+                $action = $this->request->input('action', '');
                 if ('' === $action && !empty($code) && false === $view->model->exists()) {
                     Tools::log()->warning('record-not-found');
                     break;

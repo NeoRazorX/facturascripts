@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
-use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
+use FacturaScripts\Core\Tools;
 
 class PuntoInteresCiudad extends ModelClass
 {
@@ -58,11 +58,10 @@ class PuntoInteresCiudad extends ModelClass
     /** @var string */
     public $nick;
 
-    public function getCity(): Ciudad
+    /** @return Ciudad|null */
+    public function getCity(): ?Ciudad
     {
-        $city = new Ciudad();
-        $city->loadFromCode($this->idciudad);
-        return $city;
+        return $this->belongsTo(Ciudad::class, 'idciudad');
     }
 
     public function install(): string
@@ -71,11 +70,6 @@ class PuntoInteresCiudad extends ModelClass
         new Ciudad();
 
         return parent::install();
-    }
-
-    public static function primaryColumn(): string
-    {
-        return "id";
     }
 
     public static function tableName(): string
@@ -89,22 +83,24 @@ class PuntoInteresCiudad extends ModelClass
         $this->nick = $this->nick ?? Session::user()->nick;
         $this->alias = Tools::noHtml($this->alias);
         $this->name = Tools::noHtml($this->name);
+
         return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
-        if ('list' === $type && !empty($this->primaryColumnValue())) {
+        if ('list' === $type && !empty($this->id())) {
             return $this->getCity()->url() . '&activetab=List' . $this->modelClassName();
         }
 
         return parent::url($type, $list);
     }
 
-    protected function saveUpdate(array $values = []): bool
+    protected function saveUpdate(): bool
     {
         $this->last_nick = Session::user()->nick;
         $this->last_update = Tools::dateTime();
-        return parent::saveUpdate($values);
+
+        return parent::saveUpdate();
     }
 }

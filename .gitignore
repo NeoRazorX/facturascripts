@@ -31,3 +31,8 @@ package-lock.json
 .vscode
 *.code-workspace
 .history
+
+# IA
+CLAUDE.md
+/.claude
+.codex

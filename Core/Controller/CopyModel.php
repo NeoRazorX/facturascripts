@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,6 +56,12 @@ class CopyModel extends Controller
     /** @var string */
     public $modelCode;
 
+    /** @var array */
+    public $warehousesList = [];
+
+    /** @var array */
+    public $paymentMethodsList = [];
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -74,9 +80,10 @@ class CopyModel extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
         $this->codeModel = new CodeModel();
 
-        $action = $this->request->get('action');
+        $action = $this->request->inputOrQuery('action');
         if ($action === 'autocomplete') {
             $this->autocompleteAction();
             return;
@@ -89,6 +96,9 @@ class CopyModel extends Controller
 
         // creamos el título de la página
         $this->title .= ' ' . $this->model->primaryDescription();
+
+        // preparamos las listas con idempresa para documentos de compra/venta
+        $this->prepareBusinessDocumentLists();
 
         // si no es un documento de compra o venta, cargamos su plantilla
         switch ($this->modelClass) {
@@ -141,6 +151,15 @@ class CopyModel extends Controller
         $this->setTemplate(false);
         $results = [];
         $data = $this->request->request->all();
+
+        // validación de seguridad: solo permitir búsquedas en Cliente, Proveedor y Contacto
+        $allowedSources = ['Cliente', 'Contacto', 'Proveedor', 'clientes', 'contactos', 'proveedores'];
+        if (false === in_array($data['source'], $allowedSources, true)) {
+            Tools::log()->error('invalid-autocomplete-source: ' . $data['source']);
+            $this->response->json($results);
+            return;
+        }
+
         foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
             $results[] = [
                 'key' => Tools::fixHtml($value->code),
@@ -148,13 +167,13 @@ class CopyModel extends Controller
             ];
         }
 
-        $this->response->setContent(json_encode($results));
+        $this->response->json($results);
     }
 
     protected function loadModel(): bool
     {
-        $this->modelClass = $this->request->get('model');
-        $this->modelCode = $this->request->get('code');
+        $this->modelClass = $this->request->queryOrInput('model');
+        $this->modelCode = $this->request->queryOrInput('code');
         if (empty($this->modelClass) || empty($this->modelCode)) {
             return false;
         }
@@ -188,17 +207,17 @@ class CopyModel extends Controller
 
         // creamos el nuevo asiento
         $newEntry = new Asiento();
-        $newEntry->canal = $this->request->request->get('canal');
-        $newEntry->concepto = $this->request->request->get('concepto');
+        $newEntry->canal = $this->request->input('canal');
+        $newEntry->concepto = $this->request->input('concepto');
 
-        $company = $this->request->request->get('idempresa');
+        $company = $this->request->input('idempresa');
         $newEntry->idempresa = empty($company) ? $newEntry->idempresa : $company;
 
-        $diario = $this->request->request->get('iddiario');
+        $diario = $this->request->input('iddiario');
         $newEntry->iddiario = empty($diario) ? null : $diario;
         $newEntry->importe = $this->model->importe;
 
-        $fecha = $this->request->request->get('fecha');
+        $fecha = $this->request->input('fecha');
         if (false === $newEntry->setDate($fecha)) {
             Tools::log()->warning('error-set-date');
             $this->dataBase->rollback();
@@ -246,7 +265,7 @@ class CopyModel extends Controller
 
         // buscamos el proveedor
         $subject = new Proveedor();
-        if (false === $subject->loadFromCode($this->request->request->get('codproveedor'))) {
+        if (false === $subject->load($this->request->input('codproveedor'))) {
             Tools::log()->warning('record-not-found');
             return;
         }
@@ -258,15 +277,19 @@ class CopyModel extends Controller
         $newDoc = new $className();
         $newDoc->setAuthor($this->user);
         $newDoc->setSubject($subject);
-        $newDoc->codalmacen = $this->request->request->get('codalmacen');
+
+        $company = $this->request->input('idempresa');
+        $newDoc->idempresa = empty($company) ? $newDoc->idempresa : $company;
+
+        $newDoc->codalmacen = $this->request->input('codalmacen');
         $newDoc->setCurrency($this->model->coddivisa);
-        $newDoc->codpago = $this->request->request->get('codpago');
-        $newDoc->codserie = $this->request->request->get('codserie');
-        $newDoc->dtopor1 = (float)$this->request->request->get('dtopor1', 0);
-        $newDoc->dtopor2 = (float)$this->request->request->get('dtopor2', 0);
-        $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
-        $newDoc->numproveedor = $this->request->request->get('numproveedor');
-        $newDoc->observaciones = $this->request->request->get('observaciones');
+        $newDoc->codpago = $this->request->input('codpago');
+        $newDoc->codserie = $this->request->input('codserie');
+        $newDoc->dtopor1 = (float)$this->request->input('dtopor1', 0);
+        $newDoc->dtopor2 = (float)$this->request->input('dtopor2', 0);
+        $newDoc->setDate($this->request->input('fecha'), $this->request->input('hora'));
+        $newDoc->numproveedor = $this->request->input('numproveedor');
+        $newDoc->observaciones = $this->request->input('observaciones');
 
         if (false === $this->pipeFalse('beforeSavePurchase', $newDoc)) {
             $this->dataBase->rollback();
@@ -306,7 +329,7 @@ class CopyModel extends Controller
 
         // buscamos el cliente
         $subject = new Cliente();
-        if (false === $subject->loadFromCode($this->request->request->get('codcliente'))) {
+        if (false === $subject->load($this->request->input('codcliente'))) {
             Tools::log()->warning('record-not-found');
             return;
         }
@@ -318,15 +341,19 @@ class CopyModel extends Controller
         $newDoc = new $className();
         $newDoc->setAuthor($this->user);
         $newDoc->setSubject($subject);
-        $newDoc->codalmacen = $this->request->request->get('codalmacen');
+
+        $company = $this->request->input('idempresa');
+        $newDoc->idempresa = empty($company) ? $newDoc->idempresa : $company;
+
+        $newDoc->codalmacen = $this->request->input('codalmacen');
         $newDoc->setCurrency($this->model->coddivisa);
-        $newDoc->codpago = $this->request->request->get('codpago');
-        $newDoc->codserie = $this->request->request->get('codserie');
-        $newDoc->dtopor1 = (float)$this->request->request->get('dtopor1', 0);
-        $newDoc->dtopor2 = (float)$this->request->request->get('dtopor2', 0);
-        $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
-        $newDoc->numero2 = $this->request->request->get('numero2');
-        $newDoc->observaciones = $this->request->request->get('observaciones');
+        $newDoc->codpago = $this->request->input('codpago');
+        $newDoc->codserie = $this->request->input('codserie');
+        $newDoc->dtopor1 = (float)$this->request->input('dtopor1', 0);
+        $newDoc->dtopor2 = (float)$this->request->input('dtopor2', 0);
+        $newDoc->setDate($this->request->input('fecha'), $this->request->input('hora'));
+        $newDoc->numero2 = $this->request->input('numero2');
+        $newDoc->observaciones = $this->request->input('observaciones');
 
         if (false === $this->pipeFalse('beforeSaveSales', $newDoc)) {
             $this->dataBase->rollback();
@@ -385,8 +412,8 @@ class CopyModel extends Controller
             }
         }
 
-        $productoDestino->descripcion = $this->request->request->get('descripcion');
-        $productoDestino->referencia = $this->request->request->get('referencia');
+        $productoDestino->descripcion = $this->request->input('descripcion');
+        $productoDestino->referencia = $this->request->input('referencia');
 
         if (false === $this->pipeFalse('beforeSaveProduct', $productoDestino)) {
             $this->dataBase->rollback();
@@ -439,5 +466,28 @@ class CopyModel extends Controller
         $this->dataBase->commit();
         Tools::log()->notice('record-updated-correctly');
         $this->redirect($productoDestino->url() . '&action=save-ok');
+    }
+
+    protected function prepareBusinessDocumentLists(): void
+    {
+        // obtener almacenes con idempresa
+        $sql = 'SELECT codalmacen, nombre, idempresa FROM almacenes ORDER BY nombre ASC';
+        foreach ($this->dataBase->select($sql) as $row) {
+            $this->warehousesList[] = [
+                'code' => $row['codalmacen'],
+                'description' => $row['nombre'],
+                'idempresa' => $row['idempresa']
+            ];
+        }
+
+        // obtener formas de pago con idempresa
+        $sql = 'SELECT codpago, descripcion, idempresa FROM formaspago ORDER BY descripcion ASC';
+        foreach ($this->dataBase->select($sql) as $row) {
+            $this->paymentMethodsList[] = [
+                'code' => $row['codpago'],
+                'description' => $row['descripcion'],
+                'idempresa' => $row['idempresa']
+            ];
+        }
     }
 }

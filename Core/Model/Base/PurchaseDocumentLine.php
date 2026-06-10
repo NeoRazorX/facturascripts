@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 /**
  * Description of PurchaseDocumentLine
  *
+ * @deprecated replaced by BusinessDocumentLine
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 abstract class PurchaseDocumentLine extends BusinessDocumentLine

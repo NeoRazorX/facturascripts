@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,11 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -88,14 +90,14 @@ class ListView extends BaseView
         $key1 = count($this->orderOptions);
         $this->orderOptions[$key1] = [
             'fields' => $fields,
-            'label' => Tools::lang()->trans($label),
+            'label' => Tools::trans($label),
             'type' => 'ASC'
         ];
 
         $key2 = count($this->orderOptions);
         $this->orderOptions[$key2] = [
             'fields' => $fields,
-            'label' => Tools::lang()->trans($label),
+            'label' => Tools::trans($label),
             'type' => 'DESC'
         ];
 
@@ -283,9 +285,10 @@ class ListView extends BaseView
     /**
      * Adds assets to the asset manager.
      */
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/ListView.js?v=2');
+        $route = Tools::config('route');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/ListView.js?v=' . Tools::date());
     }
 
     private function loadTotalAmounts(): void
@@ -358,12 +361,29 @@ class ListView extends BaseView
             return;
         }
 
+        // si la request es GET, obtenemos los filtros desde la caché
+        $cacheKeyFiltros = 'filters-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . Session::user()->nick;
+        if ($request->isMethod('GET')) {
+            $filtrosCache = Cache::get($cacheKeyFiltros);
+            if ($filtrosCache) {
+                // creamos valores de filtros en la request para aprovechar los métodos ya existentes
+                foreach ($filtrosCache as $filtro) {
+                    $request->request->set('filter' . $filtro->key, $filtro->getValue());
+                }
+            }
+        }
+
         // filters
         foreach ($this->filters as $filter) {
             $filter->setValueFromRequest($request);
             if ($filter->getDataBaseWhere($this->where)) {
                 $this->showFilters = true;
             }
+        }
+
+        if ($request->isMethod('POST')) {
+            // guardamos los filtros en caché
+            Cache::set($cacheKeyFiltros, $this->filters);
         }
     }
 
@@ -377,8 +397,24 @@ class ListView extends BaseView
         if (isset($this->orderOptions[$orderKey])) {
             $this->order = [];
             $option = $this->orderOptions[$orderKey];
+
+            // normalizar todos los campos a un array plano
+            $allFields = [];
             foreach ($option['fields'] as $field) {
-                $this->order[$field] = $option['type'];
+                if (str_contains($field, ',')) {
+                    $allFields = array_merge($allFields, array_map('trim', explode(',', $field)));
+                } else {
+                    $allFields[] = $field;
+                }
+            }
+
+            // procesar cada campo: si especifica asc/desc lo respeta, sino usa el tipo del orderBy
+            foreach ($allFields as $field) {
+                if (preg_match('/^(.+)\s+(asc|desc)$/i', $field, $matches)) {
+                    $this->order[$matches[1]] = strtoupper($matches[2]);
+                } else {
+                    $this->order[$field] = $option['type'];
+                }
             }
 
             $this->orderKey = $orderKey;

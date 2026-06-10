@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Lib\Email;
  * Description of BaseBlock
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 abstract class BaseBlock
 {
@@ -40,6 +40,15 @@ abstract class BaseBlock
     protected $verificode;
 
     abstract public function render(bool $footer = false): string;
+
+    /**
+     * Crea una instancia del bloque a partir de los atributos y contenido de un shortcode.
+     * Las subclases deben sobreescribir este método para mapear correctamente sus parámetros.
+     */
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static($content);
+    }
 
     public function setVerificode(string $code): void
     {

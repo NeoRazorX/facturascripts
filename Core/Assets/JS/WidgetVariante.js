@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +17,79 @@
  */
 
 function widgetVarianteDraw(id, results) {
-    let html = '';
+    const rows = [];
 
     results.forEach(function (element) {
-        html += '<tr class="clickableRow" onclick="widgetVarianteSelect(\'' + id + '\', \'' + element.match + '\');">'
-            + '<td><b>' + element.referencia + '</b> ' + element.descripcion + '</td>'
-            + '<td class="text-end text-nowrap">' + element.precio_str + '</td>'
-            + '<td class="text-end text-nowrap">' + element.stock_str + '</td>'
-            + '</tr>';
+        let descripcion = widgetVarianteDecodeHtml(element.descripcion || '');
+        if (descripcion.length > 300) {
+            descripcion = descripcion.substring(0, 300) + '...';
+        }
+
+        // Determinar la clase de color para el precio
+        let priceClass = '';
+        if (element.precio < 0) {
+            priceClass = ' text-danger';
+        } else if (element.precio == 0) {
+            priceClass = ' text-warning';
+        }
+
+        // Determinar la clase de color para el stock
+        let stockClass = '';
+        if (element.stock < 0) {
+            stockClass = ' text-danger';
+        } else if (element.stock == 0) {
+            stockClass = ' text-warning';
+        }
+
+        const match = widgetVarianteDecodeHtml(element.match);
+        const referencia = widgetVarianteDecodeHtml(element.referencia || '');
+        const $row = $('<tr/>', {
+            class: 'clickableRow widget-variante-option'
+        }).data('widget-variante-id', id)
+            .data('widget-variante-value', match);
+
+        const $link = $('<a/>', {
+            class: 'widget-variante-link',
+            href: element.url || '#',
+            target: '_blank'
+        }).append($('<i/>', {
+            class: 'fa-solid fa-external-link-alt fa-fw'
+        }));
+
+        $row.append($('<td/>', {
+            class: 'text-center'
+        }).append($link));
+
+        $row.append($('<td/>')
+            .append($('<b/>').text(referencia))
+            .append(document.createTextNode(' ' + descripcion)));
+
+        $row.append($('<td/>', {
+            class: 'text-end text-nowrap' + priceClass
+        }).text(element.precio_str || ''));
+
+        $row.append($('<td/>', {
+            class: 'text-end text-nowrap' + stockClass
+        }).text(element.stock_str || ''));
+
+        rows.push($row[0]);
     });
 
-    $("#list_" + id).html(html);
+    $("#list_" + id).empty().append(rows);
+}
+
+function widgetVarianteDecodeHtml(value) {
+    if (value === null || value === undefined) {
+        return '';
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = String(value);
+    return textarea.value;
 }
 
 function widgetVarianteSearch(id) {
-    $("#list_" + id).html("");
+    $("#list_" + id).empty();
 
     let input = $("#" + id);
     let data = {
@@ -58,15 +116,35 @@ function widgetVarianteSearch(id) {
     });
 }
 
+// Objeto para almacenar los timeouts de cada instancia del widget
+let widgetVarianteSearchTimeouts = {};
+
 function widgetVarianteSearchKp(id, event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        widgetVarianteSearch(id);
+    // Limpiar el timeout anterior si existe
+    if (widgetVarianteSearchTimeouts[id]) {
+        clearTimeout(widgetVarianteSearchTimeouts[id]);
     }
+
+    // Crear un nuevo timeout para buscar después de 400ms
+    widgetVarianteSearchTimeouts[id] = setTimeout(function() {
+        widgetVarianteSearch(id);
+    }, 400);
 }
 
 function widgetVarianteSelect(id, value) {
     $("#" + id).val(value);
     $("#modal_" + id).modal("hide");
-    $("#modal_span_" + id).html(value);
+    $("#modal_span_" + id).text(value);
 }
+
+$(document).on('click', '.widget-variante-option', function () {
+    const value = $(this).data('widget-variante-value');
+    widgetVarianteSelect(
+        $(this).data('widget-variante-id'),
+        (value === null || value === undefined) ? '' : String(value)
+    );
+});
+
+$(document).on('click', '.widget-variante-link', function (event) {
+    event.stopPropagation();
+});

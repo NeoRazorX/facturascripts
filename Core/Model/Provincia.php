@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,9 +20,10 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -39,9 +40,6 @@ class Provincia extends ModelClass
     public $alias;
 
     /** @var string */
-    public $creation_date;
-
-    /** @var string */
     public $codeid;
 
     /**
@@ -55,6 +53,9 @@ class Provincia extends ModelClass
 
     /** @var string */
     public $codpais;
+
+    /** @var string */
+    public $creation_date;
 
     /** @var string */
     public $idprovincia;
@@ -80,17 +81,20 @@ class Provincia extends ModelClass
     /** @var string */
     public $telephone_prefix;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->codpais = Tools::settings('default', 'codpais');
     }
 
+    public function getCities(): array
+    {
+        return $this->hasMany(Ciudad::class, 'idprovincia');
+    }
+
     public function getCountry(): Pais
     {
-        $country = new Pais();
-        $country->loadFromCode($this->codpais);
-        return $country;
+        return Paises::get($this->codpais);
     }
 
     public function install(): string
@@ -118,32 +122,34 @@ class Provincia extends ModelClass
         $this->alias = Tools::noHtml($this->alias);
         $this->provincia = Tools::noHtml($this->provincia);
         $this->telephone_prefix = Tools::noHtml($this->telephone_prefix);
+
         return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
-        if ('list' === $type && !empty($this->primaryColumnValue())) {
+        if ('list' === $type && !empty($this->id())) {
             return $this->getCountry()->url() . '&activetab=List' . $this->modelClassName();
         }
 
         return parent::url($type, $list);
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->idprovincia)) {
             // asignamos el nuevo ID así para evitar problemas con postgresql por haber importado el listado con ids incluidos
             $this->idprovincia = $this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 
-    protected function saveUpdate(array $values = []): bool
+    protected function saveUpdate(): bool
     {
         $this->last_nick = Session::user()->nick;
         $this->last_update = Tools::dateTime();
-        return parent::saveUpdate($values);
+
+        return parent::saveUpdate();
     }
 }

@@ -135,6 +135,42 @@ final class SubcuentaTest extends TestCase
         $this->assertTrue($account->delete(), 'account-cant-delete-4');
     }
 
+    public function testAutoCorrectParentAccount()
+    {
+        // obtenemos un ejercicio
+        $exercise = $this->getRandomExercise();
+        $this->assertTrue($exercise->save(), 'cant-save-exercise-5');
+
+        // creamos una cuenta incorrecta (cuenta 1)
+        $wrongAccount = $this->getRandomAccount($exercise->codejercicio);
+        $wrongAccount->codcuenta = '1';
+        $this->assertTrue($wrongAccount->save(), 'cant-save-wrong-account');
+
+        // creamos la cuenta correcta (cuenta 57 - que es prefijo de 572.11)
+        $correctAccount = $this->getRandomAccount($exercise->codejercicio);
+        $correctAccount->codcuenta = '57';
+        $this->assertTrue($correctAccount->save(), 'cant-save-correct-account');
+
+        // creamos una subcuenta con código 572.11
+        // pero asignamos intencionalmente la cuenta incorrecta (1)
+        $subaccount = new Subcuenta();
+        $subaccount->codcuenta = $wrongAccount->codcuenta; // asignamos la cuenta 1 (incorrecta)
+        $subaccount->idcuenta = $wrongAccount->idcuenta;
+        $subaccount->codejercicio = $exercise->codejercicio;
+        $subaccount->codsubcuenta = '572.11';
+        $subaccount->descripcion = 'Test auto-correct parent';
+        $this->assertTrue($subaccount->save(), 'cant-save-subaccount-5');
+
+        // verificamos que el sistema haya corregido automáticamente la cuenta padre a '57'
+        $this->assertEquals('57', $subaccount->codcuenta, 'parent-account-not-auto-corrected');
+        $this->assertEquals($correctAccount->idcuenta, $subaccount->idcuenta, 'parent-account-id-not-auto-corrected');
+
+        // eliminamos
+        $this->assertTrue($subaccount->delete(), 'subaccount-cant-delete-5');
+        $this->assertTrue($correctAccount->delete(), 'correct-account-cant-delete-5');
+        $this->assertTrue($wrongAccount->delete(), 'wrong-account-cant-delete-5');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

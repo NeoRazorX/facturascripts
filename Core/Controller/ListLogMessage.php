@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,27 +51,23 @@ class ListLogMessage extends ListController
 
     protected function createViewsCronJobs(string $viewName = 'ListCronJob'): void
     {
+        $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
+
         $this->addView($viewName, 'CronJob', 'crons', 'fa-solid fa-cogs')
             ->addSearchFields(['jobname', 'pluginname'])
             ->addOrderBy(['jobname'], 'job-name')
             ->addOrderBy(['pluginname'], 'plugin')
             ->addOrderBy(['date'], 'date')
-            ->addOrderBy(['duration'], 'duration');
-
-        // filtros
-        $this->addFilterPeriod($viewName, 'date', 'period', 'date', true);
-
-        $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
-        $this->addFilterSelect($viewName, 'pluginname', 'plugin', 'pluginname', $plugins);
-
-        $this->addFilterSelect($viewName, 'enabled', 'status', 'enabled', [
-            '' => '------',
-            '0' => Tools::lang()->trans('disabled'),
-            '1' => Tools::lang()->trans('enabled'),
-        ]);
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
+            ->addOrderBy(['duration'], 'duration')
+            ->addOrderBy(['daily_exec'], 'daily-executions')
+            ->setSettings('btnNew', false)
+            ->addFilterPeriod('date', 'period', 'date', true)
+            ->addFilterSelect('pluginname', 'plugin', 'pluginname', $plugins)
+            ->addFilterSelect('enabled', 'status', 'enabled', [
+                '' => '------',
+                '0' => Tools::trans('disabled'),
+                '1' => Tools::trans('enabled'),
+            ]);
 
         // añadimos los botones de activar y desactivar
         $this->addButton($viewName, [
@@ -84,39 +80,31 @@ class ListLogMessage extends ListController
         $this->addButton($viewName, [
             'action' => 'disable-cronjob',
             'color' => 'warning',
-            'icon' => 'far fa-square',
+            'icon' => 'fa-regular fa-square',
             'label' => 'disable'
         ]);
     }
 
     protected function createViewsLogs(string $viewName = 'ListLogMessage'): void
     {
+        $channels = $this->codeModel->all('logs', 'channel', 'channel');
+        $levels = $this->codeModel->all('logs', 'level', 'level');
+        $uris = $this->codeModel->all('logs', 'uri', 'uri');
+        $models = $this->codeModel->all('logs', 'model', 'model');
+
         $this->addView($viewName, 'LogMessage', 'history', 'fa-solid fa-history')
             ->addSearchFields(['context', 'message', 'uri'])
             ->addOrderBy(['time', 'id'], 'date', 2)
             ->addOrderBy(['level'], 'level')
-            ->addOrderBy(['ip'], 'ip');
-
-        // filtros
-        $channels = $this->codeModel->all('logs', 'channel', 'channel');
-        $this->addFilterSelect($viewName, 'channel', 'channel', 'channel', $channels);
-
-        $levels = $this->codeModel->all('logs', 'level', 'level');
-        $this->addFilterSelect($viewName, 'level', 'level', 'level', $levels);
-
-        $this->addFilterAutocomplete($viewName, 'nick', 'user', 'nick', 'users');
-        $this->addFilterAutocomplete($viewName, 'ip', 'ip', 'ip', 'logs');
-
-        $uris = $this->codeModel->all('logs', 'uri', 'uri');
-        $this->addFilterSelect($viewName, 'url', 'url', 'uri', $uris);
-
-        $models = $this->codeModel->all('logs', 'model', 'model');
-        $this->addFilterSelect($viewName, 'model', 'doc-type', 'model', $models);
-
-        $this->addFilterPeriod($viewName, 'time', 'period', 'time', true);
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
+            ->addOrderBy(['ip'], 'ip')
+            ->setSettings('btnNew', false)
+            ->addFilterSelect('channel', 'channel', 'channel', $channels)
+            ->addFilterSelect('level', 'level', 'level', $levels)
+            ->addFilterAutocomplete('nick', 'user', 'nick', 'users')
+            ->addFilterAutocomplete('ip', 'ip', 'ip', 'logs')
+            ->addFilterSelect('url', 'url', 'uri', $uris)
+            ->addFilterSelect('model', 'doc-type', 'model', $models)
+            ->addFilterPeriod('time', 'period', 'time', true);
 
         // añadimos un botón para el modal delete-logs
         $this->addButton($viewName, [
@@ -130,24 +118,22 @@ class ListLogMessage extends ListController
 
     protected function createViewsWorkEvents(string $viewName = 'ListWorkEvent'): void
     {
+        $events = $this->codeModel->all('work_events', 'name', 'name');
+
         $this->addView($viewName, 'WorkEvent', 'work-events', 'fa-solid fa-calendar-alt')
             ->addOrderBy(['creation_date'], 'creation-date')
             ->addOrderBy(['done_date'], 'date')
+            ->addOrderBy(['execution_time'], 'duration')
             ->addOrderBy(['id'], 'id', 2)
             ->addSearchFields(['name', 'value'])
-            ->setSettings('btnNew', false);
-
-        // filtros
-        $this->addFilterSelect($viewName, 'done', 'status', 'done', [
-            '' => '------',
-            '0' => Tools::lang()->trans('pending'),
-            '1' => Tools::lang()->trans('done'),
-        ]);
-
-        $events = $this->codeModel->all('work_events', 'name', 'name');
-        $this->addFilterSelect($viewName, 'name', 'name', 'name', $events);
-
-        $this->addFilterPeriod($viewName, 'creation_date', 'period', 'creation_date', true);
+            ->setSettings('btnNew', false)
+            ->addFilterSelect('done', 'status', 'done', [
+                '' => '------',
+                '0' => Tools::trans('pending'),
+                '1' => Tools::trans('done'),
+            ])
+            ->addFilterSelect('name', 'name', 'name', $events)
+            ->addFilterPeriod('creation_date', 'period', 'creation_date', true);
     }
 
     protected function deleteLogsAction(): void
@@ -159,9 +145,9 @@ class ListLogMessage extends ListController
             return;
         }
 
-        $from = $this->request->request->get('delete_from', '');
-        $to = $this->request->request->get('delete_to', '');
-        $channel = $this->request->request->get('delete_channel', '');
+        $from = $this->request->input('delete_from', '');
+        $to = $this->request->input('delete_to', '');
+        $channel = $this->request->input('delete_channel', '');
 
         $query = LogMessage::table()
             ->whereGte('time', $from)
@@ -202,7 +188,7 @@ class ListLogMessage extends ListController
 
         foreach ($codes as $code) {
             $cron = new CronJob();
-            if (false === $cron->loadFromCode($code)) {
+            if (false === $cron->load($code)) {
                 continue;
             }
 

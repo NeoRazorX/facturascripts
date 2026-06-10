@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Internal;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Tools;
@@ -38,7 +39,9 @@ final class Forja
     public static function builds(): array
     {
         if (!isset(self::$builds)) {
-            self::$builds = Http::get(self::BUILDS_URL)->setTimeout(10)->json() ?? [];
+            self::$builds = Cache::remember('forja_builds', function () {
+                return Http::get(self::BUILDS_URL)->setTimeout(10)->json() ?? [];
+            });
         }
 
         return self::$builds ?? [];
@@ -51,7 +54,7 @@ final class Forja
                 return true;
             }
 
-            if (false === Tools::settings('default', 'enableupdatesbeta', false)) {
+            if (false === (bool)Tools::settings('default', 'enableupdatesbeta', 0)) {
                 continue;
             }
 
@@ -88,7 +91,9 @@ final class Forja
     public static function plugins(): array
     {
         if (!isset(self::$pluginList)) {
-            self::$pluginList = Http::get(self::PLUGIN_LIST_URL)->setTimeout(10)->json() ?? [];
+            self::$pluginList = Cache::remember('forja_plugins', function () {
+                return Http::get(self::PLUGIN_LIST_URL)->setTimeout(10)->json() ?? [];
+            });
         }
 
         return self::$pluginList ?? [];

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,10 @@
 
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\SecuenciaDocumento;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento as DinSecuenciaDocumento;
 
 /**
@@ -45,11 +46,11 @@ class BusinessDocumentCode
 
         // find other exercises from equivalent sequences
         $where = [
-            new DataBaseWhere('codejercicio', null, 'IS NOT'),
-            new DataBaseWhere('codserie', $sequence->codserie),
-            new DataBaseWhere('idsecuencia', $sequence->idsecuencia, '<>'),
-            new DataBaseWhere('idempresa', $sequence->idempresa),
-            new DataBaseWhere('tipodoc', $sequence->tipodoc)
+            Where::isNotNull('codejercicio'),
+            Where::eq('codserie', $sequence->codserie),
+            Where::notEq('idsecuencia', $sequence->idsecuencia),
+            Where::eq('idempresa', $sequence->idempresa),
+            Where::eq('tipodoc', $sequence->tipodoc)
         ];
         foreach ($sequence->all($where) as $item) {
             $other[] = $item->codejercicio;
@@ -61,15 +62,15 @@ class BusinessDocumentCode
     public static function getSequence(BusinessDocument $document): SecuenciaDocumento
     {
         $selectedSequence = new DinSecuenciaDocumento();
-        $patron = substr(strtoupper($document->modelClassName()), 0, 3) . '{EJE}{SERIE}{NUM}';
+        $patron = static::getDefaultPattern($document);
         $long = $selectedSequence->longnumero;
 
         // find sequence for this document and serie
         $sequence = new DinSecuenciaDocumento();
         $where = [
-            new DataBaseWhere('codserie', $document->codserie),
-            new DataBaseWhere('idempresa', $document->idempresa),
-            new DataBaseWhere('tipodoc', $document->modelClassName())
+            Where::eq('codserie', $document->codserie),
+            Where::eq('idempresa', $document->idempresa),
+            Where::eq('tipodoc', $document->modelClassName())
         ];
         foreach ($sequence->all($where) as $seq) {
             if (empty($seq->codejercicio)) {
@@ -82,6 +83,12 @@ class BusinessDocumentCode
 
             // use old pattern for the new sequence
             $patron = $seq->patron;
+
+            // replace year by {ANYO} if found
+            if (preg_match('/20\\d{2}/', $patron)) {
+                $patron = preg_replace('/20\\d{2}/', '{ANYO}', $patron);
+            }
+
             $long = $seq->longnumero;
         }
 
@@ -98,6 +105,37 @@ class BusinessDocumentCode
         }
 
         return $selectedSequence;
+    }
+
+    protected static function getDefaultPattern(BusinessDocument $document): string
+    {
+        switch ($document->modelClassName()) {
+            case 'AlbaranCliente':
+                return 'ALB{EJE}{SERIE}{NUM}';
+
+            case 'AlbaranProveedor':
+                return 'ALBP{EJE}{SERIE}{NUM}';
+
+            case 'FacturaCliente':
+                return 'F{EJE}{SERIE}{NUM}';
+
+            case 'FacturaProveedor':
+                return 'FP{EJE}{SERIE}{NUM}';
+
+            case 'PedidoCliente':
+                return 'PED{EJE}{SERIE}{NUM}';
+
+            case 'PedidoProveedor':
+                return 'PEDP{EJE}{SERIE}{NUM}';
+
+            case 'PresupuestoCliente':
+                return 'PRE{EJE}{SERIE}{NUM}';
+
+            case 'PresupuestoProveedor':
+                return 'PREP{EJE}{SERIE}{NUM}';
+        }
+
+        return substr(strtoupper($document->modelClassName()), 0, 3) . '{EJE}{SERIE}{NUM}';
     }
 
     public static function setNewCode(BusinessDocument &$document, bool $newNumber = true): void
@@ -137,9 +175,11 @@ class BusinessDocumentCode
             $preDate = $document->fecha;
             $preHour = $document->hora;
             foreach ($previous as $preDoc) {
-                if ($expectedNumber != $preDoc->numero &&
+                if (
+                    $expectedNumber != $preDoc->numero &&
                     $expectedNumber >= $sequence->inicio &&
-                    $document->codejercicio == $preCodejercicio) {
+                    $document->codejercicio == $preCodejercicio
+                ) {
                     // hole found
                     $document->fecha = $preDate;
                     $document->hora = $preHour;
@@ -159,9 +199,11 @@ class BusinessDocumentCode
             if (empty($previous)) {
                 // no previous document, then use initial number
                 $sequence->numero = $sequence->inicio;
-            } elseif ($expectedNumber >= $sequence->inicio &&
+            } elseif (
+                $expectedNumber >= $sequence->inicio &&
                 $expectedNumber >= $sequence->numero - self::GAP_LIMIT &&
-                $document->codejercicio == $preCodejercicio) {
+                $document->codejercicio == $preCodejercicio
+            ) {
                 // the gap is in the first positions of the range
                 $document->fecha = $preDate;
                 $document->hora = $preHour;
@@ -187,18 +229,19 @@ class BusinessDocumentCode
     protected static function getPrevious(SecuenciaDocumento $sequence, BusinessDocument $document): array
     {
         $where = [
-            new DataBaseWhere('codserie', $sequence->codserie),
-            new DataBaseWhere('idempresa', $sequence->idempresa)
+            Where::eq('codserie', $sequence->codserie),
+            Where::eq('idempresa', $sequence->idempresa)
         ];
         if ($sequence->codejercicio) {
-            $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
+            $where[] = Where::eq('codejercicio', $sequence->codejercicio);
         } else {
             $other = implode(',', static::getOtherExercises($sequence));
             if (!empty($other)) {
-                $where[] = new DataBaseWhere('codejercicio', $other, 'NOT IN');
+                $where[] = Where::notIn('codejercicio', $other);
             }
         }
-        $orderBy = strtolower(FS_DB_TYPE) == 'postgresql' ?
+        $db_type = Tools::config('db_type');
+        $orderBy = strtolower($db_type) == 'postgresql' ?
             ['CAST(numero as integer)' => 'DESC'] :
             ['CAST(numero as unsigned)' => 'DESC'];
         return $document->all($where, $orderBy, 0, self::GAP_LIMIT);

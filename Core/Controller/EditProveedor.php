@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,8 +23,10 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
+use FacturaScripts\Core\Lib\TaxExceptions;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -32,7 +34,7 @@ use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
  * @author       Nazca Networks             <comercial@nazcanetworks.com>
  * @author       Fco. Antonio Moreno Pérez  <famphuelva@gmail.com>
  * @author       Carlos García Gómez        <carlos@facturascripts.com>
- * @collaborator Daniel Fernández Giménez   <hola@danielfg.es>
+ * @collaborator Daniel Fernández Giménez   <contacto@danielfg.es>
  */
 class EditProveedor extends ComercialContactController
 {
@@ -82,21 +84,32 @@ class EditProveedor extends ComercialContactController
 
     protected function createDocumentView(string $viewName, string $model, string $label): void
     {
-        $this->createSupplierListView($viewName, $model, $label);
+        $this->createSupplierListView($viewName, $model, $label)
+            ->setSettings('btnPrint', true);
 
-        // botones
-        $this->setSettings($viewName, 'btnPrint', true);
-        $this->addButtonGroupDocument($viewName);
-        $this->addButtonApproveDocument($viewName);
+        // agrupamos las acciones en un dropdown
+        $this->tab($viewName)->addButtonGroup([
+            'name' => 'doc-actions',
+            'icon' => 'fa-solid fa-circle-check',
+            'label' => 'actions'
+        ]);
+        $this->addButtonApproveDocument($viewName, 'doc-actions');
+        $this->addButtonGroupDocument($viewName, 'doc-actions');
     }
 
     protected function createInvoiceView(string $viewName): void
     {
-        $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
+        $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices')
+            ->setSettings('btnPrint', true);
 
-        // botones
-        $this->setSettings($viewName, 'btnPrint', true);
-        $this->addButtonLockInvoice($viewName);
+        // agrupamos las acciones de facturas en un dropdown
+        $this->tab($viewName)->addButtonGroup([
+            'name' => 'invoice-actions',
+            'icon' => 'fa-solid fa-circle-check',
+            'label' => 'actions'
+        ]);
+        $this->addButtonPayInvoice($viewName, 'invoice-actions');
+        $this->addButtonLockInvoice($viewName, 'invoice-actions');
     }
 
     protected function createProductView(string $viewName = 'ListProductoProveedor'): void
@@ -107,22 +120,19 @@ class EditProveedor extends ComercialContactController
             ->addOrderBy(['refproveedor'], 'supplier-reference')
             ->addOrderBy(['neto'], 'net')
             ->addOrderBy(['stock'], 'stock')
-            ->addSearchFields(['referencia', 'refproveedor']);
-
-        // desactivamos la columna de proveedor
-        $this->views[$viewName]->disableColumn('supplier');
-
-        // botones
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnPrint', true);
+            ->addSearchFields(['referencia', 'refproveedor'])
+            ->disableColumn('supplier')
+            ->setSettings('btnNew', false)
+            ->setSettings('btnPrint', true);
     }
 
     /**
      * Create views
      */
-    protected function createViews()
+    protected function createViews(): void
     {
         parent::createViews();
+
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fa-solid fa-piggy-bank');
 
@@ -153,42 +163,33 @@ class EditProveedor extends ComercialContactController
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function editAction()
+    protected function editAction(): bool
     {
         $return = parent::editAction();
         if ($return && $this->active === $this->getMainViewName()) {
             $this->checkSubaccountLength($this->getModel()->codsubcuenta);
-
-            // update contact email and phones when supplier email or phones are updated
-            $this->updateContact($this->views[$this->active]->model);
         }
 
         return $return;
     }
 
-    /**
-     * @return bool
-     */
-    protected function insertAction()
+    protected function insertAction(): bool
     {
         if (false === parent::insertAction()) {
             return false;
         }
 
         // redirect to return_url if return is defined
-        $return_url = $this->request->query->get('return');
+        $return_url = $this->request->query('return');
         if (empty($return_url)) {
             return true;
         }
 
         $model = $this->views[$this->active]->model;
         if (strpos($return_url, '?') === false) {
-            $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+            $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->id());
         } else {
-            $this->redirect($return_url . '&' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+            $this->redirect($return_url . '&' . $model->primaryColumn() . '=' . $model->id());
         }
 
         return true;
@@ -217,7 +218,7 @@ class EditProveedor extends ComercialContactController
 
             case 'ListFacturaProveedor':
                 $view->loadData('', $where);
-                $this->addButtonGenerateAccountingInvoices($viewName, $codproveedor);
+                $this->addButtonGenerateAccountingInvoices($viewName, $codproveedor, 'invoice-actions');
                 break;
 
             case 'ListAlbaranProveedor':
@@ -237,6 +238,8 @@ class EditProveedor extends ComercialContactController
             case $mainViewName:
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
+                $this->loadExceptionVat($viewName);
+                $this->loadOperationValues($viewName);
                 break;
 
             default:
@@ -261,7 +264,23 @@ class EditProveedor extends ComercialContactController
         }
     }
 
-    protected function setCustomWidgetValues(string $viewName)
+    protected function loadExceptionVat(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('vat-exception');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(TaxExceptions::all(), true, true);
+        }
+    }
+
+    protected function loadOperationValues(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('operation');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(InvoiceOperation::allForPurchases(), true, true);
+        }
+    }
+
+    protected function setCustomWidgetValues(string $viewName): void
     {
         // Load values option to VAT Type select input
         $columnVATType = $this->views[$viewName]->columnForName('vat-regime');

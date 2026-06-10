@@ -69,8 +69,7 @@ if ($db->connected()) {
     WorkQueue::run();
 
     // actualizamos la telemetría
-    $telemetry = new Telemetry();
-    $telemetry->update();
+    Telemetry::init()->update();
 
     // guardamos los logs y cerramos la conexión a la base de datos
     MiniLog::save();

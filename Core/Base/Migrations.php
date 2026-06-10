@@ -30,19 +30,19 @@ use FacturaScripts\Dinamic\Model\Serie;
  * Description of Migrations
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @deprecated Use FacturaScripts\Core\Migrations instead
  */
 final class Migrations
 {
     /** @var DataBase */
     private static $database;
 
+    /**
+     * @deprecated Use FacturaScripts\Core\Migrations::run() instead
+     */
     public static function run(): void
     {
-        self::clearLogs();
-        self::fixSeries();
-        self::fixAgenciasTransporte();
-        self::fixFormasPago();
-        self::fixRectifiedInvoices();
+        \FacturaScripts\Core\Migrations::run();
     }
 
     private static function clearLogs(): void

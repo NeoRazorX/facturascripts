@@ -16,7 +16,12 @@
         <column name="done" display="center" order="140">
             <widget type="checkbox" fieldname="done"/>
         </column>
-        <column name="done-date" display="right" order="150">
+        <column name="duration" display="right" order="150">
+            <widget type="seconds" fieldname="execution_time">
+                <option color="danger">gt:0.5</option>
+            </widget>
+        </column>
+        <column name="done-date" display="right" order="160">
             <widget type="datetime" fieldname="done_date"/>
         </column>
     </columns>

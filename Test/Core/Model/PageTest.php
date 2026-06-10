@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,13 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Page;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class PageTest extends TestCase
 {
+    use LogErrorsTrait;
+
     public function testCreate(): void
     {
         // creamos
@@ -32,7 +35,15 @@ final class PageTest extends TestCase
         $page->title = 'test';
         $this->assertTrue($page->save(), 'Error saving Page');
 
+        // comprobamos que se ha creado
+        $this->assertTrue($page->exists(), 'Page does not exist after saving');
+
         // eliminamos
         $this->assertTrue($page->delete(), 'Error deleting Page');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

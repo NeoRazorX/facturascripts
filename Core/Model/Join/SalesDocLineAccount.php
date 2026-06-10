@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,14 @@
 
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Model\Base\JoinModel;
+use FacturaScripts\Core\Template\JoinModel;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Familia;
 
 /**
- * Auxiliary model to get sub-accounts of sales document lines
+ * Auxiliary model to get subaccounts of sales document lines
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -37,27 +37,21 @@ use FacturaScripts\Dinamic\Model\Familia;
  */
 class SalesDocLineAccount extends JoinModel
 {
-
     /**
      * Get totals for subaccount of sale document
-     *
-     * @param FacturaCliente $document
-     * @param string $defaultSubacode
-     *
-     * @return array
      */
     public function getTotalsForDocument($document, string $defaultSubacode): array
     {
         $totals = [];
         $where = [
-            new DataBaseWhere('lineasfacturascli.idfactura', $document->idfactura),
-            new DataBaseWhere('lineasfacturascli.suplido', false)
+            Where::eq('lineasfacturascli.idfactura', $document->idfactura),
+            Where::eq('lineasfacturascli.suplido', false),
         ];
         $order = [
             "COALESCE(productos.codsubcuentaven, '')" => 'ASC',
             "COALESCE(productos.codfamilia, '')" => 'ASC'
         ];
-        foreach ($this->all($where, $order) as $row) {
+        foreach (static::all($where, $order) as $row) {
             $codSubAccount = empty($row->codsubcuenta) ? Familia::saleSubAccount($row->codfamilia) : $row->codsubcuenta;
             if (empty($codSubAccount)) {
                 $codSubAccount = $defaultSubacode;
@@ -70,13 +64,6 @@ class SalesDocLineAccount extends JoinModel
         return $this->checkTotals($totals, $document, $defaultSubacode);
     }
 
-    /**
-     * @param array $totals
-     * @param FacturaCliente $document
-     * @param string $defaultSubacode
-     *
-     * @return array
-     */
     protected function checkTotals(array &$totals, $document, string $defaultSubacode): array
     {
         // round and add the totals
@@ -87,7 +74,7 @@ class SalesDocLineAccount extends JoinModel
         }
 
         // fix occasional penny mismatch
-        if (!Utils::floatcmp($document->neto, $sum, FS_NF0, true)) {
+        if (!Tools::floatCmp($document->neto, $sum, FS_NF0, true)) {
             $diff = round($document->neto - $sum, FS_NF0);
             $totals[$defaultSubacode] = isset($totals[$defaultSubacode]) ? $totals[$defaultSubacode] + $diff : $diff;
         }
@@ -95,11 +82,6 @@ class SalesDocLineAccount extends JoinModel
         return $totals;
     }
 
-    /**
-     * List of fields or columns to select.
-     *
-     * @return array
-     */
     protected function getFields(): array
     {
         return [
@@ -110,11 +92,6 @@ class SalesDocLineAccount extends JoinModel
         ];
     }
 
-    /**
-     * Return Group By fields
-     *
-     * @return string
-     */
     protected function getGroupFields(): string
     {
         return 'lineasfacturascli.idfactura,'
@@ -122,21 +99,11 @@ class SalesDocLineAccount extends JoinModel
             . "COALESCE(productos.codfamilia, '')";
     }
 
-    /**
-     * List of tables related to from sql.
-     *
-     * @return string
-     */
     protected function getSQLFrom(): string
     {
         return 'lineasfacturascli LEFT JOIN productos ON productos.idproducto = lineasfacturascli.idproducto';
     }
 
-    /**
-     * List of tables required for the execution of the view.
-     *
-     * @return array
-     */
     protected function getTables(): array
     {
         return ['lineasfacturascli', 'productos'];

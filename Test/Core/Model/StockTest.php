@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,7 @@ final class StockTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         // creamos un producto
         $product = $this->getRandomProduct();
@@ -41,7 +41,7 @@ final class StockTest extends TestCase
         $stock->idproducto = $product->idproducto;
         $stock->referencia = $product->referencia;
         $this->assertTrue($stock->save(), 'stock-can-not-save');
-        $this->assertNotNull($stock->primaryColumnValue(), 'stock-not-stored');
+        $this->assertNotNull($stock->id(), 'stock-not-stored');
         $this->assertTrue($stock->exists(), 'stock-can-not-persist');
 
         // borrar el producto borra el stock
@@ -49,14 +49,14 @@ final class StockTest extends TestCase
         $this->assertFalse($stock->exists(), 'stock-not-removed-when-delete-product');
     }
 
-    public function testCantCreateWithoutProduct()
+    public function testCantCreateWithoutProduct(): void
     {
         $stock = new Stock();
         $stock->cantidad = 10;
         $this->assertFalse($stock->save(), 'stock-can-not-create-without-product');
     }
 
-    public function testStockChangesProduct()
+    public function testStockChangesProduct(): void
     {
         // creamos un producto
         $product = $this->getRandomProduct();
@@ -95,7 +95,7 @@ final class StockTest extends TestCase
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
-    public function testMultiWarehouse()
+    public function testMultiWarehouse(): void
     {
         // creamos un producto
         $product = $this->getRandomProduct();
@@ -133,7 +133,7 @@ final class StockTest extends TestCase
         $this->assertTrue($warehouse2->delete(), 'warehouse-cant-delete');
     }
 
-    public function testMultiWarehouseMultiVariant()
+    public function testMultiWarehouseMultiVariant(): void
     {
         // creamos un producto
         $product = $this->getRandomProduct();
@@ -181,7 +181,7 @@ final class StockTest extends TestCase
         $this->assertTrue($warehouse2->delete(), 'warehouse-cant-delete');
     }
 
-    public function testAvailableStock()
+    public function testAvailableStock(): void
     {
         // creamos el producto
         $product = $this->getRandomProduct();
@@ -204,7 +204,7 @@ final class StockTest extends TestCase
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
-    public function testNegativeQuantity()
+    public function testNegativeQuantity(): void
     {
         // creamos el producto
         $product = $this->getRandomProduct();
@@ -225,7 +225,7 @@ final class StockTest extends TestCase
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
-    public function testNegativeAvailable()
+    public function testNegativeAvailable(): void
     {
         // creamos el producto
         $product = $this->getRandomProduct();

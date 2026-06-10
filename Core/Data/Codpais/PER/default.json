@@ -1,9 +1,12 @@
 {
     "default": {
         "coddivisa": "PEN",
-        "codimpuesto": "IVA_GEN",
+        "codimpuesto": "IGV_GEN",
         "codserie": "A",
         "codpago": "CONT",
+        "currency_position": "left",
+        "decimal_separator": ".",
+        "thousands_separator": ",",
         "tipoidfiscal": "RUC",
         "updatesupplierprices": true,
         "validate_iban": false

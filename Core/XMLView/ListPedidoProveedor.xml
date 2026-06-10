@@ -118,7 +118,13 @@
                 <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa"/>
             </widget>
         </column>
-        <column name="date" display="right" order="340">
+        <column name="conversion-rate" display="none" order="340">
+            <widget type="number" fieldname="tasaconv"/>
+        </column>
+        <column name="totaleuros" display="none" order="350">
+            <widget type="money" fieldname="totaleuros"/>
+        </column>
+        <column name="date" display="right" order="360">
             <widget type="date" fieldname="fecha"/>
         </column>
     </columns>

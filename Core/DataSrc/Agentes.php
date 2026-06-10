@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,21 +19,22 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 final class Agentes implements DataSrcInterface
 {
+    /** @var Agente[] */
     private static $list;
 
-    /**
-     * @return Agente[]
-     */
+    /** @return Agente[] */
     public static function all(): array
     {
         if (!isset(self::$list)) {
-            $model = new Agente();
-            self::$list = $model->all([], [], 0, 0);
+            self::$list = Cache::remember('model-Agente-list', function () {
+                return Agente::all([], ['codagente' => 'ASC'], 0, 0);
+            });
         }
 
         return self::$list;
@@ -44,11 +45,6 @@ final class Agentes implements DataSrcInterface
         self::$list = null;
     }
 
-    /**
-     * @param bool $addEmpty
-     *
-     * @return array
-     */
     public static function codeModel(bool $addEmpty = true): array
     {
         $codes = [];
@@ -67,11 +63,11 @@ final class Agentes implements DataSrcInterface
     public static function get($code): Agente
     {
         foreach (self::all() as $item) {
-            if ($item->primaryColumnValue() === $code) {
+            if ($item->id() === $code) {
                 return $item;
             }
         }
 
-        return new Agente();
+        return Agente::find($code) ?? new Agente();
     }
 }

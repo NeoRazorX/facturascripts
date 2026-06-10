@@ -74,7 +74,7 @@
     </column>
     <column>
         <name>direccion</name>
-        <type>character varying(100)</type>
+        <type>character varying(200)</type>
     </column>
     <column>
         <name>dtopor1</name>
@@ -119,6 +119,10 @@
     </column>
     <column>
         <name>idestado</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idestado_ant</name>
         <type>integer</type>
     </column>
     <column>
@@ -253,6 +257,10 @@
     <constraint>
         <name>ca_pedidoscli_idestado</name>
         <type>FOREIGN KEY (idestado) REFERENCES estados_documentos (idestado) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_pedidoscli_idestado_ant</name>
+        <type>FOREIGN KEY (idestado_ant) REFERENCES estados_documentos (idestado) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_pedidoscli_nick</name>

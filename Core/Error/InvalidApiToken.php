@@ -25,14 +25,11 @@ class InvalidApiToken extends ErrorController
 {
     public function run(): void
     {
-        $this->setSaveCrash(false);
-
-        http_response_code(401);
-        header('content-type: application/json');
-
-        echo json_encode([
-            'status' => 'error',
-            'message' => $this->exception->getMessage(),
-        ]);
+        $this->response()
+            ->setHttpCode(401)
+            ->json([
+                'status' => 'error',
+                'message' => $this->exception->getMessage(),
+            ]);
     }
 }

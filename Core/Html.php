@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Model\AttachedFile;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -39,7 +39,7 @@ use Twig\TwigFunction;
  * Una clase para renderizar plantillas HTML con Twig.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 final class Html
 {
@@ -99,7 +99,7 @@ final class Html
                 return '';
             }
 
-            $path = FS_ROUTE . '/';
+            $path = Tools::config('route') . '/';
             return substr($string, 0, strlen($path)) == $path ?
                 $string :
                 str_replace('//', '/', $path . $string);
@@ -110,7 +110,7 @@ final class Html
     {
         return new TwigFunction('attachedFile', function ($id) {
             $attached = new AttachedFile();
-            $attached->loadFromCode($id);
+            $attached->load($id);
             return $attached;
         });
     }
@@ -309,6 +309,13 @@ final class Html
         });
     }
 
+    private static function sessionFunction(): TwigFunction
+    {
+        return new TwigFunction('session', function (string $key, $default = null) {
+            return Session::get($key) ?? $default;
+        });
+    }
+
     private static function settingsFunction(): TwigFunction
     {
         return new TwigFunction('settings', function (string $group, string $property, $default = null) {
@@ -379,6 +386,7 @@ final class Html
         self::$twig->addFunction(self::moneyFunction());
         self::$twig->addFunction(self::myFilesUrlFunction());
         self::$twig->addFunction(self::numberFunction());
+        self::$twig->addFunction(self::sessionFunction());
         self::$twig->addFunction(self::settingsFunction());
         self::$twig->addFunction(self::transFunction());
         self::$twig->addFunction(self::bytesFunction());

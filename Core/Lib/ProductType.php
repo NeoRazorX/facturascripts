@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,10 +23,11 @@ namespace FacturaScripts\Core\Lib;
  * This class centralizes all types of products.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class ProductType
 {
+    const LOCAL_BUSINESS_RENTAL = 'Arrendamiento local negocio';
     const NORMAL = 'Normal';
     const SECOND_HAND = 'Segunda mano';
     const SERVICE = 'Servicio';
@@ -47,7 +48,8 @@ class ProductType
             self::NORMAL => 'normal',
             self::SECOND_HAND => 'second-hand',
             self::SERVICE => 'service',
-            self::TRAVEL => 'travel'
+            self::LOCAL_BUSINESS_RENTAL => 'local-business-rental',
+            self::TRAVEL => 'travel',
         ];
 
         return array_merge($defaultTypes, self::$all);

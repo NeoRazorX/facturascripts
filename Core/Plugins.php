@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core;
 
 use DirectoryIterator;
-use FacturaScripts\Core\Base\PluginDeploy;
 use FacturaScripts\Core\Internal\Plugin;
+use FacturaScripts\Core\Internal\PluginsDeploy;
 use ZipArchive;
 
 /**
@@ -112,12 +112,7 @@ final class Plugins
 
     public static function deploy(bool $clean = true, bool $initControllers = false): void
     {
-        $pluginDeploy = new PluginDeploy();
-        $pluginDeploy->deploy(
-            self::folder() . DIRECTORY_SEPARATOR,
-            self::enabled(),
-            $clean
-        );
+        PluginsDeploy::run(self::enabled(), $clean);
 
         Kernel::rebuildRoutes();
         Kernel::saveRoutes();
@@ -127,11 +122,11 @@ final class Plugins
         Tools::folderDelete(Tools::folder('MyFiles', 'Cache'));
 
         if ($initControllers) {
-            $pluginDeploy->initControllers();
+            PluginsDeploy::initControllers();
         }
     }
 
-    public static function disable(string $pluginName): bool
+    public static function disable(string $pluginName, bool $runPostDisable = true): bool
     {
         // si el plugin no existe o ya está desactivado, no hacemos nada
         $plugin = self::get($pluginName);
@@ -146,7 +141,7 @@ final class Plugins
             if ($value->name === $pluginName) {
                 self::$plugins[$key]->enabled = false;
                 self::$plugins[$key]->post_enable = false;
-                self::$plugins[$key]->post_disable = true;
+                self::$plugins[$key]->post_disable = $runPostDisable;
                 break;
             }
         }
@@ -172,7 +167,10 @@ final class Plugins
 
         // si la carpeta del plugin no es igual al nombre del plugin, no podemos activarlo
         if ($plugin->folder !== $plugin->name) {
-            Tools::log()->error('plugin-folder-not-equal-name', ['%pluginName%' => $pluginName]);
+            Tools::log()->error('plugin-folder-not-equal-name', [
+                '%folderName%' => $plugin->folder,
+                '%pluginName%' => $pluginName
+            ]);
             return false;
         }
 
@@ -453,7 +451,15 @@ final class Plugins
         $folders = [];
         for ($index = 0; $index < $zipFile->numFiles; $index++) {
             $data = $zipFile->statIndex($index);
-            $path = explode('/', $data['name']);
+            $name = $data['name'];
+
+            // comprobamos que no hay path traversal (Zip Slip)
+            if (false !== strpos($name, '..')) {
+                Tools::log()->error('zip-error-wrong-structure');
+                return false;
+            }
+
+            $path = explode('/', $name);
             if (count($path) > 1) {
                 $folders[$path[0]] = $path[0];
             }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,27 +19,28 @@
 
 namespace FacturaScripts\Test\Traits;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\RegularizacionImpuesto;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 trait DefaultSettingsTrait
 {
     protected static function installAccountingPlan(): void
     {
         // ¿Existe el archivo del plan contable?
-        $filePath = FS_FOLDER . '/Core/Data/Codpais/ESP/defaultPlan.csv';
+        $filePath = FS_FOLDER . '/Core/Data/Codpais/' . Paises::default()->codpais . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
             return;
         }
 
         // recorremos todos los ejercicios
-        $cuenta = new Cuenta();
         Ejercicios::clear();
         foreach (Ejercicios::all() as $exercise) {
             // si está cerrado, lo abrimos
@@ -48,14 +49,8 @@ trait DefaultSettingsTrait
                 $exercise->save();
             }
 
-            // si el ejercicio no tiene 10 dígitos en las subcuentas, lo eliminamos
-            if ($exercise->longsubcuenta != 10) {
-                $exercise->delete();
-                continue;
-            }
-
-            $where = [new DataBaseWhere('codejercicio', $exercise->codejercicio)];
-            if ($cuenta->count($where) > 0) {
+            $where = [Where::eq('codejercicio', $exercise->codejercicio)];
+            if (Cuenta::count($where) > 0) {
                 // ya tiene plan contable
                 continue;
             }
@@ -66,17 +61,32 @@ trait DefaultSettingsTrait
         }
     }
 
+    protected static function loadCoreModels(): void
+    {
+        foreach (Tools::folderScan(Tools::folder('Core', 'Model')) as $fileName) {
+            if ('.php' !== substr($fileName, -4)) {
+                continue;
+            }
+
+            $className = '\\FacturaScripts\\Dinamic\\Model\\' . substr($fileName, 0, -4);
+            if (false === is_subclass_of($className, ModelClass::class)) {
+                continue;
+            }
+
+            new $className();
+        }
+    }
+
     protected static function removeTaxRegularization(): void
     {
-        $regularizationModel = new RegularizacionImpuesto();
-        foreach ($regularizationModel->all() as $regularization) {
-            $regularization->delete();
+        foreach (RegularizacionImpuesto::all() as $reg) {
+            $reg->delete();
         }
     }
 
     protected static function setDefaultSettings(): void
     {
-        $fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/ESP/default.json');
+        $fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/' . Paises::default()->codpais . '/default.json');
         $defaultValues = json_decode($fileContent, true) ?? [];
         foreach ($defaultValues as $group => $values) {
             foreach ($values as $key => $value) {
@@ -84,10 +94,9 @@ trait DefaultSettingsTrait
             }
         }
 
-        $almacenModel = new Almacen();
-        $where = [new DataBaseWhere('idempresa', Tools::settings('default', 'idempresa', 1))];
-        foreach ($almacenModel->all($where) as $almacen) {
-            Tools::settingsSet('default', 'codalmacen', $almacen->codalmacen);
+        $where = [Where::eq('idempresa', Tools::settings('default', 'idempresa', 1))];
+        foreach (Almacen::all($where) as $warehouse) {
+            Tools::settingsSet('default', 'codalmacen', $warehouse->codalmacen);
         }
 
         Tools::settingsSave();

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\FormasPago;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
@@ -64,7 +64,7 @@ class FormaPago extends ModelClass
     /** @var string */
     public $tipovencimiento;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->activa = true;
@@ -74,6 +74,12 @@ class FormaPago extends ModelClass
         $this->tipovencimiento = 'days';
     }
 
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        FormasPago::clear();
+    }
+
     public function delete(): bool
     {
         if ($this->isDefault()) {
@@ -81,13 +87,7 @@ class FormaPago extends ModelClass
             return false;
         }
 
-        if (false === parent::delete()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        FormasPago::clear();
-        return true;
+        return parent::delete();
     }
 
     /**
@@ -98,7 +98,7 @@ class FormaPago extends ModelClass
     public function getBankAccount(): CuentaBanco
     {
         $bank = new DinCuentaBanco();
-        $bank->loadFromCode($this->codcuentabanco);
+        $bank->load($this->codcuentabanco);
         return $bank;
     }
 
@@ -147,17 +147,6 @@ class FormaPago extends ModelClass
         return 'codpago';
     }
 
-    public function save(): bool
-    {
-        if (false === parent::save()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        FormasPago::clear();
-        return true;
-    }
-
     public static function tableName(): string
     {
         return 'formaspago';
@@ -186,12 +175,46 @@ class FormaPago extends ModelClass
         return parent::test();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codpago)) {
-            $this->codpago = (string)$this->newCode();
+            $this->codpago = $this->newLetterCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
+    }
+
+    private function newLetterCode(): string
+    {
+        $desc = preg_replace('/[^A-Z0-9_\+\.\-]/i', '', strtoupper($this->descripcion ?? ''));
+        $prefix = substr($desc, 0, 4);
+
+        // try the first 4 letters of the description
+        if (strlen($prefix) === 4 && false === $this->codpagoExists($prefix)) {
+            return $prefix;
+        }
+
+        // try the 4-letter prefix + digit (2 to 9)
+        if (strlen($prefix) === 4) {
+            for ($digit = 2; $digit <= 9; $digit++) {
+                $candidate = $prefix . $digit;
+                if (false === $this->codpagoExists($candidate)) {
+                    return $candidate;
+                }
+            }
+        }
+
+        return (string)$this->newCode();
+    }
+
+    private function codpagoExists(string $codpago): bool
+    {
+        foreach (FormasPago::all() as $formaPago) {
+            if (strtoupper($formaPago->codpago) === strtoupper($codpago)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

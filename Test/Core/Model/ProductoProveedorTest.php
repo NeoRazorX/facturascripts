@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 
 namespace FacturaScripts\Test\Core\Model;
 
@@ -163,7 +162,11 @@ final class ProductoProveedorTest extends TestCase
         $this->assertEquals($doc->coddivisa, $productoProveedor->coddivisa);
         $this->assertEquals($doc->codproveedor, $subject->codproveedor);
         $this->assertEquals(5.6, $productoProveedor->neto);
-        $this->assertEquals(5.6, $productoProveedor->netoeuros);
+
+        if (Tools::settings('default', 'coddivisa') === 'EUR') {
+            $this->assertEquals(5.6, $productoProveedor->netoeuros);
+        }
+
         $this->assertEquals($pvpUnitario, $productoProveedor->precio);
         $this->assertEquals($dtopor, $productoProveedor->dtopor);
         $this->assertEquals($dtopor2, $productoProveedor->dtopor2);
@@ -172,6 +175,7 @@ final class ProductoProveedorTest extends TestCase
         $this->assertTrue($doc->delete());
         $this->assertTrue($subject->getDefaultAddress()->delete());
         $this->assertTrue($subject->delete());
+        $this->assertTrue($productoProveedor->delete());
         $this->assertTrue($product->delete());
     }
 
@@ -206,6 +210,7 @@ final class ProductoProveedorTest extends TestCase
         $this->assertTrue($subject->getDefaultAddress()->delete());
         $this->assertTrue($subject->delete());
         $this->assertTrue($product->delete());
+        $this->assertTrue(ProductoProveedor::deleteWhere([]));
     }
 
     /**
@@ -254,7 +259,7 @@ final class ProductoProveedorTest extends TestCase
         // comprobamos que se han creado dos productos proveedor
         $this->assertCount(2, $productosProveedor);
         $this->assertEquals($productosProveedor[0]->referencia, $productosProveedor[1]->referencia);
-        $this->assertEquals('EUR', $productosProveedor[0]->coddivisa);
+        $this->assertEquals(Divisas::default()->coddivisa, $productosProveedor[0]->coddivisa);
         $this->assertEquals('XXX', $productosProveedor[1]->coddivisa);
 
         // eliminamos

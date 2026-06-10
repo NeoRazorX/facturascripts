@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,7 @@
                     <p>{{ trans('group-or-split-p') }}</p>
                 </div>
             </div>
-            <div class="row">
+            <div class="row g-2">
                 <div class="col-lg-2 col-sm-6 mb-2">
                     <select name="codserie" class="form-select">
                         <option value="">{{ trans('serie') }}</option>
@@ -96,7 +96,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="#" onClick="return selectNone();">
-                                <i class="far fa-square fa-fw"></i> {{ trans('select-none') }}
+                                <i class="fa-regular fa-square fa-fw"></i> {{ trans('select-none') }}
                             </a>
                             <a class="dropdown-item" href="#" onClick="return selectAll();">
                                 <i class="fa-solid fa-square fa-fw"></i> {{ trans('select-all') }}
@@ -126,14 +126,28 @@
                         {{ formToken() }}
                         <input type="hidden" name="model" value="{{ fsc.modelName }}">
                         <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
+                        {% set morePaymentMethods = [] %}
+                        {% for doc in fsc.moreDocuments %}
+                            {% set pm = doc.getPaymentMethod() %}
+                            {% if pm.codpago and pm.codpago not in morePaymentMethods | keys %}
+                                {% set morePaymentMethods = morePaymentMethods | merge({(pm.codpago): pm.descripcion}) %}
+                            {% endif %}
+                        {% endfor %}
                         <div class="card border-success shadow mb-2">
-                            <div class="card-body p-2">
+                            <div class="card-body p-2 d-flex flex-wrap align-items-center gap-2">
                                 <button class="btn btn-spin-action btn-sm btn-outline-success" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#moreDocsCollapse" aria-expanded="false">
                                     <i class="fa-solid fa-plus-square fa-fw" aria-hidden="true"></i>
                                     {{ trans('more') }}
                                 </button>
-                                &nbsp; {{ trans('group-more-docs-p') }}
+                                <span class="flex-grow-1">{{ trans('group-more-docs-p') }}</span>
+                                <select id="moreDocsPaymentFilter" class="form-select form-select-sm w-auto"
+                                        onchange="filterMoreDocsByPayment(this.value);">
+                                    <option value="">{{ trans('payment-method') }}: {{ trans('all') }}</option>
+                                    {% for codpago, descripcion in morePaymentMethods %}
+                                        <option value="{{ codpago }}">{{ descripcion }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="collapse" id="moreDocsCollapse">
                                 <div class="table-responsive">
@@ -150,7 +164,7 @@
                                         </thead>
                                         <tbody>
                                         {% for doc in fsc.moreDocuments %}
-                                            <tr>
+                                            <tr data-codpago="{{ doc.codpago }}">
                                                 <td class="text-center" width="50">
                                                     <div class="form-check">
                                                         <input type="checkbox" class="form-check-input"
@@ -234,7 +248,27 @@
             return false;
         }
 
+        function filterMoreDocsByPayment(codpago) {
+            const rows = document.querySelectorAll('#moreDocsCollapse tbody tr[data-codpago]');
+            rows.forEach(function (row) {
+                if (codpago === '' || row.getAttribute('data-codpago') === codpago) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                    const cb = row.querySelector('input[name="newcodes[]"]');
+                    if (cb) {
+                        cb.checked = false;
+                    }
+                }
+            });
+        }
+
+        let formDocStitcherSubmitted = false;
         function sendFormData(status) {
+            if (formDocStitcherSubmitted) {
+                return;
+            }
+            formDocStitcherSubmitted = true;
             animateSpinner('add');
             document.formDocStitcher.status.value = status;
             document.formDocStitcher.submit();
@@ -262,9 +296,9 @@
                 </div>
                 <div class="col-sm-3 text-end">
                     <p class="small mb-0">
-                        <i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
+                        <i class="fa-regular fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
                         &nbsp;
-                        <i class="far fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
+                        <i class="fa-regular fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
                         <br/>
                         {{ trans('net') }}: {{ money(doc.neto) }}
                         &nbsp;
@@ -293,11 +327,11 @@
                         <td class="align-middle">{{ line.descripcion | raw | nl2br }}</td>
                         <td>
                             <input type="number" value="{{ line.cantidad }}" class="form-control text-end"
-                                   readonly="true"/>
+                                   readonly="true" tabindex="-1"/>
                         </td>
                         <td class="{{ servido == 0 ? '' : 'table-warning' }}">
                             <input type="number" value="{{ line.servido }}" class="form-control text-end"
-                                   readonly="true"/>
+                                   readonly="true" tabindex="-1"/>
                         </td>
                         {% set newQuantity = line.cantidad - line.servido %}
                         <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">

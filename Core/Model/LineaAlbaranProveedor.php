@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\AlbaranProveedor as DinAlbaranProveedor;
 
 /**
@@ -26,10 +28,9 @@ use FacturaScripts\Dinamic\Model\AlbaranProveedor as DinAlbaranProveedor;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaAlbaranProveedor extends Base\PurchaseDocumentLine
+class LineaAlbaranProveedor extends BusinessDocumentLine
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Delivery note ID of this line.
@@ -45,9 +46,9 @@ class LineaAlbaranProveedor extends Base\PurchaseDocumentLine
 
     public function getDocument(): DinAlbaranProveedor
     {
-        $albaran = new DinAlbaranProveedor();
-        $albaran->loadFromCode($this->idalbaran);
-        return $albaran;
+        $doc = new DinAlbaranProveedor();
+        $doc->load($this->idalbaran);
+        return $doc;
     }
 
     public function install(): string

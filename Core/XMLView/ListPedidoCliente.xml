@@ -144,12 +144,18 @@
                 <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa"/>
             </widget>
         </column>
-        <column name="agent" display="none" order="420">
+        <column name="conversion-rate" display="none" order="420">
+            <widget type="number" fieldname="tasaconv"/>
+        </column>
+        <column name="totaleuros" display="none" order="430">
+            <widget type="money" fieldname="totaleuros"/>
+        </column>
+        <column name="agent" display="none" order="440">
             <widget type="autocomplete" fieldname="codagente">
                 <values source="agentes" fieldcode="codagente" fieldtitle="nombre"/>
             </widget>
         </column>
-        <column name="date" display="right" order="430">
+        <column name="date" display="right" order="450">
             <widget type="date" fieldname="fecha"/>
         </column>
     </columns>

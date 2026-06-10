@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,22 +19,23 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 final class Impuestos implements DataSrcInterface
 {
+    /** @var Impuesto[] */
     private static $list;
 
-    /**
-     * @return Impuesto[]
-     */
+    /** @return Impuesto[] */
     public static function all(): array
     {
         if (!isset(self::$list)) {
-            $model = new Impuesto();
-            self::$list = $model->all([], [], 0, 0);
+            self::$list = Cache::remember('model-Impuesto-list', function () {
+                return Impuesto::all([], ['codimpuesto' => 'ASC'], 0, 0);
+            });
         }
 
         return self::$list;
@@ -45,11 +46,6 @@ final class Impuestos implements DataSrcInterface
         self::$list = null;
     }
 
-    /**
-     * @param bool $addEmpty
-     *
-     * @return array
-     */
     public static function codeModel(bool $addEmpty = true): array
     {
         $codes = [];
@@ -62,8 +58,8 @@ final class Impuestos implements DataSrcInterface
 
     public static function default(): Impuesto
     {
-        $codimpuesto = Tools::settings('default', 'codimpuesto', '');
-        return self::get($codimpuesto);
+        $code = Tools::settings('default', 'codimpuesto', 'IVA21');
+        return self::get($code);
     }
 
     /**
@@ -74,11 +70,11 @@ final class Impuestos implements DataSrcInterface
     public static function get($code): Impuesto
     {
         foreach (self::all() as $item) {
-            if ($item->primaryColumnValue() === $code) {
+            if ($item->id() === $code) {
                 return $item;
             }
         }
 
-        return new Impuesto();
+        return Impuesto::find($code) ?? new Impuesto();
     }
 }

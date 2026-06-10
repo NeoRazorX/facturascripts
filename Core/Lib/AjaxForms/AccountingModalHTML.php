@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,14 +32,10 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 class AccountingModalHTML
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $orden;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $query;
 
     public static function apply(Asiento &$model, array $formData): void
@@ -58,24 +54,26 @@ class AccountingModalHTML
         $tbody = '';
         foreach (static::getSubaccounts($model) as $subaccount) {
             $cssClass = $subaccount->saldo > 0 ? 'table-success clickableRow' : 'clickableRow';
+            $code = static::html($subaccount->codsubcuenta);
+            $description = static::html($subaccount->descripcion);
             $onclick = '$(\'#findSubaccountModal\').modal(\'hide\');'
-                . ' return newLineAction(\'' . $subaccount->codsubcuenta . '\');';
+                . ' return newLineAction(this.dataset.subaccount);';
 
-            $tbody .= '<tr class="' . $cssClass . '" onclick="' . $onclick . '">'
-                . '<td><b>' . $subaccount->codsubcuenta . '</b> ' . $subaccount->descripcion . '</td>'
+            $tbody .= '<tr class="' . $cssClass . '" data-subaccount="' . $code . '" onclick="' . $onclick . '">'
+                . '<td><b>' . $code . '</b> ' . $description . '</td>'
                 . '<td class="text-end">' . Tools::money($subaccount->saldo) . '</td>'
                 . '</tr>';
         }
 
         if (empty($tbody)) {
-            $tbody .= '<tr class="table-warning"><td colspan="3">' . Tools::lang()->trans('no-data') . '</td></tr>';
+            $tbody .= '<tr class="table-warning"><td colspan="3">' . Tools::trans('no-data') . '</td></tr>';
         }
 
         return '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
-            . '<th>' . Tools::lang()->trans('subaccount') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('balance') . '</th>'
+            . '<th>' . Tools::trans('subaccount') . '</th>'
+            . '<th class="text-end">' . Tools::trans('balance') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -84,7 +82,6 @@ class AccountingModalHTML
 
     protected static function getSubaccounts(Asiento $model): array
     {
-        $subaccount = new Subcuenta();
         if (empty($model->codejercicio)) {
             $model->setDate($model->fecha);
         }
@@ -107,7 +104,13 @@ class AccountingModalHTML
                 break;
         }
 
-        return $subaccount->all($where, $order);
+        return Subcuenta::all($where, $order);
+    }
+
+    protected static function html(?string $text): string
+    {
+        $decoded = html_entity_decode($text ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return htmlspecialchars($decoded, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
     protected static function modalSubaccount(Asiento $model): string
@@ -116,16 +119,16 @@ class AccountingModalHTML
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-book fa-fw"></i> ' . Tools::lang()->trans('subaccounts') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-book fa-fw"></i> ' . Tools::trans('subaccounts') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . '<div class="col-sm">'
             . '<div class="input-group">'
-            . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . Tools::lang()->trans('search')
+            . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . Tools::trans('search')
             . '" onkeyup="return findSubaccountSearch(\'find-subaccount\', \'0\', this);"/>'
             . '<div class="input-group-apend">'
             . '<button class="btn btn-primary" type="button" onclick="return accEntryFormAction(\'find-subaccount\', \'0\');"'
@@ -148,9 +151,9 @@ class AccountingModalHTML
             . '<div class="input-group">'
             . '<span class="input-group-text"><i class="fa-solid fa-sort-amount-down-alt"></i></span>'
             . '<select name="fp_orden" class="form-select" onchange="return accEntryFormAction(\'find-subaccount\', \'0\');">'
-            . '<option value="code_asc">' . Tools::lang()->trans('code') . '</option>'
-            . '<option value="desc_asc">' . Tools::lang()->trans('description') . '</option>'
-            . '<option value="saldo_desc">' . Tools::lang()->trans('balance') . '</option>'
+            . '<option value="code_asc">' . Tools::trans('code') . '</option>'
+            . '<option value="desc_asc">' . Tools::trans('description') . '</option>'
+            . '<option value="saldo_desc">' . Tools::trans('balance') . '</option>'
             . '</select>'
             . '</div>'
             . '</div>';

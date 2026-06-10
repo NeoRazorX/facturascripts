@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 class WorkEvent extends ModelClass
@@ -36,6 +36,9 @@ class WorkEvent extends ModelClass
 
     /** @var string */
     public $done_date;
+
+    /** @var float */
+    public $execution_time;
 
     /** @var int */
     public $id;
@@ -58,7 +61,7 @@ class WorkEvent extends ModelClass
     /** @var string */
     public $worker_list;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->creation_date = Tools::dateTime();
@@ -104,11 +107,6 @@ class WorkEvent extends ModelClass
         }
 
         return empty($this->params) ? [] : json_decode($this->params, true);
-    }
-
-    public static function primaryColumn(): string
-    {
-        return 'id';
     }
 
     public function save(): bool

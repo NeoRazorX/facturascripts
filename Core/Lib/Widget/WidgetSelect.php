@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\CodeModel;
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Daniel Fernández Giménez      <hola@danielfg.es>
+ * @author Daniel Fernández Giménez      <contacto@danielfg.es>
  */
 class WidgetSelect extends BaseWidget
 {
@@ -59,6 +59,15 @@ class WidgetSelect extends BaseWidget
 
     /** @var bool */
     protected $translate;
+
+    /** @var string */
+    protected $groupSource = '';
+
+    /** @var string */
+    protected $groupFieldcode = '';
+
+    /** @var string */
+    protected $groupTitle = '';
 
     /** @var array */
     public $values = [];
@@ -104,7 +113,10 @@ class WidgetSelect extends BaseWidget
             'fieldcode' => $this->fieldcode,
             'fieldfilter' => $this->fieldfilter,
             'fieldtitle' => $this->fieldtitle,
-            'limit' => $this->limit
+            'limit' => $this->limit,
+            'group_source' => $this->groupSource,
+            'group_fieldcode' => $this->groupFieldcode,
+            'group_title' => $this->groupTitle,
         ];
     }
 
@@ -119,7 +131,7 @@ class WidgetSelect extends BaseWidget
         if ('' === $value) {
             $model->{$this->fieldname} = null;
         } elseif ($this->multiple && false === $this->readonly()) {
-            $model->{$this->fieldname} = implode(',', $value);
+            $model->{$this->fieldname} = implode(',', unserialize($value));
         } else {
             $model->{$this->fieldname} = $value;
         }
@@ -137,8 +149,10 @@ class WidgetSelect extends BaseWidget
      * @param string $col1
      * @param string $col2
      */
-    public function setValuesFromArray(array $items, bool $translate = false, bool $addEmpty = false, string $col1 = 'value', string $col2 = 'title')
+    public function setValuesFromArray(array $items, bool $translate = false, bool $addEmpty = false, string $col1 = 'value', string $col2 = 'title', string $col3 = '')
     {
+        $this->values = [];
+
         if ($addEmpty && false === $this->multiple) {
             $this->values = [['value' => null, 'title' => '------']];
         }
@@ -152,10 +166,14 @@ class WidgetSelect extends BaseWidget
             }
 
             if (isset($item[$col1])) {
-                $this->values[] = [
+                $entry = [
                     'value' => $item[$col1],
-                    'title' => $item[$col2] ?? $item[$col1]
+                    'title' => $item[$col2] ?? $item[$col1],
                 ];
+                if ($col3 !== '' && isset($item[$col3])) {
+                    $entry['group'] = $item[$col3];
+                }
+                $this->values[] = $entry;
             }
         }
 
@@ -164,17 +182,20 @@ class WidgetSelect extends BaseWidget
         }
     }
 
-    public function setValuesFromArrayKeys(array $values, bool $translate = false, bool $addEmpty = false)
+    public function setValuesFromArrayKeys(array $values, bool $translate = false, bool $addEmpty = false, array $groups = [])
     {
+        $this->values = [];
+
         if ($addEmpty && false === $this->multiple) {
             $this->values = [['value' => null, 'title' => '------']];
         }
 
         foreach ($values as $key => $value) {
-            $this->values[] = [
-                'value' => $key,
-                'title' => $value
-            ];
+            $entry = ['value' => $key, 'title' => $value];
+            if (isset($groups[$key])) {
+                $entry['group'] = $groups[$key];
+            }
+            $this->values[] = $entry;
         }
 
         if ($translate) {
@@ -183,19 +204,22 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     * Loads the value list from an array with value and title (description)
-     *
      * @param array $rows
      * @param bool $translate
+     * @param array $groups array indexado por code => etiqueta del grupo
      */
-    public function setValuesFromCodeModel(array $rows, bool $translate = false)
+    public function setValuesFromCodeModel(array $rows, bool $translate = false, array $groups = [])
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
-            $this->values[] = [
+            $entry = [
                 'value' => $codeModel->code,
-                'title' => $codeModel->description
+                'title' => $codeModel->description,
             ];
+            if (isset($groups[$codeModel->code])) {
+                $entry['group'] = $groups[$codeModel->code];
+            }
+            $this->values[] = $entry;
         }
 
         if ($translate) {
@@ -207,11 +231,25 @@ class WidgetSelect extends BaseWidget
      * @param int $start
      * @param int $end
      * @param int $step
+     * @param array $groups array indexado por valor numérico => etiqueta del grupo
      */
-    public function setValuesFromRange(int $start, int $end, int $step)
+    public function setValuesFromRange(int $start, int $end, int $step, array $groups = [])
     {
         $values = range($start, $end, $step);
-        $this->setValuesFromArray($values);
+
+        if (empty($groups)) {
+            $this->setValuesFromArray($values);
+            return;
+        }
+
+        $this->values = [];
+        foreach ($values as $val) {
+            $entry = ['value' => $val, 'title' => $val];
+            if (isset($groups[$val])) {
+                $entry['group'] = $groups[$val];
+            }
+            $this->values[] = $entry;
+        }
     }
 
     /**
@@ -232,23 +270,24 @@ class WidgetSelect extends BaseWidget
     /**
      *  Translate the fixed titles, if they exist
      */
-    private function applyTranslations()
+    private function applyTranslations(): void
     {
         foreach ($this->values as $key => $value) {
             if (empty($value['title']) || '------' === $value['title']) {
                 continue;
             }
 
-            $this->values[$key]['title'] = Tools::lang()->trans($value['title']);
+            $this->values[$key]['title'] = Tools::trans($value['title']);
         }
     }
 
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::add('css', FS_ROUTE . '/node_modules/select2/dist/css/select2.min.css');
-        AssetManager::add('css', FS_ROUTE . '/node_modules/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css');
-        AssetManager::add('js', FS_ROUTE . '/node_modules/select2/dist/js/select2.min.js', 2);
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/node_modules/select2/dist/css/select2.min.css?v=5');
+        AssetManager::addCss($route . '/node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css?v=5');
+        AssetManager::addJs($route . '/node_modules/select2/dist/js/select2.min.js?v=5', 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js?v=5');
     }
 
     /**
@@ -291,16 +330,63 @@ class WidgetSelect extends BaseWidget
             . '>';
 
         $found = false;
+        $hasGroups = false;
         foreach ($this->values as $option) {
-            $title = empty($option['title']) ? $option['value'] : $option['title'];
+            if (!empty($option['group'])) {
+                $hasGroups = true;
+                break;
+            }
+        }
 
-            if ($option['value'] == $this->value && (!$found || $this->multiple)) {
-                $found = true;
-                $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
-                continue;
+        if ($hasGroups) {
+            // Separar opciones sin grupo (ej. la opción vacía) de las agrupadas
+            $ungrouped = [];
+            $grouped = [];
+            foreach ($this->values as $option) {
+                if (empty($option['group'])) {
+                    $ungrouped[] = $option;
+                } else {
+                    $grouped[$option['group']][] = $option;
+                }
             }
 
-            $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
+            // Opciones sin grupo primero
+            foreach ($ungrouped as $option) {
+                $title = empty($option['title']) ? $option['value'] : $option['title'];
+                if ($this->valuesMatch($option['value'], $this->value) && (!$found || $this->multiple)) {
+                    $found = true;
+                    $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
+                    continue;
+                }
+                $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
+            }
+
+            // Opciones agrupadas dentro de <optgroup>
+            foreach ($grouped as $groupLabel => $options) {
+                $html .= '<optgroup label="' . Tools::noHtml($groupLabel) . '">';
+                foreach ($options as $option) {
+                    $title = empty($option['title']) ? $option['value'] : $option['title'];
+                    if ($this->valuesMatch($option['value'], $this->value) && (!$found || $this->multiple)) {
+                        $found = true;
+                        $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
+                        continue;
+                    }
+                    $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
+                }
+                $html .= '</optgroup>';
+            }
+        } else {
+            foreach ($this->values as $option) {
+                $title = empty($option['title']) ? $option['value'] : $option['title'];
+
+                if ($this->valuesMatch($option['value'], $this->value) && (!$found || $this->multiple)) {
+                    $found = true;
+                    $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
+                    continue;
+                }
+
+                $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
+            }
         }
 
         // value not found?
@@ -338,12 +424,65 @@ class WidgetSelect extends BaseWidget
         $this->fieldcode = $child['fieldcode'] ?? 'id';
         $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
-        $this->limit = $child['limit'] ?? CodeModel::ALL_LIMIT;
+        $this->limit = $child['limit'] ?? CodeModel::getlimit();
+        $this->groupSource = $child['group_source'] ?? '';
+        $this->groupFieldcode = $child['group_fieldcode'] ?? '';
+        $this->groupTitle = $child['group_title'] ?? '';
+
         if ($loadData && $this->source) {
             static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
-            $this->setValuesFromCodeModel($values, $this->translate);
+
+            if (!empty($this->groupSource) && !empty($this->groupFieldcode) && !empty($this->groupTitle)) {
+                // Mapa de group_fieldcode => group_title
+                $groupLabelRows = static::$codeModel->all($this->groupSource, $this->groupFieldcode, $this->groupTitle, false);
+                $groupLabelMap = [];
+                foreach ($groupLabelRows as $row) {
+                    $groupLabelMap[$row->code] = $row->description;
+                }
+
+                // Mapa de fieldcode => group_fieldcode (valor del campo de agrupación en cada registro)
+                static::$codeModel::setLimit($this->limit);
+                $groupFieldRows = static::$codeModel->all($this->source, $this->fieldcode, $this->groupFieldcode, false);
+                $groupFieldMap = [];
+                foreach ($groupFieldRows as $row) {
+                    $groupFieldMap[$row->code] = $row->description;
+                }
+
+                // Construir mapa fieldcode => etiqueta del grupo
+                $groups = [];
+                foreach ($values as $row) {
+                    $groupFieldValue = $groupFieldMap[$row->code] ?? null;
+                    $groups[$row->code] = $groupLabelMap[$groupFieldValue] ?? '';
+                }
+
+                $this->setValuesFromCodeModel($values, $this->translate, $groups);
+            } else {
+                $this->setValuesFromCodeModel($values, $this->translate);
+            }
         }
+    }
+
+    /**
+     * Compares two values for equality, normalizing booleans to strings
+     * and using strict string comparison to avoid type juggling issues.
+     *
+     * @param mixed $value1
+     * @param mixed $value2
+     * @return bool
+     */
+    private function valuesMatch($value1, $value2): bool
+    {
+        // normalize boolean values to string
+        if (is_bool($value1)) {
+            $value1 = $value1 ? '1' : '0';
+        }
+        if (is_bool($value2)) {
+            $value2 = $value2 ? '1' : '0';
+        }
+
+        // use string comparison to avoid type juggling (e.g., "01" != "1")
+        return (string)$value1 === (string)$value2;
     }
 
     /**
@@ -367,18 +506,17 @@ class WidgetSelect extends BaseWidget
             }
 
             $txt = implode(', ', $array);
-            if (strlen($txt) < 20) {
+            if (mb_strlen($txt, 'UTF-8') < 20) {
                 return $txt;
             }
 
-            $txtBreak = substr($txt, 0, 20);
+            $txtBreak = mb_substr($txt, 0, 20, 'UTF-8');
             return '<span data-bs-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
         }
 
         $selected = null;
         foreach ($this->values as $option) {
-            // don't use strict comparation (===)
-            if ($option['value'] == $this->value) {
+            if ($this->valuesMatch($option['value'], $this->value)) {
                 $selected = $option['title'];
             }
         }

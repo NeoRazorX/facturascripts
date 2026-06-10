@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
@@ -83,6 +83,7 @@ class Dashboard extends Controller
         $data['menu'] = 'reports';
         $data['title'] = 'dashboard';
         $data['icon'] = 'fa-solid fa-chalkboard-teacher';
+        $data['showonmenu'] = false;
         return $data;
     }
 
@@ -97,25 +98,26 @@ class Dashboard extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        $this->title = Tools::lang()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
+        $this->title = Tools::trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
 
         $this->loadExtensions();
 
-        // comprobamos si la instalación está registrada
-        $telemetry = new Telemetry();
-        $this->registered = $telemetry->ready();
+        // comprobamos si la instalación está registrada (solo para administradores)
+        $this->registered = $user->admin === false || Telemetry::init()->ready();
 
-        // comprobamos si hay actualizaciones disponibles
-        $this->updated = Forja::canUpdateCore() === false;
+        // comprobamos si hay actualizaciones disponibles (solo para administradores)
+        $this->updated = $user->admin === false || Forja::canUpdateCore() === false;
     }
 
     public function showBackupWarning(): bool
     {
         // comprobamos si estamos el localhost
-        if ($_SERVER['REMOTE_ADDR'] == 'localhost' ||
+        if (
+            $_SERVER['REMOTE_ADDR'] == 'localhost' ||
             $_SERVER['REMOTE_ADDR'] == '::1' ||
             substr($_SERVER['REMOTE_ADDR'], 0, 4) == '192.' ||
-            substr($_SERVER['REMOTE_ADDR'], 0, 4) == '172.') {
+            substr($_SERVER['REMOTE_ADDR'], 0, 4) == '172.'
+        ) {
             // si el plugin Backup está activo, devolvemos false
             return !Plugins::isEnabled('Backup');
         }
@@ -143,7 +145,7 @@ class Dashboard extends Controller
      * @param string $field
      * @param int $previous
      *
-     * @return DataBaseWhere[]
+     * @return Where[]
      */
     private function getStatsWhere(string $field, int $previous): array
     {
@@ -152,8 +154,8 @@ class Dashboard extends Controller
         $untilDate = date('01-m-Y', strtotime($fromDate . ' +1 month'));
 
         return [
-            new DataBaseWhere($field, $fromDate, '>='),
-            new DataBaseWhere($field, $untilDate, '<'),
+            Where::gte($field, $fromDate),
+            Where::lt($field, $untilDate),
         ];
     }
 
@@ -235,9 +237,8 @@ class Dashboard extends Controller
         $minDate = Tools::date('-2 days');
         $minDateTime = Tools::dateTime('-2 days');
 
-        $customerModel = new Cliente();
-        $whereCustomer = [new DataBaseWhere('fechaalta', $minDate, '>=')];
-        foreach ($customerModel->all($whereCustomer, ['fechaalta' => 'DESC'], 0, 3) as $customer) {
+        $whereCustomer = [Where::gte('fechaalta', $minDate)];
+        foreach (Cliente::all($whereCustomer, ['fechaalta' => 'DESC'], 0, 3) as $customer) {
             $this->openLinks[] = [
                 'type' => 'customer',
                 'url' => $customer->url(),
@@ -246,9 +247,8 @@ class Dashboard extends Controller
             ];
         }
 
-        $contactModel = new Contacto();
-        $whereContact = [new DataBaseWhere('fechaalta', $minDate, '>=')];
-        foreach ($contactModel->all($whereContact, ['fechaalta' => 'DESC'], 0, 3) as $contact) {
+        $whereContact = [Where::gte('fechaalta', $minDate)];
+        foreach (Contacto::all($whereContact, ['fechaalta' => 'DESC'], 0, 3) as $contact) {
             $this->openLinks[] = [
                 'type' => 'contact',
                 'url' => $contact->url(),
@@ -257,9 +257,8 @@ class Dashboard extends Controller
             ];
         }
 
-        $productModel = new Producto();
-        $whereProd = [new DataBaseWhere('actualizado', $minDateTime, '>=')];
-        foreach ($productModel->all($whereProd, ['actualizado' => 'DESC'], 0, 3) as $product) {
+        $whereProd = [Where::gte('actualizado', $minDateTime)];
+        foreach (Producto::all($whereProd, ['actualizado' => 'DESC'], 0, 3) as $product) {
             $this->openLinks[] = [
                 'type' => 'product',
                 'url' => $product->url(),
@@ -276,13 +275,12 @@ class Dashboard extends Controller
      */
     private function loadReceiptSection(): void
     {
-        $receiptModel = new ReciboCliente();
         $where = [
-            new DataBaseWhere('pagado', false),
-            new DataBaseWhere('vencimiento', Tools::date(), '<'),
-            new DataBaseWhere('vencimiento', date('Y-m-d', strtotime('-1 year')), '>'),
+            Where::eq('pagado', false),
+            Where::lt('vencimiento', Tools::date()),
+            Where::gt('vencimiento', date('Y-m-d', strtotime('-1 year'))),
         ];
-        $this->receipts = $receiptModel->all($where, ['vencimiento' => 'DESC']);
+        $this->receipts = ReciboCliente::all($where, ['vencimiento' => 'DESC']);
 
         if (count($this->receipts) > 0) {
             $this->sections[] = 'receipts';
@@ -336,8 +334,8 @@ class Dashboard extends Controller
     {
         $minDate = Tools::date('-2 days');
         $where = [
-            new DataBaseWhere('fecha', $minDate, '>='),
-            new DataBaseWhere('nick', $this->user->nick),
+            Where::gte('fecha', $minDate),
+            Where::eq('nick', $this->user->nick),
         ];
         foreach ($model->all($where, [$model->primaryColumn() => 'DESC'], 0, 3) as $doc) {
             $this->openLinks[] = [

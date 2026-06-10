@@ -1,0 +1,557 @@
+<?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2026 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+namespace FacturaScripts\Test\Core;
+
+use FacturaScripts\Core\UploadedFile;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+
+final class UploadedFileTest extends TestCase
+{
+    private $tempDir;
+    private $tempFile;
+
+    protected function setUp(): void
+    {
+        $this->tempDir = sys_get_temp_dir() . '/uploadedfile_test_' . uniqid();
+        mkdir($this->tempDir);
+
+        $this->tempFile = $this->tempDir . '/test_file.txt';
+        file_put_contents($this->tempFile, 'test content');
+    }
+
+    protected function tearDown(): void
+    {
+        if (is_dir($this->tempDir)) {
+            $this->removeDirectory($this->tempDir);
+        }
+    }
+
+    public function testConstructorWithArrayData(): void
+    {
+        $data = [
+            'name' => 'test.pdf',
+            'type' => 'application/pdf',
+            'tmp_name' => '/tmp/phpXXXXXX',
+            'error' => UPLOAD_ERR_OK,
+            'size' => 1024
+        ];
+
+        $file = new UploadedFile($data);
+
+        $this->assertEquals('test.pdf', $file->name);
+        $this->assertEquals('application/pdf', $file->type);
+        $this->assertEquals('/tmp/phpXXXXXX', $file->tmp_name);
+        $this->assertEquals(UPLOAD_ERR_OK, $file->error);
+        $this->assertEquals(1024, $file->size);
+        $this->assertFalse($file->test);
+    }
+
+    public function testConstructorWithNestedArrayData(): void
+    {
+        $data = [
+            'name' => ['test.pdf'],
+            'type' => ['application/pdf'],
+            'tmp_name' => ['/tmp/phpXXXXXX'],
+            'error' => [UPLOAD_ERR_OK],
+            'size' => [1024]
+        ];
+
+        $file = new UploadedFile($data);
+
+        $this->assertEquals('test.pdf', $file->name);
+        $this->assertEquals('application/pdf', $file->type);
+        $this->assertEquals('/tmp/phpXXXXXX', $file->tmp_name);
+        $this->assertEquals(UPLOAD_ERR_OK, $file->error);
+        $this->assertEquals(1024, $file->size);
+    }
+
+    public function testConstructorIgnoresInvalidProperties(): void
+    {
+        $data = [
+            'name' => 'test.pdf',
+            'invalid_property' => 'should be ignored',
+            'another_invalid' => 123
+        ];
+
+        $file = new UploadedFile($data);
+
+        $this->assertEquals('test.pdf', $file->name);
+        $this->assertFalse(property_exists($file, 'invalid_property'));
+        $this->assertFalse(property_exists($file, 'another_invalid'));
+    }
+
+    public function testExtensionMethod(): void
+    {
+        $testCases = [
+            'document.pdf' => 'pdf',
+            'image.jpeg' => 'jpeg',
+            'archive.tar.gz' => 'gz',
+            'noextension' => '',
+            '.hidden' => 'hidden'
+        ];
+
+        foreach ($testCases as $filename => $expectedExtension) {
+            $file = new UploadedFile(['name' => $filename]);
+            $this->assertEquals($expectedExtension, $file->extension());
+        }
+    }
+
+    public function testExtensionMethodWithNullName(): void
+    {
+        $file = new UploadedFile(['name' => null]);
+        $this->assertSame('', $file->extension());
+    }
+
+    public function testGetClientOriginalName(): void
+    {
+        $file = new UploadedFile(['name' => 'original_document.pdf']);
+        $this->assertEquals('original_document.pdf', $file->getClientOriginalName());
+    }
+
+    public function testGetClientOriginalNameWithNullName(): void
+    {
+        $file = new UploadedFile(['name' => null]);
+        $this->assertSame('', $file->getClientOriginalName());
+    }
+
+    public function testGetClientOriginalNameSanitizesPathComponents(): void
+    {
+        $testCases = [
+            '../Dinamic/Assets/traversed.txt' => 'traversed.txt',
+            '..\\Dinamic\\Assets\\traversed.txt' => 'traversed.txt',
+            '/tmp/uploads/document.pdf' => 'document.pdf',
+            'C:\\temp\\uploads\\document.pdf' => 'document.pdf'
+        ];
+
+        foreach ($testCases as $originalName => $expectedName) {
+            $file = new UploadedFile(['name' => $originalName]);
+            $this->assertSame($expectedName, $file->getClientOriginalName());
+        }
+    }
+
+    public function testGetErrorMessage(): void
+    {
+        $errorCases = [
+            UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
+            UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
+            UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded.',
+            UPLOAD_ERR_NO_FILE => 'No file was uploaded.',
+            UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder.',
+            UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk.',
+            UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload.',
+            999 => 'Unknown upload error.'
+        ];
+
+        foreach ($errorCases as $errorCode => $expectedMessage) {
+            $file = new UploadedFile(['error' => $errorCode]);
+            $this->assertEquals($expectedMessage, $file->getErrorMessage());
+        }
+    }
+
+    public function testGetErrorMessageForBlockedPhpExtensions(): void
+    {
+        foreach (['shell.php', 'shell.phtml', 'shell.PHAR'] as $fileName) {
+            $file = new UploadedFile([
+                'name' => $fileName,
+                'error' => UPLOAD_ERR_OK,
+                'tmp_name' => $this->tempFile,
+                'test' => true
+            ]);
+
+            $this->assertEquals('Executable or unsafe files are not allowed.', $file->getErrorMessage());
+        }
+    }
+
+    public function testGetMaxFilesize(): void
+    {
+        $maxFilesize = UploadedFile::getMaxFilesize();
+
+        $this->assertIsInt($maxFilesize);
+        $this->assertGreaterThan(0, $maxFilesize);
+    }
+
+    public function testGetClientMimeType(): void
+    {
+        $file = new UploadedFile(['type' => 'image/png']);
+        $this->assertSame('image/png', $file->getClientMimeType());
+    }
+
+    public function testGetClientMimeTypeWithNullType(): void
+    {
+        $file = new UploadedFile(['type' => null]);
+        $this->assertSame('', $file->getClientMimeType());
+    }
+
+    public function testGetMimeType(): void
+    {
+        $file = new UploadedFile(['tmp_name' => $this->tempFile]);
+        $mimeType = $file->getMimeType();
+
+        $this->assertStringContainsString('text/', $mimeType);
+    }
+
+    public function testGetMimeTypeWithNullPath(): void
+    {
+        $file = new UploadedFile(['tmp_name' => null]);
+        $this->assertSame('', $file->getMimeType());
+    }
+
+    public function testGetMimeTypeWithInvalidPath(): void
+    {
+        $file = new UploadedFile(['tmp_name' => $this->tempDir . '/missing-file.txt']);
+        $this->assertSame('', $file->getMimeType());
+    }
+
+    public function testGetPathname(): void
+    {
+        $file = new UploadedFile(['tmp_name' => '/tmp/test.txt']);
+        $this->assertEquals('/tmp/test.txt', $file->getPathname());
+    }
+
+    public function testGetPathnameWithNullPath(): void
+    {
+        $file = new UploadedFile(['tmp_name' => null]);
+        $this->assertSame('', $file->getPathname());
+    }
+
+    public function testGetRealPath(): void
+    {
+        $file = new UploadedFile(['tmp_name' => '/tmp/test.txt']);
+        $this->assertEquals('/tmp/test.txt', $file->getRealPath());
+    }
+
+    public function testGetSize(): void
+    {
+        $file = new UploadedFile(['size' => 2048]);
+        $this->assertEquals(2048, $file->getSize());
+    }
+
+    public function testIsUploadedWithoutTestMode(): void
+    {
+        $file = new UploadedFile([
+            'tmp_name' => '/tmp/non_uploaded_file.txt',
+            'test' => false
+        ]);
+
+        $this->assertFalse($file->isUploaded());
+    }
+
+    public function testIsUploadedWithNullPath(): void
+    {
+        $file = new UploadedFile([
+            'tmp_name' => null,
+            'test' => false
+        ]);
+
+        $this->assertFalse($file->isUploaded());
+    }
+
+    public function testIsUploadedWithTestMode(): void
+    {
+        $file = new UploadedFile([
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertTrue($file->isUploaded());
+    }
+
+    public function testIsValidWithValidFile(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertTrue($file->isValid());
+    }
+
+    public function testIsValidWithError(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_NO_FILE,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertFalse($file->isValid());
+    }
+
+    public function testIsValidWithNonUploadedFile(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => '/tmp/non_uploaded.txt',
+            'test' => false
+        ]);
+
+        $this->assertFalse($file->isValid());
+    }
+
+    public function testIsValidRejectsBlockedPhpExtensions(): void
+    {
+        foreach (['shell.php', 'shell.phtml', 'shell.PHP8', '.htaccess', 'page.html', 'page.shtml'] as $fileName) {
+            $file = new UploadedFile([
+                'name' => $fileName,
+                'error' => UPLOAD_ERR_OK,
+                'tmp_name' => $this->tempFile,
+                'test' => true
+            ]);
+
+            $this->assertFalse($file->isValid());
+        }
+    }
+
+    public function testIsValidImageWithValidGif(): void
+    {
+        $imageFile = $this->tempDir . '/test-image.gif';
+        file_put_contents($imageFile, base64_decode('R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs='));
+
+        $file = new UploadedFile([
+            'name' => 'image.gif',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $imageFile,
+            'test' => true
+        ]);
+
+        $this->assertTrue($file->isValidImage());
+    }
+
+    public function testIsValidImageRejectsNonImageExtension(): void
+    {
+        $file = new UploadedFile([
+            'name' => 'document.txt',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertFalse($file->isValidImage());
+    }
+
+    public function testIsValidImageRejectsBlockedPhpExtension(): void
+    {
+        $file = new UploadedFile([
+            'name' => 'shell.php',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertFalse($file->isValidImage());
+    }
+
+    public function testIsValidImageRejectsFakeGifPayload(): void
+    {
+        $fakeGif = $this->tempDir . '/fake.gif';
+        file_put_contents($fakeGif, "GIF89a\n<?php system(\$_GET['cmd']); ?>\n");
+
+        $file = new UploadedFile([
+            'name' => 'fake.gif',
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $fakeGif,
+            'test' => true
+        ]);
+
+        if (function_exists('imagecreatefromstring')) {
+            $this->assertFalse($file->isValidImage());
+            return;
+        }
+
+        $this->assertTrue($file->isValidImage());
+    }
+
+    public function testMoveWithValidFileInTestMode(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $destName = 'moved_file.txt';
+        $result = $file->move($this->tempDir, $destName);
+
+        $this->assertTrue($result);
+        $this->assertFileExists($this->tempDir . '/' . $destName);
+        $this->assertFileDoesNotExist($this->tempFile);
+    }
+
+    public function testMoveAddsDirectorySeparator(): void
+    {
+        file_put_contents($this->tempFile, 'test content');
+
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $destName = 'moved_file.txt';
+        $destinyWithoutSeparator = rtrim($this->tempDir, DIRECTORY_SEPARATOR);
+        $result = $file->move($destinyWithoutSeparator, $destName);
+
+        $this->assertTrue($result);
+        $this->assertFileExists($this->tempDir . '/' . $destName);
+    }
+
+    public function testMoveWithInvalidFile(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_NO_FILE,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $result = $file->move($this->tempDir, 'moved_file.txt');
+
+        $this->assertFalse($result);
+    }
+
+    public function testMoveSanitizesDestinyName(): void
+    {
+        $myFilesDir = $this->tempDir . '/MyFiles';
+        $assetsDir = $this->tempDir . '/Dinamic/Assets';
+        mkdir($myFilesDir);
+        mkdir($this->tempDir . '/Dinamic');
+        mkdir($assetsDir);
+
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $result = $file->move($myFilesDir, '../Dinamic/Assets/traversed.txt');
+
+        $this->assertTrue($result);
+        $this->assertFileExists($myFilesDir . '/traversed.txt');
+        $this->assertFileDoesNotExist($assetsDir . '/traversed.txt');
+    }
+
+    public function testMoveRejectsEmptyDestinyName(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $this->assertFalse($file->move($this->tempDir, '../'));
+        $this->assertFileExists($this->tempFile);
+    }
+
+    public function testMoveToWithValidFileInTestMode(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $targetPath = $this->tempDir . '/moved_file.txt';
+        $result = $file->moveTo($targetPath);
+
+        $this->assertTrue($result);
+        $this->assertFileExists($targetPath);
+        $this->assertFileDoesNotExist($this->tempFile);
+    }
+
+    public function testMoveToWithInvalidFile(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_NO_FILE,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $targetPath = $this->tempDir . '/moved_file.txt';
+        $result = $file->moveTo($targetPath);
+
+        $this->assertFalse($result);
+        $this->assertFileDoesNotExist($targetPath);
+    }
+
+    public function testMoveToRejectsParentDirectorySegments(): void
+    {
+        $file = new UploadedFile([
+            'error' => UPLOAD_ERR_OK,
+            'tmp_name' => $this->tempFile,
+            'test' => true
+        ]);
+
+        $targetPath = $this->tempDir . '/../traversed.txt';
+        $result = $file->moveTo($targetPath);
+
+        $this->assertFalse($result);
+        $this->assertFileExists($this->tempFile);
+        $this->assertFileDoesNotExist($targetPath);
+    }
+
+    public function testParseFilesizeDataProvider(): array
+    {
+        return [
+            ['1024', 1024],
+            ['2k', 2048],
+            ['2K', 2048],
+            ['3m', 3145728],
+            ['3M', 3145728],
+            ['1g', 1073741824],
+            ['1G', 1073741824],
+            ['1t', 1099511627776],
+            ['1T', 1099511627776],
+            ['0x100', 256],
+            ['0100', 64],
+            ['+500', 500],
+            ['', 0]
+        ];
+    }
+
+    /**
+     * @dataProvider testParseFilesizeDataProvider
+     */
+    public function testParseFilesize(string $input, int $expected): void
+    {
+        $reflection = new ReflectionClass(UploadedFile::class);
+        $method = $reflection->getMethod('parseFilesize');
+        if (PHP_VERSION_ID < 80500) {
+            $method->setAccessible(true);
+        }
+
+        $result = $method->invoke(null, $input);
+        $this->assertEquals($expected, $result);
+    }
+
+    private function removeDirectory(string $dir): void
+    {
+        foreach (scandir($dir) as $item) {
+            if ('.' === $item || '..' === $item) {
+                continue;
+            }
+
+            $path = $dir . DIRECTORY_SEPARATOR . $item;
+            is_dir($path) ? $this->removeDirectory($path) : unlink($path);
+        }
+
+        rmdir($dir);
+    }
+}

@@ -1,16 +1,16 @@
 <?php
 /**
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\AjaxForms\PurchasesController;
-use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
+use FacturaScripts\Dinamic\Lib\AjaxForms\PurchasesController;
+use FacturaScripts\Dinamic\Lib\Calculator;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
@@ -44,9 +44,10 @@ class EditFacturaProveedor extends PurchasesController
     /**
      * Load views
      */
-    protected function createViews()
+    protected function createViews(): void
     {
         parent::createViews();
+
         $this->createViewsReceipts();
         $this->createViewsAccounting();
         $this->createViewsRefunds();
@@ -59,7 +60,9 @@ class EditFacturaProveedor extends PurchasesController
      */
     private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS): void
     {
-        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fa-solid fa-balance-scale');
+        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fa-solid fa-balance-scale')
+            ->addSearchFields(['concepto'])
+            ->addOrderBy(['fecha'], 'date', 1);
 
         // buttons
         $this->addButton($viewName, [
@@ -88,7 +91,9 @@ class EditFacturaProveedor extends PurchasesController
     private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS): void
     {
         $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fa-solid fa-dollar-sign')
-            ->addOrderBy(['vencimiento'], 'expiration');
+            ->addSearchFields(['observaciones'])
+            ->addOrderBy(['vencimiento'], 'expiration')
+            ->addOrderBy(['importe'], 'amount');
 
         // buttons
         $this->addButton($viewName, [
@@ -100,6 +105,7 @@ class EditFacturaProveedor extends PurchasesController
 
         $this->addButton($viewName, [
             'action' => 'paid',
+            'color' => 'outline-success',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-check',
             'label' => 'paid'
@@ -142,7 +148,7 @@ class EditFacturaProveedor extends PurchasesController
     private function generateAccountingAction(): bool
     {
         $invoice = new FacturaProveedor();
-        if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
+        if (false === $invoice->load($this->request->query('code'))) {
             Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
@@ -171,7 +177,7 @@ class EditFacturaProveedor extends PurchasesController
     private function generateReceiptsAction(): bool
     {
         $invoice = new FacturaProveedor();
-        if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
+        if (false === $invoice->load($this->request->query('code'))) {
             Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
@@ -181,8 +187,26 @@ class EditFacturaProveedor extends PurchasesController
             return true;
         }
 
+        // comprobamos si se han recibido importes específicos
+        $amounts = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $amount = $this->request->input('amount_' . $i);
+            if ($amount !== null && $amount !== '') {
+                $amountFloat = (float)$amount;
+                if ($amountFloat > 0) {
+                    $amounts[] = $amountFloat;
+                }
+            }
+        }
+
+        // si hay importes específicos, creamos los recibos manualmente
+        if (!empty($amounts)) {
+            return $this->generateReceiptsWithAmounts($invoice, $amounts);
+        }
+
+        // si no hay importes específicos, usamos el generador automático
         $generator = new ReceiptGenerator();
-        $number = (int)$this->request->request->get('number', '0');
+        $number = (int)$this->request->input('number', '0');
         if ($generator->generate($invoice, $number)) {
             $generator->update($invoice);
             $invoice->save();
@@ -192,6 +216,35 @@ class EditFacturaProveedor extends PurchasesController
         }
 
         Tools::log()->error('record-save-error');
+        return true;
+    }
+
+    private function generateReceiptsWithAmounts(FacturaProveedor $invoice, array $amounts): bool
+    {
+        // creamos los recibos con los importes especificados
+        $numero = count($invoice->getReceipts()) + 1;
+
+        foreach ($amounts as $amount) {
+            $receipt = $invoice->getNewReceipt($numero, [
+                'importe' => $amount,
+                'nick' => $this->user->nick
+            ]);
+
+            $receipt->disableInvoiceUpdate(true);
+            if (false === $receipt->save()) {
+                Tools::log()->error('record-save-error');
+                return true;
+            }
+
+            $numero++;
+        }
+
+        // actualizamos la factura
+        $generator = new ReceiptGenerator();
+        $generator->update($invoice);
+        $invoice->save();
+
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 
@@ -209,7 +262,9 @@ class EditFacturaProveedor extends PurchasesController
             case self::VIEW_RECEIPTS:
                 $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
                 $view->loadData('', $where);
-                $this->checkReceiptsTotal($view->cursor);
+                if (empty($view->query)) {
+                    $this->checkReceiptsTotal($view->cursor);
+                }
                 break;
 
             case self::VIEW_ACCOUNTS:
@@ -235,7 +290,7 @@ class EditFacturaProveedor extends PurchasesController
     protected function newRefundAction(): bool
     {
         $invoice = new FacturaProveedor();
-        if (false === $invoice->loadFromCode($this->request->request->get('idfactura'))) {
+        if (false === $invoice->load($this->request->input('idfactura'))) {
             Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
@@ -247,7 +302,7 @@ class EditFacturaProveedor extends PurchasesController
 
         $lines = [];
         foreach ($invoice->getLines() as $line) {
-            $quantity = (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            $quantity = (float)$this->request->input('refund_' . $line->id(), '0');
             if (!empty($quantity)) {
                 $lines[] = $line;
             }
@@ -271,18 +326,19 @@ class EditFacturaProveedor extends PurchasesController
                     $this->dataBase->rollback();
                     return true;
                 }
+                break;
             }
         }
 
         $newRefund = new FacturaProveedor();
         $newRefund->loadFromData($invoice->toArray(), $invoice::dontCopyFields());
         $newRefund->codigorect = $invoice->codigo;
-        $newRefund->codserie = $this->request->request->get('codserie');
+        $newRefund->codserie = $this->request->input('codserie');
         $newRefund->idfacturarect = $invoice->idfactura;
         $newRefund->nick = $this->user->nick;
-        $newRefund->numproveedor = $this->request->request->get('numproveedor');
-        $newRefund->observaciones = $this->request->request->get('observaciones');
-        $newRefund->setDate($this->request->request->get('fecha'), date(FacturaProveedor::HOUR_STYLE));
+        $newRefund->numproveedor = $this->request->input('numproveedor');
+        $newRefund->observaciones = $this->request->input('observaciones');
+        $newRefund->setDate($this->request->input('fecha'), date(Tools::HOUR_STYLE));
         if (false === $newRefund->save()) {
             Tools::log()->error('record-save-error');
             $this->dataBase->rollback();
@@ -291,7 +347,7 @@ class EditFacturaProveedor extends PurchasesController
 
         foreach ($lines as $line) {
             $newLine = $newRefund->getNewLine($line->toArray());
-            $newLine->cantidad = 0 - (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            $newLine->cantidad = 0 - (float)$this->request->input('refund_' . $line->id(), '0');
             $newLine->idlinearect = $line->idlinea;
             if (false === $newLine->save()) {
                 Tools::log()->error('record-save-error');
@@ -317,7 +373,7 @@ class EditFacturaProveedor extends PurchasesController
         }
 
         // asignamos el estado de la factura
-        $newRefund->idestado = $this->request->request->get('idestado');
+        $newRefund->idestado = $this->request->input('idestado');
         if (false === $newRefund->save()) {
             Tools::log()->error('record-save-error');
             $this->dataBase->rollback();

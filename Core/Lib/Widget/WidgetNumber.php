@@ -50,6 +50,13 @@ class WidgetNumber extends BaseWidget
     public $min;
 
     /**
+     * Indicates if the totals should be shown.
+     *
+     * @var bool
+     */
+    public $showTotals;
+
+    /**
      * Indicates the step value
      *
      * @var string
@@ -65,6 +72,7 @@ class WidgetNumber extends BaseWidget
         $this->decimal = (int)($data['decimal'] ?? FS_NF0);
         $this->max = $data['max'] ?? '';
         $this->min = $data['min'] ?? '';
+        $this->showTotals = isset($data['totals']) && strtolower($data['totals']) === 'true';
         $this->step = $data['step'] ?? 'any';
     }
 
@@ -81,6 +89,14 @@ class WidgetNumber extends BaseWidget
     public function processFormData(&$model, $request)
     {
         $model->{$this->fieldname} = (float)$request->request->get($this->fieldname);
+    }
+
+    /**
+     * @return bool
+     */
+    public function showTableTotals(): bool
+    {
+        return $this->showTotals;
     }
 
     /**

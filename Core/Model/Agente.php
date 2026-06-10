@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,12 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
+use FacturaScripts\Core\Model\Base\FiscalNumberTrait;
+use FacturaScripts\Core\Model\Base\GravatarTrait;
+use FacturaScripts\Core\Model\Base\ProductRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
@@ -33,10 +39,13 @@ use FacturaScripts\Dinamic\Model\Producto as DinProducto;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa    <jcuello@artextrading.com>
  */
-class Agente extends Base\Contact
+class Agente extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\ProductRelationTrait;
+    use ModelTrait;
+    use EmailAndPhonesTrait;
+    use FiscalNumberTrait;
+    use GravatarTrait;
+    use ProductRelationTrait;
 
     /** @var string */
     public $cargo;
@@ -48,10 +57,33 @@ class Agente extends Base\Contact
     public $debaja;
 
     /** @var string */
+    public $fechaalta;
+
+    /** @var string */
     public $fechabaja;
 
     /** @var integer */
     public $idcontacto;
+
+    /** @var string */
+    public $nombre;
+
+    /** @var string */
+    public $observaciones;
+
+    public function clear(): void
+    {
+        parent::clear();
+        $this->debaja = false;
+        $this->fechaalta = Tools::date();
+        $this->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Agentes::clear();
+    }
 
     public function checkVies(bool $msg = true): bool
     {
@@ -62,19 +94,8 @@ class Agente extends Base\Contact
     public function getContact(): DinContacto
     {
         $contact = new DinContacto();
-        $contact->loadFromCode($this->idcontacto);
+        $contact->load($this->idcontacto);
         return $contact;
-    }
-
-    public function delete(): bool
-    {
-        if (false === parent::delete()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        Agentes::clear();
-        return true;
     }
 
     public function install(): string
@@ -95,17 +116,6 @@ class Agente extends Base\Contact
         return 'nombre';
     }
 
-    public function save(): bool
-    {
-        if (false === parent::save()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        Agentes::clear();
-        return true;
-    }
-
     public static function tableName(): string
     {
         return 'agentes';
@@ -115,6 +125,8 @@ class Agente extends Base\Contact
     {
         $this->cargo = Tools::noHtml($this->cargo);
         $this->debaja = !empty($this->fechabaja);
+        $this->nombre = Tools::noHtml($this->nombre);
+        $this->observaciones = Tools::noHtml($this->observaciones) ?? '';
 
         if ($this->codagente && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
             Tools::log()->error(
@@ -124,21 +136,29 @@ class Agente extends Base\Contact
             return false;
         }
 
-        return parent::test() && $this->testContact();
+        return parent::test() && $this->testFiscalNumber() && $this->testEmailAndPhones() && $this->testContact();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codagente)) {
             $this->codagente = (string)$this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 
     protected function testContact(): bool
     {
+        // si ya tenemos un contacto, comprobamos que exista
         if ($this->idcontacto) {
+            if (false === $this->getContact()->exists()) {
+                Tools::log()->error('contact-not-found', ['%id%' => $this->idcontacto]);
+                $this->idcontacto = null;
+
+                return false;
+            }
+
             return true;
         }
 
@@ -150,11 +170,12 @@ class Agente extends Base\Contact
         $contact->nombre = $this->nombre;
         $contact->telefono1 = $this->telefono1;
         $contact->telefono2 = $this->telefono2;
-        if ($contact->save()) {
-            $this->idcontacto = $contact->idcontacto;
-            return true;
+        if (false === $contact->save()) {
+            return false;
         }
 
-        return false;
+        $this->idcontacto = $contact->idcontacto;
+
+        return true;
     }
 }

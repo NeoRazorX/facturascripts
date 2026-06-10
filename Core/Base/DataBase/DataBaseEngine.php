@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator;
 
 /**
@@ -64,6 +65,13 @@ abstract class DataBaseEngine
      * @param mixed $link
      */
     abstract public function close($link);
+
+    /**
+     * Returns the random function for the database engine
+     *
+     * @return string
+     */
+    abstract public function random(): string;
 
     /**
      * Converts the sqlColumns returned data to a working structure
@@ -172,6 +180,11 @@ abstract class DataBaseEngine
         $this->i18n = new Translator();
     }
 
+    public function clearError(): void
+    {
+        $this->lastErrorMsg = '';
+    }
+
     /**
      * Compares the data types from a numeric column. Returns true if they are equal
      *
@@ -180,9 +193,21 @@ abstract class DataBaseEngine
      *
      * @return bool
      */
-    public function compareDataTypes($dbType, $xmlType)
+    public function compareDataTypes($dbType, $xmlType): bool
     {
-        return \FS_DB_TYPE_CHECK === false || $dbType === $xmlType || strtolower($xmlType) == 'serial' || substr($dbType, 0, 4) == 'time' && substr($xmlType, 0, 4) == 'time';
+        if (false === Tools::config('db_type_check', true)) {
+            return true;
+        }
+
+        if ($dbType === $xmlType) {
+            return true;
+        }
+
+        if (strtolower($xmlType) == 'serial') {
+            return true;
+        }
+
+        return str_starts_with($dbType, 'time') && str_starts_with($xmlType, 'time');
     }
 
     /**
@@ -190,7 +215,7 @@ abstract class DataBaseEngine
      *
      * @return string
      */
-    public function dateStyle()
+    public function dateStyle(): string
     {
         return 'Y-m-d';
     }
@@ -202,9 +227,14 @@ abstract class DataBaseEngine
      *
      * @return string
      */
-    public function getOperator($operator)
+    public function getOperator($operator): string
     {
         return $operator;
+    }
+
+    public function hasError(): bool
+    {
+        return $this->lastErrorMsg !== '';
     }
 
     /**
@@ -213,7 +243,7 @@ abstract class DataBaseEngine
      * @param string $tableName
      * @param array $fields
      */
-    public function updateSequence($link, $tableName, $fields)
+    public function updateSequence($link, $tableName, $fields): void
     {
         ;
     }

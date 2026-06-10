@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,17 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 /**
  * Structure for each of the items in the FacturaScripts menu.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class MenuItem
 {
-
     /**
      * Indicates whether it is activated or not.
      *
@@ -77,7 +77,7 @@ class MenuItem
      * @param string $url
      * @param string $icon
      */
-    public function __construct($name, $title, $url, $icon = 'fa-solid fa-file')
+    public function __construct(string $name, string $title, string $url, string $icon = 'fa-solid fa-file')
     {
         $this->name = $name;
         $this->title = $title;

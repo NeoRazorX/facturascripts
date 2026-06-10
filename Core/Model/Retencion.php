@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Class to manage the data of retenciones table
@@ -30,9 +32,9 @@ use FacturaScripts\Core\Tools;
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>
  */
-class Retencion extends Base\ModelClass
+class Retencion extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /** @var bool */
     public $activa;
@@ -52,45 +54,29 @@ class Retencion extends Base\ModelClass
     /** @var int */
     public $porcentaje;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->activa = true;
         $this->porcentaje = 0.0;
     }
 
-    public function delete(): bool
+    public function clearCache(): void
     {
-        if (false === parent::delete()) {
-            return false;
-        }
-
-        // limpiamos la caché
+        parent::clearCache();
         Retenciones::clear();
-        return true;
     }
 
     public function loadFromPercentage(float $percentaje): bool
     {
-        $where = [new DataBaseWhere('porcentaje', $percentaje)];
+        $where = [Where::eq('porcentaje', $percentaje)];
         $order = ['codretencion' => 'ASC'];
-        return $this->loadFromCode('', $where, $order);
+        return $this->loadWhere($where, $order);
     }
 
     public static function primaryColumn(): string
     {
         return 'codretencion';
-    }
-
-    public function save(): bool
-    {
-        if (false === parent::save()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        Retenciones::clear();
-        return true;
     }
 
     public static function tableName(): string
@@ -100,7 +86,7 @@ class Retencion extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->codretencion = trim($this->codretencion);
+        $this->codretencion = trim($this->codretencion ?? '');
         if ($this->codretencion && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codretencion)) {
             Tools::log()->error(
                 'invalid-alphanumeric-code',
@@ -126,12 +112,49 @@ class Retencion extends Base\ModelClass
         return parent::url($type, $list);
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codretencion)) {
-            $this->codretencion = (string)$this->newCode();
+            $this->codretencion = $this->newLetterCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
+    }
+
+    private function newLetterCode(): string
+    {
+        $desc = preg_replace('/[^A-Z]/i', '', strtoupper($this->descripcion ?? ''));
+        $pct = (int)$this->porcentaje;
+
+        // try 3 letters + percentage
+        $prefix3 = substr($desc, 0, 3);
+        if (strlen($prefix3) === 3) {
+            $candidate = $prefix3 . $pct;
+            if (false === $this->codretencionExists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        // try 4 letters + percentage
+        $prefix4 = substr($desc, 0, 4);
+        if (strlen($prefix4) === 4) {
+            $candidate = $prefix4 . $pct;
+            if (false === $this->codretencionExists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return (string)$this->newCode();
+    }
+
+    private function codretencionExists(string $codretencion): bool
+    {
+        foreach (Retenciones::all() as $retencion) {
+            if (strtoupper($retencion->codretencion) === strtoupper($codretencion)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

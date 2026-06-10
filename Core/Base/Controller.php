@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,10 @@ namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
-use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Lib\MenuManager as NewMenuManager;
+use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
@@ -31,33 +32,32 @@ use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
-use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 
 /**
- * Class from which all FacturaScripts controllers must inherit.
+ * Clase de la que deben heredar todos los controladores de FacturaScripts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Controller implements ControllerInterface
 {
     /**
-     * Name of the class of the controller (although its in inheritance from this class,
-     * the name of the final class we will have here)
+     * Nombre de la clase del controlador (aunque herede de esta clase,
+     * aquí tendremos el nombre de la clase final).
      *
      * @var string __CLASS__
      */
     private $className;
 
     /**
-     * It provides direct access to the database.
+     * Proporciona acceso directo a la base de datos.
      *
      * @var DataBase
      */
     protected $dataBase;
 
     /**
-     * Selected company.
+     * Empresa seleccionada.
      *
      * @var Empresa
      */
@@ -69,56 +69,56 @@ class Controller implements ControllerInterface
     public $multiRequestProtection;
 
     /**
-     * User permissions on this controller.
+     * Permisos del usuario sobre este controlador.
      *
      * @var ControllerPermissions
      */
     public $permissions;
 
     /**
-     * Request on which we can get data.
+     * Petición de la que podemos obtener datos.
      *
      * @var Request
      */
     public $request;
 
     /**
-     * HTTP Response object.
+     * Objeto de respuesta HTTP.
      *
      * @var Response
      */
     protected $response;
 
     /**
-     * Name of the file for the template.
+     * Nombre del archivo de la plantilla.
      *
      * @var string|false nombre_archivo.html.twig
      */
     private $template;
 
     /**
-     * Title of the page.
+     * Título de la página.
      *
      * @var string título de la página.
      */
     public $title;
 
     /**
-     * Given uri, default is empty.
+     * URI dada, por defecto vacía.
      *
      * @var string
      */
     public $uri;
 
     /**
-     * User logged in.
+     * Usuario que ha iniciado sesión.
      *
      * @var User|false
      */
     public $user = false;
 
     /**
-     * Initialize all objects and properties.
+     * Inicializa todos los objetos y propiedades.
      *
      * @param string $className
      * @param string $uri
@@ -132,14 +132,14 @@ class Controller implements ControllerInterface
         Session::set('uri', $uri);
 
         $this->dataBase = new DataBase();
-        $this->empresa = new Empresa();
+        $this->empresa = Empresas::default();
         $this->multiRequestProtection = new MultiRequestProtection();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
         $this->uri = $uri;
 
         $pageData = $this->getPageData();
-        $this->title = empty($pageData) ? $this->className : Tools::lang()->trans($pageData['title']);
+        $this->title = empty($pageData) ? $this->className : Tools::trans($pageData['title']);
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
@@ -156,7 +156,10 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Return the basic data for this page.
+     * Devuelve los datos básicos de esta página (nombre, título, icono, menú, etc.).
+     *
+     * Esta función solamente sirve para eso. No se debe añadir aquí ningún otro código,
+     * ya que en este punto el usuario ni siquiera se ha logueado todavía.
      *
      * @return array
      */
@@ -174,7 +177,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Return the template to use for this controller.
+     * Devuelve la plantilla a usar para este controlador.
      *
      * @return string|false
      */
@@ -208,7 +211,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Runs the controller's private logic.
+     * Ejecuta la lógica privada del controlador.
      *
      * @param Response $response
      * @param User $user
@@ -225,27 +228,28 @@ class Controller implements ControllerInterface
             throw new KernelException('AccessDenied', Tools::lang()->trans('access-denied'));
         }
 
-        // Select the default company for the user
+        // Seleccionamos la empresa por defecto del usuario
         $this->empresa = Empresas::get($this->user->idempresa);
 
-        // add the user to the token generation seed
+        // Añadimos el usuario a la semilla de generación del token
         $this->multiRequestProtection->addSeed($user->nick);
 
-        // Have this user a default page?
-        $defaultPage = $this->request->query->get('defaultPage', '');
+        // ¿Tiene este usuario una página por defecto?
+        $cookiesExpire = time() + Tools::config('cookies_expire');
+        $defaultPage = $this->request->query('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE);
+            $this->response->cookie('fsHomepage', $this->user->homepage, $cookiesExpire);
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE);
+            $this->response->cookie('fsHomepage', $this->user->homepage, $cookiesExpire);
             $this->user->save();
         }
     }
 
     /**
-     * Execute the public part of the controller.
+     * Ejecuta la parte pública del controlador.
      *
      * @param Response $response
      */
@@ -260,27 +264,28 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Redirect to an url or controller.
+     * Redirige a una url o controlador.
      *
      * @param string $url
      * @param int $delay
      */
     public function redirect(string $url, int $delay = 0)
     {
-        $this->response->headers->set('Refresh', $delay . '; ' . $url);
+        $this->response->header('Refresh', $delay . '; ' . $url);
         if ($delay === 0) {
             $this->setTemplate(false);
         }
+    }
+
+    public function request(): Request
+    {
+        return $this->request;
     }
 
     public function run(): void
     {
         // creamos la respuesta
         $response = new Response();
-        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
-        $response->headers->set('X-XSS-Protection', '1; mode=block');
-        $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->headers->set('Strict-Transport-Security', 'max-age=31536000');
 
         // si se ha podido autenticar, ejecutamos la parte privada
         if ($this->auth()) {
@@ -289,18 +294,13 @@ class Controller implements ControllerInterface
 
             // renderizamos la plantilla
             if ($this->template) {
-                // carga el menú
-                $menu = new MenuManager();
-                $menu->setUser(Session::user());
-                $menu->selectPage($this->getPageData());
-
                 Kernel::startTimer('Controller::html-render');
-                $response->setContent(Html::render($this->template, [
+                $response->view($this->template, [
                     'controllerName' => $this->className,
                     'fsc' => $this,
-                    'menuManager' => $menu,
+                    'menuManager' => NewMenuManager::init()->selectPage($this->getPageData()),
                     'template' => $this->template,
-                ]));
+                ]);
                 Kernel::stopTimer('Controller::html-render');
             }
 
@@ -314,11 +314,11 @@ class Controller implements ControllerInterface
         // renderizamos la plantilla
         if ($this->template) {
             Kernel::startTimer('Controller::html-render');
-            $response->setContent(Html::render($this->template, [
+            $response->view($this->template, [
                 'controllerName' => $this->className,
                 'fsc' => $this,
                 'template' => $this->template,
-            ]));
+            ]);
             Kernel::stopTimer('Controller::html-render');
         }
 
@@ -326,7 +326,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Set the template to use for this controller.
+     * Establece la plantilla a usar para este controlador.
      *
      * @param string|false $template
      *
@@ -339,16 +339,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * @return ToolBox
-     * @deprecated since version 2023.1
-     */
-    public static function toolBox(): ToolBox
-    {
-        return new ToolBox();
-    }
-
-    /**
-     * Return the URL of the actual controller.
+     * Devuelve la URL del controlador actual.
      *
      * @return string
      */
@@ -359,33 +350,55 @@ class Controller implements ControllerInterface
 
     private function auth(): bool
     {
-        $cookieNick = $this->request->cookies->get('fsNick', '');
+        // Obtener el nick del usuario de la cookie
+        $cookieNick = $this->request->cookie('fsNick', '');
         if (empty($cookieNick)) {
+            // Si no hay nick en la cookie, no se puede autenticar
             return false;
         }
 
+        // Cargar el usuario desde la base de datos usando el nick
         $user = new DinUser();
-        if (false === $user->loadFromCode($cookieNick) && $user->enabled) {
-            Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
+        if (false === $user->load($cookieNick)) {
+            // Si el usuario no se encuentra, registrar advertencia y fallar autenticación
+            Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($cookieNick)]);
             return false;
         }
 
-        $logKey = $this->request->cookies->get('fsLogkey', '') ?? '';
+        // Verificar si el usuario está activado
+        $deleteCookieOptions = [
+            'expires' => time() - 3600,
+            'path' => Tools::config('route', '/'),
+            'domain' => '',
+            'secure' => $this->request->isSecure(),
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ];
+        if (false === $user->enabled) {
+            // Si el usuario está desactivado, registrar advertencia, eliminar cookie y fallar autenticación
+            Tools::log()->warning('login-user-disabled', ['%nick%' => htmlspecialchars($cookieNick)]);
+            setcookie('fsNick', '', $deleteCookieOptions);
+            return false;
+        }
+
+        // Verificar la logkey del usuario desde la cookie
+        $logKey = $this->request->cookie('fsLogkey', '') ?? '';
         if (false === $user->verifyLogkey($logKey)) {
+            // Si la logkey no es válida, registrar advertencia, eliminar cookie y fallar autenticación
             Tools::log()->warning('login-cookie-fail');
-            // eliminamos la cookie
-            setcookie('fsNick', '', time() - FS_COOKIES_EXPIRE, '/');
+            setcookie('fsNick', '', $deleteCookieOptions);
             return false;
         }
 
-        // actualizamos la actividad del usuario
+        // Actualizar la última actividad del usuario si ha pasado el período definido
         if (time() - strtotime($user->lastactivity) > User::UPDATE_ACTIVITY_PERIOD) {
             $ip = Session::getClientIp();
-            $browser = $this->request->headers->get('User-Agent');
+            $browser = $this->request->header('User-Agent');
             $user->updateActivity($ip, $browser);
             $user->save();
         }
 
+        // Establecer el usuario en la sesión actual
         Session::set('user', $user);
         return true;
     }
@@ -398,8 +411,13 @@ class Controller implements ControllerInterface
         }
     }
 
+    protected function db(): DataBase
+    {
+        return $this->dataBase;
+    }
+
     /**
-     * Return the name of the controller.
+     * Devuelve el nombre del controlador.
      *
      * @return string
      */
@@ -408,25 +426,29 @@ class Controller implements ControllerInterface
         return $this->className;
     }
 
+    protected function response(): Response
+    {
+        return $this->response;
+    }
+
     /**
-     * Check request token. Returns an error if:
-     *   - the token does not exist
-     *   - the token is invalid
-     *   - the token is duplicated
+     * Comprueba el token de la petición. Devuelve un error si:
+     *   - el token no existe
+     *   - el token no es válido
+     *   - el token está duplicado
      *
      * @return bool
      */
     protected function validateFormToken(): bool
     {
-        // valid request?
-        $urlToken = $this->request->query->get('multireqtoken', '');
-        $token = $this->request->request->get('multireqtoken', $urlToken);
+        // ¿petición válida?
+        $token = $this->request->inputOrQuery('multireqtoken', '');
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
             Tools::log()->warning('invalid-request');
             return false;
         }
 
-        // duplicated request?
+        // ¿petición duplicada?
         if ($this->multiRequestProtection->tokenExist($token)) {
             Tools::log()->warning('duplicated-request');
             return false;

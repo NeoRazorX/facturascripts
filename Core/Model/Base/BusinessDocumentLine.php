@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,58 +19,60 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Template\ModelClass as NewModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Description of BusinessDocumentLine
+ * Linea de documento de negocio.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class BusinessDocumentLine extends ModelOnChangeClass
+abstract class BusinessDocumentLine extends NewModelClass
 {
     use TaxRelationTrait;
 
     /**
-     * Update stock status.
+     * Estado de actualización de stock.
      *
      * @var int
      */
     public $actualizastock;
 
     /**
-     * Quantity.
+     * Cantidad.
      *
      * @var float|int
      */
     public $cantidad;
 
     /**
-     * Description of the line.
+     * Descripción de la línea.
      *
      * @var string
      */
     public $descripcion;
 
     /** @var bool */
-    private $disableUpdateStock = false;
+    private $disable_update_stock = false;
 
     /** @var array */
     protected static $dont_copy_fields = ['idlinea', 'orden', 'servido'];
 
     /**
-     * Percentage of discount.
+     * Porcentaje de descuento.
      *
      * @var float|int
      */
     public $dtopor;
 
     /**
-     * Percentage of second discount.
+     * Porcentaje de segundo descuento.
      *
      * @var float|int
      */
@@ -80,7 +82,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public $excepcioniva;
 
     /**
-     * Primary key.
+     * Clave primaria.
      *
      * @var int
      */
@@ -90,63 +92,63 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public $idproducto;
 
     /**
-     * % of IRPF of the line.
+     * % de IRPF de la línea.
      *
      * @var float|int
      */
     public $irpf;
 
     /**
-     * % of the related tax.
+     * % del impuesto relacionado.
      *
      * @var float|int
      */
     public $iva;
 
     /**
-     * Position of the line in the document. The higher down.
+     * Posición de la línea en el documento. Cuanto mayor, más abajo.
      *
      * @var int
      */
     public $orden;
 
     /**
-     * Net amount without discounts.
+     * Importe neto sin descuentos.
      *
      * @var float|int
      */
     public $pvpsindto;
 
     /**
-     * Net amount of the line, without taxes.
+     * Importe neto de la línea, sin impuestos.
      *
      * @var float|int
      */
     public $pvptotal;
 
     /**
-     * Price of the item, one unit.
+     * Precio del artículo, una unidad.
      *
      * @var float|int
      */
     public $pvpunitario;
 
     /**
-     * % surcharge of line equivalence.
+     * % de recargo de equivalencia de la línea.
      *
      * @var float|int
      */
     public $recargo;
 
     /**
-     * Reference of the article.
+     * Referencia del artículo.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Served.
+     * Servido.
      *
      * @var float|int
      */
@@ -156,18 +158,19 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public $suplido;
 
     /**
-     * Returns the parent document of this line.
+     * Devuelve el documento padre de esta línea.
      */
     abstract public function getDocument();
 
     /**
-     * Returns the name of the column to store the document's identifier.
+     * Devuelve el nombre de la columna que almacena el identificador del documento.
      */
     abstract public function documentColumn();
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
+
         $this->actualizastock = 0;
         $this->cantidad = 1.0;
         $this->descripcion = '';
@@ -181,7 +184,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->servido = 0.0;
         $this->suplido = false;
 
-        // default tax
+        // impuesto por defecto
         $this->codimpuesto = Tools::settings('default', 'codimpuesto');
         $this->iva = $this->getTax()->iva;
         $this->recargo = $this->getTax()->recargo;
@@ -189,17 +192,53 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
     public function disableUpdateStock(bool $value): void
     {
-        $this->disableUpdateStock = $value;
+        $this->disable_update_stock = $value;
     }
 
     /**
-     * Returns the identifier of the document.
+     * Devuelve el identificador del documento.
      *
      * @return int
      */
     public function documentColumnValue()
     {
         return $this->{$this->documentColumn()};
+    }
+
+    /**
+     * Devuelve las líneas hijas generadas desde esta línea.
+     *
+     * @return BusinessDocumentLine[]
+     */
+    public function childrenLines(): array
+    {
+        if (empty($this->documentColumnValue()) || empty($this->id())) {
+            return [];
+        }
+
+        $children = [];
+        $keys = [];
+        $where = [
+            Where::eq('model1', $this->getDocument()->modelClassName()),
+            Where::eq('iddoc1', $this->documentColumnValue()),
+            Where::eq('idlinea1', $this->id())
+        ];
+        foreach (DocTransformation::all($where, ['id' => 'ASC'], 0, 0) as $docTrans) {
+            $childLine = $docTrans->getChildLine();
+            if (false === $childLine->exists()) {
+                continue;
+            }
+
+            $key = $docTrans->model2 . '|' . $docTrans->iddoc2 . '|' . $docTrans->idlinea2;
+            if (in_array($key, $keys, true)) {
+                continue;
+            }
+
+            $children[] = $childLine;
+            $keys[] = $key;
+        }
+
+        return $children;
     }
 
     public static function dontCopyField(string $field): void
@@ -215,15 +254,39 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
     public function getDisableUpdateStock(): bool
     {
-        return $this->disableUpdateStock;
+        return $this->disable_update_stock;
     }
 
     /**
-     * Returns the Equivalent Unified Discount.
+     * Devuelve la línea padre desde la que se generó esta línea.
+     */
+    public function getParentLine(): ?BusinessDocumentLine
+    {
+        if (empty($this->documentColumnValue()) || empty($this->id())) {
+            return null;
+        }
+
+        $where = [
+            Where::eq('model2', $this->getDocument()->modelClassName()),
+            Where::eq('iddoc2', $this->documentColumnValue()),
+            Where::eq('idlinea2', $this->id())
+        ];
+        foreach (DocTransformation::all($where) as $docTrans) {
+            $parentLine = $docTrans->getParentLine();
+            if ($parentLine->exists()) {
+                return $parentLine;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Devuelve el Descuento Unificado Equivalente.
      *
      * @return float
      */
-    public function getEUDiscount()
+    public function getEUDiscount(): float
     {
         $eud = 1.0;
         foreach ([$this->dtopor, $this->dtopor2] as $dto) {
@@ -233,30 +296,48 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $eud;
     }
 
+    public function getOriginal(?string $key = null)
+    {
+        $original = parent::getOriginal($key);
+        if (is_null($original)) {
+            switch ($key) {
+                case 'actualizastock':
+                    $original = 0;
+                    break;
+
+                case 'servido':
+                case 'cantidad':
+                    $original = 0.0;
+                    break;
+            }
+        }
+
+        return $original;
+    }
+
     public function getProducto(): Producto
     {
         $producto = new Producto();
 
-        // for backward compatibility we must search by reference
+        // por compatibilidad buscamos por referencia
         if (empty($this->idproducto) && !empty($this->referencia)) {
             $this->idproducto = $this->getVariante()->idproducto;
         }
 
-        $producto->loadFromCode($this->idproducto);
+        $producto->load($this->idproducto);
         return $producto;
     }
 
     public function getVariante(): Variante
     {
         $variante = new Variante();
-        $where = [new DataBaseWhere('referencia', $this->referencia)];
-        $variante->loadFromCode('', $where);
+        $variante->loadWhereEq('referencia', $this->referencia);
         return $variante;
     }
 
     public function install(): string
     {
-        // needed dependencies
+        // dependencias necesarias
         new Impuesto();
         new Producto();
 
@@ -271,7 +352,9 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public function save(): bool
     {
         $done = parent::save();
+
         $this->disableUpdateStock(false);
+
         return $done;
     }
 
@@ -281,8 +364,22 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->pvpunitario = round($newPrice, Producto::ROUND_DECIMALS);
     }
 
+    public function setTax(?string $codimpuesto): void
+    {
+        if (empty($codimpuesto)) {
+            $this->codimpuesto = null;
+            $this->iva = 0.0;
+            $this->recargo = 0.0;
+            return;
+        }
+
+        $this->codimpuesto = $codimpuesto;
+        $this->iva = $this->getTax()->iva;
+        $this->recargo = $this->getTax()->recargo;
+    }
+
     /**
-     * Transfers the line stock from one warehouse to another.
+     * Transfiere el stock de la línea de un almacén a otro.
      *
      * @param string $fromCodalmacen
      * @param string $toCodalmacen
@@ -291,50 +388,53 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public function transfer($fromCodalmacen, $toCodalmacen): bool
     {
-        // find the stock
+        // buscamos el stock
         $fromStock = new Stock();
         $where = [
-            new DataBaseWhere('codalmacen', $fromCodalmacen),
-            new DataBaseWhere('referencia', $this->referencia)
+            Where::eq('codalmacen', $fromCodalmacen),
+            Where::eq('referencia', $this->referencia)
         ];
-        if (empty($this->referencia) || false === $fromStock->loadFromCode('', $where)) {
-            // no need to transfer
+        if (empty($this->referencia) || false === $fromStock->loadWhere($where)) {
+            // no es necesario transferir
             return true;
         }
-        $this->applyStockChanges($fromStock, $this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $this->previousData['servido'] * -1);
+        $this->applyStockChanges(
+            $fromStock,
+            $this->getOriginal('actualizastock'),
+            $this->getOriginal('cantidad') * -1,
+            $this->getOriginal('servido') * -1
+        );
         $fromStock->save();
 
-        // find the new stock
+        // buscamos el nuevo stock
         $toStock = new Stock();
         $where2 = [
-            new DataBaseWhere('codalmacen', $toCodalmacen),
-            new DataBaseWhere('referencia', $this->referencia)
+            Where::eq('codalmacen', $toCodalmacen),
+            Where::eq('referencia', $this->referencia)
         ];
-        if (false === $toStock->loadFromCode('', $where2)) {
-            // stock not found, then create one
+        if (false === $toStock->loadWhere($where2)) {
+            // stock no encontrado, creamos uno
             $toStock->codalmacen = $toCodalmacen;
             $toStock->idproducto = $this->idproducto ?? $this->getProducto()->idproducto;
             $toStock->referencia = $this->referencia;
         }
 
         $this->applyStockChanges($toStock, $this->actualizastock, $this->cantidad, $this->servido);
-        if ($toStock->save()) {
-            $this->pipe('transfer', $fromCodalmacen, $toCodalmacen, $this->getDocument());
-            return true;
+        if (false === $toStock->save()) {
+            return false;
         }
 
-        return false;
+        $this->pipe('transfer', $fromCodalmacen, $toCodalmacen, $this->getDocument());
+
+        return true;
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
     public function test(): bool
     {
         if (empty($this->codimpuesto)) {
             $this->codimpuesto = null;
+            $this->iva = 0.0;
+            $this->recargo = 0.0;
         }
 
         if ($this->servido < 0 && $this->cantidad >= 0) {
@@ -350,18 +450,20 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         $name = str_replace('Linea', '', $this->modelClassName());
-        return $type === 'new' ? 'Edit' . $name : parent::url($type, 'List' . $name . '?activetab=List');
+        return $type === 'new' ?
+            'Edit' . $name :
+            parent::url($type, 'List' . $name . '?activetab=List');
     }
 
     /**
-     * Apply stock modifications according to $mode.
+     * Aplica las modificaciones de stock según el $mode.
      *
      * @param Stock $stock
      * @param int $mode
      * @param float $quantity
      * @param float $served
      */
-    private function applyStockChanges(&$stock, int $mode, float $quantity, float $served)
+    private function applyStockChanges(&$stock, int $mode, float $quantity, float $served): void
     {
         if ($quantity < 0 && $served < $quantity) {
             $served = $quantity;
@@ -384,14 +486,13 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     }
 
     /**
-     * This method is called before save (update) in the database this record
-     * data when some field value has changed.
+     * Este método se ejecuta antes de guardar (update) cuando algún campo ha cambiado.
      *
      * @param string $field
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'actualizastock':
@@ -404,89 +505,88 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     }
 
     /**
-     * This method is called after this record is deleted from database.
+     * Este método se ejecuta después de eliminar este registro de la base de datos.
      */
-    protected function onDelete()
+    protected function onDelete(): void
     {
         $this->cantidad = 0.0;
         $this->updateStock();
+
         parent::onDelete();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
-        return $this->updateStock() && parent::saveInsert($values);
-    }
-
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['actualizastock', 'cantidad', 'servido'];
-        parent::setPreviousData(array_merge($more, $fields));
-
-        if (null === $this->previousData['actualizastock']) {
-            $this->previousData['actualizastock'] = 0;
-        }
-
-        if (null === $this->previousData['cantidad']) {
-            $this->previousData['cantidad'] = 0.0;
-        }
+        return $this->updateStock() && parent::saveInsert();
     }
 
     /**
-     * Updates stock according to line data and $codalmacen warehouse.
+     * Actualiza el stock según los datos de la línea y el almacén.
      *
      * @return bool
      */
     protected function updateStock(): bool
     {
-        if ($this->disableUpdateStock) {
+        if ($this->disable_update_stock) {
             return true;
-        } elseif (empty($this->actualizastock) && empty($this->previousData['actualizastock'])) {
+        } elseif (empty($this->actualizastock) && empty($this->getOriginal('actualizastock'))) {
             return true;
         }
 
-        // find the variant
+        // buscamos la variante
         $variante = new Variante();
-        $where = [new DataBaseWhere('referencia', $this->referencia)];
-        if (empty($this->referencia) || false === $variante->loadFromCode('', $where)) {
+        $where = [Where::eq('referencia', $this->referencia)];
+        if (empty($this->referencia) || false === $variante->loadWhere($where)) {
             return true;
         }
 
-        // find the product
+        // buscamos el producto
         $producto = $variante->getProducto();
         if ($producto->nostock) {
             return true;
         }
 
-        // find the stock
+        // buscamos el stock
         $stock = new Stock();
         $doc = $this->getDocument();
         $where2 = [
-            new DataBaseWhere('codalmacen', $doc->codalmacen),
-            new DataBaseWhere('referencia', $this->referencia)
+            Where::eq('codalmacen', $doc->codalmacen),
+            Where::eq('referencia', $this->referencia)
         ];
-        if (false === $stock->loadFromCode('', $where2)) {
-            // stock not found, then create one
+        if (false === $stock->loadWhere($where2)) {
+            // stock no encontrado, creamos uno
             $stock->codalmacen = $doc->codalmacen;
             $stock->idproducto = $this->idproducto ?? $this->getProducto()->idproducto;
             $stock->referencia = $this->referencia;
         }
 
-        $this->applyStockChanges($stock, $this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $this->previousData['servido'] * -1);
+        $this->applyStockChanges(
+            $stock,
+            $this->getOriginal('actualizastock'),
+            $this->getOriginal('cantidad') * -1,
+            $this->getOriginal('servido') * -1
+        );
+
         $this->applyStockChanges($stock, $this->actualizastock, $this->cantidad, $this->servido);
 
-        // enough stock?
+        // ¿hay suficiente stock?
         if (false === $producto->ventasinstock && $this->actualizastock === -1 && $stock->cantidad < 0) {
             Tools::log()->warning('not-enough-stock', ['%reference%' => $this->referencia]);
             return false;
         }
 
-        if ($stock->save()) {
-            $this->pipe('updateStock', $doc);
-            $this->disableUpdateStock = true;
-            return true;
+        if (false === $stock->save()) {
+            Tools::log()->warning('cant-update-stock', [
+                '%reference%' => $this->referencia,
+                '%codalmacen%' => $doc->codalmacen,
+            ]);
+            return false;
         }
 
-        return false;
+        $this->pipe('updateStock', $doc);
+
+        $this->disable_update_stock = true;
+
+        return true;
     }
 }

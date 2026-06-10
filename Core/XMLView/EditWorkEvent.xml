@@ -20,6 +20,9 @@
             <column name="done-date" order="150">
                 <widget type="datetime" fieldname="done_date" readonly="true"/>
             </column>
+            <column name="duration" order="155">
+                <widget type="seconds" fieldname="execution_time" readonly="true"/>
+            </column>
             <column name="workers" order="160">
                 <widget type="number" fieldname="workers" readonly="true"/>
             </column>

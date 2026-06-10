@@ -4,8 +4,8 @@
         bootstrap="Test/test-plugins.php"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
-        stopOnError="false"
-        stopOnFailure="false"
+        stopOnError="true"
+        stopOnFailure="true"
         stopOnIncomplete="false"
         stopOnSkipped="false">
     <testsuites>

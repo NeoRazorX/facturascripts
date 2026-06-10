@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Series;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -71,10 +71,16 @@ class Serie extends ModelClass
      */
     public $tipo;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->siniva = false;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Series::clear();
     }
 
     public function delete(): bool
@@ -84,13 +90,7 @@ class Serie extends ModelClass
             return false;
         }
 
-        if (parent::delete()) {
-            // limpiamos la caché
-            Series::clear();
-            return true;
-        }
-
-        return false;
+        return parent::delete();
     }
 
     public function install(): string
@@ -116,17 +116,6 @@ class Serie extends ModelClass
         return 'codserie';
     }
 
-    public function save(): bool
-    {
-        if (parent::save()) {
-            // limpiamos la caché
-            Series::clear();
-            return true;
-        }
-
-        return false;
-    }
-
     public static function tableName(): string
     {
         return 'series';
@@ -134,7 +123,7 @@ class Serie extends ModelClass
 
     public function test(): bool
     {
-        $this->codserie = trim($this->codserie);
+        $this->codserie = trim($this->codserie ?? '');
         if ($this->codserie && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codserie)) {
             Tools::log()->error(
                 'invalid-alphanumeric-code',
@@ -148,12 +137,44 @@ class Serie extends ModelClass
         return parent::test();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codserie)) {
-            $this->codserie = (string)$this->newCode();
+            $this->codserie = $this->newLetterCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
+    }
+
+    private function newLetterCode(): string
+    {
+        // try prefixes from the description (1 to 4 chars)
+        $desc = preg_replace('/[^A-Z0-9_\+\.\-]/i', '', strtoupper($this->descripcion ?? ''));
+        for ($len = 1; $len <= 4; $len++) {
+            $candidate = substr($desc, 0, $len);
+            if (strlen($candidate) === $len && false === $this->codserieExists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        // fall back to A-Z
+        for ($letter = 'A'; $letter <= 'Z'; $letter++) {
+            if (false === $this->codserieExists($letter)) {
+                return $letter;
+            }
+        }
+
+        return (string)$this->newCode();
+    }
+
+    private function codserieExists(string $codserie): bool
+    {
+        foreach (Series::all() as $serie) {
+            if (strtoupper($serie->codserie) === strtoupper($codserie)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

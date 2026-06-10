@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,9 +45,8 @@ class EditApiKey extends EditController
             ];
         }
 
-        $accessModel = new ApiAccess();
-        $where = [new DataBaseWhere('idapikey', $this->request->query->get('code'))];
-        foreach ($accessModel->all($where, [], 0, 0) as $access) {
+        $where = [new DataBaseWhere('idapikey', $this->request->query('code'))];
+        foreach (ApiAccess::all($where) as $access) {
             $rules[$access->resource]['allowget'] = $access->allowget;
             $rules[$access->resource]['allowpost'] = $access->allowpost;
             $rules[$access->resource]['allowput'] = $access->allowput;
@@ -82,7 +81,7 @@ class EditApiKey extends EditController
         $this->createViewsAccess();
     }
 
-    protected function createViewsAccess(string $viewName = 'ApiAccess')
+    protected function createViewsAccess(string $viewName = 'ApiAccess'): void
     {
         $this->addHtmlView($viewName, 'Tab/ApiAccess', 'ApiAccess', 'rules', 'fa-solid fa-check-square');
     }
@@ -97,15 +96,14 @@ class EditApiKey extends EditController
             return true;
         }
 
-        $allowGet = $this->request->request->getArray('allowget');
-        $allowPut = $this->request->request->getArray('allowput');
-        $allowPost = $this->request->request->getArray('allowpost');
-        $allowDelete = $this->request->request->getArray('allowdelete');
+        $allowGet = $this->request->request->getArray('allowget', false);
+        $allowPut = $this->request->request->getArray('allowput', false);
+        $allowPost = $this->request->request->getArray('allowpost', false);
+        $allowDelete = $this->request->request->getArray('allowdelete', false);
 
         // update current access rules
-        $accessModel = new ApiAccess();
-        $where = [new DataBaseWhere('idapikey', $this->request->query->get('code'))];
-        $rules = $accessModel->all($where, [], 0, 0);
+        $where = [new DataBaseWhere('idapikey', $this->request->query('code'))];
+        $rules = ApiAccess::all($where);
         foreach ($rules as $access) {
             $access->allowget = in_array($access->resource, $allowGet);
             $access->allowput = in_array($access->resource, $allowPut);
@@ -129,7 +127,7 @@ class EditApiKey extends EditController
 
             // add
             $newAccess = new ApiAccess();
-            $newAccess->idapikey = $this->request->query->get('code');
+            $newAccess->idapikey = $this->request->query('code');
             $newAccess->resource = $resource;
             $newAccess->allowget = in_array($resource, $allowGet);
             $newAccess->allowput = in_array($resource, $allowPut);

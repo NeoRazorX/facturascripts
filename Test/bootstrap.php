@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,10 +28,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 define("FS_FOLDER", getcwd());
 
 $config = FS_FOLDER . '/config.php';
-if (__DIR__ === '/home/scrutinizer/build/Test') {
-    echo 'Executing on scrutinizer ...' . "\n\n";
-    $config = FS_FOLDER . '/Test/config-scrutinizer.php';
-} elseif (!file_exists($config)) {
+if (!file_exists($config)) {
     die($config . " not found!\n");
 }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,21 +19,23 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Divisa;
 
 final class Divisas implements DataSrcInterface
 {
+    /** @var Divisa[] */
     private static $list;
 
-    /**
-     * @return Divisa[]
-     */
+    /** @return Divisa[] */
     public static function all(): array
     {
         if (!isset(self::$list)) {
-            $model = new Divisa();
-            self::$list = $model->all([], [], 0, 0);
+            self::$list = Cache::remember('model-Divisa-list', function () {
+                return Divisa::all([], ['coddivisa' => 'ASC'], 0, 0);
+            });
         }
 
         return self::$list;
@@ -44,11 +46,6 @@ final class Divisas implements DataSrcInterface
         self::$list = null;
     }
 
-    /**
-     * @param bool $addEmpty
-     *
-     * @return array
-     */
     public static function codeModel(bool $addEmpty = true): array
     {
         $codes = [];
@@ -59,6 +56,12 @@ final class Divisas implements DataSrcInterface
         return CodeModel::array2codeModel($codes, $addEmpty);
     }
 
+    public static function default(): Divisa
+    {
+        $code = Tools::settings('default', 'coddivisa', 'EUR');
+        return self::get($code);
+    }
+
     /**
      * @param string $code
      *
@@ -67,11 +70,11 @@ final class Divisas implements DataSrcInterface
     public static function get($code): Divisa
     {
         foreach (self::all() as $item) {
-            if ($item->primaryColumnValue() === $code) {
+            if ($item->id() === $code) {
                 return $item;
             }
         }
 
-        return new Divisa();
+        return Divisa::find($code) ?? new Divisa();
     }
 }

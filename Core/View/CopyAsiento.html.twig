@@ -17,14 +17,15 @@
                         <div class="card-body">
                             <div class="row g-2">
                                 {% if fsc.empresa.count() > 1 %}
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-6 col-md-2">
                                         {{ trans('company') }}
                                         <div class="mb-3">
                                             <select name="idempresa" class="form-select" required>
                                                 {% for item in fsc.codeModel.all('empresas','idempresa','nombrecorto',false) %}
                                                     {% if item.code == fsc.model.idempresa %}
-                                                        <option value="{{ item.code }}"
-                                                                selected>{{ item.description }}</option>
+                                                        <option value="{{ item.code }}" selected>
+                                                            {{ item.description }}
+                                                        </option>
                                                     {% else %}
                                                         <option value="{{ item.code }}">{{ item.description }}</option>
                                                     {% endif %}
@@ -33,21 +34,21 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                                <div class="col-sm-2">
+                                <div class="col-sm-6 col-md-2">
                                     {{ trans('date') }}
                                     <div class="mb-3">
                                         <input type="date" name="fecha" value="{{ "now" | date('Y-m-d') }}"
                                                class="form-control" required/>
                                     </div>
                                 </div>
-                                <div class="col-sm">
+                                <div class="col-sm-6 col-md">
                                     {{ trans('concept') }}
                                     <div class="mb-3">
                                         <input type="text" name="concepto" value="{{ fsc.model.concepto }}"
                                                class="form-control" required/>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-6 col-md-2">
                                     {{ trans('daily') }}
                                     <div class="mb-3">
                                         <select name="iddiario" class="form-select">
@@ -63,7 +64,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-6 col-md-2">
                                     {{ trans('channel') }}
                                     <div class="mb-3">
                                         <input type="number" name="canal" value="{{ fsc.model.canal }}"

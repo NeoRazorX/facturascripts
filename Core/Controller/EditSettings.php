@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,6 +27,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditView;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -103,7 +104,7 @@ class EditSettings extends PanelController
         // find current default tax
         $taxModel = new Impuesto();
         $codimpuesto = Tools::settings('default', 'codimpuesto');
-        if ($taxModel->loadFromCode($codimpuesto)) {
+        if ($taxModel->load($codimpuesto)) {
             return true;
         }
 
@@ -120,7 +121,7 @@ class EditSettings extends PanelController
         // custom translation
         foreach ($types as $key => $value) {
             if (!empty($value->code)) {
-                $value->description = Tools::lang()->trans($value->code);
+                $value->description = Tools::trans($value->code);
             }
         }
 
@@ -161,12 +162,15 @@ class EditSettings extends PanelController
             ->addOrderBy(['id'], 'id')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['creationdate', 'id'], 'date', 2)
-            ->addSearchFields(['description', 'apikey', 'nick']);
+            ->addOrderBy(['lastactivity', 'id'], 'last-activity')
+            ->addSearchFields(['description', 'apikey', 'nick'])
+            ->addFilterCheckbox('enabled', 'enabled', 'enabled')
+            ->addFilterCheckbox('fullaccess', 'full-access', 'fullaccess');
     }
 
     protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal'): void
     {
-        $this->addEditListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card')
+        $this->addEditListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'fa-regular fa-id-card')
             ->setInLine(true);
     }
 
@@ -221,7 +225,7 @@ class EditSettings extends PanelController
 
         // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
-            $this->views[$viewName]->disableColumn('company');
+            $this->listView($viewName)->disableColumn('company');
         } else {
             // Filters with various companies
             $this->listView($viewName)->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
@@ -246,11 +250,11 @@ class EditSettings extends PanelController
         $this->listView($viewName)
             ->addFilterSelect('actualizastock', 'update-stock', 'actualizastock', [
                 ['code' => null, 'description' => '------'],
-                ['code' => -2, 'description' => Tools::lang()->trans('book')],
-                ['code' => -1, 'description' => Tools::lang()->trans('subtract')],
-                ['code' => 0, 'description' => Tools::lang()->trans('do-nothing')],
-                ['code' => 1, 'description' => Tools::lang()->trans('add')],
-                ['code' => 2, 'description' => Tools::lang()->trans('foresee')],
+                ['code' => -2, 'description' => Tools::trans('book')],
+                ['code' => -1, 'description' => Tools::trans('subtract')],
+                ['code' => 0, 'description' => Tools::trans('do-nothing')],
+                ['code' => 1, 'description' => Tools::trans('add')],
+                ['code' => 2, 'description' => Tools::trans('foresee')],
             ])
             ->addFilterCheckbox('predeterminado', 'default', 'predeterminado')
             ->addFilterCheckbox('editable', 'editable', 'editable');
@@ -315,6 +319,7 @@ class EditSettings extends PanelController
                 $this->loadLogoImageValues($viewName);
                 $this->loadSerie($viewName);
                 $this->loadSerieRectifying($viewName);
+                $this->loadRegimeValues($viewName);
                 break;
 
             default:
@@ -347,6 +352,14 @@ class EditSettings extends PanelController
         $columnPayment = $this->views[$viewName]->columnForName('payment-method');
         if ($columnPayment && $columnPayment->widget->getType() === 'select') {
             $columnPayment->widget->setValuesFromCodeModel($methods);
+        }
+    }
+
+    protected function loadRegimeValues(string $viewName): void
+    {
+        $columnVATRegime = $this->views[$viewName]->columnForName('vat-regime');
+        if ($columnVATRegime && $columnVATRegime->widget->getType() === 'select') {
+            $columnVATRegime->widget->setValuesFromArrayKeys(RegimenIVA::all(), true, true);
         }
     }
 

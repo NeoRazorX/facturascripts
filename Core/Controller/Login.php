@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,29 +24,46 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
-use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
 
+/**
+ * Controlador de la pantalla de login. Es el unico controlador que se ejecuta sin sesion previa,
+ * por lo que concentra todos los puntos de entrada anonimos: alta de sesion (login), validacion
+ * del segundo factor (2FA), cierre de sesion (logout) y cambio de contrasena por emergencia
+ * usando la contrasena de base de datos.
+ *
+ * Incluye la proteccion contra fuerza bruta basada en listas por IP y por usuario en cache,
+ * con un umbral de MAX_INCIDENT_COUNT incidentes en una ventana de INCIDENT_EXPIRATION_TIME
+ * segundos. El flujo de 2FA exige un nonce escrito por loginAction tras validar la contrasena,
+ * para evitar que el endpoint de validacion del codigo se use como puerta trasera sin password.
+ */
 class Login implements ControllerInterface
 {
     const INCIDENT_EXPIRATION_TIME = 600;
     const IP_LIST = 'login-ip-list';
     const MAX_INCIDENT_COUNT = 6;
+    const TWO_FACTOR_PENDING_TTL = 300;
     const USER_LIST = 'login-user-list';
+
+    // Hash bcrypt fijo para igualar tiempos cuando el usuario no existe.
+    // Nunca podrá verificarse contra ninguna contraseña real.
+    const DUMMY_PASSWORD_HASH = '$2y$12$ye/68ONwKIM9/446.2a5G.GFcYDXB0hxLxQr2YFl1BhQ1wjoHM6Fu';
 
     /** @var Empresa */
     public $empresa;
 
     /** @var string */
+    private $template = 'Login/Login.html.twig';
+
+    /** @var string */
     public $title = 'Login';
 
-    /** @var boolean */
-    private $two_factor_view = false;
-
+    /** @var string */
+    public $two_factor_user;
 
     public function __construct(string $className, string $url = '')
     {
@@ -69,7 +86,7 @@ class Login implements ControllerInterface
         $this->title = $this->empresa->nombrecorto;
 
         $request = Request::createFromGlobals();
-        $action = $request->request->get('action', $request->query->get('action', ''));
+        $action = $request->inputOrQuery('action', '');
 
         switch ($action) {
             case 'change-password':
@@ -84,60 +101,50 @@ class Login implements ControllerInterface
                 $this->logoutAction($request);
                 break;
 
-            case 'valid-totp':
-                $this->validCodeAction($request);
+            case 'two-factor-validation':
+                $this->twoFactorValidationAction($request);
                 break;
         }
 
-        if ($this->two_factor_view) {
-            echo Html::render('Login/TwoFactor.html.twig', [
-                'controllerName' => 'Login',
-                'debugBarRender' => false,
-                'fsc' => $this,
-                'template' => 'Login/TwoFactor.html.twig',
-            ]);
-            return;
-        }
-
-        echo Html::render('Login/Login.html.twig', [
+        echo Html::render($this->template, [
             'controllerName' => 'Login',
             'debugBarRender' => false,
             'fsc' => $this,
-            'template' => 'Login/Login.html.twig',
+            'template' => $this->template,
         ]);
     }
 
     public function saveIncident(string $ip, string $user = '', ?int $time = null): void
     {
-        // add the current IP to the list
+        // anadimos la IP actual a la lista
         $ipList = $this->getIpList();
         $ipList[] = [
             'ip' => $ip,
             'time' => ($time ?? time())
         ];
 
-        // save the list in cache
+        // guardamos la lista en cache
         Cache::set(self::IP_LIST, $ipList);
 
-        // if the user is not empty, save the incident
+        // si el usuario esta vacio (incidente solo por IP), no tocamos la lista de usuarios
         if (empty($user)) {
             return;
         }
 
-        // add the current user to the list
+        // anadimos el usuario actual a la lista
         $userList = $this->getUserList();
         $userList[] = [
             'user' => $user,
             'time' => ($time ?? time())
         ];
 
-        // save the list in cache
+        // guardamos la lista en cache
         Cache::set(self::USER_LIST, $userList);
     }
 
     public function userHasManyIncidents(string $ip, string $username = ''): bool
     {
-        // get ip count on the list
+        // contamos los incidentes para la IP
         $ipCount = 0;
         foreach ($this->getIpList() as $item) {
             if ($item['ip'] === $ip) {
@@ -148,7 +155,7 @@ class Login implements ControllerInterface
             return true;
         }
 
-        // get user count on the list
+        // contamos los incidentes para el usuario
         $userCount = 0;
         foreach ($this->getUserList() as $item) {
             if ($item['user'] === $username) {
@@ -164,44 +171,48 @@ class Login implements ControllerInterface
             return;
         }
 
-        $username = $request->request->get('fsNewUserPasswd');
+        $username = $request->input('fsNewUserPasswd');
         if ($this->userHasManyIncidents(Session::getClientIp(), $username)) {
             Tools::log()->warning('ip-banned');
             return;
         }
 
-        $dbPassword = $request->request->get('fsDbPasswd');
+        $dbPassword = $request->input('fsDbPasswd');
         if ($dbPassword !== Tools::config('db_pass')) {
             Tools::log()->warning('login-invalid-db-password');
             $this->saveIncident(Session::getClientIp(), $username);
             return;
         }
 
-        $password = $request->request->get('fsNewPasswd');
-        $password2 = $request->request->get('fsNewPasswd2');
+        $password = $request->input('fsNewPasswd');
+        $password2 = $request->input('fsNewPasswd2');
         if (empty($username) || empty($password) || empty($password2)) {
             Tools::log()->warning('login-empty-fields');
             return;
         }
 
         if ($password !== $password2) {
-            Tools::log()->warning('different-passwords', ['%userNick%' => $username]);
+            Tools::log()->warning('different-passwords', ['%userNick%' => htmlspecialchars($username)]);
             return;
         }
 
         $user = new User();
-        if (false === $user->loadFromCode($username)) {
-            Tools::log()->warning('login-user-not-found');
+        if (false === $user->load($username) || false === $user->enabled) {
+            Tools::log()->warning('login-password-fail');
             $this->saveIncident(Session::getClientIp(), $username);
             return;
         }
 
-        if (false === $user->enabled) {
-            Tools::log()->warning('login-user-disabled');
+        if (false === $user->setPassword($password)) {
+            Tools::log()->warning('weak-password', ['%userNick%' => htmlspecialchars($username)]);
             return;
         }
 
-        $user->setPassword($password);
+        // desactivamos el 2FA si estaba activado
+        if ($user->two_factor_enabled) {
+            $user->disableTwoFactor();
+        }
+
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');
             $this->saveIncident(Session::getClientIp(), $username);
@@ -216,14 +227,13 @@ class Login implements ControllerInterface
         $multiRequestProtection = new MultiRequestProtection();
 
         // si el usuario está autenticado, añadimos su nick a la semilla
-        $cookieNick = $request->cookies->get('fsNick', '');
+        $cookieNick = $request->cookie('fsNick', '');
         if ($cookieNick) {
             $multiRequestProtection->addSeed($cookieNick);
         }
 
         // comprobamos el token
-        $urlToken = $request->query->get('multireqtoken', '');
-        $token = $request->request->get('multireqtoken', $urlToken);
+        $token = $request->inputOrQuery('multireqtoken', '');
         if (empty($token) || false === $multiRequestProtection->validate($token)) {
             Tools::log()->warning('invalid-request');
             return false;
@@ -245,7 +255,7 @@ class Login implements ControllerInterface
             return [];
         }
 
-        // remove expired items
+        // descartamos los incidentes ya expirados
         $newList = [];
         foreach ($ipList as $item) {
             if (time() - $item['time'] < self::INCIDENT_EXPIRATION_TIME) {
@@ -262,7 +272,7 @@ class Login implements ControllerInterface
             return [];
         }
 
-        // remove expired items
+        // descartamos los incidentes ya expirados
         $newList = [];
         foreach ($userList as $item) {
             if (time() - $item['time'] < self::INCIDENT_EXPIRATION_TIME) {
@@ -278,77 +288,106 @@ class Login implements ControllerInterface
             return;
         }
 
-        $userName = $request->request->get('fsNick');
-        $password = $request->request->get('fsPassword');
+        $userName = $request->input('fsNick');
+        $password = $request->input('fsPassword');
         if (empty($userName) || empty($password)) {
             Tools::log()->warning('login-error-empty-fields');
             return;
         }
 
-        // check if the user is in the incident list
+        // si la IP o el usuario acumulan demasiados incidentes recientes, bloqueamos
         if ($this->userHasManyIncidents(Session::getClientIp(), $userName)) {
             Tools::log()->warning('ip-banned');
             return;
         }
 
         $user = new User();
-        if (false === $user->loadFromCode($userName)) {
-            Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($userName)]);
-            $this->saveIncident(Session::getClientIp());
+        if (false === $user->load($userName)) {
+            // ejecutamos un password_verify falso para igualar tiempos
+            // y evitar enumeración de usuarios por timing
+            password_verify($password, self::DUMMY_PASSWORD_HASH);
+            Tools::log()->warning('login-password-fail');
+            $this->saveIncident(Session::getClientIp(), $userName);
             return;
         }
 
-        if (false === $user->enabled) {
-            Tools::log()->warning('login-user-disabled');
-            return;
-        }
-
-        if (false === $user->verifyPassword($password)) {
+        if (false === $user->enabled || false === $user->verifyPassword($password)) {
             Tools::log()->warning('login-password-fail');
             $this->saveIncident(Session::getClientIp(), $userName);
             return;
         }
 
         if ($user->two_factor_enabled) {
-            $this->two_factor_view = true;
+            Cache::set($this->twoFactorPendingKey(Session::getClientIp(), $user->nick), time());
+            $this->two_factor_user = $user->nick;
+            $this->template = 'Login/TwoFactor.html.twig';
             return;
         }
 
         $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
-    protected function validCodeAction(Request $request): void
+    protected function twoFactorPendingKey(string $ip, string $userName): string
     {
-        $user = new User();
-        $user->loadFromCode($request->request->get('fsNick'));
+        return 'login-2fa-pending-' . sha1($ip . '|' . $userName);
+    }
 
-        if (!TwoFactorManager::verifyCode($user->two_factor_secret_key, $request->request->get('fsCode'))) {
-            Tools::log()->warning('login-2fa-fail');
+    protected function twoFactorValidationAction(Request $request): void
+    {
+        if (false === $this->validateFormToken($request)) {
             return;
         }
 
-        $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
+        $userName = $request->input('fsNick');
+        $ip = Session::getClientIp();
+
+        // rate-limit antes de hacer cualquier trabajo
+        if ($this->userHasManyIncidents($ip, $userName)) {
+            Tools::log()->warning('ip-banned');
+            return;
+        }
+
+        // exigimos que loginAction se haya completado con éxito recientemente
+        $pendingKey = $this->twoFactorPendingKey($ip, $userName);
+        $pendingAt = Cache::get($pendingKey);
+        if (!is_int($pendingAt) || time() - $pendingAt > self::TWO_FACTOR_PENDING_TTL) {
+            Tools::log()->warning('login-password-fail');
+            $this->saveIncident($ip, $userName);
+            return;
+        }
+
+        $user = new User();
+        if (
+            !$user->load($userName) || false === $user->enabled
+            || !$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))
+        ) {
+            Tools::log()->warning('two-factor-code-invalid');
+            $this->saveIncident($ip, $userName);
+            return;
+        }
+
+        // consumimos el nonce: un único intento exitoso por password-step
+        Cache::delete($pendingKey);
+
+        $this->updateUserAndRedirect($user, $ip, $request);
     }
 
     protected function updateUserAndRedirect(User $user, string $ip, Request $request): void
     {
-        // update user data
+        // actualizamos los datos del usuario y abrimos sesion
         Session::set('user', $user);
-        $browser = $request->headers->get('User-Agent');
+        $browser = $request->userAgent();
         $user->newLogkey($ip, $browser);
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');
             return;
         }
 
-        // save cookies
+        // guardamos las cookies de sesion
         $this->saveCookies($user, $request);
 
-        // redirect to the user's main page
-        if (empty($user->homepage)) {
-            $user->homepage = Tools::config('route') . '/';
-        }
-        header('Location: ' . $user->homepage);
+        // redirigimos a la pagina de inicio del usuario; homepageUrl() devuelve un nombre de controlador seguro
+        header('Location: ' . $user->homepageUrl());
     }
 
     protected function logoutAction(Request $request): void
@@ -357,13 +396,36 @@ class Login implements ControllerInterface
             return;
         }
 
-        // remove cookies
-        $path = Tools::config('route', '/');
-        setcookie('fsNick', '', time() - 3600, $path);
-        setcookie('fsLogkey', '', time() - 3600, $path);
-        setcookie('fsLang', '', time() - 3600, $path);
+        // invalidamos la logkey en el servidor para que la cookie robada no siga siendo válida
+        $cookieNick = $request->cookie('fsNick', '');
+        $cookieLogkey = $request->cookie('fsLogkey', '');
+        if ($cookieNick && $cookieLogkey) {
+            $user = new User();
+            if ($user->load($cookieNick) && $user->verifyLogkey($cookieLogkey)) {
+                $user->newLogkey(Session::getClientIp(), $request->userAgent());
+                $user->save();
+            }
+        }
 
-        // restart token
+        // limpiamos la sesión del lado servidor
+        Session::set('user', null);
+
+        // borramos las cookies con los mismos atributos que en saveCookies para que el navegador acepte el borrado
+        $path = Tools::config('route', '/');
+        $secure = $request->isSecure();
+        $options = [
+            'expires' => time() - 3600,
+            'path' => $path,
+            'domain' => '',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ];
+        setcookie('fsNick', '', $options);
+        setcookie('fsLogkey', '', $options);
+        setcookie('fsLang', '', $options);
+
+        // regeneramos la semilla del token anti-CSRF
         $multiRequestProtection = new MultiRequestProtection();
         $multiRequestProtection->clearSeed();
 
@@ -372,12 +434,17 @@ class Login implements ControllerInterface
 
     protected function saveCookies(User $user, Request $request): void
     {
-        $expiration = time() + (int)Tools::config('cookies_expire', 31536000);
-        $path = Tools::config('route', '/');
-        $secure = $request->isSecure();
+        $options = [
+            'expires' => time() + (int)Tools::config('cookies_expire', 31536000),
+            'path' => Tools::config('route', '/'),
+            'domain' => '',
+            'secure' => $request->isSecure(),
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ];
 
-        setcookie('fsNick', $user->nick, $expiration, $path, '', $secure, true);
-        setcookie('fsLogkey', $user->logkey, $expiration, $path, '', $secure, true);
-        setcookie('fsLang', $user->langcode, $expiration, $path, '', $secure, true);
+        setcookie('fsNick', $user->nick, $options);
+        setcookie('fsLogkey', $user->logkey, $options);
+        setcookie('fsLang', $user->langcode, $options);
     }
 }

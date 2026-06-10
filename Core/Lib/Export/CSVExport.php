@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Where;
 
 /**
  * Class to export data to CSV format.
@@ -31,7 +31,6 @@ use FacturaScripts\Core\Response;
  */
 class CSVExport extends ExportBase
 {
-
     const LIST_LIMIT = 1000;
 
     /**
@@ -90,7 +89,7 @@ class CSVExport extends ExportBase
      * Adds a new page with a table listing the model data.
      *
      * @param ModelClass $model
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -241,7 +240,7 @@ class CSVExport extends ExportBase
     public function show(Response &$response)
     {
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=' . $this->getFileName() . '.csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $this->getFileName() . '.csv');
         $response->setContent($this->getDoc());
     }
 
@@ -260,11 +259,22 @@ class CSVExport extends ExportBase
         foreach ($data as $row) {
             $line = [];
             foreach ($row as $cell) {
-                $line[] = is_string($cell) ? $this->getDelimiter() . $cell . $this->getDelimiter() : $cell;
+                $line[] = is_string($cell) ? $this->formatCell($cell) : $cell;
             }
 
             $this->csv[] = implode($this->separator, $line);
         }
+    }
+
+    private function formatCell(string $cell): string
+    {
+        $cell = $this->escapeSpreadsheetFormula($cell);
+        $delimiter = $this->getDelimiter();
+        if ($delimiter === '') {
+            return $cell;
+        }
+
+        return $delimiter . str_replace($delimiter, $delimiter . $delimiter, $cell) . $delimiter;
     }
 
     /**
@@ -275,7 +285,7 @@ class CSVExport extends ExportBase
     {
         $headers = [];
         foreach ($fields as $field) {
-            $headers[] = $this->getDelimiter() . utf8_decode($field) . $this->getDelimiter();
+            $headers[] = $this->formatCell((string)$field);
         }
         $this->csv[] = implode($this->separator, $headers);
     }

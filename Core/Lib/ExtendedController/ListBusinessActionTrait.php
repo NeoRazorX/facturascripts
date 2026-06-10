@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,21 +44,27 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonApproveDocument(string $viewName)
+    protected function addButtonApproveDocument(string $viewName, string $group = '')
     {
-        $this->addButton($viewName, [
+        $sameDateButton = [
             'action' => 'approve-document-same-date',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-calendar-check',
             'label' => 'approve-document-same-date'
-        ]);
-
-        $this->addButton($viewName, [
+        ];
+        $approveButton = [
             'action' => 'approve-document',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-check',
             'label' => 'approve-document'
-        ]);
+        ];
+        if ($group !== '') {
+            $sameDateButton['group'] = $group;
+            $approveButton['group'] = $group;
+        }
+
+        $this->addButton($viewName, $approveButton);
+        $this->addButton($viewName, $sameDateButton);
     }
 
     /**
@@ -67,7 +73,7 @@ trait ListBusinessActionTrait
      * @param string $viewName
      * @param string|null $code
      */
-    protected function addButtonGenerateAccountingInvoices(string $viewName, ?string $code = null): void
+    protected function addButtonGenerateAccountingInvoices(string $viewName, ?string $code = null, string $group = ''): void
     {
         $model = $this->views[$viewName]->model;
         if (false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
@@ -80,9 +86,9 @@ trait ListBusinessActionTrait
             new DataBaseWhere('total', 0, '!=')
         ];
 
-        if (false === empty($code) && property_exists($model, 'codcliente')) {
+        if (false === empty($code) && $model->hasColumn('codcliente')) {
             $where[] = new DataBaseWhere('codcliente', $code);
-        } elseif (false === empty($code) && property_exists($model, 'codproveedor')) {
+        } elseif (false === empty($code) && $model->hasColumn('codproveedor')) {
             $where[] = new DataBaseWhere('codproveedor', $code);
         }
 
@@ -90,12 +96,17 @@ trait ListBusinessActionTrait
             return;
         }
 
-        $this->addButton($viewName, [
+        $button = [
             'action' => 'generate-accounting-entries',
             'color' => 'warning',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entries'
-        ]);
+        ];
+        if ($group !== '') {
+            $button['group'] = $group;
+        }
+
+        $this->addButton($viewName, $button);
     }
 
     /**
@@ -103,13 +114,18 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonGroupDocument(string $viewName): void
+    protected function addButtonGroupDocument(string $viewName, string $group = ''): void
     {
-        $this->addButton($viewName, [
+        $button = [
             'action' => 'group-document',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'group-or-split'
-        ]);
+        ];
+        if ($group !== '') {
+            $button['group'] = $group;
+        }
+
+        $this->addButton($viewName, $button);
     }
 
     /**
@@ -117,14 +133,41 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonLockInvoice(string $viewName): void
+    protected function addButtonLockInvoice(string $viewName, string $group = ''): void
     {
-        $this->addButton($viewName, [
+        $button = [
             'action' => 'lock-invoice',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-lock fa-fw',
             'label' => 'lock-invoice'
-        ]);
+        ];
+        if ($group !== '') {
+            $button['group'] = $group;
+        }
+
+        $this->addButton($viewName, $button);
+    }
+
+    /**
+     * Adds button to pay invoices.
+     *
+     * @param string $viewName
+     */
+    protected function addButtonPayInvoice(string $viewName, string $group = ''): void
+    {
+        $button = [
+            'action' => 'pay-invoice',
+            'color' => 'outline-success',
+            'confirm' => 'true',
+            'icon' => 'fa-solid fa-check',
+            'label' => 'paid',
+            'type' => 'action'
+        ];
+        if ($group !== '') {
+            $button['group'] = $group;
+        }
+
+        $this->addButton($viewName, $button);
     }
 
     /**
@@ -136,8 +179,9 @@ trait ListBusinessActionTrait
     {
         $this->addButton($viewName, [
             'action' => 'pay-receipt',
+            'color' => 'outline-success',
             'confirm' => 'true',
-            'icon' => 'fa-solid fa-dollar-sign',
+            'icon' => 'fa-solid fa-check',
             'label' => 'paid',
             'type' => 'action'
         ]);
@@ -158,7 +202,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
@@ -274,7 +318,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
@@ -311,6 +355,61 @@ trait ListBusinessActionTrait
     }
 
     /**
+     * Sets all receipts of selected invoices as paid.
+     *
+     * @param mixed $codes
+     * @param TransformerDocument $model
+     * @param bool $allowUpdate
+     * @param DataBase $dataBase
+     * @param string $nick
+     *
+     * @return bool
+     */
+    protected function payInvoiceAction($codes, $model, $allowUpdate, $dataBase, $nick): bool
+    {
+        if (false === $allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === is_array($codes) || empty($model)) {
+            Tools::log()->warning('no-selected-item');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
+        }
+
+        if (count($codes) === 0) {
+            Tools::log()->warning('no-selected-item');
+            return true;
+        }
+
+        $dataBase->beginTransaction();
+        foreach ($codes as $code) {
+            if (false === $model->loadFromCode($code)) {
+                Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            foreach ($model->getReceipts() as $receipt) {
+                if ($receipt->pagado) {
+                    continue;
+                }
+                $receipt->nick = $nick;
+                $receipt->pagado = true;
+                if (false === $receipt->save()) {
+                    Tools::log()->error('record-save-error');
+                    $dataBase->rollback();
+                    return true;
+                }
+            }
+        }
+
+        $dataBase->commit();
+        Tools::log()->notice('record-updated-correctly');
+        $model->clear();
+        return true;
+    }
+
+    /**
      * Sets selected receipts as paid.
      *
      * @param mixed $codes
@@ -326,7 +425,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {

@@ -28,10 +28,15 @@ class UnsafeFile extends ErrorController
     {
         http_response_code(403);
 
-        $title = Tools::lang()->trans('unsafe-file');
-        $body = '<h1>' . $title . '</h1>'
-            . '<p>' . $this->exception->getMessage() . '</p>';
+        $title = '⛔ ' . Tools::trans('unsafe-file');
+        $content = '<h1>' . $title . '</h1>'
+            . '<p>' . Tools::trans('unsafe-file-p', ['%file%' => $this->exception->getMessage()]) . '</p>';
 
-        echo $this->htmlCard($title, $body, 'bg-danger');
+        echo $this->html(
+            $title,
+            $this->htmlContainer(
+                $this->htmlErrorCard($content)
+            )
+        );
     }
 }

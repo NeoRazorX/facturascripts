@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,20 +20,26 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Users;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
 use FacturaScripts\Core\Model\Base\GravatarTrait;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Agente as DinAgente;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
-use FacturaScripts\Core\Lib\TwoFactorManager;
+use FacturaScripts\Dinamic\Model\Role as DinRole;
+use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
+use FacturaScripts\Dinamic\Model\RoleUser as DinRoleUser;
+use FacturaScripts\Dinamic\Model\Serie as DinSerie;
 
 /**
  * Usuario de FacturaScripts.
  *
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
- * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ * @collaborator Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class User extends ModelClass
 {
@@ -52,6 +58,9 @@ class User extends ModelClass
 
     /** @var string */
     public $codalmacen;
+
+    /** @var string */
+    public $codserie;
 
     /** @var string */
     public $creationdate;
@@ -107,17 +116,30 @@ class User extends ModelClass
             return false;
         }
 
-        $roleUser = new RoleUser();
-        $roleUser->codrole = $code;
-        $roleUser->nick = $this->nick;
-        if (false === $roleUser->save()) {
+        // comprobamos si el usuario ya tiene el rol
+        foreach ($this->getRoles() as $role) {
+            if ($role->codrole === $code) {
+                return true;
+            }
+        }
+
+        // comprobamos si el rol existe
+        $role = new DinRole();
+        if (false === $role->load($code)) {
+            Tools::log()->error('role-not-found', ['%code%' => $code]);
+            return false;
+        }
+
+        // añadimos el rol al usuario
+        if (false === $role->addUser($this->nick)) {
+            Tools::log()->error('cant-add-role-to-user', ['%nick%' => $this->nick, '%role%' => $code]);
             return false;
         }
 
         // si el usuario no tiene página de inicio, la ponemos
         if (empty($this->homepage)) {
-            foreach ($roleUser->getRoleAccess() as $roleAccess) {
-                $this->homepage = $roleAccess->pagename;
+            foreach ($role->getAccesses() as $access) {
+                $this->homepage = $access->pagename;
                 if ('List' == substr($this->homepage, 0, 4)) {
                     break;
                 }
@@ -138,6 +160,12 @@ class User extends ModelClass
      */
     public function can(string $pageName, string $permission = 'access'): bool
     {
+        // si el usuario no existe (nick vacío), no puede acceder a nada
+        if (empty($this->nick)) {
+            Tools::log()->warning('no-user-specified');
+            return false;
+        }
+
         // si está desactivado, no puede acceder a nada
         if (false === $this->enabled) {
             return false;
@@ -147,11 +175,11 @@ class User extends ModelClass
         if ($this->admin) {
             // comprobamos si la página existe y si el permiso a comprobar no es only-owner-data
             $page = new DinPage();
-            return $page->loadFromCode($pageName) && $permission != 'only-owner-data';
+            return $page->load($pageName) && $permission != 'only-owner-data';
         }
 
         // si no es admin, comprobamos si tiene acceso a la página
-        foreach (RoleAccess::allFromUser($this->nick, $pageName) as $access) {
+        foreach (DinRoleAccess::allFromUser($this->nick, $pageName) as $access) {
             if ($access->can($permission)) {
                 return true;
             }
@@ -160,7 +188,7 @@ class User extends ModelClass
         return false;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->admin = false;
@@ -168,9 +196,16 @@ class User extends ModelClass
         $this->creationdate = Tools::date();
         $this->enabled = true;
         $this->idempresa = Tools::settings('default', 'idempresa', 1);
-        $this->langcode = FS_LANG;
+        $this->langcode = Tools::config('lang');
         $this->level = self::DEFAULT_LEVEL;
         $this->two_factor_enabled = false;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+
+        Users::clear();
     }
 
     public function delete(): bool
@@ -184,13 +219,55 @@ class User extends ModelClass
         return parent::delete();
     }
 
+    /**
+     * Desactiva la autenticación de dos factores para el usuario.
+     */
+    public function disableTwoFactor(): void
+    {
+        $this->two_factor_enabled = false;
+        $this->two_factor_secret_key = null;
+    }
+
+    /**
+     * Activa la autenticación de dos factores para el usuario.
+     *
+     * @return string La clave secreta generada para configurar la aplicación TOTP.
+     */
+    public function enableTwoFactor(string $key = ''): string
+    {
+        if ($this->two_factor_enabled) {
+            return $this->two_factor_secret_key;
+        }
+
+        $this->two_factor_enabled = true;
+        $this->two_factor_secret_key = empty($key) ?
+            TwoFactorManager::getSecretKey() :
+            $key;
+
+        return $this->two_factor_secret_key;
+    }
+
+    /**
+     * Devuelve los nombres de campos que no deben exponerse en la API.
+     *
+     * @return string[]
+     */
+    public function getApiFieldsToHide(): array
+    {
+        return ['password', 'logkey', 'two_factor_secret_key'];
+    }
+
+    /**
+     * Devuelve los roles asignados al usuario.
+     *
+     * @return Role[]
+     */
     public function getRoles(): array
     {
         $roles = [];
 
-        $roleUser = new RoleUser();
         $where = [new DataBaseWhere('nick', $this->nick)];
-        foreach ($roleUser->all($where, [], 0, 0) as $role) {
+        foreach (DinRoleUser::all($where, [], 0, 0) as $role) {
             $roles[] = $role->getRole();
         }
 
@@ -199,16 +276,18 @@ class User extends ModelClass
 
     public function getTwoFactorUrl(): string
     {
-        if (empty($this->two_factor_secret_key)) {
-            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
-        }
-
-        return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->two_factor_secret_key);
+        return TwoFactorManager::getQRCodeUrl(
+            $this->getCompany()->nombrecorto ?? 'FacturaScripts',
+            $this->email,
+            $this->two_factor_secret_key
+        );
     }
 
     public function getTwoFactorQR(): string
     {
-        return TwoFactorManager::getQRCodeImage($this->getTwoFactorUrl());
+        return $this->two_factor_enabled && !empty($this->two_factor_secret_key) ?
+            TwoFactorManager::getQRCodeImage($this->getTwoFactorUrl()) :
+            '';
     }
 
     public function install(): string
@@ -216,18 +295,50 @@ class User extends ModelClass
         // we need this models to be checked before
         new DinPage();
         new DinEmpresa();
+        new DinSerie();
 
         $nick = Tools::config('initial_user', 'admin');
         $pass = Tools::config('initial_pass', 'admin');
         $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ?
             $this->nick :
             Tools::config('initial_email', '');
+        $lang = Tools::config('lang');
 
         Tools::log()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
 
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,email,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
             . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT) . "','" . $email
-            . "',TRUE,TRUE,'1','1','" . FS_LANG . "','Wizard','99');";
+            . "',TRUE,TRUE,'1','1','" . $lang . "','Wizard','99');";
+    }
+
+    /**
+     * Devuelve un nombre de pagina seguro para redirigir tras login.
+     * Si la homepage del usuario no es un nombre de controlador valido o no existe en la tabla pages,
+     * se devuelve la homepage por defecto de la instalacion (o 'Dashboard' como ultimo recurso).
+     * Nunca devuelve una URL absoluta ni un path arbitrario, para evitar open-redirect.
+     */
+    public function homepageUrl(): string
+    {
+        $default = Tools::settings('default', 'homepage', 'Dashboard');
+        if (!self::isSafePageName($default)) {
+            $default = 'Dashboard';
+        }
+
+        if (!self::isSafePageName($this->homepage ?? '')) {
+            return $default;
+        }
+
+        $page = new DinPage();
+        if (false === $page->load($this->homepage)) {
+            return $default;
+        }
+
+        return $this->homepage;
+    }
+
+    private static function isSafePageName(string $name): bool
+    {
+        return $name !== '' && 1 === preg_match('/^[A-Za-z][A-Za-z0-9_]{0,49}$/', $name);
     }
 
     public function newLogkey(string $ipAddress, string $browser = ''): string
@@ -240,6 +351,24 @@ class User extends ModelClass
     public static function primaryColumn(): string
     {
         return 'nick';
+    }
+
+    public function removeRole(?string $code): bool
+    {
+        if (empty($code)) {
+            return false;
+        }
+
+        // comprobamos si el usuario tiene el rol
+        foreach ($this->getRoles() as $role) {
+            if ($role->codrole === $code) {
+                // eliminamos el rol del usuario
+                return $role->removeUser($this->nick);
+            }
+        }
+
+        Tools::log()->error('role-not-found', ['%code%' => $code]);
+        return false;
     }
 
     public function setPassword($value): bool
@@ -261,7 +390,7 @@ class User extends ModelClass
 
     public function test(): bool
     {
-        $this->nick = trim($this->nick);
+        $this->nick = trim($this->nick ?? '');
         if (1 !== preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
             Tools::log()->error(
                 'invalid-alphanumeric-code',
@@ -277,6 +406,15 @@ class User extends ModelClass
             return false;
         }
 
+        // homepage es FK a pages.name: siempre un nombre de controlador alfanumerico.
+        // Rechazamos cualquier otra cosa para evitar open-redirect al usarlo como Location tras login.
+        if (!empty($this->homepage) && false === self::isSafePageName($this->homepage)) {
+            Tools::log()->warning('invalid-alphanumeric-code', [
+                '%value%' => $this->homepage, '%column%' => 'homepage', '%min%' => '1', '%max%' => '50',
+            ]);
+            return false;
+        }
+
         if (empty($this->creationdate)) {
             $this->creationdate = Tools::date();
         }
@@ -286,19 +424,15 @@ class User extends ModelClass
         }
 
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
-        $this->lastbrowser = substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200);
+        $this->lastbrowser = mb_substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200, 'UTF-8');
 
-        // escapamos el html de lastip y comprobamos que no excede los 40 caracteres
-        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 40);
+        // escapamos el html de lastip y comprobamos que no excede los 45 caracteres
+        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 45);
 
         if ($this->admin) {
             $this->level = 99;
         } elseif ($this->level === null) {
             $this->level = 0;
-        }
-
-        if (empty($this->two_factor_secret_key)) {
-            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
         }
 
         return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
@@ -329,11 +463,26 @@ class User extends ModelClass
         return false;
     }
 
+    /**
+     * Verifica un código TOTP proporcionado por el usuario.
+     *
+     * @param string $code El código TOTP a verificar.
+     * @return bool Verdadero si el código es válido.
+     */
+    public function verifyTwoFactorCode(string $code): bool
+    {
+        if (!$this->two_factor_enabled || empty($this->two_factor_secret_key)) {
+            return false;
+        }
+
+        return TwoFactorManager::verifyCode($this->two_factor_secret_key, $code);
+    }
+
     protected function testPassword(): bool
     {
         if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
             if ($this->newPassword !== $this->newPassword2) {
-                Tools::log()->warning('different-passwords', ['%userNick%' => $this->primaryColumnValue()]);
+                Tools::log()->warning('different-passwords', ['%userNick%' => $this->nick]);
                 return false;
             }
 
@@ -346,9 +495,9 @@ class User extends ModelClass
         return true;
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
-        if (false === parent::saveInsert($values)) {
+        if (false === parent::saveInsert()) {
             return false;
         }
 
@@ -368,8 +517,8 @@ class User extends ModelClass
             return true;
         }
 
-        $agent = new Agente();
-        if (false === $agent->loadFromCode($this->codagente)) {
+        $agent = new DinAgente();
+        if (false === $agent->load($this->codagente)) {
             $this->codagente = null;
         }
 
@@ -385,7 +534,7 @@ class User extends ModelClass
         }
 
         $warehouse = new Almacen();
-        if (false === $warehouse->loadFromCode($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
+        if (false === $warehouse->load($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
             $this->codalmacen = Tools::settings('default', 'codalmacen');
             $this->idempresa = Tools::settings('default', 'idempresa');
         }

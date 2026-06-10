@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,20 +28,20 @@ final class FabricanteTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $manufacturer = new Fabricante();
         $manufacturer->codfabricante = 'Test';
         $manufacturer->nombre = 'Test Manufacturer';
         $this->assertTrue($manufacturer->save(), 'manufacturer-cant-save');
-        $this->assertNotNull($manufacturer->primaryColumnValue(), 'manufacturer-not-stored');
+        $this->assertNotNull($manufacturer->id(), 'manufacturer-not-stored');
         $this->assertTrue($manufacturer->exists(), 'manufacturer-cant-persist');
 
         // eliminamos
         $this->assertTrue($manufacturer->delete(), 'manufacturer-cant-delete');
     }
 
-    public function testCreateHtml()
+    public function testCreateHtml(): void
     {
         // creamos contenido con html
         $manufacturer = new Fabricante();
@@ -57,7 +57,7 @@ final class FabricanteTest extends TestCase
         $this->assertTrue($manufacturer->delete(), 'manufacturer-cant-delete');
     }
 
-    public function testCreateWithNewCode()
+    public function testCreateWithNewCode(): void
     {
         $manufacturer = new Fabricante();
         $manufacturer->nombre = 'Test Manufacturer with new code';

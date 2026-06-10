@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,7 +48,7 @@ class EditSerie extends EditController
         return $data;
     }
 
-    protected function createFormatView(string $viewName = 'ListFormatoDocumento')
+    protected function createFormatView(string $viewName = 'ListFormatoDocumento'): void
     {
         $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fa-solid fa-print');
         $this->views[$viewName]->addOrderBy(['tipodoc'], 'doc-type', 2);
@@ -57,30 +57,29 @@ class EditSerie extends EditController
         $this->views[$viewName]->disableColumn('serie');
     }
 
-    protected function createSequenceView(string $viewName = 'ListSecuenciaDocumento')
+    protected function createSequenceView(string $viewName = 'ListSecuenciaDocumento'): void
     {
-        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fa-solid fa-code');
-        $this->views[$viewName]->addOrderBy(['codejercicio', 'tipodoc'], 'exercise');
-        $this->views[$viewName]->addOrderBy(['tipodoc', 'codejercicio'], 'doc-type', 1);
-        $this->views[$viewName]->addSearchFields(['patron', 'tipodoc']);
-
-        // desactivamos la columna serie
-        $this->views[$viewName]->disableColumn('serie');
+        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fa-solid fa-code')
+            ->addOrderBy(['codejercicio', 'tipodoc'], 'exercise')
+            ->addOrderBy(['tipodoc', 'codejercicio'], 'doc-type', 1)
+            ->addSearchFields(['patron', 'tipodoc'])
+            ->disableColumn('serie');
 
         // desactivamos la columna empresa si solo hay una
         if ($this->empresa->count() < 2) {
-            $this->views[$viewName]->disableColumn('company');
+            $this->listView($viewName)->disableColumn('company');
         }
 
         // filtros
         $types = $this->codeModel->all('estados_documentos', 'tipodoc', 'tipodoc');
         foreach ($types as $value) {
             if (!empty($value->code)) {
-                $value->description = Tools::lang()->trans($value->code);
+                $value->description = Tools::trans($value->code);
             }
         }
-        $this->views[$viewName]->addFilterSelect('tipodoc', 'doc-type', 'tipodoc', $types);
-        $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
+        $this->listView($viewName)
+            ->addFilterSelect('tipodoc', 'doc-type', 'tipodoc', $types)
+            ->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
     }
 
     /**

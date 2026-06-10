@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Template;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\CronJob;
 
 abstract class CronClass
@@ -38,10 +38,10 @@ abstract class CronClass
     {
         $job = new CronJob();
         $where = [
-            new DataBaseWhere('jobname', $name),
-            new DataBaseWhere('pluginname', $this->pluginName)
+            Where::eq('jobname', $name),
+            Where::eq('pluginname', $this->pluginName)
         ];
-        if (false === $job->loadFromCode('', $where)) {
+        if (false === $job->loadWhere($where)) {
             // no se había ejecutado nunca, lo creamos
             $job->jobname = $name;
             $job->pluginname = $this->pluginName;

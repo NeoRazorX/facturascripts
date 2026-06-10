@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Daniel Fernández Giménez      <hola@danielfg.es>
+ * @author Daniel Fernández Giménez      <contacto@danielfg.es>
  */
 class EditEmpresa extends EditController
 {
@@ -51,7 +51,8 @@ class EditEmpresa extends EditController
     protected function checkViesAction(): bool
     {
         $model = $this->getModel();
-        if (false === $model->loadFromCode($this->request->get('code'))) {
+        $code = $this->request->input('code');
+        if (false === $model->loadFromCode($code)) {
             return true;
         }
 
@@ -65,6 +66,7 @@ class EditEmpresa extends EditController
     protected function createViews()
     {
         parent::createViews();
+
         $this->createViewWarehouse();
         $this->createViewBankAccounts();
         $this->createViewPaymentMethods();
@@ -150,11 +152,6 @@ class EditEmpresa extends EditController
         $columnVATType = $view->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
             $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all(), true);
-        }
-
-        $columnVATException = $view->columnForName('vat-exception');
-        if ($columnVATException && $columnVATException->widget->getType() === 'select') {
-            $columnVATException->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
     }
 }

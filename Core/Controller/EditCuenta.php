@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -105,7 +105,7 @@ class EditCuenta extends EditController
                 return true;
             }
 
-            $code = $this->request->query->get('code');
+            $code = $this->request->query('code');
             if (!empty($code)) {
                 $this->setTemplate(false);
                 $this->ledgerReport($code);
@@ -119,7 +119,7 @@ class EditCuenta extends EditController
     protected function ledgerReport(int $idAccount): void
     {
         $account = new Cuenta();
-        $account->loadFromCode($idAccount);
+        $account->load($idAccount);
         $request = $this->request->request->all();
 
         $ledger = new Ledger();
@@ -129,17 +129,17 @@ class EditCuenta extends EditController
             'grouped' => $request['groupingtype'],
             'account-from' => $account->codcuenta
         ]);
-        $title = Tools::lang()->trans('ledger') . ' ' . $account->codcuenta;
+        $title = Tools::trans('ledger') . ' ' . $account->codcuenta;
         $this->exportManager->newDoc($request['format'], $title);
         $this->exportManager->setCompany($account->getExercise()->idempresa);
 
         // añadimos la tabla de cabecera con la info del informe
         if ($request['format'] === 'PDF') {
             $titles = [[
-                Tools::lang()->trans('account') => $account->codcuenta,
-                Tools::lang()->trans('exercise') => $account->codejercicio,
-                Tools::lang()->trans('from-date') => $request['dateFrom'],
-                Tools::lang()->trans('until-date') => $request['dateTo']
+                Tools::trans('account') => $account->codcuenta,
+                Tools::trans('exercise') => $account->codejercicio,
+                Tools::trans('from-date') => $request['dateFrom'],
+                Tools::trans('until-date') => $request['dateTo']
             ]];
             $this->exportManager->addTablePage(array_keys($titles[0]), $titles);
         }
@@ -211,8 +211,8 @@ class EditCuenta extends EditController
     protected function prepareCuenta(BaseView $view): void
     {
         $cuenta = new Cuenta();
-        $idcuenta = $this->request->query->get('parent_idcuenta', '');
-        if (!empty($idcuenta) && $cuenta->loadFromCode($idcuenta)) {
+        $idcuenta = $this->request->query('parent_idcuenta', '');
+        if (!empty($idcuenta) && $cuenta->load($idcuenta)) {
             $view->model->codejercicio = $cuenta->codejercicio;
         }
     }
@@ -233,7 +233,7 @@ class EditCuenta extends EditController
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();
-        $exercise->loadFromCode($codeExercise);
+        $exercise->load($codeExercise);
 
         $model = $this->views[$viewName]->model;
         $model->dateFrom = $exercise->fechainicio;

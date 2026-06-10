@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Diario as DinDiario;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
@@ -33,10 +35,10 @@ use FacturaScripts\Dinamic\Model\RegularizacionImpuesto as DinRegularizacionImpu
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Asiento extends Base\ModelOnChangeClass
+class Asiento extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\ExerciseRelationTrait;
+    use ModelTrait;
+    use ExerciseRelationTrait;
 
     const OPERATION_GENERAL = null;
     const OPERATION_OPENING = 'A';
@@ -137,11 +139,12 @@ class Asiento extends Base\ModelOnChangeClass
      */
     public function accumulateAmounts(array &$detail)
     {
+        $nf0 = Tools::settings('default', 'decimals', 2);
         $haber = isset($detail['haber']) ? (float)$detail['haber'] : 0.0;
-        $this->importe += round($haber, FS_NF0);
+        $this->importe += round($haber, $nf0);
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->editable = true;
@@ -169,14 +172,15 @@ class Asiento extends Base\ModelOnChangeClass
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->warning('deleted-model', [
+        Tools::log(LogMessage::AUDIT_CHANNEL)->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
-            '%key%' => $this->primaryColumnValue(),
+            '%key%' => $this->id(),
             '%desc%' => $this->primaryDescription(),
             'model-class' => $this->modelClassName(),
-            'model-code' => $this->primaryColumnValue(),
+            'model-code' => $this->id(),
             'model-data' => $this->toArray()
         ]);
+
         return true;
     }
 
@@ -195,7 +199,7 @@ class Asiento extends Base\ModelOnChangeClass
             return false;
         }
 
-        return $this->editable || $this->previousData['editable'];
+        return $this->editable || $this->getOriginal('editable');
     }
 
     /**
@@ -216,7 +220,7 @@ class Asiento extends Base\ModelOnChangeClass
         $partida = new DinPartida();
         $partida->concepto = $this->concepto;
         $partida->documento = $this->documento;
-        $partida->idasiento = $this->primaryColumnValue();
+        $partida->idasiento = $this->id();
 
         if ($subcuenta) {
             $partida->setAccount($subcuenta);
@@ -255,7 +259,8 @@ class Asiento extends Base\ModelOnChangeClass
             $haber += $line->haber;
         }
 
-        return Utils::floatcmp($debe, $haber, FS_NF0, true);
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        return Tools::floatCmp($debe, $haber, $nf0, true);
     }
 
     /**
@@ -294,7 +299,7 @@ class Asiento extends Base\ModelOnChangeClass
     public function renumber(string $codejercicio): bool
     {
         $exercise = new DinEjercicio();
-        if (false === $exercise->loadFromCode($codejercicio)) {
+        if (false === $exercise->load($codejercicio)) {
             Tools::log()->error('exercise-not-found', ['%code%' => $codejercicio]);
             return false;
         } elseif (false === $exercise->isOpened()) {
@@ -305,10 +310,10 @@ class Asiento extends Base\ModelOnChangeClass
         $offset = 0;
         $number = 1;
         $sql = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
-            . ' WHERE codejercicio = ' . self::$dataBase->var2str($exercise->codejercicio)
+            . ' WHERE codejercicio = ' . self::db()->var2str($exercise->codejercicio)
             . " ORDER BY fecha ASC, CASE WHEN operacion = 'A' THEN 1 ELSE 2 END ASC, idasiento ASC";
 
-        $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
+        $rows = self::db()->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
         while (!empty($rows)) {
             if (false === $this->renumberAccEntries($rows, $number)) {
                 Tools::log()->warning('renumber-accounting-error', ['%exerciseCode%' => $codejercicio]);
@@ -316,7 +321,7 @@ class Asiento extends Base\ModelOnChangeClass
             }
 
             $offset += self::RENUMBER_LIMIT;
-            $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
+            $rows = self::db()->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
         }
         return true;
     }
@@ -337,14 +342,15 @@ class Asiento extends Base\ModelOnChangeClass
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->info('updated-model', [
+        Tools::log(LogMessage::AUDIT_CHANNEL)->info('updated-model', [
             '%model%' => $this->modelClassName(),
-            '%key%' => $this->primaryColumnValue(),
+            '%key%' => $this->id(),
             '%desc%' => $this->primaryDescription(),
             'model-class' => $this->modelClassName(),
-            'model-code' => $this->primaryColumnValue(),
+            'model-code' => $this->id(),
             'model-data' => $this->toArray()
         ]);
+
         return true;
     }
 
@@ -352,13 +358,14 @@ class Asiento extends Base\ModelOnChangeClass
     {
         $exercise = new DinEjercicio();
         $exercise->idempresa = $this->idempresa;
-        if ($exercise->loadFromDate($date)) {
-            $this->codejercicio = $exercise->codejercicio;
-            $this->fecha = $date;
-            return true;
+        if (false === $exercise->loadFromDate($date)) {
+            return false;
         }
 
-        return false;
+        $this->codejercicio = $exercise->codejercicio;
+        $this->fecha = $date;
+
+        return true;
     }
 
     public static function tableName(): string
@@ -385,12 +392,7 @@ class Asiento extends Base\ModelOnChangeClass
         return parent::test();
     }
 
-    /**
-     * @param string $field
-     *
-     * @return bool
-     */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'codejercicio':
@@ -399,7 +401,7 @@ class Asiento extends Base\ModelOnChangeClass
 
             case 'fecha':
                 $this->setDate($this->fecha);
-                if ($this->codejercicio != $this->previousData['codejercicio']) {
+                if ($this->codejercicio != $this->getOriginal('codejercicio')) {
                     Tools::log()->warning('cant-change-accounting-entry-exercise');
                     return false;
                 }
@@ -421,25 +423,20 @@ class Asiento extends Base\ModelOnChangeClass
     {
         $sql = '';
         foreach ($entries as $row) {
-            if (self::$dataBase->var2str($row['numero']) !== self::$dataBase->var2str($number)) {
+            if (self::db()->var2str($row['numero']) !== self::db()->var2str($number)) {
                 $sql .= 'UPDATE ' . static::tableName()
-                    . ' SET numero = ' . self::$dataBase->var2str($number)
-                    . ' WHERE idasiento = ' . self::$dataBase->var2str($row['idasiento']) . ';';
+                    . ' SET numero = ' . self::db()->var2str($number)
+                    . ' WHERE idasiento = ' . self::db()->var2str($row['idasiento']) . ';';
             }
             ++$number;
         }
-        return empty($sql) || self::$dataBase->exec($sql);
+        return empty($sql) || self::db()->exec($sql);
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         $this->numero = $this->newCode('numero');
-        return parent::saveInsert($values);
-    }
 
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['codejercicio', 'editable', 'fecha'];
-        parent::setPreviousData(array_merge($more, $fields));
+        return parent::saveInsert();
     }
 }

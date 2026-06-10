@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,47 +20,47 @@
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Description of SalesDocumentLine
+ * Línea de documento de venta.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 abstract class SalesDocumentLine extends BusinessDocumentLine
 {
-
     /**
-     * Line cost amount.
+     * Importe del coste de la línea.
      *
      * @var float
      */
     public $coste;
 
     /**
-     * False -> the quantity column is not displayed when printing.
+     * False -> no se muestra la columna de cantidad al imprimir.
      *
      * @var bool
      */
     public $mostrar_cantidad;
 
     /**
-     * False -> price, discount, tax and total columns are not displayed when printing.
+     * False -> no se muestran las columnas de precio, descuento, impuesto y total al imprimir.
      *
      * @var bool
      */
     public $mostrar_precio;
 
     /**
-     * Jump to a new page in the pdf if TRUE.
+     * Salto de página en el pdf si es TRUE.
      *
      * @var bool
      */
     public $salto_pagina;
 
     /**
-     * Reset the values of all model properties.
+     * Restablece los valores de todas las propiedades del modelo.
      */
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
+
         $this->coste = 0.00;
         $this->mostrar_cantidad = true;
         $this->mostrar_precio = true;

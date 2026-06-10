@@ -26,6 +26,9 @@ use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
+use FacturaScripts\Dinamic\Lib\TaxExceptions;
 
 /**
  * Controller to list the items in the Proveedor model
@@ -68,11 +71,11 @@ class ListProveedor extends ListController
         // filtros
         $values = [
             [
-                'label' => Tools::lang()->trans('suppliers'),
+                'label' => Tools::trans('suppliers'),
                 'where' => [new DataBaseWhere('codproveedor', null, 'IS NOT')]
             ],
             [
-                'label' => Tools::lang()->trans('all'),
+                'label' => Tools::trans('all'),
                 'where' => []
             ]
         ];
@@ -111,14 +114,14 @@ class ListProveedor extends ListController
 
         // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => Tools::lang()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => Tools::lang()->trans('all'), 'where' => []]
+            ['label' => Tools::trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => Tools::trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => Tools::trans('all'), 'where' => []]
         ]);
         $this->addFilterSelectWhere($viewName, 'type', [
-            ['label' => Tools::lang()->trans('all'), 'where' => []],
-            ['label' => Tools::lang()->trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
-            ['label' => Tools::lang()->trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
+            ['label' => Tools::trans('all'), 'where' => []],
+            ['label' => Tools::trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
+            ['label' => Tools::trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
         ]);
 
         $fiscalIds = $this->codeModel->all('proveedores', 'tipoidfiscal', 'tipoidfiscal');
@@ -128,7 +131,25 @@ class ListProveedor extends ListController
         $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', Retenciones::codeModel());
         $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', FormasPago::codeModel());
 
-        $vatRegimes = $this->codeModel->all('proveedores', 'regimeniva', 'regimeniva');
+        $vatRegimes = $this->codeModel->all('proveedores', 'regimeniva', 'regimeniva', true, [Where::isNotNull('regimeniva')]);
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
+
+        $operations = $this->codeModel->all('proveedores', 'operacion', 'operacion', true, [Where::isNotNull('operacion')]);
+        foreach ($operations as &$item) {
+            $operationKey = InvoiceOperation::get($item->code);
+            if (null !== $operationKey) {
+                $item->description = Tools::trans($operationKey);
+            }
+        }
+        $this->addFilterSelect($viewName, 'operation', 'operation', 'operacion', $operations);
+
+        $vatExceptions = $this->codeModel->all('proveedores', 'excepcioniva', 'excepcioniva', true, [Where::isNotNull('excepcioniva')]);
+        foreach ($vatExceptions as &$item) {
+            $operationKey = InvoiceOperation::get($item->code);
+            if (null !== $operationKey) {
+                $item->description = Tools::trans($operationKey);
+            }
+        }
+        $this->addFilterSelect($viewName, 'vat-exception', 'vat-exception', 'excepcioniva', $vatExceptions);
     }
 }

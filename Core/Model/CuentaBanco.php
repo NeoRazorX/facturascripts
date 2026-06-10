@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,14 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\BankAccount;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
+use FacturaScripts\Core\Model\Base\IbanTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
@@ -31,14 +34,20 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class CuentaBanco extends BankAccount
+class CuentaBanco extends ModelClass
 {
     use ModelTrait;
+    use CompanyRelationTrait;
+    use IbanTrait;
 
-    const SPECIAL_ACCOUNT = 'CAJA';
+    const SPECIAL_ACCOUNT = 'BANCO';
+    const SPECIAL_ACCOUNT_FALLBACK = 'CAJA';
 
     /** @var bool */
     public $activa;
+
+    /** @var string */
+    public $codcuenta;
 
     /** @var string */
     public $codsubcuenta;
@@ -46,49 +55,105 @@ class CuentaBanco extends BankAccount
     /** @var string */
     public $codsubcuentagasto;
 
-    /** @var int */
-    public $idempresa;
+    /** @var string */
+    public $descripcion;
 
     /** @var string */
     public $sufijosepa;
 
-    public function clear()
+    /** @var string */
+    public $swift;
+
+    public function clear(): void
     {
         parent::clear();
         $this->activa = true;
         $this->sufijosepa = '000';
     }
 
+    public function createSubcuenta(string $codejercicio): Subcuenta
+    {
+        // buscamos la cuenta padre en el ejercicio
+        $cuenta = $this->loadParentCuenta($codejercicio);
+        if (null === $cuenta) {
+            return new DinSubcuenta();
+        }
+
+        // obtenemos un código de subcuenta libre
+        $code = $this->getFreeSubaccountCode($cuenta, $codejercicio);
+        if (empty($code)) {
+            return new DinSubcuenta();
+        }
+
+        // creamos la subcuenta
+        $subAccount = $cuenta->createSubcuenta($code, $this->descripcion);
+        if (empty($subAccount->codsubcuenta)) {
+            return new DinSubcuenta();
+        }
+
+        // guardamos el código de subcuenta
+        $this->codsubcuenta = $subAccount->codsubcuenta;
+        $this->save();
+
+        return $subAccount;
+    }
+
+    private function getFreeSubaccountCode(Cuenta $cuenta, string $codejercicio): string
+    {
+        $ejercicio = new DinEjercicio();
+        if (false === $ejercicio->load($codejercicio)) {
+            return '';
+        }
+
+        $longsub = (int)$ejercicio->longsubcuenta;
+        $prefix = $cuenta->codcuenta;
+        $padLength = $longsub - strlen($prefix);
+        if ($padLength <= 0) {
+            return '';
+        }
+
+        $subcuenta = new DinSubcuenta();
+        $max = (int)str_repeat('9', $padLength);
+        for ($num = 1; $num <= $max; $num++) {
+            $candidate = $prefix . str_pad((string)$num, $padLength, '0', STR_PAD_LEFT);
+            $where = [
+                Where::eq('codejercicio', $codejercicio),
+                Where::eq('codsubcuenta', $candidate),
+            ];
+            if (false === $subcuenta->loadWhere($where)) {
+                return $candidate;
+            }
+        }
+
+        return '';
+    }
+
     public function getSubcuenta(string $codejercicio, bool $create): Subcuenta
     {
-        // si no hay una subcuenta definida, devolvemos la subcuenta especial de CAJA
+        // si no hay una subcuenta definida, devolvemos la subcuenta especial
         if (empty($this->codsubcuenta)) {
-            $especial = new DinCuentaEspecial();
-            if ($especial->loadFromCode(static::SPECIAL_ACCOUNT)) {
-                return $especial->getSubcuenta($codejercicio);
-            }
+            return $this->loadSpecialSubcuenta($codejercicio);
         }
 
         // buscamos la subcuenta
         $subcuenta = new DinSubcuenta();
         $where = [
-            new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
-            new DataBaseWhere('codejercicio', $codejercicio),
+            Where::eq('codsubcuenta', $this->codsubcuenta),
+            Where::eq('codejercicio', $codejercicio),
         ];
-        if ($subcuenta->loadFromCode('', $where)) {
+        if ($subcuenta->loadWhere($where)) {
             return $subcuenta;
         }
 
         // no la hemos encontrado, ¿La creamos?
         if ($create) {
-            // buscamos la cuenta especial
-            $especial = new DinCuentaEspecial();
-            if (false === $especial->loadFromCode(static::SPECIAL_ACCOUNT)) {
+            $cuenta = $this->loadParentCuenta($codejercicio);
+            if (null === $cuenta) {
                 return new DinSubcuenta();
             }
 
             // creamos la subcuenta
-            return $especial->getCuenta($codejercicio)->createSubcuenta($this->codsubcuenta, $this->descripcion);
+            return $cuenta->createSubcuenta($this->codsubcuenta, $this->descripcion);
         }
 
         // devolvemos una vacía
@@ -97,37 +162,68 @@ class CuentaBanco extends BankAccount
 
     public function getSubcuentaGastos(string $codejercicio, bool $create): Subcuenta
     {
-        // si no hay una subcuenta definida, devolvemos la subcuenta especial de CAJA
+        // si no hay una subcuenta definida, devolvemos la subcuenta especial
         if (empty($this->codsubcuentagasto)) {
-            $especial = new DinCuentaEspecial();
-            if ($especial->loadFromCode(static::SPECIAL_ACCOUNT)) {
-                return $especial->getSubcuenta($codejercicio);
-            }
+            return $this->loadSpecialSubcuenta($codejercicio);
         }
 
         // buscamos la subcuenta
         $subcuenta = new DinSubcuenta();
         $where = [
-            new DataBaseWhere('codsubcuenta', $this->codsubcuentagasto),
-            new DataBaseWhere('codejercicio', $codejercicio),
+            Where::eq('codsubcuenta', $this->codsubcuentagasto),
+            Where::eq('codejercicio', $codejercicio),
         ];
-        if ($subcuenta->loadFromCode('', $where)) {
+        if ($subcuenta->loadWhere($where)) {
             return $subcuenta;
         }
 
         // no la hemos encontrado, ¿La creamos?
         if ($create) {
-            // buscamos la cuenta especial
-            $especial = new DinCuentaEspecial();
-            if (false === $especial->loadFromCode(static::SPECIAL_ACCOUNT)) {
+            $cuenta = $this->loadParentCuenta($codejercicio);
+            if (null === $cuenta) {
                 return new DinSubcuenta();
             }
 
             // creamos la subcuenta
-            return $especial->getCuenta($codejercicio)->createSubcuenta($this->codsubcuentagasto, $this->descripcion);
+            return $cuenta->createSubcuenta($this->codsubcuentagasto, $this->descripcion);
         }
 
         // devolvemos una vacía
+        return new DinSubcuenta();
+    }
+
+    private function loadParentCuenta(string $codejercicio): ?Cuenta
+    {
+        // intentamos primero con BANCO; si no hay cuenta mapeada en el ejercicio, caemos a CAJA
+        foreach ([static::SPECIAL_ACCOUNT, static::SPECIAL_ACCOUNT_FALLBACK] as $code) {
+            $especial = new DinCuentaEspecial();
+            if (false === $especial->load($code)) {
+                continue;
+            }
+
+            $cuenta = $especial->getCuenta($codejercicio);
+            if (!empty($cuenta->codcuenta)) {
+                return $cuenta;
+            }
+        }
+
+        return null;
+    }
+
+    private function loadSpecialSubcuenta(string $codejercicio): Subcuenta
+    {
+        foreach ([static::SPECIAL_ACCOUNT, static::SPECIAL_ACCOUNT_FALLBACK] as $code) {
+            $especial = new DinCuentaEspecial();
+            if (false === $especial->load($code)) {
+                continue;
+            }
+
+            $subcuenta = $especial->getSubcuenta($codejercicio);
+            if (!empty($subcuenta->codsubcuenta)) {
+                return $subcuenta;
+            }
+        }
+
         return new DinSubcuenta();
     }
 
@@ -139,6 +235,11 @@ class CuentaBanco extends BankAccount
         return parent::install();
     }
 
+    public static function primaryColumn(): string
+    {
+        return 'codcuenta';
+    }
+
     public static function tableName(): string
     {
         return 'cuentasbanco';
@@ -146,15 +247,23 @@ class CuentaBanco extends BankAccount
 
     public function test(): bool
     {
+        $this->codcuenta = Tools::noHtml($this->codcuenta);
+        $this->codsubcuenta = Tools::noHtml($this->codsubcuenta);
+        $this->codsubcuentagasto = Tools::noHtml($this->codsubcuentagasto);
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->sufijosepa = Tools::noHtml($this->sufijosepa);
+        $this->swift = Tools::noHtml($this->swift);
+
+        if (!empty($this->codcuenta) && false === is_numeric($this->codcuenta)) {
+            Tools::log()->error('invalid-number', ['%number%' => $this->codcuenta]);
+            return false;
+        }
+
         if (empty($this->idempresa)) {
             $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
-        $this->codsubcuenta = Tools::noHtml($this->codsubcuenta);
-        $this->codsubcuentagasto = Tools::noHtml($this->codsubcuentagasto);
-        $this->sufijosepa = Tools::noHtml($this->sufijosepa);
-
-        return parent::test();
+        return parent::test() && $this->testIBAN();
     }
 
     public function url(string $type = 'auto', string $list = 'ListFormaPago?activetab=List'): string
@@ -162,17 +271,26 @@ class CuentaBanco extends BankAccount
         return parent::url($type, $list);
     }
 
-    protected function saveUpdate(array $values = []): bool
+    protected function saveInsert(): bool
     {
-        if (false === parent::saveUpdate($values)) {
+        if (empty($this->codcuenta)) {
+            $this->codcuenta = $this->newCode();
+        }
+
+        return parent::saveInsert();
+    }
+
+    protected function saveUpdate(): bool
+    {
+        if (false === parent::saveUpdate()) {
             return false;
         }
 
         // si ha cambiado el iban, añadimos un aviso al log
-        if (!empty($this->iban_old) && $this->iban_old !== $this->iban) {
-            Tools::log('audit')->warning('company-iban-changed', [
+        if (!empty($this->getOriginal('iban')) && $this->isDirty('iban')) {
+            Tools::log(LogMessage::AUDIT_CHANNEL)->warning('company-iban-changed', [
                 '%account%' => $this->codcuenta,
-                '%old%' => $this->iban_old,
+                '%old%' => $this->getOriginal('iban'),
                 '%new%' => $this->iban,
             ]);
         }

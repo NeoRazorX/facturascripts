@@ -1,7 +1,7 @@
 <?php namespace FacturaScripts\Dinamic\Lib\ListFilter;
 
 /**
- * Class created by Core/Base/PluginDeploy
+ * Class created by Core/Internal/PluginsDeploy
  * @author FacturaScripts <carlos@facturascripts.com>
  */
 abstract class BaseFilter extends \FacturaScripts\Core\Lib\ListFilter\BaseFilter

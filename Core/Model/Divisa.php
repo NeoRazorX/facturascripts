@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Divisas;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -75,13 +75,19 @@ class Divisa extends ModelClass
      */
     public $simbolo;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->descripcion = '';
         $this->tasaconv = 1.00;
         $this->tasaconvcompra = 1.00;
         $this->simbolo = '?';
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Divisas::clear();
     }
 
     public function delete(): bool
@@ -91,13 +97,7 @@ class Divisa extends ModelClass
             return false;
         }
 
-        if (parent::delete()) {
-            // limpiamos la caché
-            Divisas::clear();
-            return true;
-        }
-
-        return false;
+        return parent::delete();
     }
 
     /**
@@ -113,17 +113,6 @@ class Divisa extends ModelClass
     public static function primaryColumn(): string
     {
         return 'coddivisa';
-    }
-
-    public function save(): bool
-    {
-        if (parent::save()) {
-            // limpiamos la caché
-            Divisas::clear();
-            return true;
-        }
-
-        return false;
     }
 
     public static function tableName(): string

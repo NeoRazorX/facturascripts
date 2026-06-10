@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,12 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\Atributo;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Variante;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -56,20 +58,23 @@ final class VarianteTest extends TestCase
 
     public function testSetPriceWithTax(): void
     {
-        // creamos un producto con IVA 21%
+        $default_tax = Impuestos::default();
+
+        // creamos un producto con IVA predeterminado
         $producto = new Producto();
-        $producto->codimpuesto = 'IVA21';
+        $producto->codimpuesto = $default_tax->codimpuesto;
         $this->assertTrue($producto->save());
 
         // obtenemos la primera variante y le ponemos un precio con IVA
         $variante = $producto->getVariants()[0];
         $variante->setPriceWithTax(100);
 
-        // comprobamos que el precio sin IVA es correcto
-        $this->assertEquals(82.64463, $variante->precio);
-
         // comprobamos que el precio con IVA es correcto
         $this->assertEquals(100.00000, $variante->priceWithTax());
+
+        // comprobamos que el precio sin IVA es correcto
+        $price = round((100 * 100) / (100 + $default_tax->iva), 5);
+        $this->assertEquals($price, $variante->precio);
 
         // eliminamos el producto
         $this->assertTrue($producto->delete());
@@ -77,6 +82,11 @@ final class VarianteTest extends TestCase
 
     public function testSetPriceWithTaxSecondHand(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un producto de segunda mano con IVA 21%
         $producto = new Producto();
         $producto->codimpuesto = 'IVA21';

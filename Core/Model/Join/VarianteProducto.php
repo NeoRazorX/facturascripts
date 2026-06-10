@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Core\Model\Base\JoinModel;
+use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
 /**
@@ -31,23 +31,12 @@ use FacturaScripts\Dinamic\Model\Producto as DinProducto;
  */
 class VarianteProducto extends JoinModel
 {
-    /**
-     * Class constructor.
-     * Set master model for controller actions.
-     *
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->setMasterModel(new DinProducto());
     }
 
-    /**
-     * List of fields or columns to select clausule.
-     *
-     * @return array
-     */
     protected function getFields(): array
     {
         return [
@@ -69,11 +58,6 @@ class VarianteProducto extends JoinModel
         ];
     }
 
-    /**
-     * List of tables related to from clausule.
-     *
-     * @return string
-     */
     protected function getSQLFrom(): string
     {
         return 'variantes'
@@ -81,11 +65,6 @@ class VarianteProducto extends JoinModel
             . ' LEFT JOIN impuestos ON impuestos.codimpuesto = productos.codimpuesto';
     }
 
-    /**
-     * List of tables required for the execution of the view.
-     *
-     * @return array
-     */
     protected function getTables(): array
     {
         return ['productos', 'variantes', 'impuestos'];

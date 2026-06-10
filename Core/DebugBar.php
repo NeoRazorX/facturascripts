@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
@@ -34,6 +35,7 @@ class DebugBar
         $items = [];
         $this->addItemTimer($items);
         $this->addItemMemory($items);
+        $this->addItemDatabase($items);
         $this->addItemAssets($items);
         $this->addItemInputs($items);
         $this->addItemLogs($items);
@@ -47,8 +49,9 @@ class DebugBar
 
     public function renderHead(): string
     {
-        return '<link rel="stylesheet" href="' . FS_ROUTE . '/Dinamic/Assets/CSS/debugbar.css"/>'
-            . '<script src="' . FS_ROUTE . '/Dinamic/Assets/JS/DebugBar.js"></script>';
+        $route = Tools::config('route');
+        return '<link rel="stylesheet" href="' . $route . '/Dinamic/Assets/CSS/debugbar.css"/>'
+            . '<script src="' . $route . '/Dinamic/Assets/JS/DebugBar.js"></script>';
     }
 
     private function addItem(array &$items, string $label, array $data, bool $counter = false): void
@@ -66,6 +69,28 @@ class DebugBar
                 $this->addItem($items, $label, $data, true);
             }
         }
+    }
+
+    private function addItemDatabase(array &$items): void
+    {
+        $db = new DataBase();
+        $connected = $db->connected();
+
+        $icon = $connected ?
+            '<i class="fa-solid fa-database" style="color: #28a745;"></i>' :
+            '<i class="fa-solid fa-database" style="color: #dc3545;"></i>';
+
+        $label = $icon . ' DB';
+        $data = [
+            ['Status', $connected ? 'Connected' : 'Disconnected']
+        ];
+
+        if ($connected) {
+            $data[] = ['Type', $db->type()];
+            $data[] = ['Version', $db->version()];
+        }
+
+        $this->addItem($items, $label, $data);
     }
 
     private function addItemInputs(array &$items): void

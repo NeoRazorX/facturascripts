@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,6 +32,11 @@ final class Session
 {
     private static $data = [];
 
+    public static function clear(): void
+    {
+        self::$data = [];
+    }
+
     public static function get(string $key)
     {
         return self::$data[$key] ?? null;
@@ -40,7 +45,7 @@ final class Session
     public static function getClientIp(): string
     {
         foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
-            if (isset($_SERVER[$field])) {
+            if (!empty($_SERVER[$field])) {
                 return (string)$_SERVER[$field];
             }
         }

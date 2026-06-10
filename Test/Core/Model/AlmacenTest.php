@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -65,6 +66,73 @@ final class AlmacenTest extends TestCase
                 break;
             }
         }
+    }
+
+    public function testPropertiesLength(): void
+    {
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'apartado' => [10, 11],
+            'ciudad' => [100, 101],
+            'codpais' => [20, 21],
+            'codalmacen' => [4, 5],
+            'codpostal' => [10, 11],
+            'direccion' => [200, 201],
+            'nombre' => [100, 101],
+            'provincia' => [100, 101],
+            'telefono' => [30, 31],
+        ];
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos un nuevo almacén
+            $warehouse = new Almacen();
+
+            // campo obligatorio (not null)
+            $warehouse->nombre = 'Test Warehouse with new code';
+
+            // Asignamos el valor inválido en el campo a probar
+            $warehouse->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($warehouse->save(), "can-save-almacen-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $warehouse->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($warehouse->save(), "cannot-save-almacen-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($warehouse->delete(), "cannot-delete-almacen-{$campo}");
+        }
+    }
+
+    public function testHtmlOnFields(): void
+    {
+        // los campos de texto deben sanearse para evitar XSS almacenado
+        $warehouse = new Almacen();
+        $warehouse->codalmacen = 'TXSS';
+        $warehouse->nombre = '<script>alert("nom")</script>';
+        $warehouse->apartado = '<b>';
+        $warehouse->ciudad = '<script>alert("ciu")</script>';
+        $warehouse->codpostal = '<i>';
+        $warehouse->direccion = '<img src=x onerror=alert(1)>';
+        $warehouse->provincia = '"><svg/onload=alert(1)>';
+        $warehouse->telefono = '<b>900</b>';
+
+        $this->assertTrue($warehouse->save(), 'warehouse-cant-save-with-html');
+
+        // ningún campo debe contener caracteres < o >
+        foreach (['nombre', 'apartado', 'ciudad', 'codpostal', 'direccion', 'provincia', 'telefono'] as $field) {
+            $this->assertStringNotContainsString('<', $warehouse->{$field}, "warehouse-{$field}-not-sanitized");
+            $this->assertStringNotContainsString('>', $warehouse->{$field}, "warehouse-{$field}-not-sanitized");
+        }
+
+        $this->assertTrue($warehouse->delete(), 'warehouse-cant-delete');
+    }
+
+    public function testBadCodalmacen(): void
+    {
+        $warehouse = new Almacen();
+        $warehouse->codalmacen = 'BAD CODE!';
+        $warehouse->nombre = 'Test';
+        $this->assertFalse($warehouse->save(), 'warehouse-saved-with-bad-code');
     }
 
     protected function tearDown(): void

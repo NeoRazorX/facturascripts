@@ -34,23 +34,24 @@ final class DbUpdaterTest extends TestCase
 
     public function testTableXmlFileCanBeRead(): void
     {
-        $filePath = Tools::folder('Test', '__files', 'test_table.xml');
-        $structure = DbUpdater::readTableXml($filePath);
+        // leemos el xml
+        $file_path = Tools::folder('Test', '__files', 'test_table.xml');
+        $structure = DbUpdater::readTableXml($file_path);
         $this->assertNotEmpty($structure, 'empty-table-structure');
         $this->assertArrayHasKey('columns', $structure, 'columns-structure-not-found');
         $this->assertCount(10, $structure['columns'], 'missing-columns');
 
-        // check first column
+        // comprobamos la primera columna
         $this->assertArrayHasKey('debaja', $structure['columns'], 'column-debaja-not-found');
         $this->assertEquals('boolean', $structure['columns']['debaja']['type'], 'bad-column-debaja-type');
         $this->assertEquals('YES', $structure['columns']['debaja']['null'], 'bad-column-debaja-null');
         $this->assertEquals('false', $structure['columns']['debaja']['default'], 'bad-column-debaja-default');
 
-        // check other columns
+        // comprobamos otra columna
         $this->assertEquals('NO', $structure['columns']['importe']['null'], 'bad-column-importe-null');
         $this->assertEquals('', $structure['columns']['email']['default'], 'bad-column-email-default');
 
-        // check constraints
+        // comprobamos las restricciones y claves ajenas
         $this->assertArrayHasKey('constraints', $structure, 'constraints-structure-not-found');
         $this->assertCount(1, $structure['constraints'], 'missing-constraints');
         $this->assertArrayHasKey('test_table_pkey', $structure['constraints'], 'first-constraint-not-found');
@@ -58,19 +59,23 @@ final class DbUpdaterTest extends TestCase
 
     public function testCanCreateAndDropTable(): void
     {
-        $tableName = 'test_table';
-        $found = $this->db()->tableExists($tableName);
+        // comprobamos que la tabla no exista
+        $table_name = 'test_table';
+        $found = $this->db()->tableExists($table_name);
         $this->assertFalse($found, 'test-table-found-before-create');
 
-        $filePath = Tools::folder('Test', '__files', $tableName . '.xml');
-        $structure = DbUpdater::readTableXml($filePath);
-        $created = DbUpdater::createTable($tableName, $structure);
+        // creamos la tabla
+        $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
+        $structure = DbUpdater::readTableXml($file_path);
+        $created = DbUpdater::createTable($table_name, $structure);
         $this->assertTrue($created, 'test-table-not-created');
 
-        $exists = $this->db()->tableExists($tableName);
+        // comprobamos que existe
+        $exists = $this->db()->tableExists($table_name);
         $this->assertTrue($exists, 'test-table-not-exists');
 
-        $columns = $this->db()->getColumns($tableName);
+        // comprobamos las columnas
+        $columns = $this->db()->getColumns($table_name);
         $this->assertNotEmpty($columns, 'test-table-empty-columns');
         $this->assertArrayHasKey('debaja', $columns, 'column-debaja-not-found');
         $this->assertTrue(in_array($columns['debaja']['type'], ['boolean', 'tinyint(1)']), 'column-debaja-bad-type');
@@ -87,28 +92,29 @@ final class DbUpdaterTest extends TestCase
         $this->assertArrayHasKey('numero', $columns, 'column-numero-not-found');
         $this->assertArrayHasKey('observaciones', $columns, 'column-observaciones-not-found');
 
-        $dropped = DbUpdater::dropTable($tableName);
+        // eliminamos
+        $dropped = DbUpdater::dropTable($table_name);
         $this->assertTrue($dropped, 'test-table-not-dropped');
     }
 
     public function testCanAddColumnsAndConstraintsToTable(): void
     {
-        // create
-        $tableName = 'test_table';
-        $filePath = Tools::folder('Test', '__files', $tableName . '.xml');
-        $structure = DbUpdater::readTableXml($filePath);
-        $created = DbUpdater::createTable($tableName, $structure);
+        // creamos la tabla
+        $table_name = 'test_table';
+        $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
+        $structure = DbUpdater::readTableXml($file_path);
+        $created = DbUpdater::createTable($table_name, $structure);
         $this->assertTrue($created, 'test-table-not-created');
 
-        // update
+        // la actualizamos
         DbUpdater::rebuild();
-        $newFilePath = Tools::folder('Test', '__files', $tableName . '_update_1.xml');
-        $newStructure = DbUpdater::readTableXml($newFilePath);
-        $updated = DbUpdater::updateTable($tableName, $newStructure);
+        $new_file_path = Tools::folder('Test', '__files', $table_name . '_update_1.xml');
+        $new_structure = DbUpdater::readTableXml($new_file_path);
+        $updated = DbUpdater::updateTable($table_name, $new_structure);
         $this->assertTrue($updated, 'test-table-not-updated');
 
-        // check columns
-        $columns = $this->db()->getColumns($tableName);
+        // comprobamos las columnas
+        $columns = $this->db()->getColumns($table_name);
         $this->assertNotEmpty($columns, 'empty-columns');
         $this->assertCount(11, $columns, 'missing-columns');
         $this->assertArrayHasKey('email2', $columns, 'column-email2-not-found');
@@ -116,54 +122,122 @@ final class DbUpdaterTest extends TestCase
         $this->assertEquals('NO', $columns['email2']['is_nullable'], 'column-email2-bad-nullable');
         $this->assertNull($columns['email2']['default'], 'column-email2-bad-default');
 
-        // check constraints
-        $constraints = $this->db()->getConstraints($tableName);
+        // comprobamos las restricciones
+        $constraints = $this->db()->getConstraints($table_name);
         $this->assertNotEmpty($constraints, 'empty-constraints');
         $this->assertCount(2, $constraints, 'missing-constraints');
 
-        $dropped = DbUpdater::dropTable($tableName);
+        // eliminamos
+        $dropped = DbUpdater::dropTable($table_name);
         $this->assertTrue($dropped, 'test-table-not-dropped');
     }
 
     public function testCanUpdateTableColumnNullAndDefault(): void
     {
-        // create
-        $tableName = 'test_table';
-        $filePath = Tools::folder('Test', '__files', $tableName . '.xml');
-        $structure = DbUpdater::readTableXml($filePath);
-        $created = DbUpdater::createTable($tableName, $structure);
+        // creamos la tabla
+        $table_name = 'test_table';
+        $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
+        $structure = DbUpdater::readTableXml($file_path);
+        $created = DbUpdater::createTable($table_name, $structure);
         $this->assertTrue($created, 'test-table-not-created');
 
-        // update
+        // la actualizamos
         DbUpdater::rebuild();
-        $newFilePath = Tools::folder('Test', '__files', $tableName . '_update_2.xml');
-        $newStructure = DbUpdater::readTableXml($newFilePath);
-        $updated = DbUpdater::updateTable($tableName, $newStructure);
+        $new_file_path = Tools::folder('Test', '__files', $table_name . '_update_2.xml');
+        $new_structure = DbUpdater::readTableXml($new_file_path);
+        $updated = DbUpdater::updateTable($table_name, $new_structure);
         $this->assertTrue($updated, 'test-table-not-updated');
 
-        // check columns
-        $columns = $this->db()->getColumns($tableName);
+        // comprobamos las columnas
+        $columns = $this->db()->getColumns($table_name);
         $this->assertNotEmpty($columns, 'empty-columns');
         $this->assertCount(10, $columns, 'missing-columns');
 
-        // hora column
+        // comprobamos la columna hora
         $this->assertArrayHasKey('hora', $columns, 'column-hora-not-found');
         $this->assertEquals(0, strpos($columns['hora']['type'], 'time'), 'column-hora-bad-type');
         $this->assertEquals('NO', $columns['hora']['is_nullable'], 'column-hora-bad-nullable');
         $this->assertNull($columns['hora']['default'], 'column-hora-bad-default');
 
-        // importe column
+        // comprobamos la columna importe
         $this->assertArrayHasKey('importe', $columns, 'column-importe-not-found');
         $this->assertEquals(0, strpos($columns['importe']['type'], 'double'), 'column-importe-bad-type');
         $this->assertEquals('YES', $columns['importe']['is_nullable'], 'column-importe-bad-nullable');
 
-        // numero column
+        // comprobamos la columna numero
         $this->assertArrayHasKey('numero', $columns, 'column-numero-not-found');
         $this->assertEquals(0, strpos($columns['numero']['type'], 'int'), 'column-numero-bad-type');
         $this->assertEquals('NO', $columns['numero']['is_nullable'], 'column-numero-bad-nullable');
         $this->assertEquals('7', $columns['numero']['default'], 'column-numero-bad-default');
 
-        $dropped = DbUpdater::dropTable($tableName);
+        // eliminamos
+        $dropped = DbUpdater::dropTable($table_name);
+        $this->assertTrue($dropped, 'test-table-not-dropped');
+    }
+
+    public function testCanRenameColumns(): void
+    {
+        // creamos la tabla
+        $table_name = 'test_table';
+        $file_path = Tools::folder('Test', '__files', $table_name . '_update_2.xml');
+        $structure = DbUpdater::readTableXml($file_path);
+        $created = DbUpdater::createTable($table_name, $structure);
+        $this->assertTrue($created, 'test-table-not-created');
+
+        // comprobamos las columnas
+        $columns = $this->db()->getColumns($table_name);
+        $this->assertCount(10, $columns, 'missing-columns');
+
+        // existe la columna observaciones, pero no la columna notas
+        $this->assertArrayHasKey('observaciones', $columns, 'column-observaciones-not-found');
+        $this->assertArrayNotHasKey('notas', $columns, 'column-notas-found');
+
+        // actualizamos la tabla para que se renombre la columna observaciones
+        DbUpdater::rebuild();
+        $new_file_path = Tools::folder('Test', '__files', $table_name . '_update_3.xml');
+        $new_structure = DbUpdater::readTableXml($new_file_path);
+        $updated = DbUpdater::updateTable($table_name, $new_structure);
+        $this->assertTrue($updated, 'test-table-not-updated');
+
+        // comprobamos las columnas
+        $columns = $this->db()->getColumns($table_name);
+        $this->assertCount(10, $columns, 'missing-columns');
+
+        // ahora existe la columna notas, pero no la de observaciones
+        $this->assertArrayHasKey('notas', $columns, 'column-notas-not-found');
+        $this->assertArrayNotHasKey('observaciones', $columns, 'column-observaciones-found');
+
+        // eliminamos
+        $dropped = DbUpdater::dropTable($table_name);
+        $this->assertTrue($dropped, 'test-table-not-dropped');
+    }
+
+    public function testIndexes(): void
+    {
+        // creamos la tabla
+        $table_name = 'test_table';
+        $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
+        $structure = DbUpdater::readTableXml($file_path);
+        $created = DbUpdater::createTable($table_name, $structure);
+        $this->assertTrue($created, 'test-table-not-created');
+
+        // comprobamos que no hay índices
+        $indexes = $this->db()->getIndexes($table_name);
+        $this->assertEmpty($indexes, 'empty-indexes');
+
+        // actualizamos la tabla
+        DbUpdater::rebuild();
+        $new_file_path = Tools::folder('Test', '__files', $table_name . '_update_4.xml');
+        $new_structure = DbUpdater::readTableXml($new_file_path);
+        $updated = DbUpdater::updateTable($table_name, $new_structure);
+        $this->assertTrue($updated, 'test-table-not-updated');
+
+        // comprobamos que ahora hay un índice
+        $indexes = $this->db()->getIndexes($table_name);
+        $this->assertCount(1, $indexes, 'missing-indexes');
+
+        // eliminamos
+        $dropped = DbUpdater::dropTable($table_name);
         $this->assertTrue($dropped, 'test-table-not-dropped');
     }
 

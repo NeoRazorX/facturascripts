@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,14 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
+use FacturaScripts\Core\Model\Base\FiscalNumberTrait;
+use FacturaScripts\Core\Model\Base\GravatarTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
-use FacturaScripts\Dinamic\Model\Agente as DinAgente;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
-use FacturaScripts\Dinamic\Model\Pais as DinPais;
 use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 
 /**
@@ -34,9 +37,12 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Contacto extends Base\Contact
+class Contacto extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
+    use EmailAndPhonesTrait;
+    use FiscalNumberTrait;
+    use GravatarTrait;
 
     /** @var bool */
     public $aceptaprivacidad;
@@ -80,8 +86,23 @@ class Contacto extends Base\Contact
     /** @var string */
     public $empresa;
 
+    /** @var string */
+    public $fechaalta;
+
     /** @var int */
     public $idcontacto;
+
+    /** @var string */
+    public $langcode;
+
+    /** @var string */
+    public $nombre;
+
+    /** @var string */
+    public $observaciones;
+
+    /** @var bool */
+    public $personafisica;
 
     /** @var string */
     public $provincia;
@@ -98,12 +119,15 @@ class Contacto extends Base\Contact
         return Vies::check($this->cifnif ?? '', $codiso, $msg) === 1;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->aceptaprivacidad = false;
         $this->admitemarketing = false;
         $this->codpais = Tools::settings('default', 'codpais');
+        $this->fechaalta = Tools::date();
+        $this->personafisica = true;
+        $this->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
         $this->verificado = false;
     }
 
@@ -128,13 +152,7 @@ class Contacto extends Base\Contact
 
     public function country(): string
     {
-        $country = new DinPais();
-        $where = [new DataBaseWhere('codiso', $this->codpais)];
-        if ($country->loadFromCode($this->codpais) || $country->loadFromCode('', $where)) {
-            return Tools::fixHtml($country->nombre) ?? '';
-        }
-
-        return $this->codpais ?? '';
+        return Tools::fixHtml(Paises::get($this->codpais)->nombre) ?? $this->codpais ?? '';
     }
 
     /**
@@ -150,7 +168,7 @@ class Contacto extends Base\Contact
     public function getCustomer(bool $create = true): Cliente
     {
         $cliente = new DinCliente();
-        if ($this->codcliente && $cliente->loadFromCode($this->codcliente)) {
+        if ($this->codcliente && $cliente->load($this->codcliente)) {
             return $cliente;
         }
 
@@ -184,7 +202,7 @@ class Contacto extends Base\Contact
     public function getSupplier(bool $create = true): Proveedor
     {
         $proveedor = new DinProveedor();
-        if ($this->codproveedor && $proveedor->loadFromCode($this->codproveedor)) {
+        if ($this->codproveedor && $proveedor->load($this->codproveedor)) {
             return $proveedor;
         }
 
@@ -216,9 +234,10 @@ class Contacto extends Base\Contact
     public function install(): string
     {
         // we need this models to be checked before
-        new DinAgente();
-        new DinCliente();
-        new DinProveedor();
+        new Agente();
+        new Cliente();
+        new Pais();
+        new Proveedor();
 
         return parent::install();
     }
@@ -251,12 +270,17 @@ class Contacto extends Base\Contact
                 $this->direccion;
         }
 
-        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->apartado = Tools::noHtml($this->apartado) ?? '';
         $this->apellidos = Tools::noHtml($this->apellidos) ?? '';
         $this->cargo = Tools::noHtml($this->cargo) ?? '';
         $this->ciudad = Tools::noHtml($this->ciudad) ?? '';
+        $this->codpostal = Tools::noHtml($this->codpostal) ?? '';
+        $this->descripcion = Tools::noHtml($this->descripcion);
         $this->direccion = Tools::noHtml($this->direccion) ?? '';
         $this->empresa = Tools::noHtml($this->empresa) ?? '';
+        $this->langcode = Tools::noHtml($this->langcode) ?? '';
+        $this->nombre = Tools::noHtml($this->nombre) ?? '';
+        $this->observaciones = Tools::noHtml($this->observaciones) ?? '';
         $this->provincia = Tools::noHtml($this->provincia) ?? '';
         $this->web = Tools::noHtml($this->web) ?? '';
 
@@ -266,7 +290,7 @@ class Contacto extends Base\Contact
             return false;
         }
 
-        return parent::test();
+        return parent::test() && $this->testEmailAndPhones() && $this->testFiscalNumber();
     }
 
     public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string

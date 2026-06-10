@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,6 +32,7 @@ final class ResponseHeaders
             'X-Content-Type-Options' => 'nosniff',
             'X-Frame-Options' => 'SAMEORIGIN',
             'X-XSS-Protection' => '1; mode=block',
+            'Cache-Control' => 'private, no-cache, must-revalidate'
         ];
     }
 
@@ -43,6 +44,11 @@ final class ResponseHeaders
     public function get(string $name): string
     {
         return $this->data[$name] ?? '';
+    }
+
+    public function has(string $name): bool
+    {
+        return isset($this->data[$name]);
     }
 
     public function remove(string $name): self

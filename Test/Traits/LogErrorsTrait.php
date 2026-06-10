@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,14 +20,32 @@
 namespace FacturaScripts\Test\Traits;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Tools;
 
 trait LogErrorsTrait
 {
-    protected function logErrors()
+    protected function logErrors(bool $force = false): void
     {
-        if ($this->getStatus() > 1) {
+        if ($this->getStatus() > 1 || $force) {
             foreach (MiniLog::read('', ['critical', 'error', 'warning']) as $item) {
                 error_log($item['message']);
+                if (!empty($item['context'])) {
+                    error_log(print_r($item['context'], true));
+                }
+            }
+
+            // guardamos la lista de consultas sql en un archivo
+            $queries = [];
+            foreach (MiniLog::read('database') as $item) {
+                $queries[] = $item['message'];
+            }
+            $file_path = Tools::folder('MyFiles', 'test_error_' . date('Y-m-d_H-i-s_') . rand(0, 1000) . '.log');
+            file_put_contents($file_path, implode(PHP_EOL, $queries) . PHP_EOL, FILE_APPEND);
+            error_log('Database queries in ' . $file_path . PHP_EOL);
+
+            // mostramos las 5 últimas
+            foreach (array_slice($queries, -5) as $query) {
+                error_log($query);
             }
         }
 

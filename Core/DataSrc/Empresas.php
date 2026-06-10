@@ -72,11 +72,11 @@ final class Empresas implements DataSrcInterface
     public static function get($code): Empresa
     {
         foreach (self::all() as $item) {
-            if ($item->primaryColumnValue() == $code) {
+            if ($item->id() == $code) {
                 return $item;
             }
         }
 
-        return new Empresa();
+        return Empresa::find($code) ?? new Empresa();
     }
 }

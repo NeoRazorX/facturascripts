@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -181,12 +181,12 @@ abstract class BaseView
             'checkBoxes' => true,
             'clickable' => true,
             'customized' => false,
-            'itemLimit' => FS_ITEM_LIMIT,
+            'itemLimit' => Tools::settings('default', 'item_limit', 50),
             'megasearch' => false,
             'saveFilters' => false,
         ];
         $this->template = static::DEFAULT_TEMPLATE;
-        $this->title = Tools::lang()->trans($title);
+        $this->title = Tools::trans($title);
         $this->assets();
     }
 
@@ -280,6 +280,11 @@ abstract class BaseView
         $current = 1;
         $limit = (int)$this->settings['itemLimit'];
 
+        // Si limit es 0 o negativo, no tiene sentido paginar
+        if ($limit <= 0) {
+            return [];
+        }
+
         // add all pages
         while ($key2 < $this->count) {
             $pages[$key1] = [
@@ -360,7 +365,7 @@ abstract class BaseView
 
         $orderBy = ['nick' => 'ASC'];
         $where = $this->getPageWhere($user);
-        if ($this->pageOption->loadFromCode('', $where, $orderBy)) {
+        if ($this->pageOption->loadWhere($where, $orderBy)) {
             $this->settings['customized'] = true;
         } else {
             $viewName = explode('-', $this->name)[0];
@@ -373,6 +378,49 @@ abstract class BaseView
     public function setSettings(string $key, $value): BaseView
     {
         $this->settings[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Añade un botón a la vista. Si se pasa la clave 'group', el botón se
+     * añade como un ítem dentro del dropdown con ese nombre (en la fila de
+     * acciones).
+     *
+     * @param array $btnArray
+     *
+     * @return BaseView
+     */
+    public function addButton(array $btnArray): BaseView
+    {
+        if (isset($btnArray['group'])) {
+            $rowType = 'actions';
+        } else {
+            $rowType = isset($btnArray['row']) ? 'footer' : 'actions';
+        }
+        $row = $this->getRow($rowType);
+        if ($row) {
+            $row->addButton($btnArray);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Añade un grupo de botones (dropdown) a la fila de acciones de la vista.
+     * Después se pueden añadir botones a este grupo llamando a addButton()
+     * pasando la clave 'group' con el mismo nombre.
+     *
+     * @param array $groupArray
+     *
+     * @return BaseView
+     */
+    public function addButtonGroup(array $groupArray): BaseView
+    {
+        $row = $this->getRow('actions');
+        if ($row && method_exists($row, 'addButtonGroup')) {
+            $row->addButtonGroup($groupArray);
+        }
 
         return $this;
     }

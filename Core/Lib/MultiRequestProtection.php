@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Tools;
 
 /**
  * Class to prevent duplicated petitions.
@@ -45,14 +46,14 @@ class MultiRequestProtection
         }
     }
 
-    public function addSeed(string $seed)
+    public function addSeed(string $seed): void
     {
         self::$seed .= $seed;
     }
 
     public function clearSeed(): void
     {
-        self::$seed = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS;
+        self::$seed = PHP_VERSION . __FILE__ . Tools::config('db_name') . Tools::config('db_pass');
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * Class that gathers all the needed SQL sentences by the database engine
  *
@@ -27,7 +29,6 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class PostgresqlQueries implements DataBaseQueries
 {
-
     /**
      * Returns the needed SQL to convert a column to integer
      *
@@ -37,7 +38,7 @@ class PostgresqlQueries implements DataBaseQueries
      */
     public function sql2Int(string $colName): string
     {
-        return 'CAST(' . $colName . ' as INTEGER)';
+        return 'CAST(' . $colName . ' as BIGINT)';
     }
 
     /**
@@ -51,6 +52,9 @@ class PostgresqlQueries implements DataBaseQueries
      */
     public function sqlAddConstraint(string $tableName, string $constraintName, string $sql): string
     {
+        // reemplazamos (user) por ("user") para evitar problemas
+        $sql = str_replace('(user)', '("user")', $sql);
+
         return 'ALTER TABLE ' . $tableName . ' ADD CONSTRAINT ' . $constraintName . ' ' . $sql . ';';
     }
 
@@ -98,6 +102,20 @@ class PostgresqlQueries implements DataBaseQueries
     }
 
     /**
+     * Returns the SQL needed to add an index to a table
+     *
+     * @param string $tableName
+     * @param string $indexName
+     * @param string $columns
+     *
+     * @return string
+     */
+    public function sqlAddIndex(string $tableName, string $indexName, string $columns): string
+    {
+        return 'CREATE INDEX ' . $indexName . ' ON ' . $tableName . ' (' . $columns . ');';
+    }
+
+    /**
      * SQL statement to alter a null constraint in a table column
      *
      * @param string $tableName
@@ -141,7 +159,7 @@ class PostgresqlQueries implements DataBaseQueries
             . 'character_maximum_length, column_default as default,'
             . 'is_nullable'
             . ' FROM information_schema.columns'
-            . " WHERE table_catalog = '" . FS_DB_NAME . "'"
+            . " WHERE table_catalog = '" . Tools::config('db_name') . "'"
             . " AND table_name = '" . $tableName . "'"
             . ' ORDER BY 1 ASC;';
     }
@@ -199,10 +217,11 @@ class PostgresqlQueries implements DataBaseQueries
      * @param string $tableName
      * @param array $columns
      * @param array $constraints
+     * @param array $indexes
      *
      * @return string
      */
-    public function sqlCreateTable(string $tableName, array $columns, array $constraints): string
+    public function sqlCreateTable(string $tableName, array $columns, array $constraints, array $indexes): string
     {
         $serials = ['serial', 'bigserial'];
         $fields = '';
@@ -223,7 +242,8 @@ class PostgresqlQueries implements DataBaseQueries
         }
 
         return 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
-            . $this->sqlTableConstraints($constraints) . ');';
+            . $this->sqlTableConstraints($constraints) . ');'
+            . $this->sqlTableIndexes($tableName, $indexes);
     }
 
     /**
@@ -237,6 +257,11 @@ class PostgresqlQueries implements DataBaseQueries
     public function sqlDropConstraint(string $tableName, array $colData): string
     {
         return 'ALTER TABLE ' . $tableName . ' DROP CONSTRAINT ' . $colData['name'] . ';';
+    }
+
+    public function sqlDropIndex(string $tableName, array $colData): string
+    {
+        return 'DROP INDEX IF EXISTS ' . $colData['name'] . ';';
     }
 
     /**
@@ -260,7 +285,23 @@ class PostgresqlQueries implements DataBaseQueries
      */
     public function sqlIndexes(string $tableName): string
     {
-        return "SELECT indexname as Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
+        return "SELECT
+                  i.relname AS key_name,
+                  a.attname AS column_name
+                FROM
+                  pg_class t
+                JOIN
+                  pg_index ix ON t.oid = ix.indrelid
+                JOIN
+                  pg_class i ON i.oid = ix.indexrelid
+                JOIN
+                  pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(ix.indkey)
+                WHERE
+                  t.relkind = 'r'
+                  AND t.relname = '" . $tableName . "'
+                ORDER BY
+                  i.relname,
+                  a.attname;";
     }
 
     /**
@@ -271,6 +312,11 @@ class PostgresqlQueries implements DataBaseQueries
     public function sqlLastValue(): string
     {
         return 'SELECT lastval() as num;';
+    }
+
+    public function sqlRenameColumn(string $tableName, string $old_column, string $new_column): string
+    {
+        return 'ALTER TABLE ' . $tableName . ' RENAME COLUMN ' . $old_column . ' TO ' . $new_column . ';';
     }
 
     /**
@@ -291,9 +337,30 @@ class PostgresqlQueries implements DataBaseQueries
                 continue;
             }
 
-            if (FS_DB_FOREIGN_KEYS || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
+            if (Tools::config('db_foreign_keys') || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
+                // reemplazamos (user) por ("user") para evitar problemas
+                $res['constraint'] = str_replace('(user)', '("user")', $res['constraint']);
+
                 $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
             }
+        }
+
+        return $sql;
+    }
+
+    /**
+     * Generates the needed SQL to create the indexes in a table
+     *
+     * @param string $tableName
+     * @param array $xmlIndexes
+     *
+     * @return string
+     */
+    private function sqlTableIndexes(string $tableName, array $xmlIndexes): string
+    {
+        $sql = '';
+        foreach ($xmlIndexes as $idx) {
+            $sql .= ' CREATE INDEX fs_' . $idx['name'] . ' ON ' . $tableName . ' (' . $idx['columns'] . ');';
         }
 
         return $sql;

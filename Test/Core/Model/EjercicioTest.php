@@ -142,6 +142,143 @@ final class EjercicioTest extends TestCase
         $this->assertTrue($empresa2->delete());
     }
 
+    // Comprobar que no se puede crear un ejercicio con longsubcuenta fuera del rango permitido.
+    public function testLongsubcuentaLimit(): void
+    {
+        $nextYear = date('Y', strtotime(date('Y') . ' + 1 year'));
+
+        // intentamos crear un ejercicio con longsubcuenta = 0 (inválido)
+        $ejercicio = new Ejercicio();
+        $ejercicio->codejercicio = 't004';
+        $ejercicio->nombre = 'exercise-test';
+        $ejercicio->fechainicio = $nextYear . '-01-01';
+        $ejercicio->fechafin = $nextYear . '-12-31';
+        $ejercicio->longsubcuenta = 0;
+        $this->assertFalse($ejercicio->save(), 'exercise-should-not-save-with-longsubcuenta-0');
+
+        // intentamos crear un ejercicio con longsubcuenta = 3 (inválido)
+        $ejercicio->codejercicio = 't005';
+        $ejercicio->longsubcuenta = 3;
+        $this->assertFalse($ejercicio->save(), 'exercise-should-not-save-with-longsubcuenta-3');
+
+        // intentamos crear un ejercicio con longsubcuenta = 16 (inválido)
+        $ejercicio->codejercicio = 't006';
+        $ejercicio->longsubcuenta = 16;
+        $this->assertFalse($ejercicio->save(), 'exercise-should-not-save-with-longsubcuenta-16');
+
+        // intentamos crear un ejercicio con longsubcuenta = 20 (inválido)
+        $ejercicio->codejercicio = 't007';
+        $ejercicio->longsubcuenta = 20;
+        $this->assertFalse($ejercicio->save(), 'exercise-should-not-save-with-longsubcuenta-20');
+
+        // intentamos crear un ejercicio con longsubcuenta negativo (inválido)
+        $ejercicio->codejercicio = 't008';
+        $ejercicio->longsubcuenta = -5;
+        $this->assertFalse($ejercicio->save(), 'exercise-should-not-save-with-negative-longsubcuenta');
+
+        // creamos un ejercicio con longsubcuenta = 4 (válido - límite inferior)
+        $ejercicio->codejercicio = 't009';
+        $ejercicio->longsubcuenta = 4;
+        $this->assertTrue($ejercicio->save(), 'exercise-should-save-with-longsubcuenta-4');
+        $this->assertTrue($ejercicio->delete(), 'exercise-cant-delete');
+
+        // creamos un ejercicio con longsubcuenta = 10 (válido - valor por defecto)
+        $ejercicio->codejercicio = 't010';
+        $ejercicio->longsubcuenta = 10;
+        $this->assertTrue($ejercicio->save(), 'exercise-should-save-with-longsubcuenta-10');
+        $this->assertTrue($ejercicio->delete(), 'exercise-cant-delete');
+
+        // creamos un ejercicio con longsubcuenta = 15 (válido - límite superior)
+        $ejercicio->codejercicio = 't011';
+        $ejercicio->longsubcuenta = 15;
+        $this->assertTrue($ejercicio->save(), 'exercise-should-save-with-longsubcuenta-15');
+        $this->assertTrue($ejercicio->delete(), 'exercise-cant-delete');
+    }
+
+    // Comprobar que al crear ejercicios automáticamente se asignan los códigos alternativos correctos.
+    // La secuencia es: año (2098), 0098, 0+idempresa+98, 0001-9999.
+    public function testAlternativeCodesOnCreate(): void
+    {
+        $idempresa = 1;
+        $year = '2098';
+        $year2 = '98';
+        $inicio = $year . '-01-01';
+        $fin = $year . '-12-31';
+
+        // Creamos el primer ejercicio manualmente con código = año
+        $ej1 = new Ejercicio();
+        $ej1->idempresa = $idempresa;
+        $ej1->codejercicio = $year;
+        $ej1->nombre = 'alt-code-test-1';
+        $ej1->fechainicio = $inicio;
+        $ej1->fechafin = $fin;
+        $this->assertTrue($ej1->save(), 'exercise-1-should-save');
+
+        // Creamos una segunda empresa
+        $empresa2 = $this->getRandomCompany();
+        $this->assertTrue($empresa2->save());
+
+        // loadFromDate para empresa2 debe crear ejercicio con código 0098
+        $ej2 = new Ejercicio();
+        $ej2->idempresa = $empresa2->idempresa;
+        $this->assertTrue($ej2->loadFromDate($inicio));
+        $this->assertEquals('00' . $year2, $ej2->codejercicio, 'exercise-2-should-be-00' . $year2);
+
+        // Ocupamos el código 0+idempresa+98 manualmente para la siguiente prueba
+        $code3 = sprintf('%04s', '0' . $empresa2->idempresa . $year2);
+
+        // Creamos una tercera empresa
+        $empresa3 = $this->getRandomCompany();
+        $this->assertTrue($empresa3->save());
+
+        // loadFromDate para empresa3 debe crear ejercicio con código 0+idempresa+98
+        $ej3 = new Ejercicio();
+        $ej3->idempresa = $empresa3->idempresa;
+        $this->assertTrue($ej3->loadFromDate($inicio));
+        $this->assertEquals(
+            sprintf('%04s', '0' . $empresa3->idempresa . $year2),
+            $ej3->codejercicio,
+            'exercise-3-should-be-0' . $empresa3->idempresa . $year2
+        );
+
+        // Ocupamos también el código 0+idempresa4+98
+        $empresa4 = $this->getRandomCompany();
+        $this->assertTrue($empresa4->save());
+
+        // Creamos manualmente un ejercicio para ocupar el código que le correspondería
+        $code4 = sprintf('%04s', '0' . $empresa4->idempresa . $year2);
+        $ej4block = new Ejercicio();
+        $ej4block->idempresa = $empresa4->idempresa;
+        $ej4block->codejercicio = $code4;
+        $ej4block->nombre = 'alt-code-block';
+        $ej4block->fechainicio = '2097-01-01';
+        $ej4block->fechafin = '2097-12-31';
+        $this->assertTrue($ej4block->save(), 'exercise-block-should-save');
+
+        // loadFromDate para empresa4 debe caer en el rango 0001-9999
+        $ej4 = new Ejercicio();
+        $ej4->idempresa = $empresa4->idempresa;
+        $this->assertTrue($ej4->loadFromDate($inicio));
+        $this->assertNotEquals($year, $ej4->codejercicio);
+        $this->assertNotEquals('00' . $year2, $ej4->codejercicio);
+        $this->assertNotEquals($code4, $ej4->codejercicio);
+        $this->assertMatchesRegularExpression(
+            '/^\d{4}$/',
+            $ej4->codejercicio,
+            'exercise-4-should-be-numeric-4-digits'
+        );
+
+        // Eliminamos en orden inverso
+        $this->assertTrue($ej4->delete());
+        $this->assertTrue($ej4block->delete());
+        $this->assertTrue($ej3->delete());
+        $this->assertTrue($ej2->delete());
+        $this->assertTrue($ej1->delete());
+        $this->assertTrue($empresa4->delete());
+        $this->assertTrue($empresa3->delete());
+        $this->assertTrue($empresa2->delete());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

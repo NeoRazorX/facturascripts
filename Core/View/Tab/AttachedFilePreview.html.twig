@@ -4,30 +4,54 @@
 <div class="card shadow mb-3">
     <div class="card-body">
         <div class="dropdown">
-            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ trans('download-options') }}">
                 <i class="fa-solid fa-cloud-download-alt"></i> {{ trans('download') }}
             </button>
             <div class="dropdown-menu">
-                <a class="dropdown-item" target="_blank" href="{{ asset(file.url('download')) }}">
+                <a class="dropdown-item" target="_blank" href="{{ asset(file.url('download')) }}" aria-label="{{ trans('download-temporary-link') }}">
                     <i class="fa-regular fa-hourglass-half fa-fw me-1"></i> {{ trans('valid-for-day') }}
                 </a>
-                <a class="dropdown-item" target="_blank" href="{{ asset(file.url('download-permanent')) }}">
+                <a class="dropdown-item" target="_blank" href="{{ asset(file.url('download-permanent')) }}" aria-label="{{ trans('download-permanent-link') }}">
                     <i class="fa-solid fa-circle-check fa-fw me-1"></i> {{ trans('unlimited') }}
                 </a>
             </div>
         </div>
     </div>
     {% if file.isImage() %}
-        <img src="{{ asset(file.url('download')) }}" class="card-img-top" alt="{{ file.filename }}" />
+        <img src="{{ asset(file.url('download')) }}" class="card-img-top" alt="{{ file.filename }}" loading="lazy" />
     {% elseif file.isVideo() %}
-        <div class="embed-responsive embed-responsive-16by9">
-            <video width="320" height="240" controls>
-                <source src="{{ asset(file.url('download-permanent')) }}" type="video/mp4" />
+        <div class="ratio ratio-16x9">
+            <video controls aria-label="{{ trans('video-player') }}: {{ file.filename }}">
+                <source src="{{ asset(file.url('download-permanent')) }}" type="video/{{ file.getExtension() }}" />
+                {% if file.getExtension() == 'mp4' %}
+                    <source src="{{ asset(file.url('download-permanent')) }}" type="video/mp4" />
+                {% elseif file.getExtension() == 'webm' %}
+                    <source src="{{ asset(file.url('download-permanent')) }}" type="video/webm" />
+                {% elseif file.getExtension() == 'ogg' or file.getExtension() == 'ogv' %}
+                    <source src="{{ asset(file.url('download-permanent')) }}" type="video/ogg" />
+                {% endif %}
+                {{ trans('video-not-supported') }}
             </video>
         </div>
     {% elseif file.getExtension() == 'pdf' %}
-        <div class="embed-responsive embed-responsive-16by9">
-            <embed src="{{ asset(file.url('download-permanent')) }}" type="application/pdf" />
+        <div class="ratio ratio-4x3">
+            <embed src="{{ asset(file.url('download-permanent')) }}" type="application/pdf" aria-label="{{ trans('pdf-viewer') }}: {{ file.filename }}" />
+        </div>
+    {% elseif file.getExtension() in ['txt', 'log', 'md', 'csv'] %}
+        <div class="card-body">
+            <p class="text-muted">
+                <i class="fa-solid fa-file-alt fa-3x mb-2"></i><br/>
+                {{ trans('preview-not-available') }}<br/>
+                <small>{{ file.filename }}</small>
+            </p>
+        </div>
+    {% else %}
+        <div class="card-body text-center">
+            <i class="fa-solid fa-file fa-3x text-muted mb-2"></i>
+            <p class="text-muted">
+                {{ trans('file-type') }}: {{ file.getExtension()|upper }}<br/>
+                <small>{{ file.filename }}</small>
+            </p>
         </div>
     {% endif %}
 </div>

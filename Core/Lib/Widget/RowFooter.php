@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,6 @@ use FacturaScripts\Core\Tools;
  */
 class RowFooter extends VisualItem
 {
-
     /**
      * @var array
      */
@@ -41,7 +40,7 @@ class RowFooter extends VisualItem
         $this->children = $data['children'];
     }
 
-    public function addButton(array $btnArray)
+    public function addButton(array $btnArray): void
     {
         if (!isset($btnArray['tag'])) {
             $btnArray['tag'] = 'button';
@@ -81,7 +80,7 @@ class RowFooter extends VisualItem
     protected function renderCardFooter(array $group): string
     {
         if (isset($group['footer'])) {
-            return '<div class="card-footer">' . Tools::lang()->trans($group['footer']) . '</div>';
+            return '<div class="card-footer">' . Tools::trans($group['footer']) . '</div>';
         }
 
         return '';
@@ -90,7 +89,7 @@ class RowFooter extends VisualItem
     protected function renderCardHeader(array $group): string
     {
         if (isset($group['title'])) {
-            return '<div class="card-header">' . Tools::lang()->trans($group['title']) . '</div>';
+            return '<div class="card-header">' . Tools::trans($group['title']) . '</div>';
         }
 
         return '';
@@ -126,7 +125,7 @@ class RowFooter extends VisualItem
         }
 
         if (isset($group['label'])) {
-            $html .= '<p>' . Tools::lang()->trans($group['label']) . '</p>';
+            $html .= '<p>' . Tools::trans($group['label']) . '</p>';
         }
 
         $html .= '</div>'

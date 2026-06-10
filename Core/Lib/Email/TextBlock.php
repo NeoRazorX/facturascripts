@@ -25,7 +25,7 @@ use FacturaScripts\Core\Template\ExtensionsTrait;
  * Description of TextBlock
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class TextBlock extends BaseBlock
 {
@@ -39,6 +39,15 @@ class TextBlock extends BaseBlock
         $this->css = $css;
         $this->style = $style;
         $this->text = $text;
+    }
+
+    public static function fromShortcode(array $attrs, string $content): static
+    {
+        return new static(
+            $attrs['text'] ?? $content,
+            $attrs['css'] ?? '',
+            $attrs['style'] ?? ''
+        );
     }
 
     public function render(bool $footer = false): string

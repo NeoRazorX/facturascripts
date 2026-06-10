@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 
 /**
@@ -34,6 +33,8 @@ use FacturaScripts\Dinamic\Model\FormatoDocumento;
  */
 abstract class ExportBase
 {
+    private const SPREADSHEET_FORMULA_TRIGGERS = ['=', '+', '-', '@', "\t", "\r"];
+
     /** @var string */
     private $fileName;
 
@@ -128,7 +129,7 @@ abstract class ExportBase
             }
 
             if (!$col->hidden()) {
-                $titles[$col->widget->fieldname] = Tools::lang()->trans($col->title);
+                $titles[$col->widget->fieldname] = Tools::trans($col->title);
             }
         }
 
@@ -205,6 +206,26 @@ abstract class ExportBase
         return $data;
     }
 
+    protected function escapeSpreadsheetFormula(string $value): string
+    {
+        if ($value === '') {
+            return $value;
+        }
+
+        return in_array($value[0], self::SPREADSHEET_FORMULA_TRIGGERS, true) ? "'" . $value : $value;
+    }
+
+    protected function escapeSpreadsheetFormulaRow(array $row): array
+    {
+        foreach ($row as $key => $value) {
+            if (is_string($value)) {
+                $row[$key] = $this->escapeSpreadsheetFormula($value);
+            }
+        }
+
+        return $row;
+    }
+
     /**
      * @param BusinessDocument $model
      *
@@ -214,8 +235,8 @@ abstract class ExportBase
     {
         $documentFormat = new FormatoDocumento();
         $where = [
-            new DataBaseWhere('autoaplicar', true),
-            new DataBaseWhere('idempresa', $model->idempresa)
+            Where::eq('autoaplicar', true),
+            Where::eq('idempresa', $model->idempresa)
         ];
         foreach ($documentFormat->all($where, ['tipodoc' => 'DESC', 'codserie' => 'DESC']) as $format) {
             if ($format->tipodoc === $model->modelClassName() && $format->codserie === $model->codserie) {
@@ -233,12 +254,12 @@ abstract class ExportBase
     }
 
     /**
-     * @param ModelClass $model
+     * @param mixed $model
      * @param array $columns
      *
      * @return array
      */
-    protected function getModelColumnsData(ModelClass $model, array $columns): array
+    protected function getModelColumnsData(mixed $model, array $columns): array
     {
         $data = [];
         foreach ($columns as $col) {
@@ -255,7 +276,7 @@ abstract class ExportBase
 
             if (!$col->hidden()) {
                 $data[$col->widget->fieldname] = [
-                    'title' => Tools::lang()->trans($col->title),
+                    'title' => Tools::trans($col->title),
                     'value' => $col->widget->plainText($model)
                 ];
             }
@@ -295,14 +316,5 @@ abstract class ExportBase
         if (empty($this->fileName)) {
             $this->fileName = str_replace([' ', '"', "'", '/', '\\', ','], '_', Tools::fixHtml($name));
         }
-    }
-
-    /**
-     * @return ToolBox
-     * @deprecated since 2023.1
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 }

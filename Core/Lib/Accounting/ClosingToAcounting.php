@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
@@ -201,9 +201,9 @@ class ClosingToAcounting
         // find customer invoices without accounting entry
         $customerInvoice = new FacturaCliente();
         $whereMissing = [
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-            new DataBaseWhere('idasiento', null),
-            new DataBaseWhere('total', 0, '!=')
+            Where::eq('codejercicio', $this->exercise->codejercicio),
+            Where::isNull('idasiento'),
+            Where::notEq('total', 0)
         ];
         if ($customerInvoice->count($whereMissing) > 0) {
             Tools::log()->warning('invoice-without-acc-entry');
@@ -213,8 +213,8 @@ class ClosingToAcounting
         // close customer invoices
         $status1 = $customerInvoice->getAvailableStatus();
         $where = [
-            new DataBaseWhere('editable', true),
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio)
+            Where::eq('editable', true),
+            Where::eq('codejercicio', $this->exercise->codejercicio)
         ];
         foreach ($status1 as $stat) {
             if ($stat->editable || $stat->generadoc) {
@@ -224,6 +224,7 @@ class ClosingToAcounting
             foreach ($customerInvoice->all($where, [], 0, 0) as $invoice) {
                 $invoice->idestado = $stat->idestado;
                 if (false === $invoice->save()) {
+                    Tools::log()->error('cant-close-invoice-' . $invoice->idfactura);
                     return false;
                 }
             }
@@ -247,6 +248,7 @@ class ClosingToAcounting
             foreach ($supplierInvoice->all($where, [], 0, 0) as $invoice) {
                 $invoice->idestado = $stat->idestado;
                 if (false === $invoice->save()) {
+                    Tools::log()->error('cant-close-supplier-invoice-' . $invoice->idfactura);
                     return false;
                 }
             }
@@ -293,7 +295,7 @@ class ClosingToAcounting
     /**
      * Update special accounts from data file.
      */
-    protected function updateSpecialAccounts()
+    protected function updateSpecialAccounts(): void
     {
         $sql = CSVImport::updateTableSQL(CuentaEspecial::tableName());
         if (!empty($sql) && self::$dataBase->tableExists(CuentaEspecial::tableName())) {

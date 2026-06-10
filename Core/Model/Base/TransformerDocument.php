@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,15 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
- * Description of TransformerDocument
+ * Documento transformable en otro tipo de documento.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -37,29 +38,50 @@ abstract class TransformerDocument extends BusinessDocument
     /**
      * @var bool
      */
-    private static $documentGeneration = true;
+    private static $document_generation = true;
 
     /**
-     * Indicates whether the document can be modified
+     * Indica si el documento es editable.
      *
      * @var bool
      */
     public $editable;
 
     /**
-     * @var EstadoDocumento[]
-     */
-    private static $estados;
-
-    /**
-     * Document status, from EstadoDocumento model.
+     * Estado del documento, del modelo EstadoDocumento.
      *
      * @var int
      */
     public $idestado;
 
     /**
-     * Returns all children documents of this one.
+     * Estado anterior del documento, del modelo EstadoDocumento.
+     *
+     * @var int|null
+     */
+    public $idestado_ant;
+
+    /**
+     * Campos que se pueden modificar aunque el documento no sea editable.
+     *
+     * @var array
+     */
+    private static $unlocked_fields = ['femail', 'idestado', 'idestado_ant', 'numdocs', 'pagada'];
+
+    /**
+     * Añade un campo a la lista de campos desbloqueados (editables aunque el documento no sea editable).
+     *
+     * @param string $field
+     */
+    public static function addUnlockedField(string $field): void
+    {
+        if (false === in_array($field, self::$unlocked_fields, true)) {
+            self::$unlocked_fields[] = $field;
+        }
+    }
+
+    /**
+     * Devuelve todos los documentos hijos de este.
      *
      * @return TransformerDocument[]
      */
@@ -67,13 +89,12 @@ abstract class TransformerDocument extends BusinessDocument
     {
         $children = [];
         $keys = [];
-        $docTransformation = new DocTransformation();
         $where = [
-            new DataBaseWhere('model1', $this->modelClassName()),
-            new DataBaseWhere('iddoc1', $this->primaryColumnValue())
+            Where::eq('model1', $this->modelClassName()),
+            Where::eq('iddoc1', $this->id())
         ];
-        foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
-            // we use this key to load documents only once
+        foreach (DocTransformation::all($where, [], 0, 0) as $docTrans) {
+            // usamos esta clave para cargar documentos solo una vez
             $key = $docTrans->model2 . '|' . $docTrans->iddoc2;
             if (in_array($key, $keys, true)) {
                 continue;
@@ -95,14 +116,15 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
-     * Reset the values of all model properties.
+     * Restablece los valores de todas las propiedades del modelo.
      */
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
+
         $this->editable = true;
 
-        // select default status
+        // seleccionamos el estado predeterminado
         foreach ($this->getAvailableStatus() as $status) {
             if ($status->predeterminado) {
                 $this->idestado = $status->idestado;
@@ -113,7 +135,7 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
-     * Removes this document from the database.
+     * Elimina este documento de la base de datos.
      *
      * @return bool
      */
@@ -128,104 +150,128 @@ abstract class TransformerDocument extends BusinessDocument
             return false;
         }
 
-        // we check if there is already an open transaction so as not to break it
-        $newTransaction = false === static::$dataBase->inTransaction() && self::$dataBase->beginTransaction();
+        // obtenemos las líneas antes de abrir la transacción para que la comprobación de tablas ocurra fuera
+        $lines = $this->getLines();
 
-        // remove lines to update stock
-        foreach ($this->getLines() as $line) {
+        // comprobamos si ya hay una transacción abierta para no romperla
+        $newTransaction = false === static::db()->inTransaction() && self::db()->beginTransaction();
+
+        // eliminamos las líneas para actualizar el stock
+        foreach ($lines as $line) {
             if ($line->delete()) {
                 continue;
             }
             if ($newTransaction) {
-                self::$dataBase->rollback();
+                self::db()->rollback();
             }
             return false;
         }
 
-        // remove this model
+        // eliminamos este modelo
         if (false === parent::delete()) {
             if ($newTransaction) {
-                self::$dataBase->rollback();
+                self::db()->rollback();
             }
             return false;
         }
 
-        // load parents, remove relations and update servido column
+        // eliminamos las relaciones y actualizamos la columna servido
         $parents = $this->parentDocuments();
         $docTransformation = new DocTransformation();
-        $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue(), true);
+        $docTransformation->deleteFrom($this->modelClassName(), $this->id(), true);
 
-        // change parent doc status
+        // cambiamos el estado del documento padre
         foreach ($parents as $parent) {
+            $previousStatus = $parent->getPreviousStatus();
+            if ($previousStatus && empty($previousStatus->generadoc)) {
+                $parent->idestado = $previousStatus->idestado;
+                $parent->save();
+                continue;
+            }
+
             foreach ($parent->getAvailableStatus() as $status) {
-                if ($status->predeterminado) {
-                    $parent->idestado = $status->idestado;
-                    $parent->save();
-                    break;
+                if (!$status->predeterminado) {
+                    continue;
                 }
+
+                $parent->idestado = $status->idestado;
+                $parent->save();
+                break;
             }
         }
 
-        // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->warning('deleted-model', [
+        // añadimos el log de auditoría
+        Tools::log($this->getAuditChannel())->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
-            '%key%' => $this->primaryColumnValue(),
+            '%key%' => $this->id(),
             '%desc%' => $this->primaryDescription(),
             'model-class' => $this->modelClassName(),
-            'model-code' => $this->primaryColumnValue(),
+            'model-code' => $this->id(),
             'model-data' => $this->toArray()
         ]);
 
         if ($newTransaction) {
-            self::$dataBase->commit();
+            self::db()->commit();
         }
+
         return true;
     }
 
     /**
-     * Returns all available status for this type of document.
+     * Devuelve todos los estados disponibles para este tipo de documento.
      *
      * @return EstadoDocumento[]
      */
     public function getAvailableStatus(): array
     {
-        if (null === self::$estados) {
-            $statusModel = new EstadoDocumento();
-            self::$estados = $statusModel->all([], ['idestado' => 'ASC'], 0, 0);
-        }
-
-        $available = [];
-        foreach (self::$estados as $status) {
-            if ($status->tipodoc === $this->modelClassName()) {
-                $available[] = $status;
-            }
-        }
-
-        return $available;
+        return EstadosDocumentos::byTipoDoc($this->modelClassName());
     }
 
     /**
-     * Returns the EstadoDocumento model for this document.
+     * Devuelve el modelo EstadoDocumento de este documento.
      *
      * @return EstadoDocumento
      */
     public function getStatus(): EstadoDocumento
     {
+        return EstadosDocumentos::get($this->idestado);
+    }
+
+    /**
+     * Devuelve el modelo EstadoDocumento anterior de este documento.
+     *
+     * @return EstadoDocumento|null
+     */
+    public function getPreviousStatus(): ?EstadoDocumento
+    {
+        if (empty($this->idestado_ant)) {
+            return null;
+        }
+
         $status = new EstadoDocumento();
-        $status->loadFromCode($this->idestado);
-        return $status;
+        return $status->load($this->idestado_ant) ? $status : null;
+    }
+
+    /**
+     * Devuelve la lista de campos desbloqueados (editables aunque el documento no sea editable).
+     *
+     * @return array
+     */
+    public static function getUnlockedFields(): array
+    {
+        return self::$unlocked_fields;
     }
 
     public function install(): string
     {
-        // needed dependencies
+        // dependencias necesarias
         new EstadoDocumento();
 
         return parent::install();
     }
 
     /**
-     * Returns all parent document of this one.
+     * Devuelve todos los documentos padre de este.
      *
      * @return TransformerDocument[]
      */
@@ -233,13 +279,12 @@ abstract class TransformerDocument extends BusinessDocument
     {
         $parents = [];
         $keys = [];
-        $docTransformation = new DocTransformation();
         $where = [
-            new DataBaseWhere('model2', $this->modelClassName()),
-            new DataBaseWhere('iddoc2', $this->primaryColumnValue())
+            Where::eq('model2', $this->modelClassName()),
+            Where::eq('iddoc2', $this->id())
         ];
-        foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
-            // we use this key to load documents only once
+        foreach (DocTransformation::all($where, [], 0, 0) as $docTrans) {
+            // usamos esta clave para cargar documentos solo una vez
             $key = $docTrans->model1 . '|' . $docTrans->iddoc1;
             if (in_array($key, $keys, true)) {
                 continue;
@@ -261,50 +306,71 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
-     * Saves data in the database.
+     * Elimina un campo de la lista de campos desbloqueados.
+     *
+     * @param string $field
+     */
+    public static function removeUnlockedField(string $field): void
+    {
+        $key = array_search($field, self::$unlocked_fields, true);
+        if ($key !== false) {
+            unset(self::$unlocked_fields[$key]);
+            self::$unlocked_fields = array_values(self::$unlocked_fields);
+        }
+    }
+
+    /**
+     * Guarda los datos en la base de datos.
      *
      * @return bool
      */
     public function save(): bool
     {
-        // match editable with status
+        // igualamos editable con el estado
         $this->editable = $this->getStatus()->editable;
+
         return parent::save();
     }
 
-    public function setDocumentGeneration(bool $value)
+    public function setDocumentGeneration(bool $value): void
     {
-        self::$documentGeneration = $value;
+        self::$document_generation = $value;
     }
 
     /**
-     * Check changed fields before update the database.
+     * Comprueba los campos modificados antes de actualizar la base de datos.
      *
      * @param string $field
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
-        if (false === $this->editable && false === $this->previousData['editable'] && $field != 'idestado') {
+        // comprobamos si el campo está bloqueado cuando el documento no es editable
+        if (!$this->editable && !$this->getOriginal('editable') && !in_array($field, self::$unlocked_fields, true)) {
             Tools::log()->warning('non-editable-document');
             return false;
-        } elseif ($field !== 'idestado') {
+        }
+
+        if ($field !== 'idestado') {
             return parent::onChange($field);
         }
 
+        // guardamos el estado anterior real antes del cambio
+        $this->idestado_ant = $this->getOriginal('idestado');
+
         $status = $this->getStatus();
-        if (empty($status->generadoc) || false === self::$documentGeneration) {
-            // update lines to update stock
+        if (empty($status->generadoc) || false === self::$document_generation) {
+            // actualizamos las líneas para actualizar el stock
             foreach ($this->getLines() as $line) {
                 $line->actualizastock = $status->actualizastock;
                 $line->save();
             }
-            // do not generate a new document
+            // no generamos un nuevo documento
             return parent::onChange($field);
         }
 
-        // update lines to update stock and break down quantities
+        // actualizamos las líneas para actualizar el stock y desglosar cantidades
         $newLines = [];
         $quantities = [];
         foreach ($this->getLines() as $line) {
@@ -318,29 +384,18 @@ abstract class TransformerDocument extends BusinessDocument
             $line->save();
         }
 
-        // generate the new document, when there are no children
+        // generamos el nuevo documento, cuando no hay hijos
         $generator = new BusinessDocumentGenerator();
         if (empty($this->childrenDocuments())) {
             return $generator->generate($this, $status->generadoc) && parent::onChange($field);
         }
 
-        // generate the new document, when there are children
+        // generamos el nuevo documento, cuando hay hijos
         if ($newLines) {
             return $generator->generate($this, $status->generadoc, $newLines, $quantities) && parent::onChange($field);
         }
 
-        // no pending lines to generate a new document
+        // no hay líneas pendientes para generar un nuevo documento
         return true;
-    }
-
-    /**
-     * Sets fields to be watched.
-     *
-     * @param array $fields
-     */
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['editable', 'idestado'];
-        parent::setPreviousData(array_merge($more, $fields));
     }
 }

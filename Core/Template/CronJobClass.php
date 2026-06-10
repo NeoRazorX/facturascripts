@@ -104,7 +104,7 @@ abstract class CronJobClass
                     ->subject($subject)
                     ->body(
                         '<p>Hola ' . $user->nick . ",<br><br>" . nl2br($body)
-                        . '</p><br/><br/><p>Atentamente,<br/>el cron de FacturaSctipts</p>'
+                        . '</p><br/><br/><p>Atentamente,<br/>el cron de FacturaScripts</p>'
                     );
                 if (!$mail->send()) {
                     self::echo($body);

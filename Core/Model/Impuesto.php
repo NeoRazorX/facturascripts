@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cuenta as DinCuenta;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
@@ -55,6 +55,12 @@ class Impuesto extends ModelClass
     public $codsubcuentarep;
 
     /**
+     * Código de la subcuenta de IVA repercutido intracomunitario.
+     * @var string
+     */
+    public $codsubcuentarepintra;
+
+    /**
      * Código de la subcuenta de recargo de equivalencia para el IVA repercutido.
      * @var string
      */
@@ -67,6 +73,12 @@ class Impuesto extends ModelClass
     public $codsubcuentasop;
 
     /**
+     * Código de la subcuenta de IVA soportado intracomunitario.
+     * @var string
+     */
+    public $codsubcuentasopintra;
+
+    /**
      * Código de la subcuenta de recargo de equivalencia para el IVA soportado.
      * @var string
      */
@@ -74,6 +86,9 @@ class Impuesto extends ModelClass
 
     /** @var string */
     public $descripcion;
+
+    /** @var string */
+    public $operacion;
 
     /** @var int */
     public $tipo;
@@ -84,13 +99,19 @@ class Impuesto extends ModelClass
     /** @var float */
     public $recargo;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->activo = true;
         $this->iva = 0.0;
         $this->recargo = 0.0;
         $this->tipo = self::TYPE_PERCENTAGE;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Impuestos::clear();
     }
 
     public function delete(): bool
@@ -100,13 +121,14 @@ class Impuesto extends ModelClass
             return false;
         }
 
-        if (false === parent::delete()) {
-            return false;
-        }
+        return parent::delete();
+    }
 
-        // limpiamos la caché
-        Impuestos::clear();
-        return true;
+    public function getInputIntraTaxAccount(string $codejercicio): DinSubcuenta
+    {
+        return $this->codsubcuentasopintra ?
+            $this->getSubAccount($codejercicio, $this->codsubcuentasopintra, static::SPECIAL_TAX_SUPPORTED_ACCOUNT) :
+            $this->getInputTaxAccount($codejercicio);
     }
 
     public function getInputSurchargeAccount(string $codejercicio): DinSubcuenta
@@ -123,6 +145,13 @@ class Impuesto extends ModelClass
         return $this->codsubcuentasop ?
             $this->getSubAccount($codejercicio, $this->codsubcuentasop, static::SPECIAL_TAX_SUPPORTED_ACCOUNT) :
             $this->getSpecialSubAccount($codejercicio, static::SPECIAL_TAX_SUPPORTED_ACCOUNT);
+    }
+
+    public function getOutputIntraTaxAccount(string $codejercicio): DinSubcuenta
+    {
+        return $this->codsubcuentarepintra ?
+            $this->getSubAccount($codejercicio, $this->codsubcuentarepintra, static::SPECIAL_TAX_IMPACTED_ACCOUNT) :
+            $this->getOutputTaxAccount($codejercicio);
     }
 
     public function getOutputSurchargeAccount(string $codejercicio): DinSubcuenta
@@ -151,17 +180,6 @@ class Impuesto extends ModelClass
         return 'codimpuesto';
     }
 
-    public function save(): bool
-    {
-        if (false === parent::save()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        Impuestos::clear();
-        return true;
-    }
-
     public static function tableName(): string
     {
         return 'impuestos';
@@ -179,8 +197,10 @@ class Impuesto extends ModelClass
         }
 
         $this->codsubcuentarep = empty($this->codsubcuentarep) ? null : $this->codsubcuentarep;
+        $this->codsubcuentarepintra = empty($this->codsubcuentarepintra) ? null : $this->codsubcuentarepintra;
         $this->codsubcuentarepre = empty($this->codsubcuentarepre) ? null : $this->codsubcuentarepre;
         $this->codsubcuentasop = empty($this->codsubcuentasop) ? null : $this->codsubcuentasop;
+        $this->codsubcuentasopintra = empty($this->codsubcuentasopintra) ? null : $this->codsubcuentasopintra;
         $this->codsubcuentasopre = empty($this->codsubcuentasopre) ? null : $this->codsubcuentasopre;
         $this->descripcion = Tools::noHtml($this->descripcion);
 
@@ -195,7 +215,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codcuentaesp', $codcuentaesp),
         ];
-        if ($subcuenta->loadFromCode('', $whereSubcuenta)) {
+        if ($subcuenta->loadWhere($whereSubcuenta)) {
             return $subcuenta;
         }
 
@@ -205,7 +225,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codcuentaesp', $codcuentaesp),
         ];
-        if ($cuenta->loadFromCode('', $whereCuenta)) {
+        if ($cuenta->loadWhere($whereCuenta)) {
             foreach ($cuenta->getSubcuentas() as $subcuenta) {
                 return $subcuenta;
             }
@@ -222,7 +242,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codsubcuenta', $codsubcuenta),
         ];
-        if ($subcuenta->loadFromCode('', $whereSubcuenta)) {
+        if ($subcuenta->loadWhere($whereSubcuenta)) {
             return $subcuenta;
         }
 
@@ -232,7 +252,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codcuentaesp', $codcuentaesp),
         ];
-        if ($cuenta->loadFromCode('', $whereCuenta)) {
+        if ($cuenta->loadWhere($whereCuenta)) {
             // creamos la subcuenta
             $subcuenta->codejercicio = $codejercicio;
             $subcuenta->codcuenta = $cuenta->codcuenta;
@@ -246,13 +266,49 @@ class Impuesto extends ModelClass
         return $subcuenta;
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
-        // si no se ha asignado un código, lo generamos
         if (empty($this->codimpuesto)) {
-            $this->codimpuesto = (string)$this->newCode();
+            $this->codimpuesto = $this->newLetterCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
+    }
+
+    private function newLetterCode(): string
+    {
+        $desc = preg_replace('/[^A-Z]/i', '', strtoupper($this->descripcion ?? ''));
+        $pct = (int)$this->iva;
+
+        // try 3 letters + percentage
+        $prefix3 = substr($desc, 0, 3);
+        if (strlen($prefix3) === 3) {
+            $candidate = $prefix3 . $pct;
+            if (false === $this->codimpuestoExists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        // try 4 letters + percentage
+        $prefix4 = substr($desc, 0, 4);
+        if (strlen($prefix4) === 4) {
+            $candidate = $prefix4 . $pct;
+            if (false === $this->codimpuestoExists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return (string)$this->newCode();
+    }
+
+    private function codimpuestoExists(string $codimpuesto): bool
+    {
+        foreach (Impuestos::all() as $impuesto) {
+            if (strtoupper($impuesto->codimpuesto) === strtoupper($codimpuesto)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

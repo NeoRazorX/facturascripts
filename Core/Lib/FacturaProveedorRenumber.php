@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,12 +33,12 @@ class FacturaProveedorRenumber
     const RENUMBER_LIMIT = 1000;
 
     /** @var DataBase */
-    protected static $db;
+    private static $db;
 
     public static function run(string $codejercicio): bool
     {
         $exercise = new Ejercicio();
-        if (false === $exercise->loadFromCode($codejercicio)) {
+        if (false === $exercise->load($codejercicio)) {
             Tools::log()->error('exercise-not-found', ['%code%' => $codejercicio]);
             return false;
         }
@@ -48,27 +48,26 @@ class FacturaProveedorRenumber
             return false;
         }
 
-        self::$db = new DataBase();
-        self::$db->beginTransaction();
+        self::db()->beginTransaction();
 
         // cada serie tiene numeración independiente
         foreach (Series::all() as $serie) {
             // ordenamos facturas por fecha y hora
             $sql = 'SELECT idfactura,codejercicio,codigo,numero,fecha,hora FROM ' . FacturaProveedor::tableName()
-                . ' WHERE codejercicio = ' . self::$db->var2str($exercise->codejercicio)
-                . ' AND codserie = ' . self::$db->var2str($serie->codserie)
+                . ' WHERE codejercicio = ' . self::db()->var2str($exercise->codejercicio)
+                . ' AND codserie = ' . self::db()->var2str($serie->codserie)
                 . ' ORDER BY fecha ASC, hora ASC, idfactura ASC';
             $offset = 0;
-            $rows = self::$db->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
+            $rows = self::db()->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
             if (empty($rows)) {
                 continue;
             }
 
             // obtenemos una factura de muestra para obtener la secuencia
             $sample = new FacturaProveedor();
-            if (false === $sample->loadFromCode($rows[0]['idfactura'])) {
+            if (false === $sample->load($rows[0]['idfactura'])) {
                 Tools::log()->error('sample-invoice-not-found-' . $rows[0]['idfactura']);
-                self::$db->rollback();
+                self::db()->rollback();
                 return false;
             }
 
@@ -79,26 +78,36 @@ class FacturaProveedorRenumber
             while (!empty($rows)) {
                 if (false === static::renumberInvoices($rows, $number, $serie, $sequence)) {
                     Tools::log()->warning('renumber-invoices-error', ['%code%' => $codejercicio]);
-                    self::$db->rollback();
+                    self::db()->rollback();
                     return false;
                 }
 
                 $offset += self::RENUMBER_LIMIT;
-                $rows = self::$db->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
+                $rows = self::db()->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
             }
         }
 
-        self::$db->commit();
+        self::db()->commit();
         return true;
+    }
+
+    protected static function db(): DataBase
+    {
+        if (null === self::$db) {
+            self::$db = new DataBase();
+            self::$db->connect();
+        }
+
+        return self::$db;
     }
 
     protected static function renumberInvoices(array &$entries, int &$number, Serie $serie, SecuenciaDocumento $sequence): bool
     {
         $sql = '';
         foreach ($entries as $row) {
-            if (self::$db->var2str($row['numero']) !== self::$db->var2str($number)) {
+            if (self::db()->var2str($row['numero']) !== self::db()->var2str($number)) {
                 $document = new FacturaProveedor();
-                if (false === $document->loadFromCode($row['idfactura'])) {
+                if (false === $document->load($row['idfactura'])) {
                     Tools::log()->error('invoice-not-found-' . $row['idfactura']);
                     break;
                 }
@@ -109,41 +118,41 @@ class FacturaProveedorRenumber
 
                 // modificamos la factura que pueda tener ya el número y código que vamos a asignar
                 $sql .= 'UPDATE ' . FacturaProveedor::tableName()
-                    . ' SET numero = ' . self::$db->var2str($altNumber)
-                    . ', codigo = ' . self::$db->var2str('???-' . $altNumber)
-                    . ' WHERE codejercicio = ' . self::$db->var2str($row['codejercicio'])
-                    . ' AND (codigo = ' . self::$db->var2str($codigo)
-                    . ' OR (codserie = ' . self::$db->var2str($serie->codserie)
-                    . ' AND numero = ' . self::$db->var2str($number) . ')); ';
+                    . ' SET numero = ' . self::db()->var2str($altNumber)
+                    . ', codigo = ' . self::db()->var2str('???-' . $altNumber)
+                    . ' WHERE codejercicio = ' . self::db()->var2str($row['codejercicio'])
+                    . ' AND (codigo = ' . self::db()->var2str($codigo)
+                    . ' OR (codserie = ' . self::db()->var2str($serie->codserie)
+                    . ' AND numero = ' . self::db()->var2str($number) . ')); ';
 
                 // asignamos el nuevo número y código a la factura
                 $sql .= 'UPDATE ' . FacturaProveedor::tableName()
-                    . ' SET numero = ' . self::$db->var2str($number)
-                    . ', codigo = ' . self::$db->var2str($codigo)
-                    . ' WHERE idfactura = ' . self::$db->var2str($row['idfactura']) . '; ';
+                    . ' SET numero = ' . self::db()->var2str($number)
+                    . ', codigo = ' . self::db()->var2str($codigo)
+                    . ' WHERE idfactura = ' . self::db()->var2str($row['idfactura']) . '; ';
 
                 // modificamos los recibos de la factura
                 $sql .= 'UPDATE recibospagosprov'
-                    . ' SET codigofactura = ' . self::$db->var2str($codigo)
-                    . ' WHERE idfactura = ' . self::$db->var2str($row['idfactura']) . '; ';
+                    . ' SET codigofactura = ' . self::db()->var2str($codigo)
+                    . ' WHERE idfactura = ' . self::db()->var2str($row['idfactura']) . '; ';
 
                 if ($document->idasiento) {
                     // modificamos el asiento de la factura
                     $sql .= 'UPDATE asientos'
-                        . ' SET documento = ' . self::$db->var2str($codigo)
-                        . ', concepto = REPLACE(concepto, ' . self::$db->var2str($row['codigo'])
-                        . ', ' . self::$db->var2str($codigo) . ')'
-                        . ' WHERE idasiento = ' . self::$db->var2str($document->idasiento) . '; ';
+                        . ' SET documento = ' . self::db()->var2str($codigo)
+                        . ', concepto = REPLACE(concepto, ' . self::db()->var2str($row['codigo'])
+                        . ', ' . self::db()->var2str($codigo) . ')'
+                        . ' WHERE idasiento = ' . self::db()->var2str($document->idasiento) . '; ';
 
                     // modificamos las partidas del asiento de la factura
                     $sql .= 'UPDATE partidas'
-                        . ' SET concepto = REPLACE(concepto, ' . self::$db->var2str($row['codigo'])
-                        . ', ' . self::$db->var2str($codigo) . ')'
-                        . ' WHERE idasiento = ' . self::$db->var2str($document->idasiento) . '; ';
+                        . ' SET concepto = REPLACE(concepto, ' . self::db()->var2str($row['codigo'])
+                        . ', ' . self::db()->var2str($codigo) . ')'
+                        . ' WHERE idasiento = ' . self::db()->var2str($document->idasiento) . '; ';
                 }
             }
             ++$number;
         }
-        return empty($sql) || self::$db->exec($sql);
+        return empty($sql) || self::db()->exec($sql);
     }
 }

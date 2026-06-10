@@ -23,39 +23,56 @@ use FacturaScripts\Core\Internal\Headers;
 use FacturaScripts\Core\Internal\RequestFiles;
 use FacturaScripts\Core\Internal\SubRequest;
 
+/**
+ * Encapsula la petición HTTP entrante (cookies, archivos, cabeceras, parámetros GET/POST y cuerpo).
+ * Se construye normalmente desde las superglobales mediante createFromGlobals(),
+ * pero también admite datos arbitrarios para facilitar los tests.
+ */
 final class Request
 {
     const METHOD_GET = 'GET';
+    const METHOD_PATCH = 'PATCH';
     const METHOD_POST = 'POST';
+    const METHOD_PUT = 'PUT';
 
-    /** @var SubRequest */
+    /** Cookies de la petición ($_COOKIE). @var SubRequest */
     public $cookies;
 
-    /** @var RequestFiles */
+    /** Archivos subidos ($_FILES). @var RequestFiles */
     public $files;
 
-    /** @var Headers */
+    /** Cabeceras HTTP derivadas de $_SERVER. @var Headers */
     public $headers;
 
-    /** @var SubRequest */
+    /** Parámetros de la query string ($_GET). @var SubRequest */
     public $query;
 
-    /** @var SubRequest */
+    /** Cuerpo crudo de la petición; si es null se lee de php://input bajo demanda. @var string|null */
+    private $rawInput;
+
+    /** Parámetros del cuerpo de la petición ($_POST y PUT/PATCH form-urlencoded). @var SubRequest */
     public $request;
 
+    /**
+     * @param array $data Claves opcionales: cookies, files, headers, query, request, input.
+     */
     public function __construct(array $data = [])
     {
         $this->cookies = new SubRequest($data['cookies'] ?? []);
         $this->files = new RequestFiles($data['files'] ?? []);
         $this->headers = new Headers($data['headers'] ?? []);
         $this->query = new SubRequest($data['query'] ?? []);
+        $this->rawInput = $data['input'] ?? null;
         $this->request = new SubRequest($data['request'] ?? []);
     }
 
+    /**
+     * @deprecated use request->all() or query->all() instead
+     */
     public function all(string ...$key): array
     {
         if (empty($key)) {
-            return array_merge($this->query->all(), $this->request->all());
+            return array_merge($this->request->all(), $this->query->all());
         }
 
         $result = [];
@@ -65,13 +82,17 @@ final class Request
         return $result;
     }
 
+    /**
+     * Detecta el navegador a partir del User-Agent.
+     * @return string chrome, edge, firefox, safari, opera, ie o unknown.
+     */
     public function browser(): string
     {
         $userAgent = $this->userAgent();
         if (stripos($userAgent, 'chrome') !== false) {
             return 'chrome';
         }
-        if (stripos($userAgent, 'edge') !== false) {
+        if (stripos($userAgent, 'edg/') !== false || stripos($userAgent, 'edge') !== false) {
             return 'edge';
         }
         if (stripos($userAgent, 'firefox') !== false) {
@@ -89,11 +110,16 @@ final class Request
         return 'unknown';
     }
 
+    /** Devuelve el valor de una cookie o $default si no existe. */
     public function cookie(string $key, $default = null): ?string
     {
         return $this->cookies->get($key, $default);
     }
 
+    /**
+     * Construye una Request a partir de las superglobales del entorno PHP
+     * ($_COOKIE, $_FILES, $_SERVER, $_GET, $_POST y php://input para PUT/PATCH).
+     */
     public static function createFromGlobals(): self
     {
         return new self([
@@ -101,108 +127,154 @@ final class Request
             'files' => $_FILES,
             'headers' => $_SERVER,
             'query' => $_GET,
-            'request' => $_POST,
+            'request' => self::parseRequestData(),
         ]);
     }
 
+    /** Devuelve el archivo subido asociado a $key, o null si no existe. */
     public function file(string $key): ?UploadedFile
     {
         return $this->files->get($key);
     }
 
+    /** URL absoluta completa: protocolo, host, path y query string. */
     public function fullUrl(): string
     {
         return $this->protocol() . '://' . $this->host() . $this->urlWithQuery();
     }
 
+    /**
+     * @deprecated use input(), inputOrQuery(), query() or queryOrInput() instead
+     */
     public function get(string $key, $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->get($key);
+        if ($this->query->has($key)) {
+            return $this->query->get($key);
         }
 
-        return $this->query->get($key, $default);
+        return $this->request->get($key, $default);
     }
 
-    public function getArray(string $key, bool $allowNull = true): ?array
+    /**
+     * @deprecated use request->getArray() or query->getArray() instead
+     */
+    public function getArray(string $key): array
     {
-        if ($this->request->has($key)) {
-            return $this->request->getArray($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getArray($key);
         }
 
-        return $this->query->getArray($key, $allowNull);
+        return $this->request->getArray($key);
     }
 
+    /**
+     * @deprecated use request->getAlnum() or query->getAlnum() instead
+     */
     public function getAlnum(string $key): string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getAlnum($key);
+        if ($this->query->has($key)) {
+            return $this->query->getAlnum($key);
         }
 
-        return $this->query->getAlnum($key);
+        return $this->request->getAlnum($key);
     }
 
-    public function getBool(string $key, bool $allowNull = true): ?bool
+    /** Devuelve el path de REQUEST_URI sin la query string (ej: "/admin/users"). */
+    public function getBasePath(): string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getBool($key, $allowNull);
-        }
-
-        return $this->query->getBool($key, $allowNull);
+        $url = $_SERVER['REQUEST_URI'];
+        $base = parse_url($url, PHP_URL_PATH);
+        return is_string($base) ? $base : '';
     }
 
-    public function getDate(string $key, bool $allowNull = true): ?string
+    /**
+     * @deprecated use request->getBool() or query->getBool() instead
+     */
+    public function getBool(string $key, ?bool $default = null): ?bool
     {
-        if ($this->request->has($key)) {
-            return $this->request->getDate($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getBool($key, $default);
         }
 
-        return $this->query->getDate($key, $allowNull);
+        return $this->request->getBool($key, $default);
     }
 
-    public function getDateTime(string $key, bool $allowNull = true): ?string
+    /** Devuelve el cuerpo crudo de la petición (rawInput inyectado o php://input). */
+    public function getContent(): string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getDateTime($key, $allowNull);
-        }
-
-        return $this->query->getDateTime($key, $allowNull);
+        return $this->rawInput ?? file_get_contents('php://input');
     }
 
-    public function getEmail(string $key, bool $allowNull = true): ?string
+    /**
+     * @deprecated use request->getDate() or query->getDate() instead
+     */
+    public function getDate(string $key, ?string $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getEmail($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getDate($key, $default);
         }
 
-        return $this->query->getEmail($key, $allowNull);
+        return $this->request->getDate($key, $default);
     }
 
-    public function getFloat(string $key, bool $allowNull = true): ?float
+    /**
+     * @deprecated use request->getDateTime() or query->getDateTime() instead
+     */
+    public function getDateTime(string $key, ?string $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getFloat($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getDateTime($key, $default);
         }
 
-        return $this->query->getFloat($key, $allowNull);
+        return $this->request->getDateTime($key, $default);
     }
 
-    public function getHour(string $key, bool $allowNull = true): ?string
+    /**
+     * @deprecated use request->getEmail() or query->getEmail() instead
+     */
+    public function getEmail(string $key, ?string $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getHour($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getEmail($key, $default);
         }
 
-        return $this->query->getHour($key, $allowNull);
+        return $this->request->getEmail($key, $default);
     }
 
-    public function getInt(string $key, bool $allowNull = true): ?int
+    /**
+     * @deprecated use request->getFloat() or query->getFloat() instead
+     */
+    public function getFloat(string $key, ?float $default = null): ?float
     {
-        if ($this->request->has($key)) {
-            return $this->request->getInt($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getFloat($key, $default);
         }
 
-        return $this->query->getInt($key, $allowNull);
+        return $this->request->getFloat($key, $default);
+    }
+
+    /**
+     * @deprecated use request->getHour() or query->getHour() instead
+     */
+    public function getHour(string $key, ?string $default = null): ?string
+    {
+        if ($this->query->has($key)) {
+            return $this->query->getHour($key, $default);
+        }
+
+        return $this->request->getHour($key, $default);
+    }
+
+    /**
+     * @deprecated use request->getInt() or query->getInt() instead
+     */
+    public function getInt(string $key, ?int $default = null): ?int
+    {
+        if ($this->query->has($key)) {
+            return $this->query->getInt($key, $default);
+        }
+
+        return $this->request->getInt($key, $default);
     }
 
     /**
@@ -214,40 +286,46 @@ final class Request
         return $this->method();
     }
 
+    /**
+     * @deprecated use request->getOnly() or query->getOnly() instead
+     */
     public function getOnly(string $key, array $values): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getOnly($key, $values);
+        if ($this->query->has($key)) {
+            return $this->query->getOnly($key, $values);
         }
 
-        return $this->query->getOnly($key, $values);
+        return $this->request->getOnly($key, $values);
     }
 
-    public function getString(string $key, bool $allowNull = true): ?string
+    /**
+     * @deprecated use request->getString() or query->getString() instead
+     */
+    public function getString(string $key, ?string $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getString($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getString($key, $default);
         }
 
-        return $this->query->getString($key, $allowNull);
+        return $this->request->getString($key, $default);
     }
 
-    public function getUrl(string $key, bool $allowNull = true): ?string
+    /**
+     * @deprecated use request->getUrl() or query->getUrl() instead
+     */
+    public function getUrl(string $key, ?string $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getUrl($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getUrl($key, $default);
         }
 
-        return $this->query->getUrl($key, $allowNull);
+        return $this->request->getUrl($key, $default);
     }
 
-    public function getBasePath(): string
-    {
-        $url = $_SERVER['REQUEST_URI'];
-        $base = parse_url($url, PHP_URL_PATH);
-        return is_string($base) ? $base : '';
-    }
-
+    /**
+     * Comprueba que TODAS las claves indicadas estén presentes en query o request.
+     * Devuelve false si alguna falta o si no se pasa ninguna clave.
+     */
     public function has(string ...$key): bool
     {
         $found = false;
@@ -263,25 +341,40 @@ final class Request
         return $found;
     }
 
+    /** Devuelve la cabecera HTTP solicitada o $default. */
     public function header(string $key, $default = null): ?string
     {
         return $this->headers->get($key, $default);
     }
 
+    /** Host de la petición (HTTP_HOST) o cadena vacía si no se conoce. */
     public function host(): string
     {
         return $_SERVER['HTTP_HOST'] ?? '';
     }
 
+    /** Lee un valor solo del cuerpo de la petición (POST/PUT/PATCH). */
     public function input(string $key, $default = null): ?string
     {
         return $this->request->get($key, $default);
     }
 
+    /** Lee del cuerpo y, si no existe, recurre a la query string. */
+    public function inputOrQuery(string $key, $default = null): ?string
+    {
+        return $this->request->has($key) ?
+            $this->request->get($key) :
+            $this->query->get($key, $default);
+    }
+
+    /**
+     * Devuelve la IP del cliente, dando prioridad a Cloudflare y X-Forwarded-For
+     * antes que REMOTE_ADDR. Si no hay nada disponible devuelve "::1".
+     */
     public function ip(): string
     {
         foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
-            if (isset($_SERVER[$field])) {
+            if (!empty($_SERVER[$field])) {
                 return (string)$_SERVER[$field];
             }
         }
@@ -289,16 +382,38 @@ final class Request
         return '::1';
     }
 
+    /** Comprueba si el método HTTP coincide con el indicado (GET, POST, etc.). */
     public function isMethod(string $method): bool
     {
         return $this->method() === $method;
     }
 
+    /**
+     * Decodifica el cuerpo de la petición como JSON.
+     * Si $key es null devuelve el array completo; en caso contrario el valor de esa clave o $default.
+     */
+    public function json(?string $key = null, $default = null)
+    {
+        $input = $this->getContent();
+        $data = json_decode($input, true);
+
+        if ($key === null) {
+            return $data;
+        }
+
+        return $data[$key] ?? $default;
+    }
+
+    /** Devuelve el método HTTP (GET, POST, PUT, PATCH, DELETE...). */
     public function method(): string
     {
         return $_SERVER['REQUEST_METHOD'];
     }
 
+    /**
+     * Detecta el sistema operativo del cliente a partir del User-Agent.
+     * @return string windows, mac, linux, unix, sun, bsd o unknown.
+     */
     public function os(): string
     {
         $userAgent = $this->userAgent();
@@ -323,28 +438,70 @@ final class Request
         return 'unknown';
     }
 
+    /**
+     * Construye el array de datos de la petición.
+     * Para PUT/PATCH con application/x-www-form-urlencoded, PHP no rellena $_POST,
+     * así que parseamos manualmente el cuerpo desde php://input.
+     */
+    public static function parseRequestData(): array
+    {
+        $request = $_POST;
+
+        if (!array_key_exists('REQUEST_METHOD', $_SERVER)) {
+            return $request;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === self::METHOD_PUT || $_SERVER['REQUEST_METHOD'] === self::METHOD_PATCH) {
+            $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+
+            if (strpos($contentType, 'application/x-www-form-urlencoded') !== false) {
+                parse_str(file_get_contents('php://input'), $request);
+            }
+        }
+
+        return $request;
+    }
+
+    /** Protocolo del servidor (p.ej. HTTP/1.1) o cadena vacía. */
     public function protocol(): string
     {
         return $_SERVER['SERVER_PROTOCOL'] ?? '';
     }
 
+    /** Lee un valor solo de la query string. */
     public function query(string $key, $default = null): ?string
     {
         return $this->query->get($key, $default);
     }
 
+    /** Lee de la query y, si no existe, recurre al cuerpo de la petición. */
+    public function queryOrInput(string $key, $default = null): ?string
+    {
+        return $this->query->has($key) ?
+            $this->query->get($key) :
+            $this->request->get($key, $default);
+    }
+
+    /** Indica si la petición se ha realizado por HTTPS. */
     public function isSecure(): bool
     {
         return $this->protocol() === 'https';
     }
 
+    /**
+     * Devuelve la URL relativa de la petición, eliminada la query string y el prefijo FS_ROUTE.
+     *
+     * @param int|null $position Si es null devuelve la URL completa.
+     *                           Si es un índice, devuelve el segmento del path en esa posición
+     *                           (admite negativos para contar desde el final).
+     */
     public function url(?int $position = null): string
     {
         // si contiene '?', lo quitamos y lo que venga después
         $url = explode('?', $_SERVER['REQUEST_URI'])[0];
 
         // si el principio coincide con FS_ROUTE, lo quitamos
-        $route = FS_ROUTE;
+        $route = Tools::config('route');
         if (substr($url, 0, strlen($route)) === $route) {
             $url = substr($url, strlen($route));
         }
@@ -364,11 +521,13 @@ final class Request
         return $path[$position] ?? '';
     }
 
+    /** URL relativa con la query string añadida (incluye el "?" aunque esté vacía). */
     public function urlWithQuery(): string
     {
         return $this->url() . '?' . $_SERVER['QUERY_STRING'];
     }
 
+    /** User-Agent enviado por el cliente, o cadena vacía. */
     public function userAgent(): string
     {
         return $_SERVER['HTTP_USER_AGENT'] ?? '';

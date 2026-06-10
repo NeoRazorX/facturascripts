@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Model\Base\PurchaseDocument;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor as LineaPresupuesto;
 
 /**
@@ -28,10 +31,9 @@ use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor as LineaPresupuesto;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class PresupuestoProveedor extends Base\PurchaseDocument
+class PresupuestoProveedor extends PurchaseDocument
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Primary key.
@@ -47,11 +49,9 @@ class PresupuestoProveedor extends Base\PurchaseDocument
      */
     public function getLines(): array
     {
-        $lineaModel = new LineaPresupuesto();
         $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-
-        return $lineaModel->all($where, $order, 0, 0);
+        return LineaPresupuesto::all($where, $order, 0, 0);
     }
 
     /**
@@ -65,10 +65,16 @@ class PresupuestoProveedor extends Base\PurchaseDocument
     public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpresupuesto', 'servido'])
     {
         $newLine = new LineaPresupuesto();
+        $newLine->actualizastock = $this->getStatus()->actualizastock;
+        $newLine->excepcioniva = $this->getSubject()->excepcioniva;
         $newLine->idpresupuesto = $this->idpresupuesto;
         $newLine->irpf = $this->irpf;
-        $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
+
+        // si no viene de getNewProductLine(), calculamos la línea
+        if (empty($data['referencia'] ?? '')) {
+            Calculator::calculateLine($this, $newLine);
+        }
 
         // allow extensions
         $this->pipe('getNewLine', $newLine, $data, $exclude);

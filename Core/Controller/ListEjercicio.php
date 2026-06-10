@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -60,15 +60,15 @@ class ListEjercicio extends ListController
 
         $this->addFilterSelectWhere($viewName, 'status', [
             [
-                'label' => Tools::lang()->trans('all'),
+                'label' => Tools::trans('all'),
                 'where' => []
             ],
             [
-                'label' => Tools::lang()->trans('only-active'),
+                'label' => Tools::trans('only-active'),
                 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]
             ],
             [
-                'label' => Tools::lang()->trans('only-closed'),
+                'label' => Tools::trans('only-closed'),
                 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]
             ],
         ]);

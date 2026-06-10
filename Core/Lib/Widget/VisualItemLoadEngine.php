@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,23 +19,19 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Translator;
+use FacturaScripts\Core\Model\PageOption;
+use FacturaScripts\Core\Tools;
 use SimpleXMLElement;
 
 /**
  * Description of VisualItemLoadEngine
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  */
 class VisualItemLoadEngine
 {
-
-    /**
-     * @var string
-     */
+    /** @var string */
     private static $namespace = '\\FacturaScripts\\Dinamic\\Lib\\Widget\\';
 
     public static function getNamespace(): string
@@ -43,7 +39,7 @@ class VisualItemLoadEngine
         return self::$namespace;
     }
 
-    public static function setNamespace(string $namespace)
+    public static function setNamespace(string $namespace): void
     {
         self::$namespace = $namespace;
     }
@@ -52,11 +48,11 @@ class VisualItemLoadEngine
      * Loads an xmlview data into a PageOption model.
      *
      * @param string $name
-     * @param Model\PageOption $model
+     * @param PageOption $model
      *
      * @return bool
      */
-    public static function installXML($name, &$model): bool
+    public static function installXML(string $name, PageOption &$model): bool
     {
         $model->name = htmlspecialchars($name);
 
@@ -66,13 +62,13 @@ class VisualItemLoadEngine
         }
 
         if (!file_exists($fileName)) {
-            static::saveError('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $model->name . '.xml']);
+            Tools::log()->error('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $model->name . '.xml']);
             return false;
         }
 
         $xml = simplexml_load_string(file_get_contents($fileName));
         if ($xml === false) {
-            static::saveError('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $model->name . '.xml']);
+            Tools::log()->error('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $model->name . '.xml']);
             return false;
         }
 
@@ -106,9 +102,9 @@ class VisualItemLoadEngine
      * @param array $columns
      * @param array $modals
      * @param array $rows
-     * @param Model\PageOption $model
+     * @param PageOption $model
      */
-    public static function loadArray(&$columns, &$modals, &$rows, $model)
+    public static function loadArray(array &$columns, array &$modals, array &$rows, PageOption $model): void
     {
         static::getGroupsColumns($model->columns, $columns);
         static::getGroupsColumns($model->modals, $modals);
@@ -135,7 +131,7 @@ class VisualItemLoadEngine
      * @param array $columns
      * @param array $target
      */
-    private static function getGroupsColumns($columns, &$target)
+    private static function getGroupsColumns(array $columns, array &$target): void
     {
         $groupClass = static::getNamespace() . 'GroupItem';
         $newGroupArray = [
@@ -158,17 +154,6 @@ class VisualItemLoadEngine
             $groupItem = new $groupClass($newGroupArray);
             $target[$groupItem->name] = $groupItem;
         }
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     */
-    private static function saveError($message, $context = [])
-    {
-        $i18n = new Translator();
-        $logger = new MiniLog();
-        $logger->critical($i18n->trans($message, $context));
     }
 
     /**
@@ -217,7 +202,7 @@ class VisualItemLoadEngine
      *
      * @return string
      */
-    private static function xmlToArrayAux($tag, $attributes): string
+    private static function xmlToArrayAux(string $tag, $attributes): string
     {
         if (isset($attributes->name)) {
             return (string)$attributes->name;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,10 +30,15 @@ final class AtributoTest extends TestCase
 
     public function testCreate(): void
     {
+        // creamos un atributo
         $attribute = $this->getTestAttribute();
         $this->assertTrue($attribute->save(), 'attribute-cant-save');
-        $this->assertNotNull($attribute->primaryColumnValue(), 'attribute-not-stored');
+
+        // comprobamos que se ha guardado
+        $this->assertNotNull($attribute->id(), 'attribute-not-stored');
         $this->assertTrue($attribute->exists(), 'attribute-cant-persist');
+
+        // eliminamos
         $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
     }
 
@@ -61,12 +66,46 @@ final class AtributoTest extends TestCase
         $attValue2 = $attribute->getNewValue('Value 2');
         $this->assertTrue($attValue2->save(), 'attribute-value-cant-save');
 
+        // comprobamos que el atributo tiene los valores
+        $this->assertCount(2, $attribute->getValues(), 'attribute-values-not');
+        $this->assertTrue($attribute->hasValue('Value 1'), 'attribute-value-not-found');
+        $this->assertTrue($attribute->hasValue('Value 2'), 'attribute-value-not-found');
+
         // eliminamos el atributo
         $this->assertTrue($attribute->delete(), 'attribute-value-cant-delete');
 
         // se deben haber eliminado los valores
         $this->assertFalse($attValue->exists(), 'attribute-value-still-persist');
         $this->assertFalse($attValue2->exists(), 'attribute-value-still-persist');
+    }
+
+    public function testAddValues(): void
+    {
+        // creamos el atributo
+        $attribute = $this->getTestAttribute();
+        $this->assertTrue($attribute->save(), 'attribute-cant-save');
+
+        // añadimos un valor
+        $this->assertTrue($attribute->addValue('Value 1'), 'attribute-value-cant-add');
+
+        // comprobamos que el atributo tiene el valor
+        $this->assertCount(1, $attribute->getValues(), 'attribute-values-not');
+        $this->assertTrue($attribute->hasValue('Value 1'), 'attribute-value-not-found');
+
+        // añadimos otro valor
+        $this->assertTrue($attribute->addValue('Value 2'), 'attribute-value-cant-add');
+        $this->assertCount(2, $attribute->getValues(), 'attribute-values-not');
+        $this->assertTrue($attribute->hasValue('Value 2'), 'attribute-value-not-found');
+        $this->assertTrue($attribute->hasValue('Value 1'), 'attribute-value-not-found');
+
+        // eliminamos el primer valor
+        $this->assertTrue($attribute->removeValue('Value 1'), 'attribute-value-cant-remove');
+        $this->assertCount(1, $attribute->getValues(), 'attribute-values-not');
+        $this->assertFalse($attribute->hasValue('Value 1'), 'attribute-value-still-found');
+        $this->assertTrue($attribute->hasValue('Value 2'), 'attribute-value-not-found');
+
+        // eliminamos
+        $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
     }
 
     public function testValueNoAttribute(): void

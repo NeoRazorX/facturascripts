@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\PDF\PDFDocument;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 
@@ -78,7 +78,7 @@ class PDFExport extends PDFDocument
      * Adds a new page with a table listing the model's data.
      *
      * @param ModelClass $model
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -261,7 +261,7 @@ class PDFExport extends PDFDocument
     public function show(Response &$response)
     {
         $response->headers->set('Content-type', 'application/pdf');
-        $response->headers->set('Content-Disposition', 'inline;filename=' . $this->getFileName() . '.pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename=' . $this->getFileName() . '.pdf');
         $response->setContent($this->getDoc());
     }
 }

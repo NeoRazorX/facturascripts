@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,18 +19,22 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
  * ApiKey model to manage the connection tokens through the api
  * that will be generated to synchronize different applications.
  *
- * @author Joe Nilson           <joenilson at gmail.com>
+ * @author Joe Nilson           <joenilson@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class ApiKey extends Base\ModelClass
+class ApiKey extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /** @var string */
     public $apikey;
@@ -51,9 +55,42 @@ class ApiKey extends Base\ModelClass
     public $id;
 
     /** @var string */
+    public $lastactivity;
+
+    /** @var string */
+    public $lastip;
+
+    /** @var string */
     public $nick;
 
-    public function clear()
+    /**
+     * Adds a new API access entry for the given resource with the specified permissions.
+     *
+     * If the resource already exists for this API key, no changes are made.
+     *
+     * @param string $resource Resource name to grant access to.
+     * @param bool $state Initial permission state (applied to all methods).
+     *
+     * @return bool True if created or already exists, false on failure.
+     */
+    public function addAccess(string $resource, bool $state = false): bool
+    {
+        if (null !== $this->getAccess($resource)) {
+            return true; // already exists
+        }
+
+        $apiAccess = new ApiAccess();
+        $apiAccess->idapikey = $this->id;
+        $apiAccess->resource = $resource;
+        $apiAccess->allowdelete = $state;
+        $apiAccess->allowget = $state;
+        $apiAccess->allowpost = $state;
+        $apiAccess->allowput = $state;
+
+        return $apiAccess->save();
+    }
+
+    public function clear(): void
     {
         parent::clear();
         $this->apikey = Tools::randomString(20);
@@ -62,9 +99,71 @@ class ApiKey extends Base\ModelClass
         $this->fullaccess = false;
     }
 
-    public static function primaryColumn(): string
+    public function getAccesses(): array
     {
-        return 'id';
+        $where = [Where::eq('idapikey', $this->id)];
+        return ApiAccess::all($where, [], 0, 0);
+    }
+
+    /**
+     * Retrieves the API access entry for the specified resource.
+     *
+     * Use addResourceAccess() first if the resource does not exist.
+     *
+     * @param string $resource Resource name to look up.
+     *
+     * @return ?ApiAccess The ApiAccess object if found, false otherwise.
+     */
+    public function getAccess(string $resource): ?ApiAccess
+    {
+        $apiAccess = new ApiAccess();
+        $where = [
+            Where::eq('idapikey', $this->id),
+            Where::eq('resource', $resource)
+        ];
+        if ($apiAccess->loadWhere($where)) {
+            return $apiAccess;
+        }
+
+        return null;
+    }
+
+    /**
+     * Devuelve los nombres de campos que no deben exponerse en la API.
+     *
+     * @return string[]
+     */
+    public function getApiFieldsToHide(): array
+    {
+        return ['apikey'];
+    }
+
+    /**
+     * Comprueba si esta API key tiene permiso para la operación indicada sobre el recurso.
+     *
+     * @param string $resource Nombre del recurso.
+     * @param string $permission Operación: 'get', 'post', 'put' o 'delete'.
+     *
+     * @return bool
+     */
+    public function hasAccess(string $resource, string $permission = 'get'): bool
+    {
+        if ($this->fullaccess) {
+            return true;
+        }
+
+        $access = $this->getAccess($resource);
+        if (null === $access) {
+            return false;
+        }
+
+        return match ($permission) {
+            'delete' => $access->allowdelete ?? false,
+            'get' => $access->allowget ?? false,
+            'post' => $access->allowpost ?? false,
+            'put' => $access->allowput ?? false,
+            default => false,
+        };
     }
 
     public function primaryDescriptionColumn(): string
@@ -84,7 +183,18 @@ class ApiKey extends Base\ModelClass
         $this->description = Tools::noHtml($this->description);
         $this->nick = Tools::noHtml($this->nick);
 
+        if (empty($this->lastactivity)) {
+            $this->lastactivity = null;
+        }
+
         return parent::test();
+    }
+
+    public function updateActivity(?string $ip = null): bool
+    {
+        $this->lastactivity = Tools::dateTime();
+        $this->lastip = $ip;
+        return $this->save();
     }
 
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
