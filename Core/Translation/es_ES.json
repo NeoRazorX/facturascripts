@@ -399,6 +399,8 @@
     "created": "Creado",
     "created-by": "Creado por",
     "created-default-admin-account": "Se ha creado el usuario %nick% con la contraseña %pass%",
+    "crash-files-found": "Archivos de error fatal encontrados",
+    "crash-files-p": "Se han encontrado archivos de error fatal en la instalación. Puedes borrarlos o enviárnoslos para ayudarnos a solucionar estos errores.",
     "creation-date": "Fecha creación",
     "credit": "Haber",
     "crm": "CRM",
