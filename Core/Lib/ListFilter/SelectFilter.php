@@ -44,6 +44,11 @@ class SelectFilter extends BaseFilter
 
     public function getDataBaseWhere(array &$where): bool
     {
+        if ($this->value === '__null__') {
+            $where[] = new DataBaseWhere($this->field, null, 'IS');
+            return true;
+        }
+
         if ('' !== $this->value && null !== $this->value) {
             $where[] = new DataBaseWhere($this->field, $this->value);
             return true;
@@ -85,6 +90,16 @@ class SelectFilter extends BaseFilter
         $html = '<option value="">' . static::$i18n->trans($this->label) . '</option>';
         foreach ($this->values as $key => $data) {
             if ($data instanceof CodeModel) {
+                if ($data->code === null && $data->description !== '------') {
+                    $extra = ($this->value === '__null__') ? ' selected=""' : '';
+                    $transKey = 'without-' . $this->label;
+                    $nullText = static::$i18n->trans($transKey);
+                    if ($nullText === $transKey) {
+                        $nullText = '(' . static::$i18n->trans('empty') . ')';
+                    }
+                    $html .= '<option value="__null__"' . $extra . '>' . $nullText . '</option>';
+                    continue;
+                }
                 $extra = ('' != $this->value && $data->code == $this->value) ? ' selected=""' : '';
                 $html .= '<option value="' . $data->code . '"' . $extra . '>' . $data->description . '</option>';
                 continue;
