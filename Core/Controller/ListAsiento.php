@@ -128,9 +128,25 @@ class ListAsiento extends ListController
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
         $this->addFilterSelect($viewName, 'iddiario', 'journals', 'iddiario', $selectJournals);
 
-        $selectChannel = $this->codeModel->all('asientos', 'canal', 'canal');
-        if (count($selectChannel) > 1) {
-            $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
+        $allChannels = $this->codeModel->all('asientos', 'canal', 'canal', false);
+        if (count($allChannels) > 0) {
+            $channelOptions = [['label' => Tools::lang()->trans('channel'), 'where' => []]];
+            foreach ($allChannels as $item) {
+                if ($item->code === null) {
+                    $channelOptions[] = [
+                        'label' => Tools::lang()->trans('without-channel'),
+                        'where' => [new DataBaseWhere('canal', null, 'IS')],
+                    ];
+                } else {
+                    $channelOptions[] = [
+                        'label' => (string)$item->code,
+                        'where' => [new DataBaseWhere('canal', $item->code)],
+                    ];
+                }
+            }
+            if (count($channelOptions) > 1) {
+                $this->addFilterSelectWhere($viewName, 'canal', $channelOptions, 'channel');
+            }
         }
 
         // agrupamos las acciones en un dropdown
