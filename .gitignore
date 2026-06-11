@@ -8,7 +8,6 @@
 /vendor/
 .DS_Store
 .htaccess
-.user.ini
 config.php
 config-mysql.php
 config-postgresql.php
