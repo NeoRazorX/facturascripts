@@ -220,29 +220,55 @@
                         </div>
                         <div class="collapse {{ fsc.showFilters is same as(true) ? 'show' : '' }}" id="moreDocsCollapse">
                             <div class="card-body">
-                                <form action="{{ fsc.url() }}" method="post">
+                                <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                                    {{ formToken() }}
                                     <input type="hidden" name="model" value="{{ fsc.modelName }}">
                                     <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
                                     <input type="hidden" name="action" value="search">
-                                    <div id="form{{ fsc.getViewName() }}Filters"
-                                         class="row g-2 align-items-center border-bottom mb-3">
-                                        {% for filterName, filter in fsc.filters %}
-                                            {{ filter.render() | raw }}
-                                        {% endfor %}
-                                        {% if fsc.filters|length > 0 %}
-                                            <div class="col-auto">
+                                    <div id="formDocStitcherFilters"
+                                         class="row g-2 align-items-end border-bottom mb-3">
+                                        {% if fsc.payMethods | length > 1 %}
+                                            <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
                                                 <div class="mb-3">
-                                                    <button type="submit" class="btn btn-secondary"
-                                                            title="{{ trans('search') }}">
-                                                        <i class="fa-solid fa-search"></i>
-                                                    </button>
+                                                    {{ trans('payment-method') }}
+                                                    <select name="codpago" class="form-select"
+                                                            onchange="this.form.submit();">
+                                                        <option value="">{{ trans('all') }}</option>
+                                                        {% for codpago, descripcion in fsc.payMethods %}
+                                                            <option value="{{ codpago }}"
+                                                                    {{ fsc.filters.codpago == codpago ? 'selected' : '' }}>{{ descripcion }}</option>
+                                                        {% endfor %}
+                                                    </select>
                                                 </div>
                                             </div>
                                         {% endif %}
+                                        <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                                            <div class="mb-3">
+                                                {{ trans('from-date') }}
+                                                <input type="date" name="desde" value="{{ fsc.filters.desde }}"
+                                                       class="form-control" autocomplete="off"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                                            <div class="mb-3">
+                                                {{ trans('until-date') }}
+                                                <input type="date" name="hasta" value="{{ fsc.filters.hasta }}"
+                                                       class="form-control" autocomplete="off"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="mb-3">
+                                                <button type="submit" class="btn btn-secondary"
+                                                        title="{{ trans('search') }}">
+                                                    <i class="fa-solid fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
-                            <form action="{{ fsc.url() }}" method="post">
+                            <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                                {{ formToken() }}
                                 <input type="hidden" name="model" value="{{ fsc.modelName }}">
                                 <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
                                 <input type="hidden" name="action" value="add">
@@ -342,21 +368,6 @@
             }
 
             return false;
-        }
-
-        function filterMoreDocsByPayment(codpago) {
-            const rows = document.querySelectorAll('#moreDocsCollapse tbody tr[data-codpago]');
-            rows.forEach(function (row) {
-                if (codpago === '' || row.getAttribute('data-codpago') === codpago) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                    const cb = row.querySelector('input[name="newcodes[]"]');
-                    if (cb) {
-                        cb.checked = false;
-                    }
-                }
-            });
         }
 
         let formDocStitcherSubmitted = false;

@@ -28,8 +28,6 @@ use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
-use FacturaScripts\Dinamic\Lib\ListFilter\PeriodFilter;
-use FacturaScripts\Dinamic\Lib\ListFilter\SelectFilter;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
 
@@ -54,13 +52,16 @@ class DocumentStitcher extends Controller
     public $documents = [];
 
     /** @var array */
-    public $filters = [];
+    public $filters = ['codpago' => '', 'desde' => '', 'hasta' => ''];
 
     /** @var string */
     public $modelName;
 
     /** @var TransformerDocument[] */
     public $moreDocuments = [];
+
+    /** @var array */
+    public $payMethods = [];
 
     /** @var bool */
     public $showFilters = false;
@@ -184,18 +185,17 @@ class DocumentStitcher extends Controller
 
     protected function addFilters(): void
     {
-        $payMethods = [];
+        if (empty($this->documents)) {
+            return;
+        }
+
         foreach (FormasPago::all() as $payMethod) {
-            if ($payMethod->idempresa == $this->documents[0]->idempresa) {
-                $payMethods[$payMethod->id()] = $payMethod->descripcion;
+            if ($payMethod->activa && $payMethod->idempresa == $this->documents[0]->idempresa) {
+                $this->payMethods[$payMethod->id()] = $payMethod->descripcion;
             }
         }
 
-        if (count($payMethods) > 2) {
-            $this->filters['codpago'] = new SelectFilter('codpago', 'codpago', 'payment-method', CodeModel::array2codeModel($payMethods));
-        }
-
-        $this->filters['fecha'] = new PeriodFilter('fecha', 'fecha', 'date');
+        asort($this->payMethods);
     }
 
     /**
@@ -488,11 +488,22 @@ class DocumentStitcher extends Controller
     protected function processFormDataLoad(): void
     {
         // filters
-        foreach ($this->filters as $filter) {
-            $filter->setValueFromRequest($this->request);
-            if ($filter->getDataBaseWhere($this->where)) {
-                $this->showFilters = true;
-            }
+        $this->filters['codpago'] = $this->request->request->get('codpago', '');
+        if ($this->filters['codpago']) {
+            $this->where[] = Where::eq('codpago', $this->filters['codpago']);
+            $this->showFilters = true;
+        }
+
+        $this->filters['desde'] = $this->request->request->get('desde', '');
+        if ($this->filters['desde']) {
+            $this->where[] = Where::gte('fecha', $this->filters['desde']);
+            $this->showFilters = true;
+        }
+
+        $this->filters['hasta'] = $this->request->request->get('hasta', '');
+        if ($this->filters['hasta']) {
+            $this->where[] = Where::lte('fecha', $this->filters['hasta']);
+            $this->showFilters = true;
         }
     }
 }
