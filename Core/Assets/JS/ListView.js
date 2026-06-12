@@ -180,18 +180,6 @@ function dateFilterOnChange(e, form){
 }
 
 function isValidDateInput(input) {
-    if (!input || !input.value) return false; // Si está vacío, es inválido
-
-    const dateValue = input.value.trim(); // Obtener valor del input
-    const datePattern = /^\d{4}-\d{2}-\d{2}$/; // Formato YYYY-MM-DD
-
-    if (!datePattern.test(dateValue)) return false; // Validar formato
-
-    const date = new Date(dateValue);
-    const [year, month, day] = dateValue.split('-').map(Number);
-
-    // Validar que la fecha exista (ej: evitar 2024-02-30)
-    return date.getFullYear() === year &&
-        date.getMonth() + 1 === month &&
-        date.getDate() === day;
+    // un input type="date" solo devuelve cadena vacía o una fecha válida YYYY-MM-DD
+    return Boolean(input) && /^\d{4}-\d{2}-\d{2}$/.test(input.value);
 }
