@@ -132,68 +132,75 @@ class CronJob extends ModelClass
     public function everyDay(int $day, int $hour, bool $strict = false): self
     {
         $date = date('Y-m-' . $day, $this->getCurrentTimestamp());
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '1 month');
     }
 
     public function everyDayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', $this->getCurrentTimestamp());
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '1 day');
     }
 
     public function everyFridayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('friday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
     public function everyLastDayOfMonthAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('last day of this month', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+
+        // si todavía no toca la de este mes, usamos el último día del mes anterior,
+        // porque restar un mes a una fecha de fin de mes da fechas incorrectas
+        if (false === $strict && $this->getCurrentTimestamp() < strtotime($date . ' +' . $hour . ' hours')) {
+            $date = date('Y-m-d', strtotime('last day of last month', $this->getCurrentTimestamp()));
+        }
+
+        return $this->everyDayAux($date, $hour, $strict, '1 month');
     }
 
     public function everyMondayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('monday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
     public function everySaturdayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('saturday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
     public function everySundayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('sunday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
     public function everyThursdayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('thursday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
     public function everyTuesdayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('tuesday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
     public function everyWednesdayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('wednesday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
     public function everyYearAt(int $month, int $day, int $hour, bool $strict = false): self
     {
         $currentYear = date('Y', $this->getCurrentTimestamp());
         $date = sprintf('%s-%02d-%02d', $currentYear, $month, $day);
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '1 year');
     }
 
     public function isReady(): bool
@@ -329,7 +336,7 @@ class CronJob extends ModelClass
         return $this;
     }
 
-    private function everyDayAux(string $date, int $hour, bool $strict): self
+    private function everyDayAux(string $date, int $hour, bool $strict, string $period = '1 day'): self
     {
         if (false === $this->enabled) {
             $this->ready = false;
@@ -338,24 +345,23 @@ class CronJob extends ModelClass
 
         $last = strtotime($this->date ?? '-99 years');
         $start = strtotime($date . ' +' . $hour . ' hours');
-        $end = $strict ?
-            strtotime($date . ' +' . $hour . ' hours +59 minutes') :
-            strtotime($date . ' +23 hours +59 minutes');
         $this->start = $this->getCurrentMicrotime();
 
-        // si se ha ejecutado antes, comprobamos que no sea pasada la fecha de inicio
-        if (!empty($this->date) && $last >= $start) {
-            $this->ready = false;
+        // en modo estricto solamente se ejecuta dentro de la hora programada
+        if ($strict) {
+            $end = strtotime($date . ' +' . $hour . ' hours +59 minutes');
+            $this->ready = $last < $start && $this->start >= $start && $this->start <= $end;
             return $this;
         }
 
-        // comprobamos que la fecha de inicio esté dentro del rango
-        if ($this->start >= $start && $this->start <= $end) {
-            $this->ready = true;
-            return $this;
+        // si todavía no ha llegado la hora programada, comprobamos la ocurrencia anterior,
+        // para así recuperar ejecuciones perdidas (estilo anacron)
+        if ($this->start < $start) {
+            $start = strtotime($date . ' +' . $hour . ' hours -' . $period);
         }
 
-        $this->ready = false;
+        // se ejecuta si no se ha ejecutado desde la última hora programada
+        $this->ready = $last < $start && $this->start >= $start;
         return $this;
     }
 
