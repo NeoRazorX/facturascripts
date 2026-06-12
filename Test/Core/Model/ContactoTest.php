@@ -112,6 +112,50 @@ final class ContactoTest extends TestCase
         $this->assertTrue($supplier->delete(), 'supplier-cant-delete');
     }
 
+    public function testDeleteUnlinksCustomersAndSuppliers(): void
+    {
+        // creamos un contacto
+        $contacto = new Contacto();
+        $contacto->nombre = 'Test Contacto';
+        $this->assertTrue($contacto->save(), 'contact-cant-save');
+
+        // creamos dos clientes vinculados al contacto
+        $cliente = $this->getRandomCustomer('ContactoTest');
+        $cliente->idcontactoenv = $contacto->idcontacto;
+        $cliente->idcontactofact = $contacto->idcontacto;
+        $this->assertTrue($cliente->save(), 'customer-cant-save');
+
+        $cliente2 = $this->getRandomCustomer('ContactoTest');
+        $cliente2->idcontactoenv = $contacto->idcontacto;
+        $cliente2->idcontactofact = $contacto->idcontacto;
+        $this->assertTrue($cliente2->save(), 'customer-cant-save');
+
+        // creamos un proveedor vinculado al contacto
+        $proveedor = $this->getRandomSupplier('ContactoTest');
+        $proveedor->idcontacto = $contacto->idcontacto;
+        $this->assertTrue($proveedor->save(), 'supplier-cant-save');
+
+        // eliminamos el contacto
+        $this->assertTrue($contacto->delete(), 'contact-cant-delete');
+
+        // recargamos desde la base de datos y comprobamos que se ha desvinculado
+        $this->assertTrue($cliente->reload());
+        $this->assertNull($cliente->idcontactoenv);
+        $this->assertNull($cliente->idcontactofact);
+
+        $this->assertTrue($cliente2->reload());
+        $this->assertNull($cliente2->idcontactoenv);
+        $this->assertNull($cliente2->idcontactofact);
+
+        $this->assertTrue($proveedor->reload());
+        $this->assertNull($proveedor->idcontacto);
+
+        // eliminamos
+        $this->assertTrue($cliente->delete());
+        $this->assertTrue($cliente2->delete());
+        $this->assertTrue($proveedor->delete());
+    }
+
     public function testCantCreateEmpty(): void
     {
         $contact = new Contacto();
