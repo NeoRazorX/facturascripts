@@ -935,7 +935,7 @@
     "invalid-email-to": "Endereço de e-mail do destinatário inválido: '%email%'",
     "invalid-iban": "i",
     "invalid-iso-code": "Código ISO '%iso-code%' não válido",
-    "invalid-log-level": "Nivel de log no válido: '%level%'",
+    "invalid-log-level": "Nível de log inválido: '%level%'",
     "invalid-number": "Número não válido: %number%",
     "invalid-operation-exception-combination": "A combinação de operação e exceção do IVA não é válida",
     "invalid-request": "Pedido não válido",
