@@ -236,7 +236,7 @@
     "cant-delete-last-user": "Nie można usunąć ostatniego użytkownika",
     "cant-delete-variant-with-documents": "Nie można usunąć produktu lub wariantu %reference%, ponieważ został już zakupiony lub sprzedany. Możesz go jednak zablokować, jeśli chcesz.",
     "cant-load-controller": "Nie można załadować kontrolera '%controllerName%'.",
-    "cant-lock-next-code": "Nie można zablokować kolejnego kodu",
+    "cant-lock-next-code": "Nie można zablokować następnego kodu",
     "cant-modify-reference": "Nie można zmodyfikować odniesienia.",
     "cant-remove-account-entry": "Nie można usunąć zapisu księgowego",
     "cant-remove-accounting-entry": "Nie można usunąć wpisu księgowego",

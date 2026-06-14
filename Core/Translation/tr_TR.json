@@ -1913,7 +1913,7 @@
     "two-factor-code": "İki faktörlü kod",
     "two-factor-code-invalid": "İki faktörlü doğrulama kodu geçersiz",
     "two-factor-enabled": "İki adımlı doğrulamayı etkinleştir",
-    "two-factor-secret-key-empty": "İki faktörlü doğrulama için gizli anahtar boş",
+    "two-factor-secret-key-empty": "İki faktörlü doğrulama gizli anahtarı boş",
     "type": "Tür",
     "type-alert": "Alerji türü",
     "type-critical": "Kritik tür",
