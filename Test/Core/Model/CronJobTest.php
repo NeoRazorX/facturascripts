@@ -343,6 +343,87 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job->delete());
     }
 
+    public function testRunningCounterAfterSuccess(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestNameRunOk';
+        $job->pluginname = 'TestPluginRunOk';
+        $this->assertTrue($job->everyDayAt(0)->isReady());
+
+        $this->assertTrue($job->run(function () {
+            return true;
+        }));
+
+        // tras una ejecución correcta, el contador vuelve a 0
+        $this->assertSame(0, $job->running);
+
+        $this->assertTrue($job->delete());
+    }
+
+    public function testRunningCounterAfterFail(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestNameRunFail';
+        $job->pluginname = 'TestPluginRunFail';
+        $this->assertTrue($job->everyDayAt(0)->isReady());
+
+        $this->assertFalse($job->run(function () {
+            throw new Exception('Test');
+        }));
+
+        // tras un fallo capturado, el contador también vuelve a 0
+        $this->assertSame(0, $job->running);
+
+        $this->assertTrue($job->delete());
+    }
+
+    public function testReleaseIfStale(): void
+    {
+        // simulamos un proceso zombie: quedó en ejecución y nunca liberó el contador
+        $job = new CronJob();
+        $job->jobname = 'TestNameStale';
+        $job->pluginname = 'TestPluginStale';
+        $job->running = 1;
+        $job->done = false;
+        $job->fails = 0;
+        $job->date = '2025-03-01 00:00:00';
+        $this->assertTrue($job->save());
+
+        // a las 3 horas todavía no es zombie, no se libera
+        $job->setMockDateTime('2025-03-01 03:00:00');
+        $this->assertFalse($job->releaseIfStale());
+        $this->assertSame(1, $job->running);
+
+        // a las 12 horas se considera zombie y se libera
+        $job->setMockDateTime('2025-03-01 12:00:00');
+        $this->assertTrue($job->releaseIfStale());
+        $this->assertSame(0, $job->running);
+        $this->assertTrue($job->done);
+        $this->assertTrue($job->failed);
+        $this->assertSame(1, $job->fails);
+
+        $job->clearMocks();
+        $this->assertTrue($job->delete());
+    }
+
+    public function testReleaseIfStaleIgnoresIdleJobs(): void
+    {
+        // un job que no está en ejecución nunca se libera, aunque sea antiguo
+        $job = new CronJob();
+        $job->jobname = 'TestNameNotStale';
+        $job->pluginname = 'TestPluginNotStale';
+        $job->running = 0;
+        $job->date = '2025-03-01 00:00:00';
+        $this->assertTrue($job->save());
+
+        $job->setMockDateTime('2025-03-02 00:00:00');
+        $this->assertFalse($job->releaseIfStale());
+        $this->assertSame(0, $job->running);
+
+        $job->clearMocks();
+        $this->assertTrue($job->delete());
+    }
+
     public function testWithoutOverlapping(): void
     {
         // creamos un trabajo en ejecución

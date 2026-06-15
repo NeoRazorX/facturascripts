@@ -37,6 +37,9 @@ class CronJob extends ModelClass
 {
     use ModelTrait;
 
+    /** @var int */
+    const STALE_HOURS = 6;
+
     /** @var string */
     public $date;
 
@@ -206,6 +209,31 @@ class CronJob extends ModelClass
     public function isReady(): bool
     {
         return $this->ready && false === $this->overlapping;
+    }
+
+    /**
+     * Si el job lleva más de STALE_HOURS horas en ejecución, se considera un
+     * proceso zombie (murió sin liberar el contador) y se libera.
+     */
+    public function releaseIfStale(): bool
+    {
+        if ($this->running <= 0) {
+            return false;
+        }
+
+        if (strtotime($this->date) >= $this->getCurrentTimestamp() - (self::STALE_HOURS * 3600)) {
+            return false;
+        }
+
+        Tools::log('cron')->warning('cron-stale-job-released', [
+            '%jobName%' => $this->jobname,
+        ]);
+
+        $this->running = 0;
+        $this->done = true;
+        $this->failed = true;
+        $this->fails++;
+        return $this->save();
     }
 
     public function run(Closure $function): bool
