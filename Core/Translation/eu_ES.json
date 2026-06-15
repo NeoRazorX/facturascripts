@@ -930,7 +930,7 @@
     "invalid-date-there-are-invoices-after": "Data baliogabea. Ba daude fakturak %date% ondorengo datarekin",
     "invalid-date-there-are-invoices-before": "Data baliogabea. %date% data hurrengo fakturaren dataren ondorengoa da",
     "invalid-email-bcc": "Dirección de email CCO no válida: '%email%'",
-    "invalid-email-cc": "Dirección de email CC no válida: '%email%'",
+    "invalid-email-cc": "CC helbide elektronikoa ez da baliozkoa: '%email%'",
     "invalid-email-from": "Dirección de email del remitente no válida: '%email%'",
     "invalid-email-to": "Hartzailearen posta elektronikoaren helbide baliogabea: '%email%'",
     "invalid-iban": "IBAN baliogabea: %iban%",

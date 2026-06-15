@@ -903,7 +903,7 @@
     "income-and-expenses": "Przychody i wydatki",
     "incomes": "Przychody",
     "incompatible-document": "Dokument niezgodny: %code%. Aby móc grupować dokumenty, muszą mieć tego samego klienta lub dostawcę, serię, magazyn, walutę i łączne rabaty.",
-    "incompatible-plugins": "Plugins incompatibles",
+    "incompatible-plugins": "Niekompatybilne wtyczki",
     "incompatible-with-facturascripts": "Niekompatybilne z wersją %version% FacturaScripts",
     "incorrect-accounting-amount": "Kwota księgowania jest błędna.",
     "info": "Informacje",

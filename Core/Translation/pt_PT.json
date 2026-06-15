@@ -238,7 +238,7 @@
     "cant-load-controller": "Não é possível carregar o controlador.",
     "cant-lock-next-code": "Não é possível bloquear o próximo código",
     "cant-modify-reference": "Não pode editar a referência.",
-    "cant-remove-account-entry": "No se puede eliminar el asiento contable",
+    "cant-remove-account-entry": "Não é possível eliminar o lançamento contabilístico",
     "cant-remove-accounting-entry": "No se puede eliminar la entrada contable",
     "cant-remove-invoice-refund": "Não é possível eliminar uma fatura que já tem uma nota de crédito (devolução)",
     "cant-remove-payment": "Não é possível eliminar o pagamento",
