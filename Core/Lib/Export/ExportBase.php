@@ -238,19 +238,32 @@ abstract class ExportBase
             Where::eq('autoaplicar', true),
             Where::eq('idempresa', $model->idempresa)
         ];
-        foreach ($documentFormat->all($where, ['tipodoc' => 'DESC', 'codserie' => 'DESC']) as $format) {
+
+        // Buscamos el formato más específico. No dependemos del ORDER BY porque
+        // el orden de los NULL difiere entre MySQL (NULL al final) y PostgreSQL
+        // (NULL al principio), así que puntuamos cada coincidencia y nos quedamos
+        // con la de mayor prioridad.
+        $best = null;
+        $bestScore = -1;
+        foreach ($documentFormat->all($where) as $format) {
+            $score = -1;
             if ($format->tipodoc === $model->modelClassName() && $format->codserie === $model->codserie) {
-                return $format;
+                $score = 3;
             } elseif ($format->tipodoc === $model->modelClassName() && $format->codserie === null) {
-                return $format;
+                $score = 2;
             } elseif ($format->tipodoc === null && $format->codserie === $model->codserie) {
-                return $format;
+                $score = 1;
             } elseif ($format->tipodoc === null && $format->codserie === null) {
-                return $format;
+                $score = 0;
+            }
+
+            if ($score > $bestScore) {
+                $best = $format;
+                $bestScore = $score;
             }
         }
 
-        return $documentFormat;
+        return $best ?? $documentFormat;
     }
 
     /**
