@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Lib\ApiBusinessDocumentTrait;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Response;
@@ -27,41 +28,19 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
+/**
+ * Crea un documento de negocio (factura, albarán, pedido o presupuesto) en una sola llamada: 
+ * alta de documento y líneas, recalculando totales y manteniendo el stock consistente.
+ */
 class ApiCreateDocument extends ApiController
 {
+    use ApiBusinessDocumentTrait;
+
     /** @var string */
     protected $purchases_model;
 
     /** @var string */
     protected $sales_model;
-
-    protected function runResource(): void
-    {
-        if (!in_array($this->request->method(), ['POST', 'PUT'])) {
-            $this->response
-                ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
-                ->json([
-                    'status' => 'error',
-                    'message' => 'method-not-allowed',
-                ]);
-            return;
-        }
-
-        $this->loadModel();
-
-        if (!empty($this->purchases_model)) {
-            $this->createPurchase();
-        } elseif (!empty($this->sales_model)) {
-            $this->createSale();
-        } else {
-            $this->response
-                ->setHttpCode(Response::HTTP_UNPROCESSABLE_ENTITY)
-                ->json([
-                    'status' => 'error',
-                    'message' => 'invalid-model',
-                ]);
-        }
-    }
 
     protected function createPurchase(): void
     {
@@ -341,6 +320,34 @@ class ApiCreateDocument extends ApiController
         }
     }
 
+    protected function runResource(): void
+    {
+        if (!in_array($this->request->method(), ['POST', 'PUT'])) {
+            $this->response
+                ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'method-not-allowed',
+                ]);
+            return;
+        }
+
+        $this->loadModel();
+
+        if (!empty($this->purchases_model)) {
+            $this->createPurchase();
+        } elseif (!empty($this->sales_model)) {
+            $this->createSale();
+        } else {
+            $this->response
+                ->setHttpCode(Response::HTTP_UNPROCESSABLE_ENTITY)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'invalid-model',
+                ]);
+        }
+    }
+
     protected function saveLines(BusinessDocument &$documento): bool
     {
         if (!$this->request->request->has('lineas')) {
@@ -371,37 +378,7 @@ class ApiCreateDocument extends ApiController
                 $documento->getNewLine() :
                 $documento->getNewProductLine($line['referencia']);
 
-            $newLine->cantidad = (float)($line['cantidad'] ?? 1);
-            $newLine->descripcion = $line['descripcion'] ?? $newLine->descripcion ?? '?';
-            $newLine->pvpunitario = (float)($line['pvpunitario'] ?? $newLine->pvpunitario);
-            $newLine->dtopor = (float)($line['dtopor'] ?? $newLine->dtopor);
-            $newLine->dtopor2 = (float)($line['dtopor2'] ?? $newLine->dtopor2);
-
-            if (isset($line['excepcioniva'])) {
-                $newLine->excepcioniva = $line['excepcioniva'] === 'null' ? null : $line['excepcioniva'];
-            }
-
-            if (isset($line['codimpuesto'])) {
-                $newCodimpuesto = $line['codimpuesto'] === 'null' ? null : $line['codimpuesto'];
-                if ($newCodimpuesto !== $newLine->codimpuesto) {
-                    $newLine->setTax($newCodimpuesto);
-                }
-            }
-            if (array_key_exists('suplido', $line)) {
-                $newLine->suplido = $this->toBool($line['suplido']);
-            }
-
-            if (array_key_exists('mostrar_cantidad', $line)) {
-                $newLine->mostrar_cantidad = $this->toBool($line['mostrar_cantidad']);
-            }
-
-            if (array_key_exists('mostrar_precio', $line)) {
-                $newLine->mostrar_precio = $this->toBool($line['mostrar_precio']);
-            }
-
-            if (array_key_exists('salto_pagina', $line)) {
-                $newLine->salto_pagina = $this->toBool($line['salto_pagina']);
-            }
+            $this->applyLineFields($newLine, $line, true);
 
             $newLines[] = $newLine;
         }
@@ -418,27 +395,5 @@ class ApiCreateDocument extends ApiController
         }
 
         return true;
-    }
-
-    /**
-     * Convierte un valor a booleano.
-     * Acepta: true, false, 1, 0, "1", "0", "true", "false"
-     */
-    protected function toBool($value): bool
-    {
-        if (is_bool($value)) {
-            return $value;
-        }
-
-        if (is_numeric($value)) {
-            return (bool)$value;
-        }
-
-        if (is_string($value)) {
-            $lower = strtolower(trim($value));
-            return in_array($lower, ['1', 'true', 'yes', 'on'], true);
-        }
-
-        return (bool)$value;
     }
 }
