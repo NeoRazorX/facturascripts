@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
@@ -27,244 +28,6 @@ use FacturaScripts\Core\Template\ApiController;
 
 class ApiPlugins extends ApiController
 {
-    protected function runResource(): void
-    {
-        // obtenemos el nombre del plugin desde la URI (api/3/plugins/{nombre})
-        $pluginName = $this->getUriParam(3);
-
-        // obtenemos la acción desde la URI (api/3/plugins/{nombre}/{accion})
-        $action = $this->getUriParam(4);
-
-        // si hay un plugin y una acción específica, procesamos la acción
-        if (!empty($pluginName) && !empty($action)) {
-            $this->handlePluginAction($pluginName, $action);
-            return;
-        }
-
-        // si es un método GET
-        if ($this->request->isMethod(Request::METHOD_GET)) {
-            // si hay un plugin específico, mostramos su información
-            if (!empty($pluginName)) {
-                $this->getPlugin($pluginName);
-                return;
-            }
-
-            // si no hay plugin, listamos todos
-            $this->listPlugins();
-            return;
-        }
-
-        // método no permitido
-        $this->response
-            ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
-            ->json([
-                'status' => 'error',
-                'message' => 'method-not-allowed',
-            ]);
-    }
-
-    private function handlePluginAction(string $pluginName, string $action): void
-    {
-        // validamos que solo se permitan métodos POST
-        if (false === $this->request->isMethod(Request::METHOD_POST)) {
-            $this->response
-                ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
-                ->json([
-                    'status' => 'error',
-                    'message' => 'method-not-allowed',
-                ]);
-            return;
-        }
-
-        // validamos que la API key tenga acceso completo
-        if (false === $this->apiKey->fullaccess) {
-            $this->response
-                ->setHttpCode(Response::HTTP_FORBIDDEN)
-                ->json([
-                    'status' => 'error',
-                    'message' => 'full-access-required',
-                ]);
-            return;
-        }
-
-        // procesamos la acción
-        switch ($action) {
-            case 'enable':
-                $this->enablePlugin($pluginName);
-                break;
-
-            case 'disable':
-                $this->disablePlugin($pluginName);
-                break;
-
-            default:
-                $this->response
-                    ->setHttpCode(Response::HTTP_BAD_REQUEST)
-                    ->json([
-                        'status' => 'error',
-                        'message' => 'invalid-action',
-                    ]);
-        }
-    }
-
-    private function enablePlugin(string $pluginName): void
-    {
-        // validamos el plugin
-        $plugin = $this->validatePluginAccess($pluginName);
-        if (null === $plugin) {
-            return;
-        }
-
-        if (Plugins::enable($pluginName)) {
-            $this->response
-                ->setHttpCode(Response::HTTP_OK)
-                ->json([
-                    'status' => 'success',
-                    'message' => $this->getLogMessages('plugin-enabled'),
-                ]);
-            return;
-        }
-
-        $this->response
-            ->setHttpCode(Response::HTTP_BAD_REQUEST)
-            ->json([
-                'status' => 'error',
-                'message' => $this->getLogMessages('plugin-not-enabled'),
-            ]);
-    }
-
-    private function disablePlugin(string $pluginName): void
-    {
-        // validamos el plugin
-        $plugin = $this->validatePluginAccess($pluginName);
-        if (null === $plugin) {
-            return;
-        }
-
-        if (Plugins::disable($pluginName)) {
-            $this->response
-                ->setHttpCode(Response::HTTP_OK)
-                ->json([
-                    'status' => 'success',
-                    'message' => $this->getLogMessages('plugin-disabled')
-                ]);
-            return;
-        }
-
-        $this->response
-            ->setHttpCode(Response::HTTP_BAD_REQUEST)
-            ->json([
-                'status' => 'error',
-                'message' => $this->getLogMessages('plugin-not-disabled')
-            ]);
-    }
-
-    private function getLogMessages(string $default = ''): string
-    {
-        $messages = [];
-
-        // capturamos solo los mensajes importantes del canal master
-        $logs = MiniLog::read('master', ['info', 'notice', 'warning', 'error', 'critical']);
-        foreach ($logs as $log) {
-            $messages[] = $log['message'];
-        }
-
-        return empty($messages) ?
-            $default :
-            implode('. ', $messages);
-    }
-
-    private function validatePluginAccess(string $pluginName): ?object
-    {
-        // obtenemos el plugin
-        $plugin = Plugins::get($pluginName);
-
-        // verificamos que existe
-        if (null === $plugin) {
-            $this->response
-                ->setHttpCode(Response::HTTP_NOT_FOUND)
-                ->json([
-                    'status' => 'error',
-                    'message' => 'plugin-not-found: ' . $pluginName,
-                ]);
-            return null;
-        }
-
-        // verificamos que no esté oculto
-        if ($plugin->hidden) {
-            $this->response
-                ->setHttpCode(Response::HTTP_FORBIDDEN)
-                ->json([
-                    'status' => 'error',
-                    'message' => 'plugin-hidden: ' . $pluginName,
-                ]);
-            return null;
-        }
-
-        // verificamos que esté instalado
-        if (false === $plugin->installed) {
-            $this->response
-                ->setHttpCode(Response::HTTP_NOT_FOUND)
-                ->json([
-                    'status' => 'error',
-                    'message' => 'plugin-not-found: ' . $pluginName,
-                ]);
-            return null;
-        }
-
-        return $plugin;
-    }
-
-    private function formatPluginData(object $plugin): array
-    {
-        return [
-            'compatible' => $plugin->compatible,
-            'description' => $plugin->description,
-            'enabled' => $plugin->enabled,
-            'folder' => $plugin->folder,
-            'min_version' => $plugin->min_version,
-            'min_php' => $plugin->min_php,
-            'name' => $plugin->name,
-            'require' => $plugin->require,
-            'require_php' => $plugin->require_php,
-            'version' => $plugin->version,
-        ];
-    }
-
-    private function getPlugin(string $pluginName): void
-    {
-        // validamos el plugin
-        $plugin = $this->validatePluginAccess($pluginName);
-        if (null === $plugin) {
-            return;
-        }
-
-        // devolvemos la información del plugin
-        $this->response->json($this->formatPluginData($plugin));
-    }
-
-    private function listPlugins(): void
-    {
-        // no incluimos plugins ocultos en la API
-        $allPlugins = Plugins::list(false);
-
-        // excluimos los plugins no instalados
-        $plugins = array_filter($allPlugins, function ($plugin) {
-            return $plugin->installed;
-        });
-
-        $filter = $this->request->getArray('filter');
-        $plugins = $this->applyFilter($plugins, $filter);
-
-        $order = $this->request->getArray('sort');
-        $plugins = $this->applySort($plugins, $order);
-
-        // filtramos los campos que se mostrarán
-        $plugins = array_map(fn($plugin) => $this->formatPluginData($plugin), $plugins);
-
-        $this->response->json(array_values($plugins));
-    }
-
     private function applyFilter(array $plugins, array $filter): array
     {
         if (empty($filter)) {
@@ -314,21 +77,6 @@ class ApiPlugins extends ApiController
         });
     }
 
-    private function compare($a, $b, string $operator): bool
-    {
-        return match ($operator) {
-            '>' => $a > $b,
-            '<' => $a < $b,
-            '>=' => $a >= $b,
-            '<=' => $a <= $b,
-            '!=' => $a != $b,
-            'LIKE' => stripos((string)$a, (string)$b) !== false,
-            'IS' => $a === null,
-            'IS NOT' => $a !== null,
-            default => $a == $b,
-        };
-    }
-
     private function applySort(array $plugins, array $sort): array
     {
         if (empty($sort)) {
@@ -357,5 +105,261 @@ class ApiPlugins extends ApiController
         });
 
         return $plugins;
+    }
+
+    private function compare($a, $b, string $operator): bool
+    {
+        return match ($operator) {
+            '>' => $a > $b,
+            '<' => $a < $b,
+            '>=' => $a >= $b,
+            '<=' => $a <= $b,
+            '!=' => $a != $b,
+            'LIKE' => stripos((string)$a, (string)$b) !== false,
+            'IS' => $a === null,
+            'IS NOT' => $a !== null,
+            default => $a == $b,
+        };
+    }
+
+    private function disablePlugin(string $pluginName): void
+    {
+        // validamos el plugin
+        $plugin = $this->validatePluginAccess($pluginName);
+        if (null === $plugin) {
+            return;
+        }
+
+        if (Plugins::disable($pluginName)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_OK)
+                ->json([
+                    'status' => 'success',
+                    'message' => $this->getLogMessages('plugin-disabled')
+                ]);
+            return;
+        }
+
+        $this->response
+            ->setHttpCode(Response::HTTP_BAD_REQUEST)
+            ->json([
+                'status' => 'error',
+                'message' => $this->getLogMessages('plugin-not-disabled')
+            ]);
+    }
+
+    private function enablePlugin(string $pluginName): void
+    {
+        // validamos el plugin
+        $plugin = $this->validatePluginAccess($pluginName);
+        if (null === $plugin) {
+            return;
+        }
+
+        if (Plugins::enable($pluginName)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_OK)
+                ->json([
+                    'status' => 'success',
+                    'message' => $this->getLogMessages('plugin-enabled'),
+                ]);
+            return;
+        }
+
+        $this->response
+            ->setHttpCode(Response::HTTP_BAD_REQUEST)
+            ->json([
+                'status' => 'error',
+                'message' => $this->getLogMessages('plugin-not-enabled'),
+            ]);
+    }
+
+    private function formatPluginData(object $plugin): array
+    {
+        return [
+            'compatible' => $plugin->compatible,
+            'description' => $plugin->description,
+            'enabled' => $plugin->enabled,
+            'folder' => $plugin->folder,
+            'min_version' => $plugin->min_version,
+            'min_php' => $plugin->min_php,
+            'name' => $plugin->name,
+            'require' => $plugin->require,
+            'require_php' => $plugin->require_php,
+            'version' => $plugin->version,
+        ];
+    }
+
+    private function getLogMessages(string $default = ''): string
+    {
+        $messages = [];
+
+        // capturamos solo los mensajes importantes del canal master
+        $logs = MiniLog::read('master', ['info', 'notice', 'warning', 'error', 'critical']);
+        foreach ($logs as $log) {
+            $messages[] = $log['message'];
+        }
+
+        return empty($messages) ?
+            $default :
+            implode('. ', $messages);
+    }
+
+    private function getPlugin(string $pluginName): void
+    {
+        // validamos el plugin
+        $plugin = $this->validatePluginAccess($pluginName);
+        if (null === $plugin) {
+            return;
+        }
+
+        // devolvemos la información del plugin
+        $this->response->json($this->formatPluginData($plugin));
+    }
+
+    private function handlePluginAction(string $pluginName, string $action): void
+    {
+        // validamos que solo se permitan métodos POST
+        if (false === $this->request->isMethod(Request::METHOD_POST)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'method-not-allowed',
+                ]);
+            return;
+        }
+
+        // validamos que la API key tenga acceso completo
+        if (false === $this->apiKey->fullaccess) {
+            $this->response
+                ->setHttpCode(Response::HTTP_FORBIDDEN)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'full-access-required',
+                ]);
+            return;
+        }
+
+        // procesamos la acción
+        switch ($action) {
+            case 'enable':
+                $this->enablePlugin($pluginName);
+                break;
+
+            case 'disable':
+                $this->disablePlugin($pluginName);
+                break;
+
+            default:
+                $this->response
+                    ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                    ->json([
+                        'status' => 'error',
+                        'message' => 'invalid-action',
+                    ]);
+        }
+    }
+
+    private function listPlugins(): void
+    {
+        // no incluimos plugins ocultos en la API
+        $allPlugins = Plugins::list(false);
+
+        // excluimos los plugins no instalados
+        $plugins = array_filter($allPlugins, function ($plugin) {
+            return $plugin->installed;
+        });
+
+        $filter = $this->request->getArray('filter');
+        $plugins = $this->applyFilter($plugins, $filter);
+
+        $order = $this->request->getArray('sort');
+        $plugins = $this->applySort($plugins, $order);
+
+        // filtramos los campos que se mostrarán
+        $plugins = array_map(fn($plugin) => $this->formatPluginData($plugin), $plugins);
+
+        // devolvemos la versión del core en la cabecera de la respuesta
+        $this->response->header('X-Core-Version', (string)Kernel::version());
+
+        $this->response->json(array_values($plugins));
+    }
+
+    protected function runResource(): void
+    {
+        // obtenemos el nombre del plugin desde la URI (api/3/plugins/{nombre})
+        $pluginName = $this->getUriParam(3);
+
+        // obtenemos la acción desde la URI (api/3/plugins/{nombre}/{accion})
+        $action = $this->getUriParam(4);
+
+        // si hay un plugin y una acción específica, procesamos la acción
+        if (!empty($pluginName) && !empty($action)) {
+            $this->handlePluginAction($pluginName, $action);
+            return;
+        }
+
+        // si es un método GET
+        if ($this->request->isMethod(Request::METHOD_GET)) {
+            // si hay un plugin específico, mostramos su información
+            if (!empty($pluginName)) {
+                $this->getPlugin($pluginName);
+                return;
+            }
+
+            // si no hay plugin, listamos todos
+            $this->listPlugins();
+            return;
+        }
+
+        // método no permitido
+        $this->response
+            ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+            ->json([
+                'status' => 'error',
+                'message' => 'method-not-allowed',
+            ]);
+    }
+
+    private function validatePluginAccess(string $pluginName): ?object
+    {
+        // obtenemos el plugin
+        $plugin = Plugins::get($pluginName);
+
+        // verificamos que existe
+        if (null === $plugin) {
+            $this->response
+                ->setHttpCode(Response::HTTP_NOT_FOUND)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'plugin-not-found: ' . $pluginName,
+                ]);
+            return null;
+        }
+
+        // verificamos que no esté oculto
+        if ($plugin->hidden) {
+            $this->response
+                ->setHttpCode(Response::HTTP_FORBIDDEN)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'plugin-hidden: ' . $pluginName,
+                ]);
+            return null;
+        }
+
+        // verificamos que esté instalado
+        if (false === $plugin->installed) {
+            $this->response
+                ->setHttpCode(Response::HTTP_NOT_FOUND)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'plugin-not-found: ' . $pluginName,
+                ]);
+            return null;
+        }
+
+        return $plugin;
     }
 }
