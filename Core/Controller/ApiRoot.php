@@ -31,8 +31,7 @@ class ApiRoot extends ApiController
         'crearFacturaRectificativaCliente', 'crearPedidoCliente', 'crearPedidoProveedor', 'crearPresupuestoCliente',
         'crearPresupuestoProveedor', 'exportarAlbaranCliente', 'exportarAlbaranProveedor', 'exportarFacturaCliente',
         'exportarFacturaProveedor', 'exportarPedidoCliente', 'exportarPedidoProveedor', 'exportarPresupuestoCliente',
-        'exportarPresupuestoProveedor', 'pagarFacturaCliente', 'pagarFacturaProveedor', 'plugins', 'productoimagenes',
-        'uploadFiles'
+        'exportarPresupuestoProveedor', 'pagarFacturaCliente', 'pagarFacturaProveedor', 'plugins', 'uploadFiles'
     ];
 
     public static function addCustomResource(string $name): void
