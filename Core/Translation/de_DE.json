@@ -1473,7 +1473,7 @@
     "provinces": "Provinzen",
     "public": "Öffentlichkeit",
     "public-key": "Öffentlicher Schlüssel",
-    "purchase-goods-lines-error": "Fehler in den Warenpositionen der Einkäufe",
+    "purchase-goods-lines-error": "Fehler in den Positionen des Wareneinkaufs",
     "purchase-irpf-lines-error": "Fehler in den IRPF-Zeilen der Einkäufe",
     "purchase-rate": "Kaufrate",
     "purchase-supplied-lines-error": "Fehler in den Lieferpositionen der Einkäufe",

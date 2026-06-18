@@ -95,7 +95,7 @@
     "allow-get-data": "Permettre l'accès",
     "allow-import": "Autoriser l'import",
     "allow-marketing": "Autoriser le marketing",
-    "allow-post-data": "Autoriser modifier",
+    "allow-post-data": "Autoriser l'ajout",
     "allow-put-data": "Autoriser PUT",
     "allow-sale-without-stock": "Autoriser la vente sans stock",
     "allow-sale-without-stock-n": "Autoriser la vente des nouveaux produits sans stock",
