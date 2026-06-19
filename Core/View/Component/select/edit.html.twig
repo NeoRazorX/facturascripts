@@ -1,0 +1,32 @@
+{% set field_errors = errors[c.fieldname()] ?? [] %}
+<div class="mb-3">
+    <label class="mb-0 small fw-semibold" for="{{ c.fieldname() }}">
+        {{- c.label() -}}
+        {% if c.required() %} <span class="text-danger">*</span>{% endif %}
+    </label>
+    {% if c.isReadOnly() %}
+        <input type="hidden" name="{{ c.fieldname() }}" value="{{ value|default('')|e }}">
+        <select class="form-select select2{{ field_errors|length > 0 ? ' is-invalid' : '' }}" disabled>
+    {% else %}
+        <select id="{{ c.fieldname() }}"
+                name="{{ c.multiple() ? c.fieldname() ~ '[]' : c.fieldname() }}"
+                class="form-select select2{{ field_errors|length > 0 ? ' is-invalid' : '' }}"
+                data-field="{{ c.fieldname() }}"
+                data-source="{{ c.source() }}"
+                {% if c.required() %}required{% endif %}
+                {% if c.multiple() %}multiple{% endif %}>
+    {% endif %}
+        {% for option in c.values() %}
+            <option value="{{ option.value|default('')|e }}"
+                    {{ (option.value|default('')|e == value|default('')|e) ? 'selected' : ''}}>
+                {{- option.title|default(option.value)|e -}}
+            </option>
+        {% endfor %}
+    </select>
+    {% for error in field_errors %}
+        <div class="invalid-feedback">{{ error }}</div>
+    {% endfor %}
+    {% if c.description() %}
+        <small class="form-text text-muted">{{ c.description() }}</small>
+    {% endif %}
+</div>

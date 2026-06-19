@@ -1,0 +1,23 @@
+{% set field_errors = errors[c.fieldname()] ?? [] %}
+<div class="mb-3">
+    <label class="mb-0 small fw-semibold" for="{{ c.fieldname() }}">
+        {{- c.label() -}}
+        {% if c.required() %} <span class="text-danger">*</span>{% endif %}
+    </label>
+    <input type="number"
+           id="{{ c.fieldname() }}"
+           name="{{ c.fieldname() }}"
+           value="{{ value|default('')|e }}"
+           class="form-control text-end{{ field_errors|length > 0 ? ' is-invalid' : '' }}"
+           step="{{ c.step() }}"
+           {% if c.min() != '' %}min="{{ c.min() }}"{% endif %}
+           {% if c.max() != '' %}max="{{ c.max() }}"{% endif %}
+           {% if c.required() %}required{% endif %}
+           {% if c.isReadOnly() %}readonly{% endif %}>
+    {% for error in field_errors %}
+        <div class="invalid-feedback">{{ error }}</div>
+    {% endfor %}
+    {% if c.description() %}
+        <small class="form-text text-muted">{{ c.description() }}</small>
+    {% endif %}
+</div>

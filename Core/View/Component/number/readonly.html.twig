@@ -1,0 +1,6 @@
+<div class="mb-3">
+    <label class="mb-0 small fw-semibold">{{ c.label() }}</label>
+    <p class="form-control-plaintext py-0 text-end">
+        {{ value is not null ? value|number_format(c.decimal(), '.', ',') : '-' }}
+    </p>
+</div>

@@ -1,0 +1,10 @@
+{% set display = '-' %}
+{% for option in c.values() %}
+    {% if option.value|default('')|e == value|default('')|e %}
+        {% set display = option.title|default(option.value)|e %}
+    {% endif %}
+{% endfor %}
+<div class="mb-3">
+    <label class="mb-0 small fw-semibold">{{ c.label() }}</label>
+    <p class="form-control-plaintext py-0">{{ display }}</p>
+</div>

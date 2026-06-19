@@ -1,0 +1,40 @@
+{% set field_errors = errors[c.fieldname()] ?? [] %}
+<div class="mb-3">
+    <label class="mb-0 small fw-semibold" for="{{ c.fieldname() }}">
+        {{- c.label() -}}
+        {% if c.required() %} <span class="text-danger">*</span>{% endif %}
+    </label>
+    {% if c.icon() %}
+    <div class="input-group">
+        <span class="input-group-text"><i class="{{ c.icon() }} fa-fw"></i></span>
+        <input type="text"
+               id="{{ c.fieldname() }}"
+               name="{{ c.fieldname() }}"
+               value="{{ value|default('')|e }}"
+               class="form-control{{ field_errors|length > 0 ? ' is-invalid' : '' }}"
+               {% if c.required() %}required{% endif %}
+               {% if c.isReadOnly() %}readonly{% endif %}
+               {% if c.maxlength() > 0 %}maxlength="{{ c.maxlength() }}"{% endif %}
+               {% if c.placeholder() %}placeholder="{{ c.placeholder()|e }}"{% endif %}>
+        {% for error in field_errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <input type="text"
+           id="{{ c.fieldname() }}"
+           name="{{ c.fieldname() }}"
+           value="{{ value|default('')|e }}"
+           class="form-control{{ field_errors|length > 0 ? ' is-invalid' : '' }}"
+           {% if c.required() %}required{% endif %}
+           {% if c.isReadOnly() %}readonly{% endif %}
+           {% if c.maxlength() > 0 %}maxlength="{{ c.maxlength() }}"{% endif %}
+           {% if c.placeholder() %}placeholder="{{ c.placeholder()|e }}"{% endif %}>
+    {% for error in field_errors %}
+        <div class="invalid-feedback">{{ error }}</div>
+    {% endfor %}
+    {% endif %}
+    {% if c.description() %}
+        <small class="form-text text-muted">{{ c.description() }}</small>
+    {% endif %}
+</div>

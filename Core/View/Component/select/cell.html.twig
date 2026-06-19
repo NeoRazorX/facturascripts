@@ -1,0 +1,7 @@
+{% set display = '-' %}
+{% for option in c.values() %}
+    {% if option.value|default('')|e == value|default('')|e %}
+        {% set display = option.title|default(option.value)|e %}
+    {% endif %}
+{% endfor %}
+<td class="text-{{ align|default('left') }}">{{ display }}</td>
