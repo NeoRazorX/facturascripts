@@ -27,7 +27,6 @@ namespace FacturaScripts\Core\Component;
  * campos en una sola llamada. Los manejadores que solo necesitan registrar un aviso y
  * permanecer en la misma página deben devolver ActionResult::make() sin ningún encadenamiento.
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 class ActionResult

@@ -35,7 +35,6 @@ use FacturaScripts\Core\Tools;
  * comas en el campo del modelo. El estado solo lectura se comunica mediante un input
  * oculto para que el valor se envíe igualmente cuando el <select> visible está deshabilitado.
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 class ComponentSelect extends BaseComponent

@@ -30,7 +30,6 @@ use FacturaScripts\Core\Request;
  * preserva mediante un input oculto para que sobreviva el POST. renderEdit()
  * está completamente sobreescrito — inputHtml() no se utiliza.
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 class ComponentCheckbox extends BaseComponent

@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Component;
  * con puntos suspensivos para mantener las tablas legibles. El valor completo
  * siempre se escribe en el modelo al guardar.
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 class ComponentTextarea extends BaseComponent

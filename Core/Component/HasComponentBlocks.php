@@ -34,7 +34,6 @@ use Exception;
  * La capa Twig expone los bloques a través de fsc.componentBlocks() y renderiza cada uno
  * mediante Component/block.html.twig, que ya está integrado en PanelController.
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 trait HasComponentBlocks

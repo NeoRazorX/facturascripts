@@ -43,7 +43,6 @@ use FacturaScripts\Core\Tools;
  * cuenta bancaria se oculta en registros nuevos que aún no han sido guardados).
  *
  * @see FormaPago
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 class NewFormaPago extends UIController

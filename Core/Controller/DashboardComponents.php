@@ -35,7 +35,6 @@ use FacturaScripts\Core\Tools;
  * traducidas), ComponentNumber y ComponentTextarea en un único formulario.
  * Accesible en /DashboardComponents.
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 class DashboardComponents extends UIController

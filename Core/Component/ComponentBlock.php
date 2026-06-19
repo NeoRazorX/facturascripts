@@ -32,7 +32,6 @@ use FacturaScripts\Core\Request;
  * El array público $settings expone 'active' (si la pestaña es visible) y 'card'
  * (si el contenido se envuelve en una card de Bootstrap) para la capa de plantillas Twig.
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 class ComponentBlock

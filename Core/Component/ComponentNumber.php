@@ -29,7 +29,6 @@ use FacturaScripts\Core\Tools;
  * siempre convierte el valor a float, de modo que el modelo recibe un número en lugar
  * de una cadena sin procesar. El formateo decimal se delega a Tools::number().
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 class ComponentNumber extends BaseComponent

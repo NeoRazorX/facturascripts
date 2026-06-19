@@ -36,7 +36,6 @@ use FacturaScripts\Core\Tools;
  *       ->addRule(fn($v, $lang, $c) => validacion($v) ? null : $lang->trans('clave'))
  *       ->setCols(6);
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 abstract class BaseComponent

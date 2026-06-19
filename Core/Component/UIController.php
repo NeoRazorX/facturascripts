@@ -34,7 +34,6 @@ use FacturaScripts\Core\Base\Controller;
  * Sobreescribe resolveTemplate() para devolver una plantilla Twig diferente según el
  * estado interno del controlador (por ejemplo, modo lista vs. modo edición).
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 abstract class UIController extends Controller

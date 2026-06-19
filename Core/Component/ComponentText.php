@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Component;
  * Los errores de validación en línea se muestran mediante la clase CSS is-invalid y un
  * div invalid-feedback inyectado por inputCssClass() y renderInlineErrors().
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
 class ComponentText extends BaseComponent
