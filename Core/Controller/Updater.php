@@ -47,6 +47,9 @@ class Updater extends Controller
     /** @var array */
     public $coreUpdateWarnings = [];
 
+    /** @var bool */
+    public $gtmEnabled = false;
+
     /** @var Telemetry */
     public $telemetryManager;
 
@@ -151,6 +154,38 @@ class Updater extends Controller
         Tools::log()->notice('record-updated-correctly');
     }
 
+    private function disableGtmAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $configFile = FS_FOLDER . '/config.php';
+        $content = file_get_contents($configFile);
+        $content = preg_replace("/\n?define\('GOOGLE_TAG_MANAGER'[^)]*\);\n?/", "\n", $content);
+        file_put_contents($configFile, $content);
+
+        Tools::log()->notice('record-updated-correctly');
+        $this->gtmEnabled = false;
+    }
+
+    private function enableGtmAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $configFile = FS_FOLDER . '/config.php';
+        $content = file_get_contents($configFile);
+        if (strpos($content, 'GOOGLE_TAG_MANAGER') === false) {
+            file_put_contents($configFile, $content . "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
+        }
+
+        Tools::log()->notice('record-updated-correctly');
+
+        $this->gtmEnabled = true;
+    }
+
     /**
      * Download selected update.
      */
@@ -204,6 +239,14 @@ class Updater extends Controller
                 $this->disableBetaUpdatesAction();
                 return;
 
+            case 'disable-gtm':
+                $this->disableGtmAction();
+                return;
+
+            case 'enable-gtm':
+                $this->enableGtmAction();
+                return;
+
             case 'download':
                 $this->downloadAction();
                 return;
@@ -236,6 +279,7 @@ class Updater extends Controller
 
         $this->updaterItems = self::getUpdateItems();
         $this->setCoreWarnings();
+        $this->gtmEnabled = defined('GOOGLE_TAG_MANAGER') && !empty(GOOGLE_TAG_MANAGER);
     }
 
     private static function getUpdateItemsCore(): array

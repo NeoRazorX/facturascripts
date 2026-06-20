@@ -161,6 +161,47 @@
                         {{ Utils.registerInstall(false) }}
                     </div>
                 {% endif %}
+                {% if fsc.gtmEnabled == false %}
+                    <hr/>
+                    <div class="card shadow-sm mt-4 mb-4">
+                        <div class="card-body">
+                            <h5>
+                                <i class="fa-solid fa-heart me-2" aria-hidden="true"></i>
+                                {{ trans('google-tag-manager') }}
+                            </h5>
+                            <p class="card-text">{{ trans('google-tag-manager-p') }}</p>
+                        </div>
+                        <div class="card-footer p-2">
+                            <form method="post">
+                                {{ formToken() }}
+                                <input type="hidden" name="action" value="enable-gtm"/>
+                                <button type="submit" class="btn btn-sm btn-outline-primary btn-spin-action">
+                                    {{ trans('enable') }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <hr/>
+                    <div class="card shadow-sm mt-4 mb-4">
+                        <div class="card-body">
+                            <h5>
+                                <i class="fa-solid fa-heart me-2" aria-hidden="true"></i>
+                                {{ trans('google-tag-manager') }}
+                            </h5>
+                            <p class="card-text">{{ trans('google-tag-manager-enabled') }}</p>
+                        </div>
+                        <div class="card-footer p-2">
+                            <form method="post">
+                                {{ formToken() }}
+                                <input type="hidden" name="action" value="disable-gtm"/>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary btn-spin-action">
+                                    {{ trans('disable') }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
