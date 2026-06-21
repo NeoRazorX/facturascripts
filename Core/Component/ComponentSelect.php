@@ -37,7 +37,7 @@ use FacturaScripts\Core\Tools;
  *
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
-class ComponentSelect extends BaseComponent
+class ComponentSelect extends FieldComponent
 {
     protected string $fieldcode = 'id';
     protected string $fieldfilter = '';
