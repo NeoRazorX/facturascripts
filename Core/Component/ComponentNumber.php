@@ -31,7 +31,7 @@ use FacturaScripts\Core\Tools;
  *
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
-class ComponentNumber extends BaseComponent
+class ComponentNumber extends FieldComponent
 {
     protected int $decimal;
     protected string $max = '';
@@ -42,7 +42,7 @@ class ComponentNumber extends BaseComponent
     public function __construct(string $fieldname)
     {
         parent::__construct($fieldname);
-        $this->decimal = FS_NF0;
+        $this->decimal = (int) FS_NF0;
     }
 
     public function setDecimals(int $decimal): static
