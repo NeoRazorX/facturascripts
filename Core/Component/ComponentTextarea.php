@@ -28,7 +28,7 @@ namespace FacturaScripts\Core\Component;
  *
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
-class ComponentTextarea extends BaseComponent
+class ComponentTextarea extends FieldComponent
 {
     protected int $rows = 3;
 
