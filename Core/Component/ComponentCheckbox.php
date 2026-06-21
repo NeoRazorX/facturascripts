@@ -22,27 +22,27 @@ namespace FacturaScripts\Core\Component;
 use FacturaScripts\Core\Request;
 
 /**
- * Interruptor booleano renderizado como un form-switch de Bootstrap.
+ * Campo booleano renderizado como checkbox estándar de Bootstrap.
  *
  * Los checkboxes HTML no se envían cuando están desmarcados, por lo que este
  * componente interpreta la ausencia de la clave en el POST como false y su
- * presencia (con cualquier valor) como true. En modo solo lectura el valor se
- * preserva mediante un input oculto para que sobreviva el POST. renderEdit()
- * está completamente sobreescrito — inputHtml() no se utiliza.
+ * presencia con value="TRUE" como true, igual que WidgetCheckbox. En modo solo
+ * lectura el valor se preserva mediante un input oculto. renderEdit() está
+ * completamente sobreescrito — inputHtml() no se utiliza.
  *
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
-class ComponentCheckbox extends BaseComponent
+class ComponentCheckbox extends FieldComponent
 {
     public function processRequest(Request $request, ?object $model = null): array
     {
         if ($this->isReadOnly()) {
-            // hidden input carries '1' or '0'
+            // input oculto lleva 'TRUE' o 'FALSE'
             $raw = $request->request->get($this->fieldname);
-            $value = $raw !== null ? (bool)(int)$raw : (bool)$this->value;
+            $value = ($raw === 'TRUE');
         } else {
-            // checkbox: present in POST → true, absent → false
-            $value = $request->request->get($this->fieldname) !== null;
+            // checkbox: presente en POST con value="TRUE" → true, ausente → false
+            $value = $request->request->get($this->fieldname) === 'TRUE';
         }
 
         if ($model !== null) {
@@ -70,28 +70,26 @@ class ComponentCheckbox extends BaseComponent
             $this->value = $value;
         }
 
-        $readonly = $this->isReadOnly() ? ' disabled' : '';
-        $checked  = $this->value ? ' checked' : '';
+        $id       = 'checkbox_' . $this->fieldname;
+        $checked  = $this->value ? ' checked=""' : '';
+        $readonly = $this->isReadOnly() ? ' onclick="return false;"' : '';
+        $tabindex = $this->tabindex >= 0 ? ' tabindex="' . $this->tabindex . '"' : '';
+        $class    = $this->inputCssClass('form-check-input');
 
-        // cuando está deshabilitado el navegador no envía el valor → se preserva con un input oculto
         $hidden = $this->isReadOnly()
-            ? '<input type="hidden" name="' . $this->fieldname . '" value="' . ($this->value ? '1' : '0') . '">'
+            ? '<input type="hidden" name="' . $this->fieldname . '" value="' . ($this->value ? 'TRUE' : 'FALSE') . '">'
             : '';
 
         $desc = $this->description
-            ? '<small class="form-text text-muted">' . htmlspecialchars($this->description) . '</small>'
+            ? '<div class="form-text text-muted">' . htmlspecialchars($this->description) . '</div>'
             : '';
 
-        return '<div class="mb-3">'
+        return '<div class="form-check pe-3 mb-3">'
             . $hidden
-            . '<div class="form-check form-switch">'
-            . '<input type="checkbox" class="form-check-input" id="chk_' . $this->fieldname . '"'
-            . ' name="' . $this->fieldname . '" value="1"'
-            . $checked . $readonly . '>'
-            . '<label class="form-check-label" for="chk_' . $this->fieldname . '">'
-            . htmlspecialchars($this->label)
-            . '</label>'
-            . '</div>'
+            . '<input type="checkbox" name="' . $this->fieldname . '" value="TRUE"'
+            . ' id="' . $id . '" class="' . $class . '"'
+            . $checked . $readonly . $tabindex . '/>'
+            . '<label for="' . $id . '">' . htmlspecialchars($this->label) . '</label>'
             . $desc
             . '</div>';
     }
@@ -120,9 +118,19 @@ class ComponentCheckbox extends BaseComponent
             : '<i class="fa-solid fa-xmark text-muted"></i>';
 
         return '<div class="mb-3">'
-            . '<label class="mb-0 small fw-semibold">' . htmlspecialchars($this->label) . '</label>'
+            . '<label class="mb-0">' . htmlspecialchars($this->label) . '</label>'
             . '<p class="form-control-plaintext py-0">' . $icon . '</p>'
             . '</div>';
+    }
+
+    public function renderHidden(): string
+    {
+        return '<input type="hidden" name="' . $this->fieldname . '" value="' . ($this->value ? 'TRUE' : 'FALSE') . '">';
+    }
+
+    public function colClass(): string
+    {
+        return $this->cols <= 0 ? 'col-sm-auto' : parent::colClass();
     }
 
     protected function templateDir(): string
