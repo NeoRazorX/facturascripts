@@ -36,7 +36,7 @@ use FacturaScripts\Core\Request;
  */
 class ComponentBlock
 {
-    /** @var BaseComponent[] */
+    /** @var FieldComponent[] */
     private array $components = [];
 
     /** @var array<string, string[]> */
@@ -62,7 +62,7 @@ class ComponentBlock
         return new static($name, $title, $icon);
     }
 
-    public function addComponent(BaseComponent $component): BaseComponent
+    public function addComponent(FieldComponent $component): FieldComponent
     {
         $fieldname = $component->fieldname();
 
@@ -82,7 +82,7 @@ class ComponentBlock
         return $component;
     }
 
-    public function component(string $fieldname): ?BaseComponent
+    public function component(string $fieldname): ?FieldComponent
     {
         return $this->components[$fieldname] ?? null;
     }
