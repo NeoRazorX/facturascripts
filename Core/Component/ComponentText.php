@@ -28,7 +28,7 @@ namespace FacturaScripts\Core\Component;
  *
  * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
  */
-class ComponentText extends BaseComponent
+class ComponentText extends FieldComponent
 {
     protected int $maxlength = 0;
     protected string $placeholder = '';
