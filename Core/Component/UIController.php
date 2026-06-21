@@ -81,6 +81,18 @@ abstract class UIController extends Controller
     }
 
     /**
+     * Devuelve true para omitir processComponents() en un POST concreto.
+     *
+     * Sobreescribe en subclases para evitar que un POST de una vista embebida
+     * (p. ej. un ListView incrustado) sea tratado como un envío del formulario
+     * de edición. Cuando devuelve true, se llama a populateFromModel() en su lugar.
+     */
+    protected function skipFormProcessing(): bool
+    {
+        return false;
+    }
+
+    /**
      * Inicia un nuevo grupo de campos. Los componentes añadidos con addComponent() a
      * continuación pertenecerán a este grupo hasta que se llame a startGroup() de nuevo.
      *
@@ -245,11 +257,15 @@ abstract class UIController extends Controller
         }
 
         if ($this->request->isMethod('POST') && empty($action)) {
-            if (false === $this->pipeFalse('execPreviousAction', 'save')) {
-                return;
-            }
-            if ($this->processComponents()) {
-                return;
+            if ($this->skipFormProcessing()) {
+                $this->populateFromModel();
+            } else {
+                if (false === $this->pipeFalse('execPreviousAction', 'save')) {
+                    return;
+                }
+                if ($this->processComponents()) {
+                    return;
+                }
             }
         } else {
             $this->populateFromModel();
