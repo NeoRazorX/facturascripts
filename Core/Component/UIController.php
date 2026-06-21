@@ -38,11 +38,17 @@ use FacturaScripts\Core\Base\Controller;
  */
 abstract class UIController extends Controller
 {
-    /** @var BaseComponent[] keyed by fieldname */
+    /** @var FieldComponent[] keyed by fieldname */
     private array $components = [];
 
     /** @var array<string, string[]> fieldname → error messages */
     private array $errors = [];
+
+    /** Nombre del grupo activo para las siguientes llamadas a addComponent(). */
+    private string $currentGroup = '__default__';
+
+    /** @var array<string, array{alignBottom: bool, components: string[]}> */
+    private array $groups = [];
 
     /** @var array<string, callable> event name → controller method */
     private array $eventHandlers = [];
@@ -74,7 +80,31 @@ abstract class UIController extends Controller
         return null;
     }
 
-    protected function addComponent(BaseComponent $component): BaseComponent
+    /**
+     * Inicia un nuevo grupo de campos. Los componentes añadidos con addComponent() a
+     * continuación pertenecerán a este grupo hasta que se llame a startGroup() de nuevo.
+     *
+     * En la plantilla cada grupo se renderiza como:
+     *   <div class="col-md-12"><div class="row g-2 [align-items-end]">...</div></div>
+     *
+     * @param bool $alignBottom si true, añade align-items-end al row interno (útil para checkboxes)
+     */
+    protected function startGroup(string $name, bool $alignBottom = false): void
+    {
+        $this->currentGroup = $name;
+        if (!isset($this->groups[$name])) {
+            $this->groups[$name] = ['alignBottom' => $alignBottom, 'components' => []];
+        }
+    }
+
+    /**
+     * Registra un componente en el controlador y lo asigna al grupo activo.
+     *
+     * Lanza InvalidArgumentException si el fieldname no cumple el patrón
+     * /^[a-zA-Z_][a-zA-Z0-9_]*$/ y LogicException si ya existe otro componente
+     * con el mismo nombre.
+     */
+    protected function addComponent(FieldComponent $component): FieldComponent
     {
         $fieldname = $component->fieldname();
 
@@ -91,14 +121,44 @@ abstract class UIController extends Controller
         }
 
         $this->components[$fieldname] = $component;
+
+        // assign to current group
+        if (!isset($this->groups[$this->currentGroup])) {
+            $this->groups[$this->currentGroup] = ['alignBottom' => false, 'components' => []];
+        }
+        $this->groups[$this->currentGroup]['components'][] = $fieldname;
+
         return $component;
     }
 
-    protected function component(string $fieldname): ?BaseComponent
+    /**
+     * Devuelve los grupos de componentes para la plantilla Twig.
+     *
+     * Cada elemento es ['alignBottom' => bool, 'components' => FieldComponent[]].
+     * Si no se usó startGroup(), devuelve un único grupo con todos los componentes.
+     */
+    public function componentGroups(): array
+    {
+        $result = [];
+        foreach ($this->groups as $groupDef) {
+            $comps = [];
+            foreach ($groupDef['components'] as $fieldname) {
+                if (isset($this->components[$fieldname])) {
+                    $comps[$fieldname] = $this->components[$fieldname];
+                }
+            }
+            $result[] = ['alignBottom' => $groupDef['alignBottom'], 'components' => $comps];
+        }
+        return $result;
+    }
+
+    /** Devuelve el componente registrado con ese fieldname, o null si no existe. */
+    protected function component(string $fieldname): ?FieldComponent
     {
         return $this->components[$fieldname] ?? null;
     }
 
+    /** Elimina el componente con ese fieldname del árbol. No lanza error si no existe. */
     protected function removeComponent(string $fieldname): void
     {
         unset($this->components[$fieldname]);
@@ -117,35 +177,63 @@ abstract class UIController extends Controller
         $this->eventHandlers[$event] = $handler;
     }
 
+    /** Indica si hay un handler registrado para el evento dado. */
+    protected function hasEventHandler(string $event): bool
+    {
+        return isset($this->eventHandlers[$event]);
+    }
+
+    /** Devuelve todos los componentes registrados, indexados por fieldname. Usado por Twig. */
     public function components(): array
     {
         return $this->components;
     }
 
+    /** Devuelve el mapa completo de errores de validación: fieldname → string[]. */
     public function errors(): array
     {
         return $this->errors;
     }
 
+    /** Indica si algún componente falló la validación en el último POST. */
     public function hasErrors(): bool
     {
         return !empty($this->errors);
     }
 
+    /** Devuelve los mensajes de error asociados a un fieldname concreto. */
     public function errorsFor(string $fieldname): array
     {
         return $this->errors[$fieldname] ?? [];
     }
 
+    /**
+     * Punto de entrada principal del controlador.
+     *
+     * Flujo: createUI → (si hay _event: dispatchEvent) | (POST sin event:
+     * processComponents) | (GET: populateFromModel) → modifyUI → setTemplate.
+     */
     public function privateCore(&$response, $user, $permissions): void
     {
         parent::privateCore($response, $user, $permissions);
 
         $this->createUI();
+        $this->pipe('createUI');
 
-        $event = $this->request->get('_event');
-        if (!empty($event)) {
-            $result = $this->dispatchEvent($event);
+        // dispatch widget AJAX actions (action=widget-*) sent by WidgetSubcuenta.js etc.
+        $widgetAction = $this->request->request->get('action', '');
+        if (!empty($widgetAction) && str_starts_with($widgetAction, 'widget-')) {
+            $this->dispatchWidgetAction($widgetAction);
+            return;
+        }
+
+        $action = $this->request->queryOrInput('_event', '');
+
+        if (!empty($action)) {
+            if (false === $this->pipeFalse('execPreviousAction', $action)) {
+                return;
+            }
+            $result = $this->dispatchEvent($action);
             if ($result !== null && $result->exit) {
                 if (!empty($result->redirect)) {
                     $this->redirect($result->redirect);
@@ -156,29 +244,63 @@ abstract class UIController extends Controller
             }
         }
 
-        if ($this->request->isMethod('POST') && empty($event)) {
+        if ($this->request->isMethod('POST') && empty($action)) {
+            if (false === $this->pipeFalse('execPreviousAction', 'save')) {
+                return;
+            }
             if ($this->processComponents()) {
-                return; // redirección gestionada dentro de processComponents
+                return;
             }
         } else {
             $this->populateFromModel();
         }
 
+        $this->pipe('loadData', $this->loadModel());
+
         $this->modifyUI();
+        $this->pipe('modifyUI');
+
+        $this->pipeFalse('execAfterAction', $action);
+
+        // Registrar activos JS/CSS de cada componente ANTES de que Twig evalúe
+        // assetManager.get('js') en el <head>. Si se registrase dentro de renderEdit()
+        // sería demasiado tarde (el <head> ya está renderizado).
+        foreach ($this->components as $component) {
+            $component->registerAssets();
+        }
 
         $this->setTemplate($this->resolveTemplate());
     }
 
+    /**
+     * Devuelve el nombre de la plantilla Twig a renderizar.
+     *
+     * Sobreescribe en la subclase para cambiar de plantilla según el estado
+     * interno (p. ej. lista vs. edición). La implementación base devuelve la
+     * plantilla genérica de componentes.
+     */
     protected function resolveTemplate(): string
     {
         return 'Master/ComponentController';
     }
 
+    /**
+     * Procesa todos los componentes del formulario POST.
+     *
+     * Por cada componente invoca processRequest(). Si hay errores de validación
+     * los almacena en $errors y los inyecta en el componente para que renderEdit()
+     * muestre el feedback en línea. Si todos pasan, dispara el evento 'save'.
+     * Devuelve true si se ha gestionado una redirección (la llamada debe salir
+     * inmediatamente), false para continuar con el renderizado normal.
+     */
     private function processComponents(): bool
     {
         $model = $this->loadModel();
 
         foreach ($this->components as $fieldname => $component) {
+            if ($component->isHidden()) {
+                continue; // el campo oculto no se procesa; el modelo conserva el valor de BD
+            }
             $result = $component->processRequest($this->request, $model);
             if (!$result['success']) {
                 $this->errors[$fieldname] = $result['errors'];
@@ -201,6 +323,12 @@ abstract class UIController extends Controller
         return false;
     }
 
+    /**
+     * En GET, rellena los valores de los componentes desde el modelo devuelto por loadModel().
+     *
+     * Solo copia propiedades que existan tanto en el modelo como en el árbol de componentes;
+     * las propiedades sin componente correspondiente se ignoran silenciosamente.
+     */
     private function populateFromModel(): void
     {
         $model = $this->loadModel();
@@ -215,6 +343,38 @@ abstract class UIController extends Controller
         }
     }
 
+    /**
+     * Despacha una acción de widget AJAX (action=widget-*) al componente que la reconozca.
+     *
+     * Itera por todos los componentes llamando a handleWidgetAction(). El primero que
+     * devuelva un string no nulo gana: se envía como JSON y se suprime la plantilla.
+     * Si ningún componente reconoce la acción se devuelve un array vacío.
+     */
+    private function dispatchWidgetAction(string $widgetAction): void
+    {
+        foreach ($this->components as $component) {
+            $json = $component->handleWidgetAction($widgetAction, $this->request);
+            if ($json !== null) {
+                $this->response->headers->set('Content-Type', 'application/json');
+                $this->response->setContent($json);
+                $this->setTemplate(false);
+                return;
+            }
+        }
+
+        $this->response->headers->set('Content-Type', 'application/json');
+        $this->response->setContent('[]');
+        $this->setTemplate(false);
+    }
+
+    /**
+     * Despacha un evento por nombre.
+     *
+     * Busca primero en los handlers registrados con onEvent(); si no hay ninguno,
+     * intenta llamar a un método del mismo nombre en la subclase. Devuelve el
+     * ActionResult retornado por el handler, o null si no hay handler o no devuelve
+     * un ActionResult.
+     */
     private function dispatchEvent(string $name): ?ActionResult
     {
         if (isset($this->eventHandlers[$name])) {
