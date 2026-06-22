@@ -65,7 +65,7 @@ abstract class FieldComponent extends BaseComponent
     protected string $cssClass = '';
     protected int $cols = 0;
     protected int $tabindex = -1;
-    protected string $cellAlign = 'left';
+    protected string $cellAlign = 'start';
 
     public function __construct(string $fieldname)
     {
@@ -161,11 +161,21 @@ abstract class FieldComponent extends BaseComponent
         return $this;
     }
 
-    /** Alineación de la celda en la tabla de listado: 'left', 'right' o 'center'. */
+    /** Alineación de la celda en la tabla de listado: 'left'/'start', 'right'/'end' o 'center'. */
     public function setAlign(string $align): static
     {
-        $this->cellAlign = $align;
+        $this->cellAlign = match($align) {
+            'left'  => 'start',
+            'right' => 'end',
+            default => $align,
+        };
         return $this;
+    }
+
+    /** Devuelve la clase Bootstrap 5 de alineación (start, end, center). */
+    public function align(): string
+    {
+        return $this->cellAlign;
     }
     public function label(): string
     {

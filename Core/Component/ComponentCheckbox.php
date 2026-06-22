@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Component;
 
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 
 /**
  * Campo booleano renderizado como checkbox estándar de Bootstrap.
@@ -102,11 +103,14 @@ class ComponentCheckbox extends FieldComponent
             $this->value = $value;
         }
 
-        $icon = $this->value
-            ? '<i class="fa-solid fa-check text-success"></i>'
-            : '<i class="fa-solid fa-xmark text-muted"></i>';
+        if ($this->value === null) {
+            return '<td class="text-' . $this->cellAlign . '">-</td>';
+        }
 
-        return '<td class="text-' . $this->cellAlign . '">' . $icon . '</td>';
+        $colorClass = $this->value ? ' text-success' : ' text-danger';
+        return '<td class="text-' . $this->cellAlign . $colorClass . '">'
+            . htmlspecialchars($this->displayValue())
+            . '</td>';
     }
 
     public function renderReadOnly(mixed $value = null): string
@@ -147,6 +151,9 @@ class ComponentCheckbox extends FieldComponent
 
     protected function displayValue(): string
     {
-        return $this->value ? '✓' : '✗';
+        if ($this->value === null) {
+            return '-';
+        }
+        return $this->value ? Tools::lang()->trans('yes') : Tools::lang()->trans('no');
     }
 }

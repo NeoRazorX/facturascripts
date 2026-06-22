@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Component\ComponentCheckbox;
 use FacturaScripts\Core\Component\ComponentNumber;
+use FacturaScripts\Core\Component\ComponentSelect;
 use FacturaScripts\Core\Component\ComponentText;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\UIComponents\UIListController;
@@ -63,7 +64,12 @@ class NewListFormaPago extends UIListController
         $tab->addColumn(ComponentText::make('codpago')->setLabel('code')->setCols(2));
         $tab->addColumn(ComponentText::make('descripcion')->setLabel('description')->setCols(5));
         $tab->addColumn(ComponentNumber::make('plazovencimiento')->setLabel('expiration')->setDecimals(0)->setCols(2));
-        $tab->addColumn(ComponentText::make('tipovencimiento')->setLabel('expiration-type')->setCols(2));
+        $tab->addColumn(
+            ComponentSelect::make('tipovencimiento')
+                ->setLabel('expiration-type')
+                ->setValuesFromArrayKeys(['days' => 'days', 'weeks' => 'weeks', 'months' => 'months', 'years' => 'years'], true)
+                ->setCols(2)
+        );
         $tab->addColumn(ComponentCheckbox::make('activa')->setLabel('active'));
         $tab->addColumn(ComponentCheckbox::make('pagado')->setLabel('paid'));
         $tab->addColumn(ComponentCheckbox::make('domiciliado')->setLabel('domiciled'));

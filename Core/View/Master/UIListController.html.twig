@@ -326,7 +326,7 @@
                                             {% endif %}
                                             {% for fieldname, col in columns %}
                                                 {% if not col.isHidden() %}
-                                                    <th>{{ col.label() }}</th>
+                                                    <th class="text-{{ col.align() }}">{{ col.label() }}</th>
                                                 {% endif %}
                                             {% endfor %}
                                         </tr>
@@ -581,7 +581,7 @@
                                     {% endif %}
                                     {% for fieldname, col in columns %}
                                         {% if not col.isHidden() %}
-                                            <th>{{ col.label() }}</th>
+                                            <th class="text-{{ col.align() }}">{{ col.label() }}</th>
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
