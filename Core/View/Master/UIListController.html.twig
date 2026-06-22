@@ -1,0 +1,336 @@
+{#
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+#}
+{% extends "Master/MenuBghTemplate.html.twig" %}
+
+{% block bodyHeaderOptions %}
+    {{ parent() }}
+    {% set pageData = fsc.getPageData() %}
+    {% set hasTabs = fsc.tabs() | length > 0 %}
+    {% set activeTabName = hasTabs ? fsc.activeTabName() : '' %}
+
+    <div class="container-fluid mb-3 d-print-none">
+        <div class="row">
+            <div class="col-md-7">
+                {# Breadcrumb móvil #}
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb d-md-none">
+                        <li class="breadcrumb-item"><a href="#">{{ trans(pageData.menu) }}</a></li>
+                        {% if pageData.submenu %}
+                            <li class="breadcrumb-item"><a href="#">{{ trans(pageData.submenu) }}</a></li>
+                        {% endif %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ fsc.title }}</li>
+                    </ol>
+                </nav>
+
+                <div class="btn-group">
+                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}" title="{{ trans('refresh') }}">
+                        <i class="fa-solid fa-redo" aria-hidden="true"></i>
+                    </a>
+                    {% if pageData.name == fsc.user.homepage %}
+                        <a class="btn btn-sm btn-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
+                           title="{{ trans('marked-as-homepage') }}">
+                            <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+                        </a>
+                    {% else %}
+                        <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
+                           title="{{ trans('mark-as-homepage') }}">
+                            <i class="fa-regular fa-bookmark" aria-hidden="true"></i>
+                        </a>
+                    {% endif %}
+                </div>
+
+                {# Botón Opciones #}
+                <div class="btn-group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa-solid fa-wrench fa-fw me-1" aria-hidden="true"></i>
+                            {{ trans('options') }}
+                        </button>
+                        <div class="dropdown-menu">
+                            <h6 class="dropdown-header">{{ trans('options-button-header') }}</h6>
+                            {% if hasTabs %}
+                                {% for tabName, tab in fsc.tabs() %}
+                                    <a class="dropdown-item"
+                                       href="EditPageOption?code={{ tabName }}&url={{ fsc.url() | url_encode }}">
+                                        <i class="{{ tab.icon() }} fa-fw me-1" aria-hidden="true"></i>
+                                        {{ trans(tab.title()) }}
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                <a class="dropdown-item" href="EditPageOption?code={{ pageData.name }}&url={{ fsc.url() | url_encode }}">
+                                    <i class="{{ pageData.icon }} fa-fw me-1" aria-hidden="true"></i>
+                                    {{ fsc.title }}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5 text-end">
+                <h1 class="h4 mb-0 d-none d-md-inline-block">
+                    {{ fsc.title }}<i class="{{ pageData.icon }} ms-3" aria-hidden="true"></i>
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    {# Navegación de pestañas — dentro del bg-light igual que ListController #}
+    {% if hasTabs %}
+        <div class="nav-tabs-wrapper d-print-none">
+            <ul class="nav nav-tabs nav-tabs-scroll" id="uiListTabs" role="tablist">
+                {% for tabName, tab in fsc.tabs() %}
+                    <li class="nav-item">
+                        <a href="{{ fsc.url() }}?activetab={{ tabName }}"
+                           class="nav-link{{ tabName == activeTabName ? ' active' : '' }}"
+                           title="{{ trans(tab.title()) }}">
+                            <i class="{{ tab.icon() }} fa-fw me-1 d-none d-sm-inline" aria-hidden="true"></i>
+                            <span>{{ trans(tab.title()) }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    {# Fuente de datos: tab activo o controlador en modo single #}
+    {% set hasTabs = fsc.tabs() | length > 0 %}
+    {% if hasTabs %}
+        {% set src = fsc.activeTab() %}
+        {% set activeTabName = fsc.activeTabName() %}
+    {% else %}
+        {% set src = fsc %}
+        {% set activeTabName = '' %}
+    {% endif %}
+
+    {% set columns = src.columns() %}
+    {% set records = src.records() %}
+    {% set orderOptions = src.orderOptions() %}
+
+    <div class="container-fluid pt-3">
+        <form method="post" onsubmit="animateSpinner('add')" id="formUIList">
+            {{ formToken() }}
+            <input type="hidden" name="action" value="delete">
+            {% if hasTabs %}
+                <input type="hidden" name="activetab" value="{{ activeTabName }}">
+            {% endif %}
+
+            <div class="card shadow">
+                {# Barra de controles: nuevo + eliminar + buscar + ordenar #}
+                <div class="container-fluid pt-3">
+                    <div class="row">
+                        <div class="col-md-auto mb-2">
+                            {% if src.newUrl() is not empty %}
+                                <a href="{{ src.newUrl() }}" class="btn btn-success" title="{{ trans('new') }}">
+                                    <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-xl-inline-block">{{ trans('new') }}</span>
+                                </a>
+                            {% endif %}
+                            {% if src.count() > 0 %}
+                                <button type="button" class="btn btn-danger" title="{{ trans('delete') }}"
+                                        onclick="uiListConfirmDelete()">
+                                    <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+                        <div class="col-sm mb-2">
+                            {% if src.searchFields() | length > 0 %}
+                                <div class="input-group">
+                                    <input class="form-control" type="text" form="formUIListSearch"
+                                           name="query" value="{{ src.query() }}" autocomplete="off"
+                                           placeholder="{{ trans('search') }}"/>
+                                    <button type="submit" form="formUIListSearch" class="btn btn-secondary">
+                                        <i class="fa-solid fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-sm-auto text-end mb-2">
+                            {% if orderOptions | length > 0 %}
+                                <div class="btn-group">
+                                    <button class="btn btn-light dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-angles-up fa-fw" aria-hidden="true"></i>
+                                        <span class="d-none d-lg-inline">{{ trans('order-by') }}</span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        {% for i, opt in orderOptions %}
+                                            {% set activeClass = (src.orderIndex() == i) ? ' active' : '' %}
+                                            <a class="dropdown-item{{ activeClass }}"
+                                               href="{{ fsc.url() }}?order={{ i }}{% if hasTabs %}&activetab={{ activeTabName }}{% endif %}{% if src.query() %}&query={{ src.query() | url_encode }}{% endif %}">
+                                                <i class="fa-solid fa-angles-up fa-fw" aria-hidden="true"></i>
+                                                {{ trans(opt.label) }}
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tabla #}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th width="50" class="text-center">
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="form-check-input" type="checkbox" id="uiListCheckAll"
+                                               onclick="uiListCheckboxes()"/>
+                                    </div>
+                                </th>
+                                {% for fieldname, column in columns %}
+                                    {% if not column.isHidden() %}
+                                        <th>{{ column.label() }}</th>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                                {% set editUrl = src.rowUrl(record) %}
+                                <tr class="{{ src.rowClass(record) }}"
+                                    {% if editUrl is not empty %}
+                                        data-href="{{ editUrl | e('html_attr') }}"
+                                        onclick="window.location=this.dataset.href"
+                                        style="cursor:pointer"
+                                    {% endif %}>
+                                    <td class="cancelClickable p-0 text-center align-middle"
+                                        onclick="event.stopPropagation()">
+                                        <div class="form-check form-check-inline m-0">
+                                            <input class="form-check-input uiListAction" type="checkbox"
+                                                   name="codes[]" value="{{ attribute(record, record.primaryColumn()) }}"/>
+                                        </div>
+                                    </td>
+                                    {% for fieldname, column in columns %}
+                                        {% if not column.isHidden() %}
+                                            {{ column.renderCell(attribute(record, fieldname) ?? null) | raw }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="{{ 1 + columns | length }}" class="text-center p-5 text-muted">
+                                        {% if src.query() is not empty %}
+                                            <div class="mb-3">
+                                                <i class="fa-solid fa-magnifying-glass fa-3x text-secondary"></i>
+                                            </div>
+                                            <p class="mb-0">{{ trans('no-results-found') }}</p>
+                                        {% else %}
+                                            <div class="mb-3">
+                                                <i class="fa-solid fa-inbox fa-3x text-secondary"></i>
+                                            </div>
+                                            <p class="mb-1">{{ trans('no-data-empty-list') }}</p>
+                                            {% if src.newUrl() is not empty %}
+                                                <p class="mb-0 small">{{ trans('no-data-click-new') }}</p>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {# Paginación #}
+                {% set srcCount = src.count() %}
+                {% set srcLimit = hasTabs ? src.limit() : fsc.limit() %}
+                {% if srcCount > srcLimit %}
+                    <div class="card-footer text-center">
+                        <div class="btn-group">
+                            {% set totalPages = (srcCount / srcLimit) | round(0, 'ceil') %}
+                            {% set currentPage = (src.offset() / srcLimit) | round(0, 'floor') %}
+                            {% for p in 0..(totalPages - 1) %}
+                                {% set btnClass = (p == currentPage) ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
+                                <a class="{{ btnClass }}"
+                                   href="{{ fsc.url() }}?offset={{ p * srcLimit }}{% if hasTabs %}&activetab={{ activeTabName }}{% endif %}{% if src.query() %}&query={{ src.query() | url_encode }}{% endif %}{% if src.orderIndex() >= 0 %}&order={{ src.orderIndex() }}{% endif %}">
+                                    {{ p + 1 }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </form>
+        <br/>
+    </div>
+
+    {# Formulario GET separado para el buscador #}
+    <form method="get" id="formUIListSearch" style="display:none">
+        <input type="hidden" name="order" value="{{ src.orderIndex() >= 0 ? src.orderIndex() : '' }}">
+        {% if hasTabs %}
+            <input type="hidden" name="activetab" value="{{ activeTabName }}">
+        {% endif %}
+    </form>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        @media (max-width: 767px) {
+            .nav-tabs-wrapper {
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                margin-bottom: -1px;
+            }
+            .nav-tabs-scroll {
+                flex-wrap: nowrap;
+                white-space: nowrap;
+                border-bottom: 1px solid #dee2e6;
+                min-width: min-content;
+            }
+            .nav-tabs-scroll .nav-item { flex-shrink: 0; }
+            .nav-tabs-scroll .nav-link { white-space: nowrap; }
+        }
+        @media (min-width: 768px) {
+            .nav-tabs-wrapper { overflow: visible; }
+            .nav-tabs-scroll { flex-wrap: wrap; }
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function uiListCheckboxes() {
+            var checked = document.getElementById('uiListCheckAll').checked;
+            document.querySelectorAll('.uiListAction').forEach(function (cb) {
+                cb.checked = checked;
+            });
+        }
+
+        function uiListConfirmDelete() {
+            if (!document.querySelector('.uiListAction:checked')) {
+                alert('{{ trans('no-selected-item') | escape('js') }}');
+                return;
+            }
+            if (confirm('{{ trans('are-you-sure') | escape('js') }}')) {
+                document.getElementById('formUIList').submit();
+            }
+        }
+    </script>
+{% endblock %}
