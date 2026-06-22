@@ -54,8 +54,6 @@ class ComponentVariante extends ComponentModalPicker
         return $this;
     }
 
-    // ─── ComponentModalPicker: identidad ─────────────────────────────────────
-
     protected function widgetActionName(): string
     {
         return 'widget-variante-search';
@@ -70,8 +68,6 @@ class ComponentVariante extends ComponentModalPicker
     {
         return 'fa-solid fa-cubes';
     }
-
-    // ─── ComponentModalPicker: búsqueda AJAX ─────────────────────────────────
 
     protected function jsonSearch(Request $request): string
     {
@@ -97,8 +93,6 @@ class ComponentVariante extends ComponentModalPicker
 
         return json_encode($data);
     }
-
-    // ─── ComponentModalPicker: modal ─────────────────────────────────────────
 
     protected function sortOptions(): array
     {
@@ -168,8 +162,6 @@ class ComponentVariante extends ComponentModalPicker
             . '</a>';
     }
 
-    // ─── ComponentModalPicker: solo lectura ──────────────────────────────────
-
     protected function readOnlyUrl(): string
     {
         $v = new Variante();
@@ -179,15 +171,11 @@ class ComponentVariante extends ComponentModalPicker
         return $v->url();
     }
 
-    // ─── ComponentModalPicker: assets ────────────────────────────────────────
-
     public function registerAssets(): void
     {
         $route = Tools::config('route');
         AssetManager::addJs($route . '/Core/Assets/JS/WidgetVariante.js?v=' . Tools::date());
     }
-
-    // ─── Helpers internos ────────────────────────────────────────────────────
 
     /**
      * @return Variante[]
