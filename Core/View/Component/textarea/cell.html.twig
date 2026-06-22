@@ -1,3 +1,0 @@
-{% set display = value|default('-') %}
-{% if display|length > 80 %}{% set display = display|slice(0, 80) ~ '…' %}{% endif %}
-<td class="text-{{ align|default('left') }}">{{ display|e }}</td>
