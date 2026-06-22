@@ -38,6 +38,7 @@ class ComponentNumber extends FieldComponent
     protected string $min = '';
     protected bool $showTotals = false;
     protected string $step = 'any';
+    protected string $cellAlign = 'right';
 
     public function __construct(string $fieldname)
     {

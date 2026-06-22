@@ -65,6 +65,7 @@ abstract class FieldComponent extends BaseComponent
     protected string $cssClass = '';
     protected int $cols = 0;
     protected int $tabindex = -1;
+    protected string $cellAlign = 'left';
 
     public function __construct(string $fieldname)
     {
@@ -159,6 +160,13 @@ abstract class FieldComponent extends BaseComponent
         $this->tabindex = $index;
         return $this;
     }
+
+    /** Alineación de la celda en la tabla de listado: 'left', 'right' o 'center'. */
+    public function setAlign(string $align): static
+    {
+        $this->cellAlign = $align;
+        return $this;
+    }
     public function label(): string
     {
         return $this->label;
@@ -202,7 +210,7 @@ abstract class FieldComponent extends BaseComponent
         if ($this->cols === 12) {
             return 'col-12';
         }
-        return 'col-12 col-sm-6 col-md-4 col-xl-' . $this->cols;
+        return 'col-12 col-md-' . $this->cols;
     }
 
     public function cssClass(): string
@@ -281,13 +289,13 @@ abstract class FieldComponent extends BaseComponent
      * Las subclases pueden sobreescribir este método para renderizar HTML especial
      * (por ejemplo, ComponentCheckbox muestra un icono en lugar de texto).
      */
-    public function renderCell(mixed $value = null, string $align = 'left'): string
+    public function renderCell(mixed $value = null): string
     {
         if ($value !== null) {
             $this->value = $value;
         }
 
-        return '<td class="text-' . $align . '">'
+        return '<td class="text-' . $this->cellAlign . '">'
             . htmlspecialchars($this->displayValue())
             . '</td>';
     }

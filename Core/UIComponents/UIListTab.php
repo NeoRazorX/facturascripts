@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\UIComponents;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Component\FieldComponent;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 
 /**
  * Representa una pestaña dentro de un UIListController multi-pestaña.
@@ -33,6 +34,8 @@ use FacturaScripts\Core\Request;
  */
 class UIListTab
 {
+    use HasListFilters;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     private string $name;
@@ -56,6 +59,9 @@ class UIListTab
     private string $newUrlValue = '';
     /** @var callable|null */
     private $rowUrlCallback = null;
+
+    /** @var callable|null Callback que devuelve array de DataBaseWhere extra aplicados en loadRecords(). */
+    private $extraWhereCallback = null;
 
     private function __construct(string $name, string $modelClassName, string $titleKey, string $icon)
     {
@@ -121,6 +127,30 @@ class UIListTab
         return $this;
     }
 
+    /**
+     * Registra un callback que devuelve condiciones WHERE extra para loadRecords().
+     *
+     * El callback se invoca sin parámetros y debe retornar array<DataBaseWhere>.
+     * Útil para pestañas que necesitan filtros derivados de una consulta previa,
+     * como la pestaña de asientos desbalanceados.
+     */
+    public function setExtraWhere(callable $fn): static
+    {
+        $this->extraWhereCallback = $fn;
+        return $this;
+    }
+
+    public function loadCount(array $extraWhere = []): void
+    {
+        $modelClass = self::MODEL_NAMESPACE . $this->modelClassName;
+        if (!class_exists($modelClass)) {
+            return;
+        }
+        $model = new $modelClass();
+        $where = array_merge($extraWhere, $this->extraWhereCallback ? ($this->extraWhereCallback)() : []);
+        $this->count = $model->count($where);
+    }
+
     public function loadRecords(Request $request, int $limit, array $extraWhere = []): void
     {
         $modelClass = self::MODEL_NAMESPACE . $this->modelClassName;
@@ -130,7 +160,10 @@ class UIListTab
 
         $this->limit = $limit;
         $model = new $modelClass();
-        $where = $extraWhere;
+        $where = array_merge($extraWhere, $this->extraWhereCallback ? ($this->extraWhereCallback)() : []);
+
+        $this->readFilterValues($request);
+        $where = array_merge($where, $this->buildFilterWhere());
 
         $this->query = $request->inputOrQuery('query', '');
         if (!empty($this->query) && !empty($this->searchFields)) {
@@ -238,6 +271,27 @@ class UIListTab
     public function newUrl(): string
     {
         return $this->newUrlValue;
+    }
+
+    public function isClickable(): bool
+    {
+        return $this->rowUrlCallback !== null;
+    }
+
+    public function colorLegend(): string
+    {
+        $html = '';
+        foreach ($this->colorConditions as $cond) {
+            if (!empty($cond['title'])) {
+                $label = Tools::lang()->trans($cond['title']);
+                $textClass = str_replace('table-', 'text-', $cond['color']);
+                $html .= '<span class="dropdown-item small">'
+                    . '<i class="fa-solid fa-circle me-1 ' . htmlspecialchars($textClass) . '" aria-hidden="true"></i>'
+                    . htmlspecialchars($label)
+                    . '</span>';
+            }
+        }
+        return $html;
     }
 
     private function resolveOrder(): array

@@ -357,6 +357,18 @@ abstract class UIEditController extends UIController
     }
 
     /**
+     * Devuelve HTML de botones extra inyectados en la cabecera del formulario.
+     *
+     * La implementación base retorna cadena vacía. Las subclases pueden sobreescribir
+     * este método para añadir botones específicos (p. ej. bloquear/desbloquear).
+     * El HTML se renderiza crudo en el template con `{{ fsc.extraHeaderButtons() | raw }}`.
+     */
+    public function extraHeaderButtons(): string
+    {
+        return '';
+    }
+
+    /**
      * Devuelve la URL del listado asociado a este formulario de edición.
      *
      * Se usa en las redirecciones post-guardado y post-borrado, y en el botón

@@ -130,6 +130,9 @@
                     </a>
                 {% endif %}
 
+                {# Botones extra inyectados por subclases de UIEditController #}
+                {{ fsc.extraHeaderButtons() | raw }}
+
                 {# Botón Imprimir #}
                 {% if fsc.hasData and model %}
                     <div class="btn-group ms-1">
@@ -261,6 +264,12 @@
                                     <div class="row">
                                         {% for group in fsc.componentGroups() %}
                                             <div class="col-md-12">
+                                                {% if group.title %}
+                                                    <div class="col-12 mt-2 mb-1">
+                                                        <small class="text-muted text-uppercase fw-semibold">{{ group.title }}</small>
+                                                        <hr class="mt-1 mb-0">
+                                                    </div>
+                                                {% endif %}
                                                 <div class="row g-2{{ group.alignBottom ? ' align-items-end' : '' }}">
                                                     {% for fieldname, component in group.components %}
                                                         {% if component.isHidden() %}
@@ -489,6 +498,17 @@
     <script>
         function uiEditDelete() {
             new bootstrap.Modal(document.getElementById('uiEditDeleteModal')).show();
+        }
+
+        function uiEditSendEvent(eventName) {
+            var form = document.getElementById('formUIEdit');
+            if (!form) { return; }
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = '_event';
+            input.value = eventName;
+            form.appendChild(input);
+            form.submit();
         }
 
         $(document).ready(function () {

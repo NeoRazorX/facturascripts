@@ -52,6 +52,8 @@ use FacturaScripts\Core\UIComponents\UIListTab;
  */
 abstract class UIListController extends Controller
 {
+    use HasListFilters;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /** @var FieldComponent[] keyed by fieldname */
@@ -131,6 +133,12 @@ abstract class UIListController extends Controller
         }
 
         if (!empty($this->tabs)) {
+            $activeTabName = $this->activeTabName();
+            foreach ($this->tabs as $tabName => $tab) {
+                if ($tabName !== $activeTabName) {
+                    $tab->loadCount();
+                }
+            }
             $activeTab = $this->activeTab();
             if ($activeTab !== null) {
                 $activeTab->loadRecords($this->request, $this->limit);
@@ -346,6 +354,9 @@ abstract class UIListController extends Controller
         $model = new $modelClass();
 
         $where = $this->permissions->onlyOwnerData ? $this->getOwnerFilter($model) : [];
+
+        $this->readFilterValues($this->request);
+        $where = array_merge($where, $this->buildFilterWhere());
 
         $this->query = $this->request->inputOrQuery('query', '');
         if (!empty($this->query) && !empty($this->searchFields)) {
@@ -611,6 +622,41 @@ abstract class UIListController extends Controller
     {
         $index = (int) $this->request->inputOrQuery('order', -1);
         return isset($this->orderOptions[$index]) ? $index : -1;
+    }
+
+    public function isClickable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Devuelve HTML de botones extra para la pestaña indicada.
+     *
+     * La implementación base retorna cadena vacía. Las subclases pueden sobreescribir
+     * para añadir botones específicos por pestaña (p. ej. bloquear entradas, renumerar).
+     * El HTML se renderiza crudo en el template con `{{ fsc.tabExtraButtons(tabName) | raw }}`.
+     *
+     * @param string $tabName Nombre de la pestaña activa en el loop del template.
+     */
+    public function tabExtraButtons(string $tabName): string
+    {
+        return '';
+    }
+
+    public function colorLegend(): string
+    {
+        $html = '';
+        foreach ($this->colorConditions as $cond) {
+            if (!empty($cond['title'])) {
+                $label = Tools::lang()->trans($cond['title']);
+                $textClass = str_replace('table-', 'text-', $cond['color']);
+                $html .= '<span class="dropdown-item small">'
+                    . '<i class="fa-solid fa-circle me-1 ' . htmlspecialchars($textClass) . '" aria-hidden="true"></i>'
+                    . htmlspecialchars($label)
+                    . '</span>';
+            }
+        }
+        return $html;
     }
 
     /**

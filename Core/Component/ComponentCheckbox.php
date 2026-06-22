@@ -94,7 +94,9 @@ class ComponentCheckbox extends FieldComponent
             . '</div>';
     }
 
-    public function renderCell(mixed $value = null, string $align = 'center'): string
+    protected string $cellAlign = 'center';
+
+    public function renderCell(mixed $value = null): string
     {
         if ($value !== null) {
             $this->value = $value;
@@ -104,7 +106,7 @@ class ComponentCheckbox extends FieldComponent
             ? '<i class="fa-solid fa-check text-success"></i>'
             : '<i class="fa-solid fa-xmark text-muted"></i>';
 
-        return '<td class="text-' . $align . '">' . $icon . '</td>';
+        return '<td class="text-' . $this->cellAlign . '">' . $icon . '</td>';
     }
 
     public function renderReadOnly(mixed $value = null): string

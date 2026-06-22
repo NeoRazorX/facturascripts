@@ -28,19 +28,22 @@
     <div class="container-fluid mb-3 d-print-none">
         <div class="row">
             <div class="col-md-7">
-                {# Breadcrumb móvil #}
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb d-md-none">
-                        <li class="breadcrumb-item"><a href="#">{{ trans(pageData.menu) }}</a></li>
+                        <li class="breadcrumb-item">
+                            <a href="#">{{ trans(pageData.menu) }}</a>
+                        </li>
                         {% if pageData.submenu %}
-                            <li class="breadcrumb-item"><a href="#">{{ trans(pageData.submenu) }}</a></li>
+                            <li class="breadcrumb-item">
+                                <a href="#">{{ trans(pageData.submenu) }}</a>
+                            </li>
                         {% endif %}
                         <li class="breadcrumb-item active" aria-current="page">{{ fsc.title }}</li>
                     </ol>
                 </nav>
-
                 <div class="btn-group">
-                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}" title="{{ trans('refresh') }}">
+                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}"
+                       title="{{ trans('refresh') }}">
                         <i class="fa-solid fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if pageData.name == fsc.user.homepage %}
@@ -55,14 +58,11 @@
                         </a>
                     {% endif %}
                 </div>
-
-                {# Botón Opciones #}
                 <div class="btn-group">
                     <div class="dropdown">
                         <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa-solid fa-wrench fa-fw me-1" aria-hidden="true"></i>
-                            {{ trans('options') }}
+                            <i class="fa-solid fa-wrench fa-fw me-1" aria-hidden="true"></i>{{ trans('options') }}
                         </button>
                         <div class="dropdown-menu">
                             <h6 class="dropdown-header">{{ trans('options-button-header') }}</h6>
@@ -75,7 +75,8 @@
                                     </a>
                                 {% endfor %}
                             {% else %}
-                                <a class="dropdown-item" href="EditPageOption?code={{ pageData.name }}&url={{ fsc.url() | url_encode }}">
+                                <a class="dropdown-item"
+                                   href="EditPageOption?code={{ pageData.name }}&url={{ fsc.url() | url_encode }}">
                                     <i class="{{ pageData.icon }} fa-fw me-1" aria-hidden="true"></i>
                                     {{ fsc.title }}
                                 </a>
@@ -84,7 +85,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-md-5 text-end">
                 <h1 class="h4 mb-0 d-none d-md-inline-block">
                     {{ fsc.title }}<i class="{{ pageData.icon }} ms-3" aria-hidden="true"></i>
@@ -92,199 +92,570 @@
             </div>
         </div>
     </div>
-
-    {# Navegación de pestañas — dentro del bg-light igual que ListController #}
-    {% if hasTabs %}
-        <div class="nav-tabs-wrapper d-print-none">
-            <ul class="nav nav-tabs nav-tabs-scroll" id="uiListTabs" role="tablist">
+    <div class="nav-tabs-wrapper d-print-none">
+        <ul class="nav nav-tabs nav-tabs-scroll" id="mainTabs" role="tablist">
+            {% if hasTabs %}
                 {% for tabName, tab in fsc.tabs() %}
-                    <li class="nav-item">
+                    <li class="nav-item" role="presentation">
                         <a href="{{ fsc.url() }}?activetab={{ tabName }}"
                            class="nav-link{{ tabName == activeTabName ? ' active' : '' }}"
-                           title="{{ trans(tab.title()) }}">
+                           role="tab" title="{{ trans(tab.title()) }}">
                             <i class="{{ tab.icon() }} fa-fw me-1 d-none d-sm-inline" aria-hidden="true"></i>
-                            <span>{{ trans(tab.title()) }}</span>
+                            {% set titleText = trans(tab.title()) %}
+                            {% if titleText | length > 15 %}
+                                <span>{{ titleText | slice(0, 15) }}...</span>
+                            {% else %}
+                                <span>{{ titleText }}</span>
+                            {% endif %}
+                            {% if tab.count() > 0 %}
+                                <span class="badge bg-secondary">{{ number(tab.count(), 0) }}</span>
+                            {% endif %}
                         </a>
                     </li>
                 {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
+            {% else %}
+                <li class="nav-item">
+                    <a href="{{ fsc.url() }}" class="nav-link active" role="tab">
+                        <i class="{{ pageData.icon }} fa-fw me-1 d-none d-sm-inline" aria-hidden="true"></i>
+                        <span>{{ fsc.title }}</span>
+                        {% if fsc.count() > 0 %}
+                            <span class="badge bg-secondary">{{ number(fsc.count(), 0) }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 {% endblock %}
 
 {% block body %}
     {{ parent() }}
 
-    {# Fuente de datos: tab activo o controlador en modo single #}
     {% set hasTabs = fsc.tabs() | length > 0 %}
-    {% if hasTabs %}
-        {% set src = fsc.activeTab() %}
-        {% set activeTabName = fsc.activeTabName() %}
-    {% else %}
-        {% set src = fsc %}
-        {% set activeTabName = '' %}
-    {% endif %}
+    {% set activeTabName = hasTabs ? fsc.activeTabName() : '' %}
+    {% set tableSize = settings('default', 'tablesize') %}
 
-    {% set columns = src.columns() %}
-    {% set records = src.records() %}
-    {% set orderOptions = src.orderOptions() %}
+    <script>
+        var listViewDeleteCancel = "{{ trans('cancel') }}";
+        var listViewDeleteConfirm = "{{ trans('confirm') }}";
+        var listViewDeleteMessage = "{{ trans('are-you-sure') }}";
+        var listViewDeleteTitle = "{{ trans('confirm-delete') }}";
+    </script>
 
-    <div class="container-fluid pt-3">
-        <form method="post" onsubmit="animateSpinner('add')" id="formUIList">
-            {{ formToken() }}
-            <input type="hidden" name="action" value="delete">
-            {% if hasTabs %}
-                <input type="hidden" name="activetab" value="{{ activeTabName }}">
-            {% endif %}
-
-            <div class="card shadow">
-                {# Barra de controles: nuevo + eliminar + buscar + ordenar #}
-                <div class="container-fluid pt-3">
-                    <div class="row">
-                        <div class="col-md-auto mb-2">
-                            {% if src.newUrl() is not empty %}
-                                <a href="{{ src.newUrl() }}" class="btn btn-success" title="{{ trans('new') }}">
-                                    <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
-                                    <span class="d-none d-xl-inline-block">{{ trans('new') }}</span>
-                                </a>
+    <div class="tab-content pt-3" id="mainTabsContent">
+        {% if hasTabs %}
+            {% for tabName, tab in fsc.tabs() %}
+                {% set isActive = tabName == activeTabName %}
+                <div class="tab-pane fade{{ isActive ? ' show active' : '' }}" id="{{ tabName }}" role="tabpanel">
+                    {% if isActive %}
+                        {% set src = tab %}
+                        {% set formName = 'form' ~ tabName %}
+                        {% set columns = src.columns() %}
+                        {% set records = src.records() %}
+                        {% set orderOptions = src.orderOptions() %}
+                        {% set orderIndex = src.orderIndex() %}
+                        {% set colorLegend = src.colorLegend() %}
+                        {% set clickable = src.isClickable() %}
+                        {% set visibleColCount = 0 %}
+                        {% for fieldname, col in columns %}
+                            {% if not col.isHidden() %}
+                                {% set visibleColCount = visibleColCount + 1 %}
                             {% endif %}
-                            {% if src.count() > 0 %}
-                                <button type="button" class="btn btn-danger" title="{{ trans('delete') }}"
-                                        onclick="uiListConfirmDelete()">
-                                    <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
-                                </button>
-                            {% endif %}
-                        </div>
-                        <div class="col-sm mb-2">
-                            {% if src.searchFields() | length > 0 %}
-                                <div class="input-group">
-                                    <input class="form-control" type="text" form="formUIListSearch"
-                                           name="query" value="{{ src.query() }}" autocomplete="off"
-                                           placeholder="{{ trans('search') }}"/>
-                                    <button type="submit" form="formUIListSearch" class="btn btn-secondary">
-                                        <i class="fa-solid fa-search" aria-hidden="true"></i>
-                                    </button>
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-sm-auto text-end mb-2">
-                            {% if orderOptions | length > 0 %}
-                                <div class="btn-group">
-                                    <button class="btn btn-light dropdown-toggle" type="button"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-solid fa-angles-up fa-fw" aria-hidden="true"></i>
-                                        <span class="d-none d-lg-inline">{{ trans('order-by') }}</span>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        {% for i, opt in orderOptions %}
-                                            {% set activeClass = (src.orderIndex() == i) ? ' active' : '' %}
-                                            <a class="dropdown-item{{ activeClass }}"
-                                               href="{{ fsc.url() }}?order={{ i }}{% if hasTabs %}&activetab={{ activeTabName }}{% endif %}{% if src.query() %}&query={{ src.query() | url_encode }}{% endif %}">
-                                                <i class="fa-solid fa-angles-up fa-fw" aria-hidden="true"></i>
-                                                {{ trans(opt.label) }}
-                                            </a>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                {# Tabla #}
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th width="50" class="text-center">
-                                    <div class="form-check form-check-inline m-0">
-                                        <input class="form-check-input" type="checkbox" id="uiListCheckAll"
-                                               onclick="uiListCheckboxes()"/>
-                                    </div>
-                                </th>
-                                {% for fieldname, column in columns %}
-                                    {% if not column.isHidden() %}
-                                        <th>{{ column.label() }}</th>
-                                    {% endif %}
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for record in records %}
-                                {% set editUrl = src.rowUrl(record) %}
-                                <tr class="{{ src.rowClass(record) }}"
-                                    {% if editUrl is not empty %}
-                                        data-href="{{ editUrl | e('html_attr') }}"
-                                        onclick="window.location=this.dataset.href"
-                                        style="cursor:pointer"
-                                    {% endif %}>
-                                    <td class="cancelClickable p-0 text-center align-middle"
-                                        onclick="event.stopPropagation()">
-                                        <div class="form-check form-check-inline m-0">
-                                            <input class="form-check-input uiListAction" type="checkbox"
-                                                   name="codes[]" value="{{ attribute(record, record.primaryColumn()) }}"/>
+                        {% endfor %}
+                        <form id="{{ formName }}" method="post" onsubmit="animateSpinner('add')">
+                            {{ formToken() }}
+                            <input type="hidden" name="action"/>
+                            <input type="hidden" name="activetab" value="{{ tabName }}"/>
+                            <input type="hidden" name="loadfilter" value=""/>
+                            <input type="hidden" name="offset" value="{{ src.offset() }}"/>
+                            <input type="hidden" name="order" value="{{ orderIndex >= 0 ? orderIndex : '' }}"/>
+                            <div class="">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-auto mb-2">
+                                            {% if src.newUrl() is not empty %}
+                                                <a href="{{ src.newUrl() }}" class="btn btn-success"
+                                                   title="{{ trans('new') }}">
+                                                    <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
+                                                    <span class="d-none d-xl-inline-block ms-1">{{ trans('new') }}</span>
+                                                </a>
+                                            {% endif %}
+                                            {% if src.count() > 0 %}
+                                                <button type="button" class="btn btn-danger"
+                                                        onclick="listViewDelete('{{ tabName }}');"
+                                                        title="{{ trans('delete') }}">
+                                                    <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
+                                                </button>
+                                            {% endif %}
+                                            {% if src.count() > 0 %}
+                                                <div class="btn-group">
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-light dropdown-toggle" type="button"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            <i class="fa-solid fa-print fa-fw" aria-hidden="true"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#"
+                                                               onclick="listViewPrintAction('{{ tabName }}', 'PDF'); return false;">
+                                                                <i class="fa-solid fa-file-pdf fa-fw me-1" aria-hidden="true"></i>PDF</a>
+                                                            <a class="dropdown-item" href="#"
+                                                               onclick="listViewPrintAction('{{ tabName }}', 'XLS'); return false;">
+                                                                <i class="fa-solid fa-file-excel fa-fw me-1" aria-hidden="true"></i>XLS</a>
+                                                            <a class="dropdown-item" href="#"
+                                                               onclick="listViewPrintAction('{{ tabName }}', 'CSV'); return false;">
+                                                                <i class="fa-solid fa-file-csv fa-fw me-1" aria-hidden="true"></i>CSV</a>
+                                                            <div class="dropdown-divider"></div>
+                                                            <a class="dropdown-item" href="#"
+                                                               onclick="listViewPrintAction('{{ tabName }}', 'MAIL'); return false;">
+                                                                <i class="fa-solid fa-envelope fa-fw me-1" aria-hidden="true"></i>{{ trans('send') }}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                            {% if clickable and src.count() > 1 %}
+                                                <button type="button" class="btn btn-light"
+                                                        onclick="listViewOpenTab('{{ tabName }}');"
+                                                        title="{{ trans('open-tab') }}">
+                                                    <i class="fa-solid fa-external-link-alt fa-fw" aria-hidden="true"></i>
+                                                </button>
+                                            {% endif %}
+                                            {{ fsc.tabExtraButtons(tabName) | raw }}
                                         </div>
-                                    </td>
-                                    {% for fieldname, column in columns %}
-                                        {% if not column.isHidden() %}
-                                            {{ column.renderCell(attribute(record, fieldname) ?? null) | raw }}
+                                        <div class="col-sm mb-2">
+                                            {% if src.searchFields() | length > 0 %}
+                                                <div class="input-group">
+                                                    <input class="form-control" type="text" name="query"
+                                                           value="{{ src.query() }}" autocomplete="off"
+                                                           placeholder="{{ trans('search') }}"/>
+                                                    <button type="submit" class="btn btn-secondary">
+                                                        <i class="fa-solid fa-search" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-sm-auto text-end mb-2">
+                                            {% if src.hasFilters() %}
+                                                <button type="button" class="btn btn-light{{ src.hasActiveFilters() ? ' active' : '' }}"
+                                                        onclick="listViewShowFilters('{{ tabName }}');"
+                                                        title="{{ trans('filters') }}">
+                                                    <i class="fa-solid fa-filter fa-fw" aria-hidden="true"></i>
+                                                    <span class="d-none d-lg-inline">{{ trans('filters') }}</span>
+                                                </button>
+                                            {% endif %}
+                                            {% if orderOptions | length > 0 %}
+                                                {% set activeOrder = null %}
+                                                {% if orderIndex >= 0 %}
+                                                    {% set activeOrder = orderOptions[orderIndex] %}
+                                                {% endif %}
+                                                {% if activeOrder is null %}
+                                                    {% for opt in orderOptions %}
+                                                        {% if opt.default > 0 and activeOrder is null %}
+                                                            {% set activeOrder = opt %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                                {% if activeOrder is null %}
+                                                    {% set activeOrder = orderOptions | first %}
+                                                {% endif %}
+                                                {% set sortIcon = (orderIndex >= 0 and orderIndex % 2 != 0) ? 'fa-solid fa-angles-down' : 'fa-solid fa-angles-up' %}
+                                                <div class="btn-group">
+                                                    <button class="btn btn-light dropdown-toggle" type="button"
+                                                            data-bs-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="true">
+                                                        <i class="{{ sortIcon }} fa-fw" aria-hidden="true"></i>
+                                                        <span class="d-none d-lg-inline">{{ trans(activeOrder.label) }}</span>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        {% for i, opt in orderOptions %}
+                                                            {% set activeClass = (orderIndex == i) ? ' active' : '' %}
+                                                            {% set icon = (i % 2 == 0) ? 'fa-solid fa-angles-up' : 'fa-solid fa-angles-down' %}
+                                                            <a class="dropdown-item{{ activeClass }}" href="#"
+                                                               onclick="listViewSetOrder('{{ tabName }}', '{{ i }}');">
+                                                                <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
+                                                                {{ trans(opt.label) }}
+                                                            </a>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                            {% if colorLegend is not empty %}
+                                                <div class="btn-group">
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-light dropdown-toggle" type="button"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            <i class="fa-solid fa-fill-drip fa-fw" aria-hidden="true"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-end pb-0">
+                                                            <h6 class="dropdown-header">{{ trans('colors') }}</h6>
+                                                            {{ colorLegend | raw }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if src.hasFilters() %}
+                                        {% set filtersHtml = src.renderFiltersHtml(formName) %}
+                                        <div id="form{{ tabName }}Filters"
+                                             class="row g-2 align-items-center border-bottom mb-3"
+                                             {% if not src.hasActiveFilters() %}style="display: none;"{% endif %}>
+                                            {{ filtersHtml | raw }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="table-responsive">
+                                    {% set tableClass = tableSize == 'small' ? 'table-sm' : '' %}
+                                    <table class="table table-hover mb-0 {{ tableClass }}">
+                                        <thead>
+                                        <tr>
+                                            {% if src.count() > 0 %}
+                                                <th width="50" class="text-center">
+                                                    <div class="form-check form-check-inline m-0 toggle-ext-link">
+                                                        <input class="form-check-input listActionCB" type="checkbox"
+                                                               onclick="listViewCheckboxes('{{ tabName }}');"/>
+                                                    </div>
+                                                    {% if clickable %}
+                                                        <i class="fa-solid fa-external-link-alt toggle-ext-link d-none"
+                                                           title="{{ trans('open-tab') }}"></i>
+                                                    {% endif %}
+                                                </th>
+                                            {% else %}
+                                                <th width="50"></th>
+                                            {% endif %}
+                                            {% for fieldname, col in columns %}
+                                                {% if not col.isHidden() %}
+                                                    <th>{{ col.label() }}</th>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for record in records %}
+                                            {% set editUrl = src.rowUrl(record) %}
+                                            {% set trClass = (clickable ? 'clickableListRow ' : '') ~ src.rowClass(record) %}
+                                            <tr class="{{ trClass }}"
+                                                data-href="{{ editUrl | e('html_attr') }}">
+                                                <td class="cancelClickable p-0 text-center align-middle">
+                                                    <div class="form-check form-check-inline m-0 toggle-ext-link">
+                                                        <input class="form-check-input listAction" type="checkbox"
+                                                               name="codes[]"
+                                                               value="{{ record.primaryColumnValue() }}"/>
+                                                    </div>
+                                                    {% if clickable %}
+                                                        <a href="{{ editUrl }}" target="_blank"
+                                                           class="toggle-ext-link d-none"
+                                                           onauxclick="$(this).addClass('text-dark');"
+                                                           title="{{ trans('open-tab') }}">
+                                                            <i class="fa-solid fa-external-link-alt"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                </td>
+                                                {% for fieldname, col in columns %}
+                                                    {% if not col.isHidden() %}
+                                                        {{ col.renderCell(attribute(record, fieldname) ?? null) | raw }}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </tr>
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="{{ 1 + visibleColCount }}"
+                                                    class="text-center p-5 text-muted">
+                                                    {% if src.query() is not empty %}
+                                                        <div class="mb-3">
+                                                            <i class="fa-solid fa-magnifying-glass fa-3x text-secondary"></i>
+                                                        </div>
+                                                        <p class="mb-0">{{ trans('no-results-found') }}</p>
+                                                    {% else %}
+                                                        <div class="mb-3">
+                                                            <i class="fa-solid fa-inbox fa-3x text-secondary"></i>
+                                                        </div>
+                                                        <p class="mb-1">{{ trans('no-data-empty-list') }}</p>
+                                                        {% if src.newUrl() is not empty %}
+                                                            <p class="mb-0 small">{{ trans('no-data-click-new') }}</p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% set totalPages = src.count() > 0 ? ((src.count() / src.limit()) | round(0, 'ceil')) : 0 %}
+                                {% set currentPage = src.limit() > 0 ? ((src.offset() / src.limit()) | round(0, 'floor')) : 0 %}
+                                {% if totalPages > 1 %}
+                                    <div class="card-footer text-center">
+                                        <div class="btn-group">
+                                            {% for p in 0..(totalPages - 1) %}
+                                                {% set btnClass = (p == currentPage) ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
+                                                <button type="button" class="{{ btnClass }}"
+                                                        onclick="listViewSetOffset('{{ tabName }}', '{{ p * src.limit() }}');">
+                                                    {{ p + 1 }}
+                                                </button>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </form>
+                        <br/>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            {# Single-tab mode #}
+            {% set src = fsc %}
+            {% set tabName = fsc.getPageData().name %}
+            {% set formName = 'form' ~ tabName %}
+            {% set columns = src.columns() %}
+            {% set records = src.records() %}
+            {% set orderOptions = src.orderOptions() %}
+            {% set orderIndex = src.orderIndex() %}
+            {% set colorLegend = src.colorLegend() %}
+            {% set clickable = src.isClickable() %}
+            {% set visibleColCount = 0 %}
+            {% for fieldname, col in columns %}
+                {% if not col.isHidden() %}
+                    {% set visibleColCount = visibleColCount + 1 %}
+                {% endif %}
+            {% endfor %}
+            <div class="tab-pane fade show active" role="tabpanel">
+                <form id="{{ formName }}" method="post" onsubmit="animateSpinner('add')">
+                    {{ formToken() }}
+                    <input type="hidden" name="action"/>
+                    <input type="hidden" name="loadfilter" value=""/>
+                    <input type="hidden" name="offset" value="{{ src.offset() }}"/>
+                    <input type="hidden" name="order" value="{{ orderIndex >= 0 ? orderIndex : '' }}"/>
+                    <div class="">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-auto mb-2">
+                                    {% if src.newUrl() is not empty %}
+                                        <a href="{{ src.newUrl() }}" class="btn btn-success" title="{{ trans('new') }}">
+                                            <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
+                                            <span class="d-none d-xl-inline-block ms-1">{{ trans('new') }}</span>
+                                        </a>
+                                    {% endif %}
+                                    {% if src.count() > 0 %}
+                                        <button type="button" class="btn btn-danger"
+                                                onclick="listViewDelete('{{ tabName }}');"
+                                                title="{{ trans('delete') }}">
+                                            <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
+                                        </button>
+                                    {% endif %}
+                                    {% if src.count() > 0 %}
+                                        <div class="btn-group">
+                                            <div class="dropdown">
+                                                <button class="btn btn-light dropdown-toggle" type="button"
+                                                        data-bs-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">
+                                                    <i class="fa-solid fa-print fa-fw" aria-hidden="true"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="#"
+                                                       onclick="listViewPrintAction('{{ tabName }}', 'PDF'); return false;">
+                                                        <i class="fa-solid fa-file-pdf fa-fw me-1" aria-hidden="true"></i>PDF</a>
+                                                    <a class="dropdown-item" href="#"
+                                                       onclick="listViewPrintAction('{{ tabName }}', 'XLS'); return false;">
+                                                        <i class="fa-solid fa-file-excel fa-fw me-1" aria-hidden="true"></i>XLS</a>
+                                                    <a class="dropdown-item" href="#"
+                                                       onclick="listViewPrintAction('{{ tabName }}', 'CSV'); return false;">
+                                                        <i class="fa-solid fa-file-csv fa-fw me-1" aria-hidden="true"></i>CSV</a>
+                                                    <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item" href="#"
+                                                       onclick="listViewPrintAction('{{ tabName }}', 'MAIL'); return false;">
+                                                        <i class="fa-solid fa-envelope fa-fw me-1" aria-hidden="true"></i>{{ trans('send') }}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if clickable and src.count() > 1 %}
+                                        <button type="button" class="btn btn-light"
+                                                onclick="listViewOpenTab('{{ tabName }}');"
+                                                title="{{ trans('open-tab') }}">
+                                            <i class="fa-solid fa-external-link-alt fa-fw" aria-hidden="true"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                                <div class="col-sm mb-2">
+                                    {% if src.searchFields() | length > 0 %}
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" name="query"
+                                                   value="{{ src.query() }}" autocomplete="off"
+                                                   placeholder="{{ trans('search') }}"/>
+                                            <button type="submit" class="btn btn-secondary">
+                                                <i class="fa-solid fa-search" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-sm-auto text-end mb-2">
+                                    {% if src.hasFilters() %}
+                                        <button type="button" class="btn btn-light{{ src.hasActiveFilters() ? ' active' : '' }}"
+                                                onclick="listViewShowFilters('{{ tabName }}');"
+                                                title="{{ trans('filters') }}">
+                                            <i class="fa-solid fa-filter fa-fw" aria-hidden="true"></i>
+                                            <span class="d-none d-lg-inline">{{ trans('filters') }}</span>
+                                        </button>
+                                    {% endif %}
+                                    {% if orderOptions | length > 0 %}
+                                        {% set activeOrder = null %}
+                                        {% if orderIndex >= 0 %}
+                                            {% set activeOrder = orderOptions[orderIndex] %}
+                                        {% endif %}
+                                        {% if activeOrder is null %}
+                                            {% for opt in orderOptions %}
+                                                {% if opt.default > 0 and activeOrder is null %}
+                                                    {% set activeOrder = opt %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% if activeOrder is null %}
+                                            {% set activeOrder = orderOptions | first %}
+                                        {% endif %}
+                                        {% set sortIcon = (orderIndex >= 0 and orderIndex % 2 != 0) ? 'fa-solid fa-angles-down' : 'fa-solid fa-angles-up' %}
+                                        <div class="btn-group">
+                                            <button class="btn btn-light dropdown-toggle" type="button"
+                                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <i class="{{ sortIcon }} fa-fw" aria-hidden="true"></i>
+                                                <span class="d-none d-lg-inline">{{ trans(activeOrder.label) }}</span>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                {% for i, opt in orderOptions %}
+                                                    {% set activeClass = (orderIndex == i) ? ' active' : '' %}
+                                                    {% set icon = (i % 2 == 0) ? 'fa-solid fa-angles-up' : 'fa-solid fa-angles-down' %}
+                                                    <a class="dropdown-item{{ activeClass }}" href="#"
+                                                       onclick="listViewSetOrder('{{ tabName }}', '{{ i }}');">
+                                                        <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
+                                                        {{ trans(opt.label) }}
+                                                    </a>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if colorLegend is not empty %}
+                                        <div class="btn-group">
+                                            <div class="dropdown">
+                                                <button class="btn btn-light dropdown-toggle" type="button"
+                                                        data-bs-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">
+                                                    <i class="fa-solid fa-fill-drip fa-fw" aria-hidden="true"></i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-end pb-0">
+                                                    <h6 class="dropdown-header">{{ trans('colors') }}</h6>
+                                                    {{ colorLegend | raw }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if src.hasFilters() %}
+                                {% set filtersHtml = src.renderFiltersHtml(formName) %}
+                                <div id="form{{ tabName }}Filters"
+                                     class="row g-2 align-items-center border-bottom mb-3"
+                                     {% if not src.hasActiveFilters() %}style="display: none;"{% endif %}>
+                                    {{ filtersHtml | raw }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="table-responsive">
+                            {% set tableClass = tableSize == 'small' ? 'table-sm' : '' %}
+                            <table class="table table-hover mb-0 {{ tableClass }}">
+                                <thead>
+                                <tr>
+                                    {% if src.count() > 0 %}
+                                        <th width="50" class="text-center">
+                                            <div class="form-check form-check-inline m-0 toggle-ext-link">
+                                                <input class="form-check-input listActionCB" type="checkbox"
+                                                       onclick="listViewCheckboxes('{{ tabName }}');"/>
+                                            </div>
+                                            {% if clickable %}
+                                                <i class="fa-solid fa-external-link-alt toggle-ext-link d-none"
+                                                   title="{{ trans('open-tab') }}"></i>
+                                            {% endif %}
+                                        </th>
+                                    {% else %}
+                                        <th width="50"></th>
+                                    {% endif %}
+                                    {% for fieldname, col in columns %}
+                                        {% if not col.isHidden() %}
+                                            <th>{{ col.label() }}</th>
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="{{ 1 + columns | length }}" class="text-center p-5 text-muted">
-                                        {% if src.query() is not empty %}
-                                            <div class="mb-3">
-                                                <i class="fa-solid fa-magnifying-glass fa-3x text-secondary"></i>
+                                </thead>
+                                <tbody>
+                                {% for record in records %}
+                                    {% set editUrl = src.rowUrl(record) %}
+                                    {% set trClass = (clickable ? 'clickableListRow ' : '') ~ src.rowClass(record) %}
+                                    <tr class="{{ trClass }}" data-href="{{ editUrl | e('html_attr') }}">
+                                        <td class="cancelClickable p-0 text-center align-middle">
+                                            <div class="form-check form-check-inline m-0 toggle-ext-link">
+                                                <input class="form-check-input listAction" type="checkbox"
+                                                       name="codes[]" value="{{ record.primaryColumnValue() }}"/>
                                             </div>
-                                            <p class="mb-0">{{ trans('no-results-found') }}</p>
-                                        {% else %}
-                                            <div class="mb-3">
-                                                <i class="fa-solid fa-inbox fa-3x text-secondary"></i>
-                                            </div>
-                                            <p class="mb-1">{{ trans('no-data-empty-list') }}</p>
-                                            {% if src.newUrl() is not empty %}
-                                                <p class="mb-0 small">{{ trans('no-data-click-new') }}</p>
+                                            {% if clickable %}
+                                                <a href="{{ editUrl }}" target="_blank"
+                                                   class="toggle-ext-link d-none"
+                                                   onauxclick="$(this).addClass('text-dark');"
+                                                   title="{{ trans('open-tab') }}">
+                                                    <i class="fa-solid fa-external-link-alt"></i>
+                                                </a>
                                             {% endif %}
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                {# Paginación #}
-                {% set srcCount = src.count() %}
-                {% set srcLimit = hasTabs ? src.limit() : fsc.limit() %}
-                {% if srcCount > srcLimit %}
-                    <div class="card-footer text-center">
-                        <div class="btn-group">
-                            {% set totalPages = (srcCount / srcLimit) | round(0, 'ceil') %}
-                            {% set currentPage = (src.offset() / srcLimit) | round(0, 'floor') %}
-                            {% for p in 0..(totalPages - 1) %}
-                                {% set btnClass = (p == currentPage) ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
-                                <a class="{{ btnClass }}"
-                                   href="{{ fsc.url() }}?offset={{ p * srcLimit }}{% if hasTabs %}&activetab={{ activeTabName }}{% endif %}{% if src.query() %}&query={{ src.query() | url_encode }}{% endif %}{% if src.orderIndex() >= 0 %}&order={{ src.orderIndex() }}{% endif %}">
-                                    {{ p + 1 }}
-                                </a>
-                            {% endfor %}
+                                        </td>
+                                        {% for fieldname, col in columns %}
+                                            {% if not col.isHidden() %}
+                                                {{ col.renderCell(attribute(record, fieldname) ?? null) | raw }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="{{ 1 + visibleColCount }}"
+                                            class="text-center p-5 text-muted">
+                                            {% if src.query() is not empty %}
+                                                <div class="mb-3">
+                                                    <i class="fa-solid fa-magnifying-glass fa-3x text-secondary"></i>
+                                                </div>
+                                                <p class="mb-0">{{ trans('no-results-found') }}</p>
+                                            {% else %}
+                                                <div class="mb-3">
+                                                    <i class="fa-solid fa-inbox fa-3x text-secondary"></i>
+                                                </div>
+                                                <p class="mb-1">{{ trans('no-data-empty-list') }}</p>
+                                                {% if src.newUrl() is not empty %}
+                                                    <p class="mb-0 small">{{ trans('no-data-click-new') }}</p>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
+                        {% set totalPages = src.count() > 0 ? ((src.count() / src.limit()) | round(0, 'ceil')) : 0 %}
+                        {% set currentPage = src.limit() > 0 ? ((src.offset() / src.limit()) | round(0, 'floor')) : 0 %}
+                        {% if totalPages > 1 %}
+                            <div class="card-footer text-center">
+                                <div class="btn-group">
+                                    {% for p in 0..(totalPages - 1) %}
+                                        {% set btnClass = (p == currentPage) ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
+                                        <button type="button" class="{{ btnClass }}"
+                                                onclick="listViewSetOffset('{{ tabName }}', '{{ p * src.limit() }}');">
+                                            {{ p + 1 }}
+                                        </button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
-                {% endif %}
+                </form>
+                <br/>
             </div>
-        </form>
-        <br/>
-    </div>
-
-    {# Formulario GET separado para el buscador #}
-    <form method="get" id="formUIListSearch" style="display:none">
-        <input type="hidden" name="order" value="{{ src.orderIndex() >= 0 ? src.orderIndex() : '' }}">
-        {% if hasTabs %}
-            <input type="hidden" name="activetab" value="{{ activeTabName }}">
         {% endif %}
-    </form>
+    </div>
 {% endblock %}
 
 {% block css %}
@@ -305,6 +676,10 @@
             }
             .nav-tabs-scroll .nav-item { flex-shrink: 0; }
             .nav-tabs-scroll .nav-link { white-space: nowrap; }
+            .nav-tabs-wrapper::-webkit-scrollbar { height: 4px; }
+            .nav-tabs-wrapper::-webkit-scrollbar-track { background: #f1f1f1; }
+            .nav-tabs-wrapper::-webkit-scrollbar-thumb { background: #888; border-radius: 2px; }
+            .nav-tabs-wrapper::-webkit-scrollbar-thumb:hover { background: #555; }
         }
         @media (min-width: 768px) {
             .nav-tabs-wrapper { overflow: visible; }
@@ -315,22 +690,29 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script src="{{ asset('Dinamic/Assets/JS/ListView.js') }}"></script>
     <script>
-        function uiListCheckboxes() {
-            var checked = document.getElementById('uiListCheckAll').checked;
-            document.querySelectorAll('.uiListAction').forEach(function (cb) {
-                cb.checked = checked;
-            });
-        }
+        $(document).ready(function () {
+            function scrollActiveTabIntoView() {
+                if (window.innerWidth <= 767) {
+                    var activeTab = $('.nav-tabs-scroll .nav-link.active');
+                    var wrapper = $('.nav-tabs-wrapper');
+                    if (activeTab.length && wrapper.length) {
+                        var tabLeft = activeTab.parent().position().left;
+                        var tabWidth = activeTab.parent().outerWidth();
+                        var wrapperWidth = wrapper.width();
+                        var scrollLeft = wrapper.scrollLeft();
+                        var targetScroll = tabLeft + scrollLeft - (wrapperWidth / 2) + (tabWidth / 2);
+                        wrapper.animate({scrollLeft: targetScroll}, 300);
+                    }
+                }
+            }
 
-        function uiListConfirmDelete() {
-            if (!document.querySelector('.uiListAction:checked')) {
-                alert('{{ trans('no-selected-item') | escape('js') }}');
-                return;
+            scrollActiveTabIntoView();
+
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
+                $("input[name='query']:visible").focus();
             }
-            if (confirm('{{ trans('are-you-sure') | escape('js') }}')) {
-                document.getElementById('formUIList').submit();
-            }
-        }
+        });
     </script>
 {% endblock %}

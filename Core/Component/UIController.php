@@ -99,13 +99,14 @@ abstract class UIController extends Controller
      * En la plantilla cada grupo se renderiza como:
      *   <div class="col-md-12"><div class="row g-2 [align-items-end]">...</div></div>
      *
-     * @param bool $alignBottom si true, añade align-items-end al row interno (útil para checkboxes)
+     * @param string $title      Título visible del grupo (separador visual). Cadena vacía = sin título.
+     * @param bool   $alignBottom si true, añade align-items-end al row interno (útil para checkboxes)
      */
-    protected function startGroup(string $name, bool $alignBottom = false): void
+    protected function startGroup(string $name, string $title = '', bool $alignBottom = false): void
     {
         $this->currentGroup = $name;
         if (!isset($this->groups[$name])) {
-            $this->groups[$name] = ['alignBottom' => $alignBottom, 'components' => []];
+            $this->groups[$name] = ['title' => $title, 'alignBottom' => $alignBottom, 'components' => []];
         }
     }
 
@@ -136,7 +137,7 @@ abstract class UIController extends Controller
 
         // assign to current group
         if (!isset($this->groups[$this->currentGroup])) {
-            $this->groups[$this->currentGroup] = ['alignBottom' => false, 'components' => []];
+            $this->groups[$this->currentGroup] = ['title' => '', 'alignBottom' => false, 'components' => []];
         }
         $this->groups[$this->currentGroup]['components'][] = $fieldname;
 
@@ -159,7 +160,11 @@ abstract class UIController extends Controller
                     $comps[$fieldname] = $this->components[$fieldname];
                 }
             }
-            $result[] = ['alignBottom' => $groupDef['alignBottom'], 'components' => $comps];
+            $result[] = [
+                'title'       => $groupDef['title'] ?? '',
+                'alignBottom' => $groupDef['alignBottom'],
+                'components'  => $comps,
+            ];
         }
         return $result;
     }
