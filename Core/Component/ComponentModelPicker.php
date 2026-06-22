@@ -77,8 +77,6 @@ class ComponentModelPicker extends ComponentModalPicker
     /** @var callable|null fn(Request): Where[] — condiciones adicionales para el AJAX. */
     private $extraWhereCallback = null;
 
-    // ─── Setters ─────────────────────────────────────────────────────────────
-
     /** Clase del modelo a buscar (FQCN). */
     public function setModel(string $modelClass): static
     {
@@ -160,8 +158,6 @@ class ComponentModelPicker extends ComponentModalPicker
         return $this;
     }
 
-    // ─── ComponentModalPicker: identidad ─────────────────────────────────────
-
     protected function widgetActionName(): string
     {
         return 'widget-model-picker';
@@ -176,8 +172,6 @@ class ComponentModelPicker extends ComponentModalPicker
     {
         return $this->pickerIcon;
     }
-
-    // ─── ComponentModalPicker: búsqueda AJAX ─────────────────────────────────
 
     protected function jsonSearch(Request $request): string
     {
@@ -208,8 +202,6 @@ class ComponentModelPicker extends ComponentModalPicker
 
         return json_encode($data);
     }
-
-    // ─── ComponentModalPicker: modal ─────────────────────────────────────────
 
     protected function sortOptions(): array
     {
@@ -269,8 +261,6 @@ class ComponentModelPicker extends ComponentModalPicker
             . '</a>';
     }
 
-    // ─── ComponentModalPicker: solo lectura ──────────────────────────────────
-
     protected function readOnlyUrl(): string
     {
         $model = new $this->modelClass();
@@ -280,15 +270,11 @@ class ComponentModelPicker extends ComponentModalPicker
         return method_exists($model, 'url') ? $model->url() : '#';
     }
 
-    // ─── Assets ──────────────────────────────────────────────────────────────
-
     public function registerAssets(): void
     {
         $route = Tools::config('route');
         AssetManager::addJs($route . '/Core/Assets/JS/ComponentModelPicker.js?v=' . Tools::date());
     }
-
-    // ─── Helpers internos ────────────────────────────────────────────────────
 
     private function itemToArray(object $item): array
     {
