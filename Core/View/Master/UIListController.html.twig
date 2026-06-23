@@ -400,7 +400,39 @@
                         {% endif %}
                         {% for fieldname, col in columns %}
                             {% if not col.isHidden() %}
-                                <th class="text-{{ col.align() }}">{{ col.label() }}</th>
+                                {# Determine sort state for this column #}
+                                {% set _sortNextKey = null %}
+                                {% set _sortIsActive = false %}
+                                {% set _sortMode = '' %}
+                                {% for i, opt in orderOptions %}
+                                    {% if fieldname in opt.fields %}
+                                        {% if i == orderIndex %}
+                                            {% set _sortIsActive = true %}
+                                            {% set _sortMode = (i % 2 == 0) ? 'ASC' : 'DESC' %}
+                                        {% elseif _sortNextKey is null %}
+                                            {% set _sortNextKey = i %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                <th class="text-{{ col.align() }}">
+                                    {% if _sortIsActive %}
+                                        {% if _sortNextKey is not null %}
+                                            <a href="#" onclick="listViewSetOrder('{{ tabName }}', '{{ _sortNextKey }}'); return false;"
+                                               title="{{ trans(_sortMode == 'ASC' ? 'sorted-asc' : 'sorted-desc') }}">
+                                                <i class="fa-solid {{ _sortMode == 'ASC' ? 'fa-angles-up' : 'fa-angles-down' }}"></i> {{ col.label() }}
+                                            </a>
+                                        {% else %}
+                                            <i class="fa-solid {{ _sortMode == 'ASC' ? 'fa-angles-up' : 'fa-angles-down' }}"></i> {{ col.label() }}
+                                        {% endif %}
+                                    {% elseif _sortNextKey is not null %}
+                                        <a href="#" onclick="listViewSetOrder('{{ tabName }}', '{{ _sortNextKey }}'); return false;"
+                                           title="{{ trans('sort-by-column') }}">
+                                            <i class="fa-solid fa-sort"></i> {{ col.label() }}
+                                        </a>
+                                    {% else %}
+                                        {{ col.label() }}
+                                    {% endif %}
+                                </th>
                             {% endif %}
                         {% endfor %}
                     </tr>

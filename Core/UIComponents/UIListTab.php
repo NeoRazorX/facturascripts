@@ -133,7 +133,12 @@ class UIListTab
         $this->orderOptions[] = [
             'fields'  => $fields,
             'label'   => $label,
-            'default' => $default,
+            'default' => ($default === 1) ? 1 : 0,
+        ];
+        $this->orderOptions[] = [
+            'fields'  => $fields,
+            'label'   => $label,
+            'default' => ($default === 2) ? 2 : 0,
         ];
         return $this;
     }
