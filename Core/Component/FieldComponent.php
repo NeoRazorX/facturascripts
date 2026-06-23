@@ -58,7 +58,7 @@ abstract class FieldComponent extends BaseComponent
     /**
      * Visibilidad del campo en formularios y tablas.
      * 'none' → oculto (no se renderiza el input visible; en lista se salta la columna).
-     * Cualquier otro valor → visible.
+     * Cualquier otro valor → visible y controla la alineación de celda (left/right/center).
      */
     protected string $display = 'left';
 
@@ -66,6 +66,12 @@ abstract class FieldComponent extends BaseComponent
     protected int $cols = 0;
     protected int $tabindex = -1;
     protected string $cellAlign = 'start';
+
+    /** Posición de la columna en la tabla (equivalente al atributo order del XML). */
+    protected int $order = 0;
+
+    /** Nivel mínimo de usuario necesario para ver este campo. 0 = sin restricción. */
+    protected int $level = 0;
 
     public function __construct(string $fieldname)
     {
@@ -134,11 +140,39 @@ abstract class FieldComponent extends BaseComponent
     /**
      * Establece la visibilidad del campo.
      * 'none' lo excluye del formulario (igual que display="none" en los XML antiguos).
+     *
+     * Cuando se llama desde applyColumnOptions() con un valor distinto de 'none',
+     * la alineación se sincroniza allí de forma explícita mediante setAlign() para
+     * no pisar una alineación fijada manualmente por el desarrollador en createUI().
      */
     public function setDisplay(string $display): static
     {
         $this->display = $display;
         return $this;
+    }
+
+    /** Posición de la columna en la tabla (equivalente al atributo order del XML antiguo). */
+    public function setOrder(int $order): static
+    {
+        $this->order = $order;
+        return $this;
+    }
+
+    public function order(): int
+    {
+        return $this->order;
+    }
+
+    /** Nivel mínimo de usuario requerido para ver este campo. 0 = sin restricción. */
+    public function setLevel(int $level): static
+    {
+        $this->level = $level;
+        return $this;
+    }
+
+    public function level(): int
+    {
+        return $this->level;
     }
 
     /** Devuelve true cuando el campo está marcado como invisible (display='none'). */

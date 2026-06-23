@@ -89,6 +89,36 @@ class UIListTab
         return $component;
     }
 
+    /**
+     * Aplica configuración de display, order y nivel de seguridad a las columnas,
+     * y reordena el array interno según el order resultante.
+     *
+     * Llamado desde UIListController::applyPageOptions() después de cargar PageOption.
+     *
+     * @param array $displayMap  fieldname → 'none'|'left'|'right'|'center'
+     * @param array $orderMap    fieldname → int (posición numérica)
+     * @param int   $userLevel   nivel del usuario actual; oculta columnas con level > userLevel
+     */
+    public function applyColumnOptions(array $displayMap, array $orderMap, int $userLevel = 0): void
+    {
+        foreach ($this->columns as $fieldname => $component) {
+            if (isset($displayMap[$fieldname])) {
+                $display = $displayMap[$fieldname];
+                $component->setDisplay($display);
+                if ($display !== 'none') {
+                    $component->setAlign($display);
+                }
+            }
+            if (isset($orderMap[$fieldname])) {
+                $component->setOrder($orderMap[$fieldname]);
+            }
+            if ($component->level() > 0 && $userLevel < $component->level()) {
+                $component->setDisplay('none');
+            }
+        }
+        uasort($this->columns, fn($a, $b) => $a->order() <=> $b->order());
+    }
+
     public function addSearchField(string ...$fields): static
     {
         foreach ($fields as $field) {

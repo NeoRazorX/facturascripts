@@ -70,9 +70,9 @@ class NewListFormaPago extends UIListController
                 ->setValuesFromArrayKeys(['days' => 'days', 'weeks' => 'weeks', 'months' => 'months', 'years' => 'years'], true)
                 ->setCols(2)
         );
-        $tab->addColumn(ComponentCheckbox::make('activa')->setLabel('active'));
         $tab->addColumn(ComponentCheckbox::make('pagado')->setLabel('paid'));
         $tab->addColumn(ComponentCheckbox::make('domiciliado')->setLabel('domiciled'));
+        $tab->addColumn(ComponentText::make('codcuentabanco')->setLabel('bank-account')->setAlign('right'));
 
         $tab->addSearchField('codpago', 'descripcion');
 

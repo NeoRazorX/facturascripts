@@ -715,29 +715,56 @@ abstract class UIListController extends Controller
      */
     private function applyPageOptions(): void
     {
+        $userLevel = (int)($this->user->level ?? 0);
+
         if (!empty($this->tabs)) {
             foreach ($this->tabs as $tabName => $tab) {
-                $this->applyDisplayMap($tabName, $tab->columns());
+                $this->ensurePageOption($tabName, $tab->columns());
+                [$displayMap, $orderMap] = $this->loadPageOptionMaps($tabName);
+                $tab->applyColumnOptions($displayMap, $orderMap, $userLevel);
             }
             return;
         }
 
-        // modo single: intentar con el nombre del propio controlador
+        // modo single: usar el nombre del propio controlador
         $pageName = $this->getPageData()['name'] ?? '';
-        if (!empty($pageName)) {
-            $this->applyDisplayMap($pageName, $this->columns);
+        if (empty($pageName)) {
+            return;
         }
+
+        $this->ensurePageOption($pageName, $this->columns);
+        [$displayMap, $orderMap] = $this->loadPageOptionMaps($pageName);
+
+        foreach ($this->columns as $fieldname => $component) {
+            if (isset($displayMap[$fieldname])) {
+                $display = $displayMap[$fieldname];
+                $component->setDisplay($display);
+                if ($display !== 'none') {
+                    $component->setAlign($display);
+                }
+            }
+            if (isset($orderMap[$fieldname])) {
+                $component->setOrder($orderMap[$fieldname]);
+            }
+            if ($component->level() > 0 && $userLevel < $component->level()) {
+                $component->setDisplay('none');
+            }
+        }
+
+        uasort($this->columns, fn($a, $b) => $a->order() <=> $b->order());
     }
 
     /**
-     * Carga el PageOption para el nombre de vista dado y aplica el estado
-     * display de cada columna al FieldComponent correspondiente por fieldname.
+     * Carga el PageOption para el nombre de vista dado y extrae dos mapas:
+     * uno fieldname→display y otro fieldname→order.
      *
-     * @param string         $viewName Nombre de la vista / pestaña
-     * @param FieldComponent[] $columns  Array fieldname → FieldComponent
+     * @return array{0: array<string,string>, 1: array<string,int>}
      */
-    private function applyDisplayMap(string $viewName, array $columns): void
+    private function loadPageOptionMaps(string $viewName): array
     {
+        $displayMap = [];
+        $orderMap   = [];
+
         $pageOption = new PageOption();
         $where = [
             new DataBaseWhere('name', $viewName),
@@ -746,24 +773,92 @@ abstract class UIListController extends Controller
         ];
 
         if (!$pageOption->loadWhere($where, ['nick' => 'ASC'])) {
-            return;
+            return [$displayMap, $orderMap];
         }
 
-        // Construir mapa fieldname → display a partir de la estructura anidada
-        $map = [];
-        foreach ((array)$pageOption->columns as $group) {
-            foreach ((array)($group['columns'] ?? []) as $col) {
-                $fieldname = $col['widget']['fieldname'] ?? null;
+        foreach ((array)$pageOption->columns as $entry) {
+            if (($entry['tag'] ?? '') === 'column') {
+                // Columnas en nivel raíz (estructura generada por XMLView o installXML)
+                $fieldname = $entry['children'][0]['fieldname'] ?? null;
                 if ($fieldname !== null) {
-                    $map[$fieldname] = $col['display'] ?? 'left';
+                    $displayMap[$fieldname] = $entry['display'] ?? 'start';
+                    if (isset($entry['order'])) {
+                        $orderMap[$fieldname] = (int)$entry['order'];
+                    }
+                }
+                continue;
+            }
+
+            // Columnas dentro de un grupo (estructura generada por ensurePageOption)
+            foreach ((array)($entry['children'] ?? []) as $col) {
+                $fieldname = $col['children'][0]['fieldname'] ?? null;
+                if ($fieldname === null) {
+                    continue;
+                }
+                $displayMap[$fieldname] = $col['display'] ?? 'start';
+                if (isset($col['order'])) {
+                    $orderMap[$fieldname] = (int)$col['order'];
                 }
             }
         }
 
-        foreach ($columns as $fieldname => $component) {
-            if (isset($map[$fieldname])) {
-                $component->setDisplay($map[$fieldname]);
-            }
+        return [$displayMap, $orderMap];
+    }
+
+    /**
+     * Crea el PageOption por defecto (nick=null) para una vista si aún no existe en BD.
+     *
+     * Construye la estructura de columnas a partir de los FieldComponent registrados,
+     * de modo que EditPageOption pueda mostrar y editar las columnas del UIListController
+     * en lugar de intentar cargar el XML antiguo.
+     *
+     * @param string           $viewName Nombre de la vista / pestaña
+     * @param FieldComponent[] $columns  Array fieldname → FieldComponent
+     */
+    private function ensurePageOption(string $viewName, array $columns): void
+    {
+        $pageOption = new PageOption();
+        $where = [
+            new DataBaseWhere('name', $viewName),
+            new DataBaseWhere('nick', null, 'IS'),
+        ];
+        if ($pageOption->loadWhere($where)) {
+            return;
         }
+
+        $order = 10;
+        $children = [];
+        foreach ($columns as $fieldname => $component) {
+            $schema = $component->schema();
+            $children[$fieldname] = [
+                'tag'      => 'column',
+                'name'     => $fieldname,
+                'title'    => $fieldname,
+                'order'    => (string)($component->order() > 0 ? $component->order() : $order),
+                'display'  => $component->isHidden() ? 'none' : 'start',
+                'level'    => (string)$component->level(),
+                'children' => [
+                    [
+                        'tag'       => 'widget',
+                        'type'      => $schema['type'] ?? 'text',
+                        'fieldname' => $fieldname,
+                        'readonly'  => 'false',
+                    ]
+                ]
+            ];
+            $order += 10;
+        }
+
+        $pageOption->name    = $viewName;
+        $pageOption->nick    = null;
+        $pageOption->columns = [
+            'main' => [
+                'tag'      => 'group',
+                'name'     => 'main',
+                'title'    => '',
+                'children' => $children,
+            ]
+        ];
+        $pageOption->save();
     }
 }
