@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Component\FieldComponent;
+use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -101,6 +102,12 @@ abstract class UIListController extends Controller
     /** Texto de búsqueda activo, extraído de la petición. */
     protected string $query = '';
 
+    protected ExportManager $exportManager;
+
+    /** WHERE y ORDER usados en loadRecords(), reutilizados en exportAction(). */
+    protected array $lastWhere = [];
+    protected array $lastOrder = [];
+
     /**
      * Devuelve el nombre de la clase del modelo a listar (sin namespace).
      * Ejemplo: 'FormaPago', 'Cliente'.
@@ -119,6 +126,7 @@ abstract class UIListController extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
+        $this->exportManager = new ExportManager();
         $this->limit = defined('FS_ITEM_LIMIT') ? (int)FS_ITEM_LIMIT : 50;
 
         $this->createUI();
@@ -152,7 +160,9 @@ abstract class UIListController extends Controller
         $this->execAfterAction($action);
         $this->pipeFalse('execAfterAction', $action);
 
-        $this->setTemplate($this->resolveTemplate());
+        if ($this->getTemplate() !== false) {
+            $this->setTemplate($this->resolveTemplate());
+        }
     }
 
     /**
@@ -255,13 +265,47 @@ abstract class UIListController extends Controller
     /**
      * Acciones ejecutadas después de cargar los datos.
      *
-     * Maneja: 'delete-ok' (muestra notificación de éxito al regresar del edit).
+     * Maneja: 'delete-ok' (muestra notificación de éxito), 'export' (PDF/XLS/CSV/MAIL).
      */
     protected function execAfterAction(string $action): void
     {
-        if ($action === 'delete-ok') {
-            Tools::log()->notice('record-deleted-correctly');
+        switch ($action) {
+            case 'delete-ok':
+                Tools::log()->notice('record-deleted-correctly');
+                break;
+
+            case 'export':
+                $this->exportAction();
+                break;
         }
+    }
+
+    protected function exportAction(): void
+    {
+        if (false === $this->permissions->allowExport) {
+            Tools::log()->warning('no-print-permission');
+            return;
+        }
+
+        $option = $this->request->queryOrInput('option', '');
+
+        if (!empty($this->tabs)) {
+            $tab   = $this->activeTab();
+            $model = new (self::MODEL_NAMESPACE . $tab->modelClassName())();
+            $where = $tab->lastWhere();
+            $order = $tab->lastOrder();
+            $cols  = array_keys($tab->columns());
+        } else {
+            $model = new (self::MODEL_NAMESPACE . $this->getModelClassName())();
+            $where = $this->lastWhere;
+            $order = $this->lastOrder;
+            $cols  = array_keys($this->columns);
+        }
+
+        $this->setTemplate(false);
+        $this->exportManager->newDoc($option, $this->title);
+        $this->exportManager->addListModelPage($model, $where, $order, 0, $cols, $this->title);
+        $this->exportManager->show($this->response);
     }
 
     /**
@@ -370,6 +414,8 @@ abstract class UIListController extends Controller
         $this->offset = max(0, (int)$this->request->inputOrQuery('offset', 0));
         $order = $this->resolveOrder();
 
+        $this->lastWhere = $where;
+        $this->lastOrder = $order;
         $this->count   = $model->count($where);
         $this->records = $model->all($where, $order, $this->offset, $this->limit);
     }

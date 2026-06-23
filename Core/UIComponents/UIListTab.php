@@ -63,6 +63,9 @@ class UIListTab
     /** @var callable|null Callback que devuelve array de DataBaseWhere extra aplicados en loadRecords(). */
     private $extraWhereCallback = null;
 
+    private array $lastWhere = [];
+    private array $lastOrder = [];
+
     private function __construct(string $name, string $modelClassName, string $titleKey, string $icon)
     {
         $this->name = $name;
@@ -180,8 +183,20 @@ class UIListTab
         $this->resolvedOrderIndex = isset($this->orderOptions[$rawIndex]) ? $rawIndex : -1;
         $order = $this->resolveOrder();
 
+        $this->lastWhere = $where;
+        $this->lastOrder = $order;
         $this->count = $model->count($where);
         $this->records = $model->all($where, $order, $this->offset, $limit);
+    }
+
+    public function lastWhere(): array
+    {
+        return $this->lastWhere;
+    }
+
+    public function lastOrder(): array
+    {
+        return $this->lastOrder;
     }
 
     public function name(): string
