@@ -35,6 +35,7 @@ use FacturaScripts\Core\Tools;
 class UIListTab
 {
     use HasListFilters;
+    use HasToolbarButtons;
 
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 

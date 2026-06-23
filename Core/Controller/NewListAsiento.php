@@ -85,6 +85,23 @@ class NewListAsiento extends UIListController
 
         $tab->setNewUrl('NewEditAsiento');
         $tab->setRowUrlCallback(fn($r) => 'NewEditAsiento?code=' . urlencode((string)$r->idasiento));
+
+        if ($this->permissions->allowUpdate) {
+            $tab->addButtonGroup('entry-actions', 'fa-solid fa-circle-check', 'actions')
+                ->addGroupButton('entry-actions', [
+                    'action'  => 'lock-entries',
+                    'confirm' => true,
+                    'icon'    => 'fa-solid fa-lock',
+                    'label'   => 'lock-entry',
+                ])
+                ->addGroupButton('entry-actions', [
+                    'action' => 'renumber',
+                    'icon'   => 'fa-solid fa-sort-numeric-down',
+                    'label'  => 'renumber',
+                    'type'   => 'modal',
+                    'target' => 'renumberModal',
+                ]);
+        }
     }
 
     protected function createViewsNotBalanced(string $tabName = 'ListAsiento-not'): void
@@ -243,75 +260,47 @@ class NewListAsiento extends UIListController
         Tools::log()->error('record-save-error');
     }
 
-    public function tabExtraButtons(string $tabName): string
+    public function tabModals(string $tabName): string
     {
         if ($tabName !== 'ListAsiento' || false === $this->permissions->allowUpdate) {
             return '';
         }
 
         $lang = Tools::lang();
+        $ejercicios = Ejercicio::all([], ['codejercicio' => 'DESC'], 0, 0);
 
-        // Dropdown "Acciones" con lock-entries y renumber
-        $html = '<div class="btn-group ms-2">'
-            . '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">'
-            . '<i class="fa-solid fa-circle-check fa-fw" aria-hidden="true"></i>'
-            . '<span class="d-none d-lg-inline-block ms-1">' . $lang->trans('actions') . '</span>'
-            . '</button>'
-            . '<div class="dropdown-menu">'
-            . '<button type="button" class="dropdown-item"'
-            . ' onclick="if(confirm(\'' . addslashes($lang->trans('are-you-sure')) . '\'))'
-            . ' { listViewSetAction(\'ListAsiento\', \'lock-entries\'); }">'
-            . '<i class="fa-solid fa-lock fa-fw me-1" aria-hidden="true"></i>'
-            . $lang->trans('lock-entry')
-            . '</button>'
-            . '<button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#renumberModal">'
-            . '<i class="fa-solid fa-sort-numeric-down fa-fw me-1" aria-hidden="true"></i>'
-            . $lang->trans('renumber')
-            . '</button>'
-            . '</div>'
-            . '</div>';
-
-        // Modal de renumeración (se inyecta una sola vez)
-        static $modalRendered = false;
-        if (!$modalRendered) {
-            $modalRendered = true;
-            $ejercicios = Ejercicio::all([], ['codejercicio' => 'DESC'], 0, 0);
-
-            $options = '';
-            foreach ($ejercicios as $ej) {
-                $options .= '<option value="' . htmlspecialchars($ej->codejercicio) . '">'
-                    . htmlspecialchars($ej->nombre) . '</option>';
-            }
-
-            $token = '<input type="hidden" name="multireqtoken" value="'
-                . htmlspecialchars((new MultiRequestProtection())->newToken()) . '"/>';
-
-            $html .= '<div class="modal fade" id="renumberModal" tabindex="-1" aria-hidden="true">'
-                . '<div class="modal-dialog"><div class="modal-content">'
-                . '<form method="post" onsubmit="animateSpinner(\'add\')">'
-                . $token
-                . '<input type="hidden" name="action" value="renumber">'
-                . '<input type="hidden" name="activetab" value="ListAsiento">'
-                . '<div class="modal-header"><h5 class="modal-title">'
-                . '<i class="fa-solid fa-sort-numeric-down fa-fw me-1"></i>'
-                . $lang->trans('renumber') . '</h5>'
-                . '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>'
-                . '</div>'
-                . '<div class="modal-body"><div class="mb-3">'
-                . '<label class="form-label">' . $lang->trans('exercise') . '</label>'
-                . '<select name="exercise" class="form-select" required>'
-                . '<option value="">------</option>'
-                . $options
-                . '</select></div></div>'
-                . '<div class="modal-footer">'
-                . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
-                . $lang->trans('cancel') . '</button>'
-                . '<button type="submit" class="btn btn-primary">'
-                . '<i class="fa-solid fa-check fa-fw me-1"></i>' . $lang->trans('accept')
-                . '</button></div>'
-                . '</form></div></div></div>';
+        $options = '';
+        foreach ($ejercicios as $ej) {
+            $options .= '<option value="' . htmlspecialchars($ej->codejercicio) . '">'
+                . htmlspecialchars($ej->nombre) . '</option>';
         }
 
-        return $html;
+        $token = '<input type="hidden" name="multireqtoken" value="'
+            . htmlspecialchars((new MultiRequestProtection())->newToken()) . '"/>';
+
+        return '<div class="modal fade" id="renumberModal" tabindex="-1" aria-hidden="true">'
+            . '<div class="modal-dialog"><div class="modal-content">'
+            . '<form method="post" onsubmit="animateSpinner(\'add\')">'
+            . $token
+            . '<input type="hidden" name="action" value="renumber">'
+            . '<input type="hidden" name="activetab" value="ListAsiento">'
+            . '<div class="modal-header"><h5 class="modal-title">'
+            . '<i class="fa-solid fa-sort-numeric-down fa-fw me-1"></i>'
+            . $lang->trans('renumber') . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>'
+            . '</div>'
+            . '<div class="modal-body"><div class="mb-3">'
+            . '<label class="form-label">' . $lang->trans('exercise') . '</label>'
+            . '<select name="exercise" class="form-select" required>'
+            . '<option value="">------</option>'
+            . $options
+            . '</select></div></div>'
+            . '<div class="modal-footer">'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+            . $lang->trans('cancel') . '</button>'
+            . '<button type="submit" class="btn btn-primary">'
+            . '<i class="fa-solid fa-check fa-fw me-1"></i>' . $lang->trans('accept')
+            . '</button></div>'
+            . '</form></div></div></div>';
     }
 }

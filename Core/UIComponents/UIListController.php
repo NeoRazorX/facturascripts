@@ -54,6 +54,7 @@ use FacturaScripts\Core\UIComponents\UIListTab;
 abstract class UIListController extends Controller
 {
     use HasListFilters;
+    use HasToolbarButtons;
 
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
@@ -76,6 +77,7 @@ abstract class UIListController extends Controller
      * El color es una clase CSS de Bootstrap (p. ej. 'table-danger', 'table-success').
      */
     protected array $colorConditions = [];
+
 
     /**
      * Pestañas adicionales declaradas con addTab().
@@ -676,15 +678,14 @@ abstract class UIListController extends Controller
     }
 
     /**
-     * Devuelve HTML de botones extra para la pestaña indicada.
+     * Devuelve HTML de modales para la pestaña indicada.
      *
-     * La implementación base retorna cadena vacía. Las subclases pueden sobreescribir
-     * para añadir botones específicos por pestaña (p. ej. bloquear entradas, renumerar).
-     * El HTML se renderiza crudo en el template con `{{ fsc.tabExtraButtons(tabName) | raw }}`.
-     *
-     * @param string $tabName Nombre de la pestaña activa en el loop del template.
+     * La implementación base retorna cadena vacía. Las subclases sobreescriben este
+     * método cuando necesitan inyectar modales con contenido dinámico complejo que no
+     * puede expresarse con addButtonGroup()/addGroupButton().
+     * El HTML se renderiza fuera del form con `{{ fsc.tabModals(tabName) | raw }}`.
      */
-    public function tabExtraButtons(string $tabName): string
+    public function tabModals(string $tabName): string
     {
         return '';
     }
@@ -706,8 +707,8 @@ abstract class UIListController extends Controller
     }
 
     /**
-     * Lee la configuración de visibilidad de columnas guardada en pages_options
-     * y la aplica a las columnas de cada pestaña registrada.
+     * Lee la configuración de columnas guardada en pages_options y la aplica
+     * a las columnas de cada pestaña registrada (display, order, seguridad de nivel).
      *
      * El nombre de la pestaña (p. ej. 'ListFormaPago') coincide con el nombre
      * de la view XML del sistema antiguo, por lo que EditPageOption funciona de
