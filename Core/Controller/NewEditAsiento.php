@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,29 +19,63 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Component\ActionResult;
-use FacturaScripts\Core\Component\ComponentCheckbox;
-use FacturaScripts\Core\Component\ComponentNumber;
-use FacturaScripts\Core\Component\ComponentSelect;
-use FacturaScripts\Core\Component\ComponentText;
-use FacturaScripts\Core\Model\Asiento;
-use FacturaScripts\Core\Model\Empresa;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingFooterHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingHeaderHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingLineHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingModalHTML;
+use FacturaScripts\Core\Lib\Export\AsientoExport;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
+use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\UIComponents\UIEditController;
-use FacturaScripts\Core\Where;
-use FacturaScripts\Dinamic\Model\Diario;
-use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Core\UIComponents\UIPanelController;
+use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Dinamic\Model\Partida;
 
 /**
- * Formulario de edición de asientos contables construido sobre UIEditController.
+ * Formulario de edición de asientos contables construido sobre UIPanelController.
  *
- * Replica la funcionalidad de EditAsiento con el nuevo sistema de componentes UI.
- * No visible en el menú; se accede desde NewListAsiento.
+ * Réplica funcional de EditAsiento usando el nuevo sistema UI: mantiene el mismo
+ * formulario AJAX interactivo (Tab/AccountingEntry) y los mismos paneles de
+ * ficheros adjuntos y auditoría de log, sin botones adicionales ni lógica nueva.
  *
- * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
+ * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Abderrahim Darghal Belkacemi  <abdedarghal111@gmail.com>
  */
-class NewEditAsiento extends UIEditController
+class NewEditAsiento extends UIPanelController
 {
+    use DocFilesTrait;
+    use LogAuditTrait;
+
+    const MAIN_VIEW_NAME = 'main';
+    const MAIN_VIEW_TEMPLATE = 'Tab/AccountingEntry';
+
+    /** @var array */
+    private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
+
+    /**
+     * Devuelve el modelo principal cargado desde la vista HtmlView.
+     * La plantilla Tab/AccountingEntry lo obtiene via fsc.getCurrentView().model,
+     * pero este método lo expone para los manejadores AJAX internos.
+     */
+    public function getModel(): Asiento
+    {
+        if ($this->views[static::MAIN_VIEW_NAME]->model->id()) {
+            return $this->views[static::MAIN_VIEW_NAME]->model;
+        }
+
+        $primaryKey = $this->request->input($this->views[static::MAIN_VIEW_NAME]->model->primaryColumn());
+        $code = $this->request->query('code', $primaryKey);
+        if (empty($code)) {
+            return $this->views[static::MAIN_VIEW_NAME]->model;
+        }
+
+        $this->views[static::MAIN_VIEW_NAME]->model->load($code);
+        return $this->views[static::MAIN_VIEW_NAME]->model;
+    }
+
     public function getModelClassName(): string
     {
         return 'Asiento';
@@ -53,260 +87,275 @@ class NewEditAsiento extends UIEditController
         $data['menu'] = 'accounting';
         $data['title'] = 'accounting-entry';
         $data['icon'] = 'fa-solid fa-balance-scale';
+        $data['showonmenu'] = false;
         return $data;
     }
 
-    public function listUrl(): string
+    /**
+     * Genera el HTML del formulario contable (cabecera + líneas + pie + modal).
+     * Llamado desde la plantilla Tab/AccountingEntry via fsc.renderAccEntryForm().
+     *
+     * @param Partida[] $lines
+     */
+    public function renderAccEntryForm(Asiento $model, array $lines): string
     {
-        return 'NewListAsiento';
+        AccountingLineHTML::calculateUnbalance($model, $lines);
+        return '<div id="accEntryFormHeader">' . AccountingHeaderHTML::render($model) . '</div>'
+            . '<div id="accEntryFormLines">' . AccountingLineHTML::render($lines, $model) . '</div>'
+            . '<div id="accEntryFormFooter">' . AccountingFooterHTML::render($model) . '</div>'
+            . AccountingModalHTML::render($model);
     }
 
-    protected function getViewName(): string
+    protected function createPanels(): void
     {
-        return 'EditAsiento';
+        $this->setTabsPosition('top');
+
+        $this->addHtmlView(
+            static::MAIN_VIEW_NAME,
+            static::MAIN_VIEW_TEMPLATE,
+            $this->getModelClassName(),
+            'accounting-entry',
+            'fa-solid fa-balance-scale'
+        );
+        $this->setSettings(static::MAIN_VIEW_NAME, 'btnPrint', true);
+
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
+
+        $this->createViewDocFiles();
+        $this->createViewLogAudit();
     }
 
-    protected function buildForm(): void
+    protected function execPreviousAction($action)
     {
-        $this->loadModel();
+        switch ($action) {
+            case 'add-file':
+                return $this->addFileAction();
 
-        // Grupo principal: cabecera del asiento
-        $this->startGroup('header');
+            case 'delete-file':
+                return $this->deleteFileAction();
 
-        $this->addComponent(
-            ComponentNumber::make('idasiento')
-                ->setLabel('id')
-                ->setDisplay('none')
-        );
+            case 'delete-doc':
+                return $this->deleteDocAction();
 
-        $this->addComponent(
-            ComponentText::make('fecha')
-                ->setLabel('date')
-                ->setRequired()
-                ->setCols(2)
-        );
+            case 'edit-file':
+                return $this->editFileAction();
 
-        $this->addComponent(
-            ComponentNumber::make('numero')
-                ->setLabel('number')
-                ->setReadOnly()
-                ->setDecimals(0)
-                ->setCols(2)
-        );
+            case 'find-subaccount':
+                return $this->findSubaccountAction();
 
-        // Ejercicio (read-only dynamic: se asigna desde fecha al guardar)
-        $ejercicios = Ejercicio::all([], ['codejercicio' => 'DESC']);
-        $this->addComponent(
-            ComponentSelect::make('codejercicio')
-                ->setLabel('exercise')
-                ->setLabelUrl('ListEjercicio')
-                ->setReadOnlyDynamic()
-                ->setCols(3)
-                ->setSource('ejercicios', 'codejercicio', 'nombre')
-                ->setOptionsResolver(function () use ($ejercicios) {
-                    $opts = [['value' => '', 'title' => '------', 'group' => '']];
-                    foreach ($ejercicios as $ej) {
-                        $opts[] = ['value' => $ej->codejercicio, 'title' => $ej->nombre, 'group' => ''];
-                    }
-                    return $opts;
-                })
-        );
+            case 'lock-doc':
+                return $this->unlockAction(false);
 
-        $this->addComponent(
-            ComponentText::make('concepto')
-                ->setLabel('concept')
-                ->setRequired()
-                ->setMaxLength(255)
-        );
+            case 'new-line':
+            case 'rm-line':
+            case 'recalculate':
+                return $this->recalculateAction($action !== 'recalculate');
 
-        $this->addComponent(
-            ComponentText::make('documento')
-                ->setLabel('document')
-                ->setMaxLength(255)
-                ->setCols(3)
-        );
+            case 'save-doc':
+                return $this->saveDocAction();
 
-        $this->addComponent(
-            ComponentNumber::make('canal')
-                ->setLabel('channel')
-                ->setDecimals(0)
-                ->setCols(2)
-        );
+            case 'sort-files':
+                return $this->sortFilesAction();
 
-        // Diario
-        $diarios = (new Diario())->all([], ['descripcion' => 'ASC']);
-        $this->addComponent(
-            ComponentSelect::make('iddiario')
-                ->setLabel('journal')
-                ->setLabelUrl('EditDiario')
-                ->setCols(3)
-                ->setSource('diarios', 'iddiario', 'descripcion')
-                ->setOptionsResolver(function () use ($diarios) {
-                    $opts = [['value' => '', 'title' => '------', 'group' => '']];
-                    foreach ($diarios as $d) {
-                        $opts[] = ['value' => $d->iddiario, 'title' => $d->descripcion, 'group' => ''];
-                    }
-                    return $opts;
-                })
-        );
+            case 'unlink-file':
+                return $this->unlinkFileAction();
 
-        // Tipo de operación
-        $this->addComponent(
-            ComponentSelect::make('operacion')
-                ->setLabel('operation')
-                ->setCols(3)
-                ->setValuesFromArrayKeys([
-                    ''                            => '------',
-                    Asiento::OPERATION_OPENING       => Tools::lang()->trans('opening-operation'),
-                    Asiento::OPERATION_CLOSING       => Tools::lang()->trans('closing-operation'),
-                    Asiento::OPERATION_REGULARIZATION => Tools::lang()->trans('regularization-operation'),
-                ])
-        );
-
-        // Empresa (oculto si solo hay una)
-        $empresas = (new Empresa())->all();
-        if (count($empresas) > 1) {
-            $this->addComponent(
-                ComponentSelect::make('idempresa')
-                    ->setLabel('company')
-                    ->setRequired()
-                    ->setReadOnlyDynamic()
-                    ->setCols(3)
-                    ->setSource('empresas', 'idempresa', 'nombrecorto')
-                    ->setOptionsResolver(fn() => array_map(
-                        fn($e) => ['value' => $e->idempresa, 'title' => $e->nombrecorto, 'group' => ''],
-                        $empresas
-                    ))
-            );
-        } else {
-            $this->addComponent(
-                ComponentSelect::make('idempresa')
-                    ->setDisplay('none')
-                    ->setValue($empresas[0]->idempresa ?? null)
-            );
+            case 'unlock-doc':
+                return $this->unlockAction(true);
         }
 
-        // Grupo de importes (calculados, solo lectura)
-        $this->startGroup('amounts', alignBottom: true);
-
-        $this->addComponent(
-            ComponentNumber::make('debe')
-                ->setLabel('debit')
-                ->setReadOnly()
-                ->setCols(3)
-        );
-
-        $this->addComponent(
-            ComponentNumber::make('haber')
-                ->setLabel('credit')
-                ->setReadOnly()
-                ->setCols(3)
-        );
-
-        $this->addComponent(
-            ComponentNumber::make('importe')
-                ->setLabel('amount')
-                ->setReadOnly()
-                ->setCols(3)
-        );
-
-        $this->addComponent(
-            ComponentCheckbox::make('editable')
-                ->setLabel('editable')
-                ->setReadOnly()
-        );
-
-        // Lista de partidas contables debajo del formulario
-        $this->addListView('ListPartidaAsiento', 'Partida', 'accounting-lines', 'fa-solid fa-list')
-            ->setSettings('btnNew', false)
-            ->setSettings('btnDelete', false);
-
-        // Eventos personalizados
-        $this->onEvent('lock-doc', fn() => $this->lockDocAction(false));
-        $this->onEvent('unlock-doc', fn() => $this->lockDocAction(true));
+        return parent::execPreviousAction($action);
     }
 
-    protected function modifyUI(): void
+    protected function exportAction()
     {
-        parent::modifyUI();
-
-        $model = $this->editModel;
-        if ($model === null || !$model->exists()) {
+        if (false === $this->views[$this->active]->settings['btnPrint'] || false === $this->permissions->allowExport) {
+            Tools::log()->warning('no-print-permission');
             return;
         }
 
-        $list = $this->listView('ListPartidaAsiento');
-        if ($list !== null) {
-            $list->processFormData($this->request, 'load');
-            $list->loadData('', [Where::eq('idasiento', $model->idasiento)]);
+        $this->setTemplate(false);
+        AsientoExport::show(
+            $this->getModel(),
+            $this->request->queryOrInput('option', ''),
+            $this->title,
+            (int)$this->request->input('idformat', ''),
+            $this->request->input('langcode', ''),
+            $this->response
+        );
+    }
+
+    protected function loadData($viewName, $view)
+    {
+        $primaryKey = $this->request->input($view->model->primaryColumn());
+        $code = $this->request->query('code', $primaryKey);
+
+        switch ($viewName) {
+            case 'docfiles':
+                $this->loadDataDocFiles($view, $this->getModelClassName(), $code);
+                break;
+
+            case 'ListLogMessage':
+                $this->loadDataLogAudit($view, $this->getModelClassName(), $code);
+                break;
+
+            case static::MAIN_VIEW_NAME:
+                if (empty($code)) {
+                    $view->model->clear();
+                    break;
+                }
+
+                $view->loadData($code);
+                $action = $this->request->input('action', '');
+                if ('' === $action && false === $view->model->exists()) {
+                    Tools::log()->warning('record-not-found');
+                    break;
+                }
+
+                if (false === $view->model->isBalanced()) {
+                    Tools::log()->warning('unbalanced-entry');
+                    break;
+                }
+
+                $this->title .= ' ' . $view->model->primaryDescription();
+                $this->addButton($viewName, [
+                    'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->id(),
+                    'icon'   => 'fa-solid fa-cut',
+                    'label'  => 'copy',
+                    'type'   => 'link',
+                ]);
+                break;
         }
     }
 
-    public function extraHeaderButtons(): string
+    private function applyMainFormData(Asiento &$model, array &$lines, bool $applyModal = false): void
     {
-        $model = $this->editModel;
-        if (!$this->hasData || $model === null) {
-            return '';
+        $formData = json_decode($this->request->input('data'), true);
+        AccountingHeaderHTML::apply($model, $formData);
+        AccountingFooterHTML::apply($model, $formData);
+        AccountingLineHTML::apply($model, $lines, $formData);
+        if ($applyModal) {
+            AccountingModalHTML::apply($model, $formData);
         }
-
-        $code = htmlspecialchars((string)$model->primaryColumnValue());
-        $lang = Tools::lang();
-        $html = '';
-
-        // Bloquear / desbloquear
-        if ($model->editable) {
-            $html .= '<button type="button" class="btn btn-sm btn-warning ms-1"'
-                . ' title="' . $lang->trans('lock') . '"'
-                . ' onclick="uiEditSendEvent(\'lock-doc\')">'
-                . '<i class="fa-solid fa-lock fa-fw" aria-hidden="true"></i>'
-                . '<span class="d-none d-lg-inline-block"> ' . $lang->trans('lock') . '</span>'
-                . '</button>';
-        } else {
-            $html .= '<button type="button" class="btn btn-sm btn-success ms-1"'
-                . ' title="' . $lang->trans('unlock') . '"'
-                . ' onclick="uiEditSendEvent(\'unlock-doc\')">'
-                . '<i class="fa-solid fa-lock-open fa-fw" aria-hidden="true"></i>'
-                . '<span class="d-none d-lg-inline-block"> ' . $lang->trans('unlock') . '</span>'
-                . '</button>';
-        }
-
-        // Copiar asiento
-        $html .= '<a href="CopyModel?model=Asiento&amp;code=' . urlencode((string)$model->primaryColumnValue()) . '"'
-            . ' class="btn btn-sm btn-secondary ms-1"'
-            . ' title="' . $lang->trans('copy') . '">'
-            . '<i class="fa-solid fa-copy fa-fw" aria-hidden="true"></i>'
-            . '<span class="d-none d-lg-inline-block"> ' . $lang->trans('copy') . '</span>'
-            . '</a>';
-
-        return $html;
     }
 
-    protected function lockDocAction(bool $unlock): ActionResult
+    protected function deleteDocAction(): bool
     {
+        $this->setTemplate(false);
+        if (false === $this->permissions->allowDelete) {
+            Tools::log()->warning('not-allowed-delete');
+            return $this->sendJsonError();
+        } elseif (false === $this->validateFileActionToken()) {
+            return $this->sendJsonError();
+        }
+
+        $model = $this->getModel();
+        if (false === $model->delete()) {
+            return $this->sendJsonError();
+        }
+
+        $this->response->json(['ok' => true, 'newurl' => $model->url('list')]);
+        return false;
+    }
+
+    protected function findSubaccountAction(): bool
+    {
+        $this->setTemplate(false);
+        $model = $this->getModel();
+        $lines = [];
+        $this->applyMainFormData($model, $lines, true);
+        $content = [
+            'header'   => '',
+            'lines'    => '',
+            'footer'   => '',
+            'list'     => AccountingModalHTML::renderSubaccountList($model),
+            'messages' => Tools::log()::read('master', $this->logLevels),
+        ];
+        $this->response->json($content);
+        return false;
+    }
+
+    protected function recalculateAction(bool $renderLines): bool
+    {
+        $this->setTemplate(false);
+        $model = $this->getModel();
+        $lines = $model->getLines();
+        $this->applyMainFormData($model, $lines);
+        $content = [
+            'header'   => AccountingHeaderHTML::render($model),
+            'lines'    => $renderLines ? AccountingLineHTML::render($lines, $model) : '',
+            'footer'   => AccountingFooterHTML::render($model),
+            'list'     => '',
+            'messages' => Tools::log()::read('master', $this->logLevels),
+        ];
+        $this->response->json($content);
+        return false;
+    }
+
+    protected function saveDocAction(): bool
+    {
+        $this->setTemplate(false);
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
-            return ActionResult::make();
+            return $this->sendJsonError();
         }
 
-        if (false === $this->validateFormToken()) {
-            return ActionResult::make();
-        }
+        $this->dataBase->beginTransaction();
+        $model = $this->getModel();
+        $lines = $model->getLines();
+        $this->applyMainFormData($model, $lines);
 
-        $model = $this->loadModel();
-        if ($model === null || !$model->exists()) {
-            Tools::log()->warning('record-not-found');
-            return ActionResult::make();
-        }
-
-        $model->editable = $unlock;
         if (false === $model->save()) {
-            Tools::log()->error('record-save-error');
-            return ActionResult::make();
+            $this->dataBase->rollback();
+            return $this->sendJsonError();
         }
 
-        Tools::log()->notice('record-updated-correctly');
-        return ActionResult::make()->withRedirect(
-            $this->url() . '?code=' . urlencode((string)$model->primaryColumnValue()) . '&action=save-ok'
-        );
+        foreach ($lines as $line) {
+            $line->idasiento = $line->idasiento ?? $model->idasiento;
+            if (false === $line->save()) {
+                $this->dataBase->rollback();
+                return $this->sendJsonError();
+            }
+        }
+
+        foreach ($model->getLines() as $oldLine) {
+            if (in_array($oldLine->idpartida, AccountingLineHTML::getDeletedLines()) && false === $oldLine->delete()) {
+                $this->dataBase->rollback();
+                return $this->sendJsonError();
+            }
+        }
+
+        $this->response->json(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
+        $this->dataBase->commit();
+        return false;
+    }
+
+    protected function sendJsonError(): bool
+    {
+        $this->response->json(['ok' => false, 'messages' => Tools::log()::read('master', $this->logLevels)]);
+        return false;
+    }
+
+    protected function unlockAction(bool $value): bool
+    {
+        $this->setTemplate(false);
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return $this->sendJsonError();
+        } elseif (false === $this->validateFileActionToken()) {
+            return $this->sendJsonError();
+        }
+
+        $model = $this->getModel();
+        $model->editable = $value;
+        if (false === $model->save()) {
+            return $this->sendJsonError();
+        }
+
+        $this->response->json(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
+        return false;
     }
 }
