@@ -270,6 +270,7 @@ final class Html
     private static function moneyFunction(): TwigFunction
     {
         return new TwigFunction('money', function (?float $number, string $coddivisa = '') {
+            $number = $number ?? 0.0;
             if (empty($coddivisa)) {
                 $coddivisa = Tools::settings('default', 'coddivisa');
             }
@@ -297,6 +298,7 @@ final class Html
     private static function numberFunction(): TwigFunction
     {
         return new TwigFunction('number', function (?float $number, ?int $decimals = null) {
+            $number = $number ?? 0.0;
             if ($decimals === null) {
                 $decimals = Tools::settings('default', 'decimals');
             }
