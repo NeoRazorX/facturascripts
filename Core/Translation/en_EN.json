@@ -1750,7 +1750,7 @@
     "standard": "standard",
     "start": "Start",
     "start-date": "Start date",
-    "start-date-later-end-date": "The start date is after the end date",
+    "start-date-later-end-date": "The start date is later than the end date",
     "start-day": "Start day",
     "start-hour": "Start hour",
     "start-month": "Start month",

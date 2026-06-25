@@ -1610,7 +1610,7 @@
     "running-plugin-cron": "S'està eixecutant el cron del plugin %pluginName%",
     "running-work-queue": "Executant la cua d'esdeveniments de treball",
     "sales": "Vendes",
-    "sales-goods-lines-error": "Error en las líneas de ventas de mercancías",
+    "sales-goods-lines-error": "Error en les línies de venda de mercaderies",
     "sales-invoice": "Factura de venda",
     "sales-irpf-lines-error": "Error en les línies d'IRPF de vendes",
     "sales-orders": "Comandes de venda",
