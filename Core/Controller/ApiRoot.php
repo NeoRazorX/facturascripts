@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,9 @@ class ApiRoot extends ApiController
     private static $custom_resources = [
         'crearAlbaranCliente', 'crearAlbaranProveedor', 'crearFacturaCliente', 'crearFacturaProveedor',
         'crearFacturaRectificativaCliente', 'crearPedidoCliente', 'crearPedidoProveedor', 'crearPresupuestoCliente',
-        'crearPresupuestoProveedor', 'exportarAlbaranCliente', 'exportarAlbaranProveedor', 'exportarFacturaCliente',
+        'crearPresupuestoProveedor', 'editarAlbaranCliente', 'editarAlbaranProveedor', 'editarFacturaCliente',
+        'editarFacturaProveedor', 'editarPedidoCliente', 'editarPedidoProveedor', 'editarPresupuestoCliente',
+        'editarPresupuestoProveedor', 'exportarAlbaranCliente', 'exportarAlbaranProveedor', 'exportarFacturaCliente',
         'exportarFacturaProveedor', 'exportarPedidoCliente', 'exportarPedidoProveedor', 'exportarPresupuestoCliente',
         'exportarPresupuestoProveedor', 'pagarFacturaCliente', 'pagarFacturaProveedor', 'plugins', 'uploadFiles'
     ];
@@ -37,6 +39,11 @@ class ApiRoot extends ApiController
     public static function addCustomResource(string $name): void
     {
         self::$custom_resources[] = $name;
+    }
+
+    public static function getCustomResources(): array
+    {
+        return self::$custom_resources;
     }
 
     protected function exposeResources(array &$map): void
@@ -49,11 +56,6 @@ class ApiRoot extends ApiController
         sort($resources);
 
         $this->response->json(['resources' => $resources]);
-    }
-
-    public static function getCustomResources(): array
-    {
-        return self::$custom_resources;
     }
 
     protected function getResourcesMap(): array
