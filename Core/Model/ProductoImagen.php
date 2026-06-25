@@ -51,11 +51,11 @@ class ProductoImagen extends ModelClass
     /** @var int */
     public $idproducto;
 
-    /** @var string */
-    public $referencia;
-
     /** @var int */
     public $orden;
+
+    /** @var string */
+    public $referencia;
 
     public function __construct(array $data = [])
     {
@@ -173,6 +173,42 @@ class ProductoImagen extends ModelClass
         }
 
         return $this->getThumbnailPath($thumbFile, $token, $permaToken);
+    }
+
+    /**
+     * Devuelve todas las miniaturas existentes del archivo asociado,
+     * con sus dimensiones y las URLs de descarga (temporal y permanente).
+     */
+    public function getThumbnails(): array
+    {
+        $result = [];
+
+        // nombre del archivo sin extensión
+        $name = pathinfo($this->getFile()->filename, PATHINFO_FILENAME);
+        if (empty($name)) {
+            return $result;
+        }
+
+        $path = FS_FOLDER . self::THUMBNAIL_PATH;
+        if (false === file_exists($path)) {
+            return $result;
+        }
+
+        // recorremos las miniaturas con el patrón nombre_ANCHOxALTO.ext
+        foreach (scandir($path) as $file) {
+            if (preg_match('/^' . preg_quote($name, '/') . '_(\d+)x(\d+)\.[a-z0-9]+$/i', $file, $matches)) {
+                // sin barra inicial, igual que el core (MyFiles/... en lugar de /MyFiles/...)
+                $relative = ltrim(self::THUMBNAIL_PATH, '/') . $file;
+                $result[] = [
+                    'width' => (int)$matches[1],
+                    'height' => (int)$matches[2],
+                    'download' => $this->getThumbnailPath($relative, true, false),
+                    'download-permanent' => $this->getThumbnailPath($relative, true, true),
+                ];
+            }
+        }
+
+        return $result;
     }
 
     public function install(): string
