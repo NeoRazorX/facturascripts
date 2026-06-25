@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -169,14 +169,21 @@ class EditPageOption extends Controller
      */
     protected function loadPageOptions(): void
     {
-        if ($this->selectedUser && false === $this->loadPageOptionsForUser()) {
+        // comprobamos si existen personalizaciones guardadas
+        $customized = $this->selectedUser ?
+            $this->loadPageOptionsForUser() :
+            $this->loadPageOptionsForAll();
+
+        // partimos de la estructura actual del XML y, si hay personalización, aplicamos sus cambios sobre ella
+        if ($customized) {
+            $custom = clone $this->model;
+            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
+            VisualItemLoadEngine::mergeCustomization($this->model, $custom);
+        } else {
             VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
         }
 
-        if (empty($this->selectedUser) && false === $this->loadPageOptionsForAll()) {
-            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
-        }
-
+        // creamos la estructura visual
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->model);
     }
 
