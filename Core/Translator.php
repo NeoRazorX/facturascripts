@@ -199,6 +199,10 @@ final class Translator
 
     private function getTransKey(?string $txt): string
     {
+        if ($txt === null) {
+            return '';
+        }
+
         $specialKeys = [
             'AlbaranCliente' => 'customer-delivery-note',
             'AlbaranProveedor' => 'supplier-delivery-note',
@@ -218,7 +222,7 @@ final class Translator
             'PresupuestoProveedor-min' => 'estimation',
         ];
 
-        return $specialKeys[$txt] ?? $txt ?? '';
+        return $specialKeys[$txt] ?? $txt;
     }
 
     private function load(string $lang): void
