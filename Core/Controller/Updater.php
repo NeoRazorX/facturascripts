@@ -47,6 +47,9 @@ class Updater extends Controller
     /** @var array */
     public $coreUpdateWarnings = [];
 
+    /** @var bool */
+    public $justRegistered = false;
+
     /** @var Telemetry */
     public $telemetryManager;
 
@@ -215,6 +218,10 @@ class Updater extends Controller
             case 'register':
                 if ($this->telemetryManager->install()) {
                     Tools::log()->notice('record-updated-correctly');
+                    // marcamos que se acaba de registrar para que la vista abra el modal
+                    // y el usuario pueda vincular la instalación con su contacto (el claim
+                    // necesita la cookie del portal, por eso lo tiene que hacer el navegador)
+                    $this->justRegistered = true;
                     break;
                 }
                 Tools::log()->error('record-save-error');

@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -177,21 +177,34 @@
                                 aria-label="{{ trans('close') }}"></button>
                     </div>
                     <div class="modal-body">
+                        {% if fsc.justRegistered %}
+                            <div class="alert alert-success">
+                                <i class="fa-solid fa-circle-check fa-fw" aria-hidden="true"></i>
+                                {{ trans('registered-installation-claim-p') }}
+                            </div>
+                        {% endif %}
                         <p>{{ trans('registered-installation-p') }}</p>
                         <p>{{ trans('telemetry-data-to-send') }}</p>
                         <a class="btn btn-primary float-start" href="{{ fsc.url() }}?action=claim-install"
                            target="_blank">
-                            <i class="fa-solid fa-cog fa-fw" aria-hidden="true"></i>
-                            {{ trans('manage') }}
+                            {% if fsc.justRegistered %}
+                                <i class="fa-solid fa-arrow-up-right-from-square fa-fw fa-beat me-1" aria-hidden="true"></i>
+                                {{ trans('finalize') }}
+                            {% else %}
+                                <i class="fa-solid fa-cog fa-fw me-1" aria-hidden="true"></i>
+                                {{ trans('manage') }}
+                            {% endif %}
                         </a>
-                        <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
-                            {{ formToken() }}
-                            <input type="hidden" name="action" value="unlink"/>
-                            <button type="submit" class="btn btn-danger btn-spin-action float-end">
-                                <i class="fa-solid fa-unlink fa-fw" aria-hidden="true"></i>
-                                {{ trans('unlink') }}
-                            </button>
-                        </form>
+                        {% if not fsc.justRegistered %}
+                            <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                                {{ formToken() }}
+                                <input type="hidden" name="action" value="unlink"/>
+                                <button type="submit" class="btn btn-danger btn-spin-action float-end">
+                                    <i class="fa-solid fa-unlink fa-fw me-1" aria-hidden="true"></i>
+                                    {{ trans('unlink') }}
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
                 {% else %}
                     <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
@@ -208,6 +221,7 @@
                             <p>{{ trans('register-installation-p') }}</p>
                             <p>{{ trans('telemetry-data-to-send') }}</p>
                             <button type="submit" class="btn btn-primary btn-spin-action w-100">
+                                <i class="fa-solid fa-arrow-right fa-beat me-1" aria-hidden="true"></i>
                                 {{ trans('register-installation') }}
                             </button>
                         </div>
@@ -262,5 +276,22 @@
                 </div>
             </div>
         </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if fsc.justRegistered %}
+        <script>
+            // tras registrar, mostramos el modal para que el usuario pulse el botón de
+            // vincular: el claim necesita la cookie del portal, así que lo tiene que abrir
+            // el navegador desde un click real (window.open automático lo bloquean)
+            document.addEventListener('DOMContentLoaded', function () {
+                const modalEl = document.getElementById('modalTelemetry');
+                if (modalEl) {
+                    new bootstrap.Modal(modalEl).show();
+                }
+            });
+        </script>
     {% endif %}
 {% endblock %}
