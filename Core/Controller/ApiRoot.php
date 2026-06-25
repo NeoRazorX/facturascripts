@@ -27,7 +27,7 @@ class ApiRoot extends ApiController
 {
     /** @var array */
     private static $custom_resources = [
-        'attachedfiles', 'crearAlbaranCliente', 'crearAlbaranProveedor', 'crearFacturaCliente', 'crearFacturaProveedor',
+        'crearAlbaranCliente', 'crearAlbaranProveedor', 'crearFacturaCliente', 'crearFacturaProveedor',
         'crearFacturaRectificativaCliente', 'crearPedidoCliente', 'crearPedidoProveedor', 'crearPresupuestoCliente',
         'crearPresupuestoProveedor', 'exportarAlbaranCliente', 'exportarAlbaranProveedor', 'exportarFacturaCliente',
         'exportarFacturaProveedor', 'exportarPedidoCliente', 'exportarPedidoProveedor', 'exportarPresupuestoCliente',
@@ -41,15 +41,14 @@ class ApiRoot extends ApiController
 
     protected function exposeResources(array &$map): void
     {
-        $json = ['resources' => self::$custom_resources];
-        foreach (array_keys($map) as $key) {
-            $json['resources'][] = $key;
-        }
+        // unimos los recursos personalizados con los modelos autoexpuestos,
+        // eliminando duplicados (p. ej. attachedfiles existe en ambos)
+        $resources = array_unique(array_merge(self::$custom_resources, array_keys($map)));
 
         // ordenamos
-        sort($json['resources']);
+        sort($resources);
 
-        $this->response->json($json);
+        $this->response->json(['resources' => $resources]);
     }
 
     public static function getCustomResources(): array
