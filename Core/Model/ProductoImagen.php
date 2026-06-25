@@ -40,6 +40,10 @@ class ProductoImagen extends ModelClass
 {
     use ModelTrait;
 
+    const THUMBNAIL_MAX_SIZE = 1024;
+
+    const THUMBNAIL_MIN_SIZE = 32;
+
     const THUMBNAIL_PATH = '/MyFiles/Tmp/Thumbnails/';
 
     /** @var int */
@@ -111,6 +115,11 @@ class ProductoImagen extends ModelClass
 
     public function getThumbnail(int $width = 100, int $height = 100, bool $token = false, bool $permaToken = false): string
     {
+        // limitamos las dimensiones (entre THUMBNAIL_MIN_SIZE y THUMBNAIL_MAX_SIZE) para
+        // evitar miniaturas degeneradas y un consumo de memoria excesivo al generarla
+        $width = max(self::THUMBNAIL_MIN_SIZE, min($width, self::THUMBNAIL_MAX_SIZE));
+        $height = max(self::THUMBNAIL_MIN_SIZE, min($height, self::THUMBNAIL_MAX_SIZE));
+
         // si el archivo no existe no podemos generar miniatura
         $file = $this->getFile();
         if (false === $file->exists() || false === file_exists($file->getFullPath())) {
@@ -194,8 +203,11 @@ class ProductoImagen extends ModelClass
             return $result;
         }
 
-        // recorremos las miniaturas con el patrón nombre_ANCHOxALTO.ext
-        foreach (scandir($path) as $file) {
+        // buscamos solo las miniaturas de este archivo (nombre_ANCHOxALTO.ext) con glob,
+        // así filtramos a nivel de sistema en lugar de recorrer toda la carpeta de miniaturas
+        $pattern = $path . self::globEscape($name) . '_*x*.*';
+        foreach (glob($pattern, GLOB_NOSORT) ?: [] as $fullPath) {
+            $file = basename($fullPath);
             if (preg_match('/^' . preg_quote($name, '/') . '_(\d+)x(\d+)\.[a-z0-9]+$/i', $file, $matches)) {
                 // sin barra inicial, igual que el core (MyFiles/... en lugar de /MyFiles/...)
                 $relative = ltrim(self::THUMBNAIL_PATH, '/') . $file;
@@ -209,6 +221,14 @@ class ProductoImagen extends ModelClass
         }
 
         return $result;
+    }
+
+    /**
+     * Escapa los metacaracteres de glob (* ? [ ]) para usar un nombre como literal en el patrón.
+     */
+    private static function globEscape(string $value): string
+    {
+        return preg_replace('/[*?\[\]]/', '[$0]', $value);
     }
 
     public function install(): string
