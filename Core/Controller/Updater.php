@@ -42,10 +42,14 @@ use ZipArchive;
 class Updater extends Controller
 {
     const CORE_ZIP_FOLDER = 'facturascripts';
+
     const UPDATE_CORE_URL = 'https://facturascripts.com/DownloadBuild';
 
     /** @var array */
     public $coreUpdateWarnings = [];
+
+    /** @var bool */
+    public $justRegistered = false;
 
     /** @var Telemetry */
     public $telemetryManager;
@@ -63,6 +67,11 @@ class Updater extends Controller
         parent::__construct($className, $uri);
     }
 
+    public static function getCoreVersion(): float
+    {
+        return Kernel::version();
+    }
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -70,11 +79,6 @@ class Updater extends Controller
         $data['title'] = 'updater';
         $data['icon'] = 'fa-solid fa-cloud-download-alt';
         return $data;
-    }
-
-    public static function getCoreVersion(): float
-    {
-        return Kernel::version();
     }
 
     public static function getUpdateItems(): array
@@ -215,6 +219,10 @@ class Updater extends Controller
             case 'register':
                 if ($this->telemetryManager->install()) {
                     Tools::log()->notice('record-updated-correctly');
+                    // marcamos que se acaba de registrar para que la vista abra el claim
+                    // en una pestaña nueva y se vincule la instalación con el contacto
+                    // (la petición de registro es servidor-a-servidor y no lleva la cookie del portal)
+                    $this->justRegistered = true;
                     break;
                 }
                 Tools::log()->error('record-save-error');

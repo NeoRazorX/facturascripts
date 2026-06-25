@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -262,5 +262,26 @@
                 </div>
             </div>
         </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if fsc.justRegistered %}
+        <script>
+            // tras registrar, abrimos el claim en una pestaña nueva para vincular la
+            // instalación con el contacto, dejando esta pestaña en el programa ya registrado
+            document.addEventListener('DOMContentLoaded', function () {
+                const claimWindow = window.open('{{ fsc.url() }}?action=claim-install', '_blank');
+
+                // si el navegador bloquea la pestaña nueva, mostramos el modal con el botón manual
+                if (!claimWindow) {
+                    const modalEl = document.getElementById('modalTelemetry');
+                    if (modalEl) {
+                        new bootstrap.Modal(modalEl).show();
+                    }
+                }
+            });
+        </script>
     {% endif %}
 {% endblock %}
