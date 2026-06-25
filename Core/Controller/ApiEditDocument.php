@@ -417,7 +417,9 @@ class ApiEditDocument extends ApiController
 
     /**
      * Actualiza la cabecera del documento con los campos permitidos. No toca el
-     * sujeto ni el almacén (ya validados como inmutables).
+     * sujeto ni el almacén (ya validados como inmutables), ni la clave primaria,
+     * la numeración (numero, codigo, codejercicio) ni el estado (idestado), que
+     * deben cambiarse por sus mecanismos propios y no por asignación directa.
      */
     protected function updateHeader(BusinessDocument &$doc): bool
     {
@@ -440,8 +442,15 @@ class ApiEditDocument extends ApiController
             $doc->setCurrency($coddivisa);
         }
 
-        // asignamos el resto de campos del modelo, excepto sujeto y almacén
-        $protected = [$doc->subjectColumn(), 'idempresa', 'codalmacen', 'fecha', 'hora', 'coddivisa'];
+        // asignamos el resto de campos del modelo, excepto los protegidos: sujeto,
+        // empresa, almacén, fecha/hora/divisa (ya gestionados arriba), la clave
+        // primaria, la numeración (numero, codigo, codejercicio) y el estado
+        // (idestado/idestado_ant), que rompen integridad si se asignan a pelo
+        $protected = [
+            $doc->primaryColumn(), $doc->subjectColumn(), 'idempresa', 'codalmacen',
+            'fecha', 'hora', 'coddivisa', 'numero', 'codigo', 'codejercicio',
+            'idestado', 'idestado_ant',
+        ];
         foreach ($doc->getModelFields() as $key => $field) {
             if (in_array($key, $protected, true)) {
                 continue;
