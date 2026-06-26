@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
@@ -245,15 +245,15 @@ trait CommonLineHTML
         }
 
         // cargamos las variantes
-        $whereVariant = [new DataBaseWhere('referencia', $references, 'IN')];
+        $whereVariant = [Where::in('referencia', $references)];
         foreach (Variante::all($whereVariant, [], 0, 0) as $variante) {
             self::$variants[$variante->referencia] = $variante;
         }
 
         // cargamos los stocks
         $whereStock = [
-            new DataBaseWhere('codalmacen', $model->codalmacen),
-            new DataBaseWhere('referencia', $references, 'IN'),
+            Where::eq('codalmacen', $model->codalmacen),
+            Where::in('referencia', $references),
         ];
         foreach (Stock::all($whereStock, [], 0, 0) as $stock) {
             self::$stocks[$stock->referencia] = $stock;

@@ -21,12 +21,12 @@ namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Fabricante;
@@ -151,7 +151,7 @@ class SalesModalHTML
         $options = '<option value="">' . Tools::trans('family') . '</option>'
             . '<option value="">------</option>';
 
-        $where = [new DataBaseWhere('madre', null, 'IS')];
+        $where = [Where::isNull('madre')];
         $orderBy = ['descripcion' => 'ASC'];
         foreach (Familia::all($where, $orderBy, 0, 0) as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">' . $fam->descripcion . '</option>';
@@ -178,11 +178,11 @@ class SalesModalHTML
             }
 
             // consultamos la base de datos
-            $where = [new DataBaseWhere('fechabaja', null, 'IS')];
+            $where = [Where::isNull('fechabaja')];
             if ($permissions->onlyOwnerData && !$showAll) {
                 // Mantener alineado con OwnerDataTrait/getOwnerFilter si Cliente añade más criterios de propiedad.
-                $where[] = new DataBaseWhere('codagente', $user->codagente);
-                $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+                $where[] = Where::eq('codagente', $user->codagente);
+                $where[] = Where::isNotNull('codagente');
             }
             return Cliente::all($where, ['LOWER(nombre)' => 'ASC'], 0, 50);
         });

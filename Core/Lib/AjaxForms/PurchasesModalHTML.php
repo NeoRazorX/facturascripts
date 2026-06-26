@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
@@ -151,7 +151,7 @@ class PurchasesModalHTML
         $options = '<option value="">' . Tools::trans('family') . '</option>'
             . '<option value="">------</option>';
 
-        $where = [new DataBaseWhere('madre', null, 'IS')];
+        $where = [Where::isNull('madre')];
         $orderBy = ['descripcion' => 'ASC'];
         foreach (Familia::all($where, $orderBy, 0, 0) as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">' . $fam->descripcion . '</option>';
@@ -308,7 +308,7 @@ class PurchasesModalHTML
     protected static function modalProveedores(string $url): string
     {
         $trs = '';
-        $where = [new DataBaseWhere('fechabaja', null, 'IS')];
+        $where = [Where::isNull('fechabaja')];
         foreach (Proveedor::all($where, ['LOWER(nombre)' => 'ASC'], 0, 50) as $pro) {
             $name = ($pro->nombre === $pro->razonsocial) ? $pro->nombre : $pro->nombre . ' <small>(' . $pro->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'purchasesForm\'][\'codproveedor\'].value = \''
