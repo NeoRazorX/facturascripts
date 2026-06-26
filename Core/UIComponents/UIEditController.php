@@ -25,6 +25,7 @@ use FacturaScripts\Core\Component\ComponentBlock;
 use FacturaScripts\Core\Component\UIController;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditListView;
+use FacturaScripts\Core\Lib\ExtendedController\HtmlView;
 use FacturaScripts\Core\Lib\ExtendedController\ListView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -76,6 +77,9 @@ abstract class UIEditController extends UIController
 
     /** @var ListView[] Listas relacionadas (vistas debajo del formulario) indexadas por nombre. */
     private array $listViews = [];
+
+    /** @var HtmlView[] Vistas HTML (imágenes, archivos…) indexadas por nombre. */
+    private array $htmlViews = [];
 
     /** Nombre de la vista de lista activa para que Twig llame a getCurrentView(). */
     private string $currentListViewName = '';
@@ -175,13 +179,54 @@ abstract class UIEditController extends UIController
         return $view;
     }
 
+    public function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fa-brands fa-html5'): HtmlView
+    {
+        $view = new HtmlView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
+        $view->loadPageOptions($this->user);
+        $this->htmlViews[$viewName] = $view;
+        return $view;
+    }
+
+    public function htmlViews(): array
+    {
+        return $this->htmlViews;
+    }
+
+    /**
+     * Expone fsc.views | first para compatibilidad con plantillas Tab/* que
+     * usan ese patrón para obtener el modelo principal.
+     */
+    public function getViews(): array
+    {
+        $wrapper = new \stdClass();
+        $wrapper->model = $this->editModel;
+        return [$wrapper];
+    }
+
     /**
      * Devuelve las vistas de lista registradas, indexadas por nombre.
-     * Usado por la plantilla Twig para renderizar cada sección inferior.
      */
     public function listViews(): array
     {
         return $this->listViews;
+    }
+
+    /**
+     * Vistas que aparecen como pestañas en la nav izquierda:
+     * ListView/EditListView (no inline) + HtmlViews.
+     */
+    public function panelListViews(): array
+    {
+        $listPanel = array_filter($this->listViews, fn($v) => !str_contains($v->template, 'InLine'));
+        return array_merge($listPanel, $this->htmlViews);
+    }
+
+    /**
+     * Vistas inline (setInLine(true)): se renderizan debajo del formulario principal.
+     */
+    public function inlineListViews(): array
+    {
+        return array_filter($this->listViews, fn($v) => str_contains($v->template, 'InLine'));
     }
 
     /**
@@ -208,17 +253,17 @@ abstract class UIEditController extends UIController
      */
     public function getCurrentView(): BaseView
     {
-        return $this->listViews[$this->currentListViewName];
+        return $this->listViews[$this->currentListViewName]
+            ?? $this->htmlViews[$this->currentListViewName];
     }
 
     /**
-     * Omite processComponents() cuando el POST proviene de un ListView embebido
-     * (activetab coincide con el nombre de uno de los listViews).
+     * Omite processComponents() cuando el POST proviene de un ListView o HtmlView embebido.
      */
     protected function skipFormProcessing(): bool
     {
         $activetab = $this->request->request->get('activetab', '');
-        return isset($this->listViews[$activetab]);
+        return isset($this->listViews[$activetab]) || isset($this->htmlViews[$activetab]);
     }
 
     /**
@@ -229,6 +274,12 @@ abstract class UIEditController extends UIController
     {
         $tab = $this->request->inputOrQuery('activetab', '__main__');
         if ($tab === '__main__' || isset($this->extraPanels[$tab])) {
+            return $tab;
+        }
+        if (isset($this->listViews[$tab]) && !str_contains($this->listViews[$tab]->template, 'InLine')) {
+            return $tab;
+        }
+        if (isset($this->htmlViews[$tab])) {
             return $tab;
         }
         return '__main__';
@@ -290,6 +341,15 @@ abstract class UIEditController extends UIController
     }
 
     /**
+     * Punto de extensión para manejar acciones de formularios HtmlView
+     * (add-image, delete-image, add-file, delete-file, edit-file, …).
+     * La subclase sobreescribe este método y llama a los métodos del trait correspondiente.
+     */
+    protected function execHtmlAction(string $action): void
+    {
+    }
+
+    /**
      * Sobreescribe modifyUI() para poblar los paneles extra desde el modelo en GET
      * y para aplicar la configuración de visibilidad guardada en pages_options.
      */
@@ -305,6 +365,11 @@ abstract class UIEditController extends UIController
                 $editAction = $this->request->request->get('action', '');
                 if (in_array($editAction, ['insert', 'edit', 'delete'], true)) {
                     $this->editListViewAction($editAction);
+                }
+            } elseif (isset($this->htmlViews[$activetab])) {
+                $htmlAction = $this->request->request->get('action', '');
+                if (!empty($htmlAction)) {
+                    $this->execHtmlAction($htmlAction);
                 }
             }
         }

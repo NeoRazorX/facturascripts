@@ -193,8 +193,9 @@
     {% set pageData = fsc.getPageData() %}
     {% set model = fsc.getModel() %}
     {% set extraPanels = fsc.extraPanels() %}
-    {% set listViews = fsc.listViews() %}
-    {% set hasMultiplePanels = extraPanels | length > 0 %}
+    {% set panelListViews = fsc.panelListViews() %}
+    {% set inlineListViews = fsc.inlineListViews() %}
+    {% set hasMultiplePanels = extraPanels | length > 0 or panelListViews | length > 0 %}
     {% set activeTab = fsc.activeTab() %}
 
     <div class="container-fluid">
@@ -221,6 +222,20 @@
                                role="tab" aria-controls="{{ panelName }}" aria-expanded="true">
                                 <i class="{{ panel.icon() }} fa-fw me-1 d-none d-lg-inline-block" aria-hidden="true"></i>
                                 <span>{{ panel.title() }}</span>
+                            </a>
+                        {% endfor %}
+
+                        {# Vistas de lista como pestañas laterales #}
+                        {% for panelName, panelView in panelListViews %}
+                            {% set disable = panelView.settings.active ? '' : ' disabled' %}
+                            <a class="nav-link{{ activeTab == panelName ? ' active' : '' }}{{ disable }} text-nowrap"
+                               id="{{ panelName }}-tab" data-bs-toggle="pill" href="#{{ panelName }}"
+                               role="tab" aria-controls="{{ panelName }}" aria-expanded="true">
+                                <i class="{{ panelView.icon }} fa-fw me-1 d-none d-lg-inline-block" aria-hidden="true"></i>
+                                <span>{{ trans(panelView.title) }}</span>
+                                {% if panelView.count > 0 %}
+                                    <span class="badge bg-secondary ms-1">{{ number(panelView.count, 0) }}</span>
+                                {% endif %}
                             </a>
                         {% endfor %}
                     </div>
@@ -265,10 +280,7 @@
                                         {% for group in fsc.componentGroups() %}
                                             <div class="col-md-12">
                                                 {% if group.title %}
-                                                    <div class="col-12 mt-2 mb-1">
-                                                        <small class="text-muted text-uppercase fw-semibold">{{ group.title }}</small>
-                                                        <hr class="mt-1 mb-0">
-                                                    </div>
+                                                    <legend class="text-info mt-2 mb-1">{{ trans(group.title) }}</legend>
                                                 {% endif %}
                                                 <div class="row g-2{{ group.alignBottom ? ' align-items-end' : '' }}">
                                                     {% for fieldname, component in group.components %}
@@ -369,59 +381,29 @@
                         </div>
                     {% endfor %}
 
+                    {# Tabs de vistas de lista laterales #}
+                    {% for panelName, panelView in panelListViews %}
+                        {% if panelView.settings.active %}
+                            {% set panelActive = (activeTab == panelName) ? ' show active' : '' %}
+                            <div class="tab-pane fade{{ panelActive }}" id="{{ panelName }}" role="tabpanel"
+                                 aria-labelledby="{{ panelName }}-tab">
+                                {% do fsc.setCurrentView(panelName) %}
+                                {{ include(panelView.template) }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
                 </div>
             </div>
         </div>
 
-        {# Listas relacionadas: como en PanelControllerBottom.
-           - 1 lista activa  → se muestra directamente sin nav-pills.
-           - 2+ listas       → nav-pills para seleccionar entre ellas (una visible a la vez). #}
-        {% if listViews | length > 1 %}
-            <div class="row mt-3">
-                <div class="col">
-                    <div class="nav-pills-wrapper d-print-none">
-                        <ul class="nav nav-pills nav-pills-scroll mb-3" id="listTabs" role="tablist">
-                            {% set contList = 0 %}
-                            {% for listName, listView in listViews %}
-                                {% if listView.settings.active %}
-                                    {% set contList = contList + 1 %}
-                                    <li class="nav-item">
-                                        <a href="#{{ listName }}"
-                                           class="nav-link{{ contList == 1 ? ' active' : '' }}"
-                                           data-bs-toggle="tab" role="tab" aria-controls="{{ listName }}">
-                                            <i class="{{ listView.icon }} fa-fw me-1 d-none d-sm-inline" aria-hidden="true"></i>
-                                            <span>{{ listView.title }}</span>
-                                            {% if listView.count > 0 %}
-                                                <span class="badge bg-secondary">{{ number(listView.count, 0) }}</span>
-                                            {% endif %}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="tab-content" id="listTabsContent">
-                {% set contList = 0 %}
-                {% for listName, listView in listViews %}
-                    {% if listView.settings.active %}
-                        {% set contList = contList + 1 %}
-                        <div class="tab-pane{{ contList == 1 ? ' show active' : '' }}" id="{{ listName }}" role="tabpanel">
-                            {% do fsc.setCurrentView(listName) %}
-                            {{ include(listView.template) }}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        {% else %}
-            {% for listName, listView in listViews %}
-                {% if listView.settings.active %}
-                    {% do fsc.setCurrentView(listName) %}
-                    {{ include(listView.template) }}
-                {% endif %}
-            {% endfor %}
-        {% endif %}
+        {# Vistas inline (setInLine=true): se renderizan debajo del formulario. #}
+        {% for listName, listView in inlineListViews %}
+            {% if listView.settings.active %}
+                {% do fsc.setCurrentView(listName) %}
+                {{ include(listView.template) }}
+            {% endif %}
+        {% endfor %}
     </div>
 
     {# Modal + form de confirmación de borrado #}
