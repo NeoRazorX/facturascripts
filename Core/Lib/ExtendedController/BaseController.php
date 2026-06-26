@@ -295,20 +295,24 @@ abstract class BaseController extends Controller
             return true;
         }
 
-        // si el modelo y el usuario tienen agente, comprobamos el agente
-        if ($model->hasColumn('codagente') &&
-            false === empty($this->user->codagente)
-        ) {
-            return $model->codagente === $this->user->codagente;
+        // si el modelo no tiene ninguna columna de propiedad, permitimos
+        if (false === $model->hasColumn('codagente') && false === $model->hasColumn('nick')) {
+            return true;
         }
 
-        // si el modelo tiene nick, comprobamos nick
-        if ($model->hasColumn('nick')) {
-            return $model->nick === $this->user->nick;
+        // criterios de propiedad que el usuario puede cumplir en este modelo
+        $checkAgente = $model->hasColumn('codagente') && false === empty($this->user->codagente);
+        $checkNick = $model->hasColumn('nick');
+
+        // permitimos si coincide el agente o el nick
+        if ($checkAgente && $model->codagente === $this->user->codagente) {
+            return true;
+        }
+        if ($checkNick && $model->nick === $this->user->nick) {
+            return true;
         }
 
-        // si no hay nada en que apoyarse, permitimos
-        return true;
+        return false;
     }
 
     /**

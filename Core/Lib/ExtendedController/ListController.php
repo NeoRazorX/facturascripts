@@ -390,25 +390,29 @@ abstract class ListController extends BaseController
      */
     protected function getOwnerFilter($model): array
     {
-        // si el modelo y el usuario tienen agente, comprobamos solo el agente
-        if ($model->hasColumn('codagente') &&
-            false === empty($this->user->codagente)
-        ) {
-            return [ new DataBaseWhere('codagente', $this->user->codagente) ];
+        $where = [];
+
+        // si el modelo y el usuario tienen agente, filtramos por agente
+        if ($model->hasColumn('codagente') && false === empty($this->user->codagente)) {
+            $where[] = new DataBaseWhere('codagente', $this->user->codagente);
         }
 
-        // si el modelo tiene nick, comprobamos nick
+        // si el modelo tiene nick, añadimos el nick (con OR si ya filtramos por agente)
         if ($model->hasColumn('nick')) {
-            // DatabaseWhere applies parentheses grouping the ORs
-            // result: (`nick` = 'username' OR `nick` IS NULL) AND [... user filters]
-            return [
-                new DataBaseWhere('nick', $this->user->nick),
-                new DataBaseWhere('nick', null, 'IS', 'OR')
-            ];
+            $operation = empty($where) ? 'AND' : 'OR';
+            $where[] = new DataBaseWhere('nick', $this->user->nick, '=', $operation);
         }
 
-        // nada que filtrar
-        return [];
+        // si el modelo tiene criterio de propiedad pero el usuario no puede cumplir
+        // ninguno (tiene codagente pero el usuario no tiene agente, y no hay nick),
+        // no posee nada: filtro imposible para no devolver filas
+        if (empty($where) && $model->hasColumn('codagente')) {
+            return [ new DataBaseWhere($model->primaryColumn(), null, 'IS') ];
+        }
+
+        // DatabaseWhere agrupa los OR entre paréntesis
+        // result: (`codagente` = 'agent' OR `nick` = 'username') AND [... user filters]
+        return $where;
     }
 
     /**
