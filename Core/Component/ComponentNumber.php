@@ -144,7 +144,7 @@ class ComponentNumber extends FieldComponent
 
     protected function inputHtml(): string
     {
-        $class = $this->inputCssClass('form-control', 'text-end');
+        $class = $this->inputCssClass('form-control');
         $min = $this->min !== '' ? ' min="' . $this->min . '"' : '';
         $max = $this->max !== '' ? ' max="' . $this->max . '"' : '';
 
