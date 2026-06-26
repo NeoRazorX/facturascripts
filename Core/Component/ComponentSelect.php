@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Component;
 
 use FacturaScripts\Core\Lib\AssetManager;
+use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 
@@ -289,6 +290,15 @@ class ComponentSelect extends FieldComponent
                 . '>' . htmlspecialchars((string) $optTitle) . '</option>';
         }
 
+        // Value not found in the pre-loaded list — fall back to a DB lookup (mirrors WidgetSelect behaviour).
+        if (!$this->multiple && !$found && $this->value !== null && $this->value !== '' && !empty($this->source)) {
+            $codeModel = new CodeModel();
+            $description = $codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle);
+            $html .= '<option value="' . htmlspecialchars((string) $this->value) . '" selected>'
+                . htmlspecialchars($description)
+                . '</option>';
+        }
+
         $html .= '</select>';
 
         return $html;
@@ -303,6 +313,14 @@ class ComponentSelect extends FieldComponent
         foreach ($this->values() as $option) {
             if ($this->valuesMatch($option['value'] ?? '', $this->value)) {
                 return (string) ($option['title'] ?? $this->value);
+            }
+        }
+
+        if (!empty($this->source)) {
+            $codeModel = new CodeModel();
+            $description = $codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle);
+            if ($description !== '') {
+                return $description;
             }
         }
 
