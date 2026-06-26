@@ -217,6 +217,16 @@ class UIListTab
 
         $rawIndex = (int)$request->inputOrQuery('order', -1);
         $this->resolvedOrderIndex = isset($this->orderOptions[$rawIndex]) ? $rawIndex : -1;
+
+        if ($this->resolvedOrderIndex === -1) {
+            foreach ($this->orderOptions as $index => $opt) {
+                if ($opt['default'] > 0) {
+                    $this->resolvedOrderIndex = $index;
+                    break;
+                }
+            }
+        }
+
         $order = $this->resolveOrder();
 
         $this->lastWhere = $where;
