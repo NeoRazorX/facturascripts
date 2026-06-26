@@ -373,28 +373,55 @@
             </div>
         </div>
 
-        {# Listas relacionadas: siempre debajo del formulario principal, igual que PanelControllerBottom #}
-        {% for listName, listView in listViews %}
-            {% if listView.settings.active %}
-                <div class="row mt-3">
-                    <div class="col">
-                        <h3 class="h4 mb-2">
-                            <i class="{{ listView.icon }} me-2" aria-hidden="true"></i>
-                            {{ listView.title }}
-                            {% if listView.count > 0 %}
-                                <span class="badge bg-secondary">{{ number(listView.count, 0) }}</span>
-                            {% endif %}
-                        </h3>
+        {# Listas relacionadas: como en PanelControllerBottom.
+           - 1 lista activa  → se muestra directamente sin nav-pills.
+           - 2+ listas       → nav-pills para seleccionar entre ellas (una visible a la vez). #}
+        {% if listViews | length > 1 %}
+            <div class="row mt-3">
+                <div class="col">
+                    <div class="nav-pills-wrapper d-print-none">
+                        <ul class="nav nav-pills nav-pills-scroll mb-3" id="listTabs" role="tablist">
+                            {% set contList = 0 %}
+                            {% for listName, listView in listViews %}
+                                {% if listView.settings.active %}
+                                    {% set contList = contList + 1 %}
+                                    <li class="nav-item">
+                                        <a href="#{{ listName }}"
+                                           class="nav-link{{ contList == 1 ? ' active' : '' }}"
+                                           data-bs-toggle="tab" role="tab" aria-controls="{{ listName }}">
+                                            <i class="{{ listView.icon }} fa-fw me-1 d-none d-sm-inline" aria-hidden="true"></i>
+                                            <span>{{ listView.title }}</span>
+                                            {% if listView.count > 0 %}
+                                                <span class="badge bg-secondary">{{ number(listView.count, 0) }}</span>
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
                     </div>
                 </div>
-                <div class="tab-content" id="{{ listName }}Content">
-                    <div class="tab-pane show active" id="{{ listName }}" role="tabpanel">
-                        {% do fsc.setCurrentView(listName) %}
-                        {{ include(listView.template) }}
-                    </div>
-                </div>
-            {% endif %}
-        {% endfor %}
+            </div>
+            <div class="tab-content" id="listTabsContent">
+                {% set contList = 0 %}
+                {% for listName, listView in listViews %}
+                    {% if listView.settings.active %}
+                        {% set contList = contList + 1 %}
+                        <div class="tab-pane{{ contList == 1 ? ' show active' : '' }}" id="{{ listName }}" role="tabpanel">
+                            {% do fsc.setCurrentView(listName) %}
+                            {{ include(listView.template) }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            {% for listName, listView in listViews %}
+                {% if listView.settings.active %}
+                    {% do fsc.setCurrentView(listName) %}
+                    {{ include(listView.template) }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     </div>
 
     {# Modal + form de confirmación de borrado #}
