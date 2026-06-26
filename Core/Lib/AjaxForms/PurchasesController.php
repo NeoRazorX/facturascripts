@@ -186,6 +186,17 @@ abstract class PurchasesController extends PanelController
      */
     protected function execPreviousAction($action)
     {
+        // control de acceso: si se opera (o exporta) sobre un documento existente
+        // que no pertenece al usuario, denegamos. Evita el acceso por código directo.
+        $code = $this->request->queryOrInput('code');
+        if (false === empty($action) && false === empty($code)
+            && false === $this->checkOwnerData($this->getModel())) {
+            $this->setTemplate(false);
+            Tools::log()->warning('access-denied');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
         switch ($action) {
             case 'add-file':
                 return $this->addFileAction();
@@ -318,8 +329,15 @@ abstract class PurchasesController extends PanelController
                     break;
                 }
 
-                // data not found?
                 $view->loadData($code);
+
+                // ¿el usuario puede acceder a este documento?
+                if (false === $this->checkOwnerData($view->model)) {
+                    $this->setTemplate('Error/AccessDenied');
+                    break;
+                }
+
+                // data not found?
                 $action = $this->request->input('action', '');
                 if ('' === $action && empty($view->model->primaryColumnValue())) {
                     Tools::log()->warning('record-not-found');
