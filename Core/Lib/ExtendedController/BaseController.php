@@ -371,7 +371,7 @@ abstract class BaseController extends Controller
             // deleting multiples rows
             $numDeletes = 0;
             foreach ($codes as $cod) {
-                if ($model->loadFromCode($cod) && $model->delete()) {
+                if ($model->loadFromCode($cod) && $this->checkOwnerData($model) && $model->delete()) {
                     ++$numDeletes;
                     continue;
                 }
@@ -387,7 +387,7 @@ abstract class BaseController extends Controller
                 Tools::log()->notice('record-deleted-correctly');
                 return true;
             }
-        } elseif ($model->loadFromCode($code) && $model->delete()) {
+        } elseif ($model->loadFromCode($code) && $this->checkOwnerData($model) && $model->delete()) {
             // deleting a single row
             Tools::log()->notice('record-deleted-correctly');
             $model->clear();
