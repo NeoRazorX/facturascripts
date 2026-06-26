@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Lib\ExtendedController\OwnerDataTrait;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -43,6 +44,8 @@ use FacturaScripts\Dinamic\Model\User;
  */
 class DocumentStitcher extends Controller
 {
+    use OwnerDataTrait;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /** @var array */
@@ -444,9 +447,17 @@ class DocumentStitcher extends Controller
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         foreach ($this->codes as $code) {
             $doc = new $modelClass();
-            if ($doc->loadFromCode($code)) {
-                $this->addDocument($doc);
+            if (false === $doc->loadFromCode($code)) {
+                continue;
             }
+
+            // no permitimos agrupar/partir documentos ajenos
+            if (false === $this->checkOwnerData($doc)) {
+                Tools::log()->warning('not-allowed-modify');
+                continue;
+            }
+
+            $this->addDocument($doc);
         }
 
         // ordenamos por fecha
@@ -479,9 +490,16 @@ class DocumentStitcher extends Controller
         $this->where[] = Where::eq($model->subjectColumn(), $this->documents[0]->subjectColumnValue());
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
         foreach ($model->all($this->where, $orderBy, 0, 0) as $doc) {
-            if (false === in_array($doc->id(), $this->getCodes())) {
-                $this->moreDocuments[] = $doc;
+            if (in_array($doc->id(), $this->getCodes())) {
+                continue;
             }
+
+            // no sugerimos documentos ajenos cuando el usuario solo ve los suyos
+            if (false === $this->checkOwnerData($doc)) {
+                continue;
+            }
+
+            $this->moreDocuments[] = $doc;
         }
     }
 

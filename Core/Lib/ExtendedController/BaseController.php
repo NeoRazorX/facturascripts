@@ -24,7 +24,6 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
-use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -38,6 +37,8 @@ use FacturaScripts\Dinamic\Model\User;
  */
 abstract class BaseController extends Controller
 {
+    use OwnerDataTrait;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
@@ -279,40 +280,6 @@ abstract class BaseController extends Controller
         }
 
         return $results;
-    }
-
-    /**
-     * Returns true if the active user has permission to view the information
-     * of the active record in the informed model.
-     *
-     * @param ModelClass $model
-     *
-     * @return bool
-     */
-    protected function checkOwnerData($model): bool
-    {
-        if (false === $this->permissions->onlyOwnerData || empty($model->id())) {
-            return true;
-        }
-
-        // si el modelo no tiene ninguna columna de propiedad, permitimos
-        if (false === $model->hasColumn('codagente') && false === $model->hasColumn('nick')) {
-            return true;
-        }
-
-        // criterios de propiedad que el usuario puede cumplir en este modelo
-        $checkAgente = $model->hasColumn('codagente') && false === empty($this->user->codagente);
-        $checkNick = $model->hasColumn('nick');
-
-        // permitimos si coincide el agente o el nick
-        if ($checkAgente && $model->codagente === $this->user->codagente) {
-            return true;
-        }
-        if ($checkNick && $model->nick === $this->user->nick) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
