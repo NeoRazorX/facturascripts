@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
@@ -30,7 +28,9 @@ use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Variante;
@@ -120,8 +120,8 @@ abstract class PurchasesController extends PanelController
         $variante = new Variante();
         $query = (string)$this->request->queryOrInput('term');
         $where = [
-            new DataBaseWhere('p.bloqueado', 0),
-            new DataBaseWhere('p.secompra', 1)
+            Where::eq('p.bloqueado', 0),
+            Where::eq('p.secompra', 1)
         ];
         foreach ($variante->codeModelSearch($query, 'referencia', $where) as $value) {
             $list[] = [
@@ -133,23 +133,29 @@ abstract class PurchasesController extends PanelController
         // buscar también por referencia del proveedor
         if (!empty($query)) {
             $addedRefs = array_column($list, 'key');
-            $whereProv = [Where::like('refproveedor', $query . '%')];
-            foreach (ProductoProveedor::all($whereProv, [], 0, 10) as $prodProv) {
-                if (in_array($prodProv->referencia, $addedRefs)) {
+            $codproveedor = $this->request->queryOrInput('codproveedor');
+            $whereProv = [
+                Where::like('LOWER(pp.refproveedor)', strtolower($query) . '%'),
+                Where::eq('p.bloqueado', 0),
+                Where::eq('p.secompra', 1)
+            ];
+            if (!empty($codproveedor)) {
+                $whereProv[] = Where::eq('pp.codproveedor', $codproveedor);
+            }
+            $sql = 'SELECT pp.referencia, pp.refproveedor, p.descripcion'
+                . ' FROM ' . ProductoProveedor::tableName() . ' pp'
+                . ' INNER JOIN ' . Variante::tableName() . ' v ON v.referencia = pp.referencia'
+                . ' INNER JOIN ' . Producto::tableName() . ' p ON p.idproducto = v.idproducto'
+                . Where::multiSql($whereProv)
+                . ' ORDER BY pp.refproveedor ASC';
+            foreach ($this->db()->selectLimit($sql, 10) as $row) {
+                if (in_array($row['referencia'], $addedRefs)) {
                     continue;
                 }
-                $variant2 = new Variante();
-                if (!$variant2->loadWhere([Where::eq('referencia', $prodProv->referencia)])) {
-                    continue;
-                }
-                $product = $variant2->getProducto();
-                if ($product->bloqueado || !$product->secompra) {
-                    continue;
-                }
-                $addedRefs[] = $prodProv->referencia;
+                $addedRefs[] = $row['referencia'];
                 $list[] = [
-                    'key' => Tools::fixHtml($prodProv->referencia),
-                    'value' => Tools::fixHtml($variant2->description())
+                    'key' => Tools::fixHtml($row['referencia']),
+                    'value' => Tools::fixHtml($row['refproveedor'] . ' - ' . $row['descripcion'])
                 ];
             }
         }
@@ -372,6 +378,7 @@ abstract class PurchasesController extends PanelController
         $formData = json_decode($this->request->input('data'), true);
         PurchasesHeaderHTML::apply($model, $formData);
         PurchasesFooterHTML::apply($model, $formData);
+        $this->resolveSupplierRefs($formData, $model->codproveedor);
         PurchasesLineHTML::apply($model, $lines, $formData);
         Calculator::calculate($model, $lines, false);
 
@@ -539,6 +546,42 @@ abstract class PurchasesController extends PanelController
         $this->db()->commit();
         $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
+    }
+
+    private function resolveSupplierRef(string $reference, string $codproveedor): string
+    {
+        $variant = new Variante();
+        if ($variant->loadWhere([Where::eq('referencia', $reference)])) {
+            return $reference;
+        }
+
+        $where = [Where::eq('refproveedor', $reference)];
+        if (!empty($codproveedor)) {
+            $where[] = Where::eq('codproveedor', $codproveedor);
+        }
+        $rows = ProductoProveedor::all($where, [], 0, 1);
+        return empty($rows) ? $reference : $rows[0]->referencia;
+    }
+
+    private function resolveSupplierRefs(array &$formData, string $codproveedor): void
+    {
+        foreach ($formData as $key => $value) {
+            if (!empty($value) && str_starts_with($key, 'referencia_n')) {
+                $formData[$key] = $this->resolveSupplierRef((string)$value, $codproveedor);
+            }
+        }
+
+        if (!empty($formData['selectedLine'])) {
+            $formData['selectedLine'] = $this->resolveSupplierRef((string)$formData['selectedLine'], $codproveedor);
+        }
+
+        if (($formData['action'] ?? '') === 'fast-line' && !empty($formData['fastli'])) {
+            $resolved = $this->resolveSupplierRef((string)$formData['fastli'], $codproveedor);
+            if ($resolved !== $formData['fastli']) {
+                $formData['action'] = 'fast-product';
+                $formData['selectedLine'] = $resolved;
+            }
+        }
     }
 
     private function sendJsonWithLogs(array $data): void

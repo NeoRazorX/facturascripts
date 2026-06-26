@@ -85,19 +85,7 @@ abstract class PurchaseDocument extends TransformerDocument
         $variant = new Variante();
         $where1 = [Where::eq('referencia', Tools::noHtml($reference))];
         $where2 = [Where::eq('codbarras', Tools::noHtml($reference))];
-        $found = $variant->loadWhere($where1) || $variant->loadWhere($where2);
-        if (!$found) {
-            // buscar por referencia del proveedor
-            $whereProv = [Where::eq('refproveedor', Tools::noHtml($reference))];
-            if (!empty($this->codproveedor)) {
-                $whereProv[] = Where::eq('codproveedor', $this->codproveedor);
-            }
-            $provList = ProductoProveedor::all($whereProv, [], 0, 1);
-            if (!empty($provList)) {
-                $found = $variant->loadWhere([Where::eq('referencia', $provList[0]->referencia)]);
-            }
-        }
-        if ($found) {
+        if ($variant->loadWhere($where1) || $variant->loadWhere($where2)) {
             $product = $variant->getProducto();
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
