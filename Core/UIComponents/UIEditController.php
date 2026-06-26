@@ -23,6 +23,8 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Component\ActionResult;
 use FacturaScripts\Core\Component\ComponentBlock;
 use FacturaScripts\Core\Component\UIController;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\EditListView;
 use FacturaScripts\Core\Lib\ExtendedController\ListView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -164,6 +166,15 @@ abstract class UIEditController extends UIController
         return $view;
     }
 
+    public function addEditListView(string $viewName, string $modelName, string $viewTitle, string $icon = 'fa-solid fa-bars'): EditListView
+    {
+        $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $icon);
+        $view->settings['card'] = true;
+        $view->loadPageOptions($this->user);
+        $this->listViews[$viewName] = $view;
+        return $view;
+    }
+
     /**
      * Devuelve las vistas de lista registradas, indexadas por nombre.
      * Usado por la plantilla Twig para renderizar cada sección inferior.
@@ -178,7 +189,7 @@ abstract class UIEditController extends UIController
      * Útil en modifyUI() para cargar datos:
      *   $this->listView('ListSubcuenta')?->loadData('', $where);
      */
-    protected function listView(string $name): ?ListView
+    protected function listView(string $name): ?BaseView
     {
         return $this->listViews[$name] ?? null;
     }
@@ -195,7 +206,7 @@ abstract class UIEditController extends UIController
     /**
      * Devuelve la vista de lista activa. Llamado por ListView.html.twig via fsc.getCurrentView().
      */
-    public function getCurrentView(): ListView
+    public function getCurrentView(): BaseView
     {
         return $this->listViews[$this->currentListViewName];
     }
@@ -284,6 +295,20 @@ abstract class UIEditController extends UIController
      */
     protected function modifyUI(): void
     {
+        // Procesa acciones insert/edit/delete de EditListView embebidas.
+        // UIController despacha eventos por _event, pero EditListView usa el campo
+        // 'action'; cuando skipFormProcessing() devuelve true solo se llama a
+        // populateFromModel(), por lo que interceptamos aquí antes de recargar datos.
+        if ($this->request->isMethod('POST')) {
+            $activetab = $this->request->request->get('activetab', '');
+            if (isset($this->listViews[$activetab]) && $this->listViews[$activetab] instanceof EditListView) {
+                $editAction = $this->request->request->get('action', '');
+                if (in_array($editAction, ['insert', 'edit', 'delete'], true)) {
+                    $this->editListViewAction($editAction);
+                }
+            }
+        }
+
         $model = $this->loadModel();
         if ($model !== null && !empty($this->extraPanels)) {
             foreach ($this->extraPanels as $panel) {
@@ -528,6 +553,45 @@ abstract class UIEditController extends UIController
             }
 
             Tools::log()->error('record-deleted-error');
+        }
+
+        return ActionResult::make();
+    }
+
+    private function editListViewAction(string $action): ActionResult
+    {
+        $activetab = $this->request->request->get('activetab', '');
+        $view = $this->listViews[$activetab] ?? null;
+        if (!($view instanceof EditListView)) {
+            return ActionResult::make();
+        }
+
+        if ($action === 'delete') {
+            if (false === $this->permissions->allowDelete) {
+                Tools::log()->warning('not-allowed-delete');
+                return ActionResult::make();
+            }
+        } else {
+            if (false === $this->permissions->allowUpdate) {
+                Tools::log()->warning('not-allowed-modify');
+                return ActionResult::make();
+            }
+        }
+
+        if (false === $this->validateFormToken()) {
+            return ActionResult::make();
+        }
+
+        $view->processFormData($this->request, 'edit');
+
+        if ($action === 'delete') {
+            if ($view->model->delete()) {
+                Tools::log()->notice('record-deleted-correctly');
+            }
+        } else {
+            if ($view->model->save()) {
+                Tools::log()->notice('record-updated-correctly');
+            }
         }
 
         return ActionResult::make();
