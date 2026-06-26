@@ -163,6 +163,11 @@ class ListLogMessage extends ListController
             $query->whereNotEq('channel', 'audit');
         }
 
+        // si el usuario solo gestiona sus propios datos, limitamos el borrado a sus logs
+        if ($this->permissions->onlyOwnerData) {
+            $query->whereEq('nick', $this->user->nick);
+        }
+
         if (false === $query->delete()) {
             Tools::log()->warning('record-deleted-error');
             return;
