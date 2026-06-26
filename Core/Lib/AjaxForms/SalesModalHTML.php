@@ -180,6 +180,7 @@ class SalesModalHTML
             // consultamos la base de datos
             $where = [new DataBaseWhere('fechabaja', null, 'IS')];
             if ($permissions->onlyOwnerData && !$showAll) {
+                // Mantener alineado con OwnerDataTrait/getOwnerFilter si Cliente añade más criterios de propiedad.
                 $where[] = new DataBaseWhere('codagente', $user->codagente);
                 $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
             }

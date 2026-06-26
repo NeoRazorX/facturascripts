@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\RoleAccess;
@@ -119,8 +119,8 @@ abstract class SalesController extends PanelController
         $variante = new Variante();
         $query = (string)$this->request->queryOrInput('term');
         $where = [
-            new DataBaseWhere('p.bloqueado', 0),
-            new DataBaseWhere('p.sevende', 1)
+            Where::eq('p.bloqueado', 0),
+            Where::eq('p.sevende', 1)
         ];
         foreach ($variante->codeModelSearch($query, 'referencia', $where) as $value) {
             $list[] = [
@@ -288,8 +288,9 @@ abstract class SalesController extends PanelController
         }
         $where = [];
         if ($this->permissions->onlyOwnerData && !$showAll) {
-            $where[] = new DataBaseWhere('codagente', $this->user->codagente);
-            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+            // Mantener alineado con OwnerDataTrait/getOwnerFilter si Cliente añade más criterios de propiedad.
+            $where[] = Where::eq('codagente', $this->user->codagente);
+            $where[] = Where::isNotNull('codagente');
         }
 
         $list = [];
