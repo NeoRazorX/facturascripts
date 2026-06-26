@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model\Join;
 
+use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\Join\VarianteProducto;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Where;
@@ -74,6 +75,78 @@ final class VarianteProductoTest extends TestCase
         $this->assertNull($vp->referencia);
         $this->assertNull($vp->idproducto);
         $this->assertNull($vp->descripcion);
+    }
+
+    public function testTotalSumPrecioIva(): void
+    {
+        // creamos un impuesto con IVA conocido
+        $tax = new Impuesto();
+        $tax->codimpuesto = 'Test999';
+        $tax->descripcion = 'Test IVA totalSum';
+        $tax->iva = 10.0;
+        $this->assertTrue($tax->save(), 'tax-cant-save');
+
+        // creamos un producto con ese impuesto
+        $product = new Producto();
+        $product->referencia = 'test-999';
+        $product->descripcion = 'Test totalSum precio_iva';
+        $product->codimpuesto = $tax->codimpuesto;
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // asignamos un precio conocido a la variante por defecto
+        $variant = $product->getVariants()[0];
+        $variant->precio = 100.0;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        // totalSum('precio_iva') debe devolver 100 * (100 + 10) / 100 = 110
+        $where = [Where::eq('variantes.referencia', $variant->referencia)];
+        $vp = new VarianteProducto();
+        $result = $vp->totalSum('precio_iva', $where);
+        $this->assertEqualsWithDelta(110.0, $result, 0.001, 'total-sum-precio-iva-wrong');
+
+        // limpiamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($tax->delete(), 'tax-cant-delete');
+    }
+
+    public function testTotalSumMultipleVariants(): void
+    {
+        // creamos un impuesto con IVA del 21%
+        $tax = new Impuesto();
+        $tax->codimpuesto = 'TST999';
+        $tax->descripcion = 'Test IVA totalSum multiple';
+        $tax->iva = 21.0;
+        $this->assertTrue($tax->save(), 'tax-cant-save');
+
+        // creamos dos productos con ese impuesto y precios distintos
+        $product1 = new Producto();
+        $product1->referencia = 'test-tsm1-999';
+        $product1->descripcion = 'Test totalSum multiple 1';
+        $product1->codimpuesto = $tax->codimpuesto;
+        $this->assertTrue($product1->save(), 'product1-cant-save');
+        $variant1 = $product1->getVariants()[0];
+        $variant1->precio = 100.0;
+        $this->assertTrue($variant1->save(), 'variant1-cant-save');
+
+        $product2 = new Producto();
+        $product2->referencia = 'test-tsm2-100';
+        $product2->descripcion = 'Test totalSum multiple 2';
+        $product2->codimpuesto = $tax->codimpuesto;
+        $this->assertTrue($product2->save(), 'product2-cant-save');
+        $variant2 = $product2->getVariants()[0];
+        $variant2->precio = 200.0;
+        $this->assertTrue($variant2->save(), 'variant2-cant-save');
+
+        // totalSum('precio_iva') para ambas variantes debe ser (100 + 200) * 1.21 = 363
+        $where = [Where::in('variantes.referencia', [$variant1->referencia, $variant2->referencia])];
+        $vp = new VarianteProducto();
+        $result = $vp->totalSum('precio_iva', $where);
+        $this->assertEqualsWithDelta(363.0, $result, 0.001, 'total-sum-precio-iva-multiple-wrong');
+
+        // limpiamos
+        $this->assertTrue($product1->delete(), 'product1-cant-delete');
+        $this->assertTrue($product2->delete(), 'product2-cant-delete');
+        $this->assertTrue($tax->delete(), 'tax-cant-delete');
     }
 
     public function testIdReturnsProductId(): void
