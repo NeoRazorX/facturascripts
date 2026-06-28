@@ -156,6 +156,7 @@ abstract class PurchasesController extends PanelController
         PurchasesHeaderHTML::assets();
         PurchasesLineHTML::assets();
         PurchasesFooterHTML::assets();
+        PurchasesModalHTML::assets();
     }
 
     protected function deleteDocAction(): bool
