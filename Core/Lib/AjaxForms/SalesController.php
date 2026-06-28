@@ -191,8 +191,10 @@ abstract class SalesController extends PanelController
         // control de acceso: si se opera (o exporta) sobre un documento existente
         // que no pertenece al usuario, denegamos. Evita el acceso por código directo.
         $code = $this->request->queryOrInput('code');
-        if (false === empty($action) && false === empty($code)
-            && false === $this->checkOwnerData($this->getModel())) {
+        if (
+            false === empty($action) && false === empty($code)
+            && false === $this->checkOwnerData($this->getModel())
+        ) {
             $this->setTemplate(false);
             Tools::log()->warning('access-denied');
             $this->sendJsonWithLogs(['ok' => false]);
