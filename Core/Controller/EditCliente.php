@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Lib\ExtendedController\EditListView;
 use FacturaScripts\Core\Tools;
@@ -119,7 +120,14 @@ class EditCliente extends ComercialContactController
     protected function createInvoiceView(string $viewName): void
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices')
-            ->setSettings('btnPrint', true);
+            ->setSettings('btnPrint', true)
+            ->addFilterSelectWhere('status', [
+                ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+                ['label' => '------', 'where' => []],
+                ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagada', true)]],
+                ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagada', false)]],
+                ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencida', true)]],
+            ]); 
 
         // agrupamos las acciones de facturas en un dropdown
         $this->tab($viewName)->addButtonGroup([
@@ -162,7 +170,14 @@ class EditCliente extends ComercialContactController
             $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
         }
         if ($this->user->can('EditReciboCliente')) {
-            $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
+            $this->createReceiptView('ListReciboCliente', 'ReciboCliente')
+                ->addFilterSelectWhere('status', [
+                    ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+                    ['label' => '------', 'where' => []],
+                    ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagado', true)]],
+                    ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagado', false)]],
+                    ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencido', true)]],
+                ]);
         }
     }
 
