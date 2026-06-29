@@ -75,7 +75,7 @@ abstract class SalesController extends PanelController
         }
 
         // existing record
-        $this->views[static::MAIN_VIEW_NAME]->model->loadFromCode($code);
+        $this->views[static::MAIN_VIEW_NAME]->model->load($code);
         return $this->views[static::MAIN_VIEW_NAME]->model;
     }
 
