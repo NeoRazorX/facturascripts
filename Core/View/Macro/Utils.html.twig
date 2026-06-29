@@ -21,6 +21,12 @@
 {# Muestra todos los mensajes con alguno de los niveles dados #}
 {% macro message(log, levels, style) %}
     {% set messages = log.read('master', levels) | merge(log.read('database', levels)) %}
+    {% set blockInteraction = false %}
+    {% for item in messages %}
+        {% if item.block_interaction is defined and item.block_interaction %}
+            {% set blockInteraction = true %}
+        {% endif %}
+    {% endfor %}
     {% if messages | length > 0 %}
         <div class="alert alert-dismissible alert-{{ style }}" role="alert">
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -28,6 +34,9 @@
                 <div>{{ item.message }}</div>
             {% endfor %}
         </div>
+        {% if blockInteraction %}
+            <script>blockUserInteraction({{ messages[0].message|json_encode|raw }});</script>
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
