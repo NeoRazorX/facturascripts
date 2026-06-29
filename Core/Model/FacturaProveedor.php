@@ -133,6 +133,20 @@ class FacturaProveedor extends PurchaseDocument
         return 'facturasprov';
     }
 
+    public function savePaymentMethod(string $codpago): bool
+    {
+        $formaPago = new FormaPago();
+        if (false === $formaPago->load($codpago)) {
+            return false;
+        }
+
+        if (false === $this->update(['codpago' => $codpago])) {
+            return false;
+        }
+
+        return $this->reload();
+    }
+
     protected function testDate(): bool
     {
         return true;

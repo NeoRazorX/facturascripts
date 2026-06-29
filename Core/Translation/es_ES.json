@@ -1111,6 +1111,8 @@
     "mailer": "Controlador de correo",
     "main-address": "Dirección principal",
     "make-invoice": "Hacer factura",
+    "mark-original-invoice-as-paid": "Marcar la original como pagada",
+    "mark-rectifying-invoice-as-paid": "Marcar la rectificativa como pagada",
     "manage": "Administrar",
     "manage-installation": "Administrar",
     "manual": "Manual",
