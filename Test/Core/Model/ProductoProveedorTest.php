@@ -73,6 +73,48 @@ final class ProductoProveedorTest extends TestCase
         $this->assertTrue($proveedor->delete());
     }
 
+    /**
+     * No se debe permitir que la misma referencia de proveedor (refproveedor + codproveedor)
+     * esté vinculada a más de un producto distinto.
+     */
+    public function testCanNotCreateDuplicateRefproveedor(): void
+    {
+        // creamos un proveedor
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save());
+
+        // creamos dos productos distintos
+        $producto1 = $this->getRandomProduct();
+        $this->assertTrue($producto1->save());
+
+        $producto2 = $this->getRandomProduct();
+        $this->assertTrue($producto2->save());
+
+        // creamos un producto del proveedor para el producto1 con una refproveedor concreta
+        $productoProveedor1 = new ProductoProveedor();
+        $productoProveedor1->referencia = $producto1->referencia;
+        $productoProveedor1->codproveedor = $proveedor->codproveedor;
+        $productoProveedor1->refproveedor = 'ref-ext-duplicada';
+        $this->assertTrue($productoProveedor1->save());
+
+        // intentamos crear otro registro con el mismo codproveedor + refproveedor pero apuntando a otro producto
+        $productoProveedor2 = new ProductoProveedor();
+        $productoProveedor2->referencia = $producto2->referencia;
+        $productoProveedor2->codproveedor = $proveedor->codproveedor;
+        $productoProveedor2->refproveedor = 'ref-ext-duplicada';
+        $this->assertFalse(
+            $productoProveedor2->save(),
+            'No debe permitirse la misma refproveedor del mismo proveedor vinculada a dos productos distintos'
+        );
+
+        // eliminamos
+        $this->assertTrue($productoProveedor1->delete());
+        $this->assertTrue($producto1->delete());
+        $this->assertTrue($producto2->delete());
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
+    }
+
     public function testCantCreateWithoutReference(): void
     {
         // creamos un proveedor

@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Model\Base\ProductRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
@@ -183,6 +184,23 @@ class ProductoProveedor extends ModelClass
 
         $tasaConv = Divisas::get($this->coddivisa)->tasaconvcompra;
         $this->netoeuros = empty($tasaConv) ? 0 : round($this->neto / $tasaConv, 5);
+
+        // no puede existir otra referencia de proveedor con el mismo codproveedor + refproveedor apuntando a un producto distinto
+        $where = [
+            Where::eq('codproveedor', $this->codproveedor),
+            Where::eq('refproveedor', $this->refproveedor),
+            Where::notEq('referencia', $this->referencia),
+        ];
+        if (!empty($this->id)) {
+            $where[] = Where::notEq('id', $this->id);
+        }
+        if ($this->count($where) > 0) {
+            Tools::log()->warning('duplicated-supplier-reference', [
+                '%refproveedor%' => $this->refproveedor,
+                '%codproveedor%' => $this->codproveedor,
+            ]);
+            return false;
+        }
 
         return parent::test();
     }
