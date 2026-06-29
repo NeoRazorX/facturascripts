@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
@@ -41,6 +42,7 @@ abstract class ComercialContactController extends EditController
 {
     use ListBusinessActionTrait;
     use DocFilesTrait;
+    use ProvinceCityFilterTrait;
 
     private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
 
@@ -97,10 +99,30 @@ abstract class ComercialContactController extends EditController
             $listView->addFilterSelect('coddivisa', 'currency', 'coddivisa', $currencies);
         }
 
+        // filtros de dirección (solo en documentos que tienen estas columnas, p.ej. los de venta)
+        $model = $listView->model;
+        if ($model->hasColumn('codtrans')) {
+            $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
+            $listView->addFilterSelect('codtrans', 'carrier', 'codtrans', $carriers);
+        }
+        if ($model->hasColumn('codpais')) {
+            $listView->addFilterSelect('country', 'country', 'codpais', Paises::codeModel());
+        }
+        if ($model->hasColumn('provincia')) {
+            $listView->addFilterAutocomplete('provincia', 'province', 'provincia', 'provincias');
+        }
+        if ($model->hasColumn('ciudad')) {
+            $listView->addFilterAutocomplete('ciudad', 'city', 'ciudad', 'ciudades');
+        }
+
         $listView->addFilterCheckbox('totalrecargo', 'surcharge', 'totalrecargo', '!=', 0)
             ->addFilterCheckbox('totalirpf', 'retention', 'totalirpf', '!=', 0)
             ->addFilterCheckbox('totalsuplidos', 'supplied-amount', 'totalsuplidos', '!=', 0)
             ->addFilterCheckbox('numdocs', 'has-attachments', 'numdocs', '!=', 0);
+
+        if ($model->hasColumn('femail')) {
+            $listView->addFilterCheckbox('femail', 'email-not-sent', 'femail', 'IS', null);
+        }
     }
 
     /**
