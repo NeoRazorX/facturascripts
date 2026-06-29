@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Lib\ReceiptGenerator;
-use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\ReciboCliente;
@@ -71,7 +71,7 @@ final class ReciboClienteTest extends TestCase
     public function testCreateInvoiceOnPastDate(): void
     {
         // creamos una factura de ayer
-        $yesterday = date(ModelCore::DATE_STYLE, strtotime('-1 day'));
+        $yesterday = date(Tools::DATE_STYLE, strtotime('-1 day'));
         $invoice = $this->getRandomCustomerInvoice($yesterday);
         $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
 
@@ -81,6 +81,39 @@ final class ReciboClienteTest extends TestCase
         $this->assertEquals($yesterday, $receipts[0]->fecha);
 
         // obtenemos el subject de la factura
+        $subject = $invoice->getSubject();
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testChangingInvoiceDateUpdatesReceipt(): void
+    {
+        // creamos una factura de hoy
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // comprobamos que el recibo tiene la fecha de hoy
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $this->assertEquals($invoice->fecha, $receipts[0]->fecha, 'receipt-date-should-match-invoice-date');
+
+        // cambiamos la fecha de la factura a ayer
+        $yesterday = date(Tools::DATE_STYLE, strtotime('-1 day'));
+        $invoice->setDate($yesterday, $invoice->hora);
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'can-not-recalculate-invoice');
+
+        // comprobamos que el recibo tiene la nueva fecha
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $this->assertEquals($yesterday, $receipts[0]->fecha, 'receipt-date-not-updated-after-invoice-date-change');
+
+        // obtenemos el subject
         $subject = $invoice->getSubject();
 
         // eliminamos la factura
@@ -106,7 +139,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($customer->save(), 'cant-create-customer');
 
         // creamos una factura de ayer
-        $yesterday = date(ModelCore::DATE_STYLE, strtotime('-1 day'));
+        $yesterday = date(Tools::DATE_STYLE, strtotime('-1 day'));
         $invoice = new FacturaCliente();
         $invoice->setSubject($customer);
         $invoice->setDate($yesterday, $invoice->hora);
@@ -220,7 +253,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->id());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // obtenemos el subject
@@ -294,7 +327,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->id());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // marcamos un recibo como impagado
@@ -305,7 +338,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que la factura está impagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->id());
         $this->assertFalse($invoice->pagada, 'invoice-paid');
 
         // marcamos todos como pagados
@@ -315,7 +348,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->id());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // eliminamos un recibo
@@ -325,7 +358,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que la factura está impagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->id());
         $this->assertFalse($invoice->pagada, 'invoice-paid');
 
         // obtenemos el subject
@@ -351,7 +384,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($receipt->save(), 'can-not-set-paid-receipt');
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->id());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // añadimos una línea con precio 0
@@ -367,7 +400,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'can-not-calculate-invoice');
 
         // comprobamos que la factura sigue pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->id());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // comprobamos que solamente hay un recibo
@@ -420,7 +453,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que el riesgo es menor que el anterior
-        $customer->loadFromCode($customer->primaryColumnValue());
+        $customer->load($customer->id());
         $this->assertLessThan($risk, $customer->riesgoalcanzado, 'bad-customer-risk');
 
         // obtenemos el subject
