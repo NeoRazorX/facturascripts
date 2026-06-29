@@ -126,6 +126,9 @@ final class Kernel
         WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Update');
         WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Delete');
         WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Save');
+        WorkQueue::addWorker('ProductoProveedorWorker', 'Model.ProductoProveedor.Delete');
+        WorkQueue::addWorker('ProductoProveedorWorker', 'Model.ProductoProveedor.Insert');
+        WorkQueue::addWorker('ProductoProveedorWorker', 'Model.ProductoProveedor.Update');
         WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.AlbaranProveedor.Update');
         WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.FacturaProveedor.Update');
         WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PedidoProveedor.Update');
