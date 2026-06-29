@@ -322,15 +322,15 @@ abstract class PDFDocument extends PDFCore
 
             if (property_exists($line, 'salto_pagina') && $line->salto_pagina) {
                 $this->removeEmptyCols($tableData, $headers, Tools::number(0));
-                $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+                $this->pdfTable($tableData, $headers, '', $tableOptions);
                 $tableData = [];
-                $this->pdf->ezNewPage();
+                $this->pdfNewPage();
             }
         }
 
         if (false === empty($tableData)) {
             $this->removeEmptyCols($tableData, $headers, Tools::number(0));
-            $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+            $this->pdfTable($tableData, $headers, '', $tableOptions);
         }
 
         // añadir el código QR si existe
@@ -358,18 +358,18 @@ abstract class PDFDocument extends PDFCore
         $exceptions = $this->getTaxExceptions($model);
         if (!empty($exceptions)) {
             $this->newPage();
-            $this->pdf->ezText($this->i18n->trans('tax-exceptions') . "\n", self::FONT_SIZE);
+            $this->pdfText($this->i18n->trans('tax-exceptions') . "\n", self::FONT_SIZE);
             $this->newLine();
             foreach ($exceptions as $exception) {
-                $this->pdf->ezText('- ' . $exception . "\n", self::FONT_SIZE);
+                $this->pdfText('- ' . $exception . "\n", self::FONT_SIZE);
             }
         }
 
         if (!empty($model->observaciones)) {
             $this->newPage();
-            $this->pdf->ezText($this->i18n->trans('observations') . "\n", self::FONT_SIZE);
+            $this->pdfText($this->i18n->trans('observations') . "\n", self::FONT_SIZE);
             $this->newLine();
-            $this->pdf->ezText(Tools::fixHtml($model->observaciones) . "\n", self::FONT_SIZE);
+            $this->pdfText(Tools::fixHtml($model->observaciones) . "\n", self::FONT_SIZE);
         }
 
         $this->newPage();
@@ -399,8 +399,8 @@ abstract class PDFDocument extends PDFCore
         ];
         if (count($taxRows) > 1) {
             $this->removeEmptyCols($taxRows, $taxHeaders, Tools::number(0));
-            $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
-            $this->pdf->ezText("\n");
+            $this->pdfTable($taxRows, $taxHeaders, '', $taxTableOptions);
+            $this->pdfText("\n");
         } elseif ($this->pdf->ezPageCount < 2 && strlen($this->format->texto ?? '') < 400 && $this->pdf->y > static::INVOICE_TOTALS_Y) {
             $this->pdf->y = static::INVOICE_TOTALS_Y;
         }
@@ -449,7 +449,7 @@ abstract class PDFDocument extends PDFCore
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'width' => $this->tableWidth
         ];
-        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+        $this->pdfTable($rows, $headers, '', $tableOptions);
 
         // receipts
         if ($model->modelClassName() === 'FacturaCliente') {
@@ -459,7 +459,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         if (!empty($this->format->texto)) {
-            $this->pdf->ezText("\n" . Tools::fixHtml($this->format->texto), self::FONT_SIZE);
+            $this->pdfText("\n" . Tools::fixHtml($this->format->texto), self::FONT_SIZE);
         }
     }
 
@@ -510,7 +510,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         // Título alineado a la izquierda y dentro del bloque
-        $this->pdf->ezText("\n" . $headerData['title'] . ': ' . $model->codigo, self::FONT_SIZE + 6, [
+        $this->pdfText("\n" . $headerData['title'] . ': ' . $model->codigo, self::FONT_SIZE + 6, [
             'justification' => 'left',
             'left' => $startX - $this->pdf->ez['leftMargin'], // compensar margen
             'width' => $leftBlockWidth
@@ -519,7 +519,7 @@ abstract class PDFDocument extends PDFCore
         // Línea divisoria solo del 80%
         $lineY = $this->pdf->y;
         $this->pdf->setStrokeColor(0, 0, 0);
-        $this->pdf->line($startX, $lineY - 8, $startX + $leftBlockWidth, $lineY - 8);
+        $this->pdfLine($startX, $lineY - 8, $startX + $leftBlockWidth, $lineY - 8);
         $this->pdf->y -= 10;
         $subject = $model->getSubject();
         $tipoIdFiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
@@ -561,7 +561,7 @@ abstract class PDFDocument extends PDFCore
             'xPos' => $startX + ($tableWidth / 2) - 5, // Posicionar el centro de la tabla para que empiece en el margen izquierdo
         ];
         $this->insertParallelTable($tableData, '', $tableOptions);
-        $this->pdf->ezText('');
+        $this->pdfText('');
         $this->pdf->restoreState();
 
         // --- BLOQUE DERECHO (20%) ---
@@ -580,7 +580,7 @@ abstract class PDFDocument extends PDFCore
      */
     protected function insertBusinessDocShipping($model)
     {
-        $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
+        $this->pdfText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
         $contacto = new Contacto();
@@ -603,7 +603,7 @@ abstract class PDFDocument extends PDFCore
                 'cols' => []
             ];
             $this->insertParallelTable($tableData, '', $tableOptions);
-            $this->pdf->ezText('');
+            $this->pdfText('');
         }
     }
 
@@ -644,7 +644,7 @@ abstract class PDFDocument extends PDFCore
     protected function insertFooter()
     {
         $now = $this->i18n->trans('generated-at', ['%when%' => date('d-m-Y H:i')]);
-        $this->pdf->addText($this->tableWidth + self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, $now, 0, 'right');
+        $this->pdfAddText($this->tableWidth + self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, $now, 0, 'right');
     }
 
     /**
@@ -666,7 +666,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         $size = mb_strlen($company->nombre) > 20 ? self::FONT_SIZE + 2 : self::FONT_SIZE + 7;
-        $this->pdf->ezText(Tools::fixHtml($company->nombre), $size, ['justification' => 'right']);
+        $this->pdfText(Tools::fixHtml($company->nombre), $size, ['justification' => 'right']);
         $address = $company->direccion;
         $address .= empty($company->codpostal) ? "\n" : "\n" . $company->codpostal . ', ';
         $address .= empty($company->ciudad) ? '' : $company->ciudad;
@@ -680,7 +680,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         $lineText = $company->cifnif . ' - ' . Tools::fixHtml($address) . "\n\n" . implode(' · ', $contactData);
-        $this->pdf->ezText($lineText, self::FONT_SIZE, ['justification' => 'right']);
+        $this->pdfText($lineText, self::FONT_SIZE, ['justification' => 'right']);
 
         $idLogo = $this->format->idlogo ?? $company->idlogo;
         $this->insertCompanyLogo($idLogo);
@@ -710,8 +710,8 @@ abstract class PDFDocument extends PDFCore
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'width' => $this->tableWidth
         ];
-        $this->pdf->ezText("\n");
-        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+        $this->pdfText("\n");
+        $this->pdfTable($rows, $headers, '', $tableOptions);
     }
 
     /**
@@ -749,8 +749,8 @@ abstract class PDFDocument extends PDFCore
                 'shadeHeadingCol' => [0.95, 0.95, 0.95],
                 'width' => $this->tableWidth
             ];
-            $this->pdf->ezText("\n");
-            $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+            $this->pdfText("\n");
+            $this->pdfTable($rows, $headers, '', $tableOptions);
         }
     }
 
@@ -855,7 +855,7 @@ abstract class PDFDocument extends PDFCore
 
         if ($textWidth <= $availableTextWidth) {
             // El texto cabe en una línea
-            $this->pdf->addText($textX, $textY, self::FONT_SIZE, $qrTitle, 0, 'center');
+            $this->pdfAddText($textX, $textY, self::FONT_SIZE, $qrTitle, 0, 'center');
 
             // Actualizar posición Y para texto en una línea
             $newY = $textY - self::FONT_SIZE - 10; // Altura del texto + margen
@@ -937,7 +937,7 @@ abstract class PDFDocument extends PDFCore
             $lineHeight = self::FONT_SIZE + 2; // Espaciado entre líneas
             for ($i = 0; $i < count($lines); $i++) {
                 $lineY = $textY - ($i * $lineHeight);
-                $this->pdf->addText($textX, $lineY, self::FONT_SIZE, $lines[$i], 0, 'center');
+                $this->pdfAddText($textX, $lineY, self::FONT_SIZE, $lines[$i], 0, 'center');
             }
 
             // Actualizar la posición Y del PDF para evitar solapamiento con contenido posterior
