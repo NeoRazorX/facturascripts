@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,10 +22,11 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -386,27 +387,36 @@ abstract class ListController extends BaseController
      *
      * @param ModelClass $model
      *
-     * @return DataBaseWhere[]
+     * @return Where[]
      */
     protected function getOwnerFilter($model): array
     {
-        $where = [];
+        // criterios de propiedad que el usuario puede cumplir en este modelo
+        $owner = [];
 
-        if (property_exists($model, 'nick')) {
-            // DatabaseWhere applies parentheses grouping the ORs
-            // result: (`nick` = 'username' OR `nick` IS NULL OR `codagente` = 'agent') AND [... user filters]
-            $where[] = new DataBaseWhere('nick', $this->user->nick);
-            $where[] = new DataBaseWhere('nick', null, 'IS', 'OR');
-            if (property_exists($model, 'codagente') && $this->user->codagente) {
-                $where[] = new DataBaseWhere('codagente', $this->user->codagente, '=', 'OR');
-            }
-            return $where;
+        // si el modelo y el usuario tienen agente, filtramos por agente
+        if ($model->hasColumn('codagente') && false === empty($this->user->codagente)) {
+            $owner[] = Where::eq('codagente', $this->user->codagente);
         }
 
-        if (property_exists($model, 'codagente')) {
-            $where[] = new DataBaseWhere('codagente', $this->user->codagente);
+        // si el modelo tiene nick, añadimos el nick (con OR si ya filtramos por agente)
+        if ($model->hasColumn('nick')) {
+            $owner[] = empty($owner)
+                ? Where::eq('nick', $this->user->nick)
+                : Where::orEq('nick', $this->user->nick);
         }
-        return $where;
+
+        // si el modelo tiene criterio de propiedad pero el usuario no puede cumplir
+        // ninguno (tiene codagente pero el usuario no tiene agente, y no hay nick),
+        // no posee nada: filtro imposible para no devolver filas
+        if (empty($owner) && $model->hasColumn('codagente')) {
+            return [Where::isNull($model->primaryColumn())];
+        }
+
+        // agrupamos los criterios entre paréntesis para que el OR no se mezcle con
+        // los filtros (AND) que se añaden después:
+        // result: (`codagente` = 'agent' OR `nick` = 'username') AND [... user filters]
+        return empty($owner) ? [] : [Where::sub($owner)];
     }
 
     /**
@@ -441,7 +451,7 @@ abstract class ListController extends BaseController
             ];
 
             $fields = implode('|', $listView->searchFields);
-            $where = [new DataBaseWhere($fields, $this->request->queryOrInput('query', ''), 'LIKE')];
+            $where = [Where::like($fields, $this->request->queryOrInput('query', ''))];
             $listView->loadData(false, $where);
             foreach ($listView->cursor as $model) {
                 $item = ['url' => $model->url()];

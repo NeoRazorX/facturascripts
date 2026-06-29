@@ -24,7 +24,6 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -38,6 +37,8 @@ use FacturaScripts\Dinamic\Model\User;
  */
 abstract class BaseController extends Controller
 {
+    use OwnerDataTrait;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
@@ -282,40 +283,6 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * Returns true if the active user has permission to view the information
-     * of the active record in the informed model.
-     *
-     * @param ModelClass $model
-     *
-     * @return bool
-     */
-    protected function checkOwnerData($model): bool
-    {
-        if (false === $this->permissions->onlyOwnerData || empty($model->primaryColumnValue())) {
-            return true;
-        }
-
-        // si el modelo tiene nick, comprobamos nick
-        if (property_exists($model, 'nick')) {
-            if (null === $model->nick || $model->nick === $this->user->nick) {
-                return true;
-            }
-            if (property_exists($model, 'codagente') && $this->user->codagente) {
-                return $model->codagente === $this->user->codagente;
-            }
-            return false;
-        }
-
-        // si el modelo tiene agente, comprobamos agente
-        if (property_exists($model, 'codagente')) {
-            return $model->codagente === $this->user->codagente;
-        }
-
-        // si no hay nada en que apoyarse, permitimos
-        return true;
-    }
-
-    /**
      * Run the datalist action.
      * Returns a JSON string for the searched values.
      *
@@ -371,7 +338,7 @@ abstract class BaseController extends Controller
             // deleting multiples rows
             $numDeletes = 0;
             foreach ($codes as $cod) {
-                if ($model->loadFromCode($cod) && $model->delete()) {
+                if ($model->loadFromCode($cod) && $this->checkOwnerData($model) && $model->delete()) {
                     ++$numDeletes;
                     continue;
                 }
@@ -387,7 +354,7 @@ abstract class BaseController extends Controller
                 Tools::log()->notice('record-deleted-correctly');
                 return true;
             }
-        } elseif ($model->loadFromCode($code) && $model->delete()) {
+        } elseif ($model->loadFromCode($code) && $this->checkOwnerData($model) && $model->delete()) {
             // deleting a single row
             Tools::log()->notice('record-deleted-correctly');
             $model->clear();

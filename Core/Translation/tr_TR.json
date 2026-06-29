@@ -474,6 +474,7 @@
     "db-type-not-recognized": "Bağlantı türü tanınmıyor. MySQL veya PostgreSQL olmalıdır",
     "db-user": "Veritabanı kullanıcısı",
     "debit": "Borç",
+    "debug-mode": "Hata ayıklama modu",
     "december": "Aralık",
     "decimal-separator": "Ondalık ayırıcı",
     "decimals": "Ondalık Sayılar",

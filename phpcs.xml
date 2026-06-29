@@ -45,4 +45,9 @@
     <rule ref="PSR1.Files.SideEffects">
         <exclude-pattern>Test/*.php</exclude-pattern>
     </rule>
+
+    <!-- Test files can declare helper classes (fixtures) alongside the test class -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+        <exclude-pattern>Test/*.php</exclude-pattern>
+    </rule>
 </ruleset>

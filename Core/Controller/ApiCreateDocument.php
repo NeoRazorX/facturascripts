@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
- * Crea un documento de negocio (factura, albarán, pedido o presupuesto) en una sola llamada: 
+ * Crea un documento de negocio (factura, albarán, pedido o presupuesto) en una sola llamada:
  * alta de documento y líneas, recalculando totales y manteniendo el stock consistente.
  */
 class ApiCreateDocument extends ApiController

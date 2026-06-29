@@ -474,6 +474,7 @@
     "db-type-not-recognized": "No se reconoce el tipo de conexión. Debe ser MySQL o PostgreSQL",
     "db-user": "Usuario de base de datos",
     "debit": "Debe",
+    "debug-mode": "Modo pruebas",
     "december": "Diciembre",
     "decimal-separator": "Separador de decimales",
     "decimals": "Decimales",

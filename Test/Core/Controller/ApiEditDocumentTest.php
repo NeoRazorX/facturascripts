@@ -321,7 +321,7 @@ final class ApiEditDocumentTest extends TestCase
 
         $url = '/api/3/' . $resource . '/' . $id;
 
-        $api = new class('ApiEditDocument', $url) extends ApiEditDocument {
+        $api = new class ('ApiEditDocument', $url) extends ApiEditDocument {
             public function exec(): array
             {
                 $this->response->disableSend(true);

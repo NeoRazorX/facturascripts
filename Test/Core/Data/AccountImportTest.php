@@ -36,7 +36,7 @@ final class AccountImportTest extends TestCase
     use RandomDataTrait;
 
     private const CODEJERCICIO = '1980';
-    private const TOTAL_ACCOUNT = 802;
+    private const TOTAL_ACCOUNT = 915;
     private const TOTAL_SUBACCOUNT = 745;
 
     public static function setUpBeforeClass(): void

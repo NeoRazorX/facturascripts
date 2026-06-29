@@ -440,11 +440,11 @@
                             <input type="number" value="{{ line.servido }}" class="form-control text-end"
                                    readonly="true" tabindex="-1"/>
                         </td>
-                        {% set newQuantity = line.cantidad - line.servido %}
+                        {% set newQuantity = line.cantidad - line.servido > 0 ? line.cantidad - line.servido : 0 %}
                         <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">
                             <input type="hidden" class="to_serve" value="{{ newQuantity }}"/>
                             <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}"
-                                   value="{{ newQuantity }}" step="any" min="0" max="{{ line.cantidad }}"
+                                   value="{{ newQuantity }}" step="any" min="0" max="{{ newQuantity }}"
                                    class="form-control text-end to_be_served" autocomplete="off"/>
                         </td>
                     </tr>

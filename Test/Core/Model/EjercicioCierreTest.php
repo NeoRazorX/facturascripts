@@ -182,6 +182,70 @@ final class EjercicioCierreTest extends TestCase
         $this->assertTrue($empresa->delete());
     }
 
+    public function testCloseExerciseWithoutAccountingPlan(): void
+    {
+        // creamos una nueva empresa
+        $empresa = $this->getRandomCompany();
+        $this->assertTrue($empresa->save());
+
+        // obtenemos el almacén por defecto
+        $almacen = new Almacen();
+        $where = [new DataBaseWhere('idempresa', $empresa->idempresa)];
+        $this->assertTrue($almacen->loadWhere($where));
+
+        // creamos el ejercicio para 2019 SIN importar el plan contable
+        $ejercicio = new Ejercicio();
+        $ejercicio->codejercicio = $ejercicio->newCode();
+        $ejercicio->fechainicio = '2019-01-01';
+        $ejercicio->fechafin = '2019-12-31';
+        $ejercicio->idempresa = $empresa->idempresa;
+        $ejercicio->nombre = '2019';
+        $this->assertTrue($ejercicio->save());
+
+        // confirmamos que el ejercicio no tiene subcuentas (sin plan contable)
+        $whereExercise = [new DataBaseWhere('codejercicio', $ejercicio->codejercicio)];
+        $this->assertEquals(0, (new Subcuenta())->count($whereExercise), 'exercise-should-have-no-subaccounts');
+
+        // creamos una factura de compra con fecha 04-01-2019 (sin asiento, al no haber plan)
+        $facturaCompra = $this->getRandomSupplierInvoice('2019-01-04', $almacen->codalmacen);
+        $this->assertTrue($facturaCompra->exists());
+
+        // creamos una factura de venta con fecha 05-01-2019 (sin asiento, al no haber plan)
+        $facturaVenta = $this->getRandomCustomerInvoice('2019-01-05', $almacen->codalmacen);
+        $this->assertTrue($facturaVenta->exists());
+
+        // cerramos el ejercicio: debe permitirse aunque no haya plan contable
+        $data = [
+            'journalClosing' => '',
+            'journalOpening' => '',
+            'copySubAccounts' => true
+        ];
+        $closing = new ClosingToAcounting();
+        $this->assertTrue($ejercicio->reload());
+        $this->assertTrue($closing->exec($ejercicio, $data), 'cant-close-exercise-without-plan');
+
+        // comprobamos que el ejercicio queda cerrado
+        $this->assertTrue($ejercicio->reload());
+        $this->assertFalse($ejercicio->isOpened(), 'exercise-not-closed');
+
+        // al no haber plan, no se ha creado ningún asiento de regularización/cierre/apertura
+        $this->assertEquals(0, (new Asiento())->count($whereExercise), 'unexpected-accounting-entries');
+
+        // reabrimos el ejercicio
+        $ejercicio->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+        $this->assertTrue($ejercicio->save());
+
+        // eliminamos
+        $this->assertTrue($facturaVenta->delete());
+        $this->assertTrue($facturaVenta->getSubject()->getDefaultAddress()->delete());
+        $this->assertTrue($facturaVenta->getSubject()->delete());
+        $this->assertTrue($facturaCompra->delete());
+        $this->assertTrue($facturaCompra->getSubject()->getDefaultAddress()->delete());
+        $this->assertTrue($facturaCompra->getSubject()->delete());
+        $this->assertTrue($ejercicio->delete());
+        $this->assertTrue($empresa->delete());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

@@ -37,6 +37,8 @@ trait ListBusinessActionTrait
 
     abstract public function redirect(string $url, int $delay = 0);
 
+    abstract protected function checkOwnerData($model): bool;
+
     abstract protected function validateFormToken(): bool;
 
     /**
@@ -216,6 +218,12 @@ trait ListBusinessActionTrait
                 continue;
             }
 
+            // ¿el usuario puede modificar este documento?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
+                continue;
+            }
+
             foreach ($model->getAvailableStatus() as $status) {
                 if (empty($status->generadoc) || !$status->activo) {
                     continue;
@@ -262,6 +270,11 @@ trait ListBusinessActionTrait
                 continue;
             }
 
+            // ¿el usuario puede generar el asiento de esta factura ajena?
+            if (false === $this->checkOwnerData($invoice)) {
+                continue;
+            }
+
             $generator = new InvoiceToAccounting();
             $generator->generate($invoice);
             if (empty($invoice->idasiento)) {
@@ -293,6 +306,16 @@ trait ListBusinessActionTrait
     protected function groupDocumentAction($codes, $model): bool
     {
         if (!empty($codes) && $model) {
+            // comprobamos la propiedad de cada documento antes de pasarlos al stitcher
+            foreach ($codes as $code) {
+                if ($model->loadFromCode($code) && false === $this->checkOwnerData($model)) {
+                    Tools::log()->warning('not-allowed-modify');
+                    $model->clear();
+                    return true;
+                }
+            }
+            $model->clear();
+
             $codes = implode(',', $codes);
             $url = 'DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $codes;
             $this->redirect($url);
@@ -329,6 +352,12 @@ trait ListBusinessActionTrait
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
                 Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            // ¿el usuario puede modificar este documento?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
                 continue;
             }
 
@@ -389,6 +418,12 @@ trait ListBusinessActionTrait
                 continue;
             }
 
+            // ¿el usuario puede modificar este documento?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
+                continue;
+            }
+
             foreach ($model->getReceipts() as $receipt) {
                 if ($receipt->pagado) {
                     continue;
@@ -436,6 +471,12 @@ trait ListBusinessActionTrait
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
                 Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            // ¿el usuario puede modificar este recibo?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
                 continue;
             }
 
