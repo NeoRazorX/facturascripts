@@ -561,6 +561,7 @@
     "document-report": "Informe de documentos",
     "document-sequence": "Secuencia de documento",
     "document-sequences": "Secuencias de documentos",
+    "document-state-changed": "El estado del documento ha cambiado. Recarga la página antes de guardar.",
     "document-states": "Estados del documento",
     "document-type": "Tipo documento",
     "document-type-valid-length": "Tipo de documento no válido (debe tener entre 1 y 20 carácteres).",

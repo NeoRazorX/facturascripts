@@ -561,6 +561,7 @@
     "document-report": "Document report",
     "document-sequence": "Document sequence",
     "document-sequences": "Document sequences",
+    "document-state-changed": "The document status has changed. Reload the page before saving.",
     "document-states": "Document states",
     "document-type": "Document type",
     "document-type-valid-length": "Invalid document type. Must be between 1 and 20 characters.",
