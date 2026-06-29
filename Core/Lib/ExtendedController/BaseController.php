@@ -22,10 +22,10 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
@@ -258,14 +258,14 @@ abstract class BaseController extends Controller
         }
 
         $where = [];
-        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
-            // validar nombre de campo para prevenir SQL injection
-            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
-                Tools::log()->warning('autocomplete: invalid field filter name');
-                return [];
+
+        // fieldfilter se usa para filtrar resultados
+        foreach (Where::stringToArray($data['fieldfilter'] ?? '') as $fieldfilter) {
+            // cuando el value está vacío, usar $data['term'] para permitir filtrar por el valor actual del widget (ej. para cargar opciones dependientes)
+            if ('' === $fieldfilter['value']) {
+                $fieldfilter['value'] = $data['term'];
             }
-            $value = $this->request->queryOrInput($field);
-            $where[] = new DataBaseWhere($field, $value, '=', $operation);
+            $where[] = new Where($fieldfilter['field'], $fieldfilter['value'], $fieldfilter['operator'], $fieldfilter['operation']);
         }
 
         $results = [];
@@ -293,13 +293,14 @@ abstract class BaseController extends Controller
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
 
         $where = [];
-        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
-            // validar nombre de campo para prevenir SQL injection
-            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
-                Tools::log()->warning('datalist: invalid field filter name');
-                return [];
+        
+        // fieldfilter se usa para filtrar resultados
+        foreach (Where::stringToArray($data['fieldfilter'] ?? '') as $fieldfilter) {
+            // cuando el value está vacío, usar $data['term'] para permitir filtrar por el valor actual del widget (ej. para cargar opciones dependientes)
+            if ('' === $fieldfilter['value']) {
+                $fieldfilter['value'] = $data['term'];
             }
-            $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
+            $where[] = new Where($fieldfilter['field'], $fieldfilter['value'], $fieldfilter['operator'], $fieldfilter['operation']);
         }
 
         $results = [];
@@ -450,13 +451,14 @@ abstract class BaseController extends Controller
         }
 
         $where = [];
-        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
-            // validar nombre de campo para prevenir SQL injection
-            if (1 !== preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
-                Tools::log()->warning('select: invalid field filter name');
-                return [];
+
+        // fieldfilter se usa para filtrar resultados
+        foreach (Where::stringToArray($data['fieldfilter'] ?? '') as $fieldfilter) {
+            // cuando el value está vacío, usar $data['term'] para permitir filtrar por el valor actual del widget (ej. para cargar opciones dependientes)
+            if ('' === $fieldfilter['value']) {
+                $fieldfilter['value'] = $data['term'];
             }
-            $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
+            $where[] = new Where($fieldfilter['field'], $fieldfilter['value'], $fieldfilter['operator'], $fieldfilter['operation']);
         }
 
         $results = [];
