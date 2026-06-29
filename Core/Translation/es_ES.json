@@ -642,6 +642,7 @@
     "error-connecting-memcache": "Error al conectar con el servidor Memcache.",
     "error-creating-zip-file": "Error al crear el archivo ZIP",
     "error-deleting-lines": "Error al eliminar líneas",
+    "error-more-quant-than-pending": "No se puede seleccionar una cantidad superior a la pendiente de la linea. Revise la linea: '%description%', pendiente: '%pending%', cant. seleccionada: '%selected_quantity%'.",
     "error-generating-qr-code": "No se pudo generar el QR: %message%, %url%",
     "error-generating-qr-code-url": "Error al generar la URL del código QR",
     "error-generating-secret-key": "Error al generar la clave secreta",

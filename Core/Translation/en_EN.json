@@ -642,6 +642,7 @@
     "error-connecting-memcache": "Error connecting to Memcache server.",
     "error-creating-zip-file": "Error creating ZIP file",
     "error-deleting-lines": "Error deleting lines",
+    "error-more-quant-than-pending": "You cannot select a quantity greater than the pending quantity on the line. Check the line: '%description%', pending: '%pending%', selected qty: '%selected_quantity%'.",
     "error-generating-qr-code": "Could not generate QR: %message%, %url%",
     "error-generating-qr-code-url": "Error generating the QR code URL",
     "error-generating-secret-key": "Error generating secret key",
