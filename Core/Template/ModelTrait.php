@@ -52,6 +52,9 @@ trait ModelTrait
      */
     public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 0): array
     {
+        // Apply global scopes
+        $where = static::applyGlobalScopesToWhere($where);
+
         $data = self::table()
             ->where($where)
             ->orderMulti($order)
@@ -69,6 +72,9 @@ trait ModelTrait
 
     public static function count(array $where = []): int
     {
+        // Apply global scopes
+        $where = static::applyGlobalScopesToWhere($where);
+
         return self::table()
             ->where($where)
             ->count();
@@ -82,6 +88,9 @@ trait ModelTrait
 
     public static function deleteWhere(array $where): bool
     {
+        // Apply global scopes
+        $where = static::applyGlobalScopesToWhere($where);
+
         return self::table()
             ->where($where)
             ->delete();
@@ -89,8 +98,14 @@ trait ModelTrait
 
     public static function find($code): ?static
     {
+        $where = [];
+
+        // Apply global scopes
+        $where = static::applyGlobalScopesToWhere($where);
+
         $data = self::table()
             ->whereEq(static::primaryColumn(), $code)
+            ->where($where)
             ->first();
 
         return $data ? new static($data) : null;
@@ -98,6 +113,9 @@ trait ModelTrait
 
     public static function findWhere(array $where, array $order = []): ?static
     {
+        // Apply global scopes
+        $where = static::applyGlobalScopesToWhere($where);
+
         $data = self::table()
             ->where($where)
             ->orderMulti($order)
@@ -117,6 +135,9 @@ trait ModelTrait
 
     public static function findOrCreate(array $where, array $data = []): ?static
     {
+        // Apply global scopes
+        $where = static::applyGlobalScopesToWhere($where);
+
         $row = self::table()
             ->where($where)
             ->first();
@@ -166,6 +187,9 @@ trait ModelTrait
 
     public static function totalSum(string $field, array $where = []): float
     {
+        // Apply global scopes
+        $where = static::applyGlobalScopesToWhere($where);
+
         return self::table()
             ->where($where)
             ->sum($field);
@@ -173,6 +197,9 @@ trait ModelTrait
 
     public static function updateOrCreate(array $where, array $data): ?static
     {
+        // Apply global scopes
+        $where = static::applyGlobalScopesToWhere($where);
+
         $row = self::table()
             ->where($where)
             ->first();
