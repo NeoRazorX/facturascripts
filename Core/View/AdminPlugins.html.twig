@@ -44,14 +44,14 @@
                 {% if config('disable_add_plugins', false) == false %}
                     <button class="btn btn-spin-action btn-sm btn-success" type="button" data-bs-toggle="modal"
                             data-bs-target="#modalAddPlugin">
-                        <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
+                        <i class="fa-solid fa-plus fa-fw me-1" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ trans('add') }}</span>
                     </button>
                 {% endif %}
                 <div class="btn-group">
                     <a href="{{ fsc.url() }}?action=rebuild&multireqtoken={{ formToken(false) }}"
                        onclick="animateSpinner('add')" class="btn btn-spin-action btn-sm btn-warning">
-                        <i class="fa-solid fa-hammer fa-fw" aria-hidden="true"></i>
+                        <i class="fa-solid fa-hammer fa-fw me-1" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ trans('rebuild') }}</span>
                     </a>
                 </div>
@@ -76,7 +76,7 @@
         {% if config('disable_add_plugins', false) == false %}
             <li class="nav-item">
                 <a class="nav-link" id="allPluginsTab" data-bs-toggle="tab" href="#all" role="tab">
-                    <i class="fa-solid fa-boxes fa-fw" aria-hidden="true"></i>
+                    <i class="fa-solid fa-boxes fa-fw me-1" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">{{ trans('more-plugins') }}</span>
                     {% if fsc.remotePluginList | length > 0 %}
                         <span class="badge bg-secondary">{{ fsc.remotePluginList | length }}</span>
@@ -158,6 +158,33 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        // solo se permite activar/desactivar un plugin a la vez
+        let pluginActionRunning = false;
+
+        function pluginAction(url, el) {
+            if (pluginActionRunning) {
+                return false;
+            }
+            pluginActionRunning = true;
+
+            // bloqueamos el resto de interruptores y botones de la tabla
+            document.querySelectorAll('#installed-plugins input, #installed-plugins .btn').forEach(function (item) {
+                item.setAttribute('disabled', 'disabled');
+                item.classList.add('disabled');
+                item.style.pointerEvents = 'none';
+            });
+
+            // mostramos un spinner en la celda de estado del plugin pulsado
+            const cell = el ? el.closest('td') : null;
+            if (cell) {
+                cell.innerHTML = '<i class="fa-solid fa-spinner fa-spin fa-lg text-primary" aria-hidden="true"></i>';
+            }
+
+            window.location = url;
+            return false;
+        }
+    </script>
     {% if config('disable_rm_plugins', false) == false %}
         <script>
             function deletePlugin(pluginName) {
@@ -218,8 +245,24 @@
             }
 
             $(document).ready(function () {
-                searchList('#querySearchPlugin', '#all-plugins .wrapper-card', '.card-title');
-                searchList('#querySearchInstalledPlugins', '#installed-plugins .item-plugin', '.plugin-name');
+                searchList('#querySearchPlugin', '#all-plugins .wrapper-card', '.card-title, .card-text');
+                searchList('#querySearchInstalledPlugins', '#installed-plugins .item-plugin', '.plugin-name, .plugin-description');
+
+                // botones para limpiar los buscadores, visibles solo cuando hay texto
+                function setupClearButton(input, button) {
+                    const $input = $(input);
+                    const $button = $(button);
+                    $input.on('input', function () {
+                        $button.toggleClass('d-none', this.value.length === 0);
+                    });
+                    $button.on('click', function () {
+                        $input.val('').trigger('keyup').focus();
+                        $button.addClass('d-none');
+                    });
+                }
+
+                setupClearButton('#querySearchInstalledPlugins', '#clearSearchInstalledPlugins');
+                setupClearButton('#querySearchPlugin', '#clearSearchPlugin');
 
                 // si los archivos son demasiado grandes, no se pueden subir
                 $("#f_add_plugins").submit(function (e) {
@@ -291,154 +334,199 @@
 
 {% macro showAllPlugins(fsc) %}
     <div class="p-2">
-        <input type="text" class="form-control shadow-sm" id="querySearchPlugin" placeholder="{{ trans('search') }}"/>
+        <div class="input-group">
+            <span class="input-group-text bg-white">
+                <i class="fa-solid fa-magnifying-glass text-muted" aria-hidden="true"></i>
+            </span>
+            <input type="text" class="form-control border-start-0" id="querySearchPlugin"
+                   placeholder="{{ trans('search') }}"/>
+            <button class="btn btn-outline-secondary d-none" type="button" id="clearSearchPlugin"
+                    title="{{ trans('clear') }}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
     </div>
-    <div class="row row-cols-3 ps-2 pe-2" id="all-plugins">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2 ps-2 pe-2" id="all-plugins">
         {% for plugin in fsc.remotePluginList %}
             {% set extraClass = plugin.health > 2 ? 'border-success' : plugin.health == 0 ? 'border-danger' : 'border-warning' %}
             <div class="col mb-2 wrapper-card">
                 <div class="card {{ extraClass }} shadow-sm h-100" id="{{ plugin.idplugin }}">
-                    <div class="card-body p-2">
-                        <h5 class="card-title">{{ plugin.name }} v{{ plugin.version }}</h5>
-                        <p class="card-text">{{ plugin.description | slice(0, 300) | nl2br }}</p>
+                    <div class="card-body p-3">
+                        <h5 class="card-title d-flex align-items-start justify-content-between mb-2">
+                            <span>{{ plugin.name }}</span>
+                            <span class="badge bg-light text-dark border fw-normal ms-2 flex-shrink-0">
+                                v{{ plugin.version }}
+                            </span>
+                        </h5>
+                        <p class="card-text text-muted mb-0"
+                           style="display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;">
+                            {{ plugin.description }}
+                        </p>
                     </div>
-                    <div class="card-footer p-2">
-                        {% set extraBtnClass = plugin.health > 2 ? 'btn-outline-success' : plugin.health == 0 ? 'btn-outline-danger' : 'btn-outline-warning' %}
-                        <a href="{{ plugin.url }}" class="btn {{ extraBtnClass }}" target="_blank">{{ trans('add') }}</a>
-                        <span class="ms-2 text-danger" title="{{ trans('health') }}">
+                    <div class="card-footer p-2 bg-transparent d-flex align-items-center justify-content-between">
+                        <a href="{{ plugin.url }}" class="btn btn-sm btn-success" target="_blank">
+                            <i class="fa-solid fa-plus fa-fw me-1" aria-hidden="true"></i> {{ trans('add') }}
+                        </a>
+                        <span class="text-danger small" title="{{ trans('health') }}">
                             {{ _self.healthStatus(plugin.health) }}
                         </span>
                     </div>
                 </div>
             </div>
         {% else %}
-            <div class="text-center bg-warning rounded">
-                <h2>{{ trans('no-data') }}</h2>
+            <div class="col-12">
+                <div class="text-center text-muted p-5">
+                    <i class="fa-solid fa-boxes-stacked fa-2x mb-3" aria-hidden="true"></i>
+                    <h5>{{ trans('no-data') }}</h5>
+                </div>
             </div>
         {% endfor %}
     </div>
 {% endmacro %}
 
 {% macro showInstalledPlugins(fsc) %}
+    {% set enabledList = fsc.pluginList | filter(plugin => plugin.enabled) | sort((a, b) => a.order <=> b.order) %}
+    {% set disabledList = fsc.pluginList | filter(plugin => plugin.enabled == false and plugin.compatible) %}
+    {% set incompatibleList = fsc.pluginList | filter(plugin => plugin.enabled == false and plugin.compatible == false) %}
     <div class="m-2 mb-3">
-        <input type="text" class="form-control border-dark" id="querySearchInstalledPlugins"
-               placeholder="{{ trans('search') }}"/>
+        <div class="input-group">
+            <span class="input-group-text bg-white">
+                <i class="fa-solid fa-magnifying-glass text-muted" aria-hidden="true"></i>
+            </span>
+            <input type="text" class="form-control border-start-0" id="querySearchInstalledPlugins"
+                   placeholder="{{ trans('search') }}"/>
+            <button class="btn btn-outline-secondary d-none" type="button" id="clearSearchInstalledPlugins"
+                    title="{{ trans('clear') }}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
     </div>
 
-    <div class="card border-success m-2 mb-3">
-        <div class="card-header border-success">{{ trans('enabled-plugins') }}</div>
-        {{ _self.tablePlugins(fsc.pluginList | filter(plugin => plugin.enabled)|sort((a, b) => a.order <=> b.order), fsc.url()) }}
-    </div>
-
-    <div class="card border-dark m-2 mb-4">
-        <div class="card-header border-dark">{{ trans('disabled-plugins') }}</div>
-        {{ _self.tablePlugins(fsc.pluginList | filter(plugin => plugin.enabled == false), fsc.url()) }}
+    <div class="card m-2 mb-4">
+        <div class="table-responsive" id="installed-plugins">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th class="text-center">{{ trans('status') }}</th>
+                    <th>{{ trans('name') }}</th>
+                    <th class="text-end">{{ trans('version') }}</th>
+                    <th>{{ trans('description') }}</th>
+                    <th class="text-end pe-3">{{ trans('actions') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if enabledList is empty and disabledList is empty and incompatibleList is empty %}
+                    <tr class="table-warning">
+                        <td colspan="5"><b>{{ trans('no-data') }}</b></td>
+                    </tr>
+                {% endif %}
+                {% if enabledList is not empty %}
+                    <tr class="table-success">
+                        <td colspan="5" class="fw-bold text-uppercase small">
+                            <i class="fa-solid fa-circle-check fa-fw" aria-hidden="true"></i>
+                            {{ trans('enabled-plugins') }} <span class="badge bg-success">{{ enabledList | length }}</span>
+                        </td>
+                    </tr>
+                    {% for plugin in enabledList %}
+                        {{ _self.pluginRow(plugin, fsc.url()) }}
+                    {% endfor %}
+                {% endif %}
+                {% if disabledList is not empty %}
+                    <tr class="table-secondary">
+                        <td colspan="5" class="fw-bold text-uppercase small">
+                            <i class="fa-regular fa-circle fa-fw" aria-hidden="true"></i>
+                            {{ trans('disabled-plugins') }} <span class="badge bg-secondary">{{ disabledList | length }}</span>
+                        </td>
+                    </tr>
+                    {% for plugin in disabledList %}
+                        {{ _self.pluginRow(plugin, fsc.url()) }}
+                    {% endfor %}
+                {% endif %}
+                {% if incompatibleList is not empty %}
+                    <tr class="table-danger">
+                        <td colspan="5" class="fw-bold text-uppercase small">
+                            <i class="fa-solid fa-ban fa-fw" aria-hidden="true"></i>
+                            {{ trans('incompatible-plugins') }} <span class="badge bg-danger">{{ incompatibleList | length }}</span>
+                        </td>
+                    </tr>
+                    {% for plugin in incompatibleList %}
+                        {{ _self.pluginRow(plugin, fsc.url()) }}
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endmacro %}
 
-{% macro tablePlugins(pluginList, url) %}
-    <div class="table-responsive" id="installed-plugins">
-        <table class="table table-striped table-hover mb-0">
-            <thead>
-            <tr>
-                <th>{{ trans('name') }}</th>
-                <th class="text-end">{{ trans('version') }}</th>
-                <th>{{ trans('description') }}</th>
-                <th class="text-end pe-3">{{ trans('actions') }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for plugin in pluginList %}
-                {% set trClass = 'table-danger' %}
-                {% if plugin.enabled %}
-                    {% set trClass = 'table-success' %}
-                {% elseif plugin.compatible %}
-                    {% set trClass = '' %}
-                {% endif %}
-                <tr class="{{ trClass }} item-plugin">
-                    <td class="plugin-name">{{ plugin.name }}</td>
-                    <td class="text-end">
-                        {% if plugin.version == 0 %}
-                            <span class="text-danger">v{{ plugin.version }}</span>
-                        {% elseif plugin.version < 1 %}
-                            <span class="text-warning">v{{ plugin.version }}</span>
-                        {% else %}
-                            v{{ plugin.version }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {{ plugin.description | nl2br }}
-                        {% if plugin.forja('url', '') %}
-                            <a href="{{ plugin.forja('url', '') }}" target="_blank" class="ms-2">
-                                {{ trans('more') }} <i class="fa-solid fa-external-link-alt"></i>
-                            </a>
-                        {% endif %}
-                        <br/>
-                        {% for requiredPluginName in plugin.require %}
-                            <div class="badge bg-secondary">
-                                {{ trans('plugin-needed', {'%pluginName%': requiredPluginName}) }}
-                            </div>
-                        {% endfor %}
-                    </td>
-                    <td class="text-end text-nowrap">
-                        {% if plugin.hasUpdate() %}
-                            <a href="Updater" class="btn btn-spin-action btn-sm btn-info me-1"
-                               title="{{ trans('updater') }}">
-                                <i class="fa-solid fa-cloud-download-alt" aria-hidden="true"></i>
-                            </a>
-                        {% endif %}
-                        {% if plugin.enabled %}
-                            <a class="btn btn-sm btn-secondary btn-spin-action" onclick="animateSpinner('add');"
-                               href="{{ url }}?action=disable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                <i class="fa-solid fa-toggle-off me-1" aria-hidden="true"></i>
-                                <span class="d-none d-sm-inline-block">{{ trans('disable') }}</span>
-                            </a>
-                            <br/>
-                            <small>{{ trans('plugin-order', {'%num%': plugin.order}) }}</small>
-                        {% elseif plugin.compatible %}
-                            {% if plugin.hasUpdate() %}
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                        {{ trans('enable') }}
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="Updater">
-                                            <i class="fa-solid fa-cloud-download-alt fa-fw me-1" aria-hidden="true"></i>
-                                            {{ trans('update') }}
-                                        </a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item"
-                                           href="{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                            <i class="fa-solid fa-check fa-fw me-1" aria-hidden="true"></i>
-                                            {{ trans('enable') }}
-                                        </a>
-                                    </div>
-                                </div>
-                            {% else %}
-                                <a class="btn btn-sm btn-success btn-spin-action" onclick="animateSpinner('add');"
-                                   href="{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                    <i class="fa-solid fa-toggle-on me-1" aria-hidden="true"></i>
-                                    <span class="d-none d-sm-inline-block">{{ trans('enable') }}</span>
-                                </a>
-                            {% endif %}
-                        {% else %}
-                            {{ plugin.compatibilityDescription() }}
-                        {% endif %}
-                        {% if plugin.enabled == false and config('disable_rm_plugins', false) == false %}
-                            <a class="btn btn-sm btn-danger ms-2 btn-spin-action" href="#"
-                               title="{{ trans('delete') }}" onclick="deletePlugin('{{ plugin.name }}');">
-                                <i class="fa-solid fa-trash-alt" aria-hidden="true"></i>
-                            </a>
-                        {% endif %}
-                    </td>
-                </tr>
+{% macro pluginRow(plugin, url) %}
+    <tr class="item-plugin">
+        <td class="text-center text-nowrap">
+            {% if plugin.enabled %}
+                <div class="form-check form-switch d-inline-flex m-0 align-items-center" title="{{ trans('disable') }}">
+                    <input class="form-check-input me-0" type="checkbox" role="switch" checked
+                           style="cursor: pointer;"
+                           onclick="return pluginAction('{{ url }}?action=disable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}', this);">
+                </div>
+                <div><span class="badge bg-success">{{ trans('active') }}</span></div>
+            {% elseif plugin.compatible %}
+                <div class="form-check form-switch d-inline-flex m-0 align-items-center" title="{{ trans('enable') }}">
+                    <input class="form-check-input me-0" type="checkbox" role="switch"
+                           style="cursor: pointer;"
+                           onclick="return pluginAction('{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}', this);">
+                </div>
+                <div><span class="badge bg-secondary">{{ trans('inactive') }}</span></div>
             {% else %}
-                <tr class="table-warning">
-                    <td colspan="4"><b>{{ trans('no-data') }}</b></td>
-                </tr>
+                <span class="badge bg-danger" title="{{ plugin.compatibilityDescription() }}">
+                    <i class="fa-solid fa-ban me-1" aria-hidden="true"></i>{{ trans('inactive') }}
+                </span>
+            {% endif %}
+        </td>
+        <td class="plugin-name">
+            {{ plugin.name }}
+            {% if plugin.enabled %}
+                <br/><small class="text-muted">{{ trans('plugin-order', {'%num%': plugin.order}) }}</small>
+            {% endif %}
+        </td>
+        <td class="text-end">
+            {% if plugin.version == 0 %}
+                <span class="text-danger">v{{ plugin.version }}</span>
+            {% elseif plugin.version < 1 %}
+                <span class="text-warning">v{{ plugin.version }}</span>
+            {% else %}
+                v{{ plugin.version }}
+            {% endif %}
+        </td>
+        <td class="plugin-description">
+            {{ plugin.description | nl2br }}
+            {% if plugin.forja('url', '') %}
+                <a href="{{ plugin.forja('url', '') }}" target="_blank" class="ms-2">
+                    {{ trans('more') }} <i class="fa-solid fa-external-link-alt"></i>
+                </a>
+            {% endif %}
+            {% if plugin.compatible == false %}
+                <br/><small class="text-danger">{{ plugin.compatibilityDescription() }}</small>
+            {% endif %}
+            {% for requiredPluginName in plugin.require %}
+                <br/>
+                <div class="badge bg-secondary">
+                    {{ trans('plugin-needed', {'%pluginName%': requiredPluginName}) }}
+                </div>
             {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        </td>
+        <td class="text-end text-nowrap">
+            {% if plugin.hasUpdate() %}
+                <a href="Updater" class="btn btn-spin-action btn-sm btn-info" title="{{ trans('update') }}">
+                    <i class="fa-solid fa-cloud-download-alt me-1" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">{{ trans('update') }}</span>
+                </a>
+            {% endif %}
+            {% if plugin.enabled == false and config('disable_rm_plugins', false) == false %}
+                <a class="btn btn-sm btn-danger btn-spin-action" href="#"
+                   title="{{ trans('delete') }}" onclick="deletePlugin('{{ plugin.name }}');">
+                    <i class="fa-solid fa-trash-alt" aria-hidden="true"></i>
+                </a>
+            {% endif %}
+        </td>
+    </tr>
 {% endmacro %}

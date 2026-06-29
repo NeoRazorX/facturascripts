@@ -396,8 +396,10 @@ class Calculator
             // una usa RE, se marca el régimen en el proveedor concreto).
             if ($line->recargo > 0 && $doc instanceof PurchaseDocument) {
                 $companyRegimen = $doc->getCompany()->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
-                if ($companyRegimen !== RegimenIVA::TAX_SYSTEM_SURCHARGE
-                    && $regimen !== RegimenIVA::TAX_SYSTEM_SURCHARGE) {
+                if (
+                    $companyRegimen !== RegimenIVA::TAX_SYSTEM_SURCHARGE
+                    && $regimen !== RegimenIVA::TAX_SYSTEM_SURCHARGE
+                ) {
                     $line->recargo = 0.0;
                 }
             }

@@ -357,8 +357,10 @@ class Login implements ControllerInterface
         }
 
         $user = new User();
-        if (!$user->load($userName) || false === $user->enabled
-            || !$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))) {
+        if (
+            !$user->load($userName) || false === $user->enabled
+            || !$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))
+        ) {
             Tools::log()->warning('two-factor-code-invalid');
             $this->saveIncident($ip, $userName);
             return;

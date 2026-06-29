@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Lib\ExtendedController\OwnerDataTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
 use FacturaScripts\Core\Where;
@@ -40,6 +41,8 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  */
 class SendMail extends Controller
 {
+    use OwnerDataTrait;
+
     const MAX_FILE_AGE = 2592000; // 30 days
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
@@ -67,8 +70,46 @@ class SendMail extends Controller
         $this->newMail = NewMail::create()
             ->setUser($this->user);
 
+        // no permitimos enviar/ver/marcar documentos ajenos
+        if (false === $this->checkOwnerAccess()) {
+            Tools::log()->warning('access-denied');
+            return;
+        }
+
         $action = $this->request->inputOrQuery('action', '');
         $this->execAction($action);
+    }
+
+    /**
+     * Comprueba que el usuario es propietario del documento (o documentos) sobre
+     * el que se va a operar, según la restricción onlyOwnerData.
+     */
+    protected function checkOwnerAccess(): bool
+    {
+        if (false === $this->permissions->onlyOwnerData) {
+            return true;
+        }
+
+        $className = self::MODEL_NAMESPACE . $this->request->queryOrInput('modelClassName', '');
+        if (false === class_exists($className)) {
+            return true;
+        }
+
+        // reunimos el código individual y la lista de códigos
+        $codes = [$this->request->queryOrInput('modelCode', '')];
+        $modelCodes = $this->request->queryOrInput('modelCodes', '');
+        if (false === empty($modelCodes)) {
+            $codes = array_merge($codes, explode(',', $modelCodes));
+        }
+
+        $model = new $className();
+        foreach (array_unique(array_filter($codes)) as $code) {
+            if ($model->load($code) && false === $this->checkOwnerData($model)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

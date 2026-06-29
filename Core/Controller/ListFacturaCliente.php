@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -275,6 +275,14 @@ class ListFacturaCliente extends ListBusinessDocument
 
     protected function lookForGapsAction(): void
     {
+        // buscar huecos escanea todas las facturas, así que solo se permite a
+        // quien puede ver datos ajenos (igual que la visibilidad del botón)
+        if ($this->permissions->onlyOwnerData) {
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $gapsInRange = [];
         $gapsOutOfRange = [];
 

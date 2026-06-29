@@ -270,6 +270,7 @@ final class Html
     private static function moneyFunction(): TwigFunction
     {
         return new TwigFunction('money', function (?float $number, string $coddivisa = '') {
+            $number = $number ?? 0.0;
             if (empty($coddivisa)) {
                 $coddivisa = Tools::settings('default', 'coddivisa');
             }
@@ -297,6 +298,7 @@ final class Html
     private static function numberFunction(): TwigFunction
     {
         return new TwigFunction('number', function (?float $number, ?int $decimals = null) {
+            $number = $number ?? 0.0;
             if ($decimals === null) {
                 $decimals = Tools::settings('default', 'decimals');
             }
@@ -306,6 +308,13 @@ final class Html
             $thousandsSeparator = Tools::settings('default', 'thousands_separator');
 
             return number_format($number, $decimals, $decimalSeparator, $thousandsSeparator);
+        });
+    }
+
+    private static function sessionFunction(): TwigFunction
+    {
+        return new TwigFunction('session', function (string $key, $default = null) {
+            return Session::get($key) ?? $default;
         });
     }
 
@@ -379,6 +388,7 @@ final class Html
         self::$twig->addFunction(self::moneyFunction());
         self::$twig->addFunction(self::myFilesUrlFunction());
         self::$twig->addFunction(self::numberFunction());
+        self::$twig->addFunction(self::sessionFunction());
         self::$twig->addFunction(self::settingsFunction());
         self::$twig->addFunction(self::transFunction());
         self::$twig->addFunction(self::bytesFunction());

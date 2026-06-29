@@ -155,10 +155,18 @@ final class Cache
             // todavía no ha expirado, devolvemos el contenido
             $data = file_get_contents($fileName);
             try {
-                return unserialize($data);
+                $value = unserialize($data);
             } catch (Throwable $e) {
                 return $default;
             }
+
+            // unserialize() devuelve false (sin lanzar excepción) cuando el dato está corrupto.
+            // Distinguimos ese caso de un false legítimamente cacheado.
+            if (false === $value && $data !== serialize(false)) {
+                return $default;
+            }
+
+            return $value;
         }
 
         return $default;

@@ -35,29 +35,29 @@ use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 
 /**
- * Class from which all FacturaScripts controllers must inherit.
+ * Clase de la que deben heredar todos los controladores de FacturaScripts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Controller implements ControllerInterface
 {
     /**
-     * Name of the class of the controller (although its in inheritance from this class,
-     * the name of the final class we will have here)
+     * Nombre de la clase del controlador (aunque herede de esta clase,
+     * aquí tendremos el nombre de la clase final).
      *
      * @var string __CLASS__
      */
     private $className;
 
     /**
-     * It provides direct access to the database.
+     * Proporciona acceso directo a la base de datos.
      *
      * @var DataBase
      */
     protected $dataBase;
 
     /**
-     * Selected company.
+     * Empresa seleccionada.
      *
      * @var Empresa
      */
@@ -69,56 +69,56 @@ class Controller implements ControllerInterface
     public $multiRequestProtection;
 
     /**
-     * User permissions on this controller.
+     * Permisos del usuario sobre este controlador.
      *
      * @var ControllerPermissions
      */
     public $permissions;
 
     /**
-     * Request on which we can get data.
+     * Petición de la que podemos obtener datos.
      *
      * @var Request
      */
     public $request;
 
     /**
-     * HTTP Response object.
+     * Objeto de respuesta HTTP.
      *
      * @var Response
      */
     protected $response;
 
     /**
-     * Name of the file for the template.
+     * Nombre del archivo de la plantilla.
      *
      * @var string|false nombre_archivo.html.twig
      */
     private $template;
 
     /**
-     * Title of the page.
+     * Título de la página.
      *
      * @var string título de la página.
      */
     public $title;
 
     /**
-     * Given uri, default is empty.
+     * URI dada, por defecto vacía.
      *
      * @var string
      */
     public $uri;
 
     /**
-     * User logged in.
+     * Usuario que ha iniciado sesión.
      *
      * @var User|false
      */
     public $user = false;
 
     /**
-     * Initialize all objects and properties.
+     * Inicializa todos los objetos y propiedades.
      *
      * @param string $className
      * @param string $uri
@@ -156,7 +156,10 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Return the basic data for this page.
+     * Devuelve los datos básicos de esta página (nombre, título, icono, menú, etc.).
+     *
+     * Esta función solamente sirve para eso. No se debe añadir aquí ningún otro código,
+     * ya que en este punto el usuario ni siquiera se ha logueado todavía.
      *
      * @return array
      */
@@ -174,7 +177,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Return the template to use for this controller.
+     * Devuelve la plantilla a usar para este controlador.
      *
      * @return string|false
      */
@@ -208,7 +211,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Runs the controller's private logic.
+     * Ejecuta la lógica privada del controlador.
      *
      * @param Response $response
      * @param User $user
@@ -225,13 +228,13 @@ class Controller implements ControllerInterface
             throw new KernelException('AccessDenied', Tools::lang()->trans('access-denied'));
         }
 
-        // Select the default company for the user
+        // Seleccionamos la empresa por defecto del usuario
         $this->empresa = Empresas::get($this->user->idempresa);
 
-        // add the user to the token generation seed
+        // Añadimos el usuario a la semilla de generación del token
         $this->multiRequestProtection->addSeed($user->nick);
 
-        // Have this user a default page?
+        // ¿Tiene este usuario una página por defecto?
         $cookiesExpire = time() + Tools::config('cookies_expire');
         $defaultPage = $this->request->query('defaultPage', '');
         if ($defaultPage === 'TRUE') {
@@ -246,7 +249,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Execute the public part of the controller.
+     * Ejecuta la parte pública del controlador.
      *
      * @param Response $response
      */
@@ -261,7 +264,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Redirect to an url or controller.
+     * Redirige a una url o controlador.
      *
      * @param string $url
      * @param int $delay
@@ -323,7 +326,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Set the template to use for this controller.
+     * Establece la plantilla a usar para este controlador.
      *
      * @param string|false $template
      *
@@ -336,7 +339,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Return the URL of the actual controller.
+     * Devuelve la URL del controlador actual.
      *
      * @return string
      */
@@ -414,7 +417,7 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Return the name of the controller.
+     * Devuelve el nombre del controlador.
      *
      * @return string
      */
@@ -429,23 +432,23 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * Check request token. Returns an error if:
-     *   - the token does not exist
-     *   - the token is invalid
-     *   - the token is duplicated
+     * Comprueba el token de la petición. Devuelve un error si:
+     *   - el token no existe
+     *   - el token no es válido
+     *   - el token está duplicado
      *
      * @return bool
      */
     protected function validateFormToken(): bool
     {
-        // valid request?
+        // ¿petición válida?
         $token = $this->request->inputOrQuery('multireqtoken', '');
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
             Tools::log()->warning('invalid-request');
             return false;
         }
 
-        // duplicated request?
+        // ¿petición duplicada?
         if ($this->multiRequestProtection->tokenExist($token)) {
             Tools::log()->warning('duplicated-request');
             return false;

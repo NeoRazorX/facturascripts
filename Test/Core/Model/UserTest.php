@@ -268,6 +268,19 @@ final class UserTest extends TestCase
         $this->assertTrue($role->delete());
     }
 
+    public function testCanReturnsFalseWhenNickEmpty(): void
+    {
+        // un usuario sin nick (no existe) no puede acceder a nada,
+        // aunque por defecto enabled sea true e incluso siendo admin
+        $user = new User();
+        $this->assertNull($user->nick);
+        $this->assertTrue($user->enabled);
+        $this->assertFalse($user->can('AdminPlugins'));
+
+        $user->admin = true;
+        $this->assertFalse($user->can('AdminPlugins'));
+    }
+
     public function testAdminPermissions(): void
     {
         // añadimos una página al menú

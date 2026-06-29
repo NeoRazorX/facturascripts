@@ -242,6 +242,24 @@ class Contacto extends ModelClass
         return parent::install();
     }
 
+    protected function onDelete(): void
+    {
+        // desvinculamos el contacto de los clientes y proveedores
+        DinCliente::table()
+            ->whereEq('idcontactoenv', $this->idcontacto)
+            ->update(['idcontactoenv' => null]);
+
+        DinCliente::table()
+            ->whereEq('idcontactofact', $this->idcontacto)
+            ->update(['idcontactofact' => null]);
+
+        DinProveedor::table()
+            ->whereEq('idcontacto', $this->idcontacto)
+            ->update(['idcontacto' => null]);
+
+        parent::onDelete();
+    }
+
     public static function primaryColumn(): string
     {
         return 'idcontacto';

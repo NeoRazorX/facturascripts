@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\DataSrc\EstadosDocumentos;
+use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Lib\ExtendedController\OwnerDataTrait;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -38,9 +40,12 @@ use FacturaScripts\Dinamic\Model\User;
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class DocumentStitcher extends Controller
 {
+    use OwnerDataTrait;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /** @var array */
@@ -49,11 +54,23 @@ class DocumentStitcher extends Controller
     /** @var TransformerDocument[] */
     public $documents = [];
 
+    /** @var array */
+    public $filters = ['codpago' => '', 'desde' => '', 'hasta' => ''];
+
     /** @var string */
     public $modelName;
 
     /** @var TransformerDocument[] */
     public $moreDocuments = [];
+
+    /** @var array */
+    public $payMethods = [];
+
+    /** @var bool */
+    public $showFilters = false;
+
+    /** @var array */
+    public $where = [];
 
     public function getAvailableStatus(): array
     {
@@ -92,6 +109,7 @@ class DocumentStitcher extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $action = $this->request->request->get('action', '');
 
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
@@ -103,6 +121,11 @@ class DocumentStitcher extends Controller
         }
 
         $this->loadDocuments();
+        $this->addFilters();
+        if ('search' === $action) {
+            $this->processFormDataLoad();
+        }
+
         $this->loadMoreDocuments();
 
         $statusCode = $this->request->input('status', '');
@@ -163,6 +186,21 @@ class DocumentStitcher extends Controller
         return true;
     }
 
+    protected function addFilters(): void
+    {
+        if (empty($this->documents)) {
+            return;
+        }
+
+        foreach (FormasPago::all() as $payMethod) {
+            if ($payMethod->activa && $payMethod->idempresa == $this->documents[0]->idempresa) {
+                $this->payMethods[$payMethod->id()] = $payMethod->descripcion;
+            }
+        }
+
+        asort($this->payMethods);
+    }
+
     /**
      * @param array $newLines
      * @param TransformerDocument $doc
@@ -175,6 +213,7 @@ class DocumentStitcher extends Controller
             'mostrar_cantidad' => false,
             'mostrar_precio' => false
         ]);
+
         $this->pipe('addInfoLine', $infoLine);
         $newLines[] = $infoLine;
     }
@@ -408,9 +447,17 @@ class DocumentStitcher extends Controller
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         foreach ($this->codes as $code) {
             $doc = new $modelClass();
-            if ($doc->loadFromCode($code)) {
-                $this->addDocument($doc);
+            if (false === $doc->loadFromCode($code)) {
+                continue;
             }
+
+            // no permitimos agrupar/partir documentos ajenos
+            if (false === $this->checkOwnerData($doc)) {
+                Tools::log()->warning('not-allowed-modify');
+                continue;
+            }
+
+            $this->addDocument($doc);
         }
 
         // ordenamos por fecha
@@ -433,21 +480,48 @@ class DocumentStitcher extends Controller
 
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         $model = new $modelClass();
-        $where = [
-            Where::eq('codalmacen', $this->documents[0]->codalmacen),
-            Where::eq('coddivisa', $this->documents[0]->coddivisa),
-            Where::eq('codserie', $this->documents[0]->codserie),
-            Where::eq('dtopor1', $this->documents[0]->dtopor1),
-            Where::eq('dtopor2', $this->documents[0]->dtopor2),
-            Where::eq('editable', true),
-            Where::eq('idempresa', $this->documents[0]->idempresa),
-            Where::eq($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
-        ];
+        $this->where[] = Where::eq('codalmacen', $this->documents[0]->codalmacen);
+        $this->where[] = Where::eq('coddivisa', $this->documents[0]->coddivisa);
+        $this->where[] = Where::eq('codserie', $this->documents[0]->codserie);
+        $this->where[] = Where::eq('dtopor1', $this->documents[0]->dtopor1);
+        $this->where[] = Where::eq('dtopor2', $this->documents[0]->dtopor2);
+        $this->where[] = Where::eq('editable', true);
+        $this->where[] = Where::eq('idempresa', $this->documents[0]->idempresa);
+        $this->where[] = Where::eq($model->subjectColumn(), $this->documents[0]->subjectColumnValue());
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
-        foreach ($model->all($where, $orderBy, 0, 0) as $doc) {
-            if (false === in_array($doc->id(), $this->getCodes())) {
-                $this->moreDocuments[] = $doc;
+        foreach ($model->all($this->where, $orderBy, 0, 0) as $doc) {
+            if (in_array($doc->id(), $this->getCodes())) {
+                continue;
             }
+
+            // no sugerimos documentos ajenos cuando el usuario solo ve los suyos
+            if (false === $this->checkOwnerData($doc)) {
+                continue;
+            }
+
+            $this->moreDocuments[] = $doc;
+        }
+    }
+
+    protected function processFormDataLoad(): void
+    {
+        // filters
+        $this->filters['codpago'] = $this->request->request->get('codpago', '');
+        if ($this->filters['codpago']) {
+            $this->where[] = Where::eq('codpago', $this->filters['codpago']);
+            $this->showFilters = true;
+        }
+
+        $this->filters['desde'] = $this->request->request->get('desde', '');
+        if ($this->filters['desde']) {
+            $this->where[] = Where::gte('fecha', $this->filters['desde']);
+            $this->showFilters = true;
+        }
+
+        $this->filters['hasta'] = $this->request->request->get('hasta', '');
+        if ($this->filters['hasta']) {
+            $this->where[] = Where::lte('fecha', $this->filters['hasta']);
+            $this->showFilters = true;
         }
     }
 }

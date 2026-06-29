@@ -158,6 +158,45 @@ final class CacheTest extends TestCase
         $this->assertNotEquals(Cache::get($key), $closureValue, 'cache-value-not-found');
     }
 
+    public function testGetReturnsLegitimateCachedFalse(): void
+    {
+        Cache::clear();
+
+        $key = 'test-false-key';
+        Cache::set($key, false);
+
+        $this->assertFalse(Cache::get($key), 'cached-false-should-be-returned');
+        $this->assertTrue(Cache::has($key), 'cached-false-should-exist');
+
+        // remember no debe recalcular cuando hay un false legítimo cacheado
+        $cacheValue = Cache::remember($key, function () {
+            return 'should-not-be-called';
+        });
+        $this->assertFalse($cacheValue, 'remember-should-return-cached-false');
+    }
+
+    public function testGetReturnsDefaultWhenCacheIsCorrupted(): void
+    {
+        Cache::clear();
+
+        $key = 'test-corrupted-key';
+        Cache::set($key, ['a', 'b', 'c']);
+        $this->assertEquals(['a', 'b', 'c'], Cache::get($key), 'cache-value-not-found');
+
+        // corrompemos el fichero de caché con datos que unserialize() no puede leer
+        $fileName = FS_FOLDER . Cache::FILE_PATH . '/' . $key . '.cache';
+        file_put_contents($fileName, 'esto-no-es-serializable');
+
+        // un fichero corrupto debe tratarse como ausencia de valor, no devolver false
+        $this->assertNull(Cache::get($key), 'corrupted-cache-should-return-default');
+
+        // remember debe recalcular en lugar de propagar el false espurio
+        $cacheValue = Cache::remember($key, function () {
+            return ['x', 'y'];
+        });
+        $this->assertEquals(['x', 'y'], $cacheValue, 'remember-should-recompute-on-corrupted-cache');
+    }
+
     public function testWithMemoryReturnsInstance(): void
     {
         $instance = Cache::withMemory();

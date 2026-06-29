@@ -39,6 +39,10 @@ jobs:
             name: Mexico
             lang: es_MX
             timezone: America/Mexico_City
+          - code: PER
+            name: Peru
+            lang: es_PE
+            timezone: America/Lima
         database:
           - type: mysql
             version: '8.1'

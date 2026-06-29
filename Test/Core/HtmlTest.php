@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Test\Core;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 use Twig\TwigFunction;
@@ -52,6 +54,36 @@ final class HtmlTest extends TestCase
 
         $html = Html::render('@Test/testTemplate.html.twig');
         $this->assertEquals($expected, $html, 'html-not-equal-for-testTemplate');
+    }
+
+    public function testSessionFunction()
+    {
+        Session::set('test_html_key', 'valor123');
+
+        $expected = "valor123\ndefecto";
+        $html = Html::render('@Test/testSession.html.twig');
+        $this->assertEquals($expected, $html, 'html-not-equal-for-testSession');
+
+        Session::clear();
+    }
+
+    public function testCacheFunction()
+    {
+        Cache::set('test_html_cache_key', 'cacheValor123');
+
+        $html = Html::render('@Test/testCache.html.twig');
+        $this->assertEquals('cacheValor123', $html, 'html-not-equal-for-testCache');
+
+        Cache::delete('test_html_cache_key');
+    }
+
+    public function testSettingsFunction()
+    {
+        Tools::settingsSet('test_html', 'test_key', 'settingsValor123');
+
+        $expected = "settingsValor123\ndefecto";
+        $html = Html::render('@Test/testSettings.html.twig');
+        $this->assertEquals($expected, $html, 'html-not-equal-for-testSettings');
     }
 
     public function testCustomFunction()

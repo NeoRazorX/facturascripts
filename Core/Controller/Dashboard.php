@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -102,11 +102,11 @@ class Dashboard extends Controller
 
         $this->loadExtensions();
 
-        // comprobamos si la instalación está registrada
-        $this->registered = Telemetry::init()->ready();
+        // comprobamos si la instalación está registrada (solo para administradores)
+        $this->registered = $user->admin === false || Telemetry::init()->ready();
 
-        // comprobamos si hay actualizaciones disponibles
-        $this->updated = Forja::canUpdateCore() === false;
+        // comprobamos si hay actualizaciones disponibles (solo para administradores)
+        $this->updated = $user->admin === false || Forja::canUpdateCore() === false;
     }
 
     public function showBackupWarning(): bool
@@ -280,6 +280,12 @@ class Dashboard extends Controller
             Where::lt('vencimiento', Tools::date()),
             Where::gt('vencimiento', date('Y-m-d', strtotime('-1 year'))),
         ];
+
+        // si el usuario solo ve sus datos, limitamos los recibos a los suyos
+        if ($this->permissions->onlyOwnerData) {
+            $where[] = Where::eq('nick', $this->user->nick);
+        }
+
         $this->receipts = ReciboCliente::all($where, ['vencimiento' => 'DESC']);
 
         if (count($this->receipts) > 0) {

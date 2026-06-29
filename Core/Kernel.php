@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,14 +59,14 @@ final class Kernel
         ];
     }
 
-    public static function clearRoutes(): void
-    {
-        self::$routes = [];
-    }
-
     public static function addRoutes(Closure $closure): void
     {
         self::$routesCallbacks[] = $closure;
+    }
+
+    public static function clearRoutes(): void
+    {
+        self::$routes = [];
     }
 
     public static function getExecutionTime(int $decimals = 5): float
@@ -245,7 +245,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2026.3;
+        return 2026.4;
     }
 
     private static function checkControllerClass(string $controller): array
@@ -361,6 +361,14 @@ final class Kernel
             '/api/3/crearPedidoProveedor' => 'ApiCreateDocument',
             '/api/3/crearPresupuestoCliente' => 'ApiCreateDocument',
             '/api/3/crearPresupuestoProveedor' => 'ApiCreateDocument',
+            '/api/3/editarAlbaranCliente/*' => 'ApiEditDocument',
+            '/api/3/editarAlbaranProveedor/*' => 'ApiEditDocument',
+            '/api/3/editarFacturaCliente/*' => 'ApiEditDocument',
+            '/api/3/editarFacturaProveedor/*' => 'ApiEditDocument',
+            '/api/3/editarPedidoCliente/*' => 'ApiEditDocument',
+            '/api/3/editarPedidoProveedor/*' => 'ApiEditDocument',
+            '/api/3/editarPresupuestoCliente/*' => 'ApiEditDocument',
+            '/api/3/editarPresupuestoProveedor/*' => 'ApiEditDocument',
             '/api/3/exportarAlbaranCliente/*' => 'ApiExportDocument',
             '/api/3/exportarAlbaranProveedor/*' => 'ApiExportDocument',
             '/api/3/exportarFacturaCliente/*' => 'ApiExportDocument',
