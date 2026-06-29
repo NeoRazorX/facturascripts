@@ -37,6 +37,7 @@ use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -226,6 +227,9 @@ final class ProductoTest extends TestCase
         $supplierProduct->precio = 200;
         $this->assertTrue($supplierProduct->save(), 'supplier-product-cant-save');
 
+        // procesamos la cola de trabajos
+        $this->processWorkQueue();
+
         // recargamos la variante para comprobar que NO se ha actualizado el coste, ya que no hay política asignada
         $variant->reload();
         $this->assertEquals(66, $variant->coste, 'variant-cost-should-not-change');
@@ -273,6 +277,9 @@ final class ProductoTest extends TestCase
         $supplierProduct2->idproducto = $product->idproducto;
         $supplierProduct2->precio = 200;
         $this->assertTrue($supplierProduct2->save(), 'supplier-product-2-cant-save');
+
+        // procesamos la cola de trabajos
+        $this->processWorkQueue();
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
         $variant->reload();
@@ -325,6 +332,9 @@ final class ProductoTest extends TestCase
         $supplierProduct2->precio = 100;
         $this->assertTrue($supplierProduct2->save(), 'supplier-product-2-cant-save');
 
+        // procesamos la cola de trabajos
+        $this->processWorkQueue();
+
         // recargamos la variante para comprobar que SI se ha actualizado el coste
         $variant->reload();
         $this->assertEquals(200, $variant->coste, 'variant-cost-not-last');
@@ -374,6 +384,9 @@ final class ProductoTest extends TestCase
         $supplierProduct2->idproducto = $product->idproducto;
         $supplierProduct2->precio = 200;
         $this->assertTrue($supplierProduct2->save(), 'supplier-product-cant-save');
+
+        // procesamos la cola de trabajos
+        $this->processWorkQueue();
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
         $variant->reload();
@@ -771,6 +784,15 @@ final class ProductoTest extends TestCase
         $supplier->cifnif = $num . '345678A';
 
         return $supplier;
+    }
+
+    private function processWorkQueue(): void
+    {
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
     }
 
     protected function tearDown(): void

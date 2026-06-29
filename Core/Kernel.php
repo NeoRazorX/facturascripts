@@ -120,6 +120,9 @@ final class Kernel
         Calculator::addMod(new CalculatorModSpain());
 
         // workers
+        WorkQueue::addWorker('CostPriceWorker', 'Model.ProductoProveedor.Delete');
+        WorkQueue::addWorker('CostPriceWorker', 'Model.ProductoProveedor.Insert');
+        WorkQueue::addWorker('CostPriceWorker', 'Model.ProductoProveedor.Update');
         WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Delete');
         WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Update');
         WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Delete');
