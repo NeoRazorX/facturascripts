@@ -69,8 +69,8 @@ class ListAlbaranCliente extends ListBusinessDocument
 
         $paises = Paises::codeModel();
         $this->addFilterSelect($viewName, 'country', 'country', 'codpais', $paises);
-        $this->addFilterAutocomplete($viewName, 'provincia', 'province', 'provincia', 'provincias');
-        $this->addFilterAutocomplete($viewName, 'ciudad', 'city', 'ciudad', 'ciudades');
+        $this->addFilterSelectAuto($viewName, 'provincia', 'province', 'provincia', 'provincias');
+        $this->addFilterSelectAuto($viewName, 'ciudad', 'city', 'ciudad', 'ciudades');
     }
 
     protected function autocompleteAction(): array

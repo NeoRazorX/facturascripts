@@ -27,6 +27,7 @@ use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -194,6 +195,40 @@ abstract class ListController extends BaseController
      */
     protected function addFilterSelect(string $viewName, string $key, string $label, string $field, array $values = []): ListView
     {
+        return $this->listView($viewName)->addFilterSelect($key, $label, $field, $values);
+    }
+
+    /**
+     * Adds a select or autocomplete filter to a ListView depending on the number of available
+     * values: a select when there are few, an autocomplete when they exceed the CodeModel limit.
+     * The where conditions apply to both.
+     *
+     * @param string $viewName
+     * @param string $key (Filter identifier)
+     * @param string $label (Human reader description)
+     * @param string $field (Field of the table to apply filter)
+     * @param string $table (Table to read the values from)
+     * @param string $fieldcode (Code column; defaults to $field)
+     * @param string $fieldtitle (Title column; defaults to $fieldcode)
+     * @param array $where (Extra where conditions)
+     * @return ListView
+     */
+    protected function addFilterSelectAuto(string $viewName, string $key, string $label, string $field, string $table, string $fieldcode = '', string $fieldtitle = '', array $where = []): ListView
+    {
+        if (empty($fieldcode)) {
+            $fieldcode = $field;
+        }
+        if (empty($fieldtitle)) {
+            $fieldtitle = $fieldcode;
+        }
+
+        $values = $this->codeModel->all($table, $fieldcode, $fieldtitle, true, $where);
+
+        // si supera el límite, mostramos un autocompletado; si no, un select
+        if (count($values) >= CodeModel::getLimit()) {
+            return $this->listView($viewName)->addFilterAutocomplete($key, $label, $field, $table, $fieldcode, $fieldtitle, $where);
+        }
+
         return $this->listView($viewName)->addFilterSelect($key, $label, $field, $values);
     }
 
