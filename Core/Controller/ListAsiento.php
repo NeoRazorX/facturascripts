@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Model\Asiento;
@@ -130,11 +131,11 @@ class ListAsiento extends ListController
 
         $allChannels = $this->codeModel->all('asientos', 'canal', 'canal', false);
         if (count($allChannels) > 0) {
-            $channelOptions = [['label' => Tools::lang()->trans('channel'), 'where' => []]];
+            $channelOptions = [['label' => Tools::trans('channel'), 'where' => []]];
             foreach ($allChannels as $item) {
                 if ($item->code === null) {
                     $channelOptions[] = [
-                        'label' => Tools::lang()->trans('without-channel'),
+                        'label' => Tools::trans('without-channel'),
                         'where' => [Where::isNull('canal')],
                     ];
                 } else {
@@ -179,18 +180,21 @@ class ListAsiento extends ListController
 
     protected function createViewsNotBalanced(string $viewName = 'ListAsiento-not'): void
     {
-        $ids = [];
-        $sql = 'SELECT partidas.idasiento, ABS(SUM(partidas.debe) - SUM(partidas.haber))'
-            . ' FROM partidas GROUP BY 1 HAVING ROUND(ABS(SUM(partidas.debe) - SUM(partidas.haber)), 2) >= 0.01';
-
-        if (Tools::config('db_type') === 'postgresql') {
+        $ids = Cache::remember('table-partidas-unbalanced-ids', function () {
             $sql = 'SELECT partidas.idasiento, ABS(SUM(partidas.debe) - SUM(partidas.haber))'
-                . ' FROM partidas GROUP BY 1 HAVING ABS(SUM(partidas.debe) - SUM(partidas.haber)) >= 0.01';
-        }
+                . ' FROM partidas GROUP BY 1 HAVING ROUND(ABS(SUM(partidas.debe) - SUM(partidas.haber)), 2) >= 0.01';
 
-        foreach ($this->dataBase->select($sql) as $row) {
-            $ids[] = $row['idasiento'];
-        }
+            if (Tools::config('db_type') === 'postgresql') {
+                $sql = 'SELECT partidas.idasiento, ABS(SUM(partidas.debe) - SUM(partidas.haber))'
+                    . ' FROM partidas GROUP BY 1 HAVING ABS(SUM(partidas.debe) - SUM(partidas.haber)) >= 0.01';
+            }
+
+            $result = [];
+            foreach ($this->dataBase->select($sql) as $row) {
+                $result[] = $row['idasiento'];
+            }
+            return $result;
+        });
         if (empty($ids)) {
             return;
         }
