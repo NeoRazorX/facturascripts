@@ -51,6 +51,9 @@ class SecuenciaDocumento extends ModelClass
     /** @var int */
     public $longnumero;
 
+    /** @var bool */
+    public $mantenerfecha;
+
     /** @var int */
     public $numero;
 
@@ -72,6 +75,7 @@ class SecuenciaDocumento extends ModelClass
         $this->idempresa = Tools::settings('default', 'idempresa');
         $this->inicio = 1;
         $this->longnumero = 6;
+        $this->mantenerfecha = false;
         $this->numero = 1;
         $this->patron = '{EJE}{SERIE}{0NUM}';
         $this->usarhuecos = false;
