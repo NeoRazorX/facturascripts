@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -39,7 +40,17 @@ use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Description of Wizard
+ * Asistente de instalación web de FacturaScripts.
+ *
+ * Guía al administrador por tres pasos para configurar la empresa (step1),
+ * los parámetros fiscales y contables (step2) y desplegar todos los modelos
+ * y plugins (step3).
+ *
+ * El fichero de estado MyFiles/wizard_progress.json es compartido con
+ * ApiSetupWizard (Core/Controller/ApiSetupWizard.php), que expone el mismo
+ * flujo de instalación a través de la API REST. El campo 'installAgent' del
+ * fichero indica qué agente tomó el control ('wizard' o 'apiWizard') e impide
+ * que ambos se ejecuten simultáneamente.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -100,26 +111,130 @@ class Wizard extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        $action = $this->request->inputOrQuery('action', '');
-        switch ($action) {
-            case 'step1':
-                $this->saveStep1();
-                break;
-
-            case 'step2':
-                $this->saveStep2();
-                break;
-
-            case 'step3':
-                $this->saveStep3();
-                break;
-
-            default:
-                if (empty($this->empresa->email) && $this->user->email) {
-                    $this->empresa->email = $this->user->email;
-                    $this->empresa->save();
-                }
+        if ($this->isInstalled()) {
+            throw new KernelException('AlreadyInstalled', Tools::trans('wizard-already-completed'));
         }
+
+        $progress = $this->readWizardProgress();
+        $agent = $progress['installAgent'] ?? '';
+
+        // Si ApiSetupWizard ya tomó el control, impedimos continuar desde la web
+        // para evitar que dos agentes sobreescriban el mismo estado de instalación.
+        if ($agent === 'apiWizard') {
+            throw new KernelException('AlreadyInstalled', Tools::trans(
+                'installation-managed-by-api',
+                ['%url%' => Tools::siteUrl()]
+            ));
+        }
+
+        // Registrar este agente (Wizard web) como responsable de la instalación
+        // si todavía no hay ninguno asignado.
+        if (empty($agent)) {
+            $progress['installAgent'] = 'wizard';
+            file_put_contents(self::wizardStateFile(), json_encode($progress, JSON_PRETTY_PRINT));
+        }
+
+        $action = $this->request->inputOrQuery('action', '');
+        $currentStep = $progress['current_step'] ?? '';
+
+        // Ejecutar únicamente el paso que corresponde al estado actual para evitar
+        // que el usuario salte pasos recargando la URL con un action incorrecto.
+        if ($action === 'step1' && empty($currentStep)) {
+            $this->saveStep1();
+        } elseif ($action === 'step2' && $currentStep === 'step2') {
+            $this->saveStep2();
+        } elseif ($action === 'step3' && $currentStep === 'step3') {
+            $this->saveStep3();
+        } else {
+            // Si llegó un action pero no cuadra con el step actual, registrar el error
+            // (el usuario probablemente recargó una URL obsoleta o manipuló el formulario).
+            if (!empty($action)) {
+                Tools::log()->error('wizard-invalid-step', [
+                    '%action%' => $action,
+                    '%step%' => $currentStep ?: 'step1',
+                ]);
+            }
+
+            if (empty($this->empresa->email) && $this->user->email) {
+                $this->empresa->email = $this->user->email;
+                $this->empresa->save();
+            }
+
+            switch ($currentStep) {
+                case 'step2':
+                    $this->setTemplate('Wizard-2');
+                    break;
+                case 'step3':
+                    $this->setTemplate('Wizard-3');
+                    break;
+            }
+        }
+    }
+
+    /** Devuelve la ruta al fichero de estado del progreso del wizard (MyFiles/wizard_progress.json). */
+    private static function wizardStateFile(): string
+    {
+        return Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'wizard_progress.json';
+    }
+
+    /**
+     * Lee el progreso del wizard desde el fichero de estado.
+     * Devuelve un array vacío si el fichero todavía no existe.
+     */
+    private function readWizardProgress(): array
+    {
+        $file = self::wizardStateFile();
+        if (!file_exists($file)) {
+            return [];
+        }
+        return json_decode(file_get_contents($file), true) ?? [];
+    }
+
+    /**
+     * Devuelve true si el wizard ya ha sido completado.
+     * Las instalaciones antiguas (sin fichero de estado) se detectan comprobando que
+     * la homepage del usuario ya no es 'Wizard', cambio que ocurre al finalizar el step3.
+     */
+    private function isInstalled(): bool
+    {
+        // retrocompatibilidad: el usuario sale del wizard con homepage != 'Wizard'
+        if ($this->user->homepage !== 'Wizard') {
+            return true;
+        }
+
+        return $this->isStepCompleted('step3');
+    }
+
+    /**
+     * Devuelve true si el paso indicado está marcado como completado en el fichero de progreso.
+     *
+     * @param string $step step1 | step2 | step3
+     * @return bool true si el paso está completado.
+     */
+    private function isStepCompleted(string $step): bool
+    {
+        $data = $this->readWizardProgress();
+        return ($data[$step]['completed'] ?? false) === true;
+    }
+
+    /**
+     * Marca el paso indicado como completado en el fichero de progreso, registrando
+     * la fecha de finalización y la versión de FacturaScripts. Avanza current_step
+     * al siguiente paso pendiente (null tras el step3).
+     *
+     * @param string $step step1 | step2 | step3
+     */
+    private function completeWizardStep(string $step): void
+    {
+        $next = ['step1' => 'step2', 'step2' => 'step3'];
+        $data = $this->readWizardProgress();
+        $data[$step] = [
+            'completed'    => true,
+            'completed_at' => date('c'),
+            'version'      => \FacturaScripts\Core\Kernel::version(),
+        ];
+        $data['current_step'] = $next[$step] ?? null;
+        file_put_contents(self::wizardStateFile(), json_encode($data, JSON_PRETTY_PRINT));
     }
 
     protected function finalRedirect(): void
@@ -286,7 +401,8 @@ class Wizard extends Controller
             return;
         }
 
-        // change template
+        // complete and change template
+        $this->completeWizardStep('step1');
         $this->setTemplate('Wizard-2');
     }
 
@@ -321,7 +437,8 @@ class Wizard extends Controller
         $this->saveInvoiceStartNumber();
         $this->saveBankAccount();
 
-        // change template and redirect
+        // complete and change template and redirect (for refreshing)
+        $this->completeWizardStep('step2');
         $this->setTemplate('Wizard-3');
         $this->redirect($this->url() . '?action=step3', 2);
     }
@@ -355,7 +472,8 @@ class Wizard extends Controller
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : static::NEW_DEFAULT_PAGE;
         $this->user->save();
 
-        // change template and redirect
+        // complete and change template and redirect
+        $this->completeWizardStep('step3');
         $this->setTemplate('Wizard-3');
         $this->finalRedirect();
     }
