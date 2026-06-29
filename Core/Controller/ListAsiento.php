@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Controller to list the items in the Asiento model
@@ -58,7 +58,7 @@ class ListAsiento extends ListController
             $button['group'] = $group;
         }
 
-        $this->addButton($viewName, $button);
+        $this->tab($viewName)->addButton($button);
     }
 
     /**
@@ -78,7 +78,7 @@ class ListAsiento extends ListController
             $button['group'] = $group;
         }
 
-        $this->addButton($viewName, $button);
+        $this->tab($viewName)->addButton($button);
     }
 
     /**
@@ -128,9 +128,25 @@ class ListAsiento extends ListController
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
         $this->addFilterSelect($viewName, 'iddiario', 'journals', 'iddiario', $selectJournals);
 
-        $selectChannel = $this->codeModel->all('asientos', 'canal', 'canal');
-        if (count($selectChannel) > 1) {
-            $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
+        $allChannels = $this->codeModel->all('asientos', 'canal', 'canal', false);
+        if (count($allChannels) > 0) {
+            $channelOptions = [['label' => Tools::lang()->trans('channel'), 'where' => []]];
+            foreach ($allChannels as $item) {
+                if ($item->code === null) {
+                    $channelOptions[] = [
+                        'label' => Tools::lang()->trans('without-channel'),
+                        'where' => [Where::isNull('canal')],
+                    ];
+                } else {
+                    $channelOptions[] = [
+                        'label' => (string)$item->code,
+                        'where' => [Where::eq('canal', $item->code)],
+                    ];
+                }
+            }
+            if (count($channelOptions) > 1) {
+                $this->addFilterSelectWhere($viewName, 'canal', $channelOptions, 'channel');
+            }
         }
 
         // agrupamos las acciones en un dropdown
@@ -189,7 +205,7 @@ class ListAsiento extends ListController
         $this->addFilterSelectWhere($viewName, 'status', [
             [
                 'label' => Tools::trans('unbalance'),
-                'where' => [new DataBaseWhere('idasiento', join(',', $ids), 'IN')]
+                'where' => [Where::in('idasiento', $ids)]
             ]
         ]);
     }
@@ -279,7 +295,7 @@ class ListAsiento extends ListController
     {
         $companyFilter = $this->request->input('filteridempresa', 0);
         $exerciseFilter = $this->request->input('filtercodejercicio', '');
-        $where = empty($companyFilter) ? [] : [new DataBaseWhere('idempresa', $companyFilter)];
+        $where = empty($companyFilter) ? [] : [Where::eq('idempresa', $companyFilter)];
         $result = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre', true, $where);
         if (empty($exerciseFilter)) {
             return $result;
