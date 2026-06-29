@@ -16,6 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+function listFilterAutocompleteMsg(key) {
+    return (typeof i18n !== 'undefined' && i18n[key]) ? i18n[key] : key;
+}
+
 function listFilterAutocompleteGetData(formId, formData, term) {
     var rawForm = $("form[id=" + formId + "]").serializeArray();
     $.each(rawForm, function (i, input) {
@@ -44,18 +48,42 @@ $(document).ready(function () {
                     data: listFilterAutocompleteGetData(formId, data, request.term),
                     dataType: "json",
                     success: function (results) {
-                        var values = [];
-                        results.forEach(function (element) {
-                            if (element.key === null || element.key === element.value) {
-                                values.push(element);
-                            } else {
-                                values.push({key: element.key, value: element.key + " | " + element.value});
+                        try {
+                            if (!Array.isArray(results)) {
+                                throw new Error('response is not an array');
                             }
-                        });
-                        response(values);
+                            var values = [];
+                            results.forEach(function (element) {
+                                if (!element || element.key === undefined || element.value === undefined || element.value === null) {
+                                    console.warn('filter-autocomplete: invalid element ignored', element);
+                                    return;
+                                }
+                                if (element.key === null || element.key === element.value) {
+                                    values.push(element);
+                                } else {
+                                    values.push({key: element.key, value: element.key + " | " + element.value});
+                                }
+                            });
+                            response(values);
+                        } catch (e) {
+                            console.error('filter-autocomplete: invalid JSON response', e);
+                            alert(listFilterAutocompleteMsg('autocomplete-error-invalid-response'));
+                            response([]);
+                        }
                     },
-                    error: function (msg) {
-                        alert(msg.status + " " + msg.responseText);
+                    error: function (msg, textStatus, errorThrown) {
+                        console.error('filter-autocomplete AJAX error | status:', msg.status, '| textStatus:', textStatus, '| errorThrown:', errorThrown);
+                        console.error('filter-autocomplete responseText:', msg.responseText);
+                        if (msg.status === 0) {
+                            alert(listFilterAutocompleteMsg('autocomplete-error-network'));
+                        } else if (msg.status === 400) {
+                            alert(listFilterAutocompleteMsg('autocomplete-error-bad-request'));
+                        } else if (msg.status >= 500) {
+                            alert(listFilterAutocompleteMsg('autocomplete-error-server'));
+                        } else {
+                            alert(listFilterAutocompleteMsg('autocomplete-error-generic'));
+                        }
+                        response([]);
                     }
                 });
             },
