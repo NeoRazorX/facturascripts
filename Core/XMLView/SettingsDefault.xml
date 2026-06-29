@@ -119,10 +119,18 @@
                     <values title="high-purchase-price">high-price</values>
                 </widget>
             </column>
-            <column name="update-supplier-prices" numcolumns="3" order="110">
+            <column name="calculocosteproveedor" numcolumns="3" order="110">
+                <widget type="select" fieldname="calculocosteproveedor" translate="true">
+                    <values title="neto">neto</values>
+                    <values title="precio">precio</values>
+                    <values title="netomasextra">netomasextra</values>
+                    <values title="preciomasextra">preciomasextra</values>
+                </widget>
+            </column>
+            <column name="update-supplier-prices" numcolumns="3" order="120">
                 <widget type="checkbox" fieldname="updatesupplierprices"/>
             </column>
-            <column name="allow-sale-without-stock-n" numcolumns="6" order="120">
+            <column name="allow-sale-without-stock-n" numcolumns="3" order="130">
                 <widget type="checkbox" fieldname="ventasinstock"/>
             </column>
         </group>

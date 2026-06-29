@@ -138,7 +138,7 @@ class CostPriceTools
             Where::gt('neto', 0),
         ];
         foreach (ProductoProveedor::all($where, ['actualizado' => 'DESC'], 0, 0) as $prod) {
-            $prices[] = $prod->neto;
+            $prices[] = static::calcularCosteProveedor($prod);
         }
 
         $newCost = empty($prices) ? 0.0 : array_sum($prices) / count($prices);
@@ -158,7 +158,7 @@ class CostPriceTools
             Where::gt('neto', 0),
         ];
         foreach (ProductoProveedor::all($where, ['actualizado' => 'DESC'], 0, 1) as $prod) {
-            $variant->coste = round($prod->neto, Producto::ROUND_DECIMALS);
+            $variant->coste = round(static::calcularCosteProveedor($prod), Producto::ROUND_DECIMALS);
             $variant->save();
             break;
         }
@@ -176,9 +176,19 @@ class CostPriceTools
             Where::gt('neto', 0),
         ];
         foreach (ProductoProveedor::all($where, ['precio' => 'DESC'], 0, 1) as $prod) {
-            $variant->coste = round($prod->neto, Producto::ROUND_DECIMALS);
+            $variant->coste = round(static::calcularCosteProveedor($prod), Producto::ROUND_DECIMALS);
             $variant->save();
             break;
         }
+    }
+
+    protected static function calcularCosteProveedor(ProductoProveedor $productoProveedor): float
+    {
+        return match (Tools::settings('default', 'calculocosteproveedor', 'neto')) {
+            'precio' => $productoProveedor->precio,
+            'netomasextra' => $productoProveedor->neto + $productoProveedor->precioextra,
+            'preciomasextra' => $productoProveedor->precio + $productoProveedor->precioextra,
+            default => $productoProveedor->neto,
+        };
     }
 }

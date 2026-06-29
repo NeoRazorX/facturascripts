@@ -38,22 +38,25 @@
             <column name="price" order="130">
                 <widget type="money" fieldname="precio"/>
             </column>
-            <column name="dto" order="140">
+            <column name="precioextra" order="140">
+                <widget type="money" fieldname="precioextra"/>
+            </column>
+            <column name="dto" order="150">
                 <widget type="percentage" fieldname="dtopor"/>
             </column>
-            <column name="dto-2" display="none" order="150">
+            <column name="dto-2" display="none" order="160">
                 <widget type="percentage" fieldname="dtopor2"/>
             </column>
-            <column name="net" order="160">
+            <column name="net" order="170">
                 <widget type="money" fieldname="neto" readonly="true"/>
             </column>
-            <column name="stock" display="none" order="170">
+            <column name="stock" display="none" order="180">
                 <widget type="number" fieldname="stock"/>
             </column>
-            <column name="update-time" display="none" order="180">
+            <column name="update-time" display="none" order="190">
                 <widget type="datetime" fieldname="actualizado" readonly="true"/>
             </column>
-            <column name="currency" order="190">
+            <column name="currency" order="200">
                 <widget type="select" fieldname="coddivisa" onclick="EditDivisa" readonly="dinamic">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"/>
                 </widget>
