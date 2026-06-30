@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
@@ -134,7 +134,7 @@ class Contacto extends ModelClass
     /**
      * @param string $query
      * @param string $fieldCode
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      *
      * @return CodeModel[]
      */
@@ -143,7 +143,7 @@ class Contacto extends ModelClass
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'apellidos|cifnif|descripcion|email|empresa|nombre|observaciones|telefono1|telefono2';
-        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
         foreach ($this->all($where) as $item) {
             $results[] = new CodeModel(['code' => $item->{$field}, 'description' => $item->fullName()]);
         }

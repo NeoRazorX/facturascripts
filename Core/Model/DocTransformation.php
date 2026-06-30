@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
+use FacturaScripts\Core\Where;
 
 /**
  * A model to manage the transformations of documents. For example aprove order to delivery note.
@@ -105,8 +105,8 @@ class DocTransformation extends ModelClass
     public function deleteFrom(string $tipoDoc, int $idDoc, bool $updateServido = false): void
     {
         $options = [
-            [new DataBaseWhere('model1', $tipoDoc), new DataBaseWhere('iddoc1', $idDoc)],
-            [new DataBaseWhere('model2', $tipoDoc), new DataBaseWhere('iddoc2', $idDoc)]
+            [Where::eq('model1', $tipoDoc), Where::eq('iddoc1', $idDoc)],
+            [Where::eq('model2', $tipoDoc), Where::eq('iddoc2', $idDoc)]
         ];
         foreach ($options as $where) {
             foreach ($this->all($where, [], 0, 0) as $line) {
