@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\ExtendedController\ProvinceCityFilterTrait;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 
@@ -114,8 +114,8 @@ class ListPresupuestoCliente extends ListBusinessDocument
         }
 
         $where = [
-            new DataBaseWhere('editable', true),
-            new DataBaseWhere('finoferta', null, 'IS NOT')
+            Where::eq('editable', true),
+            Where::isNotNull('finoferta')
         ];
         foreach ($model->all($where, ['finoferta' => 'ASC']) as $item) {
             if (time() < strtotime($item->finoferta)) {

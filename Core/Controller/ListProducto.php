@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
@@ -27,6 +26,7 @@ use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Lib\TaxExceptions;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Atributo;
 
 /**
@@ -86,11 +86,11 @@ class ListProducto extends ListController
         // filtros
         $this->listView($viewName)
             ->addFilterSelectWhere('status', [
-                ['label' => Tools::trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
+                ['label' => Tools::trans('only-active'), 'where' => [Where::eq('bloqueado', false)]],
                 ['label' => '------', 'where' => []],
-                ['label' => Tools::trans('blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
-                ['label' => Tools::trans('public'), 'where' => [new DataBaseWhere('publico', true)]],
-                ['label' => Tools::trans('not-public'), 'where' => [new DataBaseWhere('publico', false)]],
+                ['label' => Tools::trans('blocked'), 'where' => [Where::eq('bloqueado', true)]],
+                ['label' => Tools::trans('public'), 'where' => [Where::eq('publico', true)]],
+                ['label' => Tools::trans('not-public'), 'where' => [Where::eq('publico', false)]],
                 ['label' => Tools::trans('all'), 'where' => []]
             ])
             ->addFilterSelect('codfabricante', 'manufacturer', 'codfabricante', $manufacturers)
@@ -179,11 +179,11 @@ class ListProducto extends ListController
                 ],
                 [
                     'label' => Tools::trans('under-minimums'),
-                    'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmin', '<', 'AND', true)]
+                    'where' => [Where::lt('stocks.disponible', 'field:stockmin')->useField()]
                 ],
                 [
                     'label' => Tools::trans('excess'),
-                    'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>', 'AND', true)]
+                    'where' => [Where::gt('stocks.disponible', 'field:stockmax')->useField()]
                 ]
             ])
             ->addFilterSelect('codfabricante', 'manufacturer', 'productos.codfabricante', $manufacturers)
@@ -204,7 +204,7 @@ class ListProducto extends ListController
 
         // buscamos los atributos que usen el selector $num
         $attributeModel = new Atributo();
-        $where = [new DataBaseWhere('num_selector', $num)];
+        $where = [Where::eq('num_selector', $num)];
         foreach ($attributeModel->all($where) as $attribute) {
             foreach ($attribute->getValues() as $value) {
                 $values[] = new CodeModel([
@@ -216,7 +216,7 @@ class ListProducto extends ListController
 
         // si no hay ninguno, buscamos los que tenga el selector 0
         if (empty($values)) {
-            $where = [new DataBaseWhere('num_selector', 0)];
+            $where = [Where::eq('num_selector', 0)];
             foreach ($attributeModel->all($where) as $attribute) {
                 foreach ($attribute->getValues() as $value) {
                     $values[] = new CodeModel([

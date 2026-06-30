@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Controller to list the items in the Ejercicio model
@@ -65,11 +65,11 @@ class ListEjercicio extends ListController
             ],
             [
                 'label' => Tools::trans('only-active'),
-                'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]
+                'where' => [Where::eq('estado', Ejercicio::EXERCISE_STATUS_OPEN)]
             ],
             [
                 'label' => Tools::trans('only-closed'),
-                'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]
+                'where' => [Where::eq('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]
             ],
         ]);
     }
