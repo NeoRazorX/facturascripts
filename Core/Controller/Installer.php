@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -218,6 +218,15 @@ class Installer implements ControllerInterface
         return true;
     }
 
+    /**
+     * Escapa un valor para incrustarlo en config.php como literal entre comillas simples,
+     * evitando que una comilla o barra invertida (p. ej. en una contraseña) rompa el fichero.
+     */
+    private function escapeConfig(string $value): string
+    {
+        return str_replace(['\\', "'"], ['\\\\', "\\'"], $value);
+    }
+
     private function saveInstall(): bool
     {
         $file = fopen(FS_FOLDER . '/config.php', 'wb');
@@ -228,13 +237,13 @@ class Installer implements ControllerInterface
 
         fwrite($file, "<?php\n");
         fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->input('fs_cookie_expire', 31536000) . ");\n");
-        fwrite($file, "define('FS_ROUTE', '" . $this->request->input('fs_route', $this->getUri()) . "');\n");
-        fwrite($file, "define('FS_DB_TYPE', '" . $this->db_type . "');\n");
-        fwrite($file, "define('FS_DB_HOST', '" . $this->db_host . "');\n");
+        fwrite($file, "define('FS_ROUTE', '" . $this->escapeConfig($this->request->input('fs_route', $this->getUri())) . "');\n");
+        fwrite($file, "define('FS_DB_TYPE', '" . $this->escapeConfig($this->db_type) . "');\n");
+        fwrite($file, "define('FS_DB_HOST', '" . $this->escapeConfig($this->db_host) . "');\n");
         fwrite($file, "define('FS_DB_PORT', " . $this->db_port . ");\n");
-        fwrite($file, "define('FS_DB_NAME', '" . $this->db_name . "');\n");
-        fwrite($file, "define('FS_DB_USER', '" . $this->db_user . "');\n");
-        fwrite($file, "define('FS_DB_PASS', '" . $this->db_pass . "');\n");
+        fwrite($file, "define('FS_DB_NAME', '" . $this->escapeConfig($this->db_name) . "');\n");
+        fwrite($file, "define('FS_DB_USER', '" . $this->escapeConfig($this->db_user) . "');\n");
+        fwrite($file, "define('FS_DB_PASS', '" . $this->escapeConfig($this->db_pass) . "');\n");
         fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
         fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
 
@@ -249,10 +258,10 @@ class Installer implements ControllerInterface
         }
 
         if ($this->db_type === 'mysql' && $this->request->input('mysql_socket') !== '') {
-            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->input('mysql_socket') . "');\n");
+            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->escapeConfig($this->request->input('mysql_socket')) . "');\n");
         } elseif ($this->db_type === 'postgresql') {
-            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->request->input('pgsql_ssl_mode') . "');\n");
-            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->request->input('pgsql_endpoint') . "');\n");
+            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->escapeConfig($this->request->input('pgsql_ssl_mode')) . "');\n");
+            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->escapeConfig($this->request->input('pgsql_endpoint')) . "');\n");
         }
 
         $fields = [
@@ -261,7 +270,7 @@ class Installer implements ControllerInterface
             'hidden_plugins' => ''
         ];
         foreach ($fields as $field => $default) {
-            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->input('fs_' . $field, $default) . "');\n");
+            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->escapeConfig($this->request->input('fs_' . $field, $default)) . "');\n");
         }
 
         $booleanFields = ['disable_add_plugins', 'disable_rm_plugins'];
@@ -275,11 +284,11 @@ class Installer implements ControllerInterface
         }
 
         if (!empty($this->initial_user)) {
-            fwrite($file, "define('FS_INITIAL_USER', '" . $this->initial_user . "');\n");
+            fwrite($file, "define('FS_INITIAL_USER', '" . $this->escapeConfig($this->initial_user) . "');\n");
         }
 
         if (!empty($this->initial_pass)) {
-            fwrite($file, "define('FS_INITIAL_PASS', '" . $this->initial_pass . "');\n");
+            fwrite($file, "define('FS_INITIAL_PASS', '" . $this->escapeConfig($this->initial_pass) . "');\n");
         }
 
         fclose($file);
