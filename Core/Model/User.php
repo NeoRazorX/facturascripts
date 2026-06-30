@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
@@ -27,6 +26,7 @@ use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Agente as DinAgente;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
@@ -266,7 +266,7 @@ class User extends ModelClass
     {
         $roles = [];
 
-        $where = [new DataBaseWhere('nick', $this->nick)];
+        $where = [Where::eq('nick', $this->nick)];
         foreach (DinRoleUser::all($where, [], 0, 0) as $role) {
             $roles[] = $role->getRole();
         }
