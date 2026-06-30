@@ -102,7 +102,7 @@ class Updater extends Controller
 
     public function hasErrorFiles(): bool
     {
-        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json');
+        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json') ?: [];
         return !empty($files);
     }
 
@@ -151,7 +151,7 @@ class Updater extends Controller
             return;
         }
 
-        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json');
+        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json') ?: [];
         foreach ($files as $file) {
             unlink($file);
         }
@@ -165,10 +165,10 @@ class Updater extends Controller
             return;
         }
 
-        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json');
+        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json') ?: [];
         foreach ($files as $file) {
             $info = json_decode(file_get_contents($file), true);
-            if (empty($info['hash'])) {
+            if (empty($info['hash']) || !is_array($info['hash'])) {
                 continue;
             }
 
@@ -189,9 +189,12 @@ class Updater extends Controller
                 Tools::log()->error('send-crash-file-error', ['%file%' => basename($file)]);
                 return;
             }
+            else {
+                unlink($file);
+            }
         }
 
-        Tools::log()->notice('record-updated-correctly');
+        Tools::log()->notice('crash-files-sent');
     }
 
     private function disableBetaUpdatesAction(): void
