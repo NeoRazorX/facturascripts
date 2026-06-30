@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,14 @@
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Contract\PurchasesModInterface;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Ciudad;
+use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Provincia;
 
 /**
  * Description of PurchasesHeaderHTML
@@ -84,6 +88,12 @@ class PurchasesHeaderHTML
         $model->numproveedor = $formData['numproveedor'] ?? $model->numproveedor;
         $model->operacion = $formData['operacion'] ?? $model->operacion;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
+        $model->apartado = $formData['apartado'] ?? $model->apartado;
+        $model->ciudad = $formData['ciudad'] ?? $model->ciudad;
+        $model->codpais = $formData['codpais'] ?? $model->codpais;
+        $model->codpostal = $formData['codpostal'] ?? $model->codpostal;
+        $model->direccion = $formData['direccion'] ?? $model->direccion;
+        $model->provincia = $formData['provincia'] ?? $model->provincia;
 
         foreach (['fechadevengo'] as $key) {
             if (isset($formData[$key])) {
@@ -200,6 +210,12 @@ class PurchasesHeaderHTML
             . '<div class="row g-2">'
             . self::renderField($model, 'nombre')
             . self::renderField($model, 'cifnif')
+            . self::renderField($model, 'direccion')
+            . self::renderField($model, 'apartado')
+            . self::renderField($model, 'codpostal')
+            . self::renderField($model, 'ciudad')
+            . self::renderField($model, 'provincia')
+            . self::renderField($model, 'codpais')
             . self::renderField($model, 'fechadevengo')
             . self::renderField($model, 'hora')
             . self::renderField($model, 'operacion')
@@ -215,6 +231,64 @@ class PurchasesHeaderHTML
             . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . Tools::trans('accept') . '</button>'
             . '</div>'
             . '</div>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function addressField(PurchaseDocument $model, string $field, string $label, int $size, int $maxlength): string
+    {
+        $attributes = $model->editable ?
+            'name="' . $field . '" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="mb-2">' . Tools::trans($label)
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->{$field}) . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function ciudad(PurchaseDocument $model, int $size, int $maxlength): string
+    {
+        $list = '';
+        $dataList = '';
+        $attributes = $model->editable ?
+            'name="ciudad" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+
+        if ($model->editable) {
+            $list = 'list="purchases-ciudades"';
+            $dataList = '<datalist id="purchases-ciudades">';
+
+            foreach (Ciudad::all([], ['ciudad' => 'ASC'], 0, 0) as $ciudad) {
+                $dataList .= '<option value="' . Tools::noHtml($ciudad->ciudad) . '">' . Tools::noHtml($ciudad->ciudad) . '</option>';
+            }
+            $dataList .= '</datalist>';
+        }
+
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="mb-2">' . Tools::trans('city')
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->ciudad) . '" ' . $list . ' class="form-control"/>'
+            . $dataList
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function codpais(PurchaseDocument $model): string
+    {
+        $options = ['<option value="">------</option>'];
+        foreach (Paises::all() as $pais) {
+            $options[] = ($pais->codpais === $model->codpais) ?
+                '<option value="' . $pais->codpais . '" selected>' . $pais->nombre . '</option>' :
+                '<option value="' . $pais->codpais . '">' . $pais->nombre . '</option>';
+        }
+
+        $pais = new Pais();
+        $attributes = $model->editable ? 'name="codpais"' : 'disabled=""';
+        return '<div class="col-sm-6">'
+            . '<div class="mb-2">'
+            . '<a href="' . $pais->url() . '">' . Tools::trans('country') . '</a>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -236,6 +310,32 @@ class PurchasesHeaderHTML
             . '<div class="mb-2">' . Tools::trans('numsupplier')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numproveedor) . '" class="form-control" maxlength="50"'
             . ' placeholder="' . Tools::trans('optional') . '" />'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function provincia(PurchaseDocument $model, int $size, int $maxlength): string
+    {
+        $list = '';
+        $dataList = '';
+        $attributes = $model->editable ?
+            'name="provincia" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+
+        if ($model->editable) {
+            $list = 'list="purchases-provincias"';
+            $dataList = '<datalist id="purchases-provincias">';
+
+            foreach (Provincia::all([], ['provincia' => 'ASC'], 0, 0) as $provincia) {
+                $dataList .= '<option value="' . Tools::noHtml($provincia->provincia) . '">' . Tools::noHtml($provincia->provincia) . '</option>';
+            }
+            $dataList .= '</datalist>';
+        }
+
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="mb-2">' . Tools::trans('province')
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->provincia) . '" ' . $list . ' class="form-control"/>'
+            . $dataList
             . '</div>'
             . '</div>';
     }
@@ -268,8 +368,14 @@ class PurchasesHeaderHTML
             case '_parents':
                 return self::parents($model);
 
+            case 'apartado':
+                return self::addressField($model, 'apartado', 'post-office-box', 4, 10);
+
             case 'cifnif':
                 return self::cifnif($model);
+
+            case 'ciudad':
+                return self::ciudad($model, 4, 100);
 
             case 'codalmacen':
                 return self::codalmacen($model, 'purchasesFormAction');
@@ -280,11 +386,20 @@ class PurchasesHeaderHTML
             case 'codpago':
                 return self::codpago($model);
 
+            case 'codpais':
+                return self::codpais($model);
+
+            case 'codpostal':
+                return self::addressField($model, 'codpostal', 'zip-code', 4, 10);
+
             case 'codproveedor':
                 return self::codproveedor($model);
 
             case 'codserie':
                 return self::codserie($model, 'purchasesFormAction');
+
+            case 'direccion':
+                return self::addressField($model, 'direccion', 'address', 12, 200);
 
             case 'fecha':
                 return self::fecha($model);
@@ -309,6 +424,9 @@ class PurchasesHeaderHTML
 
             case 'operacion':
                 return self::operacion($model);
+
+            case 'provincia':
+                return self::provincia($model, 6, 100);
 
             case 'tasaconv':
                 return self::tasaconv($model);
