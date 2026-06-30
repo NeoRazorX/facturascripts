@@ -129,8 +129,8 @@ class WidgetNumber extends BaseWidget
     protected function setValue($model)
     {
         parent::setValue($model);
-        if (null === $this->value && $this->required) {
-            $this->value = empty($this->min) ? 0 : (float)$this->min;
+        if (null === $this->value && $this->required && $this->min !== '') {
+            $this->value = (float)$this->min;
         }
     }
 
