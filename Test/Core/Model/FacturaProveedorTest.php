@@ -58,6 +58,14 @@ final class FacturaProveedorTest extends TestCase
         // creamos el proveedor
         $supplier = $this->getRandomSupplier();
         $this->assertTrue($supplier->save(), 'cant-create-supplier');
+        $address = $supplier->getDefaultAddress();
+        $address->apartado = '12345';
+        $address->ciudad = 'Test-ciudad';
+        $address->codpais = 'PRT';
+        $address->codpostal = '12345';
+        $address->direccion = 'Test-direccion';
+        $address->provincia = 'Test-provincia';
+        $this->assertTrue($address->save(), 'cant-save-supplier-address');
 
         // creamos la factura
         $invoice = new FacturaProveedor();
@@ -84,13 +92,19 @@ final class FacturaProveedorTest extends TestCase
         // buscamos la factura
         $dbInvoice = $invoice->get($invoice->idfactura);
         $this->assertIsObject($dbInvoice, 'invoice-cant-be-read');
+        $this->assertEquals($address->apartado, $dbInvoice->apartado, 'bad-invoice-apartado');
         $this->assertEquals($supplier->cifnif, $dbInvoice->cifnif, 'bad-invoice-cifnif');
+        $this->assertEquals($address->ciudad, $dbInvoice->ciudad, 'bad-invoice-ciudad');
         $this->assertEquals($invoice->codigo, $dbInvoice->codigo, 'bad-invoice-codigo');
+        $this->assertEquals($address->codpais, $dbInvoice->codpais, 'bad-invoice-codpais');
+        $this->assertEquals($address->codpostal, $dbInvoice->codpostal, 'bad-invoice-codpostal');
+        $this->assertEquals($address->direccion, $dbInvoice->direccion, 'bad-invoice-direccion');
         $this->assertEquals($neto, $dbInvoice->neto, 'bad-invoice-neto');
         $this->assertEquals($supplier->razonsocial, $dbInvoice->nombre, 'bad-invoice-nombre');
         $this->assertEquals($invoice->numero, $dbInvoice->numero, 'bad-invoice-numero');
         $this->assertEquals(self::INVOICE_REF, $dbInvoice->numproveedor, 'bad-invoice-numproveedor');
         $this->assertEquals(self::INVOICE_NOTES, $dbInvoice->observaciones, 'bad-invoice-notes');
+        $this->assertEquals($address->provincia, $dbInvoice->provincia, 'bad-invoice-provincia');
         $this->assertEquals($invoice->total, $dbInvoice->total, 'bad-invoice-total');
 
         // eliminamos
@@ -608,11 +622,18 @@ final class FacturaProveedorTest extends TestCase
     {
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
+            'apartado' => [10, 11],
             'cifnif' => [30, 31],
+            'ciudad' => [100, 101],
             'codigo' => [20, 21],
             'codigorect' => [20, 21],
+            'codpais' => [20, 21],
+            'codpostal' => [10, 11],
+            'direccion' => [200, 201],
             'nombre' => [100, 101],
+            'numproveedor' => [50, 51],
             'operacion' => [20, 21],
+            'provincia' => [100, 101],
         ];
 
         // creamos un proveedor
@@ -694,6 +715,7 @@ final class FacturaProveedorTest extends TestCase
             // proveedor también a España: mismo país que la empresa -> false
             $address->codpais = 'ESP';
             $this->assertTrue($address->save());
+            $invoice->setSubject($supplier);
             $this->assertFalse($invoice->setIntracomunitaria());
         } finally {
             Vies::simulateViesResponse(null);

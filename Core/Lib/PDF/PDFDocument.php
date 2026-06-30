@@ -86,7 +86,7 @@ abstract class PDFDocument extends PDFCore
      */
     protected function getDocAddress($subject, $model): string
     {
-        if (isset($model->codproveedor)) {
+        if (isset($model->codproveedor) && empty($model->direccion)) {
             $contacto = $subject->getDefaultAddress();
             return $this->combineAddress($contacto);
         }
