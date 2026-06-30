@@ -525,7 +525,7 @@ class Updater extends Controller
     private function updateCore(ZipArchive $zip, string $fileName): bool
     {
         // extract zip content
-        if (false === $zip->extractTo(FS_FOLDER)) {
+        if (false === $zip->extractTo(Tools::folder())) {
             Tools::log()->critical('ZIP EXTRACT ERROR: ' . $fileName);
             $zip->close();
             return false;
