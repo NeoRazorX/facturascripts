@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -107,8 +107,8 @@ class EditGrupoClientes extends EditController
         // filters
         $i18n = Tools::lang();
         $values = [
-            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => $i18n->trans('only-active'), 'where' => [Where::eq('debaja', false)]],
+            ['label' => $i18n->trans('only-suspended'), 'where' => [Where::eq('debaja', true)]],
             ['label' => $i18n->trans('all'), 'where' => []]
         ];
         $this->views[$viewName]->addFilterSelectWhere('status', $values);
@@ -184,12 +184,12 @@ class EditGrupoClientes extends EditController
         $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
         switch ($viewName) {
             case 'ListCliente':
-                $where = [new DataBaseWhere('codgrupo', $codgrupo)];
+                $where = [Where::eq('codgrupo', $codgrupo)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListCliente-new':
-                $where = [new DataBaseWhere('codgrupo', null, 'IS')];
+                $where = [Where::isNull('codgrupo')];
                 $view->loadData('', $where);
                 break;
 

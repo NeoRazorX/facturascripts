@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
@@ -124,7 +124,7 @@ class EditEmpresa extends EditController
             case 'ListEjercicio':
             case 'ListFormaPago':
                 $id = $this->getViewModelValue($this->getMainViewName(), 'idempresa');
-                $where = [new DataBaseWhere('idempresa', $id)];
+                $where = [Where::eq('idempresa', $id)];
                 $view->loadData('', $where);
                 break;
 

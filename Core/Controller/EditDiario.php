@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Where;
 
 /**
  * Controller to edit a single item from the Diario model
@@ -80,7 +80,7 @@ class EditDiario extends EditController
         switch ($viewName) {
             case 'ListAsiento':
                 $id = $this->getViewModelValue($this->getMainViewName(), 'iddiario');
-                $where = [new DataBaseWhere('iddiario', $id)];
+                $where = [Where::eq('iddiario', $id)];
                 $view->loadData('', $where);
                 break;
 

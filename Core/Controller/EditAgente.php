@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Lib\ExtendedController\ListView;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
@@ -44,8 +44,8 @@ class EditAgente extends ComercialContactController
     public function calcAgentInvoicePending(): string
     {
         $where = [
-            new DataBaseWhere('codagente', $this->getViewModelValue($this->getMainViewName(), 'codagente')),
-            new DataBaseWhere('pagada', false)
+            Where::eq('codagente', $this->getViewModelValue($this->getMainViewName(), 'codagente')),
+            Where::eq('pagada', false)
         ];
 
         $totalModel = TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
@@ -157,7 +157,7 @@ class EditAgente extends ComercialContactController
         if ($return && $this->active == 'EditContacto') {
             // update agent data when contact data is updated
             $agente = new Agente();
-            $where = [new DataBaseWhere('idcontacto', $this->views[$this->active]->model->idcontacto)];
+            $where = [Where::eq('idcontacto', $this->views[$this->active]->model->idcontacto)];
             if ($agente->load('', $where)) {
                 $agente->email = $this->views[$this->active]->model->email;
                 $agente->telefono1 = $this->views[$this->active]->model->telefono1;
@@ -186,7 +186,7 @@ class EditAgente extends ComercialContactController
                     $view->setSettings('active', false);
                     break;
                 }
-                $where = [new DataBaseWhere('idcontacto', $idcontacto)];
+                $where = [Where::eq('idcontacto', $idcontacto)];
                 $view->loadData('', $where);
                 $this->loadLanguageValues($viewName);
                 break;
@@ -197,7 +197,7 @@ class EditAgente extends ComercialContactController
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
                 $codagente = $this->getViewModelValue($mvn, 'codagente');
-                $where = [new DataBaseWhere('codagente', $codagente)];
+                $where = [Where::eq('codagente', $codagente)];
                 $view->loadData('', $where);
                 break;
 
@@ -208,7 +208,7 @@ class EditAgente extends ComercialContactController
                     break;
                 }
 
-                $where = [new DataBaseWhere('addressee', $email)];
+                $where = [Where::eq('addressee', $email)];
                 $view->loadData('', $where);
 
                 // añadimos un botón para enviar un nuevo email

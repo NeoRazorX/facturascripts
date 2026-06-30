@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,11 +18,10 @@
  */
 
 namespace FacturaScripts\Core\Controller;
-
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Controller to edit a single item from the Almacen model
@@ -76,11 +75,11 @@ class EditAlmacen extends EditController
             ],
             [
                 'label' => Tools::trans('under-minimums'),
-                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmin', '<', 'AND', true)]
+                'where' => [Where::lt('stocks.disponible', 'field:stockmin')->useField()]
             ],
             [
                 'label' => Tools::trans('excess'),
-                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>', 'AND', true)]
+                'where' => [Where::gt('stocks.disponible', 'field:stockmax')->useField()]
             ]
         ]);
 
@@ -124,7 +123,7 @@ class EditAlmacen extends EditController
         switch ($viewName) {
             case 'ListStock':
                 $code = $this->getViewModelValue($this->getMainViewName(), 'codalmacen');
-                $where = [new DataBaseWhere('stocks.codalmacen', $code)];
+                $where = [Where::eq('stocks.codalmacen', $code)];
                 $view->loadData('', $where);
                 break;
 

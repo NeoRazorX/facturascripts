@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Ejercicios;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 
 /**
@@ -50,7 +50,7 @@ abstract class ComercialContactController extends EditController
     {
         $listView = $this->listView($viewName);
 
-        $where = [new DataBaseWhere('tipodoc', $modelName)];
+        $where = [Where::eq('tipodoc', $modelName)];
         $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
 
         $listView->addFilterPeriod('date', 'period', 'fecha')
@@ -422,7 +422,7 @@ abstract class ComercialContactController extends EditController
 
             case 'ListSubcuenta':
                 $codsubcuenta = $this->getViewModelValue($mvn, 'codsubcuenta');
-                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
+                $where = [Where::eq('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->count > 0);
                 break;
@@ -434,7 +434,7 @@ abstract class ComercialContactController extends EditController
                     break;
                 }
 
-                $where = [new DataBaseWhere('addressee', $email)];
+                $where = [Where::eq('addressee', $email)];
                 $view->loadData('', $where);
 
                 // añadimos un botón para enviar un nuevo email
