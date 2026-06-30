@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,7 +56,7 @@ final class EjercicioTest extends TestCase
         // Obtenemos el ejercicio de la base de datos
         // y comprobamos que se crea abierto
         $ejercicio = new Ejercicio();
-        $ejercicio->loadFromCode($codejercicio);
+        $ejercicio->load($codejercicio);
         $this->assertEquals(Ejercicio::EXERCISE_STATUS_OPEN, $ejercicio->estado);
 
         // Comprobamos que se elimina correctamente
@@ -65,7 +65,7 @@ final class EjercicioTest extends TestCase
         // Obtenemos el ejercicio de la base de datos
         // y comprobamos que ya no existe
         $ejercicio = new Ejercicio();
-        $this->assertFalse($ejercicio->loadFromCode($codejercicio));
+        $this->assertFalse($ejercicio->load($codejercicio));
     }
 
     // Comprobar que no se puede crear un ejercicio con fecha de inicio posterior a la fecha de fin.
@@ -130,10 +130,10 @@ final class EjercicioTest extends TestCase
         $this->assertTrue($ejercicioEmpresa2->save());
 
         $ejercicio = new Ejercicio();
-        $this->assertTrue($ejercicio->loadFromCode($ejercicioEmpresa1->codejercicio));
+        $this->assertTrue($ejercicio->load($ejercicioEmpresa1->codejercicio));
 
         $ejercicio = new Ejercicio();
-        $this->assertTrue($ejercicio->loadFromCode($ejercicioEmpresa2->codejercicio));
+        $this->assertTrue($ejercicio->load($ejercicioEmpresa2->codejercicio));
 
         // Eliminamos
         $this->assertTrue($ejercicioEmpresa1->delete());

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Lib\Accounting\ClosingToAcounting;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -59,7 +59,7 @@ final class EjercicioCierreTest extends TestCase
 
         // obtenemos el almacén por defecto
         $almacen = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $empresa->idempresa)];
+        $where = [Where::eq('idempresa', $empresa->idempresa)];
         $this->assertTrue($almacen->loadWhere($where));
 
         // creamos el ejercicio para 2020
@@ -99,7 +99,7 @@ final class EjercicioCierreTest extends TestCase
         $this->assertFalse($ejercicio->isOpened());
 
         // comprobamos que todas las subcuentas del ejercicio anterior tienen saldo 0
-        $whereExercise = [new DataBaseWhere('codejercicio', $ejercicio->codejercicio)];
+        $whereExercise = [Where::eq('codejercicio', $ejercicio->codejercicio)];
         foreach (Subcuenta::all($whereExercise, [], 0, 0) as $subcuenta) {
             $this->assertEquals(0, $subcuenta->saldo);
         }
@@ -134,7 +134,7 @@ final class EjercicioCierreTest extends TestCase
 
         // obtenemos el almacén por defecto
         $almacen = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $empresa->idempresa)];
+        $where = [Where::eq('idempresa', $empresa->idempresa)];
         $this->assertTrue($almacen->loadWhere($where));
 
         // creamos el ejercicio para 2026
@@ -190,7 +190,7 @@ final class EjercicioCierreTest extends TestCase
 
         // obtenemos el almacén por defecto
         $almacen = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $empresa->idempresa)];
+        $where = [Where::eq('idempresa', $empresa->idempresa)];
         $this->assertTrue($almacen->loadWhere($where));
 
         // creamos el ejercicio para 2019 SIN importar el plan contable
@@ -203,7 +203,7 @@ final class EjercicioCierreTest extends TestCase
         $this->assertTrue($ejercicio->save());
 
         // confirmamos que el ejercicio no tiene subcuentas (sin plan contable)
-        $whereExercise = [new DataBaseWhere('codejercicio', $ejercicio->codejercicio)];
+        $whereExercise = [Where::eq('codejercicio', $ejercicio->codejercicio)];
         $this->assertEquals(0, (new Subcuenta())->count($whereExercise), 'exercise-should-have-no-subaccounts');
 
         // creamos una factura de compra con fecha 04-01-2019 (sin asiento, al no haber plan)

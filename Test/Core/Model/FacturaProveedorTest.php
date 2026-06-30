@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\Calculator;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -480,7 +480,7 @@ final class FacturaProveedorTest extends TestCase
             $this->assertTrue($invoice->save(), 'cant-create-invoice-' . $i);
 
             // recargamos la factura
-            $invoice->loadFromCode($invoice->primaryColumnValue());
+            $invoice->load($invoice->primaryColumnValue());
 
             // comprobamos que el código y número son correctos
             $this->assertEquals($date . '-' . $i, $invoice->codigo, 'bad-invoice-code-' . $i);
@@ -494,7 +494,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertEquals(10, $invoiceModel->count(), 'bad-invoice-count');
 
         // obtenemos el ejercicio de la primera factura
-        $where = [new DataBaseWhere('codserie', $serie->codserie)];
+        $where = [Where::eq('codserie', $serie->codserie)];
         $codejercicio = $invoiceModel->all($where, [], 0, 1)[0]->codejercicio;
 
         // re-numeramos

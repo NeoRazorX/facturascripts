@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,13 +19,13 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\SecuenciaDocumento;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -128,7 +128,7 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertEquals(1, $doc->numero, 'document-not-one');
 
         // comprobamos que se creó la secuencia
-        $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
+        $where = [Where::eq('tipodoc', 'PresupuestoCliente')];
         $sequence->loadWhere($where);
         $this->assertTrue($sequence->exists(), 'document-sequence-not-created');
 
@@ -178,7 +178,7 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertEquals('PRE' . $doc->codejercicio . 'A000031', $doc->codigo, 'document-bad-codigo');
 
         // comprobamos que el siguiente número para la secuencia es 32
-        $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
+        $where = [Where::eq('tipodoc', 'PresupuestoCliente')];
         $sequence->loadWhere($where);
         $this->assertEquals(32, $sequence->numero, 'document-sequence-next-not-thirty-two');
 
@@ -219,7 +219,7 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertEquals(21, $doc->numero, 'document-not-twenty-one');
 
         // comprobamos que el siguiente número para la secuencia es 22
-        $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
+        $where = [Where::eq('tipodoc', 'PresupuestoCliente')];
         $sequence->loadWhere($where);
         $this->assertEquals(22, $sequence->numero, 'document-sequence-next-not-twenty-two');
 
@@ -316,7 +316,7 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertEquals(7, $doc->numero, 'document-not-seven');
 
         // comprobamos que el siguiente número para la secuencia es 8
-        $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
+        $where = [Where::eq('tipodoc', 'PresupuestoCliente')];
         $sequence->loadWhere($where);
         $this->assertEquals(8, $sequence->numero, 'document-sequence-next-not-eight');
 
@@ -699,7 +699,7 @@ final class SecuenciaDocumentoTest extends TestCase
 
     private function deleteSequences(SecuenciaDocumento $sequence): void
     {
-        $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
+        $where = [Where::eq('tipodoc', 'PresupuestoCliente')];
         foreach ($sequence->all($where, [], 0, 0) as $sec) {
             $this->assertTrue($sec->delete(), 'document-sequence-cant-delete');
         }
