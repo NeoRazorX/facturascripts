@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Test\Core;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\WorkEvent;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -262,7 +262,7 @@ final class WorkQueueTest extends TestCase
 
         // comprobamos que el evento se ha guardado como realizado
         $model = new WorkEvent();
-        $where = [new DataBaseWhere('name', 'test-event-worker')];
+        $where = [Where::eq('name', 'test-event-worker')];
         $events = $model->all($where, [], 0, 0);
         $this->assertCount(1, $events);
         $this->assertTrue($events[0]->done);
@@ -299,14 +299,13 @@ final class WorkQueueTest extends TestCase
 
         // comprobamos que se ha guardado el evento
         $event = new WorkEvent();
-        $where = [new DataBaseWhere('name', 'Model.Producto.Save')];
-        $this->assertTrue($event->loadFromCode('', $where));
+        $this->assertTrue($event->loadWhereEq('name', 'Model.Producto.Save'));
 
         // ejecutamos la cola
         $this->assertTrue(WorkQueue::run());
 
         // comprobamos que el evento se ha guardado como realizado
-        $this->assertTrue($event->loadFromCode($event->primaryColumnValue()));
+        $this->assertTrue($event->load($event->primaryColumnValue()));
         $this->assertTrue($event->done);
 
         // comprobamos que se ha actualizado la caché
@@ -317,14 +316,13 @@ final class WorkQueueTest extends TestCase
         $this->assertTrue($producto->delete());
 
         // comprobamos que se ha guardado el evento
-        $where = [new DataBaseWhere('name', 'Model.Producto.Delete')];
-        $this->assertTrue($event->loadFromCode('', $where));
+        $this->assertTrue($event->loadWhereEq('name', 'Model.Producto.Delete'));
 
         // ejecutamos la cola
         $this->assertTrue(WorkQueue::run());
 
         // comprobamos que el evento se ha guardado como realizado
-        $this->assertTrue($event->loadFromCode($event->primaryColumnValue()));
+        $this->assertTrue($event->load($event->primaryColumnValue()));
         $this->assertTrue($event->done);
 
         // comprobamos que se ha actualizado la caché
@@ -347,7 +345,7 @@ final class WorkQueueTest extends TestCase
         $this->assertTrue($event->save());
 
         // recargamos el evento
-        $this->assertTrue($event->loadFromCode($event->primaryColumnValue()));
+        $this->assertTrue($event->load($event->primaryColumnValue()));
 
         // comprobamos que los parámetros son correctos
         $this->assertEquals($params, $event->params());
