@@ -1656,6 +1656,7 @@
     "send-anonymous-data": "Enviar datos anónimos",
     "send-audios": "Enviar audios",
     "send-code-totp": "Enviar código TOTP",
+    "send-crash-file-error": "Error al enviar el archivo de error %file%.",
     "send-documents": "Enviar documentos",
     "send-images": "Enviar imágenes",
     "send-invoices": "Enviar facturas",

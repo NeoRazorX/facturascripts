@@ -192,9 +192,8 @@ class Updater extends Controller
                 Tools::log()->error('send-crash-file-error', ['%file%' => basename($file)]);
                 return;
             }
-            else {
-                unlink($file);
-            }
+
+            unlink($file);
         }
 
         Tools::log()->notice('crash-files-sent');
