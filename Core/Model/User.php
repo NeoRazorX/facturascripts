@@ -56,7 +56,7 @@ class User extends ModelClass
     /** @var string */
     public $codagente;
 
-    /** @var string */
+    /** @var string|null */
     public $codalmacen;
 
     /** @var string */
@@ -192,10 +192,10 @@ class User extends ModelClass
     {
         parent::clear();
         $this->admin = false;
-        $this->codalmacen = Tools::settings('default', 'codalmacen');
+        $this->codalmacen = null;
         $this->creationdate = Tools::date();
         $this->enabled = true;
-        $this->idempresa = Tools::settings('default', 'idempresa', 1);
+        $this->idempresa = null;
         $this->langcode = Tools::config('lang');
         $this->level = self::DEFAULT_LEVEL;
         $this->two_factor_enabled = false;
@@ -527,16 +527,19 @@ class User extends ModelClass
 
     protected function testWarehouse(): bool
     {
-        if (empty($this->codalmacen)) {
-            $this->codalmacen = Tools::settings('default', 'codalmacen');
-            $this->idempresa = Tools::settings('default', 'idempresa');
+        // empresa y almacén son opcionales: si falta alguno, se dejan vacíos y los
+        // documentos usarán los valores por defecto del panel de control
+        if (empty($this->codalmacen) || empty($this->idempresa)) {
+            $this->codalmacen = null;
+            $this->idempresa = null;
             return true;
         }
 
+        // si se indica almacén, debe existir y pertenecer a la empresa indicada
         $warehouse = new Almacen();
         if (false === $warehouse->load($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
-            $this->codalmacen = Tools::settings('default', 'codalmacen');
-            $this->idempresa = Tools::settings('default', 'idempresa');
+            $this->codalmacen = null;
+            $this->idempresa = null;
         }
 
         return true;
