@@ -291,14 +291,16 @@ class AttachedFile extends ModelClass
             return false;
         }
 
+        // nombre con el que se guarda en disco: {idfile}_{slug}.{ext}
+        $storedName = $this->buildStoredName();
         if (
             empty($this->path) ||
-            false === rename($currentPath, $newFolderPath . '/' . $this->idfile . '.' . $this->getExtension())
+            false === rename($currentPath, $newFolderPath . '/' . $storedName)
         ) {
             return false;
         }
 
-        $this->path = $newFolder . '/' . $this->idfile . '.' . $this->getExtension();
+        $this->path = $newFolder . '/' . $storedName;
         $info = new finfo();
         $this->mimetype = $info->file($this->getFullPath(), FILEINFO_MIME_TYPE);
         if (strlen($this->mimetype) > 100) {
@@ -312,6 +314,19 @@ class AttachedFile extends ModelClass
         $this->size = filesize($this->getFullPath());
 
         return true;
+    }
+
+    /**
+     * Construye el nombre con el que se guarda el archivo en disco, conservando parte del
+     * nombre original como slug tras el identificador: {idfile}_{slug}.{ext}. El idfile va
+     * primero para garantizar un nombre único aunque el slug se repita o quede vacío.
+     */
+    protected function buildStoredName(): string
+    {
+        $extension = $this->getExtension();
+        $slug = Tools::slug(pathinfo($this->filename, PATHINFO_FILENAME), '_', static::MAX_FILENAME_LEN);
+        $base = empty($slug) ? (string)$this->idfile : $this->idfile . '_' . $slug;
+        return empty($extension) ? $base : $base . '.' . $extension;
     }
 
     /**
