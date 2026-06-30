@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use finfo;
 
 /**
@@ -79,7 +79,7 @@ class AttachedFile extends ModelClass
         }
 
         // eliminamos las relaciones con los productos
-        $where = [new DataBaseWhere('idfile', $this->idfile)];
+        $where = [Where::eq('idfile', $this->idfile)];
         foreach (ProductoImagen::all($where, [], 0, 0) as $productoImage) {
             $productoImage->delete();
         }

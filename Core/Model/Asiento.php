@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Diario as DinDiario;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Partida as DinPartida;
@@ -208,7 +208,7 @@ class Asiento extends ModelClass
     public function getLines(): array
     {
         $partida = new DinPartida();
-        $where = [new DataBaseWhere('idasiento', $this->idasiento)];
+        $where = [Where::eq('idasiento', $this->idasiento)];
         return $partida->all($where, ['orden' => 'DESC', 'codsubcuenta' => 'ASC'], 0, 0);
     }
 
@@ -274,7 +274,7 @@ class Asiento extends ModelClass
     public function newCode(string $field = '', array $where = [])
     {
         if ($field !== $this->primaryColumn()) {
-            $where[] = new DataBaseWhere('codejercicio', $this->codejercicio);
+            $where[] = Where::eq('codejercicio', $this->codejercicio);
         }
         return parent::newCode($field, $where);
     }
