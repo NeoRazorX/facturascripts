@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,6 +36,8 @@ trait ListBusinessActionTrait
     abstract public function addButton(string $viewName, array $btnArray);
 
     abstract public function redirect(string $url, int $delay = 0);
+
+    abstract protected function checkOwnerData($model): bool;
 
     abstract protected function validateFormToken(): bool;
 
@@ -86,9 +88,9 @@ trait ListBusinessActionTrait
             new DataBaseWhere('total', 0, '!=')
         ];
 
-        if (false === empty($code) && property_exists($model, 'codcliente')) {
+        if (false === empty($code) && $model->hasColumn('codcliente')) {
             $where[] = new DataBaseWhere('codcliente', $code);
-        } elseif (false === empty($code) && property_exists($model, 'codproveedor')) {
+        } elseif (false === empty($code) && $model->hasColumn('codproveedor')) {
             $where[] = new DataBaseWhere('codproveedor', $code);
         }
 
@@ -202,7 +204,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
@@ -213,6 +215,12 @@ trait ListBusinessActionTrait
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
                 Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            // ¿el usuario puede modificar este documento?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
                 continue;
             }
 
@@ -262,6 +270,11 @@ trait ListBusinessActionTrait
                 continue;
             }
 
+            // ¿el usuario puede generar el asiento de esta factura ajena?
+            if (false === $this->checkOwnerData($invoice)) {
+                continue;
+            }
+
             $generator = new InvoiceToAccounting();
             $generator->generate($invoice);
             if (empty($invoice->idasiento)) {
@@ -293,6 +306,16 @@ trait ListBusinessActionTrait
     protected function groupDocumentAction($codes, $model): bool
     {
         if (!empty($codes) && $model) {
+            // comprobamos la propiedad de cada documento antes de pasarlos al stitcher
+            foreach ($codes as $code) {
+                if ($model->loadFromCode($code) && false === $this->checkOwnerData($model)) {
+                    Tools::log()->warning('not-allowed-modify');
+                    $model->clear();
+                    return true;
+                }
+            }
+            $model->clear();
+
             $codes = implode(',', $codes);
             $url = 'DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $codes;
             $this->redirect($url);
@@ -318,7 +341,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
@@ -329,6 +352,12 @@ trait ListBusinessActionTrait
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
                 Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            // ¿el usuario puede modificar este documento?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
                 continue;
             }
 
@@ -389,6 +418,12 @@ trait ListBusinessActionTrait
                 continue;
             }
 
+            // ¿el usuario puede modificar este documento?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
+                continue;
+            }
+
             foreach ($model->getReceipts() as $receipt) {
                 if ($receipt->pagado) {
                     continue;
@@ -425,7 +460,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
@@ -436,6 +471,12 @@ trait ListBusinessActionTrait
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
                 Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            // ¿el usuario puede modificar este recibo?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
                 continue;
             }
 

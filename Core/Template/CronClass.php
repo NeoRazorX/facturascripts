@@ -47,6 +47,9 @@ abstract class CronClass
             $job->pluginname = $this->pluginName;
         }
 
+        // si es un proceso zombie, lo liberamos
+        $job->releaseIfStale();
+
         return $job;
     }
 }

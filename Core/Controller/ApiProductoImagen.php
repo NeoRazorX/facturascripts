@@ -31,41 +31,6 @@ class ApiProductoImagen extends ApiController
     /** @var ProductoImagen */
     protected $model;
 
-    protected function runResource(): void
-    {
-        $this->model = new ProductoImagen();
-
-        try {
-            switch ($this->request->method()) {
-                case 'DELETE':
-                    $this->doDELETE();
-                    break;
-
-                case 'GET':
-                    $this->doGET();
-                    break;
-
-                case 'PATCH':
-                case 'PUT':
-                    $this->doPUT();
-                    break;
-
-                case 'POST':
-                    $this->doPOST();
-                    break;
-            }
-        } catch (Exception $exc) {
-            $this->setError('API-ERROR: ' . $exc->getMessage(), null, Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
-        $this->response
-            ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
-            ->json([
-                'status' => 'error',
-                'message' => 'method-not-allowed',
-            ]);
-    }
-
     public function doDELETE(): void
     {
         if (empty($this->getUriParam(3)) || false === $this->model->load($this->getUriParam(3))) {
@@ -112,6 +77,7 @@ class ApiProductoImagen extends ApiController
         $data = $this->model->toArray();
         $data['download'] = $this->model->url('download');
         $data['download-permanent'] = $this->model->url('download-permanent');
+        $data['thumbnails'] = $this->buildThumbnails($this->model);
         $this->returnResult($data);
     }
 
@@ -171,6 +137,24 @@ class ApiProductoImagen extends ApiController
         }
 
         $this->saveResource();
+    }
+
+    private function buildThumbnails(ProductoImagen $item): array
+    {
+        // solo trabajamos con archivos de tipo imagen
+        if (false === $item->getFile()->isImage()) {
+            return [];
+        }
+
+        // si se reciben medidas, generamos (o reutilizamos) esa miniatura
+        $width = $this->request->query->getInt('width', 0);
+        $height = $this->request->query->getInt('height', 0);
+        if ($width > 0 || $height > 0) {
+            $item->getThumbnail($width ?: 100, $height ?: 100);
+        }
+
+        // devolvemos todas las miniaturas existentes del archivo
+        return $item->getThumbnails();
     }
 
     private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
@@ -263,6 +247,7 @@ class ApiProductoImagen extends ApiController
             $raw = $item->toArray();
             $raw['download'] = $item->url('download');
             $raw['download-permanent'] = $item->url('download-permanent');
+            $raw['thumbnails'] = $this->buildThumbnails($item);
             $data[] = $raw;
         }
 
@@ -278,6 +263,41 @@ class ApiProductoImagen extends ApiController
         $this->response
             ->setHttpCode(Response::HTTP_OK)
             ->json($data);
+    }
+
+    protected function runResource(): void
+    {
+        $this->model = new ProductoImagen();
+
+        try {
+            switch ($this->request->method()) {
+                case 'DELETE':
+                    $this->doDELETE();
+                    break;
+
+                case 'GET':
+                    $this->doGET();
+                    break;
+
+                case 'PATCH':
+                case 'PUT':
+                    $this->doPUT();
+                    break;
+
+                case 'POST':
+                    $this->doPOST();
+                    break;
+            }
+        } catch (Exception $exc) {
+            $this->setError('API-ERROR: ' . $exc->getMessage(), null, Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $this->response
+            ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+            ->json([
+                'status' => 'error',
+                'message' => 'method-not-allowed',
+            ]);
     }
 
     private function saveResource(): void

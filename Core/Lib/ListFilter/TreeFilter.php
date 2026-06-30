@@ -22,7 +22,7 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Where;
 
 /**
  * Filter all records that match the search term and its children.
@@ -80,7 +80,7 @@ class TreeFilter extends SelectFilter
 
         if ('' !== $this->value && null !== $this->value) {
             $ids = $this->getIds();
-            $where[] = new DataBaseWhere($this->field, implode(',', $ids), 'IN');
+            $where[] = Where::in($this->field, $ids);
             return true;
         }
 
@@ -120,10 +120,10 @@ class TreeFilter extends SelectFilter
 
         // aplicar where
         if (!empty($this->where)) {
-            if (isset($this->where[0]) && $this->where[0] instanceof DataBaseWhere) {
-                $sql .= DataBaseWhere::getSQLWhere($this->where);
-            } else {
+            if (isset($this->where[0]) && is_string($this->where[0])) {
                 $sql .= ' WHERE ' . implode(' AND ', $this->where);
+            } else {
+                $sql .= Where::multiSqlLegacy($this->where);
             }
         }
         $sql .= " ORDER BY " . $this->fieldtitle;

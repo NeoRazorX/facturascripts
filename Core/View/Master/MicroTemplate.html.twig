@@ -57,6 +57,10 @@
         {% for js in assetManager.get('js') %}
             <script src="{{ js }}"></script>
         {% endfor %}
+        {# Adds custom JS module assets #}
+        {% for mjs in assetManager.get('mjs') %}
+            <script type="module" src="{{ mjs }}"></script>
+        {% endfor %}
         {% if debugBarRender %}
             {{ debugBarRender.renderHead() | raw }}
         {% endif %}

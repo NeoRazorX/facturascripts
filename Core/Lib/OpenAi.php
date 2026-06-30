@@ -185,7 +185,7 @@ class OpenAi
     /**
      * Envía una conversación al modelo de chat y devuelve la respuesta como texto.
      */
-    public function chat(array $messages, string $user = '', string $model = 'gpt-5-mini'): string
+    public function chat(array $messages, string $user = '', string $model = 'gpt-5.4-mini'): string
     {
         $params = new stdClass();
         $params->model = $model;
@@ -220,7 +220,7 @@ class OpenAi
     /**
      * Envía una conversación al modelo de chat forzando un formato de respuesta y la devuelve como array.
      */
-    public function chatJson(array $messages, array $response_format, string $user = '', string $model = 'gpt-5-mini'): array
+    public function chatJson(array $messages, array $response_format, string $user = '', string $model = 'gpt-5.4-mini'): array
     {
         $params = new stdClass();
         $params->model = $model;

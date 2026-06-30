@@ -86,11 +86,8 @@ class ListProveedor extends ListController
 
         $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', Paises::codeModel());
 
-        $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
-        $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
-
-        $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
-        $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
+        $this->addFilterSelectAuto($viewName, 'provincia', 'province', 'provincia', 'contactos');
+        $this->addFilterSelectAuto($viewName, 'ciudad', 'city', 'ciudad', 'contactos');
 
         $this->addFilterAutocomplete($viewName, 'codpostal', 'zip-code', 'codpostal', 'contactos', 'codpostal');
 

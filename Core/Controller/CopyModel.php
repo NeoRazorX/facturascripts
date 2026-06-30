@@ -22,10 +22,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Lib\ExtendedController\OwnerDataTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -40,6 +42,8 @@ use FacturaScripts\Dinamic\Model\User;
  */
 class CopyModel extends Controller
 {
+    use OwnerDataTrait;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const TEMPLATE_ASIENTO = 'CopyAsiento';
     const TEMPLATE_PRODUCTO = 'CopyProducto';
@@ -47,7 +51,7 @@ class CopyModel extends Controller
     /** @var CodeModel */
     public $codeModel;
 
-    /** @var object */
+    /** @var ModelClass */
     public $model;
 
     /** @var string */
@@ -91,6 +95,10 @@ class CopyModel extends Controller
             return;
         } elseif (false === $this->loadModel()) {
             Tools::log()->warning('record-not-found');
+            return;
+        } elseif (false === $this->checkOwnerData($this->model)) {
+            // no permitimos copiar registros ajenos
+            Tools::log()->warning('access-denied');
             return;
         }
 
@@ -180,7 +188,7 @@ class CopyModel extends Controller
 
         $className = self::MODEL_NAMESPACE . $this->modelClass;
         $this->model = new $className();
-        return $this->model->loadFromCode($this->modelCode);
+        return $this->model->load($this->modelCode);
     }
 
     protected function saveDocumentEnd(BusinessDocument $newDoc): void

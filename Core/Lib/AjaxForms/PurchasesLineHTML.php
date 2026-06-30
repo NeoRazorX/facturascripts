@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Contract\PurchasesLineModInterface;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
@@ -248,7 +248,7 @@ class PurchasesLineHTML
         }
 
         // buscamos el código de barras en las variantes
-        $whereBarcode = [new DataBaseWhere('codbarras', $formData['fastli'])];
+        $whereBarcode = [Where::eq('codbarras', $formData['fastli'])];
         foreach (Variante::all($whereBarcode, [], 0, 5) as $variante) {
             // comprobamos que el producto se puede comprar
             $product = $variante->getProducto();

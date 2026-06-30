@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ListFilter;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Where;
 
 /**
  * Description of CheckboxFilter
@@ -29,7 +29,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 class CheckboxFilter extends BaseFilter
 {
     /**
-     * @var DataBaseWhere[]
+     * @var Where[]
      */
     public $default;
 
@@ -56,7 +56,7 @@ class CheckboxFilter extends BaseFilter
     public function getDataBaseWhere(array &$where): bool
     {
         if ('TRUE' === $this->value) {
-            $where[] = new DataBaseWhere($this->field, $this->matchValue, $this->operation, 'AND', true);
+            $where[] = Where::column($this->field, $this->matchValue, $this->operation)->useField();
             return true;
         }
 
