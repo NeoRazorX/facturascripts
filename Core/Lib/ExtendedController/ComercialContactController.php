@@ -154,7 +154,7 @@ abstract class ComercialContactController extends EditController
     {
         $model = $this->getModel();
         $code = $this->request->input('code');
-        if (false === $model->loadFromCode($code)) {
+        if (false === $model->load($code)) {
             return true;
         }
 

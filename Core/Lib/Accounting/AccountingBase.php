@@ -84,7 +84,7 @@ abstract class AccountingBase
      */
     public function setExercise($code)
     {
-        $this->exercise->loadFromCode($code);
+        $this->exercise->load($code);
     }
 
     /**

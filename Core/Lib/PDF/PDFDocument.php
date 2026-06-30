@@ -535,7 +535,7 @@ abstract class PDFDocument extends PDFCore
         ];
         if (isset($model->codigorect) && !empty($model->codigorect)) {
             $original = new $model();
-            if ($original->loadFromCode('', [Where::eq('codigo', $model->codigorect)])) {
+            if ($original->loadWhereEq('codigo', $model->codigorect)) {
                 $tableData[3] = [
                     'key' => $this->i18n->trans('original'),
                     'value' => $model->codigorect . ', ' . $original->fecha

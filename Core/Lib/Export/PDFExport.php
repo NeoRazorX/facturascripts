@@ -235,7 +235,7 @@ class PDFExport extends PDFDocument
 
         if (!empty($idformat)) {
             $this->format = new FormatoDocumento();
-            $this->format->loadFromCode($idformat);
+            $this->format->load($idformat);
         }
 
         if (!empty($langcode)) {
