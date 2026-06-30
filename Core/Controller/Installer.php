@@ -50,6 +50,9 @@ class Installer implements ControllerInterface
     /** @var string */
     public $db_user;
 
+    /** @var bool */
+    public $debug;
+
     /** @var string */
     public $initial_pass;
 
@@ -84,14 +87,18 @@ class Installer implements ControllerInterface
 
     public function run(): void
     {
-        $this->db_host = strtolower(trim($this->request->input('fs_db_host', 'localhost')));
-        $this->db_name = trim($this->request->input('fs_db_name', 'facturascripts'));
-        $this->db_pass = $this->request->input('fs_db_pass', '');
-        $this->db_port = (int)$this->request->input('fs_db_port', 3306);
-        $this->db_type = $this->request->input('fs_db_type', 'mysql');
-        $this->db_user = trim($this->request->input('fs_db_user', 'root'));
-        $this->initial_user = trim($this->request->input('fs_initial_user', ''));
-        $this->initial_pass = $this->request->input('fs_initial_pass', '');
+        $this->db_host = strtolower(trim($this->request->input('fs_db_host', Tools::env('FS_DB_HOST', 'localhost'))));
+        $this->db_name = trim($this->request->input('fs_db_name', Tools::env('FS_DB_NAME', 'facturascripts')));
+        $this->db_pass = $this->request->input('fs_db_pass', Tools::env('FS_DB_PASS', ''));
+        $this->db_port = (int)$this->request->input('fs_db_port', Tools::env('FS_DB_PORT', 3306));
+        $this->db_type = $this->request->input('fs_db_type', Tools::env('FS_DB_TYPE', 'mysql'));
+        $this->db_user = trim($this->request->input('fs_db_user', Tools::env('FS_DB_USER', 'root')));
+        $this->initial_user = trim($this->request->input('fs_initial_user', Tools::env('FS_INITIAL_USER', '')));
+        $this->initial_pass = $this->request->input('fs_initial_pass', Tools::env('FS_INITIAL_PASS', ''));
+        $this->debug = filter_var(
+            $this->request->input('fs_debug', Tools::env('FS_DEBUG', 'false')),
+            FILTER_VALIDATE_BOOLEAN
+        );
 
         $installed = $this->searchErrors() &&
             $this->request->method() === 'POST' &&
@@ -249,7 +256,7 @@ class Installer implements ControllerInterface
         }
 
         $fields = [
-            'lang' => 'es_ES',
+            'lang' => Tools::env('FS_LANG', 'es_ES'),
             'timezone' => 'Europe/Madrid',
             'hidden_plugins' => ''
         ];
@@ -257,23 +264,22 @@ class Installer implements ControllerInterface
             fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->input('fs_' . $field, $default) . "');\n");
         }
 
-        $booleanFields = ['debug', 'disable_add_plugins', 'disable_rm_plugins'];
+        $booleanFields = ['disable_add_plugins', 'disable_rm_plugins'];
         foreach ($booleanFields as $field) {
             fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->input('fs_' . $field, 'false') . ");\n");
         }
+        fwrite($file, "define('FS_DEBUG', " . ($this->debug ? 'true' : 'false') . ");\n");
 
         if ($this->request->input('fs_gtm', false)) {
             fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
         }
 
-        $initialUser = $this->request->input('fs_initial_user', '');
-        if (!empty($initialUser)) {
-            fwrite($file, "define('FS_INITIAL_USER', '" . $initialUser . "');\n");
+        if (!empty($this->initial_user)) {
+            fwrite($file, "define('FS_INITIAL_USER', '" . $this->initial_user . "');\n");
         }
 
-        $initialPass = $this->request->input('fs_initial_pass', '');
-        if (!empty($initialPass)) {
-            fwrite($file, "define('FS_INITIAL_PASS', '" . $initialPass . "');\n");
+        if (!empty($this->initial_pass)) {
+            fwrite($file, "define('FS_INITIAL_PASS', '" . $this->initial_pass . "');\n");
         }
 
         fclose($file);
