@@ -228,8 +228,8 @@ class Controller implements ControllerInterface
             throw new KernelException('AccessDenied', Tools::lang()->trans('access-denied'));
         }
 
-        // Seleccionamos la empresa del usuario o la predeterminada si no tiene ninguna asignada
-        $this->empresa = Empresas::get($this->user->idempresa ?? Tools::settings('default', 'idempresa'));
+        // Si el usuario tiene asignada una empresa distinta a la predeterminada, la seleccionamos
+        $this->setCompany($this->user->idempresa);
 
         // Añadimos el usuario a la semilla de generación del token
         $this->multiRequestProtection->addSeed($user->nick);
@@ -246,6 +246,20 @@ class Controller implements ControllerInterface
             $this->response->cookie('fsHomepage', $this->user->homepage, $cookiesExpire);
             $this->user->save();
         }
+    }
+
+    /**
+     * Selecciona la empresa indicada, salvo que esté vacía o ya sea la cargada.
+     *
+     * @param int|null $idempresa
+     */
+    protected function setCompany($idempresa): void
+    {
+        if (empty($idempresa) || $this->empresa->idempresa == $idempresa) {
+            return;
+        }
+
+        $this->empresa = Empresas::get($idempresa);
     }
 
     /**
