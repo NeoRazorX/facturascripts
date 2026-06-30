@@ -230,6 +230,46 @@
             </div>
         </div>
     </div>
+    {% if fsc.hasErrorFiles() %}
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <hr/>
+                    <div class="card shadow-sm mt-4 mb-4">
+                        <div class="card-body">
+                            <h5>
+                                <i class="fa-solid fa-bug text-warning me-2" aria-hidden="true"></i>
+                                {{ trans('crash-files-found') }}
+                            </h5>
+                            <p class="card-text">{{ trans('crash-files-p') }}</p>
+                        </div>
+                        <div class="card-footer p-2">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                                        {{ formToken() }}
+                                        <input type="hidden" name="action" value="delete-crash-files"/>
+                                        <button type="submit" class="btn btn-sm btn-danger btn-spin-action w-100">
+                                            <i class="fa-solid fa-trash fa-fw me-1" aria-hidden="true"></i>{{ trans('delete') }}
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col-6">
+                                    <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                                        {{ formToken() }}
+                                        <input type="hidden" name="action" value="send-crash-files"/>
+                                        <button type="submit" class="btn btn-sm btn-success btn-spin-action w-100">
+                                            <i class="fa-solid fa-paper-plane fa-fw me-1" aria-hidden="true"></i>{{ trans('send') }}
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
     {% if fsc.coreUpdateWarnings %}
         <div class="modal fade" id="coreWarningModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
