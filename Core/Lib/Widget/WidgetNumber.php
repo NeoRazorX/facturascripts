@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -129,7 +129,15 @@ class WidgetNumber extends BaseWidget
     protected function setValue($model)
     {
         parent::setValue($model);
-        if (null === $this->value && $this->required && $this->min !== '') {
+
+        // solo asignamos un valor por defecto cuando el campo es obligatorio y está vacío
+        if (null !== $this->value || false === $this->required) {
+            return;
+        }
+
+        // si hay un mínimo definido lo usamos; si no, dejamos el valor vacío
+        // para que la validación required de HTML5 obligue a rellenar el campo
+        if ($this->min !== '') {
             $this->value = (float)$this->min;
         }
     }
