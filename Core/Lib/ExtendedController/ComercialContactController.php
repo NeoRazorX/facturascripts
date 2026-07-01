@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Ejercicios;
@@ -102,8 +103,7 @@ abstract class ComercialContactController extends EditController
         // filtros de dirección (solo en documentos que tienen estas columnas, p.ej. los de venta)
         $model = $listView->model;
         if ($model->hasColumn('codtrans')) {
-            $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
-            $listView->addFilterSelect('codtrans', 'carrier', 'codtrans', $carriers);
+            $listView->addFilterSelect('codtrans', 'carrier', 'codtrans', AgenciasTransporte::codeModel());
         }
         if ($model->hasColumn('codpais')) {
             $listView->addFilterSelect('country', 'country', 'codpais', Paises::codeModel());

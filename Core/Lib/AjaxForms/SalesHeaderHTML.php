@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Contract\SalesModInterface;
+use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Provincias;
@@ -329,7 +330,7 @@ class SalesHeaderHTML
     {
         $options = ['<option value="">------</option>'];
         $agenciaTransporte = new AgenciaTransporte();
-        foreach ($agenciaTransporte->all() as $agencia) {
+        foreach (AgenciasTransporte::all() as $agencia) {
             $options[] = ($agencia->codtrans === $model->codtrans) ?
                 '<option value="' . $agencia->codtrans . '" selected>' . $agencia->nombre . '</option>' :
                 '<option value="' . $agencia->codtrans . '">' . $agencia->nombre . '</option>';

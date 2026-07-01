@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
@@ -229,8 +230,7 @@ abstract class ListBusinessDocument extends ListController
             }
         }
 
-        $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
-        $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
+        $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', AgenciasTransporte::codeModel());
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
 
         // asignamos los colores
