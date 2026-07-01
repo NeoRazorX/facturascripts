@@ -59,8 +59,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterNumber($viewName, 'min-total', 'total', 'total', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'total', 'total', '<=');
 
-        $where = [new DataBaseWhere('tipodoc', $modelName)];
-        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $statusValues = EstadosDocumentos::codeModelByTipoDoc($modelName);
         $this->addFilterSelect($viewName, 'idestado', 'state', 'idestado', $statusValues);
 
         if ($this->permissions->onlyOwnerData === false) {
