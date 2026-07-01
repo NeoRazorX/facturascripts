@@ -182,6 +182,11 @@ class CodeModel
             return new static();
         }
 
+        // sin código no hay nada que buscar (WHERE campo = NULL nunca casa)
+        if ($code === null || $code === '') {
+            return new static();
+        }
+
         // validamos los nombres de campos para evitar SQL injection
         if (false === self::isValidFieldName($fieldCode)) {
             Tools::log()->error('invalid-field-name: ' . $fieldCode);
