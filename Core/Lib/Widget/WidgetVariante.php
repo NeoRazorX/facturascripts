@@ -25,6 +25,7 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\Join\VarianteProducto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Variante;
@@ -198,13 +199,27 @@ class WidgetVariante extends WidgetText
             '<option value="">------</option>',
         ];
 
-        foreach (Familias::all() as $item) {
-            $options[] = '<option value="' . $this->escapeHtml($item->codfamilia) . '">' . $this->escapeHtml($item->descripcion) . '</option>';
+        foreach (Familias::children() as $item) {
+            $options[] = $this->familyOption($item);
         }
 
         return '<select class="form-select mb-2" id="modal_' . $this->id . '_fam" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
             . implode('', $options)
             . '</select>';
+    }
+
+    private function familyOption(Familia $family, int $level = 0): string
+    {
+        $prefix = $level > 0 ? str_repeat('-', $level) . ' ' : '';
+        $html = '<option value="' . $this->escapeHtml($family->codfamilia) . '">'
+            . $prefix . $this->escapeHtml($family->descripcion) . '</option>';
+
+        // añadimos las subfamilias de forma recursiva
+        foreach (Familias::children($family->codfamilia) as $child) {
+            $html .= $this->familyOption($child, $level + 1);
+        }
+
+        return $html;
     }
 
     protected function renderManufacturerFilter(): string
