@@ -21,13 +21,13 @@ namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Contract\PurchasesModInterface;
 use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\DataSrc\Provincias;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Proveedor;
-use FacturaScripts\Dinamic\Model\Provincia;
 
 /**
  * Description of PurchasesHeaderHTML
@@ -326,7 +326,7 @@ class PurchasesHeaderHTML
             $list = 'list="purchases-provincias"';
             $dataList = '<datalist id="purchases-provincias">';
 
-            foreach (Provincia::all([], ['provincia' => 'ASC'], 0, 0) as $provincia) {
+            foreach (Provincias::all() as $provincia) {
                 $dataList .= '<option value="' . Tools::noHtml($provincia->provincia) . '">' . Tools::noHtml($provincia->provincia) . '</option>';
             }
             $dataList .= '</datalist>';
