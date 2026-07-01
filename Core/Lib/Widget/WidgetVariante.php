@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\DataSrc\Fabricantes;
+use FacturaScripts\Core\DataSrc\Familias;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
-use FacturaScripts\Dinamic\Model\Fabricante;
-use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\Join\VarianteProducto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Variante;
@@ -198,7 +198,7 @@ class WidgetVariante extends WidgetText
             '<option value="">------</option>',
         ];
 
-        foreach (Familia::all([], ['descripcion' => 'ASC']) as $item) {
+        foreach (Familias::all() as $item) {
             $options[] = '<option value="' . $this->escapeHtml($item->codfamilia) . '">' . $this->escapeHtml($item->descripcion) . '</option>';
         }
 
@@ -214,7 +214,7 @@ class WidgetVariante extends WidgetText
             '<option value="">------</option>',
         ];
 
-        foreach (Fabricante::all([], ['nombre' => 'ASC']) as $item) {
+        foreach (Fabricantes::all() as $item) {
             $options[] = '<option value="' . $this->escapeHtml($item->codfabricante) . '">' . $this->escapeHtml($item->nombre) . '</option>';
         }
 
