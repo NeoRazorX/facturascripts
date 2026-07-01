@@ -59,12 +59,16 @@ class AttachedFile extends ModelClass
     public $path;
 
     /** @var int */
+    public $downloads;
+
+    /** @var int */
     public $size;
 
     public function clear(): void
     {
         parent::clear();
         $this->date = Tools::date();
+        $this->downloads = 0;
         $this->hour = Tools::hour();
         $this->size = 0;
     }
