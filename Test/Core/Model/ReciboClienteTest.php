@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ReceiptGenerator;
 use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\ReciboCliente;
@@ -460,6 +461,56 @@ final class ReciboClienteTest extends TestCase
 
         // comprobamos que el pago tiene un asiento
         $this->assertNotEmpty($payments[0]->idasiento, 'payment-should-have-accounting-entry');
+
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testPayReceiptWithBankFeesAccounting(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // obtenemos el recibo impagado
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+
+        // marcamos el recibo como pagado con gastos bancarios
+        $receipts[0]->gastos = 10.0;
+        $receipts[0]->pagado = true;
+        $this->assertTrue($receipts[0]->save(), 'can-not-set-paid-receipt');
+
+        // obtenemos el pago y comprobamos que arrastra los gastos y tiene asiento
+        $payments = $receipts[0]->getPayments();
+        $this->assertCount(1, $payments, 'should-have-one-payment');
+        $this->assertEqualsWithDelta(10.0, $payments[0]->gastos, 0.001, 'bad-payment-expenses');
+        $this->assertNotEmpty($payments[0]->idasiento, 'payment-should-have-accounting-entry');
+
+        // cargamos el asiento del pago
+        $entry = new Asiento();
+        $this->assertTrue($entry->load($payments[0]->idasiento), 'can-not-load-accounting-entry');
+
+        // el asiento debe estar cuadrado
+        $this->assertTrue($entry->isBalanced(), 'accounting-entry-not-balanced');
+
+        // los gastos bancarios no deben inflar los totales: el movimiento del asiento
+        // (debe = haber) debe coincidir con el importe del recibo, no con importe + gastos
+        $debe = 0.0;
+        $haber = 0.0;
+        foreach ($entry->getLines() as $line) {
+            $debe += $line->debe;
+            $haber += $line->haber;
+        }
+        $this->assertEqualsWithDelta($receipts[0]->importe, $debe, 0.001, 'bad-accounting-entry-debit');
+        $this->assertEqualsWithDelta($receipts[0]->importe, $haber, 0.001, 'bad-accounting-entry-credit');
 
         // obtenemos el subject
         $subject = $invoice->getSubject();
