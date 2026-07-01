@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Familias;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -117,6 +118,12 @@ class Familia extends ModelClass
     {
         parent::clear();
         $this->numproductos = 0;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Familias::clear();
     }
 
     /**
