@@ -205,10 +205,17 @@ class CodeModel
                 && $model->modelClassName() === self::modelBaseName($tableName)
             ) {
                 $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
-                if ($model->loadWhereEq($field, $code)) {
-                    return new static(['code' => $model->{$field}, 'description' => $model->primaryDescription()]);
-                }
-                return new static();
+
+                // cacheamos con clave prefijada por la tabla real del modelo, para
+                // que clearCache() (deleteMulti 'table-<tabla>-') la purgue al cambiar
+                $cacheKey = 'table-' . $model::tableName() . '-codemodel-' . md5($field . '|' . $code);
+                $data = Cache::remember($cacheKey, function () use ($model, $field, $code) {
+                    return $model->loadWhereEq($field, $code) ?
+                        ['code' => $model->{$field}, 'description' => $model->primaryDescription()] :
+                        [];
+                });
+
+                return empty($data) ? new static() : new static($data);
             }
             if ($model instanceof JoinModel) {
                 if (empty($fieldCode)) {
