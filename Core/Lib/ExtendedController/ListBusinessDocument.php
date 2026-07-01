@@ -30,6 +30,7 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\GruposClientes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
@@ -63,7 +64,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterSelect($viewName, 'idestado', 'state', 'idestado', $statusValues);
 
         if ($this->permissions->onlyOwnerData === false) {
-            $users = $this->codeModel->all('users', 'nick', 'nick');
+            $users = Users::codeModel();
             if (count($users) > 1) {
                 $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
             }

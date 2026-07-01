@@ -27,6 +27,7 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
@@ -60,7 +61,7 @@ abstract class ComercialContactController extends EditController
             ->addFilterSelect('idestado', 'state', 'idestado', $statusValues);
 
         if ($this->permissions->onlyOwnerData === false) {
-            $users = $this->codeModel->all('users', 'nick', 'nick');
+            $users = Users::codeModel();
             if (count($users) > 1) {
                 $listView->addFilterSelect('nick', 'user', 'nick', $users);
             }
