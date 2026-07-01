@@ -238,9 +238,14 @@ class CodeModel
         }
 
         if (self::db()->tableExists($tableName)) {
-            $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
-                . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::db()->var2str($code);
-            $data = self::db()->selectLimit($sql, 1);
+            // cacheamos el resultado con clave prefijada por tabla, de modo que
+            // ModelClass::clearCache() la purgue al cambiar cualquier registro de la tabla
+            $cacheKey = 'table-' . $tableName . '-codemodel-' . md5($fieldCode . '|' . $fieldDescription . '|' . $code);
+            $data = Cache::remember($cacheKey, function () use ($tableName, $fieldCode, $fieldDescription, $code) {
+                $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
+                    . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::db()->var2str($code);
+                return self::db()->selectLimit($sql, 1);
+            });
             return empty($data) ? new static() : new static($data[0]);
         }
 
