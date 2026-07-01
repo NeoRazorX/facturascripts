@@ -840,9 +840,10 @@ abstract class ModelClass
      * @param string $foreignKey
      * @param array $where
      * @param array $order
+     * @param bool $cached usar solo en relaciones de solo lectura y de listas pequeñas y cerradas
      * @return array
      */
-    protected function hasMany(string $modelName, string $foreignKey, array $where = [], array $order = []): array
+    protected function hasMany(string $modelName, string $foreignKey, array $where = [], array $order = [], bool $cached = false): array
     {
         // Extract class name if full class path is provided
         if (strpos($modelName, '\\') !== false) {
@@ -852,7 +853,19 @@ abstract class ModelClass
 
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
         $where[] = Where::eq($foreignKey, $this->id());
-        return $modelClass::all($where, $order);
+
+        if (false === $cached) {
+            return $modelClass::all($where, $order);
+        }
+
+        // clave prefijada por la tabla del modelo relacionado, para que su
+        // clearCache() (deleteMulti 'table-<tabla>-') la purgue al cambiar
+        $cacheKey = 'table-' . $modelClass::tableName() . '-hasmany-'
+            . md5($foreignKey . '|' . serialize($where) . '|' . serialize($order));
+
+        return (new CacheWithMemory())->remember($cacheKey, function () use ($modelClass, $where, $order) {
+            return $modelClass::all($where, $order);
+        });
     }
 
     /**
