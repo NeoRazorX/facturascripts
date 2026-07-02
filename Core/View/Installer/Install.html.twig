@@ -38,6 +38,12 @@
                     $('#mysql_socket_div').hide();
                     $('#pgsql_ssl_div').show();
                     $('#pgsql_endpoint').show();
+                } else if (dbType === 'sqlite') {
+                    $('#db_port').val(0);
+                    $('#db_user').val('');
+                    $('#mysql_socket_div').hide();
+                    $('#pgsql_ssl_div').hide();
+                    $('#pgsql_endpoint').hide();
                 }
             }
 
@@ -204,9 +210,15 @@
                                         {% if fsc.db_type == 'mysql' %}
                                             <option value="mysql" selected>MySQL</option>
                                             <option value="postgresql">PostgreSQL</option>
+                                            <option value="sqlite">SQLite</option>
+                                        {% elseif fsc.db_type == 'sqlite' %}
+                                            <option value="mysql">MySQL</option>
+                                            <option value="postgresql">PostgreSQL</option>
+                                            <option value="sqlite" selected>SQLite</option>
                                         {% else %}
                                             <option value="mysql">MySQL</option>
                                             <option value="postgresql" selected>PostgreSQL</option>
+                                            <option value="sqlite">SQLite</option>
                                         {% endif %}
                                     </select>
                                 </div>
@@ -233,7 +245,7 @@
                                             <i class="fa-solid fa-database"></i>
                                         </span>
                                         <input type="text" id="fs_db_name" name="fs_db_name" value="{{ fsc.db_name }}"
-                                               class="form-control" pattern="[A-Za-z0-9_]+" required/>
+                                               class="form-control" pattern="(?!.*\.\.)[A-Za-z0-9_./:-]+" required/>
                                     </div>
                                 </div>
                             </div>
