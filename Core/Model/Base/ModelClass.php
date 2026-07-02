@@ -36,6 +36,38 @@ use FacturaScripts\Dinamic\Model\CodeModel;
 abstract class ModelClass extends ModelCore
 {
     /**
+     * Campos a ocultar en la API, añadidos por los plugins, indexados por tabla.
+     *
+     * @var array
+     */
+    private static $api_fields_to_hide = [];
+
+    /**
+     * Añade un campo a la lista de campos que no deben exponerse en la API.
+     * Solo permite añadir: los campos ocultos por el core no se pueden quitar.
+     *
+     * @param string $field
+     */
+    public static function addApiFieldToHide(string $field): void
+    {
+        if (false === in_array($field, self::$api_fields_to_hide[static::tableName()] ?? [], true)) {
+            self::$api_fields_to_hide[static::tableName()][] = $field;
+        }
+    }
+
+    /**
+     * Devuelve los nombres de campos que no deben exponerse en la API
+     * (ni en GET, ni en el schema). Los modelos con datos sensibles
+     * deben sobrescribir este método fusionando con parent::getApiFieldsToHide().
+     *
+     * @return string[]
+     */
+    public function getApiFieldsToHide(): array
+    {
+        return self::$api_fields_to_hide[static::tableName()] ?? [];
+    }
+
+    /**
      * Returns all models that correspond to the selected filters.
      *
      * @param array $where filters to apply to model records.

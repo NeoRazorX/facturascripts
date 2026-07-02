@@ -418,8 +418,27 @@ class APIModel extends APIResourceClass
     private function filterHidden(array $data, array $hidden): array
     {
         foreach ($hidden as $field) {
-            unset($data[$field]);
+            // sin punto, es una columna: la eliminamos
+            $pos = strpos($field, '.');
+            if ($pos === false) {
+                unset($data[$field]);
+                continue;
+            }
+
+            // con punto, es una clave dentro de una columna json: columna.clave
+            $column = substr($field, 0, $pos);
+            $key = substr($field, $pos + 1);
+            if (!isset($data[$column]) || !is_string($data[$column])) {
+                continue;
+            }
+
+            $json = json_decode($data[$column], true);
+            if (is_array($json) && array_key_exists($key, $json)) {
+                unset($json[$key]);
+                $data[$column] = json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            }
         }
+
         return $data;
     }
 }

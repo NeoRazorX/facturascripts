@@ -135,7 +135,7 @@ class ApiKey extends ModelClass
      */
     public function getApiFieldsToHide(): array
     {
-        return ['apikey'];
+        return array_unique(array_merge(['apikey'], parent::getApiFieldsToHide()));
     }
 
     /**

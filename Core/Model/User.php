@@ -254,7 +254,10 @@ class User extends ModelClass
      */
     public function getApiFieldsToHide(): array
     {
-        return ['password', 'logkey', 'two_factor_secret_key'];
+        return array_unique(array_merge(
+            ['password', 'logkey', 'two_factor_secret_key'],
+            parent::getApiFieldsToHide()
+        ));
     }
 
     /**
