@@ -23,7 +23,6 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Response;
-use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
@@ -308,15 +307,12 @@ abstract class ListController extends BaseController
      */
     protected function clearFiltersAction(): void
     {
-        $viewName = $this->active;
-        $nick = Session::user()->nick;
-        $cacheKey = 'filters-' . Session::get('controllerName') . '-' . $viewName . '-' . $nick;
+        $view = $this->listView($this->active);
 
         // clear cache
-        Cache::delete($cacheKey);
+        Cache::delete($view->filtersCacheKey());
 
         // clear filter values from request
-        $view = $this->listView($viewName);
         foreach ($view->filters as $filter) {
             $this->request->request->remove('filter' . $filter->key);
         }
