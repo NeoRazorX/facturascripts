@@ -33,19 +33,21 @@ final class CSVExportTest extends TestCase
                 '+SUM(1+1)',
                 '-SUM(1+1)',
                 '@SUM(1+1)',
-                "\tSUM(1+1)",
-                "\rSUM(1+1)",
+                "\tSUM(1+1)", // fixHtml() recorta los espacios en blanco
+                "\rSUM(1+1)", // fixHtml() recorta los espacios en blanco
                 'a"b',
+                'a&quot;b', // se revierten las entidades html
+                '-5', // los strings numéricos no se escapan
                 'safe',
                 123,
             ],
         ], ['=formula', 'safe']);
 
-        $expected = implode(PHP_EOL, [
+        // el documento empieza con el BOM UTF-8
+        $expected = "\xEF\xBB\xBF" . implode(PHP_EOL, [
             '"\'=formula";"safe"',
-            '"\'=SUM(1+1)";"\'+SUM(1+1)";"\'-SUM(1+1)";"\'@SUM(1+1)";"\''
-            . "\t" . 'SUM(1+1)";"\''
-            . "\r" . 'SUM(1+1)";"a""b";"safe";123',
+            '"\'=SUM(1+1)";"\'+SUM(1+1)";"\'-SUM(1+1)";"\'@SUM(1+1)"'
+            . ';"SUM(1+1)";"SUM(1+1)";"a""b";"a""b";"-5";"safe";123',
         ]);
 
         $this->assertSame($expected, $export->getDoc());
