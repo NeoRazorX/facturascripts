@@ -1,0 +1,10 @@
+{% extends 'UI/Field/_wrapper.html.twig' %}
+
+{% block input %}
+    <textarea name="{{ c.inputName() }}" id="{{ c.inputId() }}" rows="{{ c.getRows() }}"
+              class="{{ c.inputCssClass('form-control') }}"
+              {%- if c.getPlaceholder() %} placeholder="{{ c.getPlaceholder() }}"{% endif %}
+              {%- if c.isRequired() %} required{% endif %}
+              {%- if c.isReadOnly() %} readonly{% endif %}
+              {%- if c.getTabIndex() >= 0 %} tabindex="{{ c.getTabIndex() }}"{% endif %}>{{ c.valueAttr() }}</textarea>
+{% endblock %}
