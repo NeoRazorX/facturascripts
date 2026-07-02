@@ -208,7 +208,8 @@ abstract class ExportBase
 
     protected function escapeSpreadsheetFormula(string $value): string
     {
-        if ($value === '') {
+        // un string puramente numérico no puede ser una fórmula
+        if ($value === '' || is_numeric($value)) {
             return $value;
         }
 

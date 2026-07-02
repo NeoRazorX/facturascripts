@@ -228,8 +228,10 @@ class XLSExport extends ExportBase
         $data = parent::getCursorRawData($cursor, $fields);
         foreach ($data as $num => $row) {
             foreach ($row as $key => $value) {
-                $value = Tools::fixHtml($value);
-                $data[$num][$key] = is_string($value) ? $this->escapeSpreadsheetFormula($value) : $value;
+                // los valores no string (números, booleanos) se escriben tal cual
+                if (is_string($value)) {
+                    $data[$num][$key] = $this->escapeSpreadsheetFormula(Tools::fixHtml($value));
+                }
             }
         }
 
