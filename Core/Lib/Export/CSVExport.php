@@ -20,8 +20,9 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
@@ -79,6 +80,12 @@ class CSVExport extends ExportBase
             $data[] = array_merge($data2[0], $data1[0]);
         }
 
+        // sin líneas, exportamos solamente los datos del documento
+        if (empty($data)) {
+            $fields = $this->getModelFields($model);
+            $data = $data1;
+        }
+
         $this->writeData($data, $fields);
 
         /// do not continue with export
@@ -111,6 +118,11 @@ class CSVExport extends ExportBase
             $data = $this->getCursorRawData($cursor);
             $this->writeData($data, $fields);
             $fields = [];
+
+            // si el bloque no está completo, no hay más datos
+            if (count($cursor) < self::LIST_LIMIT) {
+                break;
+            }
 
             /// Advance within the results
             $offset += self::LIST_LIMIT;
@@ -175,7 +187,8 @@ class CSVExport extends ExportBase
      */
     public function getDoc()
     {
-        return implode(PHP_EOL, $this->csv);
+        // BOM para que Excel abra correctamente los caracteres UTF-8
+        return "\xEF\xBB\xBF" . implode(PHP_EOL, $this->csv);
     }
 
     /**
@@ -259,7 +272,7 @@ class CSVExport extends ExportBase
         foreach ($data as $row) {
             $line = [];
             foreach ($row as $cell) {
-                $line[] = is_string($cell) ? $this->formatCell($cell) : $cell;
+                $line[] = is_string($cell) ? $this->formatCell(Tools::fixHtml($cell)) : $cell;
             }
 
             $this->csv[] = implode($this->separator, $line);

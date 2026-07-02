@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014       Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,11 +20,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\LineaPresupuestoCliente as LineaPresupuesto;
 
 /**
@@ -68,7 +68,7 @@ class PresupuestoCliente extends SalesDocument
      */
     public function getLines(): array
     {
-        $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
+        $where = [Where::eq('idpresupuesto', $this->idpresupuesto)];
         $orderBy = ['orden' => 'DESC', 'idlinea' => 'ASC'];
         return LineaPresupuesto::all($where, $orderBy, 0, 0);
     }

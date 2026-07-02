@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
@@ -29,6 +30,7 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\GruposClientes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
@@ -57,12 +59,11 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterNumber($viewName, 'min-total', 'total', 'total', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'total', 'total', '<=');
 
-        $where = [new DataBaseWhere('tipodoc', $modelName)];
-        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $statusValues = EstadosDocumentos::codeModelByTipoDoc($modelName);
         $this->addFilterSelect($viewName, 'idestado', 'state', 'idestado', $statusValues);
 
         if ($this->permissions->onlyOwnerData === false) {
-            $users = $this->codeModel->all('users', 'nick', 'nick');
+            $users = Users::codeModel();
             if (count($users) > 1) {
                 $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
             }
@@ -229,8 +230,7 @@ abstract class ListBusinessDocument extends ListController
             }
         }
 
-        $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
-        $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
+        $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', AgenciasTransporte::codeModel());
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
 
         // asignamos los colores

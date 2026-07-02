@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Retenciones;
@@ -28,8 +27,6 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
-use FacturaScripts\Dinamic\Lib\TaxExceptions;
-use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
  * Controller to list the items in the Cliente model
@@ -95,7 +92,7 @@ class ListCliente extends ListController
         $values = [
             [
                 'label' => Tools::trans('customers'),
-                'where' => [new DataBaseWhere('codcliente', null, 'IS NOT')]
+                'where' => [Where::isNotNull('codcliente')]
             ],
             [
                 'label' => Tools::trans('all'),
@@ -106,19 +103,8 @@ class ListCliente extends ListController
 
         $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', Paises::codeModel());
 
-        $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
-        if (count($provinces) >= CodeModel::getlimit()) {
-            $this->addFilterAutocomplete($viewName, 'provincia', 'province', 'provincia', 'contactos', 'provincia');
-        } else {
-            $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
-        }
-
-        $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
-        if (count($cities) >= CodeModel::getlimit()) {
-            $this->addFilterAutocomplete($viewName, 'ciudad', 'city', 'ciudad', 'contactos', 'ciudad');
-        } else {
-            $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
-        }
+        $this->addFilterSelectAuto($viewName, 'provincia', 'province', 'provincia', 'contactos');
+        $this->addFilterSelectAuto($viewName, 'ciudad', 'city', 'ciudad', 'contactos');
 
         $this->addFilterAutocomplete($viewName, 'codpostal', 'zip-code', 'codpostal', 'contactos', 'codpostal');
 
@@ -140,14 +126,14 @@ class ListCliente extends ListController
 
         // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => Tools::trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => Tools::trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => Tools::trans('only-active'), 'where' => [Where::eq('debaja', false)]],
+            ['label' => Tools::trans('only-suspended'), 'where' => [Where::eq('debaja', true)]],
             ['label' => Tools::trans('all'), 'where' => []]
         ]);
         $this->addFilterSelectWhere($viewName, 'type', [
             ['label' => Tools::trans('all'), 'where' => []],
-            ['label' => Tools::trans('is-person'), 'where' => [new DataBaseWhere('personafisica', true)]],
-            ['label' => Tools::trans('company'), 'where' => [new DataBaseWhere('personafisica', false)]]
+            ['label' => Tools::trans('is-person'), 'where' => [Where::eq('personafisica', true)]],
+            ['label' => Tools::trans('company'), 'where' => [Where::eq('personafisica', false)]]
         ]);
 
         $fiscalIds = $this->codeModel->all('clientes', 'tipoidfiscal', 'tipoidfiscal');

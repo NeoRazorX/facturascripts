@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\TaxRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ProductoImagen as DinProductoImagen;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
@@ -257,11 +257,11 @@ class Producto extends ModelClass
      */
     public function getImages(bool $imgVariant = true): array
     {
-        $where = [new DataBaseWhere('idproducto', $this->idproducto)];
+        $where = [Where::eq('idproducto', $this->idproducto)];
 
         // solo si queremos lás imágenes del producto y no de las variantes
         if (false === $imgVariant) {
-            $where[] = new DataBaseWhere('referencia', null);
+            $where[] = Where::eq('referencia', null);
         }
 
         $orderBy = ['orden' => 'ASC'];
@@ -436,7 +436,7 @@ class Producto extends ModelClass
     protected function saveInsert(): bool
     {
         // comprobamos si la referencia ya existe
-        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        $where = [Where::eq('referencia', $this->referencia)];
         if ($this->count($where) > 0) {
             Tools::log()->warning('duplicated-reference', ['%reference%' => $this->referencia]);
             return false;

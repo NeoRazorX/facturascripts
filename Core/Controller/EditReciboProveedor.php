@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\PaymentToAccounting;
 use FacturaScripts\Dinamic\Model\PagoProveedor;
 
@@ -139,7 +139,7 @@ class EditReciboProveedor extends EditController
         switch ($viewName) {
             case 'ListPagoProveedor':
                 $id = $this->getViewModelValue('EditReciboProveedor', 'idrecibo');
-                $where = [new DataBaseWhere('idrecibo', $id)];
+                $where = [Where::eq('idrecibo', $id)];
                 $this->views[$viewName]->loadData('', $where);
                 break;
 

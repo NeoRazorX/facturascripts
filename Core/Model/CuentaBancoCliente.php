@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -134,7 +134,14 @@ class CuentaBancoCliente extends ModelClass
 
     public function url(string $type = 'auto', string $list = 'List'): string
     {
-        return empty($this->codcliente) || $type == 'list' ? parent::url($type, $list) : $this->getSubject()->url();
+        if (empty($this->codcliente) || $type == 'list') {
+            return parent::url($type, $list);
+        }
+
+        // construimos la url del cliente sin cargarlo de la base de datos
+        $customer = new DinCliente();
+        $customer->codcliente = $this->codcliente;
+        return $customer->url();
     }
 
     protected function saveInsert(): bool

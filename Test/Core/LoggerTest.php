@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Test\Core;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Logger;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\LogMessage;
 use PHPUnit\Framework\TestCase;
 
@@ -388,7 +388,7 @@ final class LoggerTest extends TestCase
 
     public function testSaveChannelToDB(): void
     {
-        $where = [new DataBaseWhere('channel', self::TEST_CHANNEL)];
+        $where = [Where::eq('channel', self::TEST_CHANNEL)];
         foreach (LogMessage::all($where, [], 0, 0) as $item) {
             $item->delete();
         }

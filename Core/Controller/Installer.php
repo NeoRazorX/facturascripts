@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,6 +52,9 @@ class Installer implements ControllerInterface
     /** @var string */
     public $db_user;
 
+    /** @var bool */
+    public $debug;
+
     /** @var string */
     public $initial_pass;
 
@@ -86,14 +89,18 @@ class Installer implements ControllerInterface
 
     public function run(): void
     {
-        $this->db_host = strtolower(trim($this->request->input('fs_db_host', 'localhost')));
-        $this->db_name = trim($this->request->input('fs_db_name', 'facturascripts'));
-        $this->db_pass = $this->request->input('fs_db_pass', '');
-        $this->db_port = (int)$this->request->input('fs_db_port', 3306);
-        $this->db_type = $this->request->input('fs_db_type', 'mysql');
-        $this->db_user = trim($this->request->input('fs_db_user', 'root'));
-        $this->initial_user = trim($this->request->input('fs_initial_user', ''));
-        $this->initial_pass = $this->request->input('fs_initial_pass', '');
+        $this->db_host = strtolower(trim($this->request->input('fs_db_host', Tools::env('FS_DB_HOST', 'localhost'))));
+        $this->db_name = trim($this->request->input('fs_db_name', Tools::env('FS_DB_NAME', 'facturascripts')));
+        $this->db_pass = $this->request->input('fs_db_pass', Tools::env('FS_DB_PASS', ''));
+        $this->db_port = (int)$this->request->input('fs_db_port', Tools::env('FS_DB_PORT', 3306));
+        $this->db_type = $this->request->input('fs_db_type', Tools::env('FS_DB_TYPE', 'mysql'));
+        $this->db_user = trim($this->request->input('fs_db_user', Tools::env('FS_DB_USER', 'root')));
+        $this->initial_user = trim($this->request->input('fs_initial_user', Tools::env('FS_INITIAL_USER', '')));
+        $this->initial_pass = $this->request->input('fs_initial_pass', Tools::env('FS_INITIAL_PASS', ''));
+        $this->debug = filter_var(
+            $this->request->input('fs_debug', Tools::env('FS_DEBUG', 'false')),
+            FILTER_VALIDATE_BOOLEAN
+        );
 
         $installed = $this->searchErrors() &&
             $this->request->method() === 'POST' &&
@@ -216,6 +223,15 @@ class Installer implements ControllerInterface
         return true;
     }
 
+    /**
+     * Escapa un valor para incrustarlo en config.php como literal entre comillas simples,
+     * evitando que una comilla o barra invertida (p. ej. en una contraseña) rompa el fichero.
+     */
+    private function escapeConfig(string $value): string
+    {
+        return str_replace(['\\', "'"], ['\\\\', "\\'"], $value);
+    }
+
     private function saveInstall(): bool
     {
         $file = fopen(FS_FOLDER . '/config.php', 'wb');
@@ -226,13 +242,13 @@ class Installer implements ControllerInterface
 
         fwrite($file, "<?php\n");
         fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->input('fs_cookie_expire', 31536000) . ");\n");
-        fwrite($file, "define('FS_ROUTE', '" . $this->request->input('fs_route', $this->getUri()) . "');\n");
-        fwrite($file, "define('FS_DB_TYPE', '" . $this->db_type . "');\n");
-        fwrite($file, "define('FS_DB_HOST', '" . $this->db_host . "');\n");
+        fwrite($file, "define('FS_ROUTE', '" . $this->escapeConfig($this->request->input('fs_route', $this->getUri())) . "');\n");
+        fwrite($file, "define('FS_DB_TYPE', '" . $this->escapeConfig($this->db_type) . "');\n");
+        fwrite($file, "define('FS_DB_HOST', '" . $this->escapeConfig($this->db_host) . "');\n");
         fwrite($file, "define('FS_DB_PORT', " . $this->db_port . ");\n");
-        fwrite($file, "define('FS_DB_NAME', '" . $this->db_name . "');\n");
-        fwrite($file, "define('FS_DB_USER', '" . $this->db_user . "');\n");
-        fwrite($file, "define('FS_DB_PASS', '" . $this->db_pass . "');\n");
+        fwrite($file, "define('FS_DB_NAME', '" . $this->escapeConfig($this->db_name) . "');\n");
+        fwrite($file, "define('FS_DB_USER', '" . $this->escapeConfig($this->db_user) . "');\n");
+        fwrite($file, "define('FS_DB_PASS', '" . $this->escapeConfig($this->db_pass) . "');\n");
         fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
         fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
 
@@ -247,38 +263,37 @@ class Installer implements ControllerInterface
         }
 
         if ($this->db_type === 'mysql' && $this->request->input('mysql_socket') !== '') {
-            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->input('mysql_socket') . "');\n");
+            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->escapeConfig($this->request->input('mysql_socket')) . "');\n");
         } elseif ($this->db_type === 'postgresql') {
-            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->request->input('pgsql_ssl_mode') . "');\n");
-            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->request->input('pgsql_endpoint') . "');\n");
+            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->escapeConfig($this->request->input('pgsql_ssl_mode')) . "');\n");
+            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->escapeConfig($this->request->input('pgsql_endpoint')) . "');\n");
         }
 
         $fields = [
-            'lang' => 'es_ES',
+            'lang' => Tools::env('FS_LANG', 'es_ES'),
             'timezone' => 'Europe/Madrid',
             'hidden_plugins' => ''
         ];
         foreach ($fields as $field => $default) {
-            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->input('fs_' . $field, $default) . "');\n");
+            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->escapeConfig($this->request->input('fs_' . $field, $default)) . "');\n");
         }
 
-        $booleanFields = ['debug', 'disable_add_plugins', 'disable_rm_plugins'];
+        $booleanFields = ['disable_add_plugins', 'disable_rm_plugins'];
         foreach ($booleanFields as $field) {
             fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->input('fs_' . $field, 'false') . ");\n");
         }
+        fwrite($file, "define('FS_DEBUG', " . ($this->debug ? 'true' : 'false') . ");\n");
 
         if ($this->request->input('fs_gtm', false)) {
             fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
         }
 
-        $initialUser = $this->request->input('fs_initial_user', '');
-        if (!empty($initialUser)) {
-            fwrite($file, "define('FS_INITIAL_USER', '" . $initialUser . "');\n");
+        if (!empty($this->initial_user)) {
+            fwrite($file, "define('FS_INITIAL_USER', '" . $this->escapeConfig($this->initial_user) . "');\n");
         }
 
-        $initialPass = $this->request->input('fs_initial_pass', '');
-        if (!empty($initialPass)) {
-            fwrite($file, "define('FS_INITIAL_PASS', '" . $initialPass . "');\n");
+        if (!empty($this->initial_pass)) {
+            fwrite($file, "define('FS_INITIAL_PASS', '" . $this->escapeConfig($this->initial_pass) . "');\n");
         }
 
         fclose($file);

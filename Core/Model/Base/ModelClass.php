@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,6 +35,38 @@ use FacturaScripts\Dinamic\Model\CodeModel;
  */
 abstract class ModelClass extends ModelCore
 {
+    /**
+     * Campos a ocultar en la API, añadidos por los plugins, indexados por tabla.
+     *
+     * @var array
+     */
+    private static $api_fields_to_hide = [];
+
+    /**
+     * Añade un campo a la lista de campos que no deben exponerse en la API.
+     * Solo permite añadir: los campos ocultos por el core no se pueden quitar.
+     *
+     * @param string $field
+     */
+    public static function addApiFieldToHide(string $field): void
+    {
+        if (false === in_array($field, self::$api_fields_to_hide[static::tableName()] ?? [], true)) {
+            self::$api_fields_to_hide[static::tableName()][] = $field;
+        }
+    }
+
+    /**
+     * Devuelve los nombres de campos que no deben exponerse en la API
+     * (ni en GET, ni en el schema). Los modelos con datos sensibles
+     * deben sobrescribir este método fusionando con parent::getApiFieldsToHide().
+     *
+     * @return string[]
+     */
+    public function getApiFieldsToHide(): array
+    {
+        return self::$api_fields_to_hide[static::tableName()] ?? [];
+    }
+
     /**
      * Returns all models that correspond to the selected filters.
      *
@@ -149,7 +181,7 @@ abstract class ModelClass extends ModelCore
         }
 
         Cache::deleteMulti('model-' . $this->modelClassName() . '-');
-        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('join-model-', '-' . static::tableName() . '-');
         Cache::deleteMulti('table-' . static::tableName() . '-');
 
         WorkQueue::send(
@@ -420,7 +452,7 @@ abstract class ModelClass extends ModelCore
         }
 
         Cache::deleteMulti('model-' . $this->modelClassName() . '-');
-        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('join-model-', '-' . static::tableName() . '-');
         Cache::deleteMulti('table-' . static::tableName() . '-');
 
         WorkQueue::send(
@@ -463,7 +495,7 @@ abstract class ModelClass extends ModelCore
         }
 
         Cache::deleteMulti('model-' . $this->modelClassName() . '-');
-        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('join-model-', '-' . static::tableName() . '-');
         Cache::deleteMulti('table-' . static::tableName() . '-');
 
         WorkQueue::send(

@@ -135,6 +135,11 @@ class DocumentStitcher extends Controller
                 return;
             }
 
+            // Evita aprobar más cantidad de la que realmente queda pendiente en cada línea.
+            if (false === $this->validateSelectedQuantities()) {
+                return;
+            }
+
             // si el $statusCode empieza por close:, cerramos
             if (0 === strpos($statusCode, 'close:')) {
                 $status = substr($statusCode, 6);
@@ -523,5 +528,28 @@ class DocumentStitcher extends Controller
             $this->where[] = Where::lte('fecha', $this->filters['hasta']);
             $this->showFilters = true;
         }
+    }
+
+    protected function validateSelectedQuantities(): bool
+    {
+        foreach ($this->documents as $document) {
+            foreach ($document->getLines() as $line) {
+                $quantity = (float)$this->request->input('approve_quant_' . $line->id(), '0');
+
+                $pending = max(0, $line->cantidad - $line->servido);
+                if ($quantity <= $pending) {
+                    continue;
+                }
+
+                Tools::log()->error('error-more-quant-than-pending', [
+                    '%description%' => $line->descripcion,
+                    '%pending%' => $pending,
+                    '%selected_quantity%' => $quantity,
+                ]);
+                return false;
+            }
+        }
+
+        return true;
     }
 }

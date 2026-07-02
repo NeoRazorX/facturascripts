@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Controller to edit a single item from the Serie model
@@ -106,7 +106,7 @@ class EditSerie extends EditController
             case 'ListFormatoDocumento':
             case 'ListSecuenciaDocumento':
                 $codserie = $this->getViewModelValue($this->getMainViewName(), 'codserie');
-                $where = [new DataBaseWhere('codserie', $codserie)];
+                $where = [Where::eq('codserie', $codserie)];
                 $view->loadData('', $where);
                 break;
 

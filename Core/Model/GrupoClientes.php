@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\GruposClientes;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
@@ -65,8 +65,8 @@ class GrupoClientes extends ModelClass
         // buscamos la subcuenta para el ejercicio
         $subAccount = new DinSubcuenta();
         $where = [
-            new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
-            new DataBaseWhere('codejercicio', $codejercicio),
+            Where::eq('codsubcuenta', $this->codsubcuenta),
+            Where::eq('codejercicio', $codejercicio),
         ];
         if ($subAccount->load('', $where)) {
             return $subAccount;

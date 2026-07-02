@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Producto;
 
 /**
@@ -122,9 +122,9 @@ class EditFabricante extends EditController
         // filtros
         $this->listView($viewName)
             ->addFilterSelectWhere('status', [
-                ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
-                ['label' => $i18n->trans('blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
-                ['label' => $i18n->trans('public'), 'where' => [new DataBaseWhere('publico', true)]],
+                ['label' => $i18n->trans('only-active'), 'where' => [Where::eq('bloqueado', false)]],
+                ['label' => $i18n->trans('blocked'), 'where' => [Where::eq('bloqueado', true)]],
+                ['label' => $i18n->trans('public'), 'where' => [Where::eq('publico', true)]],
                 ['label' => $i18n->trans('all'), 'where' => []]
             ])
             ->addFilterSelect('codfamilia', 'family', 'codfamilia', $families)
@@ -178,12 +178,12 @@ class EditFabricante extends EditController
         switch ($viewName) {
             case 'ListProducto':
                 $codfabricante = $this->getViewModelValue($this->getMainViewName(), 'codfabricante');
-                $where = [new DataBaseWhere('codfabricante', $codfabricante)];
+                $where = [Where::eq('codfabricante', $codfabricante)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListProducto-new':
-                $where = [new DataBaseWhere('codfabricante', null, 'IS')];
+                $where = [Where::isNull('codfabricante')];
                 $view->loadData('', $where);
                 break;
 

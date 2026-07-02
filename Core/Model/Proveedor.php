@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Core\Lib\TaxExceptions;
@@ -137,8 +137,8 @@ class Proveedor extends ModelClass
     {
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
-        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
-        $where[] = new DataBaseWhere('fechabaja', null, 'IS');
+        $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
+        $where[] = Where::isNull('fechabaja');
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
@@ -149,7 +149,7 @@ class Proveedor extends ModelClass
      */
     public function getAddresses(): array
     {
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        $where = [Where::eq($this->primaryColumn(), $this->id())];
         return DinContacto::all($where, [], 0, 0);
     }
 
@@ -160,7 +160,7 @@ class Proveedor extends ModelClass
      */
     public function getBankAccounts(): array
     {
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        $where = [Where::eq($this->primaryColumn(), $this->id())];
         return DinCuentaBancoProveedor::all($where, [], 0, 0);
     }
 
@@ -187,8 +187,8 @@ class Proveedor extends ModelClass
             // buscamos la subcuenta para el ejercicio
             $subAccount = new DinSubcuenta();
             $where = [
-                new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
-                new DataBaseWhere('codejercicio', $codejercicio),
+                Where::eq('codsubcuenta', $this->codsubcuenta),
+                Where::eq('codejercicio', $codejercicio),
             ];
             if ($subAccount->loadWhere($where)) {
                 return $subAccount;

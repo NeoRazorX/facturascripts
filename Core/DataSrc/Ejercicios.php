@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,6 +38,31 @@ final class Ejercicios implements DataSrcInterface
         }
 
         return self::$list;
+    }
+
+    /**
+     * Devuelve los ejercicios de una empresa (o todos si no se indica),
+     * ordenados por código de ejercicio de forma descendente.
+     *
+     * @param int|string|null $idempresa
+     *
+     * @return Ejercicio[]
+     */
+    public static function byEmpresa($idempresa = null): array
+    {
+        $result = [];
+        foreach (self::all() as $item) {
+            if (empty($idempresa) || (string)$item->idempresa === (string)$idempresa) {
+                $result[] = $item;
+            }
+        }
+
+        // self::all() viene en orden ascendente; lo invertimos a descendente
+        usort($result, function ($a, $b) {
+            return strcmp((string)$b->codejercicio, (string)$a->codejercicio);
+        });
+
+        return $result;
     }
 
     public static function clear(): void

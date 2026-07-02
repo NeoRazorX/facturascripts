@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Retenciones;
@@ -28,7 +27,6 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
-use FacturaScripts\Dinamic\Lib\TaxExceptions;
 
 /**
  * Controller to list the items in the Proveedor model
@@ -72,7 +70,7 @@ class ListProveedor extends ListController
         $values = [
             [
                 'label' => Tools::trans('suppliers'),
-                'where' => [new DataBaseWhere('codproveedor', null, 'IS NOT')]
+                'where' => [Where::isNotNull('codproveedor')]
             ],
             [
                 'label' => Tools::trans('all'),
@@ -86,11 +84,8 @@ class ListProveedor extends ListController
 
         $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', Paises::codeModel());
 
-        $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
-        $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
-
-        $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
-        $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
+        $this->addFilterSelectAuto($viewName, 'provincia', 'province', 'provincia', 'contactos');
+        $this->addFilterSelectAuto($viewName, 'ciudad', 'city', 'ciudad', 'contactos');
 
         $this->addFilterAutocomplete($viewName, 'codpostal', 'zip-code', 'codpostal', 'contactos', 'codpostal');
 
@@ -114,14 +109,14 @@ class ListProveedor extends ListController
 
         // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => Tools::trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => Tools::trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => Tools::trans('only-active'), 'where' => [Where::eq('debaja', false)]],
+            ['label' => Tools::trans('only-suspended'), 'where' => [Where::eq('debaja', true)]],
             ['label' => Tools::trans('all'), 'where' => []]
         ]);
         $this->addFilterSelectWhere($viewName, 'type', [
             ['label' => Tools::trans('all'), 'where' => []],
-            ['label' => Tools::trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
-            ['label' => Tools::trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
+            ['label' => Tools::trans('is-creditor'), 'where' => [Where::eq('acreedor', true)]],
+            ['label' => Tools::trans('supplier'), 'where' => [Where::eq('acreedor', false)]],
         ]);
 
         $fiscalIds = $this->codeModel->all('proveedores', 'tipoidfiscal', 'tipoidfiscal');

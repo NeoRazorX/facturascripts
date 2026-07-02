@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -153,7 +153,9 @@ abstract class Controller implements ControllerInterface
             throw new KernelException('AccessDenied', 'access-denied');
         }
 
-        $this->empresa = Empresas::default();
+        // empresa del usuario, o la predeterminada si no tiene ninguna asignada
+        $idempresa = empty($this->user) ? null : $this->user->idempresa;
+        $this->empresa = Empresas::get($idempresa ?? Tools::settings('default', 'idempresa'));
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($this->className);

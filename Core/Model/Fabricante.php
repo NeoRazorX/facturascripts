@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Fabricantes;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -58,6 +59,12 @@ class Fabricante extends ModelClass
     {
         parent::clear();
         $this->numproductos = 0;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Fabricantes::clear();
     }
 
     public static function primaryColumn(): string

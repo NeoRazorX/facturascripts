@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\InvoiceTrait;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as LineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
 
@@ -64,7 +64,7 @@ class FacturaCliente extends SalesDocument
      */
     public function getLines(): array
     {
-        $where = [new DataBaseWhere('idfactura', $this->idfactura)];
+        $where = [Where::eq('idfactura', $this->idfactura)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
         return LineaFactura::all($where, $order, 0, 0);
     }
@@ -130,7 +130,7 @@ class FacturaCliente extends SalesDocument
      */
     public function getReceipts(): array
     {
-        $where = [new DataBaseWhere('idfactura', $this->idfactura)];
+        $where = [Where::eq('idfactura', $this->idfactura)];
         return DinReciboCliente::all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
     }
 
@@ -150,9 +150,9 @@ class FacturaCliente extends SalesDocument
         $db_type = Tools::config('db_type');
         $numColumn = strtolower($db_type) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
         $whereOld = [
-            new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codserie', $this->codserie),
-            new DataBaseWhere($numColumn, (int)$this->numero, '<')
+            Where::eq('codejercicio', $this->codejercicio),
+            Where::eq('codserie', $this->codserie),
+            Where::lt($numColumn, (int)$this->numero)
         ];
         foreach ($this->all($whereOld, ['fecha' => 'DESC'], 0, 1) as $old) {
             if (strtotime($old->fecha) > strtotime($this->fecha)) {
@@ -166,9 +166,9 @@ class FacturaCliente extends SalesDocument
 
         // prevent the use of too new dates
         $whereNew = [
-            new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codserie', $this->codserie),
-            new DataBaseWhere($numColumn, (int)$this->numero, '>')
+            Where::eq('codejercicio', $this->codejercicio),
+            Where::eq('codserie', $this->codserie),
+            Where::gt($numColumn, (int)$this->numero)
         ];
         foreach ($this->all($whereNew, ['fecha' => 'ASC'], 0, 1) as $old) {
             if (strtotime($old->fecha) < strtotime($this->fecha)) {

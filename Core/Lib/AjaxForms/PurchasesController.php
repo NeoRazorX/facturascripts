@@ -74,7 +74,7 @@ abstract class PurchasesController extends PanelController
         }
 
         // existing record
-        $this->views[static::MAIN_VIEW_NAME]->model->loadFromCode($code);
+        $this->views[static::MAIN_VIEW_NAME]->model->load($code);
         return $this->views[static::MAIN_VIEW_NAME]->model;
     }
 
@@ -392,10 +392,19 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
-        $this->db()->beginTransaction();
-
         $model = $this->getModel();
         $formData = json_decode($this->request->input('data'), true);
+
+        // bloqueo optimista: si el estado del documento ha cambiado desde que se cargó el formulario,
+        // rechazamos para no borrar líneas a partir de un formulario obsoleto (tarea 4673)
+        if (isset($formData['idestado']) && (int)$formData['idestado'] !== (int)$model->idestado) {
+            Tools::log()->warning('document-state-changed');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
+        $this->db()->beginTransaction();
+
         PurchasesHeaderHTML::apply($model, $formData);
         PurchasesFooterHTML::apply($model, $formData);
 

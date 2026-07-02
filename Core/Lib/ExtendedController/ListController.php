@@ -23,10 +23,10 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Response;
-use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -198,6 +198,40 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Adds a select or autocomplete filter to a ListView depending on the number of available
+     * values: a select when there are few, an autocomplete when they exceed the CodeModel limit.
+     * The where conditions apply to both.
+     *
+     * @param string $viewName
+     * @param string $key (Filter identifier)
+     * @param string $label (Human reader description)
+     * @param string $field (Field of the table to apply filter)
+     * @param string $table (Table to read the values from)
+     * @param string $fieldcode (Code column; defaults to $field)
+     * @param string $fieldtitle (Title column; defaults to $fieldcode)
+     * @param array $where (Extra where conditions)
+     * @return ListView
+     */
+    protected function addFilterSelectAuto(string $viewName, string $key, string $label, string $field, string $table, string $fieldcode = '', string $fieldtitle = '', array $where = []): ListView
+    {
+        if (empty($fieldcode)) {
+            $fieldcode = $field;
+        }
+        if (empty($fieldtitle)) {
+            $fieldtitle = $fieldcode;
+        }
+
+        $values = $this->codeModel->all($table, $fieldcode, $fieldtitle, true, $where);
+
+        // si supera el límite, mostramos un autocompletado; si no, un select
+        if (count($values) >= CodeModel::getLimit()) {
+            return $this->listView($viewName)->addFilterAutocomplete($key, $label, $field, $table, $fieldcode, $fieldtitle, $where);
+        }
+
+        return $this->listView($viewName)->addFilterSelect($key, $label, $field, $values);
+    }
+
+    /**
      * Add a select where type filter to a ListView.
      *
      * @param string $viewName
@@ -273,15 +307,12 @@ abstract class ListController extends BaseController
      */
     protected function clearFiltersAction(): void
     {
-        $viewName = $this->active;
-        $nick = Session::user()->nick;
-        $cacheKey = 'filters-' . Session::get('controllerName') . '-' . $viewName . '-' . $nick;
+        $view = $this->listView($this->active);
 
         // clear cache
-        Cache::clear($cacheKey);
+        Cache::delete($view->filtersCacheKey());
 
         // clear filter values from request
-        $view = $this->listView($viewName);
         foreach ($view->filters as $filter) {
             $this->request->request->remove('filter' . $filter->key);
         }
@@ -469,6 +500,20 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Saves filter values for active view and user.
+     */
+    protected function saveFilterAction(): void
+    {
+        $id_filter = $this->listView($this->active)->savePageFilter($this->request, $this->user);
+        if (!empty($id_filter)) {
+            Tools::log()->notice('record-updated-correctly');
+
+            // load filters in request
+            $this->request->request->set('loadfilter', $id_filter);
+        }
+    }
+
+    /**
      * Returns columns title for megaSearchAction function.
      *
      * @param ListView $view
@@ -485,19 +530,5 @@ abstract class ListController extends BaseController
         }
 
         return $result;
-    }
-
-    /**
-     * Saves filter values for active view and user.
-     */
-    protected function saveFilterAction(): void
-    {
-        $id_filter = $this->listView($this->active)->savePageFilter($this->request, $this->user);
-        if (!empty($id_filter)) {
-            Tools::log()->notice('record-updated-correctly');
-
-            // load filters in request
-            $this->request->request->set('loadfilter', $id_filter);
-        }
     }
 }

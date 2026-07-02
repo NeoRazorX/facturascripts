@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\DataSrc\Provincias;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
@@ -85,6 +86,12 @@ class Provincia extends ModelClass
     {
         parent::clear();
         $this->codpais = Tools::settings('default', 'codpais');
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Provincias::clear();
     }
 
     public function getCities(): array

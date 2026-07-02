@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,9 +49,10 @@ trait IntracomunitariaTrait
         // o el país de la dirección de facturación cuando es de compra
         // este dentro de la UE
         $subject = $this->getSubject();
-        $country = property_exists($this, 'codpais')
-            ? Paises::get($this->codpais)
-            : Paises::get($subject->getDefaultAddress()->codpais);
+        $codpais = $this->hasColumn('codpais') && false === empty($this->codpais)
+            ? $this->codpais
+            : $subject->getDefaultAddress()->codpais;
+        $country = Paises::get($codpais);
         if (false === Paises::miembroUE($country->codpais)) {
             Tools::log()->warning('subject-not-in-eu');
             return false;

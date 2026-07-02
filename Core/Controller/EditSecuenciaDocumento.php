@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocumentCode;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Controller to edit a single item from the SecuenciaDocumento model.
@@ -97,19 +97,19 @@ class EditSecuenciaDocumento extends EditController
             case 'ListPresupuestoCliente':
             case 'ListPresupuestoProveedor':
                 $where = [
-                    new DataBaseWhere('codserie', $this->getViewModelValue($mvn, 'codserie')),
-                    new DataBaseWhere('idempresa', $this->getViewModelValue($mvn, 'idempresa'))
+                    Where::eq('codserie', $this->getViewModelValue($mvn, 'codserie')),
+                    Where::eq('idempresa', $this->getViewModelValue($mvn, 'idempresa'))
                 ];
                 // si tiene ejercicio, solo mostramos los resultados de ese ejercicio
                 if ($this->views[$mvn]->model->codejercicio) {
-                    $where[] = new DataBaseWhere('codejercicio', $this->views[$mvn]->model->codejercicio);
+                    $where[] = Where::eq('codejercicio', $this->views[$mvn]->model->codejercicio);
                     $view->loadData('', $where);
                     break;
                 }
                 // no tiene ejercicio, mostramos los resultados otros ejercicios que no están en otras secuencias
                 $other = implode(',', BusinessDocumentCode::getOtherExercises($this->views[$mvn]->model));
                 if (!empty($other)) {
-                    $where[] = new DataBaseWhere('codejercicio', $other, 'NOT IN');
+                    $where[] = Where::notIn('codejercicio', $other);
                 }
                 $view->loadData('', $where);
                 break;

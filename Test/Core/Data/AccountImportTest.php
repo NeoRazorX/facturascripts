@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,12 +20,12 @@
 namespace FacturaScripts\Test\Core\Data;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Subcuenta;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -52,7 +52,7 @@ final class AccountImportTest extends TestCase
 
         // comprobamos que no hay cuentas cargadas
         $account = new Cuenta();
-        $where = [new DataBaseWhere('codejercicio', $exercise->codejercicio)];
+        $where = [Where::eq('codejercicio', $exercise->codejercicio)];
         $this->assertEquals(0, $account->count($where), 'account-count-not-empty');
 
         // comprobamos que no hay subcuentas
@@ -72,26 +72,26 @@ final class AccountImportTest extends TestCase
 
         // comprobamos que exista la subcuenta 1000000000 y que pertenezca al grupo correcto
         $where1 = [
-            new DataBaseWhere('codejercicio', $exercise->codejercicio),
-            new DataBaseWhere('codsubcuenta', '1000000000'),
+            Where::eq('codejercicio', $exercise->codejercicio),
+            Where::eq('codsubcuenta', '1000000000'),
         ];
-        $this->assertTrue($subaccount->loadFromCode('', $where1), 'subaccount-1000000000-not-found');
+        $this->assertTrue($subaccount->loadWhere($where1), 'subaccount-1000000000-not-found');
         $this->assertEquals('100', $subaccount->codcuenta, 'subaccount-1000000000-account-error');
 
         // comprobamos que exista la cuenta 100 y que pertenezca al grupo correcto
         $where2 = [
-            new DataBaseWhere('codejercicio', $exercise->codejercicio),
-            new DataBaseWhere('codcuenta', '100'),
+            Where::eq('codejercicio', $exercise->codejercicio),
+            Where::eq('codcuenta', '100'),
         ];
-        $this->assertTrue($account->loadFromCode('', $where2), 'account-100-not-found');
+        $this->assertTrue($account->loadWhere($where2), 'account-100-not-found');
         $this->assertEquals('10', $account->parent_codcuenta, 'account-100-parent-error');
 
         // comprobamos que exista la cuenta 10 y que pertenezca al grupo correcto
         $where3 = [
-            new DataBaseWhere('codejercicio', $exercise->codejercicio),
-            new DataBaseWhere('codcuenta', '10'),
+            Where::eq('codejercicio', $exercise->codejercicio),
+            Where::eq('codcuenta', '10'),
         ];
-        $this->assertTrue($account->loadFromCode('', $where3), 'account-10-not-found');
+        $this->assertTrue($account->loadWhere($where3), 'account-10-not-found');
         $this->assertEquals('1', $account->parent_codcuenta, 'account-10-parent-error');
 
         // eliminamos
@@ -101,7 +101,7 @@ final class AccountImportTest extends TestCase
     private function getTestExercise(): Ejercicio
     {
         $ejercicio = new Ejercicio();
-        if (false === $ejercicio->loadFromCode(self::CODEJERCICIO)) {
+        if (false === $ejercicio->load(self::CODEJERCICIO)) {
             $ejercicio->codejercicio = self::CODEJERCICIO;
             $ejercicio->idempresa = Tools::settings('default', 'idempresa', 1);
             $ejercicio->fechainicio = '01-01-' . self::CODEJERCICIO;

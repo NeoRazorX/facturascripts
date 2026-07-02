@@ -182,6 +182,11 @@ class CodeModel
             return new static();
         }
 
+        // sin código no hay nada que buscar (WHERE campo = NULL nunca casa)
+        if ($code === null || $code === '') {
+            return new static();
+        }
+
         // validamos los nombres de campos para evitar SQL injection
         if (false === self::isValidFieldName($fieldCode)) {
             Tools::log()->error('invalid-field-name: ' . $fieldCode);
@@ -200,10 +205,17 @@ class CodeModel
                 && $model->modelClassName() === self::modelBaseName($tableName)
             ) {
                 $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
-                if ($model->loadWhereEq($field, $code)) {
-                    return new static(['code' => $model->{$field}, 'description' => $model->primaryDescription()]);
-                }
-                return new static();
+
+                // cacheamos con clave prefijada por la tabla real del modelo, para
+                // que clearCache() (deleteMulti 'table-<tabla>-') la purgue al cambiar
+                $cacheKey = 'table-' . $model::tableName() . '-codemodel-' . md5($field . '|' . $code);
+                $data = Cache::remember($cacheKey, function () use ($model, $field, $code) {
+                    return $model->loadWhereEq($field, $code) ?
+                        ['code' => $model->{$field}, 'description' => $model->primaryDescription()] :
+                        [];
+                });
+
+                return empty($data) ? new static() : new static($data);
             }
             if ($model instanceof JoinModel) {
                 if (empty($fieldCode)) {
@@ -233,9 +245,14 @@ class CodeModel
         }
 
         if (self::db()->tableExists($tableName)) {
-            $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
-                . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::db()->var2str($code);
-            $data = self::db()->selectLimit($sql, 1);
+            // cacheamos el resultado con clave prefijada por tabla, de modo que
+            // ModelClass::clearCache() la purgue al cambiar cualquier registro de la tabla
+            $cacheKey = 'table-' . $tableName . '-codemodel-' . md5($fieldCode . '|' . $fieldDescription . '|' . $code);
+            $data = Cache::remember($cacheKey, function () use ($tableName, $fieldCode, $fieldDescription, $code) {
+                $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
+                    . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::db()->var2str($code);
+                return self::db()->selectLimit($sql, 1);
+            });
             return empty($data) ? new static() : new static($data[0]);
         }
 

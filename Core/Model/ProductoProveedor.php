@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Model\Base\ProductRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\CostPriceTools;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
@@ -134,7 +134,7 @@ class ProductoProveedor extends ModelClass
     public function getVariant(): DinVariante
     {
         $variant = new DinVariante();
-        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        $where = [Where::eq('referencia', $this->referencia)];
         $variant->loadWhere($where);
         return $variant;
     }

@@ -23,6 +23,8 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\SalesModalInterface;
+use FacturaScripts\Core\DataSrc\Fabricantes;
+use FacturaScripts\Core\DataSrc\Familias;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Session;
@@ -30,7 +32,6 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
@@ -167,7 +168,7 @@ class SalesModalHTML
     {
         $options = '<option value="">' . Tools::trans('manufacturer') . '</option>'
             . '<option value="">------</option>';
-        foreach (Fabricante::all([], ['nombre' => 'ASC'], 0, 0) as $man) {
+        foreach (Fabricantes::all() as $man) {
             $options .= '<option value="' . $man->codfabricante . '">' . $man->nombre . '</option>';
         }
 
@@ -180,9 +181,7 @@ class SalesModalHTML
         $options = '<option value="">' . Tools::trans('family') . '</option>'
             . '<option value="">------</option>';
 
-        $where = [Where::isNull('madre')];
-        $orderBy = ['descripcion' => 'ASC'];
-        foreach (Familia::all($where, $orderBy, 0, 0) as $fam) {
+        foreach (Familias::children() as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">' . $fam->descripcion . '</option>';
 
             // añadimos las subfamilias de forma recursiva
@@ -549,7 +548,7 @@ class SalesModalHTML
     private static function subfamilias(Familia $family, int $level = 1): string
     {
         $options = '';
-        foreach ($family->getSubfamilias() as $fam) {
+        foreach (Familias::children($family->codfamilia) as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">'
                 . str_repeat('-', $level) . ' ' . $fam->descripcion
                 . '</option>';

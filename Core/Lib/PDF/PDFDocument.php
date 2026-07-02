@@ -86,7 +86,7 @@ abstract class PDFDocument extends PDFCore
      */
     protected function getDocAddress($subject, $model): string
     {
-        if (isset($model->codproveedor)) {
+        if (isset($model->codproveedor) && empty($model->direccion)) {
             $contacto = $subject->getDefaultAddress();
             return $this->combineAddress($contacto);
         }
@@ -535,7 +535,7 @@ abstract class PDFDocument extends PDFCore
         ];
         if (isset($model->codigorect) && !empty($model->codigorect)) {
             $original = new $model();
-            if ($original->loadFromCode('', [Where::eq('codigo', $model->codigorect)])) {
+            if ($original->loadWhereEq('codigo', $model->codigorect)) {
                 $tableData[3] = [
                     'key' => $this->i18n->trans('original'),
                     'value' => $model->codigorect . ', ' . $original->fecha

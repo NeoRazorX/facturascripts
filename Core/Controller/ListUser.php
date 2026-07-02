@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,13 +19,13 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Controller to list the items in the User model
@@ -107,11 +107,11 @@ class ListUser extends ListController
                 ],
                 [
                     'label' => Tools::trans('admin'),
-                    'where' => [new DataBaseWhere('admin', true)]
+                    'where' => [Where::eq('admin', true)]
                 ],
                 [
                     'label' => Tools::trans('no-admin'),
-                    'where' => [new DataBaseWhere('admin', false)]
+                    'where' => [Where::eq('admin', false)]
                 ]
             ])
             ->addFilterSelectWhere('2fa', [
@@ -125,11 +125,11 @@ class ListUser extends ListController
                 ],
                 [
                     'label' => Tools::trans('two-factor-auth-enabled'),
-                    'where' => [new DataBaseWhere('two_factor_enabled', true)]
+                    'where' => [Where::eq('two_factor_enabled', true)]
                 ],
                 [
                     'label' => Tools::trans('two-factor-auth-disabled'),
-                    'where' => [new DataBaseWhere('two_factor_enabled', false)]
+                    'where' => [Where::eq('two_factor_enabled', false)]
                 ]
             ]);
 

@@ -34,6 +34,13 @@ use JetBrains\PhpStorm\Deprecated;
 abstract class ModelClass
 {
     /**
+     * Campos a ocultar en la API, añadidos por los plugins, indexados por tabla.
+     *
+     * @var array
+     */
+    private static $api_fields_to_hide = [];
+
+    /**
      * The model's attributes.
      *
      * @var array
@@ -213,7 +220,7 @@ abstract class ModelClass
     public function clearCache(): void
     {
         CacheWithMemory::deleteMulti('model-' . $this->modelClassName() . '-');
-        CacheWithMemory::deleteMulti('join-model-');
+        CacheWithMemory::deleteMulti('join-model-', '-' . static::tableName() . '-');
         CacheWithMemory::deleteMulti('table-' . static::tableName() . '-');
     }
 
@@ -277,15 +284,28 @@ abstract class ModelClass
     }
 
     /**
+     * Añade un campo a la lista de campos que no deben exponerse en la API.
+     * Solo permite añadir: los campos ocultos por el core no se pueden quitar.
+     *
+     * @param string $field
+     */
+    public static function addApiFieldToHide(string $field): void
+    {
+        if (false === in_array($field, self::$api_fields_to_hide[static::tableName()] ?? [], true)) {
+            self::$api_fields_to_hide[static::tableName()][] = $field;
+        }
+    }
+
+    /**
      * Devuelve los nombres de campos que no deben exponerse en la API
      * (ni en GET, ni en el schema). Los modelos con datos sensibles
-     * deben sobrescribir este método.
+     * deben sobrescribir este método fusionando con parent::getApiFieldsToHide().
      *
      * @return string[]
      */
     public function getApiFieldsToHide(): array
     {
-        return [];
+        return self::$api_fields_to_hide[static::tableName()] ?? [];
     }
 
     /**
@@ -856,9 +876,10 @@ abstract class ModelClass
      * @param string $foreignKey
      * @param array $where
      * @param array $order
+     * @param bool $cached usar solo en relaciones de solo lectura y de listas pequeñas y cerradas
      * @return array
      */
-    protected function hasMany(string $modelName, string $foreignKey, array $where = [], array $order = []): array
+    protected function hasMany(string $modelName, string $foreignKey, array $where = [], array $order = [], bool $cached = false): array
     {
         // Extract class name if full class path is provided
         if (strpos($modelName, '\\') !== false) {
@@ -868,7 +889,19 @@ abstract class ModelClass
 
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
         $where[] = Where::eq($foreignKey, $this->id());
-        return $modelClass::all($where, $order);
+
+        if (false === $cached) {
+            return $modelClass::all($where, $order);
+        }
+
+        // clave prefijada por la tabla del modelo relacionado, para que su
+        // clearCache() (deleteMulti 'table-<tabla>-') la purgue al cambiar
+        $cacheKey = 'table-' . $modelClass::tableName() . '-hasmany-'
+            . md5($foreignKey . '|' . serialize($where) . '|' . serialize($order));
+
+        return (new CacheWithMemory())->remember($cacheKey, function () use ($modelClass, $where, $order) {
+            return $modelClass::all($where, $order);
+        });
     }
 
     /**

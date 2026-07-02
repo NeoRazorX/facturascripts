@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
@@ -100,7 +100,14 @@ class EditProveedor extends ComercialContactController
     protected function createInvoiceView(string $viewName): void
     {
         $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices')
-            ->setSettings('btnPrint', true);
+            ->setSettings('btnPrint', true)
+            ->addFilterSelectWhere('status', [
+                ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+                ['label' => '------', 'where' => []],
+                ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagada', true)]],
+                ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagada', false)]],
+                ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencida', true)]],
+            ]);
 
         // agrupamos las acciones de facturas en un dropdown
         $this->tab($viewName)->addButtonGroup([
@@ -159,7 +166,14 @@ class EditProveedor extends ComercialContactController
             $this->createDocumentView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
         }
         if ($this->user->can('EditReciboProveedor')) {
-            $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor');
+            $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor')
+                ->addFilterSelectWhere('status', [
+                    ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+                    ['label' => '------', 'where' => []],
+                    ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagado', true)]],
+                    ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagado', false)]],
+                    ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencido', true)]],
+                ]);
         }
     }
 
@@ -205,7 +219,7 @@ class EditProveedor extends ComercialContactController
     {
         $mainViewName = $this->getMainViewName();
         $codproveedor = $this->getViewModelValue($mainViewName, 'codproveedor');
-        $where = [new DataBaseWhere('codproveedor', $codproveedor)];
+        $where = [Where::eq('codproveedor', $codproveedor)];
 
         switch ($viewName) {
             case 'EditCuentaBancoProveedor':
@@ -231,7 +245,7 @@ class EditProveedor extends ComercialContactController
 
             case 'ListLineaFacturaProveedor':
                 $inSQL = 'SELECT idfactura FROM facturasprov WHERE codproveedor = ' . $this->dataBase->var2str($codproveedor);
-                $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
+                $where = [Where::in('idfactura', $inSQL)];
                 $view->loadData('', $where);
                 break;
 
@@ -296,7 +310,7 @@ class EditProveedor extends ComercialContactController
 
         // Search for supplier contacts
         $codproveedor = $this->getViewModelValue($viewName, 'codproveedor');
-        $where = [new DataBaseWhere('codproveedor', $codproveedor)];
+        $where = [Where::eq('codproveedor', $codproveedor)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
         // Load values option to default contact

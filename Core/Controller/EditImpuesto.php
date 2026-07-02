@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\OperacionIVA;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\TaxExceptions;
 
 /**
@@ -104,13 +104,13 @@ class EditImpuesto extends EditController
 
         switch ($viewName) {
             case 'EditImpuestoZona':
-                $where = [new DataBaseWhere('codimpuesto', $code)];
+                $where = [Where::eq('codimpuesto', $code)];
                 $view->loadData('', $where, ['prioridad' => 'DESC']);
                 $this->loadVatExceptions($viewName);
                 break;
 
             case 'ListProducto':
-                $where = [new DataBaseWhere('codimpuesto', $code)];
+                $where = [Where::eq('codimpuesto', $code)];
                 $view->loadData('', $where);
                 break;
 
@@ -127,7 +127,7 @@ class EditImpuesto extends EditController
                     $view->settings['active'] = false;
                     break;
                 }
-                $where = [new DataBaseWhere('codsubcuenta', implode(',', $codes), 'IN')];
+                $where = [Where::in('codsubcuenta', implode(',', $codes))];
                 $view->loadData('', $where);
                 break;
 

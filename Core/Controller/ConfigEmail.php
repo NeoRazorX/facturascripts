@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\EmailSent;
 use FacturaScripts\Core\Tools;
@@ -91,7 +92,7 @@ class ConfigEmail extends PanelController
             ->addOrderBy(['date'], 'date', 2)
             ->setSettings('btnNew', false);
 
-        $users = $this->codeModel->all('users', 'nick', 'nick');
+        $users = Users::codeModel();
         $from = $this->codeModel->all('emails_sent', 'email_from', 'email_from');
 
         // filtros

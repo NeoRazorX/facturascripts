@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Where;
 
 /**
  * Controller to edit a single item from the Retencion model
@@ -90,7 +90,7 @@ class EditRetencion extends EditController
             case 'ListCliente':
             case 'ListProveedor':
                 $codretencion = $this->getViewModelValue($this->getMainViewName(), 'codretencion');
-                $where = [new DataBaseWhere('codretencion', $codretencion)];
+                $where = [Where::eq('codretencion', $codretencion)];
                 $view->loadData('', $where);
                 break;
 

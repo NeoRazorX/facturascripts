@@ -24,9 +24,9 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
-use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Core\Lib\ExtendedController\ProvinceCityFilterTrait;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
@@ -41,6 +41,8 @@ use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
  */
 class ListFacturaCliente extends ListBusinessDocument
 {
+    use ProvinceCityFilterTrait;
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -48,47 +50,6 @@ class ListFacturaCliente extends ListBusinessDocument
         $data['title'] = 'invoices';
         $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         return $data;
-    }
-
-    protected function autocompleteAction(): array
-    {
-        $data = $this->requestGet(['source', 'fieldcode', 'fieldtitle', 'strict', 'term']);
-        if ($data['source'] === 'provincias') {
-            $codpais = $this->request->input('filtercountry');
-
-            $where = [];
-            if (empty($codpais) === false) {
-                $where[] = Where::eq('codpais', $codpais);
-            }
-
-            $result = [];
-            foreach ($this->codeModel->search('provincias', $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
-                $result[] = ['key' => $value->code, 'value' => $value->description];
-            }
-
-            return $result;
-        } elseif ($data['source'] === 'ciudades') {
-            $codprovincia = $this->request->input('filterprovincia');
-
-            $where = [];
-            if (empty($codprovincia) === false) {
-                $provincias = Provincia::all([Where::eq('provincia', $codprovincia)]);
-                if (empty($provincias)) {
-                    return [];
-                }
-
-                $where[] = Where::eq('idprovincia', $provincias[0]->idprovincia);
-            }
-
-            $result = [];
-            foreach ($this->codeModel->search('ciudades', $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
-                $result[] = ['key' => $value->code, 'value' => $value->description];
-            }
-
-            return $result;
-        }
-
-        return parent::autocompleteAction();
     }
 
     protected function createViews(): void
@@ -185,8 +146,8 @@ class ListFacturaCliente extends ListBusinessDocument
         // filtros
         $paises = Paises::codeModel();
         $this->addFilterSelect($viewName, 'country', 'country', 'codpais', $paises);
-        $this->addFilterAutocomplete($viewName, 'provincia', 'province', 'provincia', 'provincias');
-        $this->addFilterAutocomplete($viewName, 'ciudad', 'city', 'ciudad', 'ciudades');
+        $this->addFilterSelectAuto($viewName, 'provincia', 'province', 'provincia', 'provincias');
+        $this->addFilterSelectAuto($viewName, 'ciudad', 'city', 'ciudad', 'ciudades');
 
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
