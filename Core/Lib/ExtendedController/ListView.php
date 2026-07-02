@@ -19,13 +19,16 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\ModelClass as LegacyModelClass;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
@@ -43,6 +46,16 @@ class ListView extends BaseView
     use ListViewFiltersTrait;
 
     const DEFAULT_TEMPLATE = 'Master/ListView.html.twig';
+
+    /** Number of tokens for view and user. Used for edit navigator */
+    const NAVIGATION_TOKENS = 10;
+
+    /**
+     * Token for actual render.
+     *
+     * @var string
+     */
+    public $navToken = '';
 
     /** @var string */
     public $orderKey = '';
@@ -283,6 +296,47 @@ class ListView extends BaseView
     }
 
     /**
+     * Guarda en caché la foto de los códigos visibles, identificada por un token
+     * nuevo que las filas añaden a sus enlaces para poder navegar entre registros
+     * desde el EditController de destino.
+     *
+     * @param bool $extended (true = amplía la foto una página antes y otra después)
+     */
+    public function saveNavigation(bool $extended = false): void
+    {
+        if (empty($this->settings['navigation']) || empty($this->cursor)) {
+            return;
+        }
+
+        $start = $this->offset;
+        $codes = $this->navigationCodes($start, $extended);
+        if (empty($codes)) {
+            return;
+        }
+
+        // save seed with new token
+        $nick = Session::user()->nick;
+        $this->navToken = bin2hex(random_bytes(8));
+        Cache::set('nav-' . $nick . '-' . $this->navToken, [
+            'codes' => $codes,
+            'count' => $this->count,
+            'start' => $start,
+        ]);
+
+        // only keep the latest tokens from this view and delete expired seeds
+        $tokensKey = 'nav-tokens-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . $nick;
+        $tokens = Cache::get($tokensKey);
+        if (false === is_array($tokens)) {
+            $tokens = [];
+        }
+        $tokens[] = $this->navToken;
+        while (count($tokens) > self::NAVIGATION_TOKENS) {
+            Cache::delete('nav-' . $nick . '-' . array_shift($tokens));
+        }
+        Cache::set($tokensKey, $tokens);
+    }
+
+    /**
      * Adds assets to the asset manager.
      */
     protected function assets(): void
@@ -419,5 +473,59 @@ class ListView extends BaseView
 
             $this->orderKey = $orderKey;
         }
+    }
+
+    /**
+     * Returns the codes for the navigation seed. By default, these are the codes for the
+     * already loaded cursor (no cost). In extended mode and with a direct model,
+     * one page before and one after are extended by querying only the
+     * primary key, adjusting $start to the actual start of the window.
+     *
+     * @param int &$start
+     * @param bool $extended
+     * @return array
+     */
+    private function navigationCodes(int &$start, bool $extended): array
+    {
+        // Standard Model and Older Model
+        $direct = $this->model instanceof ModelClass || $this->model instanceof LegacyModelClass;
+        if ($extended && $direct) {
+            $sql = 'SELECT ' . $this->model->primaryColumn()
+                . ' FROM ' . $this->model->tableName()
+                . Where::multiSqlLegacy($this->where);
+
+            if ($this->order) {
+                $orderBy = [];
+                foreach ($this->order as $field => $direction) {
+                    $orderBy[] = $field . ' ' . $direction;
+                }
+                $sql .= ' ORDER BY ' . implode(', ', $orderBy);
+            }
+
+            // have 3 record pages (previous - actual - next)
+            $limit = 3 * $this->settings['itemLimit'];
+            $start = max(0, $this->offset - $this->settings['itemLimit']);
+
+            $codes = [];
+            $db = new DataBase();
+            foreach ($db->selectLimit($sql, $limit, $start) as $row) {
+                $codes[] = $row[$this->model->primaryColumn()];
+            }
+            return $codes;
+        }
+
+        // Other cases
+        $codes = [];
+        foreach ($this->cursor as $model) {
+            $code = method_exists($model, 'id')
+                ? $model->id()
+                : $model->primaryColumnValue();
+
+            if (null === $code || '' === $code) {
+                return [];
+            }
+            $codes[] = $code;
+        }
+        return $codes;
     }
 }
