@@ -213,7 +213,7 @@ abstract class ModelClass
     public function clearCache(): void
     {
         CacheWithMemory::deleteMulti('model-' . $this->modelClassName() . '-');
-        CacheWithMemory::deleteMulti('join-model-');
+        CacheWithMemory::deleteMulti('join-model-', '-' . static::tableName() . '-');
         CacheWithMemory::deleteMulti('table-' . static::tableName() . '-');
     }
 

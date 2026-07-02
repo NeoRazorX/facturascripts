@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,18 +45,24 @@ class CacheWithMemory
         Cache::delete($key);
     }
 
-    public static function deleteMulti(string $prefix): void
+    public static function deleteMulti(string $prefix, string $contains = ''): void
     {
-        // Eliminamos de memoria todos los que empiecen con el prefijo
+        // Eliminamos de memoria todos los que empiecen con el prefijo y contengan la subcadena
         foreach (self::$memoryStorage as $key => $item) {
             $len = strlen($prefix);
-            if (substr($key, 0, $len) === $prefix) {
-                unset(self::$memoryStorage[$key]);
+            if (substr($key, 0, $len) !== $prefix) {
+                continue;
             }
+
+            if ($contains !== '' && !str_contains($key, $contains)) {
+                continue;
+            }
+
+            unset(self::$memoryStorage[$key]);
         }
 
         // También eliminamos del caché de archivos
-        Cache::deleteMulti($prefix);
+        Cache::deleteMulti($prefix, $contains);
     }
 
     public static function expire(): void
