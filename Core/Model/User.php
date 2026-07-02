@@ -43,11 +43,12 @@ use FacturaScripts\Dinamic\Model\Serie as DinSerie;
  */
 class User extends ModelClass
 {
-    use ModelTrait;
     use CompanyRelationTrait;
     use GravatarTrait;
+    use ModelTrait;
 
     const DEFAULT_LEVEL = 2;
+
     const UPDATE_ACTIVITY_PERIOD = 3600;
 
     /** @var bool */
@@ -93,13 +94,13 @@ class User extends ModelClass
     public $logkey;
 
     /** @var string */
-    public $nick;
-
-    /** @var string */
     public $newPassword;
 
     /** @var string */
     public $newPassword2;
+
+    /** @var string */
+    public $nick;
 
     /** @var string */
     public $password;
@@ -254,7 +255,7 @@ class User extends ModelClass
      */
     public function getApiFieldsToHide(): array
     {
-        return ['password', 'logkey', 'two_factor_secret_key'];
+        return $this->pipeArray('getApiFieldsToHide', ['password', 'logkey', 'two_factor_secret_key']);
     }
 
     /**
@@ -274,15 +275,6 @@ class User extends ModelClass
         return $roles;
     }
 
-    public function getTwoFactorUrl(): string
-    {
-        return TwoFactorManager::getQRCodeUrl(
-            $this->getCompany()->nombrecorto ?? 'FacturaScripts',
-            $this->email,
-            $this->two_factor_secret_key
-        );
-    }
-
     public function getTwoFactorQR(): string
     {
         return $this->two_factor_enabled && !empty($this->two_factor_secret_key) ?
@@ -290,25 +282,13 @@ class User extends ModelClass
             '';
     }
 
-    public function install(): string
+    public function getTwoFactorUrl(): string
     {
-        // we need this models to be checked before
-        new DinPage();
-        new DinEmpresa();
-        new DinSerie();
-
-        $nick = Tools::config('initial_user', 'admin');
-        $pass = Tools::config('initial_pass', 'admin');
-        $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ?
-            $this->nick :
-            Tools::config('initial_email', '');
-        $lang = Tools::config('lang');
-
-        Tools::log()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
-
-        return 'INSERT INTO ' . static::tableName() . ' (nick,password,email,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
-            . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT) . "','" . $email
-            . "',TRUE,TRUE,'1','1','" . $lang . "','Wizard','99');";
+        return TwoFactorManager::getQRCodeUrl(
+            $this->getCompany()->nombrecorto ?? 'FacturaScripts',
+            $this->email,
+            $this->two_factor_secret_key
+        );
     }
 
     /**
@@ -336,9 +316,25 @@ class User extends ModelClass
         return $this->homepage;
     }
 
-    private static function isSafePageName(string $name): bool
+    public function install(): string
     {
-        return $name !== '' && 1 === preg_match('/^[A-Za-z][A-Za-z0-9_]{0,49}$/', $name);
+        // we need this models to be checked before
+        new DinPage();
+        new DinEmpresa();
+        new DinSerie();
+
+        $nick = Tools::config('initial_user', 'admin');
+        $pass = Tools::config('initial_pass', 'admin');
+        $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ?
+            $this->nick :
+            Tools::config('initial_email', '');
+        $lang = Tools::config('lang');
+
+        Tools::log()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
+
+        return 'INSERT INTO ' . static::tableName() . ' (nick,password,email,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
+            . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT) . "','" . $email
+            . "',TRUE,TRUE,'1','1','" . $lang . "','Wizard','99');";
     }
 
     public function newLogkey(string $ipAddress, string $browser = ''): string
@@ -478,21 +474,9 @@ class User extends ModelClass
         return TwoFactorManager::verifyCode($this->two_factor_secret_key, $code);
     }
 
-    protected function testPassword(): bool
+    private static function isSafePageName(string $name): bool
     {
-        if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
-            if ($this->newPassword !== $this->newPassword2) {
-                Tools::log()->warning('different-passwords', ['%userNick%' => $this->nick]);
-                return false;
-            }
-
-            if (false === $this->setPassword($this->newPassword)) {
-                Tools::log()->warning('weak-password', ['%userNick%' => $this->nick]);
-                return false;
-            }
-        }
-
-        return true;
+        return $name !== '' && 1 === preg_match('/^[A-Za-z][A-Za-z0-9_]{0,49}$/', $name);
     }
 
     protected function saveInsert(): bool
@@ -520,6 +504,23 @@ class User extends ModelClass
         $agent = new DinAgente();
         if (false === $agent->load($this->codagente)) {
             $this->codagente = null;
+        }
+
+        return true;
+    }
+
+    protected function testPassword(): bool
+    {
+        if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
+            if ($this->newPassword !== $this->newPassword2) {
+                Tools::log()->warning('different-passwords', ['%userNick%' => $this->nick]);
+                return false;
+            }
+
+            if (false === $this->setPassword($this->newPassword)) {
+                Tools::log()->warning('weak-password', ['%userNick%' => $this->nick]);
+                return false;
+            }
         }
 
         return true;

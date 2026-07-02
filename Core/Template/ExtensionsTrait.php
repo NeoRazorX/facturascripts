@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,18 +27,18 @@ use ReflectionMethod;
 trait ExtensionsTrait
 {
     /**
-     * Stores class extensions.
-     *
-     * @var array
-     */
-    protected static $extensions = [];
-
-    /**
      * Cache for extension lookups by method name.
      *
      * @var array
      */
     protected static $extensionCache = [];
+
+    /**
+     * Stores class extensions.
+     *
+     * @var array
+     */
+    protected static $extensions = [];
 
     /**
      * Executes the first matched extension.
@@ -150,6 +150,34 @@ trait ExtensionsTrait
         }
 
         return null;
+    }
+
+    /**
+     * Ejecuta todas las extensiones registradas con este nombre encadenando un
+     * array acumulador: cada extensión recibe el array actual y devuelve el array
+     * modificado. Permite que varios plugins añadan elementos (no corta como pipe).
+     *
+     * @param string $name
+     * @param array $values valores iniciales del acumulador
+     * @param mixed ...$arguments argumentos extra pasados a cada extensión
+     *
+     * @return array
+     */
+    public function pipeArray(string $name, array $values = [], ...$arguments): array
+    {
+        // Build cache if needed
+        if (!isset(static::$extensionCache[$name])) {
+            $this->buildExtensionCache($name);
+        }
+
+        foreach (static::$extensionCache[$name] as $function) {
+            $return = call_user_func_array($function->bindTo($this, static::class), array_merge([$values], $arguments));
+            if (is_array($return)) {
+                $values = $return;
+            }
+        }
+
+        return $values;
     }
 
     /**

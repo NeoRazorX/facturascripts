@@ -66,9 +66,9 @@ abstract class ModelClass
 
     abstract public static function find($code): ?static;
 
-    abstract public static function findWhere(array $where, array $order = []): ?static;
-
     abstract public static function findOrCreate(array $where, array $data = []): ?static;
+
+    abstract public static function findWhere(array $where, array $order = []): ?static;
 
     abstract public function getModelFields(): array;
 
@@ -79,6 +79,8 @@ abstract class ModelClass
     abstract public function modelClassName(): string;
 
     abstract public function pipe($name, ...$arguments);
+
+    abstract public function pipeArray(string $name, array $values = [], ...$arguments): array;
 
     abstract public function pipeFalse($name, ...$arguments): bool;
 
@@ -285,7 +287,7 @@ abstract class ModelClass
      */
     public function getApiFieldsToHide(): array
     {
-        return [];
+        return $this->pipeArray('getApiFieldsToHide');
     }
 
     /**
@@ -811,6 +813,15 @@ abstract class ModelClass
         return in_array(strtolower($value), ['true', 't', '1'], false);
     }
 
+    private function getFloatValueForField(array $field, $value): ?float
+    {
+        if (is_numeric($value)) {
+            return (float)$value;
+        }
+
+        return $field['is_nullable'] === 'NO' ? 0.0 : null;
+    }
+
     private function getIntegerValueForField(array $field, $value): ?int
     {
         if (is_numeric($value)) {
@@ -822,15 +833,6 @@ abstract class ModelClass
         }
 
         return $field['is_nullable'] === 'NO' ? 0 : null;
-    }
-
-    private function getFloatValueForField(array $field, $value): ?float
-    {
-        if (is_numeric($value)) {
-            return (float)$value;
-        }
-
-        return $field['is_nullable'] === 'NO' ? 0.0 : null;
     }
 
     /**

@@ -99,12 +99,6 @@ class ApiKey extends ModelClass
         $this->fullaccess = false;
     }
 
-    public function getAccesses(): array
-    {
-        $where = [Where::eq('idapikey', $this->id)];
-        return ApiAccess::all($where, [], 0, 0);
-    }
-
     /**
      * Retrieves the API access entry for the specified resource.
      *
@@ -128,6 +122,12 @@ class ApiKey extends ModelClass
         return null;
     }
 
+    public function getAccesses(): array
+    {
+        $where = [Where::eq('idapikey', $this->id)];
+        return ApiAccess::all($where, [], 0, 0);
+    }
+
     /**
      * Devuelve los nombres de campos que no deben exponerse en la API.
      *
@@ -135,7 +135,7 @@ class ApiKey extends ModelClass
      */
     public function getApiFieldsToHide(): array
     {
-        return ['apikey'];
+        return $this->pipeArray('getApiFieldsToHide', ['apikey']);
     }
 
     /**
