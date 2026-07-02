@@ -88,6 +88,7 @@ class XLSExport extends ExportBase
     public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
         $this->setFileName($title);
+        $this->numSheets++;
         $name = empty($title) ? 'sheet' . $this->numSheets : Tools::slug($title);
 
         $headers = $this->getModelHeaders($model);
@@ -106,6 +107,11 @@ class XLSExport extends ExportBase
             $rows = $this->getCursorRawData($cursor);
             foreach ($rows as $row) {
                 $this->writer->writeSheetRow($name, $row);
+            }
+
+            // si el bloque no está completo, no hay más datos
+            if (count($cursor) < self::LIST_LIMIT) {
+                break;
             }
 
             // obtenemos el siguiente bloque de datos
@@ -259,12 +265,30 @@ class XLSExport extends ExportBase
         $headers = [];
         $modelFields = $model->getModelFields();
         foreach ($this->getModelFields($model) as $key) {
-            switch ($modelFields[$key]['type']) {
+            // extraemos el tipo base: int(10) unsigned -> int, numeric(10,2) -> numeric
+            $type = $modelFields[$key]['type'];
+            $pos = strpos($type, '(');
+            if ($pos !== false) {
+                $type = substr($type, 0, $pos);
+            }
+            $type = trim(str_replace(' unsigned', '', $type));
+
+            switch ($type) {
+                case 'bigint':
                 case 'int':
+                case 'integer':
+                case 'mediumint':
+                case 'serial':
+                case 'smallint':
                     $headers[$key] = 'integer';
                     break;
 
+                case 'decimal':
                 case 'double':
+                case 'double precision':
+                case 'float':
+                case 'numeric':
+                case 'real':
                     $headers[$key] = 'price';
                     break;
 
