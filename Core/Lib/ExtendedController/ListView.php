@@ -304,7 +304,12 @@ class ListView extends BaseView
      */
     public function saveNavigation(bool $extended = false): void
     {
-        if (empty($this->settings['navigation']) || empty($this->cursor)) {
+        // only when the row link opens the record itself: if the code in the link is not
+        // the primary key (document lines, line joins), there is nothing to navigate.
+        if (empty($this->settings['navigation'])
+            || empty($this->cursor)
+            || false === $this->rowCodeIsPrimaryKey()
+        ) {
             return;
         }
 
@@ -514,7 +519,7 @@ class ListView extends BaseView
             return $codes;
         }
 
-        // Other cases
+        // Other cases: the primary key of each record on the visible page
         $codes = [];
         foreach ($this->cursor as $model) {
             $code = method_exists($model, 'id')
@@ -527,5 +532,23 @@ class ListView extends BaseView
             $codes[] = $code;
         }
         return $codes;
+    }
+
+    /**
+     * Returns true when the row link opens the record itself: the code in the link
+     * matches the primary key of the model, checked on the first loaded record.
+     * False when url() is overridden to open another model (document lines, line joins).
+     */
+    private function rowCodeIsPrimaryKey(): bool
+    {
+        $model = reset($this->cursor);
+        parse_str(parse_url($model->url(), PHP_URL_QUERY) ?: '', $params);
+        $code = $params['code'] ?? '';
+        if ('' === $code || false === is_string($code)) {
+            return false;
+        }
+
+        $pk = method_exists($model, 'id') ? $model->id() : $model->primaryColumnValue();
+        return (string)$pk === $code;
     }
 }
