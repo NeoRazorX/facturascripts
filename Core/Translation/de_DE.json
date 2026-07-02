@@ -1341,7 +1341,7 @@
     "passenger": "Passagier",
     "password": "Contraseña",
     "pattern": "Muster",
-    "pattern-hardcoded-year": "Das Muster enthält das Jahr fest codiert",
+    "pattern-hardcoded-year": "Das Muster enthält das Jahr fest kodiert",
     "pattern-too-long": "Das Muster ist zu lang",
     "pattern-without-number": "Das gewählte Muster enthält keine Zahl, daher könnte es sein, dass duplikative Codes erzeugt werden.",
     "pattern-without-serie": "Das gewählte Muster enthält keine Serie, sodass es möglicherweise doppelte Codes für jede Serie generiert.",
