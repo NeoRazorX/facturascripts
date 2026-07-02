@@ -313,7 +313,7 @@ abstract class ListController extends BaseController
         $cacheKey = 'filters-' . Session::get('controllerName') . '-' . $viewName . '-' . $nick;
 
         // clear cache
-        Cache::clear($cacheKey);
+        Cache::delete($cacheKey);
 
         // clear filter values from request
         $view = $this->listView($viewName);
@@ -504,6 +504,20 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Saves filter values for active view and user.
+     */
+    protected function saveFilterAction(): void
+    {
+        $id_filter = $this->listView($this->active)->savePageFilter($this->request, $this->user);
+        if (!empty($id_filter)) {
+            Tools::log()->notice('record-updated-correctly');
+
+            // load filters in request
+            $this->request->request->set('loadfilter', $id_filter);
+        }
+    }
+
+    /**
      * Returns columns title for megaSearchAction function.
      *
      * @param ListView $view
@@ -520,19 +534,5 @@ abstract class ListController extends BaseController
         }
 
         return $result;
-    }
-
-    /**
-     * Saves filter values for active view and user.
-     */
-    protected function saveFilterAction(): void
-    {
-        $id_filter = $this->listView($this->active)->savePageFilter($this->request, $this->user);
-        if (!empty($id_filter)) {
-            Tools::log()->notice('record-updated-correctly');
-
-            // load filters in request
-            $this->request->request->set('loadfilter', $id_filter);
-        }
     }
 }
