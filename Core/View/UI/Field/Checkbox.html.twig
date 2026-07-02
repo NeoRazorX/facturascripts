@@ -1,0 +1,18 @@
+<div id="{{ c.domId() }}" data-ui-path="{{ c.path() }}" class="{{ c.colClass() }}">
+    <div class="form-check pt-2 mb-3">
+        {# el hidden garantiza que los desmarcados también viajen en el POST, con y sin JS #}
+        <input type="hidden" name="{{ c.inputName() }}" value="{{ c.isReadOnly() and c.isChecked() ? '1' : '0' }}"/>
+        <input type="checkbox" name="{{ c.inputName() }}" value="1" id="{{ c.inputId() }}"
+               class="{{ c.inputCssClass('form-check-input') }}"
+               {%- if c.isChecked() %} checked{% endif %}
+               {%- if c.isReadOnly() %} disabled{% endif %}
+               {%- if c.getTabIndex() >= 0 %} tabindex="{{ c.getTabIndex() }}"{% endif %}/>
+        <label class="form-check-label" for="{{ c.inputId() }}">{{ c.labelText() }}</label>
+        {% for error in c.errors() %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+        {% if c.descriptionText() %}
+            <small class="form-text text-muted d-block">{{ c.descriptionText() }}</small>
+        {% endif %}
+    </div>
+</div>

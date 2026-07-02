@@ -1,0 +1,15 @@
+<div id="{{ c.domId() }}" data-ui-path="{{ c.path() }}" class="{{ c.colClass() }}">
+    <div class="card border-{{ c.getColor() }} shadow-sm mb-3">
+        <div class="card-body py-2 d-flex align-items-center">
+            {% if c.getIcon() %}
+                <i class="{{ c.getIcon() }} fa-fw fs-3 text-{{ c.getColor() }} me-3"></i>
+            {% endif %}
+            <div>
+                {% if c.titleText() %}
+                    <div class="small text-muted">{{ c.titleText() }}</div>
+                {% endif %}
+                <div class="fw-semibold">{{ c.getText()|raw }}</div>
+            </div>
+        </div>
+    </div>
+</div>
