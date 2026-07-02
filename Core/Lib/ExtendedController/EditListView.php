@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,8 +57,9 @@ class EditListView extends BaseView
             return true;
         }
 
+        // siempre desde el primer registro, no desde la página actual
         return $exportManager->addListModelPage(
-            $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
+            $this->model, $this->where, $this->order, 0, $this->getColumns(), $this->title
         );
     }
 

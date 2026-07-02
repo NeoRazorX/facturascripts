@@ -38,6 +38,9 @@ class XLSExport extends ExportBase
     /** @var int */
     protected $numSheets = 0;
 
+    /** @var array */
+    protected $sheetNames = [];
+
     /** @var XLSXWriter */
     protected $writer;
 
@@ -62,12 +65,12 @@ class XLSExport extends ExportBase
         }
 
         $lineRows = $this->getCursorRawData($cursor);
-        $this->writer->writeSheet($lineRows, Tools::trans('lines'), $this->escapeSpreadsheetFormulaHeaders($lineHeaders));
+        $this->writer->writeSheet($lineRows, $this->getSheetName(Tools::trans('lines')), $this->escapeSpreadsheetFormulaHeaders($lineHeaders));
 
         // modelo
         $headers = $this->getModelHeaders($model);
         $rows = $this->getCursorRawData([$model]);
-        $this->writer->writeSheet($rows, $model->primaryDescription(), $this->escapeSpreadsheetFormulaHeaders($headers));
+        $this->writer->writeSheet($rows, $this->getSheetName($model->primaryDescription()), $this->escapeSpreadsheetFormulaHeaders($headers));
 
         // no continuamos con la exportación del resto de pestañas
         return false;
@@ -89,7 +92,7 @@ class XLSExport extends ExportBase
     {
         $this->setFileName($title);
         $this->numSheets++;
-        $name = empty($title) ? 'sheet' . $this->numSheets : Tools::slug($title);
+        $name = $this->getSheetName($title);
 
         $headers = $this->getModelHeaders($model);
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
@@ -133,9 +136,10 @@ class XLSExport extends ExportBase
      */
     public function addModelPage($model, $columns, $title = ''): bool
     {
+        $this->numSheets++;
         $headers = $this->getModelHeaders($model);
         $rows = $this->getCursorRawData([$model]);
-        $this->writer->writeSheet($rows, $title, $this->escapeSpreadsheetFormulaHeaders($headers));
+        $this->writer->writeSheet($rows, $this->getSheetName($title), $this->escapeSpreadsheetFormulaHeaders($headers));
         return true;
     }
 
@@ -152,7 +156,7 @@ class XLSExport extends ExportBase
     public function addTablePage($headers, $rows, $options = [], $title = ''): bool
     {
         $this->numSheets++;
-        $sheetName = 'sheet' . $this->numSheets;
+        $sheetName = $this->getSheetName($title);
 
         $this->writer->writeSheetRow($sheetName, $this->escapeSpreadsheetFormulaRow($headers));
         foreach ($rows as $row) {
@@ -253,6 +257,32 @@ class XLSExport extends ExportBase
         }
 
         return $result;
+    }
+
+    /**
+     * Devuelve un nombre de hoja único y válido para Excel,
+     * que limita el nombre a 31 caracteres.
+     *
+     * @param string $title
+     *
+     * @return string
+     */
+    protected function getSheetName(string $title): string
+    {
+        $name = empty($title) ? 'sheet' . $this->numSheets : Tools::slug($title, '-', 31);
+
+        // si ya existe, añadimos un sufijo para hacerlo único
+        $num = 1;
+        while (in_array($name, $this->sheetNames, true)) {
+            $num++;
+            $suffix = '-' . $num;
+            $name = empty($title) ?
+                'sheet' . $this->numSheets . $suffix :
+                Tools::slug($title, '-', 31 - strlen($suffix)) . $suffix;
+        }
+
+        $this->sheetNames[] = $name;
+        return $name;
     }
 
     /**

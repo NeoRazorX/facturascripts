@@ -171,9 +171,9 @@ class ListView extends BaseView
             return false;
         }
 
-        // print list
+        // print list, siempre desde el primer registro, no desde la página actual
         $exportManager->addListModelPage(
-            $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
+            $this->model, $this->where, $this->order, 0, $this->getColumns(), $this->title
         );
 
         // print totals
