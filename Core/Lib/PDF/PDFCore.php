@@ -230,7 +230,12 @@ abstract class PDFCore extends ExportBase
         // Extracts the data from the cursos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = $tableOptions['cols'][$col]['widget']->plainText($row);
+                // Compatibilidad con UIListController: sin widget, lee la propiedad del modelo directamente
+                if (isset($tableOptions['cols'][$col]['widget'])) {
+                    $value = $tableOptions['cols'][$col]['widget']->plainText($row);
+                } else {
+                    $value = $row->{$col} ?? '';
+                }
                 $tableData[$key][$col] = $this->fixValue($value);
             }
         }
