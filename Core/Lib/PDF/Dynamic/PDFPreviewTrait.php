@@ -33,15 +33,18 @@ use FacturaScripts\Core\Tools;
  */
 trait PDFPreviewTrait
 {
+    /** @var bool shows the preview button in the master templates */
+    public $pdfPreviewSupport = true;
+
     /**
      * Builds and returns the document to preview.
      */
     abstract protected function buildPdf(): PDFBuilder;
 
     /**
-     * Returns the onclick js code for a 'js' type button that opens the preview modal.
+     * Returns the onclick js code for a button that opens the preview modal.
      */
-    protected function pdfPreviewButtonJs($code, string $filename = ''): string
+    public function pdfPreviewButtonJs($code, string $filename = ''): string
     {
         $i18n = Tools::lang();
         $labels = [
