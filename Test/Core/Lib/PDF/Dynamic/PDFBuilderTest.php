@@ -20,11 +20,15 @@
 namespace FacturaScripts\Test\Core\Lib\PDF\Dynamic;
 
 use FacturaScripts\Core\Lib\PDF\Dynamic\Blocks\DualColumnTableBlock;
+use FacturaScripts\Core\Lib\PDF\Dynamic\Blocks\PageFooterBlock;
+use FacturaScripts\Core\Lib\PDF\Dynamic\Blocks\ParallelTableBlock;
 use FacturaScripts\Core\Lib\PDF\Dynamic\Blocks\RawHtmlBlock;
 use FacturaScripts\Core\Lib\PDF\Dynamic\Blocks\SpacerBlock;
 use FacturaScripts\Core\Lib\PDF\Dynamic\Blocks\TableBlock;
 use FacturaScripts\Core\Lib\PDF\Dynamic\Blocks\TextBlock;
 use FacturaScripts\Core\Lib\PDF\Dynamic\Blocks\TitleBlock;
+use FacturaScripts\Core\Lib\PDF\Dynamic\Blocks\WatermarkTextBlock;
+use FacturaScripts\Core\Lib\PDF\Dynamic\ModelTableHelper;
 use FacturaScripts\Core\Lib\PDF\Dynamic\PDFBuilder;
 use PHPUnit\Framework\TestCase;
 
@@ -82,6 +86,29 @@ final class PDFBuilderTest extends TestCase
         $this->assertStringContainsString('<td>03-07-2026</td>', $html);
     }
 
+    public function testParallelTableBlockPairsInTwoColumns(): void
+    {
+        $html = (new ParallelTableBlock([
+            'Nombre' => 'ACME',
+            'Ciudad' => 'Madrid',
+            'Email' => 'x@y.z',
+        ]))->render();
+
+        $this->assertStringContainsString('<table class="table-parallel">', $html);
+        $this->assertStringContainsString('<b>Nombre</b>: ACME', $html);
+        // 3 pares → 2 filas, la última con celda vacía de relleno
+        $this->assertSame(2, substr_count($html, '<tr>'));
+        $this->assertStringContainsString('<td></td>', $html);
+    }
+
+    public function testPageFooterBlock(): void
+    {
+        $html = (new PageFooterBlock('1 / 1', 'Generado el 03-07-2026'))->render();
+        $this->assertStringContainsString('class="page-footer"', $html);
+        $this->assertStringContainsString('<div>1 / 1</div>', $html);
+        $this->assertStringContainsString('<div>Generado el 03-07-2026</div>', $html);
+    }
+
     public function testRawHtmlBlockSanitizes(): void
     {
         $html = (new RawHtmlBlock(
@@ -123,8 +150,36 @@ final class PDFBuilderTest extends TestCase
         $this->assertStringContainsString('orientation:"landscape"', str_replace(' ', '', $html));
         $this->assertStringContainsString('function fsPrint()', $html);
         $this->assertStringContainsString('function fsDownloadPdf(', $html);
-        // en horizontal, la página mide 257mm de ancho (297 - 2 x 20 de margen)
-        $this->assertStringContainsString('width: 257mm', $html);
+        // en horizontal, la página mide 297mm de ancho con el margen como padding
+        $this->assertStringContainsString('width: 297mm', $html);
+        $this->assertStringContainsString('padding: 20mm', $html);
+    }
+
+    public function testWatermarkTextBlock(): void
+    {
+        $html = (new WatermarkTextBlock('BORRADOR'))->render();
+        $this->assertStringContainsString('class="watermark-text"', $html);
+        $this->assertStringContainsString('color: #C80000', $html);
+        $this->assertStringContainsString('BORRADOR', $html);
+    }
+
+    public function testRemoveEmptyColumns(): void
+    {
+        $titles = ['ref' => 'Ref.', 'dto' => 'Dto.', 'irpf' => 'IRPF', 'total' => 'Total'];
+        $alignments = ['ref' => 'left', 'dto' => 'right', 'irpf' => 'right', 'total' => 'right'];
+        $rows = [
+            ['ref' => 'A1', 'dto' => '10,00%', 'irpf' => '0,00%', 'total' => '20,00'],
+            ['ref' => 'B2', 'dto' => '0,00%', 'irpf' => '0,00%', 'total' => '5,00'],
+        ];
+
+        ModelTableHelper::removeEmptyColumns($rows, $titles, $alignments, ['0,00', '0,00%']);
+
+        // irpf desaparece (todo a cero), dto se mantiene (una fila con valor)
+        $this->assertArrayNotHasKey('irpf', $titles);
+        $this->assertArrayNotHasKey('irpf', $rows[0]);
+        $this->assertArrayHasKey('dto', $titles);
+        $this->assertArrayNotHasKey('irpf', $alignments);
+        $this->assertSame(['ref', 'dto', 'total'], array_keys($rows[0]));
     }
 
     public function testCustomBlockRegistry(): void

@@ -107,6 +107,11 @@ class PDFBuilder
         return $this;
     }
 
+    public function addDocumentHeader(Empresa $empresa, ?string $logoSrc = null, bool $logoLeft = true): self
+    {
+        return $this->add('DocumentHeader', $empresa, $logoSrc, $logoLeft);
+    }
+
     public function addDualColumnTable(array $data): self
     {
         return $this->add('DualColumnTable', $data);
@@ -122,9 +127,42 @@ class PDFBuilder
         return $this->add('Image', $src, $widthMm, $align);
     }
 
+    /**
+     * Adds a table with the model list data, using the XMLView columns to
+     * resolve titles, alignments and cell values (like the core exporters).
+     *
+     * @param array $cursor ModelClass[]
+     * @param array $columns GroupItem[] from BaseView::getColumns()
+     */
+    public function addModelTable(array $cursor, array $columns, string $cssClass = 'table-list'): self
+    {
+        $titles = ModelTableHelper::titles($columns);
+        $rows = [];
+        foreach (ModelTableHelper::rows($cursor, $columns) as $row) {
+            $rows[] = array_values($row);
+        }
+
+        return $this->addTable(
+            $rows,
+            array_values($titles),
+            array_values(ModelTableHelper::alignments($columns)),
+            $cssClass
+        );
+    }
+
     public function addPageBreak(): self
     {
         return $this->add('PageBreak');
+    }
+
+    public function addPageFooter(string $left = '', string $right = ''): self
+    {
+        return $this->add('PageFooter', $left, $right);
+    }
+
+    public function addParallelTable(array $data): self
+    {
+        return $this->add('ParallelTable', $data);
     }
 
     public function addSpacer(int $mm = 5): self
@@ -145,6 +183,11 @@ class PDFBuilder
     public function addTitle(string $text, int $level = 1, string $align = 'left'): self
     {
         return $this->add('Title', $text, $level, $align);
+    }
+
+    public function addWatermarkText(string $text, string $color = '#C80000'): self
+    {
+        return $this->add('WatermarkText', $text, $color);
     }
 
     public function getBodyHtml(): string
@@ -218,15 +261,25 @@ class PDFBuilder
     {
         $fileName = json_encode($this->sanitizeFileName($this->title) . '.pdf');
 
+        // the page margin is already the .page padding (wysiwyg), so html2pdf margin is 0.
+        // onclone removes the preview-only decoration (shadows, gaps) before the capture.
         return 'function fsPrint() { window.print(); }'
             . 'function fsPdfOptions(filename) {'
             . 'return {'
-            . 'margin: ' . $this->margin . ','
+            . 'margin: 0,'
             . 'filename: filename || ' . $fileName . ','
             . 'image: {type: "jpeg", quality: 0.98},'
-            . 'html2canvas: {scale: 3, letterRendering: true, useCORS: true},'
+            . 'html2canvas: {scale: 3, letterRendering: true, useCORS: true, backgroundColor: "#ffffff",'
+            . ' onclone: function (doc) {'
+            . 'doc.body.style.padding = "0";'
+            . 'doc.body.style.background = "#fff";'
+            . 'doc.querySelectorAll(".page").forEach(function (page) {'
+            . 'page.style.boxShadow = "none";'
+            . 'page.style.margin = "0 auto";'
+            . '});'
+            . '}},'
             . 'jsPDF: {unit: "mm", format: "a4", orientation: ' . json_encode($this->orientation) . '},'
-            . 'pagebreak: {mode: ["avoid-all", "css", "legacy"]}'
+            . 'pagebreak: {mode: ["css", "legacy"]}'
             . '};'
             . '}'
             . 'function fsDownloadPdf(filename) {'
