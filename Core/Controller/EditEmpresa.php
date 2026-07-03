@@ -26,7 +26,6 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Lib\PDF\Dynamic\PDFBuilder;
 use FacturaScripts\Core\Lib\PDF\Dynamic\PDFPreviewTrait;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
-use FacturaScripts\Dinamic\Model\Almacen;
 
 /**
  * Controller to edit a single item from the  Empresa model
@@ -57,37 +56,51 @@ class EditEmpresa extends EditController
     {
         $empresa = $this->getModel();
         $empresa->loadFromCode($this->request->input('code'));
+        $i18n = Tools::lang();
 
         $doc = PDFBuilder::create()
             ->setTitle($empresa->nombrecorto ?? $empresa->nombre ?? 'company')
-            ->addCompanyHeader($empresa, 'right')
-            ->addSpacer(5)
-            ->addTitle(Tools::lang()->trans('company'), 2)
-            ->addDualColumnTable([
-                Tools::lang()->trans('name') => $empresa->nombre,
-                Tools::lang()->trans('fiscal-number') => $empresa->cifnif,
-                Tools::lang()->trans('address') => $empresa->direccion,
-                Tools::lang()->trans('city') => $empresa->ciudad,
-                Tools::lang()->trans('admin') => $empresa->administrador,
+            ->addDocumentHeader($empresa)
+            ->addTitle($i18n->trans('company') . ': ' . $empresa->nombre)
+            ->addHtml('<hr/>')
+            ->addParallelTable([
+                $i18n->trans('name') => $empresa->nombre,
+                $i18n->trans('short-name') => $empresa->nombrecorto,
+                $i18n->trans('fiscal-id') => $empresa->tipoidfiscal,
+                $i18n->trans('fiscal-number') => $empresa->cifnif,
+                $i18n->trans('address') => $empresa->direccion,
+                $i18n->trans('zip-code') => $empresa->codpostal,
+                $i18n->trans('city') => $empresa->ciudad,
+                $i18n->trans('province') => $empresa->provincia,
+                $i18n->trans('country') => $empresa->codpais,
+                $i18n->trans('phone') => $empresa->telefono1,
+                $i18n->trans('phone2') => $empresa->telefono2,
+                $i18n->trans('fax') => $empresa->fax,
+                $i18n->trans('email') => $empresa->email,
+                $i18n->trans('web') => $empresa->web,
+                $i18n->trans('admin') => $empresa->administrador,
+                $i18n->trans('start-date') => $empresa->fechaalta,
             ]);
 
-        $rows = [];
-        foreach (Almacen::all([Where::eq('idempresa', $empresa->idempresa)]) as $almacen) {
-            $rows[] = [$almacen->codalmacen, $almacen->nombre, $almacen->direccion, $almacen->ciudad];
+        // las vistas relacionadas, como hace el export original con cada pestaña
+        foreach (['EditAlmacen', 'ListCuentaBanco', 'ListFormaPago', 'ListEjercicio'] as $viewName) {
+            $view = $this->views[$viewName] ?? null;
+            if (null === $view) {
+                continue;
+            }
+
+            $modelClass = get_class($view->model);
+            $cursor = $modelClass::all([Where::eq('idempresa', $empresa->idempresa)]);
+            if (empty($cursor)) {
+                continue;
+            }
+
+            $doc->addSpacer(3)
+                ->addTitle($view->title, 2)
+                ->addModelTable($cursor, $view->getColumns());
         }
 
-        if (false === empty($rows)) {
-            $doc->addSpacer(5)
-                ->addTitle(Tools::lang()->trans('warehouses'), 2)
-                ->addTable($rows, [
-                    Tools::lang()->trans('code'),
-                    Tools::lang()->trans('name'),
-                    Tools::lang()->trans('address'),
-                    Tools::lang()->trans('city'),
-                ]);
-        }
-
-        return $doc;
+        return $doc->addPageFooter('1 / 1', $i18n->trans('generated-at', ['%when%' => Tools::dateTime()]));
     }
 
     protected function checkViesAction(): bool
@@ -183,15 +196,6 @@ class EditEmpresa extends EditController
                         'color' => 'info',
                         'icon' => 'fa-solid fa-check-double',
                         'label' => 'check-vies'
-                    ]);
-                }
-                if ($view->model->exists()) {
-                    $this->addButton($viewName, [
-                        'action' => $this->pdfPreviewButtonJs($view->model->primaryColumnValue()),
-                        'color' => 'secondary',
-                        'icon' => 'fa-solid fa-file-pdf',
-                        'label' => 'pdf-preview',
-                        'type' => 'js'
                     ]);
                 }
                 break;
