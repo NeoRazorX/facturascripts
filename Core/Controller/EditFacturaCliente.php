@@ -6,8 +6,12 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\PDF\Dynamic\ModelTableHelper;
+use FacturaScripts\Core\Lib\PDF\Dynamic\PDFBuilder;
+use FacturaScripts\Core\Lib\PDF\Dynamic\PDFPreviewTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\AjaxForms\SalesController;
 use FacturaScripts\Dinamic\Lib\Calculator;
@@ -22,6 +26,8 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
  */
 class EditFacturaCliente extends SalesController
 {
+    use PDFPreviewTrait;
+
     private const VIEW_ACCOUNTS = 'ListAsiento';
     private const VIEW_RECEIPTS = 'ListReciboCliente';
 
@@ -46,6 +52,7 @@ class EditFacturaCliente extends SalesController
     protected function createViews(): void
     {
         parent::createViews();
+        $this->loadPdfViewerAssets();
 
         $this->createViewsReceipts();
         $this->createViewsAccounting();
@@ -128,6 +135,9 @@ class EditFacturaCliente extends SalesController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'pdf-preview':
+                return $this->pdfPreviewAction();
+
             case 'generate-accounting':
                 return $this->generateAccountingAction();
 
@@ -142,6 +152,141 @@ class EditFacturaCliente extends SalesController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function buildPdf(): PDFBuilder
+    {
+        $invoice = new FacturaCliente();
+        $invoice->load($this->request->queryOrInput('code'));
+        $i18n = Tools::lang();
+
+        $empresa = new Empresa();
+        $empresa->load($invoice->idempresa);
+
+        // cabecera general + datos del documento, como insertBusinessDocHeader()
+        $subject = $invoice->getSubject();
+        $doc = PDFBuilder::create()
+            ->setTitle($invoice->codigo)
+            ->addDocumentHeader($empresa)
+            ->addTitle($i18n->trans('invoice') . ': ' . $invoice->codigo)
+            ->addHtml('<hr/>')
+            ->addParallelTable([
+                $i18n->trans('customer') => $invoice->nombrecliente,
+                $i18n->trans('date') => $invoice->fecha,
+                $i18n->trans('address') => $this->pdfDocAddress($invoice),
+                $i18n->trans('code') => $invoice->codigo,
+                $subject->tipoidfiscal ?: $i18n->trans('cifnif') => $invoice->cifnif,
+                $i18n->trans('number') => $invoice->numero,
+                $i18n->trans('serie') => $invoice->getSerie()->descripcion,
+            ])
+            ->addSpacer(3);
+
+        // líneas del documento, como insertBusinessDocBody()
+        $titles = [
+            'referencia' => $i18n->trans('reference') . ' - ' . $i18n->trans('description'),
+            'cantidad' => $i18n->trans('quantity'),
+            'pvpunitario' => $i18n->trans('price'),
+            'dtopor' => $i18n->trans('dto'),
+            'dtopor2' => $i18n->trans('dto-2'),
+            'pvptotal' => $i18n->trans('net'),
+            'iva' => $i18n->trans('tax'),
+            'recargo' => $i18n->trans('re'),
+            'irpf' => $i18n->trans('irpf'),
+        ];
+        $alignments = array_fill_keys(array_keys($titles), 'right');
+        $alignments['referencia'] = 'left';
+
+        $rows = [];
+        foreach ($invoice->getLines() as $line) {
+            $rows[] = [
+                'referencia' => empty($line->referencia) ? $line->descripcion : $line->referencia . ' - ' . $line->descripcion,
+                'cantidad' => Tools::number($line->cantidad),
+                'pvpunitario' => Tools::number($line->pvpunitario),
+                'dtopor' => Tools::number($line->dtopor) . '%',
+                'dtopor2' => Tools::number($line->dtopor2) . '%',
+                'pvptotal' => Tools::number($line->pvptotal),
+                'iva' => Tools::number($line->iva) . '%',
+                'recargo' => Tools::number($line->recargo) . '%',
+                'irpf' => Tools::number($line->irpf) . '%',
+            ];
+        }
+
+        $zero = Tools::number(0);
+        ModelTableHelper::removeEmptyColumns($rows, $titles, $alignments, [$zero, $zero . '%']);
+        $doc->addTable(array_map('array_values', $rows), array_values($titles), array_values($alignments));
+
+        // totales, como insertBusinessDocFooter()
+        $totalTitles = [
+            'net' => $i18n->trans('net'),
+            'taxes' => $i18n->trans('taxes'),
+            'totalSurcharge' => $i18n->trans('re'),
+            'totalIrpf' => $i18n->trans('retention'),
+            'totalSupplied' => $i18n->trans('supplied-amount'),
+            'total' => $i18n->trans('total'),
+        ];
+        $totalAlignments = array_fill_keys(array_keys($totalTitles), 'right');
+        $totalRows = [[
+            'net' => Tools::number($invoice->neto),
+            'taxes' => Tools::number($invoice->totaliva),
+            'totalSurcharge' => Tools::number($invoice->totalrecargo),
+            'totalIrpf' => Tools::number(0 - $invoice->totalirpf),
+            'totalSupplied' => Tools::number($invoice->totalsuplidos),
+            'total' => Tools::number($invoice->total),
+        ]];
+        ModelTableHelper::removeEmptyColumns($totalRows, $totalTitles, $totalAlignments, [$zero]);
+        $doc->addSpacer(3)
+            ->addTable(array_map('array_values', $totalRows), array_values($totalTitles), array_values($totalAlignments));
+
+        // recibos, como insertInvoiceReceipts()
+        $receiptRows = [];
+        foreach ($invoice->getReceipts() as $receipt) {
+            $receiptRows[] = [
+                $receipt->numero,
+                Tools::number($receipt->importe),
+                Tools::date($receipt->vencimiento),
+                $i18n->trans($receipt->pagado ? 'paid' : 'unpaid'),
+            ];
+        }
+
+        if (false === empty($receiptRows)) {
+            $doc->addSpacer(3)
+                ->addTitle($i18n->trans('receipts'), 3)
+                ->addTable($receiptRows, [
+                    $i18n->trans('receipt'),
+                    $i18n->trans('amount'),
+                    $i18n->trans('expiration'),
+                    $i18n->trans('status'),
+                ], ['left', 'right', 'right', 'right']);
+        }
+
+        if (false === empty($invoice->observaciones)) {
+            $doc->addSpacer(3)
+                ->addTitle($i18n->trans('observations'), 3)
+                ->addText($invoice->observaciones);
+        }
+
+        // aviso de factura no emitida, como el export original
+        if ($invoice->editable) {
+            $doc->addWatermarkText($i18n->trans('sketch-invoice-warning'));
+        }
+
+        return $doc->addPageFooter('1 / 1', $i18n->trans('generated-at', ['%when%' => Tools::dateTime()]));
+    }
+
+    private function pdfDocAddress(FacturaCliente $invoice): string
+    {
+        $address = $invoice->direccion ?? '';
+        if (!empty($invoice->codpostal)) {
+            $address .= empty($address) ? $invoice->codpostal : ', ' . $invoice->codpostal;
+        }
+        if (!empty($invoice->ciudad)) {
+            $address .= empty($address) ? $invoice->ciudad : ', ' . $invoice->ciudad;
+        }
+        if (!empty($invoice->provincia)) {
+            $address .= ' (' . $invoice->provincia . ')';
+        }
+
+        return $address;
     }
 
     private function generateAccountingAction(): bool
