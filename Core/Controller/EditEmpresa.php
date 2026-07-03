@@ -23,7 +23,10 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Core\Lib\PDF\Dynamic\PDFBuilder;
+use FacturaScripts\Core\Lib\PDF\Dynamic\PDFPreviewTrait;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\Almacen;
 
 /**
  * Controller to edit a single item from the  Empresa model
@@ -34,6 +37,8 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
  */
 class EditEmpresa extends EditController
 {
+    use PDFPreviewTrait;
+
     public function getModelClassName(): string
     {
         return 'Empresa';
@@ -46,6 +51,43 @@ class EditEmpresa extends EditController
         $data['title'] = 'company';
         $data['icon'] = 'fa-solid fa-building';
         return $data;
+    }
+
+    protected function buildPdf(): PDFBuilder
+    {
+        $empresa = $this->getModel();
+        $empresa->loadFromCode($this->request->input('code'));
+
+        $doc = PDFBuilder::create()
+            ->setTitle($empresa->nombrecorto ?? $empresa->nombre ?? 'company')
+            ->addCompanyHeader($empresa, 'right')
+            ->addSpacer(5)
+            ->addTitle(Tools::lang()->trans('company'), 2)
+            ->addDualColumnTable([
+                Tools::lang()->trans('name') => $empresa->nombre,
+                Tools::lang()->trans('fiscal-number') => $empresa->cifnif,
+                Tools::lang()->trans('address') => $empresa->direccion,
+                Tools::lang()->trans('city') => $empresa->ciudad,
+                Tools::lang()->trans('admin') => $empresa->administrador,
+            ]);
+
+        $rows = [];
+        foreach (Almacen::all([Where::eq('idempresa', $empresa->idempresa)]) as $almacen) {
+            $rows[] = [$almacen->codalmacen, $almacen->nombre, $almacen->direccion, $almacen->ciudad];
+        }
+
+        if (false === empty($rows)) {
+            $doc->addSpacer(5)
+                ->addTitle(Tools::lang()->trans('warehouses'), 2)
+                ->addTable($rows, [
+                    Tools::lang()->trans('code'),
+                    Tools::lang()->trans('name'),
+                    Tools::lang()->trans('address'),
+                    Tools::lang()->trans('city'),
+                ]);
+        }
+
+        return $doc;
     }
 
     protected function checkViesAction(): bool
@@ -66,6 +108,7 @@ class EditEmpresa extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->loadPdfViewerAssets();
 
         $this->createViewWarehouse();
         $this->createViewBankAccounts();
@@ -103,6 +146,9 @@ class EditEmpresa extends EditController
             case 'check-vies':
                 return $this->checkViesAction();
 
+            case 'pdf-preview':
+                return $this->pdfPreviewAction();
+
             default:
                 return parent::execPreviousAction($action);
         }
@@ -137,6 +183,15 @@ class EditEmpresa extends EditController
                         'color' => 'info',
                         'icon' => 'fa-solid fa-check-double',
                         'label' => 'check-vies'
+                    ]);
+                }
+                if ($view->model->exists()) {
+                    $this->addButton($viewName, [
+                        'action' => $this->pdfPreviewButtonJs($view->model->primaryColumnValue()),
+                        'color' => 'secondary',
+                        'icon' => 'fa-solid fa-file-pdf',
+                        'label' => 'pdf-preview',
+                        'type' => 'js'
                     ]);
                 }
                 break;
