@@ -155,7 +155,7 @@ abstract class Controller implements ControllerInterface
 
         // empresa del usuario, o la predeterminada si no tiene ninguna asignada
         $idempresa = empty($this->user) ? null : $this->user->idempresa;
-        $this->empresa = Empresas::get($idempresa ?? Tools::settings('default', 'idempresa'));
+        $this->empresa = empty($idempresa) ? Empresas::default() : Empresas::get($idempresa);
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($this->className);
