@@ -354,15 +354,8 @@
                     <div class="card-body p-3">
                         <h5 class="card-title d-flex align-items-start justify-content-between mb-2">
                             <span>{{ plugin.name }}</span>
-                            <span class="ms-2 flex-shrink-0">
-                                {% if plugin.installed %}
-                                    <span class="badge bg-success fw-normal">
-                                        <i class="fa-solid fa-check me-1" aria-hidden="true"></i>{{ trans('installed') }}
-                                    </span>
-                                {% endif %}
-                                <span class="badge bg-light text-dark border fw-normal">
-                                    v{{ plugin.version }}
-                                </span>
+                            <span class="badge bg-light text-dark border fw-normal ms-2 flex-shrink-0">
+                                v{{ plugin.version }}
                             </span>
                         </h5>
                         <p class="card-text text-muted mb-0"
