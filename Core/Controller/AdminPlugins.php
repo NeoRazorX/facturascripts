@@ -207,9 +207,11 @@ class AdminPlugins extends Controller
         $installedPlugins = Plugins::list();
         foreach (Forja::plugins() as $item) {
             // plugin is already installed?
+            $item['installed'] = false;
             foreach ($installedPlugins as $plugin) {
                 if ($plugin->name == $item['name']) {
-                    continue 2;
+                    $item['installed'] = true;
+                    break;
                 }
             }
 
