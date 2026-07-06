@@ -1,0 +1,11 @@
+/**
+ * MultiInstancia — Navbar override para waterman.cdtcom.net
+ * Waterman Store — Naranja/marrón cálido
+ *
+ * @author CDTCOM
+ */
+
+.navbar.bg-primary,
+nav.bg-primary {
+    background-color: #aa6516 !important;
+}

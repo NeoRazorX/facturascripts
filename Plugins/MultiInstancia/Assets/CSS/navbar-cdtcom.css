@@ -1,0 +1,12 @@
+/**
+ * MultiInstancia — Navbar override para conta.cdtcom.net
+ * CableData Telecom — Azul corporativo
+ *
+ * @author CDTCOM
+ */
+
+.navbar.bg-primary,
+nav.bg-primary {
+    background-color: #1a56a0 !important;
+}
+

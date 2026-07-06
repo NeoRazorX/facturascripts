@@ -1,0 +1,12 @@
+/**
+ * MultiInstancia — Navbar override para cabal.cdtcom.net
+ * Cabal Corp — Negro
+ *
+ * @author CDTCOM
+ */
+
+.navbar.bg-primary,
+nav.bg-primary {
+    background-color: #000000 !important;
+}
+

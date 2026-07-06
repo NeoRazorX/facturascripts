@@ -4,7 +4,10 @@
 /doc/
 /MyFiles/
 /node_modules/
-/Plugins/
+/Plugins/*
+!/Plugins/CDTBankTools/
+!/Plugins/MultiInstancia/
+!/Plugins/PedidoToFactura/
 /vendor/
 .DS_Store
 .htaccess
