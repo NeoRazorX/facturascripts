@@ -85,6 +85,9 @@ class CronJob extends ModelClass
     /** @var bool */
     private $ready = false;
 
+    /** @var Closure|null */
+    private $ready_callback;
+
     /** @var int */
     public $running;
 
@@ -261,6 +264,10 @@ class CronJob extends ModelClass
             return false;
         }
 
+        if ($this->ready_callback !== null) {
+            ($this->ready_callback)();
+        }
+
         try {
             $function();
         } catch (Throwable $e) {
@@ -303,6 +310,12 @@ class CronJob extends ModelClass
         $this->save();
 
         return true;
+    }
+
+    public function setReadyCallback(?Closure $callback): self
+    {
+        $this->ready_callback = $callback;
+        return $this;
     }
 
     public function setMockDateTime(?string $dateTime, bool $update_microtime = true): void

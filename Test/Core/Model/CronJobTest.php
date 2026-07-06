@@ -343,6 +343,27 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job->delete());
     }
 
+    public function testReadyCallback(): void
+    {
+        $called = false;
+        $job = new CronJob();
+        $job->jobname = 'TestReadyCallback';
+        $job->pluginname = 'TestPluginReadyCallback';
+        $job->setReadyCallback(function () use (&$called) {
+            $called = true;
+        });
+
+        $this->assertFalse($job->run(function () {
+        }));
+        $this->assertFalse($called);
+
+        $this->assertTrue($job->everyDayAt(0)->run(function () {
+        }));
+        $this->assertTrue($called);
+
+        $this->assertTrue($job->delete());
+    }
+
     public function testRunningCounterAfterSuccess(): void
     {
         $job = new CronJob();

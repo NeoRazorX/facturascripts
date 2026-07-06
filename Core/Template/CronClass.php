@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Template;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\CronJob;
 
@@ -26,6 +27,9 @@ abstract class CronClass
 {
     /** @var string */
     public $pluginName;
+
+    /** @var bool */
+    private $runningLog = false;
 
     abstract public function run(): void;
 
@@ -49,6 +53,16 @@ abstract class CronClass
 
         // si es un proceso zombie, lo liberamos
         $job->releaseIfStale();
+
+        $job->setReadyCallback(function () {
+            if ($this->runningLog) {
+                return;
+            }
+
+            echo PHP_EOL . Tools::trans('running-plugin-cron', ['%pluginName%' => $this->pluginName]) . ' ... ';
+            Tools::log('cron')->notice('running-plugin-cron', ['%pluginName%' => $this->pluginName]);
+            $this->runningLog = true;
+        });
 
         return $job;
     }
