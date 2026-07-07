@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ExtensionsTrait;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
@@ -217,8 +217,8 @@ class BusinessDocumentGenerator
         $relationModel = new AttachedFileRelation();
         foreach ($newDoc->parentDocuments() as $parent) {
             $whereDocs = [
-                new DataBaseWhere('model', $parent->modelClassName()),
-                new DataBaseWhere('modelid', $parent->primaryColumnValue())
+                Where::eq('model', $parent->modelClassName()),
+                Where::eq('modelid', $parent->primaryColumnValue())
             ];
             foreach ($relationModel->all($whereDocs, ['id' => 'ASC']) as $relation) {
                 $newRelation = new AttachedFileRelation();
