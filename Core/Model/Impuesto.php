@@ -39,6 +39,7 @@ class Impuesto extends ModelClass
 
     const SPECIAL_TAX_IMPACTED_ACCOUNT = 'IVAREP';
     const SPECIAL_TAX_SUPPORTED_ACCOUNT = 'IVASOP';
+    const SPECIAL_TAX_SURCHARGE_ACCOUNT = 'IVARRE';
     const TYPE_PERCENTAGE = 1;
     const TYPE_FIXED_VALUE = 2;
 
@@ -157,9 +158,18 @@ class Impuesto extends ModelClass
     public function getOutputSurchargeAccount(string $codejercicio): DinSubcuenta
     {
         // si tenemos una cuenta definida, la devolvemos
-        return $this->codsubcuentarepre ?
-            $this->getSubAccount($codejercicio, $this->codsubcuentarepre, static::SPECIAL_TAX_IMPACTED_ACCOUNT) :
-            $this->getOutputTaxAccount($codejercicio);
+        if ($this->codsubcuentarepre) {
+            return $this->getSubAccount($codejercicio, $this->codsubcuentarepre, static::SPECIAL_TAX_SURCHARGE_ACCOUNT);
+        }
+
+        // si hay una subcuenta marcada como recargo de equivalencia repercutido, la usamos
+        $surcharge = $this->getSpecialSubAccount($codejercicio, static::SPECIAL_TAX_SURCHARGE_ACCOUNT);
+        if ($surcharge->exists()) {
+            return $surcharge;
+        }
+
+        // en otro caso, usamos la cuenta de IVA repercutido
+        return $this->getOutputTaxAccount($codejercicio);
     }
 
     public function getOutputTaxAccount(string $codejercicio): DinSubcuenta
