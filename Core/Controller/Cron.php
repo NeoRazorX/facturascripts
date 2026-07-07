@@ -286,9 +286,6 @@ END;
                 continue;
             }
 
-            echo PHP_EOL . Tools::trans('running-plugin-cron', ['%pluginName%' => $pluginName]) . ' ... ';
-            Tools::log('cron')->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
-
             try {
                 $cron = new $cronClass($pluginName);
                 $cron->run();
