@@ -454,7 +454,7 @@ class DocumentStitcher extends Controller
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         foreach ($this->codes as $code) {
             $doc = new $modelClass();
-            if (false === $doc->loadFromCode($code)) {
+            if (false === $doc->load($code)) {
                 continue;
             }
 

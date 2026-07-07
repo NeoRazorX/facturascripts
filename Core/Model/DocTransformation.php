@@ -122,7 +122,7 @@ class DocTransformation extends ModelClass
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model1;
         if (class_exists($modelClass)) {
             $line = new $modelClass();
-            $line->loadFromCode($this->idlinea1);
+            $line->load($this->idlinea1);
             return $line;
         }
 
@@ -137,7 +137,7 @@ class DocTransformation extends ModelClass
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model2;
         if (class_exists($modelClass)) {
             $line = new $modelClass();
-            $line->loadFromCode($this->idlinea2);
+            $line->load($this->idlinea2);
             return $line;
         }
 
