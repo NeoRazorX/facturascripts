@@ -178,7 +178,7 @@ abstract class TransformerDocument extends BusinessDocument
         // eliminamos las relaciones y actualizamos la columna servido
         $parents = $this->parentDocuments();
         $docTransformation = new DocTransformation();
-        $docTransformation->deleteFrom($this->modelClassName(), $this->id(), true);
+        $docTransformation->deleteFrom($this->modelClassName(), $this->id());
 
         // cambiamos el estado del documento padre
         foreach ($parents as $parent) {
@@ -380,7 +380,6 @@ abstract class TransformerDocument extends BusinessDocument
             }
 
             $line->actualizastock = $status->actualizastock;
-            $line->servido = $line->cantidad;
             $line->save();
         }
 

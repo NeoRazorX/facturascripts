@@ -259,12 +259,14 @@ class DocumentStitcher extends Controller
             }
         }
 
-        // volvemos a obtener las líneas por si han sido actualizadas
+        // reponemos las referencias con líneas frescas, porque el cambio de estado
+        // puede haberlas actualizado sobre otras instancias
         foreach ($doc->getLines() as $line) {
-            $line->servido += $quantities[$line->id()];
-            if (false === $line->save()) {
-                Tools::log()->error('record-save-error');
-                return false;
+            foreach ($newLines as $num => $newLine) {
+                if ($newLine->id() === $line->id()) {
+                    $newLines[$num] = $line;
+                    break;
+                }
             }
         }
 
