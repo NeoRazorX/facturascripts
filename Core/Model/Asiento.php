@@ -378,10 +378,8 @@ class Asiento extends ModelClass
         $this->concepto = Tools::noHtml($this->concepto);
         $this->documento = Tools::noHtml($this->documento);
 
-        if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
-            Tools::log()->warning('invalid-column-lenght', [
-                '%column%' => 'concepto', '%min%' => '1', '%max%' => '255'
-            ]);
+        if (strlen($this->concepto ?? '') < 1) {
+            Tools::log()->warning('field-required', ['%field%' => 'concepto']);
             return false;
         }
 

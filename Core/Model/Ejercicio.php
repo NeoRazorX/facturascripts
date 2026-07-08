@@ -205,11 +205,8 @@ class Ejercicio extends ModelClass
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codejercicio, '%column%' => 'codejercicio', '%min%' => '1', '%max%' => '4']
             );
-        } elseif (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
-            Tools::log()->warning(
-                'invalid-column-lenght',
-                ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
-            );
+        } elseif (strlen($this->nombre ?? '') < 1) {
+            Tools::log()->warning('field-required', ['%field%' => 'nombre']);
         } elseif ($this->longsubcuenta < 4 || $this->longsubcuenta > 15) {
             Tools::log()->warning(
                 'invalid-column-lenght',

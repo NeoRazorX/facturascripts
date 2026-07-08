@@ -342,14 +342,6 @@ class Producto extends ModelClass
             $variant = new DinVariante();
             $this->referencia = (string)$variant->newCode('referencia');
         }
-        if (strlen($this->referencia) > 30) {
-            Tools::log()->warning(
-                'invalid-column-lenght',
-                ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
-            );
-            return false;
-        }
-
         if ($this->nostock && $this->stockfis != 0 && null !== $this->idproducto) {
             $sql = "DELETE FROM " . Stock::tableName() . " WHERE idproducto = " . self::db()->var2str($this->idproducto)
                 . "; UPDATE " . Variante::tableName() . " SET stockfis = 0 WHERE idproducto = "

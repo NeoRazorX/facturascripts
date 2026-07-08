@@ -90,11 +90,8 @@ class Fabricante extends ModelClass
             return false;
         }
 
-        if (empty($this->nombre) || strlen($this->nombre) > 100) {
-            Tools::log()->warning(
-                'invalid-column-lenght',
-                ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
-            );
+        if (empty($this->nombre)) {
+            Tools::log()->warning('field-required', ['%field%' => 'nombre']);
             return false;
         }
 

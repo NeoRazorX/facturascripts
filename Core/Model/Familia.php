@@ -196,11 +196,8 @@ class Familia extends ModelClass
 
         // comprobamos descripción
         $this->descripcion = Tools::noHtml($this->descripcion);
-        if (empty($this->descripcion) || strlen($this->descripcion) > 100) {
-            Tools::log()->warning(
-                'invalid-column-lenght',
-                ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']
-            );
+        if (empty($this->descripcion)) {
+            Tools::log()->warning('field-required', ['%field%' => 'descripcion']);
             return false;
         }
 

@@ -255,12 +255,8 @@ class Cuenta extends ModelClass
             return false;
         }
 
-        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
-            Tools::log()->warning('invalid-column-lenght', [
-                '%column%' => 'descripcion',
-                '%min%' => '1',
-                '%max%' => '255'
-            ]);
+        if (strlen($this->descripcion ?? '') < 1) {
+            Tools::log()->warning('field-required', ['%field%' => 'descripcion']);
             return false;
         }
 

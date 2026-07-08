@@ -381,13 +381,6 @@ class Variante extends ModelClass
         if (empty($this->referencia)) {
             $this->referencia = (string)$this->newCode('referencia');
         }
-        if (strlen($this->referencia) > 30) {
-            Tools::log()->warning(
-                'invalid-column-lenght',
-                ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
-            );
-            return false;
-        }
 
         return parent::test();
     }
