@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -71,14 +71,14 @@ abstract class CronJobClass
 
         // el texto está limitado a 3000 caracteres, así que debemos guardar un registro por cada 3000
         $max = 3000;
-        while (strlen(self::$echo) > $max) {
+        while (mb_strlen(self::$echo, 'UTF-8') > $max) {
             $log = new LogMessage();
             $log->channel = static::JOB_NAME;
             $log->level = 'info';
-            $log->message = substr(self::$echo, 0, $max);
+            $log->message = mb_substr(self::$echo, 0, $max, 'UTF-8');
             $log->save();
 
-            self::$echo = substr(self::$echo, $max);
+            self::$echo = mb_substr(self::$echo, $max, null, 'UTF-8');
         }
 
         // guardamos el resto

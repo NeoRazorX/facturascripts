@@ -173,13 +173,13 @@ class AttachedFile extends ModelClass
 
     public function shortFileName(int $length = 20): string
     {
-        if (strlen($this->filename) <= $length) {
+        if (mb_strlen($this->filename ?? '', 'UTF-8') <= $length) {
             return $this->filename ?? '';
         }
 
         $parts = explode('.', $this->filename);
         $extension = count($parts) > 1 ? end($parts) : '';
-        $name = substr($this->filename, 0, $length - strlen('...' . $extension));
+        $name = mb_substr($this->filename, 0, $length - mb_strlen('...' . $extension, 'UTF-8'), 'UTF-8');
         return $name . '...' . $extension;
     }
 

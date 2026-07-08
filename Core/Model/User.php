@@ -377,7 +377,7 @@ class User extends ModelClass
     public function setPassword($value): bool
     {
         // si la contraseña tiene menos de 8 caracteres, o no tiene números o no tiene letras, devolvemos false
-        if (strlen($value) < 8 || !preg_match('/[0-9]/', $value) || !preg_match('/[a-zA-Z]/', $value)) {
+        if (mb_strlen($value) < 8 || !preg_match('/[0-9]/', $value) || !preg_match('/[a-zA-Z]/', $value)) {
             return false;
         }
 
