@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\Fabricante;
 use FacturaScripts\Core\Model\Familia;
 use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\Impuesto;
+use FacturaScripts\Core\Model\Join\VarianteProducto;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\ProductoImagen;
@@ -64,6 +65,26 @@ final class ProductoTest extends TestCase
 
         // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
+    public function testJoinModelAllWhereEq(): void
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save-for-join-allwhereeq');
+
+        // buscamos su variante con el JoinModel VarianteProducto
+        $found = VarianteProducto::allWhereEq('variantes.referencia', self::TEST_REFERENCE);
+        $this->assertCount(1, $found, 'join-allwhereeq-wrong-count');
+        $this->assertEquals(self::TEST_REFERENCE, $found[0]->referencia, 'join-allwhereeq-wrong-referencia');
+        $this->assertEquals($product->idproducto, $found[0]->idproducto, 'join-allwhereeq-wrong-idproducto');
+
+        // buscamos por una referencia sin coincidencias
+        $none = VarianteProducto::allWhereEq('variantes.referencia', 'no-existe');
+        $this->assertCount(0, $none, 'join-allwhereeq-not-empty');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete-after-join-allwhereeq');
     }
 
     public function testCreateWithOutReference(): void

@@ -126,6 +126,19 @@ abstract class JoinModel
         return $result;
     }
 
+    /**
+     * Devuelve todos los registros donde el campo es igual al valor.
+     *
+     * @param string $field
+     * @param mixed $value
+     * @param array $order
+     * @return static[]
+     */
+    public static function allWhereEq(string $field, $value, array $order = []): array
+    {
+        return static::all([Where::eq($field, $value)], $order);
+    }
+
     /** Restablece los valores de todos los atributos del modelo. */
     public function clear(): void
     {
