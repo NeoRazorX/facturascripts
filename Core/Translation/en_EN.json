@@ -740,6 +740,7 @@
     "festivities": "Holidays",
     "field-can-not-be-null": "Field %fieldName% on table %tableName% can't be null",
     "field-required": "Field required: %field%",
+    "field-value-too-long": "The value of field %fieldName% on table %tableName% exceeds the maximum length of %length% characters",
     "fields": "Fields",
     "file": "File",
     "file-audio-codec-not-accepted": "Error sending audio file %fileName% because its codec %codec% is not allowed. Allowed codecs are: %supported%",

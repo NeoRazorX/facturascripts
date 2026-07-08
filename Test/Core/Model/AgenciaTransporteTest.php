@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -91,6 +91,42 @@ final class AgenciaTransporteTest extends TestCase
         $agency->web = 'https://www.facturascripts.com';
         $this->assertTrue($agency->save(), 'agency-cant-save-good-web');
         $this->assertTrue($agency->delete(), 'agency-cant-delete');
+    }
+
+    public function testMaxLength(): void
+    {
+        $agency = new AgenciaTransporte();
+
+        // campos de texto con longitud definida en el xml de la tabla
+        $this->assertEquals(8, $agency->maxLength('codtrans'), 'agency-wrong-maxlength-codtrans');
+        $this->assertEquals(100, $agency->maxLength('nombre'), 'agency-wrong-maxlength-nombre');
+        $this->assertEquals(30, $agency->maxLength('telefono'), 'agency-wrong-maxlength-telefono');
+        $this->assertEquals(100, $agency->maxLength('web'), 'agency-wrong-maxlength-web');
+
+        // campo que no es de texto
+        $this->assertEquals(0, $agency->maxLength('activo'), 'agency-wrong-maxlength-activo');
+
+        // campo que no existe
+        $this->assertEquals(0, $agency->maxLength('no-existe'), 'agency-wrong-maxlength-missing-field');
+    }
+
+    public function testSaveTooLongValues(): void
+    {
+        // intentamos guardar con un codtrans demasiado largo
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'DEMASIADO-LARGO';
+        $agency->nombre = 'Test Agency';
+        $this->assertFalse($agency->save(), 'agency-can-save-too-long-codtrans');
+
+        // ahora con un nombre demasiado largo
+        $agency->codtrans = 'Test';
+        $agency->nombre = str_repeat('X', 101);
+        $this->assertFalse($agency->save(), 'agency-can-save-too-long-nombre');
+
+        // comprobamos que con la longitud máxima exacta sí se guarda
+        $agency->nombre = str_repeat('X', 100);
+        $this->assertTrue($agency->save(), 'agency-cant-save-max-length-nombre');
+        $this->assertTrue($agency->delete(), 'agency-cant-delete-after-too-long');
     }
 
     public function testLoadFromData(): void

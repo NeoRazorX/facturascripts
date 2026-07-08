@@ -520,6 +520,24 @@ abstract class ModelClass
         return $this->loadWhere([Where::eq($field, $value)]);
     }
 
+    /**
+     * Devuelve la longitud máxima de un campo de texto, o 0 si no tiene límite o no es un campo de texto.
+     *
+     * @param string $field Nombre del campo
+     * @return int Longitud máxima del campo
+     */
+    public function maxLength(string $field): int
+    {
+        $fields = $this->getModelFields();
+        if (!isset($fields[$field])) {
+            return 0;
+        }
+
+        return preg_match('/^(?:varchar|character varying|char|character)\((\d+)\)/i', $fields[$field]['type'], $matches) ?
+            (int)$matches[1] :
+            0;
+    }
+
     public function newCode(string $field = '', array $where = [])
     {
         // if not field value take PK Field
@@ -669,6 +687,17 @@ abstract class ModelClass
                 $this->{$key} = empty($this->{$key}) ? null : $this->{$key};
             } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
                 Tools::log()->warning('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]);
+                $return = false;
+            }
+
+            // comprobamos que los campos de texto no superen la longitud máxima
+            $max_length = $this->maxLength($key);
+            if ($max_length > 0 && is_string($this->{$key}) && mb_strlen($this->{$key}) > $max_length) {
+                Tools::log()->warning('field-value-too-long', [
+                    '%fieldName%' => $key,
+                    '%tableName%' => static::tableName(),
+                    '%length%' => $max_length
+                ]);
                 $return = false;
             }
         }
