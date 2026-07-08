@@ -20,10 +20,9 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\Receipt;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 
 /**
@@ -83,15 +82,15 @@ trait ListBusinessActionTrait
         }
 
         $where = [
-            new DataBaseWhere('idasiento', null, 'IS'),
-            new DataBaseWhere('fecha', Tools::date('-1 year'), '>'),
-            new DataBaseWhere('total', 0, '!=')
+            Where::isNull('idasiento'),
+            Where::gt('fecha', Tools::date('-1 year')),
+            Where::notEq('total', 0)
         ];
 
         if (false === empty($code) && $model->hasColumn('codcliente')) {
-            $where[] = new DataBaseWhere('codcliente', $code);
+            $where[] = Where::eq('codcliente', $code);
         } elseif (false === empty($code) && $model->hasColumn('codproveedor')) {
-            $where[] = new DataBaseWhere('codproveedor', $code);
+            $where[] = Where::eq('codproveedor', $code);
         }
 
         if ($model->count($where) <= 0) {
@@ -213,7 +212,7 @@ trait ListBusinessActionTrait
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (false === $model->loadFromCode($code)) {
+            if (false === $model->load($code)) {
                 Tools::log()->error('record-not-found');
                 continue;
             }
@@ -261,9 +260,9 @@ trait ListBusinessActionTrait
 
         $dataBase->beginTransaction();
         $where = [
-            new DataBaseWhere('idasiento', null, 'IS'),
-            new DataBaseWhere('fecha', Tools::date('-1 year'), '>'),
-            new DataBaseWhere('total', 0, '!=')
+            Where::isNull('idasiento'),
+            Where::gt('fecha', Tools::date('-1 year')),
+            Where::notEq('total', 0)
         ];
         foreach ($model->all($where, ['idfactura' => 'ASC'], 0, 300) as $invoice) {
             if (false === empty($invoice->idasiento)) {
@@ -308,7 +307,7 @@ trait ListBusinessActionTrait
         if (!empty($codes) && $model) {
             // comprobamos la propiedad de cada documento antes de pasarlos al stitcher
             foreach ($codes as $code) {
-                if ($model->loadFromCode($code) && false === $this->checkOwnerData($model)) {
+                if ($model->load($code) && false === $this->checkOwnerData($model)) {
                     Tools::log()->warning('not-allowed-modify');
                     $model->clear();
                     return true;
@@ -350,7 +349,7 @@ trait ListBusinessActionTrait
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (false === $model->loadFromCode($code)) {
+            if (false === $model->load($code)) {
                 Tools::log()->error('record-not-found');
                 continue;
             }
@@ -413,7 +412,7 @@ trait ListBusinessActionTrait
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (false === $model->loadFromCode($code)) {
+            if (false === $model->load($code)) {
                 Tools::log()->error('record-not-found');
                 continue;
             }
@@ -448,7 +447,7 @@ trait ListBusinessActionTrait
      * Sets selected receipts as paid.
      *
      * @param mixed $codes
-     * @param Receipt $model
+     * @param \FacturaScripts\Dinamic\Model\ReciboCliente|\FacturaScripts\Dinamic\Model\ReciboProveedor $model
      * @param bool $allowUpdate
      * @param DataBase $dataBase
      * @param string $nick
@@ -469,7 +468,7 @@ trait ListBusinessActionTrait
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (false === $model->loadFromCode($code)) {
+            if (false === $model->load($code)) {
                 Tools::log()->error('record-not-found');
                 continue;
             }

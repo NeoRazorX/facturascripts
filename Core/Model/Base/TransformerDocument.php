@@ -106,7 +106,7 @@ abstract class TransformerDocument extends BusinessDocument
             }
 
             $newModel = new $newModelClass();
-            if ($newModel->loadFromCode($docTrans->iddoc2)) {
+            if ($newModel->load($docTrans->iddoc2)) {
                 $children[] = $newModel;
                 $keys[] = $key;
             }
@@ -178,7 +178,7 @@ abstract class TransformerDocument extends BusinessDocument
         // eliminamos las relaciones y actualizamos la columna servido
         $parents = $this->parentDocuments();
         $docTransformation = new DocTransformation();
-        $docTransformation->deleteFrom($this->modelClassName(), $this->id(), true);
+        $docTransformation->deleteFrom($this->modelClassName(), $this->id());
 
         // cambiamos el estado del documento padre
         foreach ($parents as $parent) {
@@ -296,7 +296,7 @@ abstract class TransformerDocument extends BusinessDocument
             }
 
             $newModel = new $newModelClass();
-            if ($newModel->loadFromCode($docTrans->iddoc1)) {
+            if ($newModel->load($docTrans->iddoc1)) {
                 $parents[] = $newModel;
                 $keys[] = $key;
             }
@@ -375,12 +375,11 @@ abstract class TransformerDocument extends BusinessDocument
         $quantities = [];
         foreach ($this->getLines() as $line) {
             if ($line->servido < $line->cantidad) {
-                $quantities[$line->primaryColumnValue()] = $line->cantidad - $line->servido;
+                $quantities[$line->id()] = $line->cantidad - $line->servido;
                 $newLines[] = $line;
             }
 
             $line->actualizastock = $status->actualizastock;
-            $line->servido = $line->cantidad;
             $line->save();
         }
 

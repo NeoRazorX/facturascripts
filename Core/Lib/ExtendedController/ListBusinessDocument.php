@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Almacenes;
@@ -33,6 +32,7 @@ use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 
 /**
@@ -203,7 +203,7 @@ abstract class ListBusinessDocument extends ListController
             ['label' => Tools::trans('any-group'), 'where' => []],
             [
                 'label' => Tools::trans('without-groups'),
-                'where' => [new DataBaseWhere('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo IS NULL", 'IN')]
+                'where' => [Where::in('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo IS NULL")]
             ],
             ['label' => '------', 'where' => []],
         ];
@@ -211,7 +211,7 @@ abstract class ListBusinessDocument extends ListController
             $sqlGrupo = 'SELECT DISTINCT codcliente FROM clientes WHERE codgrupo = ' . $this->dataBase->var2str($grupo->codgrupo);
             $optionsGroup[] = [
                 'label' => $grupo->nombre,
-                'where' => [new DataBaseWhere('codcliente', $sqlGrupo, 'IN')]
+                'where' => [Where::in('codcliente', $sqlGrupo)]
             ];
         }
         if (count($optionsGroup) > 3) {

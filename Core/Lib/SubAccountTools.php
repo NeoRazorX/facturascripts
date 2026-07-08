@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Translator;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
@@ -68,8 +69,8 @@ class SubAccountTools
 
         $fields = $source['fieldcode'] . '|' . $source['fieldtitle'];
         $where = [
-            new DataBaseWhere('codejercicio', $keys['codejercicio']),
-            new DataBaseWhere($fields, mb_strtolower($keys['term'], 'UTF8'), 'LIKE')
+            Where::eq('codejercicio', $keys['codejercicio']),
+            Where::like($fields, $keys['term'])
         ];
 
         // search for subaccounts data
@@ -81,8 +82,7 @@ class SubAccountTools
 
         // for empty value
         if (empty($results)) {
-            $i18n = new Translator();
-            $results[] = ['key' => null, 'value' => $i18n->trans('no-data')];
+            $results[] = ['key' => null, 'value' => Tools::trans('no-data')];
         }
 
         // return subaccount list
@@ -154,13 +154,12 @@ class SubAccountTools
      * for the indicated group.
      *
      * @param string $field
-     * @param int    $group
+     * @param int $group
      *
-     * @return DataBaseWhere
+     * @return Where
      */
     public function whereForSpecialAccounts(string $field, int $group)
     {
-        $specialAccounts = implode(',', $this->specialAccountsForGroup($group));
-        return new DataBaseWhere($field, $specialAccounts, 'IN');
+        return Where::in($field, $this->specialAccountsForGroup($group));
     }
 }

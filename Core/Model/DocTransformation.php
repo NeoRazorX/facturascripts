@@ -100,9 +100,8 @@ class DocTransformation extends ModelClass
      *
      * @param string $tipoDoc
      * @param int $idDoc
-     * @param bool $updateServido
      */
-    public function deleteFrom(string $tipoDoc, int $idDoc, bool $updateServido = false): void
+    public function deleteFrom(string $tipoDoc, int $idDoc): void
     {
         $options = [
             [Where::eq('model1', $tipoDoc), Where::eq('iddoc1', $idDoc)],
@@ -110,12 +109,6 @@ class DocTransformation extends ModelClass
         ];
         foreach ($options as $where) {
             foreach ($this->all($where, [], 0, 0) as $line) {
-                if ($updateServido && $line->cantidad) {
-                    $parentLine = $line->getParentLine();
-                    $parentLine->servido -= $line->cantidad;
-                    $parentLine->save();
-                }
-
                 $line->delete();
             }
         }
@@ -129,7 +122,7 @@ class DocTransformation extends ModelClass
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model1;
         if (class_exists($modelClass)) {
             $line = new $modelClass();
-            $line->loadFromCode($this->idlinea1);
+            $line->load($this->idlinea1);
             return $line;
         }
 
@@ -144,7 +137,7 @@ class DocTransformation extends ModelClass
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model2;
         if (class_exists($modelClass)) {
             $line = new $modelClass();
-            $line->loadFromCode($this->idlinea2);
+            $line->load($this->idlinea2);
             return $line;
         }
 
@@ -154,5 +147,19 @@ class DocTransformation extends ModelClass
     public static function tableName(): string
     {
         return 'doctransformations';
+    }
+
+    protected function onDelete(): void
+    {
+        // restamos la cantidad al servido de la línea del documento padre
+        if ($this->cantidad) {
+            $parentLine = $this->getParentLine();
+            if ($parentLine->exists()) {
+                $parentLine->servido -= $this->cantidad;
+                $parentLine->save();
+            }
+        }
+
+        parent::onDelete();
     }
 }
