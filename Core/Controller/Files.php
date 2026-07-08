@@ -56,15 +56,16 @@ class Files implements ControllerInterface
             );
         }
 
-        if (false === $this->isFolderSafe($this->filePath)) {
-            throw new KernelException('UnsafeFolder', $url);
-        }
-
         $realPath = realpath($this->filePath);
         if (false === $realPath) {
             throw new KernelException('FileNotFound', Tools::trans('file-not-found', ['%fileName%' => $url]));
         }
         $this->filePath = $realPath;
+
+        if (false === $this->isFolderSafe($this->filePath)) {
+            throw new KernelException('UnsafeFolder', $url);
+        }
+
         if (false === $this->isFileSafe($this->filePath)) {
             throw new KernelException('UnsafeFile', $url);
         }
