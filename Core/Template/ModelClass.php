@@ -65,6 +65,8 @@ abstract class ModelClass
 
     abstract public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 0): array;
 
+    abstract public static function allWhereEq(string $field, $value, array $order = []): array;
+
     abstract public static function count(array $where = []): int;
 
     abstract public static function create(array $data): ?static;

@@ -93,6 +93,33 @@ final class AgenciaTransporteTest extends TestCase
         $this->assertTrue($agency->delete(), 'agency-cant-delete');
     }
 
+    public function testAllWhereEq(): void
+    {
+        // creamos dos agencias con el mismo nombre y una con otro distinto
+        foreach ([['A1', 'Test-AllWhereEq'], ['A2', 'Test-AllWhereEq'], ['A3', 'Test-Other']] as $item) {
+            $agency = new AgenciaTransporte();
+            $agency->codtrans = $item[0];
+            $agency->nombre = $item[1];
+            $this->assertTrue($agency->save(), 'agency-cant-save-for-allwhereeq');
+        }
+
+        // buscamos por nombre, ordenadas por codtrans descendente
+        $found = AgenciaTransporte::allWhereEq('nombre', 'Test-AllWhereEq', ['codtrans' => 'DESC']);
+        $this->assertCount(2, $found, 'agency-allwhereeq-wrong-count');
+        $this->assertEquals('A2', $found[0]->codtrans, 'agency-allwhereeq-wrong-order');
+        $this->assertEquals('A1', $found[1]->codtrans, 'agency-allwhereeq-wrong-order-2');
+
+        // buscamos por un valor sin coincidencias
+        $none = AgenciaTransporte::allWhereEq('nombre', 'no-existe');
+        $this->assertCount(0, $none, 'agency-allwhereeq-not-empty');
+
+        // eliminamos
+        foreach (['A1', 'A2', 'A3'] as $code) {
+            $agency = AgenciaTransporte::find($code);
+            $this->assertTrue($agency->delete(), 'agency-cant-delete-after-allwhereeq');
+        }
+    }
+
     public function testMaxLength(): void
     {
         $agency = new AgenciaTransporte();
