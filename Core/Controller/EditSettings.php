@@ -314,6 +314,9 @@ class EditSettings extends PanelController
                 if ($view->model instanceof Settings && empty($view->model->name)) {
                     $view->model->name = $code;
                 }
+                if ($view->model instanceof Settings && empty($view->model->image_compression)) {
+                    $view->model->image_compression = 'medium';
+                }
                 $this->loadPaymentMethodValues($viewName);
                 $this->loadWarehouseValues($viewName);
                 $this->loadLogoImageValues($viewName);

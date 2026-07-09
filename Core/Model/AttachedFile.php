@@ -328,7 +328,7 @@ class AttachedFile extends ModelClass
             case 'image/jpeg':
                 $image = @imagecreatefromjpeg($filePath);
                 if ($image) {
-                    imagejpeg($image, $filePath, 95);
+                    imagejpeg($image, $filePath, $this->getJpegQuality());
                 }
                 break;
 
@@ -337,7 +337,7 @@ class AttachedFile extends ModelClass
                 if ($image) {
                     imagealphablending($image, false);
                     imagesavealpha($image, true);
-                    imagepng($image, $filePath, 6);
+                    imagepng($image, $filePath, $this->getPngQuality(), PNG_ALL_FILTERS);
                 }
                 break;
 
@@ -349,9 +349,51 @@ class AttachedFile extends ModelClass
                 if ($image) {
                     imagealphablending($image, false);
                     imagesavealpha($image, true);
-                    imagewebp($image, $filePath, 95);
+                    imagewebp($image, $filePath, $this->getWebpQuality());
                 }
                 break;
+        }
+    }
+
+    protected function getJpegQuality(): int
+    {
+        switch (Tools::settings('default', 'image_compression', 'medium')) {
+            case 'low':
+                return 95;
+
+            case 'high':
+                return 75;
+
+            default:
+                return 90;
+        }
+    }
+
+    protected function getWebpQuality(): int
+    {
+        switch (Tools::settings('default', 'image_compression', 'medium')) {
+            case 'low':
+                return IMG_WEBP_LOSSLESS;
+
+            case 'high':
+                return 75;
+
+            default:
+                return 90;
+        }
+    }
+
+    protected function getPngQuality(): int
+    {
+        switch (Tools::settings('default', 'image_compression', 'medium')) {
+            case 'low':
+                return 1;
+
+            case 'high':
+                return 9;
+
+            default:
+                return 6;
         }
     }
 }
