@@ -31,6 +31,9 @@ use FacturaScripts\Core\Mod\CalculatorModSpain;
  */
 final class Kernel
 {
+    /** @var float|null */
+    private static $mock_execution_time;
+
     /** @var array */
     private static $routes = [];
 
@@ -71,6 +74,10 @@ final class Kernel
 
     public static function getExecutionTime(int $decimals = 5): float
     {
+        if (self::$mock_execution_time !== null) {
+            return round(self::$mock_execution_time, $decimals);
+        }
+
         $start = self::$timers['kernel::init']['start'] ?? microtime(true);
         $diff = microtime(true) - $start;
         return round($diff, $decimals);
@@ -215,6 +222,15 @@ final class Kernel
         $filePath = Tools::folder('MyFiles', 'routes.json');
         $content = json_encode(self::$routes, JSON_PRETTY_PRINT);
         return false !== file_put_contents($filePath, $content);
+    }
+
+    /**
+     * Establece un tiempo de ejecución simulado para los tests.
+     * Pasar null para volver al tiempo real.
+     */
+    public static function setMockExecutionTime(?float $seconds): void
+    {
+        self::$mock_execution_time = $seconds;
     }
 
     public static function startTimer(string $name): void

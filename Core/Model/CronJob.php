@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use Closure;
 use Error;
+use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -70,6 +71,12 @@ class CronJob extends ModelClass
     /** @var float */
     public $last_duration;
 
+    /** @var int */
+    private static $max_execution_time = 0;
+
+    /** @var bool */
+    private static $max_execution_time_logged = false;
+
     /** @var string|null */
     private $mock_date_time;
 
@@ -102,6 +109,12 @@ class CronJob extends ModelClass
         $this->fails = 0;
         $this->last_duration = 0.0;
         $this->running = 0;
+    }
+
+    public static function clearMaxExecutionTime(): void
+    {
+        self::$max_execution_time = 0;
+        self::$max_execution_time_logged = false;
     }
 
     public function clearMocks(): void
@@ -206,8 +219,42 @@ class CronJob extends ModelClass
         return $this->everyDayAux($date, $hour, $strict, '1 year');
     }
 
+    public static function getMaxExecutionTime(): int
+    {
+        return self::$max_execution_time;
+    }
+
+    /**
+     * Devuelve true si se ha superado el tiempo máximo de ejecución del cron,
+     * en cuyo caso los jobs pendientes se rechazan hasta la siguiente ejecución.
+     */
+    public static function isMaxExecutionTimeReached(): bool
+    {
+        if (self::$max_execution_time <= 0) {
+            return false;
+        }
+
+        if (Kernel::getExecutionTime() <= self::$max_execution_time) {
+            return false;
+        }
+
+        // lo registramos en el log solamente una vez
+        if (false === self::$max_execution_time_logged) {
+            self::$max_execution_time_logged = true;
+            Tools::log('cron')->notice('cron-max-execution-time-reached', [
+                '%seconds%' => self::$max_execution_time,
+            ]);
+        }
+
+        return true;
+    }
+
     public function isReady(): bool
     {
+        if (self::isMaxExecutionTimeReached()) {
+            return false;
+        }
+
         return $this->ready && false === $this->overlapping;
     }
 
@@ -303,6 +350,14 @@ class CronJob extends ModelClass
         $this->save();
 
         return true;
+    }
+
+    public static function setMaxExecutionTime(int $seconds): void
+    {
+        // si varios plugins definen límites distintos, gana el más restrictivo
+        if ($seconds > 0 && (self::$max_execution_time === 0 || $seconds < self::$max_execution_time)) {
+            self::$max_execution_time = $seconds;
+        }
     }
 
     public function setMockDateTime(?string $dateTime, bool $update_microtime = true): void

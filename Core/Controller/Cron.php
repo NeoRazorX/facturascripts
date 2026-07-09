@@ -299,6 +299,14 @@ END;
 
             ob_flush();
 
+            // si se ha superado el tiempo máximo de ejecución definido, se detiene
+            if (CronJob::isMaxExecutionTimeReached()) {
+                echo PHP_EOL . PHP_EOL . Tools::trans('cron-max-execution-time-reached', [
+                    '%seconds%' => CronJob::getMaxExecutionTime(),
+                ]);
+                break;
+            }
+
             // si no se está ejecutando en modo cli y lleva más de 20 segundos, se detiene
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 20) {
                 echo PHP_EOL . PHP_EOL . Tools::trans('cron-timeout');
@@ -323,6 +331,14 @@ END;
             ob_flush();
 
             --$max;
+
+            // si se ha superado el tiempo máximo de ejecución definido, terminamos
+            if (CronJob::isMaxExecutionTimeReached()) {
+                echo PHP_EOL . PHP_EOL . Tools::trans('cron-max-execution-time-reached', [
+                    '%seconds%' => CronJob::getMaxExecutionTime(),
+                ]);
+                return;
+            }
 
             // si no se está ejecutando en modo cli y lleva más de 25 segundos, terminamos
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 25) {

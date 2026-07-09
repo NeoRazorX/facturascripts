@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use Exception;
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Model\CronJob;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -921,8 +922,55 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job->delete());
     }
 
+    public function testMaxExecutionTime(): void
+    {
+        // creamos un trabajo
+        $job = new CronJob();
+        $job->jobname = 'TestMaxTime';
+        $job->pluginname = 'TestPluginMaxTime';
+        $job->setMockDateTime('2025-03-05 10:00:00');
+        $this->assertTrue($job->save());
+
+        // sin límite definido, nunca se supera el tiempo máximo
+        $this->assertFalse(CronJob::isMaxExecutionTimeReached());
+        $this->assertTrue($job->every('1 minute')->isReady());
+
+        // definimos un límite de 15 minutos y simulamos 10 minutos de ejecución
+        CronJob::setMaxExecutionTime(900);
+        Kernel::setMockExecutionTime(600);
+        $this->assertFalse(CronJob::isMaxExecutionTimeReached());
+        $this->assertTrue($job->every('1 minute')->isReady());
+
+        // simulamos 16 minutos de ejecución, el job se rechaza
+        Kernel::setMockExecutionTime(960);
+        $this->assertTrue(CronJob::isMaxExecutionTimeReached());
+        $this->assertFalse($job->every('1 minute')->isReady());
+        $this->assertFalse($job->run(function () {
+            return true;
+        }));
+
+        // un límite mayor no sustituye al más restrictivo
+        CronJob::setMaxExecutionTime(3600);
+        $this->assertEquals(900, CronJob::getMaxExecutionTime());
+        $this->assertTrue(CronJob::isMaxExecutionTimeReached());
+
+        // uno menor sí
+        CronJob::setMaxExecutionTime(500);
+        $this->assertEquals(500, CronJob::getMaxExecutionTime());
+
+        // al limpiar el límite, el job vuelve a estar listo
+        CronJob::clearMaxExecutionTime();
+        $this->assertFalse(CronJob::isMaxExecutionTimeReached());
+        $this->assertTrue($job->every('1 minute')->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
     protected function tearDown(): void
     {
+        CronJob::clearMaxExecutionTime();
+        Kernel::setMockExecutionTime(null);
         $this->logErrors();
     }
 }

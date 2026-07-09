@@ -407,6 +407,7 @@
     "credit": "Credit",
     "crm": "CRM",
     "cron-job": "Scheduled Task",
+    "cron-max-execution-time-reached": "The cron maximum execution time (%seconds% seconds) has been reached. Pending jobs will run on the next cron execution.",
     "cron-timeout": "The cron has stopped to prevent exceeding the maximum PHP execution time. Please run the cron from the terminal to avoid this limit.",
     "crons": "Crons",
     "csv-file-must-have-at-least-2-columns": "The CSV must have at least 2 columns",
