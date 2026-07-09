@@ -24,12 +24,27 @@ use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\LogMessage;
 
+/**
+ * Clase base para trabajos del cron. Permite separar la lógica de cada job en su
+ * propia clase, con utilidades para acumular la salida, guardarla en el log y
+ * avisar por email a los administradores.
+ *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+ */
 abstract class CronJobClass
 {
+    /** Modo de salida: imprime el texto al momento, además de acumularlo. */
     const ECHO_MODE_FULL = 'full';
+
+    /** Modo de salida: solamente acumula el texto, sin imprimirlo. */
     const ECHO_MODE_LOG = 'log';
+
+    /** Nombre del job. Se usa como canal al guardar la salida en el log. */
     const JOB_NAME = 'cron';
 
+    /**
+     * Punto de entrada del job. Aquí va la lógica a ejecutar.
+     */
     abstract public static function run(): void;
 
     /** @var string */
@@ -38,6 +53,12 @@ abstract class CronJobClass
     /** @var string */
     private static $echo_mode = self::ECHO_MODE_FULL;
 
+    /**
+     * Acumula el texto en la salida del job, y si el modo es ECHO_MODE_FULL,
+     * también lo imprime al momento.
+     *
+     * @param string $text Texto a mostrar.
+     */
     protected static function echo(string $text): void
     {
         if (self::$echo_mode === self::ECHO_MODE_FULL) {
@@ -48,21 +69,40 @@ abstract class CronJobClass
         self::$echo .= $text;
     }
 
+    /**
+     * Establece el modo de salida del job.
+     *
+     * @param string $mode ECHO_MODE_FULL para imprimir al momento, ECHO_MODE_LOG para solo acumular.
+     */
     public static function echoMode(string $mode): void
     {
         self::$echo_mode = $mode;
     }
 
+    /**
+     * Devuelve toda la salida acumulada del job.
+     *
+     * @return string
+     */
     protected static function getEcho(): string
     {
         return self::$echo;
     }
 
+    /**
+     * Acumula el texto en la salida del job sin imprimirlo, sea cual sea el modo.
+     *
+     * @param string $text Texto a acumular.
+     */
     protected static function text(string $text): void
     {
         self::$echo .= $text;
     }
 
+    /**
+     * Guarda la salida acumulada del job en el log, con nivel info y JOB_NAME como
+     * canal, troceándola en registros de 3000 caracteres. Después la vacía.
+     */
     protected static function saveEcho(): void
     {
         if (empty(self::$echo)) {
@@ -91,6 +131,13 @@ abstract class CronJobClass
         self::$echo = '';
     }
 
+    /**
+     * Envía un email a todos los usuarios administradores. Si el envío falla,
+     * añade el cuerpo a la salida del job.
+     *
+     * @param string $subject Asunto del email.
+     * @param string $body Cuerpo del email. Los saltos de línea se convierten en <br>.
+     */
     protected static function sendToAdmins(string $subject, string $body): void
     {
         foreach (Users::all() as $user) {
