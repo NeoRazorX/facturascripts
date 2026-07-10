@@ -157,8 +157,7 @@ class EditAgente extends ComercialContactController
         if ($return && $this->active == 'EditContacto') {
             // update agent data when contact data is updated
             $agente = new Agente();
-            $where = [Where::eq('idcontacto', $this->views[$this->active]->model->idcontacto)];
-            if ($agente->load('', $where)) {
+            if ($agente->loadWhereEq('idcontacto', $this->views[$this->active]->model->idcontacto)) {
                 $agente->email = $this->views[$this->active]->model->email;
                 $agente->telefono1 = $this->views[$this->active]->model->telefono1;
                 $agente->telefono2 = $this->views[$this->active]->model->telefono2;

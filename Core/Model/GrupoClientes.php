@@ -68,7 +68,7 @@ class GrupoClientes extends ModelClass
             Where::eq('codsubcuenta', $this->codsubcuenta),
             Where::eq('codejercicio', $codejercicio),
         ];
-        if ($subAccount->load('', $where)) {
+        if ($subAccount->loadWhere($where)) {
             return $subAccount;
         }
 
