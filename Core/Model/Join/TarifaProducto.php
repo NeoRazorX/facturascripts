@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Template\JoinModel;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Tarifa;
 use FacturaScripts\Dinamic\Model\Variante;
@@ -82,7 +81,7 @@ class TarifaProducto extends JoinModel
     {
         // intentamos obtener la variante para aplicar mejor la tarifa
         $variant = new Variante();
-        if ($variant->loadWhere([Where::eq('referencia', $this->referencia)])) {
+        if ($variant->loadWhereEq('referencia', $this->referencia)) {
             $product = $variant->getProducto();
             return $this->getRate()->applyTo($variant, $product);
         }

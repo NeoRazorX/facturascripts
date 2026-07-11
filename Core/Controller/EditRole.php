@@ -229,7 +229,7 @@ class EditRole extends EditController
         $orphanPages = array_diff($roleAccessPageNames, $pageNames);
         foreach ($orphanPages as $pageName) {
             $page = new RoleAccess();
-            $page->loadWhere([Where::eq('pagename', $pageName)]);
+            $page->loadWhereEq('pagename', $pageName);
             $page->delete();
 
             // si el rol ya no tiene permisos, lo eliminamos.
@@ -237,7 +237,7 @@ class EditRole extends EditController
 
             if ($rolesLength === 0) {
                 $role = new Role();
-                $role->loadWhere([Where::eq('codrole', $page->codrole)]);
+                $role->loadWhereEq('codrole', $page->codrole);
                 $role->delete();
 
                 // redireccionamos al listado, ya que el rol lo hemos borrado
