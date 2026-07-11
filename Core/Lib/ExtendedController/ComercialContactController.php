@@ -318,7 +318,7 @@ abstract class ComercialContactController extends EditController
     {
         $allowUpdate = $this->permissions->allowUpdate;
         $codes = $this->request->request->getArray('codes');
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
 
         switch ($action) {
             case 'add-file':

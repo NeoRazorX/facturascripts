@@ -199,7 +199,7 @@ class EditProveedor extends ComercialContactController
             return true;
         }
 
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
         if (strpos($return_url, '?') === false) {
             $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->id());
         } else {

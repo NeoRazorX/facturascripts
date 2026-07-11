@@ -248,7 +248,7 @@ abstract class ListBusinessDocument extends ListController
     {
         $allowUpdate = $this->permissions->allowUpdate;
         $codes = $this->request->request->getArray('codes');
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
 
         switch ($action) {
             case 'approve-document':

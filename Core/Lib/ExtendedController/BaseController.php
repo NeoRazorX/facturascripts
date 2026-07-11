@@ -231,6 +231,11 @@ abstract class BaseController extends Controller
         return $this->tab($viewName)->setSettings($property, $value);
     }
 
+    public function activeTab(): BaseView
+    {
+        return $this->tab($this->active);
+    }
+
     public function tab(string $viewName): BaseView
     {
         if (isset($this->views[$viewName])) {
@@ -317,14 +322,14 @@ abstract class BaseController extends Controller
     protected function deleteAction()
     {
         // check user permissions
-        if (false === $this->permissions->allowDelete || false === $this->views[$this->active]->settings['btnDelete']) {
+        if (false === $this->permissions->allowDelete || false === $this->activeTab()->settings['btnDelete']) {
             Tools::log()->warning('not-allowed-delete');
             return false;
         } elseif (false === $this->validateFormToken()) {
             return false;
         }
 
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
         $codes = $this->request->request->getArray('codes');
         $code = $this->request->input('code');
         if (empty($codes) && empty($code)) {
@@ -369,7 +374,7 @@ abstract class BaseController extends Controller
     protected function exportAction()
     {
         if (
-            false === $this->views[$this->active]->settings['btnPrint'] ||
+            false === $this->activeTab()->settings['btnPrint'] ||
             false === $this->permissions->allowExport
         ) {
             Tools::log()->warning('no-print-permission');

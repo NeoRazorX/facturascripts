@@ -166,7 +166,7 @@ class EditContacto extends EditController
     {
         $return = parent::editAction();
         if ($return && $this->active === $this->getMainViewName()) {
-            $this->updateRelations($this->views[$this->active]->model);
+            $this->updateRelations($this->activeTab()->model);
         }
 
         return $return;

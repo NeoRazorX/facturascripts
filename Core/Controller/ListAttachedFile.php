@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -92,7 +92,7 @@ class ListAttachedFile extends ListController
         }
 
         // añadimos los archivos
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
         foreach ($codes as $code) {
             $file = $model->get($code);
             if ($file) {
