@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,7 +56,7 @@ class ListFormaPago extends ListController
             ->addOrderBy(['descripcion'], 'description');
 
         // si solamente hay una empresa, ocultamos la columna de empresa, de lo contrario, añadimos el filtro
-        if (count(Empresas::all()) === 1) {
+        if (Empresas::count() === 1) {
             $this->listView($viewName)->disableColumn('company');
         } else {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
@@ -72,7 +72,7 @@ class ListFormaPago extends ListController
             ->addOrderBy(['idempresa', 'codpago'], 'company');
 
         // si solamente hay una empresa, ocultamos la columna de empresa, de lo contrario, añadimos el filtro
-        if (count(Empresas::all()) === 1) {
+        if (Empresas::count() === 1) {
             $this->listView($viewName)->disableColumn('company');
         } else {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());

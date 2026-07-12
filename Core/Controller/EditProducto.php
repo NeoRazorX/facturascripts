@@ -130,7 +130,7 @@ class EditProducto extends EditController
         $this->addEditListView($viewName, 'Stock', 'stock', 'fa-solid fa-dolly');
 
         // si solamente hay un almacén, ocultamos la columna
-        if (count(Almacenes::all()) <= 1) {
+        if (Almacenes::count() <= 1) {
             $this->views[$viewName]->disableColumn('warehouse');
         }
     }

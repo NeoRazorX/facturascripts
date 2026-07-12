@@ -245,7 +245,7 @@ class Ejercicio extends ModelClass
         $this->nombre = $year;
 
         // si hay más de una empresa, añadimos el nombre de la empresa
-        if (count(Empresas::all()) > 1) {
+        if (Empresas::count() > 1) {
             $this->nombre = Empresas::get($this->idempresa)->nombrecorto . ' ' . $this->nombre;
         }
 

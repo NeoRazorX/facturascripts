@@ -84,7 +84,7 @@ class ListFacturaCliente extends ListBusinessDocument
             ->setSettings('btnNew', false);
 
         // filtros
-        if (count(Empresas::all()) > 1) {
+        if (Empresas::count() > 1) {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
         }
 

@@ -55,10 +55,10 @@ class EditReciboCliente extends EditController
         $this->setTabsPosition('bottom');
 
         // desactivamos selects con una sola opción
-        if (count(Empresas::all()) <= 1) {
+        if (Empresas::count() <= 1) {
             $this->mainTab()->disableColumn('company');
         }
-        if (count(Divisas::all()) <= 1) {
+        if (Divisas::count() <= 1) {
             $this->mainTab()->disableColumn('currency');
         }
 
