@@ -1,7 +1,7 @@
 {
     "2fa": "2FA",
     "abbreviated": "Abreujat",
-    "about": "Sobre",
+    "about": "Quant a",
     "acc-concept-required": "Has d'introduir primer el concepte del seient",
     "accept": "Acceptar",
     "accept-all": "Acceptar-ho tot",
@@ -624,7 +624,7 @@
     "enable-updates-beta": "Activar actualitzacions beta",
     "enabled": "Actiu",
     "enabled-plugins": "Plugins actius",
-    "encrypt": "Xifrar",
+    "encrypt": "Xifratge",
     "end": "Fi",
     "end-date": "Data de finalització",
     "end-day": "Dia de fi",
