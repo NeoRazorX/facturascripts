@@ -35,6 +35,11 @@
         <null>NO</null>
     </column>
     <column>
+        <name>downloads</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>size</name>
         <type>integer</type>
         <null>NO</null>
