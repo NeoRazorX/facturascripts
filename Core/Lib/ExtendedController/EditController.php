@@ -114,7 +114,7 @@ abstract class EditController extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
         switch ($viewName) {
             case $mainViewName:
                 /**

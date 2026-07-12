@@ -67,7 +67,7 @@ class EditSubcuenta extends EditController
         CodeModel::setLimit(9999);
 
         // ocultamos el botón imprimir
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         $this->tab($mvn)->setSettings('btnPrint', false);
 
         // añadimos las partidas de asientos
@@ -193,7 +193,7 @@ class EditSubcuenta extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
 
         switch ($viewName) {
             case 'ListPartidaAsiento':

@@ -59,7 +59,7 @@ class EditCuenta extends EditController
         parent::createViews();
 
         // desactivamos el botón de imprimir
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         $this->tab($mvn)->setSettings('btnPrint', false);
 
         // ponemos las pestañas en la parte inferior
@@ -165,7 +165,7 @@ class EditCuenta extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
         $idcuenta = $this->mainTabModelValue('idcuenta');
 
         switch ($viewName) {

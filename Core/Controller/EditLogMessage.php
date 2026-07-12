@@ -53,7 +53,7 @@ class EditLogMessage extends EditController
         parent::createViews();
 
         // desactivamos los botones nuevo y opciones
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         $this->setSettings($mvn, 'btnNew', false);
         $this->setSettings($mvn, 'btnOptions', false);
 

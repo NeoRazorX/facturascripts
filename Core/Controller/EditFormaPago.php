@@ -63,7 +63,7 @@ class EditFormaPago extends EditController
     {
         parent::loadData($viewName, $view);
 
-        if ($viewName === $this->getMainViewName() && false === $view->model->exists()) {
+        if ($viewName === $this->mainTabName() && false === $view->model->exists()) {
             $view->disableColumn('bank-account');
         }
     }

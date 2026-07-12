@@ -85,7 +85,7 @@ class EditCuentaEspecial extends EditController
         parent::createViews();
 
         // disable buttons
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
         $this->setSettings($mainViewName, 'btnDelete', false);
         $this->setSettings($mainViewName, 'btnNew', false);
 

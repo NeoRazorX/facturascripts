@@ -40,7 +40,7 @@ class EditContacto extends EditController
 
     public function getImageUrl(): string
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         return $this->views[$mvn]->model->gravatar();
     }
 
@@ -101,7 +101,7 @@ class EditContacto extends EditController
             return;
         }
 
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         $customer = $this->views[$mvn]->model->getCustomer();
         if ($customer->exists()) {
             Tools::log()->notice('record-updated-correctly');
@@ -136,7 +136,7 @@ class EditContacto extends EditController
             return;
         }
 
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         $supplier = $this->views[$mvn]->model->getSupplier();
         if ($supplier->exists()) {
             Tools::log()->notice('record-updated-correctly');
@@ -165,7 +165,7 @@ class EditContacto extends EditController
     protected function editAction(): bool
     {
         $return = parent::editAction();
-        if ($return && $this->active === $this->getMainViewName()) {
+        if ($return && $this->active === $this->mainTabName()) {
             $this->updateRelations($this->activeTab()->model);
         }
 
@@ -250,7 +250,7 @@ class EditContacto extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'docfiles':

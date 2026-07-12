@@ -176,7 +176,7 @@ class EditAgente extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'EditContacto':

@@ -76,7 +76,7 @@ class EditEmailSent extends EditController
         $this->createViewAttachments();
 
         // buttons
-        $mainView = $this->getMainViewName();
+        $mainView = $this->mainTabName();
         $this->addButton($mainView, [
             'action' => 'contact',
             'color' => 'info',
@@ -162,7 +162,7 @@ class EditEmailSent extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'EmailSentAttachment':

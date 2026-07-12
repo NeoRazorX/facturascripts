@@ -152,8 +152,20 @@ abstract class BaseController extends Controller
      * Returns the name assigned to the main view
      *
      * @return string
+     *
+     * @deprecated since 2026. Use $this->mainTabName() instead.
      */
     public function getMainViewName(): string
+    {
+        return $this->mainTabName();
+    }
+
+    /**
+     * Returns the name assigned to the main view
+     *
+     * @return string
+     */
+    public function mainTabName(): string
     {
         foreach (array_keys($this->views) as $key) {
             return $key;
@@ -190,7 +202,7 @@ abstract class BaseController extends Controller
 
     public function mainTab(): BaseView
     {
-        return $this->tab($this->getMainViewName());
+        return $this->tab($this->mainTabName());
     }
 
     /**
@@ -201,7 +213,7 @@ abstract class BaseController extends Controller
      */
     public function mainTabModelValue(string $fieldName)
     {
-        return $this->tabModelValue($this->getMainViewName(), $fieldName);
+        return $this->tabModelValue($this->mainTabName(), $fieldName);
     }
 
     /**

@@ -57,8 +57,8 @@ class EditSecuenciaDocumento extends EditController
         }
 
         // desactivamos los botones de opciones e imprimir
-        $this->setSettings($this->getMainViewName(), 'btnOptions', false);
-        $this->setSettings($this->getMainViewName(), 'btnPrint', false);
+        $this->setSettings($this->mainTabName(), 'btnOptions', false);
+        $this->setSettings($this->mainTabName(), 'btnPrint', false);
 
         // añadimos las vistas de los documentos
         $this->createViewsDocuments('ListFacturaCliente', 'FacturaCliente', 'customer-invoices');
@@ -85,7 +85,7 @@ class EditSecuenciaDocumento extends EditController
 
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'ListAlbaranCliente':

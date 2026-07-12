@@ -83,7 +83,7 @@ abstract class PanelController extends BaseController
         }
 
         // Load the data for each view
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
         foreach ($this->views as $viewName => $view) {
             // disable views if main view has no data
             if ($viewName != $mainViewName && false === $this->hasData) {
@@ -333,7 +333,7 @@ abstract class PanelController extends BaseController
 
             case 'delete':
             case 'delete-document':
-                if ($this->deleteAction() && $this->active === $this->getMainViewName()) {
+                if ($this->deleteAction() && $this->active === $this->mainTabName()) {
                     // al eliminar el registro principal, redirigimos al listado para mostrar ahí el mensaje de éxito
                     $listUrl = $this->activeTab()->model->url('list');
                     $redirect = strpos($listUrl, '?') === false ?
@@ -394,7 +394,7 @@ abstract class PanelController extends BaseController
         }
 
         // redirect to new model url only if this is the first view
-        if ($this->active === $this->getMainViewName()) {
+        if ($this->active === $this->mainTabName()) {
             $this->redirect($this->activeTab()->model->url() . '&action=save-ok');
         }
 

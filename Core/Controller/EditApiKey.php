@@ -197,7 +197,7 @@ class EditApiKey extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
         switch ($viewName) {
             case $mainViewName:
                 parent::loadData($viewName, $view);

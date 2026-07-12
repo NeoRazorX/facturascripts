@@ -287,7 +287,7 @@ class EditProducto extends EditController
                 $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
                 break;
 
-            case $this->getMainViewName():
+            case $this->mainTabName():
                 parent::loadData($viewName, $view);
                 $this->loadTypes($viewName);
                 $this->loadExceptionVat($viewName);

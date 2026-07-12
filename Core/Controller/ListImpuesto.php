@@ -71,7 +71,7 @@ class ListImpuesto extends ListController
     protected function loadData($viewName, $view)
     {
         parent::loadData($viewName, $view);
-        if ($viewName === $this->getMainViewName()) {
+        if ($viewName === $this->mainTabName()) {
             $this->loadOperations($viewName);
         }
     }

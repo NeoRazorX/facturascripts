@@ -401,7 +401,7 @@ abstract class ComercialContactController extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case $mvn:

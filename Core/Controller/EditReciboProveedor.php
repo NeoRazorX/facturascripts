@@ -63,7 +63,7 @@ class EditReciboProveedor extends EditController
         }
 
         // desactivamos el botón nuevo
-        $this->setSettings($this->getMainViewName(), 'btnNew', false);
+        $this->setSettings($this->mainTabName(), 'btnNew', false);
 
         $this->createViewPayments();
     }

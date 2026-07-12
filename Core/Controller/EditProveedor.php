@@ -52,7 +52,7 @@ class EditProveedor extends ComercialContactController
 
     public function getImageUrl(): string
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         return $this->views[$mvn]->model->gravatar();
     }
 
@@ -180,7 +180,7 @@ class EditProveedor extends ComercialContactController
     protected function editAction(): bool
     {
         $return = parent::editAction();
-        if ($return && $this->active === $this->getMainViewName()) {
+        if ($return && $this->active === $this->mainTabName()) {
             $this->checkSubaccountLength($this->getModel()->codsubcuenta);
         }
 
@@ -217,7 +217,7 @@ class EditProveedor extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
         $codproveedor = $this->mainTabModelValue('codproveedor');
         $where = [Where::eq('codproveedor', $codproveedor)];
 
