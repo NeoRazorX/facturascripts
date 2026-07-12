@@ -122,7 +122,7 @@ class EditAlmacen extends EditController
     {
         switch ($viewName) {
             case 'ListStock':
-                $code = $this->getViewModelValue($this->getMainViewName(), 'codalmacen');
+                $code = $this->mainTabModelValue('codalmacen');
                 $where = [Where::eq('stocks.codalmacen', $code)];
                 $view->loadData('', $where);
                 break;

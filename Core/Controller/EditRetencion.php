@@ -89,7 +89,7 @@ class EditRetencion extends EditController
         switch ($viewName) {
             case 'ListCliente':
             case 'ListProveedor':
-                $codretencion = $this->getViewModelValue($this->getMainViewName(), 'codretencion');
+                $codretencion = $this->mainTabModelValue('codretencion');
                 $where = [Where::eq('codretencion', $codretencion)];
                 $view->loadData('', $where);
                 break;

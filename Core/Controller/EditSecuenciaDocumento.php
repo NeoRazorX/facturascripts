@@ -97,8 +97,8 @@ class EditSecuenciaDocumento extends EditController
             case 'ListPresupuestoCliente':
             case 'ListPresupuestoProveedor':
                 $where = [
-                    Where::eq('codserie', $this->getViewModelValue($mvn, 'codserie')),
-                    Where::eq('idempresa', $this->getViewModelValue($mvn, 'idempresa'))
+                    Where::eq('codserie', $this->mainTabModelValue('codserie')),
+                    Where::eq('idempresa', $this->mainTabModelValue('idempresa'))
                 ];
                 // si tiene ejercicio, solo mostramos los resultados de ese ejercicio
                 if ($this->views[$mvn]->model->codejercicio) {

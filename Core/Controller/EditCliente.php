@@ -245,7 +245,7 @@ class EditCliente extends ComercialContactController
     protected function loadData($viewName, $view)
     {
         $mainViewName = $this->getMainViewName();
-        $codcliente = $this->getViewModelValue($mainViewName, 'codcliente');
+        $codcliente = $this->mainTabModelValue('codcliente');
         $where = [Where::eq('codcliente', $codcliente)];
 
         switch ($viewName) {

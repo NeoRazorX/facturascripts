@@ -195,7 +195,7 @@ class EditFamilia extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $codfamilia = $this->getViewModelValue($this->getMainViewName(), 'codfamilia');
+        $codfamilia = $this->mainTabModelValue('codfamilia');
         switch ($viewName) {
             case 'ListProducto':
                 $where = [Where::eq('codfamilia', $codfamilia)];

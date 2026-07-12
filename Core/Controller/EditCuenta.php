@@ -166,7 +166,7 @@ class EditCuenta extends EditController
     protected function loadData($viewName, $view)
     {
         $mainViewName = $this->getMainViewName();
-        $idcuenta = $this->getViewModelValue($mainViewName, 'idcuenta');
+        $idcuenta = $this->mainTabModelValue('idcuenta');
 
         switch ($viewName) {
             case 'ListCuenta':

@@ -177,7 +177,7 @@ class EditFabricante extends EditController
     {
         switch ($viewName) {
             case 'ListProducto':
-                $codfabricante = $this->getViewModelValue($this->getMainViewName(), 'codfabricante');
+                $codfabricante = $this->mainTabModelValue('codfabricante');
                 $where = [Where::eq('codfabricante', $codfabricante)];
                 $view->loadData('', $where);
                 break;

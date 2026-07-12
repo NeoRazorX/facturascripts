@@ -218,7 +218,7 @@ class EditProveedor extends ComercialContactController
     protected function loadData($viewName, $view)
     {
         $mainViewName = $this->getMainViewName();
-        $codproveedor = $this->getViewModelValue($mainViewName, 'codproveedor');
+        $codproveedor = $this->mainTabModelValue('codproveedor');
         $where = [Where::eq('codproveedor', $codproveedor)];
 
         switch ($viewName) {

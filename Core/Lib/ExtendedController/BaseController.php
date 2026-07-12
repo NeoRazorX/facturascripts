@@ -191,6 +191,17 @@ abstract class BaseController extends Controller
         return $this->tab($this->getMainViewName());
     }
 
+    /**
+     * Return the value for a field in the model of the main view.
+     *
+     * @param string $fieldName
+     * @return mixed
+     */
+    public function mainTabModelValue(string $fieldName)
+    {
+        return $this->getViewModelValue($this->getMainViewName(), $fieldName);
+    }
+
     public function listView(string $viewName): ListView
     {
         if (isset($this->views[$viewName]) && $this->views[$viewName] instanceof ListView) {

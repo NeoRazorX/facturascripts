@@ -256,11 +256,9 @@ class EditFacturaProveedor extends PurchasesController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
-
         switch ($viewName) {
             case self::VIEW_RECEIPTS:
-                $where = [Where::eq('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
+                $where = [Where::eq('idfactura', $this->mainTabModelValue('idfactura'))];
                 $view->loadData('', $where);
                 if (empty($view->query)) {
                     $this->checkReceiptsTotal($view->cursor);
@@ -268,16 +266,16 @@ class EditFacturaProveedor extends PurchasesController
                 break;
 
             case self::VIEW_ACCOUNTS:
-                $where = [Where::eq('idasiento', $this->getViewModelValue($mvn, 'idasiento'))];
+                $where = [Where::eq('idasiento', $this->mainTabModelValue('idasiento'))];
                 $view->loadData('', $where);
                 break;
 
             case 'refunds':
-                if ($this->getViewModelValue($mvn, 'idfacturarect')) {
+                if ($this->mainTabModelValue('idfacturarect')) {
                     $this->setSettings($viewName, 'active', false);
                     break;
                 }
-                $where = [Where::eq('idfacturarect', $this->getViewModelValue($mvn, 'idfactura'))];
+                $where = [Where::eq('idfacturarect', $this->mainTabModelValue('idfactura'))];
                 $view->loadData('', $where);
                 break;
 

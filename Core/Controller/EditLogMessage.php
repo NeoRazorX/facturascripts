@@ -85,8 +85,8 @@ class EditLogMessage extends EditController
     {
         switch ($viewName) {
             case 'ListLogMessage':
-                $code = $this->getViewModelValue($this->getMainViewName(), 'id');
-                $ipAddress = $this->getViewModelValue($this->getMainViewName(), 'ip');
+                $code = $this->mainTabModelValue('id');
+                $ipAddress = $this->mainTabModelValue('ip');
                 $where = [
                     Where::notEq('id', $code),
                     Where::eq('ip', $ipAddress)

@@ -197,7 +197,7 @@ class EditSubcuenta extends EditController
 
         switch ($viewName) {
             case 'ListPartidaAsiento':
-                $idsubcuenta = $this->getViewModelValue($mainViewName, 'idsubcuenta');
+                $idsubcuenta = $this->mainTabModelValue('idsubcuenta');
                 $where = [Where::eq('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);
                 if ($view->count == 0) {

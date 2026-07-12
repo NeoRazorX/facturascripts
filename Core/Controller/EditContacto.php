@@ -258,7 +258,7 @@ class EditContacto extends EditController
                 break;
 
             case 'ListEmailSent':
-                $email = $this->getViewModelValue($mvn, 'email');
+                $email = $this->mainTabModelValue('email');
                 if (empty($email)) {
                     $this->setSettings($viewName, 'active', false);
                     break;
@@ -278,7 +278,7 @@ class EditContacto extends EditController
                 break;
 
             case 'ListPresupuestoCliente':
-                $id = $this->getViewModelValue($mvn, 'idcontacto');
+                $id = $this->mainTabModelValue('idcontacto');
                 $where = [Where::eq('idcontactofact', $id)];
                 $view->loadData('', $where);
                 break;

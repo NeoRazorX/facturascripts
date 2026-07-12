@@ -79,7 +79,7 @@ class EditCronJob extends EditController
     {
         switch ($viewName) {
             case 'ListLogMessage':
-                $name = $this->getViewModelValue($this->getMainViewName(), 'jobname');
+                $name = $this->mainTabModelValue('jobname');
                 $where = [Where::eq('channel', $name)];
                 $view->loadData('', $where);
                 break;

@@ -123,7 +123,7 @@ class EditEmpresa extends EditController
             case 'ListCuentaBanco':
             case 'ListEjercicio':
             case 'ListFormaPago':
-                $id = $this->getViewModelValue($this->getMainViewName(), 'idempresa');
+                $id = $this->mainTabModelValue('idempresa');
                 $where = [Where::eq('idempresa', $id)];
                 $view->loadData('', $where);
                 break;

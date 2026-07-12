@@ -143,7 +143,7 @@ class EditTarifa extends EditController
             case 'ListCliente':
             case 'ListGrupoClientes':
             case 'ListTarifaProducto':
-                $codtarifa = $this->getViewModelValue($this->getMainViewName(), 'codtarifa');
+                $codtarifa = $this->mainTabModelValue('codtarifa');
                 $where = [Where::eq('codtarifa', $codtarifa)];
                 $view->loadData('', $where);
                 break;

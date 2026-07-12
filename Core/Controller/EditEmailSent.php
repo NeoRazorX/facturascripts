@@ -54,7 +54,7 @@ class EditEmailSent extends EditController
     protected function contactAction(): void
     {
         $contact = new Contacto();
-        $email = $this->getViewModelValue($this->getMainViewName(), 'addressee');
+        $email = $this->mainTabModelValue('addressee');
         $where = [Where::eq('email', $email)];
         if ($contact->loadWhere($where)) {
             $this->redirect($contact->url());
@@ -179,8 +179,8 @@ class EditEmailSent extends EditController
                 break;
 
             case 'ListEmailSent':
-                $addressee = $this->getViewModelValue($mvn, 'addressee');
-                $id = $this->getViewModelValue($mvn, 'id');
+                $addressee = $this->mainTabModelValue('addressee');
+                $id = $this->mainTabModelValue('id');
                 $where = [
                     Where::eq('addressee', $addressee),
                     Where::notEq('id', $id)

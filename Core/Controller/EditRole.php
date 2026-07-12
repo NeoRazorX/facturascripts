@@ -209,7 +209,7 @@ class EditRole extends EditController
     {
         switch ($viewName) {
             case 'EditRoleUser':
-                $code = $this->getViewModelValue($this->getMainViewName(), 'codrole');
+                $code = $this->mainTabModelValue('codrole');
                 $where = [Where::eq('codrole', $code)];
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;

@@ -76,7 +76,7 @@ class EditAtributo extends EditController
     {
         switch ($viewName) {
             case 'EditAtributoValor':
-                $code = $this->getViewModelValue($this->getMainViewName(), 'codatributo');
+                $code = $this->mainTabModelValue('codatributo');
                 $where = [Where::eq('codatributo', $code)];
                 $view->loadData('', $where, ['orden' => 'ASC', 'id' => 'DESC']);
                 break;

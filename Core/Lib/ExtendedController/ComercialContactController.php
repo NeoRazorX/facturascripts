@@ -422,14 +422,14 @@ abstract class ComercialContactController extends EditController
                 break;
 
             case 'ListSubcuenta':
-                $codsubcuenta = $this->getViewModelValue($mvn, 'codsubcuenta');
+                $codsubcuenta = $this->mainTabModelValue('codsubcuenta');
                 $where = [Where::eq('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->count > 0);
                 break;
 
             case 'ListEmailSent':
-                $email = $this->getViewModelValue($mvn, 'email');
+                $email = $this->mainTabModelValue('email');
                 if (empty($email)) {
                     $this->setSettings($viewName, 'active', false);
                     break;

@@ -99,8 +99,7 @@ class EditImpuesto extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
-        $code = $this->getViewModelValue($mvn, 'codimpuesto');
+        $code = $this->mainTabModelValue('codimpuesto');
 
         switch ($viewName) {
             case 'EditImpuestoZona':
@@ -118,8 +117,8 @@ class EditImpuesto extends EditController
                 // cargamos la lista de subcuentas del impuesto
                 $codes = [];
                 foreach (['codsubcuentarep', 'codsubcuentarepre', 'codsubcuentasop', 'codsubcuentasopre'] as $field) {
-                    if ($this->getViewModelValue($mvn, $field)) {
-                        $codes[] = $this->getViewModelValue($mvn, $field);
+                    if ($this->mainTabModelValue($field)) {
+                        $codes[] = $this->mainTabModelValue($field);
                     }
                 }
                 if (empty($codes)) {

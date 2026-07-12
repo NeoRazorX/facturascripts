@@ -44,7 +44,7 @@ class EditAgente extends ComercialContactController
     public function calcAgentInvoicePending(): string
     {
         $where = [
-            Where::eq('codagente', $this->getViewModelValue($this->getMainViewName(), 'codagente')),
+            Where::eq('codagente', $this->mainTabModelValue('codagente')),
             Where::eq('pagada', false)
         ];
 
@@ -180,7 +180,7 @@ class EditAgente extends ComercialContactController
 
         switch ($viewName) {
             case 'EditContacto':
-                $idcontacto = $this->getViewModelValue($mvn, 'idcontacto');
+                $idcontacto = $this->mainTabModelValue('idcontacto');
                 if (empty($idcontacto)) {
                     $view->setSettings('active', false);
                     break;
@@ -195,13 +195,13 @@ class EditAgente extends ComercialContactController
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
-                $codagente = $this->getViewModelValue($mvn, 'codagente');
+                $codagente = $this->mainTabModelValue('codagente');
                 $where = [Where::eq('codagente', $codagente)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListEmailSent':
-                $email = $this->getViewModelValue($mvn, 'email');
+                $email = $this->mainTabModelValue('email');
                 if (empty($email)) {
                     $view->setSettings('active', false);
                     break;
