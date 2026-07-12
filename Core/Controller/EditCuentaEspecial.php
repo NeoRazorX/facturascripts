@@ -103,7 +103,7 @@ class EditCuentaEspecial extends EditController
         switch ($viewName) {
             case 'ListCuenta':
             case 'ListSubcuenta':
-                $codcuentaesp = $this->getViewModelValue('EditCuentaEspecial', 'codcuentaesp');
+                $codcuentaesp = $this->tabModelValue('EditCuentaEspecial', 'codcuentaesp');
                 $where = [Where::eq('codcuentaesp', $codcuentaesp)];
                 $view->loadData('', $where);
                 break;

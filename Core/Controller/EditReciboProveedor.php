@@ -138,7 +138,7 @@ class EditReciboProveedor extends EditController
     {
         switch ($viewName) {
             case 'ListPagoProveedor':
-                $id = $this->getViewModelValue('EditReciboProveedor', 'idrecibo');
+                $id = $this->tabModelValue('EditReciboProveedor', 'idrecibo');
                 $where = [Where::eq('idrecibo', $id)];
                 $this->views[$viewName]->loadData('', $where);
                 break;

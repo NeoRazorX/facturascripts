@@ -180,10 +180,12 @@ abstract class BaseController extends Controller
      * @param string $viewName
      * @param string $fieldName
      * @return mixed
+     *
+     * @deprecated since 2026. Use $this->tabModelValue($viewName, $fieldName) instead.
      */
     public function getViewModelValue(string $viewName, string $fieldName)
     {
-        return $this->tab($viewName)->model->{$fieldName} ?? null;
+        return $this->tabModelValue($viewName, $fieldName);
     }
 
     public function mainTab(): BaseView
@@ -199,7 +201,19 @@ abstract class BaseController extends Controller
      */
     public function mainTabModelValue(string $fieldName)
     {
-        return $this->getViewModelValue($this->getMainViewName(), $fieldName);
+        return $this->tabModelValue($this->getMainViewName(), $fieldName);
+    }
+
+    /**
+     * Return the value for a field in the model of the view.
+     *
+     * @param string $viewName
+     * @param string $fieldName
+     * @return mixed
+     */
+    public function tabModelValue(string $viewName, string $fieldName)
+    {
+        return $this->tab($viewName)->model->{$fieldName} ?? null;
     }
 
     public function listView(string $viewName): ListView

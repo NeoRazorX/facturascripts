@@ -52,7 +52,7 @@ class EditCliente extends ComercialContactController
      */
     public function getDeliveryNotesRisk(): string
     {
-        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $codcliente = $this->tabModelValue('EditCliente', 'codcliente');
         $total = empty($codcliente) ? 0 : CustomerRiskTools::getDeliveryNotesRisk($codcliente);
         return Tools::money($total);
     }
@@ -70,7 +70,7 @@ class EditCliente extends ComercialContactController
      */
     public function getInvoicesRisk(): string
     {
-        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $codcliente = $this->tabModelValue('EditCliente', 'codcliente');
         $total = empty($codcliente) ? 0 : CustomerRiskTools::getInvoicesRisk($codcliente);
         return Tools::money($total);
     }
@@ -87,7 +87,7 @@ class EditCliente extends ComercialContactController
      */
     public function getOrdersRisk(): string
     {
-        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $codcliente = $this->tabModelValue('EditCliente', 'codcliente');
         $total = empty($codcliente) ? 0 : CustomerRiskTools::getOrdersRisk($codcliente);
         return Tools::money($total);
     }
@@ -336,7 +336,7 @@ class EditCliente extends ComercialContactController
         }
 
         // Search for client contacts
-        $codcliente = $this->getViewModelValue($viewName, 'codcliente');
+        $codcliente = $this->tabModelValue($viewName, 'codcliente');
         $where = [Where::eq('codcliente', $codcliente)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 

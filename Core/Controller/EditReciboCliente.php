@@ -138,7 +138,7 @@ class EditReciboCliente extends EditController
     {
         switch ($viewName) {
             case 'ListPagoCliente':
-                $id = $this->getViewModelValue('EditReciboCliente', 'idrecibo');
+                $id = $this->tabModelValue('EditReciboCliente', 'idrecibo');
                 $where = [Where::eq('idrecibo', $id)];
                 $this->views[$viewName]->loadData('', $where);
                 break;

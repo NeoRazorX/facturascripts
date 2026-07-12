@@ -181,7 +181,7 @@ class EditGrupoClientes extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
+        $codgrupo = $this->tabModelValue('EditGrupoClientes', 'codgrupo');
         switch ($viewName) {
             case 'ListCliente':
                 $where = [Where::eq('codgrupo', $codgrupo)];

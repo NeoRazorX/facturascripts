@@ -231,7 +231,7 @@ class EditCuenta extends EditController
 
     private function setLedgerReportValues(string $viewName): void
     {
-        $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
+        $codeExercise = $this->tabModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();
         $exercise->load($codeExercise);
 

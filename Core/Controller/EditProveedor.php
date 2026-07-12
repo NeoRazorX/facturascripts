@@ -45,7 +45,7 @@ class EditProveedor extends ComercialContactController
      */
     public function getDeliveryNotesRisk(): string
     {
-        $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $code = $this->tabModelValue('EditProveedor', 'codproveedor');
         $total = SupplierRiskTools::getDeliveryNotesRisk($code);
         return Tools::money($total);
     }
@@ -63,7 +63,7 @@ class EditProveedor extends ComercialContactController
      */
     public function getInvoicesRisk(): string
     {
-        $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $code = $this->tabModelValue('EditProveedor', 'codproveedor');
         $total = SupplierRiskTools::getInvoicesRisk($code);
         return Tools::money($total);
     }
@@ -309,7 +309,7 @@ class EditProveedor extends ComercialContactController
         }
 
         // Search for supplier contacts
-        $codproveedor = $this->getViewModelValue($viewName, 'codproveedor');
+        $codproveedor = $this->tabModelValue($viewName, 'codproveedor');
         $where = [Where::eq('codproveedor', $codproveedor)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 

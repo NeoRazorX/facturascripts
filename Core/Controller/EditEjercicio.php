@@ -57,7 +57,7 @@ class EditEjercicio extends EditController
      */
     protected function addExerciseActionButtons(string $viewName): void
     {
-        $status = $this->getViewModelValue($viewName, 'estado');
+        $status = $this->tabModelValue($viewName, 'estado');
         switch ($status) {
             case Ejercicio::EXERCISE_STATUS_OPEN:
                 $this->addButton($viewName, [
@@ -305,7 +305,7 @@ class EditEjercicio extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $codejercicio = $this->tabModelValue('EditEjercicio', 'codejercicio');
 
         switch ($viewName) {
             case 'EditEjercicio':

@@ -258,7 +258,7 @@ class EditProducto extends EditController
     protected function loadCustomReferenceWidget(string $viewName): void
     {
         $references = [];
-        $id = $this->getViewModelValue('EditProducto', 'idproducto');
+        $id = $this->tabModelValue('EditProducto', 'idproducto');
         $where = [Where::eq('idproducto', $id)];
         $values = $this->codeModel->all('variantes', 'referencia', 'referencia', false, $where);
         foreach ($values as $code) {
@@ -279,7 +279,7 @@ class EditProducto extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $id = $this->getViewModelValue('EditProducto', 'idproducto');
+        $id = $this->tabModelValue('EditProducto', 'idproducto');
         $where = [Where::eq('idproducto', $id)];
 
         switch ($viewName) {
