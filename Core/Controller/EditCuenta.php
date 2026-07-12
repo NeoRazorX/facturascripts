@@ -188,7 +188,7 @@ class EditCuenta extends EditController
                 unset($view->totalAmounts['saldo']);
 
                 // añadimos botón de imprimir mayor
-                $this->addButton($mainViewName, [
+                $this->tab($mainViewName)->addButton([
                     'action' => 'ledger',
                     'color' => 'info',
                     'icon' => 'fa-solid fa-print fa-fw',

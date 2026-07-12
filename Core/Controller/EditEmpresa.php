@@ -132,7 +132,7 @@ class EditEmpresa extends EditController
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($view);
                 if ($view->model->exists() && $view->model->cifnif) {
-                    $this->addButton($viewName, [
+                    $view->addButton([
                         'action' => 'check-vies',
                         'color' => 'info',
                         'icon' => 'fa-solid fa-check-double',

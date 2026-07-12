@@ -300,7 +300,7 @@ class EditProducto extends EditController
                 $this->loadCustomReferenceWidget('EditProductoProveedor');
                 $this->loadCustomReferenceWidget('EditStock');
                 if (false === empty($view->model->primaryColumnValue())) {
-                    $this->addButton($viewName, [
+                    $view->addButton([
                         'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
                         'icon' => 'fa-solid fa-cut',
                         'label' => 'copy',

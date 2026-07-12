@@ -65,7 +65,7 @@ class EditFacturaProveedor extends PurchasesController
             ->addOrderBy(['fecha'], 'date', 1);
 
         // buttons
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'generate-accounting',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entry'
@@ -96,14 +96,14 @@ class EditFacturaProveedor extends PurchasesController
             ->addOrderBy(['importe'], 'amount');
 
         // buttons
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'generate-receipts',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-receipts'
         ]);
 
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'paid',
             'color' => 'outline-success',
             'confirm' => 'true',

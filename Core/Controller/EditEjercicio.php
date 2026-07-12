@@ -60,7 +60,7 @@ class EditEjercicio extends EditController
         $status = $this->tabModelValue($viewName, 'estado');
         switch ($status) {
             case Ejercicio::EXERCISE_STATUS_OPEN:
-                $this->addButton($viewName, [
+                $this->tab($viewName)->addButton([
                     'row' => 'footer-actions',
                     'action' => 'import-accounting',
                     'color' => 'warning',
@@ -69,7 +69,7 @@ class EditEjercicio extends EditController
                     'type' => 'modal'
                 ]);
 
-                $this->addButton($viewName, [
+                $this->tab($viewName)->addButton([
                     'row' => 'footer-actions',
                     'action' => 'close-exercise',
                     'color' => 'danger',
@@ -80,7 +80,7 @@ class EditEjercicio extends EditController
                 break;
 
             case Ejercicio::EXERCISE_STATUS_CLOSED:
-                $this->addButton($viewName, [
+                $this->tab($viewName)->addButton([
                     'row' => 'footer-actions',
                     'action' => 'open-exercise',
                     'color' => 'warning',

@@ -97,13 +97,13 @@ class EditSubcuenta extends EditController
             ->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
 
         // botones
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'dot-accounting-on',
             'color' => 'info',
             'icon' => 'fa-solid fa-check-double',
             'label' => 'checked'
         ]);
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'dot-accounting-off',
             'color' => 'warning',
             'icon' => 'fa-regular fa-square',
@@ -208,7 +208,7 @@ class EditSubcuenta extends EditController
                 unset($view->totalAmounts['saldo']);
 
                 // añadimos botón de informe de mayor
-                $this->addButton($mainViewName, [
+                $this->tab($mainViewName)->addButton([
                     'action' => 'ledger',
                     'color' => 'info',
                     'icon' => 'fa-solid fa-print fa-fw',

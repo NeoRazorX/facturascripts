@@ -313,7 +313,7 @@ class EditAsiento extends PanelController
                 }
 
                 $this->title .= ' ' . $view->model->primaryDescription();
-                $this->addButton($viewName, [
+                $view->addButton([
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->id(),
                     'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',

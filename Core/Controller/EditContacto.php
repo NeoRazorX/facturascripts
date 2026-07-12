@@ -62,7 +62,7 @@ class EditContacto extends EditController
     {
         $accessClient = $this->getRolePermissions('EditCliente');
         if (empty($view->model->codcliente) && $accessClient['allowupdate']) {
-            $this->addButton($viewName, [
+            $view->addButton([
                 'action' => 'convert-into-customer',
                 'color' => 'success',
                 'icon' => 'fa-solid fa-user-check',
@@ -72,7 +72,7 @@ class EditContacto extends EditController
 
         $accessSupplier = $this->getRolePermissions('EditProveedor');
         if (empty($view->model->codproveedor) && $accessSupplier['allowupdate']) {
-            $this->addButton($viewName, [
+            $view->addButton([
                 'action' => 'convert-into-supplier',
                 'color' => 'success',
                 'icon' => 'fa-solid fa-user-cog',
@@ -268,7 +268,7 @@ class EditContacto extends EditController
                 $view->loadData('', $where);
 
                 // añadimos un botón para enviar un nuevo email
-                $this->addButton($viewName, [
+                $view->addButton([
                     'action' => 'SendMail?email=' . $email,
                     'color' => 'success',
                     'icon' => 'fa-solid fa-envelope',
@@ -293,7 +293,7 @@ class EditContacto extends EditController
                     $this->addConversionButtons($viewName, $view);
                 }
                 if (!empty($view->model->cifnif)) {
-                    $this->addButton($viewName, [
+                    $view->addButton([
                         'action' => 'check-vies',
                         'color' => 'info',
                         'icon' => 'fa-solid fa-check-double',

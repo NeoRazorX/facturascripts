@@ -77,7 +77,7 @@ class EditReciboCliente extends EditController
         $this->setSettings($viewName, 'btnNew', false);
 
         // añadimos el botón de generar asiento
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'generate-accounting',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entry'

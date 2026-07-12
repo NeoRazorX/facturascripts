@@ -349,7 +349,7 @@ abstract class PurchasesController extends PanelController
 
                 $this->title .= ' ' . $view->model->primaryDescription();
                 $view->settings['btnPrint'] = true;
-                $this->addButton($viewName, [
+                $view->addButton([
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
                     'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',

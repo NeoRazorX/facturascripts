@@ -77,7 +77,7 @@ class EditEmailSent extends EditController
 
         // buttons
         $mainView = $this->mainTabName();
-        $this->addButton($mainView, [
+        $this->tab($mainView)->addButton([
             'action' => 'contact',
             'color' => 'info',
             'icon' => 'fa-solid fa-address-book',

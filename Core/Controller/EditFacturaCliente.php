@@ -64,7 +64,7 @@ class EditFacturaCliente extends SalesController
             ->addOrderBy(['fecha'], 'date', 1);
 
         // buttons
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'generate-accounting',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entry'
@@ -95,14 +95,14 @@ class EditFacturaCliente extends SalesController
             ->addOrderBy(['importe'], 'amount');
 
         // buttons
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'generate-receipts',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-receipts'
         ]);
 
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'paid',
             'color' => 'outline-success',
             'confirm' => 'true',

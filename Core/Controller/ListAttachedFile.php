@@ -67,7 +67,7 @@ class ListAttachedFile extends ListController
         $this->addFilterSelect($viewName, 'mimetype', 'type', 'mimetype', $types);
 
         // buttons
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'download',
             'icon' => 'fa-solid fa-download',
             'label' => 'download'
