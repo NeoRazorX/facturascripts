@@ -186,6 +186,11 @@ abstract class BaseController extends Controller
         return $this->tab($viewName)->model->{$fieldName} ?? null;
     }
 
+    public function mainTab(): BaseView
+    {
+        return $this->tab($this->getMainViewName());
+    }
+
     public function listView(string $viewName): ListView
     {
         if (isset($this->views[$viewName]) && $this->views[$viewName] instanceof ListView) {

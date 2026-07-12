@@ -56,10 +56,10 @@ class EditReciboCliente extends EditController
 
         // desactivamos selects con una sola opción
         if (count(Empresas::all()) <= 1) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->mainTab()->disableColumn('company');
         }
         if (count(Divisas::all()) <= 1) {
-            $this->views[$this->getMainViewName()]->disableColumn('currency');
+            $this->mainTab()->disableColumn('currency');
         }
 
         // desactivamos el botón nuevo

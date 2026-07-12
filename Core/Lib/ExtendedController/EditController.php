@@ -41,8 +41,7 @@ abstract class EditController extends PanelController
      */
     public function getModel()
     {
-        $viewName = $this->getMainViewName();
-        return $this->views[$viewName]->model;
+        return $this->mainTab()->model;
     }
 
     public function getPageData(): array

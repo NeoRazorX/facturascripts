@@ -88,7 +88,7 @@ class EditRole extends EditController
         $this->setTabsPosition('bottom');
 
         // desactivamos los botones de opciones e imprimir
-        $this->tab($this->getMainViewName())
+        $this->mainTab()
             ->setSettings('btnOptions', false)
             ->setSettings('btnPrint', false);
 

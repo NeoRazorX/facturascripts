@@ -67,7 +67,7 @@ class EditCuentaBanco extends EditController
 
         // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->mainTab()->disableColumn('company');
         }
 
         $this->createSubAccountingView();
