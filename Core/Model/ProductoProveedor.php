@@ -24,7 +24,6 @@ use FacturaScripts\Core\Model\Base\ProductRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\CostPriceTools;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
@@ -134,8 +133,7 @@ class ProductoProveedor extends ModelClass
     public function getVariant(): DinVariante
     {
         $variant = new DinVariante();
-        $where = [Where::eq('referencia', $this->referencia)];
-        $variant->loadWhere($where);
+        $variant->loadWhereEq('referencia', $this->referencia);
         return $variant;
     }
 

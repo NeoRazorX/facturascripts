@@ -528,8 +528,7 @@ final class ProductoTest extends TestCase
             . $variant->referencia . ' === ' . $variant->getProducto()->referencia);
 
         // comprobamos que no podemos eliminar la única variante
-        $where = [Where::eq('referencia', $product->referencia)];
-        $this->assertTrue($variant->loadWhere($where), 'cant-reload-variant');
+        $this->assertTrue($variant->loadWhereEq('referencia', $product->referencia), 'cant-reload-variant');
         $this->assertFalse($variant->delete(), 'can-delete-only-variant');
 
         // eliminamos el producto

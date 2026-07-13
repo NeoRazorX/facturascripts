@@ -20,7 +20,6 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\IdentificadorFiscal;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -83,8 +82,7 @@ final class IdentificadorFiscalTest extends TestCase
     {
         // cargamos el identificador fiscal y activamos la validación
         $identificador = new IdentificadorFiscal();
-        $where = [Where::eq('tipoidfiscal', $fiscalId)];
-        $identificador->loadWhere($where);
+        $identificador->loadWhereEq('tipoidfiscal', $fiscalId);
         $identificador->validar = true;
         $this->assertTrue($identificador->save(), 'identificador-fiscal-cant-save');
 

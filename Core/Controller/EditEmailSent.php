@@ -55,8 +55,7 @@ class EditEmailSent extends EditController
     {
         $contact = new Contacto();
         $email = $this->mainTabModelValue('addressee');
-        $where = [Where::eq('email', $email)];
-        if ($contact->loadWhere($where)) {
+        if ($contact->loadWhereEq('email', $email)) {
             $this->redirect($contact->url());
             return;
         }

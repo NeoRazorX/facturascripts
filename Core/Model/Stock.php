@@ -204,8 +204,7 @@ class Stock extends ModelClass
         $this->referencia = Tools::noHtml($this->referencia);
         if (empty($this->idproducto)) {
             $variante = new DinVariante();
-            $whereRef = [Where::eq('referencia', $this->referencia)];
-            if ($variante->loadWhere($whereRef)) {
+            if ($variante->loadWhereEq('referencia', $this->referencia)) {
                 $this->idproducto = $variante->idproducto;
             }
         }

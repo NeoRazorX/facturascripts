@@ -23,7 +23,6 @@ use FacturaScripts\Core\DataSrc\Familias;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
@@ -236,8 +235,7 @@ class Familia extends ModelClass
         // comprobamos las subcuentas vinculadas
         $subAccount = new DinSubcuenta();
         if ($this->codsubcuentacom) {
-            $where = [Where::eq('codsubcuenta', $this->codsubcuentacom)];
-            if (false === $subAccount->loadWhere($where)) {
+            if (false === $subAccount->loadWhereEq('codsubcuenta', $this->codsubcuentacom)) {
                 Tools::log()->warning('family-purchases-subaccount-not-found', [
                     '%family%' => $this->codfamilia,
                     '%subaccount%' => $this->codsubcuentacom
@@ -246,15 +244,13 @@ class Familia extends ModelClass
             }
         }
         if (false === empty($this->codsubcuentairpfcom)) {
-            $where = [Where::eq('codsubcuenta', $this->codsubcuentairpfcom)];
-            if (false === $subAccount->loadWhere($where)) {
+            if (false === $subAccount->loadWhereEq('codsubcuenta', $this->codsubcuentairpfcom)) {
                 Tools::log()->warning('irpf-subaccount-not-found');
                 return false;
             }
         }
         if (false === empty($this->codsubcuentaven)) {
-            $where = [Where::eq('codsubcuenta', $this->codsubcuentaven)];
-            if (false === $subAccount->loadWhere($where)) {
+            if (false === $subAccount->loadWhereEq('codsubcuenta', $this->codsubcuentaven)) {
                 Tools::log()->warning('sales-subaccount-not-found');
                 return false;
             }
