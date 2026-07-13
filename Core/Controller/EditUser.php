@@ -261,8 +261,7 @@ class EditUser extends EditController
             return $pageList;
         }
 
-        $where = [Where::eq('nick', $user->nick)];
-        foreach (RoleUser::all($where) as $roleUser) {
+        foreach (RoleUser::allWhereEq('nick', $user->nick) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
                 $page = $roleAccess->getPage();
                 if (false === $page->exists() || false === $page->showonmenu) {
