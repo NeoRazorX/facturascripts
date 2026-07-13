@@ -40,19 +40,22 @@
         <column name="price" display="none" order="140">
             <widget type="money" fieldname="precio"/>
         </column>
-        <column name="dto" display="none" order="150">
+        <column name="precioextra" display="none" order="150">
+            <widget type="money" fieldname="precioextra"/>
+        </column>
+        <column name="dto" display="none" order="160">
             <widget type="number" fieldname="dtopor"/>
         </column>
-        <column name="dto-2" display="none" order="160">
+        <column name="dto-2" display="none" order="170">
             <widget type="number" fieldname="dtopor2"/>
         </column>
-        <column name="net" display="right" order="170">
+        <column name="net" display="right" order="180">
             <widget type="money" fieldname="neto"/>
         </column>
-        <column name="stock" display="none" order="180">
+        <column name="stock" display="none" order="190">
             <widget type="number" fieldname="stock"/>
         </column>
-        <column name="update-time" display="right" order="190">
+        <column name="update-time" display="right" order="200">
             <widget type="datetime" fieldname="actualizado"/>
         </column>
     </columns>

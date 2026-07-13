@@ -124,6 +124,62 @@ final class CostPriceToolsTest extends TestCase
         $this->assertEquals(7.5, (float)$variant->coste, 'sin filas con neto > 0 el coste anterior debe preservarse');
     }
 
+    public function testCalculoCosteProveedor(): void
+    {
+        $producto = $this->createProduct();
+        $variante = $producto->getVariants()[0];
+
+        $this->createSupplierProduct($producto, 100.0, '2024-01-01 00:00:00', 10.0, 5.0);
+        Tools::settingsSet('default', 'costpricepolicy', 'last-price');
+
+        $casos = [
+            'neto' => 90.0,
+            'precio' => 100.0,
+            'netomasextra' => 95.0,
+            'preciomasextra' => 105.0,
+        ];
+
+        foreach ($casos as $calculo => $coste) {
+            Tools::settingsSet('default', 'calculocosteproveedor', $calculo);
+            CostPriceTools::update($variante);
+
+            $variante->load($variante->idvariante);
+            $this->assertEquals($coste, (float)$variante->coste, 'bad-calculo-' . $calculo);
+        }
+    }
+
+    public function testPrecioMedioConPrecioExtra(): void
+    {
+        $producto = $this->createProduct();
+        $variante = $producto->getVariants()[0];
+
+        $this->createSupplierProduct($producto, 100.0, '2024-01-01 00:00:00', 10.0, 5.0);
+        $this->createSupplierProduct($producto, 200.0, '2024-02-01 00:00:00', 20.0, 10.0);
+
+        Tools::settingsSet('default', 'costpricepolicy', 'average-price');
+        Tools::settingsSet('default', 'calculocosteproveedor', 'netomasextra');
+        CostPriceTools::update($variante);
+
+        $variante->load($variante->idvariante);
+        $this->assertEquals(132.5, (float)$variante->coste, 'bad-average-price-extra');
+    }
+
+    public function testUltimoPrecioConPrecioExtra(): void
+    {
+        $producto = $this->createProduct();
+        $variante = $producto->getVariants()[0];
+
+        $this->createSupplierProduct($producto, 100.0, '2024-01-01 00:00:00', 0.0, 5.0);
+        $this->createSupplierProduct($producto, 200.0, '2024-02-01 00:00:00', 0.0, 20.0);
+
+        Tools::settingsSet('default', 'costpricepolicy', 'last-price');
+        Tools::settingsSet('default', 'calculocosteproveedor', 'preciomasextra');
+        CostPriceTools::update($variante);
+
+        $variante->load($variante->idvariante);
+        $this->assertEquals(220.0, (float)$variante->coste, 'bad-last-price-extra');
+    }
+
     private function createProduct(): Producto
     {
         $product = $this->getRandomProduct();
@@ -137,7 +193,8 @@ final class CostPriceToolsTest extends TestCase
         Producto $product,
         float $precio,
         string $actualizado,
-        float $dtopor = 0.0
+        float $dtopor = 0.0,
+        float $precioextra = 0.0
     ): ProductoProveedor {
         // un proveedor distinto por fila para evitar el unique (codproveedor, refproveedor, referencia, coddivisa)
         $supplier = $this->getRandomSupplier();
@@ -149,6 +206,7 @@ final class CostPriceToolsTest extends TestCase
         $row->idproducto = $product->idproducto;
         $row->codproveedor = $supplier->codproveedor;
         $row->precio = $precio;
+        $row->precioextra = $precioextra;
         $row->dtopor = $dtopor;
         $row->actualizado = $actualizado;
         $this->assertTrue($row->save());

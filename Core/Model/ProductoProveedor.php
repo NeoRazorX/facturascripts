@@ -68,6 +68,9 @@ class ProductoProveedor extends ModelClass
     /** @var float */
     public $precio;
 
+    /** @var float */
+    public $precioextra;
+
     /** @var string */
     public $referencia;
 
@@ -113,6 +116,7 @@ class ProductoProveedor extends ModelClass
         $this->neto = 0.0;
         $this->netoeuros = 0.0;
         $this->precio = 0.0;
+        $this->precioextra = 0.0;
         $this->stock = 0.0;
     }
 
@@ -217,7 +221,7 @@ class ProductoProveedor extends ModelClass
      */
     protected function onUpdate(): void
     {
-        if ($this->isDirty('neto')) {
+        if ($this->isDirty('neto') || $this->isDirty('precioextra')) {
             CostPriceTools::update($this->getVariant());
         }
 

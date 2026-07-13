@@ -339,7 +339,114 @@ final class ProductoProveedorTest extends TestCase
         $this->assertEquals(0, $productoProveedor->neto);
         $this->assertEquals(0, $productoProveedor->netoeuros);
         $this->assertEquals(0, $productoProveedor->precio);
+        $this->assertEquals(0, $productoProveedor->precioextra);
         $this->assertEquals(0, $productoProveedor->stock);
+    }
+
+    public function testPrecioExtra(): void
+    {
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save());
+
+        $producto = $this->getRandomProduct();
+        $this->assertTrue($producto->save());
+
+        $productoProveedor = new ProductoProveedor();
+        $productoProveedor->codproveedor = $proveedor->codproveedor;
+        $productoProveedor->idproducto = $producto->idproducto;
+        $productoProveedor->precio = 100;
+        $productoProveedor->precioextra = 12.34;
+        $productoProveedor->referencia = $producto->referencia;
+        $this->assertTrue($productoProveedor->save());
+
+        $recargado = new ProductoProveedor();
+        $this->assertTrue($recargado->load($productoProveedor->id));
+        $this->assertEquals(12.34, (float)$recargado->precioextra);
+
+        $this->assertTrue($productoProveedor->delete());
+        $this->assertTrue($producto->delete());
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
+    }
+
+    public function testPrecioExtraActualizaCoste(): void
+    {
+        Tools::settingsSet('default', 'costpricepolicy', 'last-price');
+        Tools::settingsSet('default', 'calculocosteproveedor', 'netomasextra');
+
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save());
+
+        $producto = $this->getRandomProduct();
+        $this->assertTrue($producto->save());
+        $variante = $producto->getVariants()[0];
+
+        $productoProveedor = new ProductoProveedor();
+        $productoProveedor->codproveedor = $proveedor->codproveedor;
+        $productoProveedor->idproducto = $producto->idproducto;
+        $productoProveedor->precio = 100;
+        $productoProveedor->precioextra = 5;
+        $productoProveedor->referencia = $producto->referencia;
+        $this->assertTrue($productoProveedor->save());
+
+        $variante->reload();
+        $this->assertEquals(105.0, (float)$variante->coste);
+
+        $productoProveedor->precioextra = 15;
+        $this->assertTrue($productoProveedor->save());
+
+        $variante->reload();
+        $this->assertEquals(115.0, (float)$variante->coste);
+
+        $this->assertTrue($productoProveedor->delete());
+        $this->assertTrue($producto->delete());
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
+    }
+
+    public function testActualizarDesdeCompraMantienePrecioExtra(): void
+    {
+        Tools::settingsSet('default', 'updatesupplierprices', true);
+
+        [$proveedor, $producto, $albaran] = $this->getAlbaranConLineaProducto();
+
+        $productoProveedor = ProductoProveedor::all([
+            Where::eq('referencia', $producto->referencia),
+            Where::eq('codproveedor', $proveedor->codproveedor),
+        ])[0];
+        $productoProveedor->actualizado = Tools::dateTime('- 1 day');
+        $productoProveedor->precioextra = 12.5;
+        $this->assertTrue($productoProveedor->save());
+
+        $albaran2 = new AlbaranProveedor();
+        $albaran2->setSubject($proveedor);
+        $this->assertTrue($albaran2->save());
+
+        $linea = $albaran2->getNewProductLine($producto->referencia);
+        $linea->pvpunitario = 25;
+        $linea->dtopor = 10;
+        $linea->dtopor2 = 0;
+        $this->assertTrue($linea->save());
+        $lineas = [$linea];
+        $this->assertTrue(Calculator::calculate($albaran2, $lineas, true));
+
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+
+        $productoProveedor->load($productoProveedor->id);
+        $this->assertEquals(12.5, (float)$productoProveedor->precioextra);
+        $this->assertEquals(25.0, (float)$productoProveedor->precio);
+        $this->assertEquals(22.5, (float)$productoProveedor->neto);
+
+        $this->assertTrue($albaran->delete());
+        $this->assertTrue($albaran2->delete());
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
+        $this->assertTrue($productoProveedor->delete());
+        $this->assertTrue($producto->delete());
     }
 
     public function testGetVariant(): void
