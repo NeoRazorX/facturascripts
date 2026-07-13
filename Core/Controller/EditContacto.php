@@ -269,7 +269,7 @@ class EditContacto extends EditController
 
                 // añadimos un botón para enviar un nuevo email
                 $view->addButton([
-                    'action' => 'SendMail?email=' . $email,
+                    'action' => 'SendMail?email-to=' . $email,
                     'color' => 'success',
                     'icon' => 'fa-solid fa-envelope',
                     'label' => 'send',
