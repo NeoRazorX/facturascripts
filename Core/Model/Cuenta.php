@@ -112,8 +112,7 @@ class Cuenta extends ModelClass
      */
     public function getChildren(): array
     {
-        $where = [Where::eq('parent_idcuenta', $this->idcuenta)];
-        return $this->all($where, ['codcuenta' => 'ASC'], 0, 0);
+        return $this->allWhereEq('parent_idcuenta', $this->idcuenta, ['codcuenta' => 'ASC']);
     }
 
     public function getFreeSubjectAccountCode($subject): string
@@ -207,8 +206,7 @@ class Cuenta extends ModelClass
      */
     public function getSubcuentas(): array
     {
-        $where = [Where::eq('idcuenta', $this->idcuenta)];
-        return DinSubcuenta::all($where, ['codsubcuenta' => 'ASC'], 0, 0);
+        return DinSubcuenta::allWhereEq('idcuenta', $this->idcuenta, ['codsubcuenta' => 'ASC']);
     }
 
     public function install(): string

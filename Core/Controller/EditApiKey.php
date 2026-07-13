@@ -22,7 +22,6 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
@@ -45,8 +44,7 @@ class EditApiKey extends EditController
             ];
         }
 
-        $where = [Where::eq('idapikey', $this->request->query('code'))];
-        foreach (ApiAccess::all($where) as $access) {
+        foreach (ApiAccess::allWhereEq('idapikey', $this->request->query('code')) as $access) {
             $rules[$access->resource]['allowget'] = $access->allowget;
             $rules[$access->resource]['allowpost'] = $access->allowpost;
             $rules[$access->resource]['allowput'] = $access->allowput;
@@ -102,8 +100,7 @@ class EditApiKey extends EditController
         $allowDelete = $this->request->request->getArray('allowdelete', false);
 
         // update current access rules
-        $where = [Where::eq('idapikey', $this->request->query('code'))];
-        $rules = ApiAccess::all($where);
+        $rules = ApiAccess::allWhereEq('idapikey', $this->request->query('code'));
         foreach ($rules as $access) {
             $access->allowget = in_array($access->resource, $allowGet);
             $access->allowput = in_array($access->resource, $allowPut);

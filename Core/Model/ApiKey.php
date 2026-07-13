@@ -101,8 +101,7 @@ class ApiKey extends ModelClass
 
     public function getAccesses(): array
     {
-        $where = [Where::eq('idapikey', $this->id)];
-        return ApiAccess::all($where, [], 0, 0);
+        return ApiAccess::allWhereEq('idapikey', $this->id);
     }
 
     /**

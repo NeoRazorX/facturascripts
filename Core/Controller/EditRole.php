@@ -51,8 +51,7 @@ class EditRole extends EditController
             ];
         }
 
-        $where = [Where::eq('codrole', $this->getModel()->id())];
-        foreach (RoleAccess::all($where) as $roleAccess) {
+        foreach (RoleAccess::allWhereEq('codrole', $this->getModel()->id()) as $roleAccess) {
             $rules[$roleAccess->pagename]['show'] = true;
             $rules[$roleAccess->pagename]['onlyOwner'] = $roleAccess->onlyownerdata;
             $rules[$roleAccess->pagename]['update'] = $roleAccess->allowupdate;
@@ -126,8 +125,7 @@ class EditRole extends EditController
         $import = $this->request->request->getArray('import', false);
 
         // actualizamos los permisos del rol
-        $where = [Where::eq('codrole', $this->request->query('code'))];
-        $rules = RoleAccess::all($where);
+        $rules = RoleAccess::allWhereEq('codrole', $this->request->query('code'));
         foreach ($rules as $roleAccess) {
             // eliminamos la regla?
             if (false === is_array($show) || false === in_array($roleAccess->pagename, $show)) {

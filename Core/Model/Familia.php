@@ -131,9 +131,8 @@ class Familia extends ModelClass
      */
     public function getSubFamilias(): array
     {
-        $where = [Where::eq('madre', $this->codfamilia)];
         $orderBy = ['descripcion' => 'ASC'];
-        return static::all($where, $orderBy, 0, 0);
+        return static::allWhereEq('madre', $this->codfamilia, $orderBy);
     }
 
     public static function primaryColumn(): string

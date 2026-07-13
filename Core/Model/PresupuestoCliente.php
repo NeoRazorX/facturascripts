@@ -24,7 +24,6 @@ use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\LineaPresupuestoCliente as LineaPresupuesto;
 
 /**
@@ -68,9 +67,8 @@ class PresupuestoCliente extends SalesDocument
      */
     public function getLines(): array
     {
-        $where = [Where::eq('idpresupuesto', $this->idpresupuesto)];
         $orderBy = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-        return LineaPresupuesto::all($where, $orderBy, 0, 0);
+        return LineaPresupuesto::allWhereEq('idpresupuesto', $this->idpresupuesto, $orderBy);
     }
 
     /**

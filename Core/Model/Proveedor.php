@@ -149,8 +149,7 @@ class Proveedor extends ModelClass
      */
     public function getAddresses(): array
     {
-        $where = [Where::eq($this->primaryColumn(), $this->id())];
-        return DinContacto::all($where, [], 0, 0);
+        return DinContacto::allWhereEq($this->primaryColumn(), $this->id());
     }
 
     /**
@@ -160,8 +159,7 @@ class Proveedor extends ModelClass
      */
     public function getBankAccounts(): array
     {
-        $where = [Where::eq($this->primaryColumn(), $this->id())];
-        return DinCuentaBancoProveedor::all($where, [], 0, 0);
+        return DinCuentaBancoProveedor::allWhereEq($this->primaryColumn(), $this->id());
     }
 
     /**

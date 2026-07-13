@@ -24,7 +24,6 @@ use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use finfo;
 
 /**
@@ -79,8 +78,7 @@ class AttachedFile extends ModelClass
         }
 
         // eliminamos las relaciones con los productos
-        $where = [Where::eq('idfile', $this->idfile)];
-        foreach (ProductoImagen::all($where, [], 0, 0) as $productoImage) {
+        foreach (ProductoImagen::allWhereEq('idfile', $this->idfile) as $productoImage) {
             $productoImage->delete();
         }
 

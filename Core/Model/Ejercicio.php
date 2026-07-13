@@ -272,8 +272,7 @@ class Ejercicio extends ModelClass
 
     protected function saveInsert(): bool
     {
-        $where = [Where::eq('idempresa', $this->idempresa)];
-        foreach ($this->all($where, [], 0, 0) as $ejercicio) {
+        foreach ($this->allWhereEq('idempresa', $this->idempresa) as $ejercicio) {
             if ($this->inRange($ejercicio->fechainicio) || $this->inRange($ejercicio->fechafin)) {
                 Tools::log()->warning(
                     'exercise-date-range-exists', ['%start%' => $this->fechainicio, '%end%' => $this->fechafin]

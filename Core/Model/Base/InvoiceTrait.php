@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -110,8 +109,7 @@ trait InvoiceTrait
         }
 
         if (!isset($this->refunds)) {
-            $where = [Where::eq('idfacturarect', $this->idfactura)];
-            $this->refunds = $this->all($where, ['idfactura' => 'DESC'], 0, 0);
+            $this->refunds = $this->allWhereEq('idfacturarect', $this->idfactura, ['idfactura' => 'DESC']);
         }
 
         return $this->refunds;
@@ -146,8 +144,7 @@ trait InvoiceTrait
     public function parentDocuments(): array
     {
         $parents = parent::parentDocuments();
-        $where = [Where::eq('idfactura', $this->idfacturarect)];
-        foreach ($this->all($where, ['idfactura' => 'DESC'], 0, 0) as $invoice) {
+        foreach ($this->allWhereEq('idfactura', $this->idfacturarect, ['idfactura' => 'DESC']) as $invoice) {
             // ¿está esta factura en los padres?
             foreach ($parents as $parent) {
                 if ($parent->primaryColumnValue() == $invoice->primaryColumnValue()) {

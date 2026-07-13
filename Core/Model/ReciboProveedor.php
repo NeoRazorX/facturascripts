@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,6 @@ use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaProveedor as DinFacturaProveedor;
 use FacturaScripts\Dinamic\Model\FormaPago;
@@ -150,9 +149,8 @@ class ReciboProveedor extends ModelClass
      */
     public function getPayments(): array
     {
-        $where = [Where::eq('idrecibo', $this->idrecibo)];
         $orderBy = ['fecha' => 'DESC', 'hora' => 'DESC', 'idpago' => 'DESC'];
-        return DinPagoProveedor::all($where, $orderBy, 0, 0);
+        return DinPagoProveedor::allWhereEq('idrecibo', $this->idrecibo, $orderBy);
     }
 
     public function getSubject(): DinProveedor
