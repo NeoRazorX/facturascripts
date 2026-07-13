@@ -56,9 +56,9 @@ class MenuManager
         return $this->menu ?? [];
     }
 
-    public static function init(): self
+    public static function init(): static
     {
-        return new self();
+        return new static();
     }
 
     public function selectPage(array $data): self

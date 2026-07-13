@@ -23,7 +23,6 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
-use FacturaScripts\Core\Lib\MenuManager as NewMenuManager;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Request;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Lib\MenuManager as NewMenuManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 
