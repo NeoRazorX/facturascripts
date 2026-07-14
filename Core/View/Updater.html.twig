@@ -91,13 +91,13 @@
                                         {% if item.mincore > fsc.getCoreVersion() %}
                                             {{ trans('requires-core', {'%version%': item.mincore}) }}
                                         {% elseif item.downloaded %}
-                                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}"
+                                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}&multireqtoken={{ formToken(false) }}"
                                                class="btn btn-spin-action btn-sm btn-success"
                                                onclick="animateSpinner('add')">
                                                 <i class="fa-solid fa-rocket fa-fw fa-bounce me-1"
                                                    aria-hidden="true"></i>{{ trans('update') }}
                                             </a>
-                                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}"
+                                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}&multireqtoken={{ formToken(false) }}"
                                                class="btn btn-spin-action btn-sm btn-warning"
                                                onclick="animateSpinner('add')">
                                                 <i class="fa-solid fa-times fa-fw me-1"
@@ -110,13 +110,13 @@
                                                 <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
                                             </button>
                                         {% elseif item.stable %}
-                                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&multireqtoken={{ formToken(false) }}"
                                                class="btn btn-spin-action btn-sm btn-secondary"
                                                onclick="animateSpinner('add')">
                                                 <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
                                             </a>
                                         {% else %}
-                                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&multireqtoken={{ formToken(false) }}"
                                                class="btn btn-spin-action btn-sm btn-secondary"
                                                onclick="animateSpinner('add')">
                                                 <i class="fa-solid fa-flask-vial fa-fw me-1" aria-hidden="true"></i>{{ trans('beta') }}
@@ -292,7 +292,7 @@
                         {% for item in fsc.updaterItems %}
                             {% if item.name == 'CORE' and fsc.coreUpdateWarnings %}
                                 <div class="btn-group">
-                                    <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}"
+                                    <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}&multireqtoken={{ formToken(false) }}"
                                        class="btn btn-spin-action btn-warning"
                                        onclick="animateSpinner('add')">
                                         <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
@@ -303,7 +303,7 @@
                                         <span class="visually-hidden">{{ trans('options') }}</span>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end">
-                                        <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                                        <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&multireqtoken={{ formToken(false) }}"
                                            class="btn btn-warning"
                                            onclick="animateSpinner('add')">
                                             <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('do-not-disable-plugins') }}
