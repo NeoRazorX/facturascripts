@@ -501,6 +501,157 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertTrue($customer->delete(), 'customer-cant-delete');
     }
 
+    public function testFillGapsChangesDateWhenMantenerfechaIsFalse(): void
+    {
+        // usamos una serie aleatoria para que no haya documentos previos que interfieran
+        $serie = $this->getRandomSerie();
+        $this->assertTrue($serie->save(), 'serie-cant-save');
+
+        // objeto fresco para la secuencia (sin estado de llamadas anteriores)
+        $sequence = new SecuenciaDocumento();
+        $sequence->codserie = $serie->codserie;
+        $sequence->idempresa = 1;
+        $sequence->inicio = 1;
+        $sequence->longnumero = 6;
+        $sequence->numero = 1;
+        $sequence->patron = 'PRE{EJE}{SERIE}{0NUM}';
+        $sequence->tipodoc = 'PresupuestoCliente';
+        $sequence->usarhuecos = true;
+        $sequence->mantenerfecha = false;
+        $this->assertTrue($sequence->save(), 'document-sequence-cant-save');
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'customer-cant-save');
+
+        // usamos el año actual para que todos los documentos queden en el mismo ejercicio
+        $year = date('Y');
+
+        // creamos el primer presupuesto con fecha al inicio del año
+        $doc1 = new PresupuestoCliente();
+        $doc1->setSubject($customer);
+        $doc1->codserie = $serie->codserie;
+        $doc1->setDate('01-01-' . $year, '00:00:00');
+        $this->assertTrue($doc1->save(), 'document-cant-save');
+        $this->assertEquals(1, $doc1->numero, 'document-not-one');
+
+        // creamos el segundo presupuesto (lo borraremos para crear el hueco)
+        $doc2 = new PresupuestoCliente();
+        $doc2->setSubject($customer);
+        $doc2->codserie = $serie->codserie;
+        $doc2->setDate('15-01-' . $year, '00:00:00');
+        $this->assertTrue($doc2->save(), 'document-cant-save');
+        $this->assertEquals(2, $doc2->numero, 'document-not-two');
+
+        // creamos el tercer presupuesto para que el hueco quede en el medio
+        $doc3 = new PresupuestoCliente();
+        $doc3->setSubject($customer);
+        $doc3->codserie = $serie->codserie;
+        $doc3->setDate('20-01-' . $year, '00:00:00');
+        $this->assertTrue($doc3->save(), 'document-cant-save');
+        $this->assertEquals(3, $doc3->numero, 'document-not-three');
+
+        // eliminamos el segundo presupuesto: ahora hay un hueco en el número 2
+        $this->assertTrue($doc2->delete(), 'document-cant-delete');
+
+        // creamos un cuarto presupuesto con la fecha de hoy
+        $doc4 = new PresupuestoCliente();
+        $doc4->setSubject($customer);
+        $doc4->codserie = $serie->codserie;
+        $this->assertTrue($doc4->save(), 'document-cant-save');
+
+        // comprobamos que se le asigna el número 2 (rellena el hueco)
+        $this->assertEquals(2, $doc4->numero, 'document-not-two');
+
+        // con mantenerfecha=false la fecha SÍ se modifica: pasa a ser la del documento siguiente al hueco
+        // (el algoritmo recorre en orden descendente, así que $preDate es la fecha del doc con número mayor)
+        $this->assertEquals($doc3->fecha, $doc4->fecha, 'date-should-have-changed-to-next-doc-date');
+
+        // eliminamos
+        $this->assertTrue($doc4->delete(), 'document-cant-delete');
+        $this->assertTrue($doc3->delete(), 'document-cant-delete');
+        $this->assertTrue($doc1->delete(), 'document-cant-delete');
+        $this->assertTrue($sequence->delete(), 'document-sequence-cant-delete');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'address-cant-delete');
+        $this->assertTrue($customer->delete(), 'customer-cant-delete');
+        $this->assertTrue($serie->delete(), 'serie-cant-delete');
+    }
+
+    public function testFillGapsKeepsDateWhenMantenerfechaIsTrue(): void
+    {
+        // usamos una serie aleatoria para que no haya documentos previos que interfieran
+        $serie = $this->getRandomSerie();
+        $this->assertTrue($serie->save(), 'serie-cant-save');
+
+        // objeto fresco para la secuencia (sin estado de llamadas anteriores)
+        $sequence = new SecuenciaDocumento();
+        $sequence->codserie = $serie->codserie;
+        $sequence->idempresa = 1;
+        $sequence->inicio = 1;
+        $sequence->longnumero = 6;
+        $sequence->numero = 1;
+        $sequence->patron = 'PRE{EJE}{SERIE}{0NUM}';
+        $sequence->tipodoc = 'PresupuestoCliente';
+        $sequence->usarhuecos = true;
+        $sequence->mantenerfecha = true;
+        $this->assertTrue($sequence->save(), 'document-sequence-cant-save');
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'customer-cant-save');
+
+        // usamos el año actual para que todos los documentos queden en el mismo ejercicio
+        $year = date('Y');
+
+        // creamos el primer presupuesto con fecha al inicio del año
+        $doc1 = new PresupuestoCliente();
+        $doc1->setSubject($customer);
+        $doc1->codserie = $serie->codserie;
+        $doc1->setDate('01-01-' . $year, '00:00:00');
+        $this->assertTrue($doc1->save(), 'document-cant-save');
+        $this->assertEquals(1, $doc1->numero, 'document-not-one');
+
+        // creamos el segundo presupuesto (lo borraremos para crear el hueco)
+        $doc2 = new PresupuestoCliente();
+        $doc2->setSubject($customer);
+        $doc2->codserie = $serie->codserie;
+        $doc2->setDate('15-01-' . $year, '00:00:00');
+        $this->assertTrue($doc2->save(), 'document-cant-save');
+        $this->assertEquals(2, $doc2->numero, 'document-not-two');
+
+        // creamos el tercer presupuesto para que el hueco quede en el medio
+        $doc3 = new PresupuestoCliente();
+        $doc3->setSubject($customer);
+        $doc3->codserie = $serie->codserie;
+        $doc3->setDate('20-01-' . $year, '00:00:00');
+        $this->assertTrue($doc3->save(), 'document-cant-save');
+        $this->assertEquals(3, $doc3->numero, 'document-not-three');
+
+        // eliminamos el segundo presupuesto: ahora hay un hueco en el número 2
+        $this->assertTrue($doc2->delete(), 'document-cant-delete');
+
+        // creamos un cuarto presupuesto con la fecha de hoy
+        $doc4 = new PresupuestoCliente();
+        $doc4->setSubject($customer);
+        $doc4->codserie = $serie->codserie;
+        $this->assertTrue($doc4->save(), 'document-cant-save');
+
+        // comprobamos que se le asigna el número 2 (rellena el hueco)
+        $this->assertEquals(2, $doc4->numero, 'document-not-two');
+
+        // con mantenerfecha=true la fecha NO se modifica: sigue siendo la de hoy
+        $this->assertEquals(Tools::date(), $doc4->fecha, 'date-should-be-preserved');
+
+        // eliminamos
+        $this->assertTrue($doc4->delete(), 'document-cant-delete');
+        $this->assertTrue($doc3->delete(), 'document-cant-delete');
+        $this->assertTrue($doc1->delete(), 'document-cant-delete');
+        $this->assertTrue($sequence->delete(), 'document-sequence-cant-delete');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'address-cant-delete');
+        $this->assertTrue($customer->delete(), 'customer-cant-delete');
+        $this->assertTrue($serie->delete(), 'serie-cant-delete');
+    }
+
     public function testWithExercisesAndWithout(): void
     {
         // eliminamos todas las secuencias de PresupuestoCliente
