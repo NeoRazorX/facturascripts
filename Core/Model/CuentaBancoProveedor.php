@@ -128,7 +128,7 @@ class CuentaBancoProveedor extends ModelClass
         }
     }
 
-    public function url(string $type = 'auto', string $list = 'List'): string
+    public function url(string $type = 'auto', string $list = 'ListProveedor?activetab=List'): string
     {
         if (empty($this->codproveedor) || $type == 'list') {
             return parent::url($type, $list);

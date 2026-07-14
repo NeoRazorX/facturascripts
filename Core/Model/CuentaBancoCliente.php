@@ -132,7 +132,7 @@ class CuentaBancoCliente extends ModelClass
         }
     }
 
-    public function url(string $type = 'auto', string $list = 'List'): string
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         if (empty($this->codcliente) || $type == 'list') {
             return parent::url($type, $list);
