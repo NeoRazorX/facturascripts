@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
@@ -148,6 +149,16 @@ class ListCuenta extends ListController
 
     protected function restoreSpecialAccountsAction(): void
     {
+        if (false === $this->user->admin) {
+            Tools::log()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->request->isMethod(Request::METHOD_POST)) {
+            Tools::log()->warning('invalid-request');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $sql = CSVImport::updateTableSQL(CuentaEspecial::tableName());
         if (!empty($sql)) {
             $this->dataBase->exec($sql);
