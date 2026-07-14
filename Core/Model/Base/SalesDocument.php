@@ -218,8 +218,10 @@ abstract class SalesDocument extends TransformerDocument
         }
 
         $variant = new Variante();
-        if ($variant->loadWhereEq('referencia', Tools::noHtml($reference))
-            || $variant->loadWhereEq('codbarras', Tools::noHtml($reference))) {
+        if (
+            $variant->loadWhereEq('referencia', Tools::noHtml($reference))
+            || $variant->loadWhereEq('codbarras', Tools::noHtml($reference))
+        ) {
             $product = $variant->getProducto();
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;

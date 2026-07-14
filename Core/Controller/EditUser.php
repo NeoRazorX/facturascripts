@@ -176,8 +176,10 @@ class EditUser extends EditController
     {
         // impedimos cambiar el nick: el nick es inmutable una vez creado
         $code = $this->request->input('code', '');
-        if (false === $this->requestTargetMatches($code)
-            || ($code !== '' && $this->request->input('nick', $code) !== $code)) {
+        if (
+            false === $this->requestTargetMatches($code)
+            || ($code !== '' && $this->request->input('nick', $code) !== $code)
+        ) {
             Tools::log()->warning('not-allowed-modify');
             return false;
         }
