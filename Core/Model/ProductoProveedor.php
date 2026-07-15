@@ -177,6 +177,12 @@ class ProductoProveedor extends ModelClass
             $this->idproducto = $this->getVariant()->idproducto;
         }
 
+        // no permitimos fechas de actualización en el futuro, ya que bloquearían
+        // futuras actualizaciones del precio de coste
+        if (empty($this->actualizado) || strtotime($this->actualizado) > time()) {
+            $this->actualizado = Tools::dateTime();
+        }
+
         $this->neto = round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);
 
         $tasaConv = Divisas::get($this->coddivisa)->tasaconvcompra;
