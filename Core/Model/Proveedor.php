@@ -52,67 +52,67 @@ class Proveedor extends ModelClass
     const SPECIAL_ACCOUNT = 'PROVEE';
     const SPECIAL_CREDITOR_ACCOUNT = 'ACREED';
 
-    /** @var bool */
+    /** Indica si el proveedor actúa como acreedor. @var bool */
     public $acreedor;
 
-    /** @var string */
+    /** Código del cliente vinculado al proveedor. @var string */
     public $codcliente;
 
-    /** @var string */
+    /** Código de la forma de pago habitual del proveedor. @var string */
     public $codpago;
 
-    /** @var string */
+    /** Código identificativo del proveedor. @var string */
     public $codproveedor;
 
-    /** @var string */
+    /** Código de la retención aplicable al proveedor. @var string */
     public $codretencion;
 
-    /** @var string */
+    /** Código de la serie predeterminada para el proveedor. @var string */
     public $codserie;
 
-    /** @var string */
+    /** Código de la subcuenta contable del proveedor. @var string */
     public $codsubcuenta;
 
-    /** @var bool */
+    /** Indica si el proveedor está dado de baja. @var bool */
     public $debaja;
 
-    /** @var string */
+    /** Código de la excepción de IVA aplicable al proveedor. @var string */
     public $excepcioniva;
 
-    /** @var string */
+    /** Número de fax del proveedor. @var string */
     public $fax;
 
-    /** @var string */
+    /** Fecha de alta del proveedor. @var string */
     public $fechaalta;
 
-    /** @var string */
+    /** Fecha de baja del proveedor. @var string */
     public $fechabaja;
 
-    /** @var int */
+    /** Identificador del contacto predeterminado del proveedor. @var int */
     public $idcontacto;
 
-    /** @var string */
+    /** Código del idioma preferido del proveedor. @var string */
     public $langcode;
 
-    /** @var string */
+    /** Nombre comercial o nombre completo del proveedor. @var string */
     public $nombre;
 
-    /** @var string */
+    /** Clave de operación de IVA aplicable al proveedor. @var string */
     public $operacion;
 
-    /** @var string */
+    /** Observaciones internas sobre el proveedor. @var string */
     public $observaciones;
 
-    /** @var bool */
+    /** Indica si el proveedor es una persona física. @var bool */
     public $personafisica;
 
-    /** @var string */
+    /** Razón social del proveedor. @var string */
     public $razonsocial;
 
-    /** @var string */
+    /** Régimen de IVA aplicable al proveedor. @var string */
     public $regimeniva;
 
-    /** @var string */
+    /** Sitio web del proveedor. @var string */
     public $web;
 
     public function checkVies(bool $msg = true): bool

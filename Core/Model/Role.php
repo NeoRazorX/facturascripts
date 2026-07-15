@@ -37,10 +37,10 @@ class Role extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** Código identificativo del rol. @var string */
     public $codrole;
 
-    /** @var string */
+    /** Descripción del rol y de sus permisos. @var string */
     public $descripcion;
 
     public function addPage(string $page_name): bool
