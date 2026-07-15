@@ -240,9 +240,13 @@ class DocumentStitcher extends Controller
             $quantities[$line->id()] = $quantity;
 
             if (empty($quantity) && $line->cantidad) {
-                $full = $full && $line->servido >= $line->cantidad;
+                // no se aprueba nada de esta línea: solo está completa si ya estaba
+                // toda servida (comparando en el sentido correcto según el signo).
+                $full = $full && ($line->cantidad < 0 ? $line->servido <= $line->cantidad : $line->servido >= $line->cantidad);
                 continue;
-            } elseif (($quantity + $line->servido) < $line->cantidad) {
+            } elseif ($line->cantidad < 0 && ($quantity + $line->servido) > $line->cantidad) {
+                $full = false;
+            } elseif ($line->cantidad >= 0 && ($quantity + $line->servido) < $line->cantidad) {
                 $full = false;
             }
 
@@ -538,9 +542,18 @@ class DocumentStitcher extends Controller
             foreach ($document->getLines() as $line) {
                 $quantity = (float)$this->request->input('approve_quant_' . $line->id(), '0');
 
-                $pending = max(0, $line->cantidad - $line->servido);
-                if ($quantity <= $pending) {
-                    continue;
+                // en líneas negativas lo pendiente es negativo; comparamos en el
+                // sentido correcto para no aprobar más de lo que queda pendiente.
+                if ($line->cantidad < 0) {
+                    $pending = min(0, $line->cantidad - $line->servido);
+                    if ($quantity >= $pending && $quantity <= 0) {
+                        continue;
+                    }
+                } else {
+                    $pending = max(0, $line->cantidad - $line->servido);
+                    if ($quantity <= $pending) {
+                        continue;
+                    }
                 }
 
                 Tools::log()->error('error-more-quant-than-pending', [
