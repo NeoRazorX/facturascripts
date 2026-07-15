@@ -239,6 +239,7 @@
     "cant-load-controller": "Ezin da  '%controllerName%' kontroladorea kargatu.",
     "cant-lock-next-code": "Hurrengo kodea ezin da blokeatu",
     "cant-modify-reference": "Ezin da erreferentzia aldatu.",
+    "cant-refund-a-refund": "No se puede crear una rectificativa de una factura que ya es rectificativa",
     "cant-remove-account-entry": "Kontabilitate sarrera ezin da ezabatu",
     "cant-remove-accounting-entry": "Ezin da idazpena ezabatu",
     "cant-remove-invoice-refund": "Ezin da faktura kendu jadanik itzulgarria dena",

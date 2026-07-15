@@ -239,6 +239,7 @@
     "cant-load-controller": "Impossibile caricare il controller.",
     "cant-lock-next-code": "Impossibile bloccare il codice successivo",
     "cant-modify-reference": "Non modificare il riferimento.",
+    "cant-refund-a-refund": "No se puede crear una rectificativa de una factura que ya es rectificativa",
     "cant-remove-account-entry": "Non è possibile eliminare la registrazione contabile",
     "cant-remove-accounting-entry": "impossibile rimuovere l'entrata contabile",
     "cant-remove-invoice-refund": "Impossibile eliminare una fattura che ha già una nota di credito",

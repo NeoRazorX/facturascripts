@@ -239,6 +239,7 @@
     "cant-load-controller": "Can't load controller '%controllerName%'.",
     "cant-lock-next-code": "Cannot lock the next code",
     "cant-modify-reference": "Cann't edit reference.",
+    "cant-refund-a-refund": "No se puede crear una rectificativa de una factura que ya es rectificativa",
     "cant-remove-account-entry": "Unable to delete journal entry",
     "cant-remove-accounting-entry": "Can't remove accounting entry",
     "cant-remove-invoice-refund": "You cannot delete an invoice that already has a refund",

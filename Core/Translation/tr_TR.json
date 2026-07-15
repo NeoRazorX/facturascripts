@@ -239,6 +239,7 @@
     "cant-load-controller": "'%controllerName%' denetleyicisi yüklenemiyor.",
     "cant-lock-next-code": "Bir sonraki kod kilitlenemiyor",
     "cant-modify-reference": "Referansı değiştirmek mümkün değil.",
+    "cant-refund-a-refund": "No se puede crear una rectificativa de una factura que ya es rectificativa",
     "cant-remove-account-entry": "Muhasebe kaydı silinemiyor",
     "cant-remove-accounting-entry": "Kaydı silmek mümkün değil",
     "cant-remove-invoice-refund": "Zaten düzeltme (iadeli) olan bir faturayı silemezsiniz",

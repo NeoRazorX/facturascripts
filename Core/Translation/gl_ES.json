@@ -239,6 +239,7 @@
     "cant-load-controller": "Non se pode cargar o controlador  '%controllerName%'.",
     "cant-lock-next-code": "Non se pode bloquear o seguinte código",
     "cant-modify-reference": "Non se pode editar a referencia.",
+    "cant-refund-a-refund": "No se puede crear una rectificativa de una factura que ya es rectificativa",
     "cant-remove-account-entry": "Non se pode eliminar o asento contable",
     "cant-remove-accounting-entry": "Non se pode eliminar o asento",
     "cant-remove-invoice-refund": "Non se pode eliminar unha factura que xa ten rectificativa (devolución)",

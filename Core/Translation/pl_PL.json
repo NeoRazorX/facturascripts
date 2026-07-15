@@ -239,6 +239,7 @@
     "cant-load-controller": "Nie można załadować kontrolera '%controllerName%'.",
     "cant-lock-next-code": "Nie można zablokować następnego kodu",
     "cant-modify-reference": "Nie można zmodyfikować odniesienia.",
+    "cant-refund-a-refund": "No se puede crear una rectificativa de una factura que ya es rectificativa",
     "cant-remove-account-entry": "Nie można usunąć zapisu księgowego",
     "cant-remove-accounting-entry": "Nie można usunąć wpisu księgowego",
     "cant-remove-invoice-refund": "Nie można usunąć faktury, która ma już korektę (zwrot)",

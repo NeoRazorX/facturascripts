@@ -239,6 +239,7 @@
     "cant-load-controller": "No se puede cargar el controlador '%controllerName%'.",
     "cant-lock-next-code": "Nelze zablokovat následující kód",
     "cant-modify-reference": "Imposible modificar la referencia.",
+    "cant-refund-a-refund": "No se puede crear una rectificativa de una factura que ya es rectificativa",
     "cant-remove-account-entry": "Nelze odstranit účetní zápis",
     "cant-remove-accounting-entry": "No se puede eliminar el asiento",
     "cant-remove-invoice-refund": "Fakturu nelze odstranit, pokud má vrácenou platbu",
