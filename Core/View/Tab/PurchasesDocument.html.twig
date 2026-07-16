@@ -303,12 +303,24 @@
                 setOrdenLines();
             }
         });
+        $("#purchasesFormLines").sortable("option", "items", "> .fs-line");
         $("#purchasesFormLines").sortable("option", "disabled", false);
+        $("#purchasesFormLines").sortable("option", "cursor", "move");
+        $("#purchasesFormLines").sortable("option", "cancel", "null");
+        $("#purchasesFormLines").sortable("option", "cancel", ".titles");
+        $("#purchasesFormLines").sortable("option", "axis", "y");
+
+        $("#purchasesFormLines .fs-line").css('cursor', 'grab');
+        $("#purchasesFormLines .fs-line :input").css('cursor', 'grab');
+
         $("#purchasesFormLines").disableSelection();
     }
 
     function sortableDisable() {
         $("#purchasesFormLines").sortable("disable");
+
+        $("#purchasesFormLines .fs-line").css('cursor', 'default');
+        $("#purchasesFormLines .fs-line :input").css('cursor', 'default');
     }
 
     // creamos los inputs para que se envíen por post

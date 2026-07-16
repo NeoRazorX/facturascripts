@@ -175,7 +175,7 @@ class PurchasesLineHTML
     {
         self::$num++;
         $idlinea = $line->idlinea ?? 'n' . self::$num;
-        return '<div class="container-fluid"><div class="row g-2 align-items-center border-bottom pb-3 pb-lg-0">'
+        return '<div class="container-fluid fs-line"><div class="row g-2 align-items-center border-bottom pb-3 pb-lg-0">'
             . self::renderField($idlinea, $line, $model, 'referencia')
             . self::renderField($idlinea, $line, $model, 'descripcion')
             . self::renderField($idlinea, $line, $model, 'cantidad')
