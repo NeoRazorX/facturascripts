@@ -32,14 +32,13 @@ use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\PedidoCliente;
 use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\Stock;
-use FacturaScripts\Dinamic\Model\TotalModel;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -54,7 +53,19 @@ class Dashboard extends Controller
     public $createLinks = [];
 
     /** @var array */
+    public $firstSteps = [];
+
+    /** @var int */
+    public $firstStepsCompleted = 0;
+
+    /** @var bool */
+    public $isOnboarding = false;
+
+    /** @var array */
     public $lowStock = [];
+
+    /** @var int */
+    public $lowStockCount = 0;
 
     /** @var array */
     public $news = [];
@@ -65,6 +76,9 @@ class Dashboard extends Controller
     /** @var array */
     public $receipts = [];
 
+    /** @var int */
+    public $receiptCount = 0;
+
     /** @var bool */
     public $registered = false;
 
@@ -73,6 +87,9 @@ class Dashboard extends Controller
 
     /** @var array */
     public $stats = [];
+
+    /** @var array */
+    public $statChanges = [];
 
     /** @var bool */
     public $updated = false;
@@ -111,12 +128,19 @@ class Dashboard extends Controller
 
     public function showBackupWarning(): bool
     {
+        if (false === $this->user->admin) {
+            return false;
+        }
+
+        $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '';
+
         // comprobamos si estamos el localhost
         if (
-            $_SERVER['REMOTE_ADDR'] == 'localhost' ||
-            $_SERVER['REMOTE_ADDR'] == '::1' ||
-            substr($_SERVER['REMOTE_ADDR'], 0, 4) == '192.' ||
-            substr($_SERVER['REMOTE_ADDR'], 0, 4) == '172.'
+            $ipAddress == 'localhost' ||
+            $ipAddress == '127.0.0.1' ||
+            $ipAddress == '::1' ||
+            substr($ipAddress, 0, 4) == '192.' ||
+            substr($ipAddress, 0, 4) == '172.'
         ) {
             // si el plugin Backup está activo, devolvemos false
             return !Plugins::isEnabled('Backup');
@@ -126,52 +150,22 @@ class Dashboard extends Controller
     }
 
     /**
-     * Gets the name of the month for the statistics.
-     *
-     * @param int $previous
-     *
-     * @return string
-     */
-    private function getStatsMonth(int $previous): string
-    {
-        $firstDate = date('01-m-Y');
-        $date = $previous > 0 ? date('01-m-Y', strtotime($firstDate . ' -' . $previous . ' month')) : $firstDate;
-        return strtolower(date('F', strtotime($date)));
-    }
-
-    /**
-     * Gets the where filter for calc of the statistics.
-     *
-     * @param string $field
-     * @param int $previous
-     *
-     * @return Where[]
-     */
-    private function getStatsWhere(string $field, int $previous): array
-    {
-        $firstDate = date('01-m-Y');
-        $fromDate = $previous > 0 ? date('01-m-Y', strtotime($firstDate . ' -' . $previous . ' month')) : $firstDate;
-        $untilDate = date('01-m-Y', strtotime($fromDate . ' +1 month'));
-
-        return [
-            Where::gte($field, $fromDate),
-            Where::lt($field, $untilDate),
-        ];
-    }
-
-    /**
      * Set the quick links for data creation.
      * Example: createLinks['EditControllerName'] = 'label'
      */
     private function loadCreateLinks(): void
     {
-        $this->createLinks['EditProducto'] = 'product';
-        $this->createLinks['EditCliente'] = 'customer';
-        $this->createLinks['EditContacto'] = 'contact';
-        $this->createLinks['EditFacturaCliente'] = 'customer-invoice';
-        $this->createLinks['EditAlbaranCliente'] = 'customer-delivery-note';
-        $this->createLinks['EditPedidoCliente'] = 'customer-order';
-        $this->createLinks['EditPresupuestoCliente'] = 'customer-estimation';
+        $links = [
+            'EditFacturaCliente' => 'customer-invoice',
+            'EditFacturaProveedor' => 'supplier-invoice',
+            'EditCliente' => 'customer',
+            'EditProducto' => 'product',
+        ];
+        foreach ($links as $pageName => $label) {
+            if ($this->user->can($pageName, 'update')) {
+                $this->createLinks[$pageName] = $label;
+            }
+        }
 
         $this->pipe('loadCreateLinks');
     }
@@ -182,13 +176,68 @@ class Dashboard extends Controller
     private function loadExtensions(): void
     {
         $this->loadCreateLinks();
+        $this->loadFirstSteps();
         $this->loadOpenLinks();
-        $this->loadStats();
-        $this->loadLowStockSection();
-        $this->loadReceiptSection();
-        $this->loadNews();
+
+        if (false === $this->isOnboarding) {
+            $this->loadLowStockSection();
+            $this->loadReceiptSection();
+            $this->loadStats();
+            $this->loadNews();
+        }
 
         $this->pipe('loadExtensions');
+    }
+
+    private function loadFirstSteps(): void
+    {
+        $customerCount = Cliente::count();
+        $productCount = Producto::countWhereEq('sevende', true);
+        $invoiceCount = FacturaCliente::count();
+
+        $steps = [
+            [
+                'complete' => $customerCount > 0,
+                'icon' => 'fa-solid fa-user',
+                'label' => 'customer',
+                'url' => 'EditCliente',
+            ],
+            [
+                'complete' => $productCount > 0,
+                'icon' => 'fa-solid fa-box',
+                'label' => 'product',
+                'url' => 'EditProducto',
+            ],
+            [
+                'complete' => $invoiceCount > 0,
+                'icon' => 'fa-solid fa-file-invoice-dollar',
+                'label' => 'customer-invoice',
+                'url' => 'EditFacturaCliente',
+            ],
+        ];
+
+        foreach ($steps as $step) {
+            if (false === $this->user->can($step['url'], 'update')) {
+                continue;
+            }
+
+            $this->firstSteps[] = $step;
+            if ($step['complete']) {
+                ++$this->firstStepsCompleted;
+            }
+        }
+
+        if ($this->user->admin && $this->showBackupWarning()) {
+            $this->firstSteps[] = [
+                'complete' => false,
+                'icon' => 'fa-solid fa-floppy-disk',
+                'label' => 'dashboard-backup',
+                'url' => 'https://facturascripts.com/plugins/backup',
+            ];
+        }
+
+        $this->isOnboarding = $invoiceCount === 0 && $this->user->can('EditFacturaCliente', 'update');
+        $this->pipe('loadFirstSteps');
     }
 
     /**
@@ -196,20 +245,23 @@ class Dashboard extends Controller
      */
     private function loadLowStockSection(): void
     {
-        if (false === $this->dataBase->tableExists('stocks')) {
+        if (false === $this->user->can('ListProducto') || false === $this->dataBase->tableExists('stocks')) {
             return;
         }
 
-        $found = false;
-        $sql = 'SELECT * FROM stocks WHERE stockmin > 0 AND disponible < stockmin;';
-        foreach ($this->dataBase->select($sql) as $row) {
-            $this->lowStock[] = new Stock($row);
-            $found = true;
+        $where = 'stockmin > 0 AND disponible < stockmin';
+        $count = $this->dataBase->select('SELECT COUNT(*) AS total FROM stocks WHERE ' . $where . ';');
+        $this->lowStockCount = (int)($count[0]['total'] ?? 0);
+        if ($this->lowStockCount === 0) {
+            return;
         }
 
-        if ($found) {
-            $this->sections[] = 'low-stock';
+        $sql = 'SELECT * FROM stocks WHERE ' . $where . ' ORDER BY (stockmin - disponible) DESC LIMIT 5;';
+        foreach ($this->dataBase->select($sql) as $row) {
+            $this->lowStock[] = new Stock($row);
         }
+
+        $this->sections[] = 'low-stock';
     }
 
     /**
@@ -217,11 +269,12 @@ class Dashboard extends Controller
      */
     private function loadNews(): void
     {
-        $this->news = Cache::remember('dashboard-news', function () {
+        $news = Cache::remember('dashboard-news', function () {
             return Http::get('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE')
                 ->setTimeout(5)
                 ->json() ?? [];
         });
+        $this->news = is_array($news) ? array_slice($news, 0, 1) : [];
     }
 
     /**
@@ -229,43 +282,16 @@ class Dashboard extends Controller
      */
     private function loadOpenLinks(): void
     {
-        $this->setOpenLinksForDocument(new FacturaCliente(), 'invoice');
-        $this->setOpenLinksForDocument(new AlbaranCliente(), 'delivery-note');
-        $this->setOpenLinksForDocument(new PedidoCliente(), 'order');
-        $this->setOpenLinksForDocument(new PresupuestoCliente(), 'estimation');
+        $this->setOpenLinksForDocument(new FacturaCliente(), 'invoice', 'EditFacturaCliente');
+        $this->setOpenLinksForDocument(new FacturaProveedor(), 'supplier-invoice', 'EditFacturaProveedor');
+        $this->setOpenLinksForDocument(new AlbaranCliente(), 'delivery-note', 'EditAlbaranCliente');
+        $this->setOpenLinksForDocument(new PedidoCliente(), 'order', 'EditPedidoCliente');
+        $this->setOpenLinksForDocument(new PresupuestoCliente(), 'estimation', 'EditPresupuestoCliente');
 
-        $minDate = Tools::date('-2 days');
-        $minDateTime = Tools::dateTime('-2 days');
-
-        $whereCustomer = [Where::gte('fechaalta', $minDate)];
-        foreach (Cliente::all($whereCustomer, ['fechaalta' => 'DESC'], 0, 3) as $customer) {
-            $this->openLinks[] = [
-                'type' => 'customer',
-                'url' => $customer->url(),
-                'name' => $customer->nombre,
-                'date' => $customer->fechaalta,
-            ];
-        }
-
-        $whereContact = [Where::gte('fechaalta', $minDate)];
-        foreach (Contacto::all($whereContact, ['fechaalta' => 'DESC'], 0, 3) as $contact) {
-            $this->openLinks[] = [
-                'type' => 'contact',
-                'url' => $contact->url(),
-                'name' => $contact->fullName(),
-                'date' => $contact->fechaalta,
-            ];
-        }
-
-        $whereProd = [Where::gte('actualizado', $minDateTime)];
-        foreach (Producto::all($whereProd, ['actualizado' => 'DESC'], 0, 3) as $product) {
-            $this->openLinks[] = [
-                'type' => 'product',
-                'url' => $product->url(),
-                'name' => $product->referencia,
-                'date' => $product->actualizado,
-            ];
-        }
+        usort($this->openLinks, function (array $link1, array $link2) {
+            return strtotime($link2['date']) <=> strtotime($link1['date']);
+        });
+        $this->openLinks = array_slice($this->openLinks, 0, 6);
 
         $this->pipe('loadOpenLinks');
     }
@@ -275,6 +301,10 @@ class Dashboard extends Controller
      */
     private function loadReceiptSection(): void
     {
+        if (false === $this->user->can('ListReciboCliente')) {
+            return;
+        }
+
         $where = [
             Where::eq('pagado', false),
             Where::lt('vencimiento', Tools::date()),
@@ -282,13 +312,14 @@ class Dashboard extends Controller
         ];
 
         // si el usuario solo ve sus datos, limitamos los recibos a los suyos
-        if ($this->permissions->onlyOwnerData) {
+        if ($this->user->can('ListReciboCliente', 'only-owner-data')) {
             $where[] = Where::eq('nick', $this->user->nick);
         }
 
-        $this->receipts = ReciboCliente::all($where, ['vencimiento' => 'DESC']);
+        $this->receiptCount = ReciboCliente::count($where);
+        $this->receipts = ReciboCliente::all($where, ['vencimiento' => 'ASC'], 0, 5);
 
-        if (count($this->receipts) > 0) {
+        if ($this->receiptCount > 0) {
             $this->sections[] = 'receipts';
         }
     }
@@ -298,47 +329,115 @@ class Dashboard extends Controller
      */
     private function loadStats(): void
     {
-        $totalModel = new TotalModel();
+        $sales = $this->user->can('ListFacturaCliente')
+            ? $this->getMonthlyDocumentTotals(FacturaCliente::tableName(), 'ListFacturaCliente')
+            : null;
+        $purchases = $this->user->can('ListFacturaProveedor')
+            ? $this->getMonthlyDocumentTotals(FacturaProveedor::tableName(), 'ListFacturaProveedor')
+            : null;
 
-        // compras
-        $this->stats['purchases'] = [
-            $this->getStatsMonth(0) => $totalModel->sum('facturasprov', 'neto', $this->getStatsWhere('fecha', 0)),
-            $this->getStatsMonth(1) => $totalModel->sum('facturasprov', 'neto', $this->getStatsWhere('fecha', 1)),
-            $this->getStatsMonth(2) => $totalModel->sum('facturasprov', 'neto', $this->getStatsWhere('fecha', 2)),
-        ];
-
-        // ventas
-        $this->stats['sales'] = [
-            $this->getStatsMonth(0) => $totalModel->sum('facturascli', 'neto', $this->getStatsWhere('fecha', 0)),
-            $this->getStatsMonth(1) => $totalModel->sum('facturascli', 'neto', $this->getStatsWhere('fecha', 1)),
-            $this->getStatsMonth(2) => $totalModel->sum('facturascli', 'neto', $this->getStatsWhere('fecha', 2)),
-        ];
-
-        // impuestos
-        foreach ([0, 1, 2] as $num) {
-            $where = $this->getStatsWhere('fecha', $num);
-            $this->stats['taxes'][$this->getStatsMonth($num)] = $totalModel->sum('facturascli', 'totaliva', $where)
-                + $totalModel->sum('facturascli', 'totalrecargo', $where)
-                - $totalModel->sum('facturasprov', 'totaliva', $where)
-                - $totalModel->sum('facturasprov', 'totalrecargo', $where);
+        if ($purchases) {
+            $this->setStats('purchases', $purchases['current_net'], $purchases['previous_net']);
         }
+        if ($sales) {
+            $this->setStats('sales', $sales['current_net'], $sales['previous_net']);
+        }
+        if ($sales && $purchases) {
+            $this->setStats(
+                'taxes',
+                $sales['current_tax'] - $purchases['current_tax'],
+                $sales['previous_tax'] - $purchases['previous_tax']
+            );
+        }
+        if (
+            $this->user->can('ListCliente') &&
+            false === $this->user->can('ListCliente', 'only-owner-data')
+        ) {
+            $customers = $this->getMonthlyCustomerTotals();
+            $this->setStats('new-customers', $customers['current'], $customers['previous']);
+        }
+    }
 
-        // clientes
-        $customerModel = new Cliente();
-        $this->stats['new-customers'] = [
-            $this->getStatsMonth(0) => $customerModel->count($this->getStatsWhere('fechaalta', 0)),
-            $this->getStatsMonth(1) => $customerModel->count($this->getStatsWhere('fechaalta', 1)),
-            $this->getStatsMonth(2) => $customerModel->count($this->getStatsWhere('fechaalta', 2)),
+    private function getMonthlyCustomerTotals(): array
+    {
+        [$previousFrom, $currentFrom, $until] = $this->getStatsDates();
+        $sql = 'SELECT '
+            . 'COALESCE(SUM(CASE WHEN fechaalta >= ' . $this->dataBase->var2str($currentFrom)
+            . ' THEN 1 ELSE 0 END), 0) AS current_total, '
+            . 'COALESCE(SUM(CASE WHEN fechaalta < ' . $this->dataBase->var2str($currentFrom)
+            . ' THEN 1 ELSE 0 END), 0) AS previous_total '
+            . 'FROM ' . Cliente::tableName()
+            . ' WHERE fechaalta >= ' . $this->dataBase->var2str($previousFrom)
+            . ' AND fechaalta < ' . $this->dataBase->var2str($until) . ';';
+        $row = $this->dataBase->select($sql)[0] ?? [];
+
+        return [
+            'current' => (float)($row['current_total'] ?? 0),
+            'previous' => (float)($row['previous_total'] ?? 0),
         ];
+    }
+
+    private function getMonthlyDocumentTotals(string $tableName, string $pageName): array
+    {
+        [$previousFrom, $currentFrom, $until] = $this->getStatsDates();
+        $ownerFilter = $this->user->can($pageName, 'only-owner-data')
+            ? ' AND nick = ' . $this->dataBase->var2str($this->user->nick)
+            : '';
+        $sql = 'SELECT '
+            . 'COALESCE(SUM(CASE WHEN fecha >= ' . $this->dataBase->var2str($currentFrom)
+            . ' THEN neto ELSE 0 END), 0) AS current_net, '
+            . 'COALESCE(SUM(CASE WHEN fecha < ' . $this->dataBase->var2str($currentFrom)
+            . ' THEN neto ELSE 0 END), 0) AS previous_net, '
+            . 'COALESCE(SUM(CASE WHEN fecha >= ' . $this->dataBase->var2str($currentFrom)
+            . ' THEN totaliva + totalrecargo ELSE 0 END), 0) AS current_tax, '
+            . 'COALESCE(SUM(CASE WHEN fecha < ' . $this->dataBase->var2str($currentFrom)
+            . ' THEN totaliva + totalrecargo ELSE 0 END), 0) AS previous_tax '
+            . 'FROM ' . $tableName
+            . ' WHERE fecha >= ' . $this->dataBase->var2str($previousFrom)
+            . ' AND fecha < ' . $this->dataBase->var2str($until)
+            . $ownerFilter . ';';
+        $row = $this->dataBase->select($sql)[0] ?? [];
+
+        return [
+            'current_net' => (float)($row['current_net'] ?? 0),
+            'current_tax' => (float)($row['current_tax'] ?? 0),
+            'previous_net' => (float)($row['previous_net'] ?? 0),
+            'previous_tax' => (float)($row['previous_tax'] ?? 0),
+        ];
+    }
+
+    private function getStatsDates(): array
+    {
+        return [
+            date('Y-m-01', strtotime('-1 month')),
+            date('Y-m-01'),
+            date('Y-m-01', strtotime('+1 month')),
+        ];
+    }
+
+    private function setStats(string $group, float $current, float $previous): void
+    {
+        $this->stats[$group] = [
+            'this-month' => $current,
+            'last-month' => $previous,
+        ];
+        $this->statChanges[$group] = abs($previous) > 0.00001
+            ? (($current - $previous) / abs($previous)) * 100
+            : null;
     }
 
     /**
      * @param BusinessDocument $model
      * @param string $label
+     * @param string $pageName
      */
-    private function setOpenLinksForDocument($model, $label): void
+    private function setOpenLinksForDocument($model, $label, string $pageName): void
     {
-        $minDate = Tools::date('-2 days');
+        if (false === $this->user->can($pageName)) {
+            return;
+        }
+
+        $minDate = Tools::date('-7 days');
         $where = [
             Where::gte('fecha', $minDate),
             Where::eq('nick', $this->user->nick),
