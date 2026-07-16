@@ -85,16 +85,19 @@
                 or fsc.receiptCount > 0 or fsc.lowStockCount > 0 %}
             <div class="row g-3 mb-3">
                 {% if hasAlerts %}
-                    <div class="{{ fsc.openLinks ? 'col-lg-6' : 'col-12' }}">
+                    <div class="col-lg-6">
                         {{ _self.sectionAlerts(fsc) }}
                     </div>
                 {% endif %}
-                {% if fsc.openLinks %}
-                    <div class="{{ hasAlerts ? 'col-lg-6' : 'col-12' }}">
-                        {{ _self.sectionRecent(fsc) }}
-                    </div>
-                {% endif %}
+                <div class="{{ hasAlerts ? 'col-lg-6' : 'col-12' }}">
+                    {{ _self.sectionHelp() }}
+                </div>
             </div>
+            {% if fsc.openLinks %}
+                <div class="mb-3">
+                    {{ _self.sectionRecent(fsc) }}
+                </div>
+            {% endif %}
             {% if fsc.isOnboarding == false %}
                 {{ _self.sectionNews(fsc) }}
             {% endif %}
@@ -164,7 +167,7 @@
 {% macro sectionFirstSteps(fsc) %}
     {% set totalSteps = fsc.firstSteps|length %}
     {% set progress = totalSteps > 0 ? (fsc.firstStepsCompleted * 100 / totalSteps)|round : 0 %}
-    <div class="card shadow-sm mb-3">
+    <div class="card shadow-sm mb-5">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2 class="h4 mb-0">
@@ -234,6 +237,26 @@
                     <i class="fa-solid fa-floppy-disk fa-fw me-2 text-warning"></i>{{ trans('dashboard-backup') }}
                 </a>
             {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sectionHelp() %}
+    <div class="card shadow-sm h-100">
+        <div class="card-body pb-2">
+            <h2 class="h5 mb-0">
+                <i class="fa-solid fa-circle-question fa-fw me-1 text-primary"></i>{{ trans('help') }}
+            </h2>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="https://facturascripts.com/ayuda" target="_blank" rel="nofollow noopener"
+               class="list-group-item list-group-item-action">
+                <i class="fa-solid fa-book-open fa-fw me-2 text-secondary"></i>{{ trans('user-guide') }}
+            </a>
+            <a href="https://facturascripts.com/cursos/curso-de-usuario" target="_blank" rel="nofollow noopener"
+               class="list-group-item list-group-item-action">
+                <i class="fa-solid fa-graduation-cap fa-fw me-2 text-primary"></i>{{ trans('free-course') }}
+            </a>
         </div>
     </div>
 {% endmacro %}

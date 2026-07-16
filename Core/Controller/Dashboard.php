@@ -198,19 +198,19 @@ class Dashboard extends Controller
         $steps = [
             [
                 'complete' => $customerCount > 0,
-                'icon' => 'fa-solid fa-user',
+                'icon' => 'fa-solid fa-plus',
                 'label' => 'customer',
                 'url' => 'EditCliente',
             ],
             [
                 'complete' => $productCount > 0,
-                'icon' => 'fa-solid fa-box',
+                'icon' => 'fa-solid fa-plus',
                 'label' => 'product',
                 'url' => 'EditProducto',
             ],
             [
                 'complete' => $invoiceCount > 0,
-                'icon' => 'fa-solid fa-file-invoice-dollar',
+                'icon' => 'fa-solid fa-plus',
                 'label' => 'customer-invoice',
                 'url' => 'EditFacturaCliente',
             ],
