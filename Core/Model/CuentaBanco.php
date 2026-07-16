@@ -43,25 +43,25 @@ class CuentaBanco extends ModelClass
     const SPECIAL_ACCOUNT = 'BANCO';
     const SPECIAL_ACCOUNT_FALLBACK = 'CAJA';
 
-    /** @var bool */
+    /** Indica si la cuenta bancaria está activa. @var bool */
     public $activa;
 
-    /** @var string */
+    /** Código identificativo de la cuenta bancaria. @var string */
     public $codcuenta;
 
-    /** @var string */
+    /** Código de la subcuenta contable asociada. @var string */
     public $codsubcuenta;
 
-    /** @var string */
+    /** Código de la subcuenta contable utilizada para los gastos bancarios. @var string */
     public $codsubcuentagasto;
 
-    /** @var string */
+    /** Descripción de la cuenta bancaria. @var string */
     public $descripcion;
 
-    /** @var string */
+    /** Sufijo utilizado para identificar al acreedor en operaciones SEPA. @var string */
     public $sufijosepa;
 
-    /** @var string */
+    /** Código SWIFT o BIC de la entidad bancaria. @var string */
     public $swift;
 
     public function clear(): void

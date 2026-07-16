@@ -40,40 +40,40 @@ class ProductoProveedor extends ModelClass
     use ModelTrait;
     use ProductRelationTrait;
 
-    /** @var string */
+    /** Fecha y hora de la última actualización de los datos del proveedor. @var string */
     public $actualizado;
 
-    /** @var string */
+    /** Código de la divisa utilizada por el proveedor. @var string */
     public $coddivisa;
 
-    /** @var string */
+    /** Código del proveedor asociado al producto. @var string */
     public $codproveedor;
 
-    /** @var float */
+    /** Primer porcentaje de descuento aplicado por el proveedor. @var float */
     public $dtopor;
 
-    /** @var float */
+    /** Segundo porcentaje de descuento aplicado por el proveedor. @var float */
     public $dtopor2;
 
-    /** @var int */
+    /** Identificador único de la relación con el proveedor. @var int */
     public $id;
 
-    /** @var float */
+    /** Precio neto tras aplicar los descuentos. @var float */
     public $neto;
 
-    /** @var float */
+    /** Precio neto convertido a euros. @var float */
     public $netoeuros;
 
-    /** @var float */
+    /** Precio del producto indicado por el proveedor antes de descuentos. @var float */
     public $precio;
 
-    /** @var string */
+    /** Referencia interna de la variante del producto. @var string */
     public $referencia;
 
-    /** @var string */
+    /** Referencia utilizada por el proveedor para el producto. @var string */
     public $refproveedor;
 
-    /** @var float */
+    /** Stock del producto informado por el proveedor. @var float */
     public $stock;
 
     public function __get($key)

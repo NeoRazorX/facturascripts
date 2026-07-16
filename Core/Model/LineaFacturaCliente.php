@@ -34,13 +34,13 @@ class LineaFacturaCliente extends SalesDocumentLine
     use ModelTrait;
     use InvoiceLineTrait;
 
-    /** @var bool */
+    /** Resultado en caché de la comprobación de cantidades rectificadas. @var bool */
     private $has_refunded_quantity = null;
 
-    /** @var int */
+    /** Identificador de la factura de cliente a la que pertenece la línea. @var int */
     public $idfactura;
 
-    /** @var int */
+    /** Identificador de la línea original que se está rectificando. @var int */
     public $idlinearect;
 
     public function documentColumn(): string

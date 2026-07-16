@@ -33,13 +33,13 @@ class Atributo extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** Código identificativo del atributo. @var string */
     public $codatributo;
 
-    /** @var string */
+    /** Nombre del atributo. @var string */
     public $nombre;
 
-    /** @var int */
+    /** Posición del selector de variantes en el que se muestra el atributo. @var int */
     public $num_selector;
 
     public function addValue(string $value): bool

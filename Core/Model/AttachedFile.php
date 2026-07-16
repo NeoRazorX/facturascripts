@@ -39,25 +39,25 @@ class AttachedFile extends ModelClass
     const MAX_FILENAME_LEN = 100;
     const STORAGE_USED_KEY = 'storage-used';
 
-    /** @var string */
+    /** Fecha en la que se adjuntó el archivo. @var string */
     public $date;
 
-    /** @var string */
+    /** Nombre original del archivo. @var string */
     public $filename;
 
-    /** @var string */
+    /** Hora en la que se adjuntó el archivo. @var string */
     public $hour;
 
-    /** @var int */
+    /** Identificador único del archivo adjunto. @var int */
     public $idfile;
 
-    /** @var string */
+    /** Tipo MIME del archivo. @var string */
     public $mimetype;
 
-    /** @var string */
+    /** Ruta relativa donde se almacena el archivo. @var string */
     public $path;
 
-    /** @var int */
+    /** Tamaño del archivo en bytes. @var int */
     public $size;
 
     public function clear(): void

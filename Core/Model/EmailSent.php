@@ -36,40 +36,40 @@ class EmailSent extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** Dirección de correo electrónico del destinatario. @var string */
     public $addressee;
 
-    /** @var bool */
+    /** Indica si el correo contiene archivos adjuntos. @var bool */
     public $attachment;
 
-    /** @var string */
+    /** Cuerpo del correo en texto sin formato. @var string */
     public $body;
 
-    /** @var string */
+    /** Fecha y hora de envío del correo. @var string */
     public $date;
 
-    /** @var string */
+    /** Dirección de correo electrónico del remitente. @var string */
     public $email_from;
 
-    /** @var string */
+    /** Cuerpo del correo en formato HTML. @var string */
     public $html;
 
-    /** @var string */
+    /** Identificador único del correo enviado. @var string */
     public $id;
 
-    /** @var string */
+    /** Nombre del usuario que envió el correo. @var string */
     public $nick;
 
-    /** @var bool */
+    /** Indica si el destinatario ha abierto o verificado el correo. @var bool */
     public $opened;
 
-    /** @var string */
+    /** Asunto del correo enviado. @var string */
     public $subject;
 
-    /** @var string */
+    /** Identificador utilizado para agrupar el correo y sus archivos adjuntos. @var string */
     public $uuid;
 
-    /** @var string */
+    /** Código utilizado para verificar la interacción del destinatario. @var string */
     public $verificode;
 
     public function clear(): void

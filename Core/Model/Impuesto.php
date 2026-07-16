@@ -43,10 +43,10 @@ class Impuesto extends ModelClass
     const TYPE_PERCENTAGE = 1;
     const TYPE_FIXED_VALUE = 2;
 
-    /** @var bool */
+    /** Indica si el impuesto está activo. @var bool */
     public $activo;
 
-    /** @var string */
+    /** Código identificativo del impuesto. @var string */
     public $codimpuesto;
 
     /**
@@ -85,19 +85,19 @@ class Impuesto extends ModelClass
      */
     public $codsubcuentasopre;
 
-    /** @var string */
+    /** Descripción del impuesto. @var string */
     public $descripcion;
 
-    /** @var string */
+    /** Clave de la operación fiscal asociada al impuesto. @var string */
     public $operacion;
 
-    /** @var int */
+    /** Tipo de cálculo del impuesto: porcentaje o importe fijo. @var int */
     public $tipo;
 
-    /** @var float */
+    /** Porcentaje o importe de IVA aplicado. @var float */
     public $iva;
 
-    /** @var float */
+    /** Porcentaje o importe del recargo de equivalencia. @var float */
     public $recargo;
 
     public function clear(): void

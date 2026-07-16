@@ -36,13 +36,13 @@ class RoleUser extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** Código del rol asignado al usuario. @var string */
     public $codrole;
 
-    /** @var int */
+    /** Identificador único de la asignación. @var int */
     public $id;
 
-    /** @var string */
+    /** Nombre del usuario al que se asigna el rol. @var string */
     public $nick;
 
     public function getRole(): Role

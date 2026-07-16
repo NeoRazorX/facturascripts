@@ -46,90 +46,43 @@ class Asiento extends ModelClass
     const OPERATION_REGULARIZATION = 'R';
     const RENUMBER_LIMIT = 1000;
 
-    /**
-     * Accounting channel. For statistics purpose.
-     *
-     * @var int
-     */
+    /** Canal contable utilizado con fines estadísticos. @var int */
     public $canal;
 
-    /**
-     * Accounting entry concept.
-     *
-     * @var string
-     */
+    /** Concepto del asiento contable. @var string */
     public $concepto;
 
-    /** @var float */
+    /** Importe total del debe del asiento. @var float */
     public $debe = 0.0;
 
-    /**
-     * Document associated with the accounting entry.
-     *
-     * @var string
-     */
+    /** Documento asociado al asiento contable. @var string */
     public $documento;
 
-    /**
-     * True if it is editable, but false.
-     *
-     * @var bool
-     */
+    /** Indica si el asiento contable se puede editar. @var bool */
     public $editable;
 
-    /**
-     * Date of the accounting entry.
-     *
-     * @var string
-     */
+    /** Fecha del asiento contable. @var string */
     public $fecha;
 
-    /** @var float */
+    /** Importe total del haber del asiento. @var float */
     public $haber = 0.0;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** Identificador único del asiento contable. @var int */
     public $idasiento;
 
-    /**
-     * Diary identifier.
-     *
-     * @var int
-     */
+    /** Identificador del diario contable asociado. @var int */
     public $iddiario;
 
-    /**
-     * Foreign Key with Empresas table.
-     *
-     * @var int
-     */
+    /** Identificador de la empresa asociada. @var int */
     public $idempresa;
 
-    /**
-     * Amount of the accounting entry.
-     *
-     * @var float|int
-     */
+    /** Importe total del asiento contable. @var float|int */
     public $importe;
 
-    /**
-     * Accounting entry number. It will be modified when renumbering.
-     *
-     * @var string
-     */
+    /** Número del asiento contable, modificable durante la renumeración. @var string */
     public $numero;
 
-    /**
-     * It establishes whether the accounting entry is of a special operation:
-     * - opening
-     * - regularization
-     * - closing
-     *
-     * @var string
-     */
+    /** Tipo de operación especial del asiento: apertura, regularización o cierre. @var string */
     public $operacion;
 
     /**

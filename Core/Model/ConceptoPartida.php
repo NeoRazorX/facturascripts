@@ -32,18 +32,10 @@ class ConceptoPartida extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * Primary key.
-     *
-     * @var string
-     */
+    /** Código identificativo del concepto de partida. @var string */
     public $codconcepto;
 
-    /**
-     * Concept of departure.
-     *
-     * @var string
-     */
+    /** Descripción del concepto predefinido para la partida. @var string */
     public $descripcion;
 
     public static function primaryColumn(): string

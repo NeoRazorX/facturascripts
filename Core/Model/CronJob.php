@@ -41,61 +41,61 @@ class CronJob extends ModelClass
     /** @var int */
     const STALE_HOURS = 6;
 
-    /** @var string */
+    /** Fecha y hora de la última ejecución del trabajo. @var string */
     public $date;
 
-    /** @var int */
+    /** Número de ejecuciones completadas durante el día actual. @var int */
     public $daily_exec;
 
-    /** @var bool */
+    /** Indica si la ejecución del trabajo ha finalizado. @var bool */
     public $done;
 
-    /** @var float */
+    /** Duración en segundos de la última ejecución. @var float */
     public $duration;
 
-    /** @var bool */
+    /** Indica si el trabajo programado está habilitado. @var bool */
     public $enabled;
 
-    /** @var bool */
+    /** Indica si la última ejecución terminó con un error. @var bool */
     public $failed;
 
-    /** @var int */
+    /** Número acumulado de ejecuciones fallidas. @var int */
     public $fails;
 
-    /** @var int */
+    /** Identificador único del trabajo programado. @var int */
     public $id;
 
-    /** @var string */
+    /** Nombre identificativo del trabajo programado. @var string */
     public $jobname;
 
-    /** @var float */
+    /** Duración en segundos de la ejecución anterior a la última. @var float */
     public $last_duration;
 
-    /** @var int */
+    /** Tiempo máximo permitido para el conjunto del cron, en segundos. @var int */
     private static $max_execution_time = 0;
 
-    /** @var bool */
+    /** Indica si el exceso de tiempo máximo ya se registró en el log. @var bool */
     private static $max_execution_time_logged = false;
 
-    /** @var string|null */
+    /** Fecha y hora simuladas utilizadas durante los tests. @var string|null */
     private $mock_date_time;
 
-    /** @var float|null */
+    /** Marca de tiempo simulada utilizada durante los tests. @var float|null */
     private $mock_microtime;
 
-    /** @var bool */
+    /** Indica si se ha detectado otra ejecución incompatible en curso. @var bool */
     private $overlapping = false;
 
-    /** @var string */
+    /** Nombre del plugin propietario del trabajo programado. @var string */
     public $pluginname;
 
-    /** @var bool */
+    /** Indica si el trabajo debe ejecutarse según su programación. @var bool */
     private $ready = false;
 
-    /** @var int */
+    /** Número de ejecuciones simultáneas actualmente en curso. @var int */
     public $running;
 
-    /** @var float */
+    /** Marca de tiempo utilizada para medir el inicio de la ejecución. @var float */
     private $start;
 
     /**

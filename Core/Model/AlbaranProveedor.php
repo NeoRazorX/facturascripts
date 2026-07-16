@@ -35,11 +35,7 @@ class AlbaranProveedor extends PurchaseDocument
 {
     use ModelTrait;
 
-    /**
-     * Primary key. Integer
-     *
-     * @var int
-     */
+    /** Identificador único del albarán de proveedor. @var int */
     public $idalbaran;
 
     /**

@@ -34,47 +34,37 @@ class Pais extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** Nombre alternativo o alias del país. @var string */
     public $alias;
 
-    /**
-     * Alpha-2 code of the country.
-     * http://es.wikipedia.org/wiki/ISO_3166-1
-     *
-     * @var string
-     */
+    /** Código alfa-2 del país según la norma ISO 3166-1. @var string */
     public $codiso;
 
-    /**
-     * Primary key. Varchar(3). Alpha-3 code of the country.
-     * http://es.wikipedia.org/wiki/ISO_3166-1
-     *
-     * @var string
-     */
+    /** Código alfa-3 del país según la norma ISO 3166-1. @var string */
     public $codpais;
 
-    /** @var string */
+    /** Fecha y hora de creación del país. @var string */
     public $creation_date;
 
-    /** @var string */
+    /** Nombre del último usuario que modificó el país. @var string */
     public $last_nick;
 
-    /** @var string */
+    /** Fecha y hora de la última modificación. @var string */
     public $last_update;
 
-    /** @var float */
+    /** Latitud geográfica de referencia del país. @var float */
     public $latitude;
 
-    /** @var float */
+    /** Longitud geográfica de referencia del país. @var float */
     public $longitude;
 
-    /** @var string */
+    /** Nombre del usuario que creó el país. @var string */
     public $nick;
 
-    /** @var string */
+    /** Nombre del país. @var string */
     public $nombre;
 
-    /** @var string */
+    /** Prefijo telefónico internacional del país. @var string */
     public $telephone_prefix;
 
     public function clearCache(): void

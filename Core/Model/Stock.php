@@ -40,72 +40,34 @@ class Stock extends ModelClass
 
     const MAX_DECIMALS = 3;
 
-    /**
-     * Quantity.
-     *
-     * @var float|int
-     */
+    /** Cantidad física almacenada. @var float|int */
     public $cantidad;
 
-    /**
-     * Warehouse code.
-     *
-     * @var string
-     */
+    /** Código del almacén al que corresponde el stock. @var string */
     public $codalmacen;
 
-    /**
-     * Available. Is the quantity minus reserved.
-     *
-     * @var float|int
-     */
+    /** Cantidad disponible tras descontar la reservada. @var float|int */
     public $disponible;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** Identificador único del registro de stock. @var int */
     public $idstock;
 
-    /**
-     * Pending receipt. Merchandise pending receipt from the supplier.
-     *
-     * @var float|int
-     */
+    /** Cantidad pendiente de recibir de proveedores. @var float|int */
     public $pterecibir;
 
-    /**
-     * Reference.
-     *
-     * @var string
-     */
+    /** Referencia de la variante del producto. @var string */
     public $referencia;
 
-    /**
-     * Reserved on customer orders.
-     *
-     * @var float|int
-     */
+    /** Cantidad reservada en pedidos de clientes. @var float|int */
     public $reservada;
 
-    /**
-     * Maximum stock.
-     *
-     * @var float|int
-     */
+    /** Cantidad máxima de stock recomendada. @var float|int */
     public $stockmax;
 
-    /**
-     * Minimum stock.
-     *
-     * @var float|int
-     */
+    /** Cantidad mínima de stock recomendada. @var float|int */
     public $stockmin;
 
-    /**
-     * @var string
-     */
+    /** Ubicación física del producto dentro del almacén. @var string */
     public $ubicacion;
 
     public function clear(): void

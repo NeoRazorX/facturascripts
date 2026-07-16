@@ -35,25 +35,25 @@ class CuentaBancoCliente extends ModelClass
     use ModelTrait;
     use IbanTrait;
 
-    /** @var string */
+    /** Código del cliente titular de la cuenta bancaria. @var string */
     public $codcliente;
 
-    /** @var string */
+    /** Código identificativo de la cuenta bancaria. @var string */
     public $codcuenta;
 
-    /** @var string */
+    /** Descripción de la cuenta bancaria. @var string */
     public $descripcion;
 
-    /** @var string */
+    /** Fecha de firma del mandato SEPA. @var string */
     public $fmandato;
 
-    /** @var string */
+    /** Referencia única del mandato SEPA. @var string */
     public $mandato;
 
-    /** @var bool */
+    /** Indica si es la cuenta bancaria principal del cliente. @var bool */
     public $principal;
 
-    /** @var string */
+    /** Código SWIFT o BIC de la entidad bancaria. @var string */
     public $swift;
 
     public function clear(): void

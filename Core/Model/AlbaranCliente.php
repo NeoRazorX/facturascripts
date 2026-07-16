@@ -35,11 +35,7 @@ class AlbaranCliente extends SalesDocument
 {
     use ModelTrait;
 
-    /**
-     * Primary key. Integer.
-     *
-     * @var int
-     */
+    /** Identificador único del albarán de cliente. @var int */
     public $idalbaran;
 
     /**

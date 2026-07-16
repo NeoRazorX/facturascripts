@@ -35,53 +35,25 @@ class Familia extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * Primary key.
-     *
-     * @var string
-     */
+    /** Código identificativo de la familia de productos. @var string */
     public $codfamilia;
 
-    /**
-     * Account code for purchases.
-     *
-     * @var string
-     */
+    /** Código de la subcuenta contable utilizada para compras. @var string */
     public $codsubcuentacom;
 
-    /**
-     * Code for the shopping account, but with IRPF.
-     *
-     * @var string
-     */
+    /** Código de la subcuenta de compras utilizada cuando se aplica IRPF. @var string */
     public $codsubcuentairpfcom;
 
-    /**
-     * Account code for sales.
-     *
-     * @var string
-     */
+    /** Código de la subcuenta contable utilizada para ventas. @var string */
     public $codsubcuentaven;
 
-    /**
-     * Family's description.
-     *
-     * @var string
-     */
+    /** Descripción de la familia de productos. @var string */
     public $descripcion;
 
-    /**
-     * Mother family code.
-     *
-     * @var string
-     */
+    /** Código de la familia superior. @var string */
     public $madre;
 
-    /**
-     * Number of products
-     *
-     * @var int
-     */
+    /** Número de productos asociados a la familia. @var int */
     public $numproductos;
 
     public function changeId($new_id): bool

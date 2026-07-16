@@ -28,34 +28,34 @@ class PuntoInteresCiudad extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** Nombre alternativo o alias del punto de interés. @var string */
     public $alias;
 
-    /** @var string */
+    /** Fecha y hora de creación del punto de interés. @var string */
     public $creation_date;
 
-    /** @var int */
+    /** Identificador único del punto de interés. @var int */
     public $id;
 
-    /** @var int */
+    /** Identificador de la ciudad a la que pertenece. @var int */
     public $idciudad;
 
-    /** @var string */
+    /** Nombre del último usuario que modificó el punto de interés. @var string */
     public $last_nick;
 
-    /** @var string */
+    /** Fecha y hora de la última modificación. @var string */
     public $last_update;
 
-    /** @var float */
+    /** Latitud geográfica del punto de interés. @var float */
     public $latitude;
 
-    /** @var float */
+    /** Longitud geográfica del punto de interés. @var float */
     public $longitude;
 
-    /** @var string */
+    /** Nombre del punto de interés. @var string */
     public $name;
 
-    /** @var string */
+    /** Nombre del usuario que creó el punto de interés. @var string */
     public $nick;
 
     /** @return Ciudad|null */

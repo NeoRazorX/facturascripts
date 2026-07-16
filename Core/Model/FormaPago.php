@@ -34,34 +34,34 @@ class FormaPago extends ModelClass
 {
     use ModelTrait;
 
-    /** @var bool */
+    /** Indica si la forma de pago está activa. @var bool */
     public $activa;
 
-    /** @var string */
+    /** Código de la cuenta bancaria asociada. @var string */
     public $codcuentabanco;
 
-    /** @var string */
+    /** Código identificativo de la forma de pago. @var string */
     public $codpago;
 
-    /** @var string */
+    /** Descripción de la forma de pago. @var string */
     public $descripcion;
 
-    /** @var bool */
+    /** Indica si el pago se realiza mediante domiciliación bancaria. @var bool */
     public $domiciliado;
 
-    /** @var int */
+    /** Identificador de la empresa asociada. @var int */
     public $idempresa;
 
-    /** @var bool */
+    /** Indica si se debe imprimir la información bancaria en el documento. @var bool */
     public $imprimir;
 
-    /** @var bool */
+    /** Indica si los recibos creados con esta forma se consideran pagados. @var bool */
     public $pagado;
 
-    /** @var int */
+    /** Cantidad de unidades que se añaden para calcular el vencimiento. @var int */
     public $plazovencimiento;
 
-    /** @var string */
+    /** Unidad temporal utilizada para calcular el vencimiento. @var string */
     public $tipovencimiento;
 
     public function clear(): void

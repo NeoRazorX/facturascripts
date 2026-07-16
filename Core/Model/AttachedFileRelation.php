@@ -34,49 +34,31 @@ class AttachedFileRelation extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * @var string
-     */
+    /** Fecha y hora de creación de la relación. @var string */
     public $creationdate;
 
-    /**
-     * @var int
-     */
+    /** Identificador único de la relación. @var int */
     public $id;
 
-    /**
-     * @var int
-     */
+    /** Identificador del archivo adjunto relacionado. @var int */
     public $idfile;
 
-    /**
-     * @var string
-     */
+    /** Nombre del modelo al que pertenece el archivo. @var string */
     public $model;
 
-    /**
-     * @var int
-     */
+    /** Identificador numérico del registro relacionado. @var int */
     public $modelid;
 
-    /**
-     * @var string
-     */
+    /** Código del registro relacionado cuando su clave no es numérica. @var string */
     public $modelcode;
 
-    /**
-     * @var string
-     */
+    /** Nombre del usuario que creó la relación. @var string */
     public $nick;
 
-    /**
-     * @var string
-     */
+    /** Observaciones sobre el archivo adjunto. @var string */
     public $observations;
 
-    /**
-     * @var int
-     */
+    /** Posición utilizada para ordenar los archivos relacionados. @var int */
     public $orden;
 
     public function clear(): void

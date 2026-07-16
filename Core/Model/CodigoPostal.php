@@ -28,31 +28,31 @@ class CodigoPostal extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** Código del país al que pertenece el código postal. @var string */
     public $codpais;
 
-    /** @var string */
+    /** Fecha y hora de creación del código postal. @var string */
     public $creation_date;
 
-    /** @var int */
+    /** Identificador único del código postal. @var int */
     public $id;
 
-    /** @var int */
+    /** Identificador de la ciudad asociada. @var int */
     public $idciudad;
 
-    /** @var int */
+    /** Identificador de la provincia asociada. @var int */
     public $idprovincia;
 
-    /** @var string */
+    /** Nombre del último usuario que modificó el código postal. @var string */
     public $last_nick;
 
-    /** @var string */
+    /** Fecha y hora de la última modificación. @var string */
     public $last_update;
 
-    /** @var string */
+    /** Nombre del usuario que creó el código postal. @var string */
     public $nick;
 
-    /** @var int */
+    /** Número del código postal. @var int */
     public $number;
 
     public function clear(): void

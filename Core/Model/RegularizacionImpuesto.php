@@ -42,40 +42,40 @@ class RegularizacionImpuesto extends ModelClass
     use AccEntryRelationTrait;
     use ExerciseRelationTrait;
 
-    /** @var bool */
+    /** Indica si se deben bloquear los asientos comprendidos en el periodo. @var bool */
     public $bloquear;
 
-    /** @var string */
+    /** Código de la subcuenta acreedora de la regularización. @var string */
     public $codsubcuentaacr;
 
-    /** @var string */
+    /** Código de la subcuenta deudora de la regularización. @var string */
     public $codsubcuentadeu;
 
-    /** @var bool */
+    /** Indica si se omiten las comprobaciones adicionales del modelo. @var bool */
     private $disable_additional_test = false;
 
-    /** @var string */
+    /** Fecha del asiento contable de regularización. @var string */
     public $fechaasiento;
 
-    /** @var string */
+    /** Fecha final del periodo regularizado. @var string */
     public $fechafin;
 
-    /** @var string */
+    /** Fecha inicial del periodo regularizado. @var string */
     public $fechainicio;
 
-    /** @var int */
+    /** Identificador de la empresa asociada. @var int */
     public $idempresa;
 
-    /** @var int */
+    /** Identificador único de la regularización de impuestos. @var int */
     public $idregiva;
 
-    /** @var int */
+    /** Identificador de la subcuenta acreedora. @var int */
     public $idsubcuentaacr;
 
-    /** @var int */
+    /** Identificador de la subcuenta deudora. @var int */
     public $idsubcuentadeu;
 
-    /** @var string */
+    /** Nombre o código del periodo regularizado. @var string */
     public $periodo;
 
     public function clear(): void

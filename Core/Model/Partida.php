@@ -40,147 +40,67 @@ class Partida extends ModelClass
     use ModelTrait;
     use AccEntryRelationTrait;
 
-    /**
-     * Amount of the tax base.
-     *
-     * @var float|int
-     */
+    /** Importe de la base imponible asociada a la partida. @var float|int */
     public $baseimponible;
 
-    /**
-     * CIF / NIF of the item.
-     *
-     * @var string
-     */
+    /** Identificador fiscal relacionado con la partida. @var string */
     public $cifnif;
 
-    /**
-     * Counterparty code.
-     *
-     * @var string
-     */
+    /** Código de la subcuenta de contrapartida. @var string */
     public $codcontrapartida;
 
-    /**
-     * Currency code.
-     *
-     * @var string
-     */
+    /** Código de la divisa utilizada en la partida. @var string */
     public $coddivisa;
 
-    /**
-     * Serie code.
-     *
-     * @var string
-     */
+    /** Código de la serie documental asociada. @var string */
     public $codserie;
 
-    /**
-     * Code, not ID, of the related account.
-     *
-     * @var string
-     */
+    /** Código de la subcuenta contable asociada. @var string */
     public $codsubcuenta;
 
-    /**
-     * Concept.
-     *
-     * @var string
-     */
+    /** Concepto de la partida contable. @var string */
     public $concepto;
 
-    /**
-     * Debit of the accounting entry.
-     *
-     * @var float|int
-     */
+    /** Importe anotado en el debe. @var float|int */
     public $debe;
 
-    /**
-     * @var bool
-     */
+    /** Indica si se omiten las comprobaciones adicionales del modelo. @var bool */
     private $disable_additional_test = false;
 
-    /**
-     * Document of departure.
-     *
-     * @var string
-     */
+    /** Documento relacionado con la partida. @var string */
     public $documento;
 
-    /**
-     * Invoice number of the departure.
-     *
-     * @var string
-     */
+    /** Número de factura relacionado con la partida. @var string */
     public $factura;
 
-    /**
-     * Credit of the accounting entry.
-     *
-     * @var float|int
-     */
+    /** Importe anotado en el haber. @var float|int */
     public $haber;
 
-    /**
-     * Identifier of the counterpart.
-     *
-     * @var int
-     */
+    /** Identificador de la subcuenta de contrapartida. @var int */
     public $idcontrapartida;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** Identificador único de la partida contable. @var int */
     public $idpartida;
 
-    /**
-     * Related account ID.
-     *
-     * @var int
-     */
+    /** Identificador de la subcuenta contable asociada. @var int */
     public $idsubcuenta;
 
-    /**
-     * VAT percentage.
-     *
-     * @var float|int
-     */
+    /** Porcentaje de IVA aplicado. @var float|int */
     public $iva;
 
-    /**
-     * Visual order index
-     *
-     * @var int
-     */
+    /** Posición visual de la partida dentro del asiento. @var int */
     public $orden;
 
-    /**
-     * True if it is dotted, but False.
-     *
-     * @var bool
-     */
+    /** Indica si la partida ha sido punteada o conciliada. @var bool */
     public $punteada;
 
-    /**
-     * Equivalence surcharge percentage.
-     *
-     * @var float|int
-     */
+    /** Porcentaje de recargo de equivalencia aplicado. @var float|int */
     public $recargo;
 
-    /**
-     * @var float
-     */
+    /** Saldo acumulado de la subcuenta tras la partida. @var float */
     public $saldo;
 
-    /**
-     * Value of the conversion rate.
-     *
-     * @var float|int
-     */
+    /** Tasa de conversión de la divisa utilizada. @var float|int */
     public $tasaconv;
 
     public function clear(): void
