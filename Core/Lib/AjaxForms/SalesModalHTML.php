@@ -219,7 +219,7 @@ class SalesModalHTML
                 $where[] = Where::eq('codagente', $user->codagente);
                 $where[] = Where::isNotNull('codagente');
             }
-            return Cliente::all($where, ['LOWER(nombre)' => 'ASC'], 0, 50);
+            return Cliente::all($where, ['fechaalta' => 'DESC', 'LOWER(nombre)' => 'ASC'], 0, 50);
         });
     }
 

@@ -312,6 +312,9 @@ class Cliente extends ModelClass
     public function test(): bool
     {
         $this->debaja = !empty($this->fechabaja);
+        if (empty($this->fechaalta)) {
+            $this->fechaalta = Tools::date();
+        }
         $this->fax = Tools::noHtml($this->fax) ?? '';
         $this->langcode = Tools::noHtml($this->langcode);
         $this->nombre = Tools::noHtml($this->nombre);

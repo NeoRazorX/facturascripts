@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
@@ -335,7 +334,6 @@ abstract class SalesController extends PanelController
             return false;
         }
 
-        Cache::deleteMulti('model-Cliente-sales-modal-');
         $formData['action'] = 'set-customer';
         $formData['codcliente'] = $customer->codcliente;
 
