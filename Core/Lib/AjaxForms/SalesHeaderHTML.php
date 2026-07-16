@@ -265,7 +265,7 @@ class SalesHeaderHTML
                 . '<div class="mb-2">' . Tools::trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
                 . '<a href="#" id="btnFindCustomerModal" class="btn w-100 btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
-                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
+                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw me-1"></i> '
                 . Tools::trans('select') . '</a>'
                 . '</div>'
                 . '</div>'

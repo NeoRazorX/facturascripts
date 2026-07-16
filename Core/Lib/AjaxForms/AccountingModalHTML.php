@@ -130,10 +130,8 @@ class AccountingModalHTML
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . Tools::trans('search')
             . '" onkeyup="return findSubaccountSearch(\'find-subaccount\', \'0\', this);"/>'
-            . '<div class="input-group-apend">'
-            . '<button class="btn btn-primary" type="button" onclick="return accEntryFormAction(\'find-subaccount\', \'0\');"'
+            . '<button class="btn btn-secondary" type="button" onclick="return accEntryFormAction(\'find-subaccount\', \'0\');"'
             . ' data-loading-text="<span class=\'spinner-border spinner-border-sm\' role=\'status\' aria-hidden=\'true\'></span>"><i class="fa-solid fa-search"></i></button>'
-            . '</div>'
             . '</div>'
             . '</div>'
             . static::orden()
