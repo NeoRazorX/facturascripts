@@ -21,9 +21,13 @@ namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Contract\PurchasesModalInterface;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Fabricantes;
 use FacturaScripts\Core\DataSrc\Familias;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
+use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AtributoValor;
@@ -59,6 +63,9 @@ class PurchasesModalHTML
     /** @var array */
     protected static $idatributovalores = [];
 
+    /** @var int */
+    protected static $idempresa;
+
     /** @var string */
     protected static $orden;
 
@@ -85,6 +92,7 @@ class PurchasesModalHTML
         self::$codfabricante = $formData['fp_codfabricante'] ?? '';
         self::$codfamilia = $formData['fp_codfamilia'] ?? '';
         self::$codproveedor = $model->codproveedor;
+        self::$idempresa = $model->idempresa;
         self::$orden = $formData['fp_orden'] ?? 'ref_asc';
         self::$comprado = (bool)($formData['fp_comprado'] ?? false);
         self::$query = isset($formData['fp_query']) ?
@@ -109,6 +117,7 @@ class PurchasesModalHTML
         self::$codalmacen = $model->codalmacen;
         self::$coddivisa = $model->coddivisa;
         self::$codproveedor = $model->codproveedor;
+        self::$idempresa = $model->idempresa;
 
         if (empty($model->id()) && !$model->editable) {
             return '<div class="alert alert-warning mt-4">'
@@ -339,7 +348,7 @@ class PurchasesModalHTML
     {
         $trs = '';
         $where = [Where::isNull('fechabaja')];
-        foreach (Proveedor::all($where, ['LOWER(nombre)' => 'ASC'], 0, 50) as $pro) {
+        foreach (Proveedor::all($where, ['fechaalta' => 'DESC', 'LOWER(nombre)' => 'ASC'], 0, 50) as $pro) {
             $name = ($pro->nombre === $pro->razonsocial) ? $pro->nombre : $pro->nombre . ' <small>(' . $pro->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'purchasesForm\'][\'codproveedor\'].value = \''
                 . $pro->codproveedor . '\'; $(\'#findSupplierModal\').modal(\'hide\'); purchasesFormAction(\'set-supplier\', \'0\'); return false;">'
@@ -348,11 +357,20 @@ class PurchasesModalHTML
                 . '</tr>';
         }
 
+        $newSupplierButton = '';
+        $newSupplierModal = '';
+        if (static::canCreateSupplier(Session::user())) {
+            $newSupplierButton = '<button type="button" class="btn w-100 btn-success" onclick="return showNewSupplierModal();">'
+                . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::trans('new')
+                . '</button>';
+            $newSupplierModal = static::modalNewSupplier();
+        }
+
         return '<div class="modal" id="findSupplierModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-scrollable">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-users fa-fw"></i> ' . Tools::trans('suppliers') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-users fa-fw me-1"></i> ' . Tools::trans('suppliers') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . '</button>'
             . '</div>'
@@ -365,13 +383,72 @@ class PurchasesModalHTML
             . '</div>'
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
             . '<div class="modal-footer bg-light">'
-            . '<a href="EditProveedor?return=' . urlencode($url) . '" class="btn w-100 btn-success">'
-            . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::trans('new')
-            . '</a>'
+            . $newSupplierButton
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . $newSupplierModal;
+    }
+
+    protected static function modalNewSupplier(): string
+    {
+        $company = Empresas::get(self::$idempresa);
+        $countryOptions = '';
+        $defaultCountry = Tools::settings('default', 'codpais');
+        foreach (Paises::all() as $country) {
+            $selected = $country->codpais === $defaultCountry ? ' selected' : '';
+            $countryOptions .= '<option value="' . static::html($country->codpais) . '"' . $selected . '>'
+                . static::html($country->nombre) . '</option>';
+        }
+
+        return '<div class="modal" id="newSupplierModal" tabindex="-1" aria-hidden="true">'
+            . '<div class="modal-dialog modal-lg modal-dialog-scrollable">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title"><i class="fa-solid fa-user-plus fa-fw me-1"></i> '
+            . Tools::trans('new-supplier') . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'
+            . '</div>'
+            . '<div class="modal-body">'
+            . '<div class="row g-2">'
+            . '<div class="col-sm-8"><label for="newSupplierName" class="form-label">' . Tools::trans('name') . '</label>'
+            . '<input type="text" name="newsupplier_nombre" id="newSupplierName" class="form-control" maxlength="100" required></div>'
+            . '<div class="col-sm-4"><label for="newSupplierCifnif" class="form-label">' . Tools::trans('cifnif') . '</label>'
+            . '<input type="text" name="newsupplier_cifnif" id="newSupplierCifnif" class="form-control" maxlength="30"></div>'
+            . '<div class="col-sm-4"><label for="newSupplierPhone" class="form-label">' . Tools::trans('phone') . '</label>'
+            . '<input type="tel" name="newsupplier_telefono" id="newSupplierPhone" class="form-control" maxlength="30"></div>'
+            . '<div class="col-sm-8"><label for="newSupplierEmail" class="form-label">' . Tools::trans('email') . '</label>'
+            . '<input type="email" name="newsupplier_email" id="newSupplierEmail" class="form-control" maxlength="100"></div>'
+            . '<div class="col-sm-9"><label for="newSupplierAddress" class="form-label">' . Tools::trans('address') . '</label>'
+            . '<input type="text" name="newsupplier_direccion" id="newSupplierAddress" class="form-control" maxlength="200" required></div>'
+            . '<div class="col-sm-3"><label for="newSupplierPostalCode" class="form-label">' . Tools::trans('zip-code') . '</label>'
+            . '<input type="text" name="newsupplier_codpostal" id="newSupplierPostalCode" class="form-control" maxlength="10" value="'
+            . static::html($company->codpostal) . '"></div>'
+            . '<div class="col-sm-4"><label for="newSupplierCity" class="form-label">' . Tools::trans('city') . '</label>'
+            . '<input type="text" name="newsupplier_ciudad" id="newSupplierCity" class="form-control" maxlength="100" value="'
+            . static::html($company->ciudad) . '" required></div>'
+            . '<div class="col-sm-4"><label for="newSupplierProvince" class="form-label">' . Tools::trans('province') . '</label>'
+            . '<input type="text" name="newsupplier_provincia" id="newSupplierProvince" class="form-control" maxlength="100" value="'
+            . static::html($company->provincia) . '" required></div>'
+            . '<div class="col-sm-4"><label for="newSupplierCountry" class="form-label">' . Tools::trans('country') . '</label>'
+            . '<select name="newsupplier_codpais" id="newSupplierCountry" class="form-select" required>' . $countryOptions . '</select></div>'
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer bg-light">'
+            . '<button type="button" class="btn btn-secondary" onclick="return showSupplierModal();">'
+            . '<i class="fa-solid fa-arrow-left fa-fw"></i> ' . Tools::trans('back') . '</button>'
+            . '<button type="button" class="btn btn-success btn-spin-action" onclick="return createSupplierFromPurchases();">'
+            . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::trans('save') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
+    }
+
+    protected static function canCreateSupplier(User $user): bool
+    {
+        return $user->can('EditProveedor', 'update');
     }
 
     protected static function orden(): string

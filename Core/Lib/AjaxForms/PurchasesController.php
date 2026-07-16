@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
@@ -216,6 +217,9 @@ abstract class PurchasesController extends PanelController
             case 'set-supplier':
                 return $this->recalculateAction(true);
 
+            case 'create-supplier':
+                return $this->createSupplierAction();
+
             case 'delete-doc':
                 return $this->deleteDocAction();
 
@@ -252,6 +256,102 @@ abstract class PurchasesController extends PanelController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function createSupplierAction(): bool
+    {
+        $this->setTemplate(false);
+
+        if (false === $this->user->can('EditProveedor', 'update')) {
+            Tools::log()->warning('not-allowed-modify');
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        if (false === $this->validateFormToken()) {
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        $formData = json_decode($this->request->input('data'), true);
+        if (false === is_array($formData)) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        foreach (['newsupplier_nombre', 'newsupplier_direccion', 'newsupplier_ciudad', 'newsupplier_provincia'] as $field) {
+            if (false === is_string($formData[$field] ?? null) || trim($formData[$field]) === '') {
+                Tools::log()->warning('invalid-request');
+                $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+                return false;
+            }
+
+            $formData[$field] = trim($formData[$field]);
+        }
+
+        $countryCode = is_string($formData['newsupplier_codpais'] ?? null) ? $formData['newsupplier_codpais'] : '';
+        if (empty($countryCode) || false === Paises::get($countryCode)->exists()) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        $supplier = new Proveedor();
+        $supplier->cifnif = $formData['newsupplier_cifnif'] ?? '';
+        $supplier->email = $formData['newsupplier_email'] ?? '';
+        $supplier->nombre = $formData['newsupplier_nombre'] ?? '';
+        $supplier->telefono1 = $formData['newsupplier_telefono'] ?? '';
+
+        $this->db()->beginTransaction();
+        try {
+            if (false === $supplier->save()) {
+                $this->db()->rollback();
+                $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+                return false;
+            }
+
+            $address = $supplier->getDefaultAddress();
+            $address->cifnif = $supplier->cifnif;
+            $address->ciudad = $formData['newsupplier_ciudad'] ?? '';
+            $address->codpais = $countryCode;
+            $address->codpostal = $formData['newsupplier_codpostal'] ?? '';
+            $address->direccion = $formData['newsupplier_direccion'] ?? '';
+            $address->provincia = $formData['newsupplier_provincia'] ?? '';
+            if (false === $address->save()) {
+                $this->db()->rollback();
+                $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+                return false;
+            }
+
+            $this->db()->commit();
+        } catch (Throwable $e) {
+            $this->db()->rollback();
+            Tools::log()->error($e->getMessage());
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        $formData['action'] = 'set-supplier';
+        $formData['codproveedor'] = $supplier->codproveedor;
+
+        $model = $this->getModel();
+        $lines = $model->getLines();
+        PurchasesHeaderHTML::apply($model, $formData);
+        PurchasesFooterHTML::apply($model, $formData);
+        PurchasesLineHTML::apply($model, $lines, $formData);
+        Calculator::calculate($model, $lines, false);
+
+        $this->sendJsonWithLogs([
+            'supplierCreated' => true,
+            'footer' => PurchasesFooterHTML::render($model),
+            'header' => PurchasesHeaderHTML::render($model),
+            'lines' => PurchasesLineHTML::render($lines, $model),
+            'linesMap' => [],
+            'multireqtoken' => $this->multiRequestProtection->newToken(),
+            'products' => '',
+        ]);
+        return false;
     }
 
     protected function exportAction()
@@ -551,6 +651,19 @@ abstract class PurchasesController extends PanelController
         $this->db()->commit();
         $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
+    }
+
+    private function emptyPurchasesResponse(): array
+    {
+        return [
+            'supplierCreated' => false,
+            'footer' => '',
+            'header' => '',
+            'lines' => '',
+            'linesMap' => [],
+            'multireqtoken' => $this->multiRequestProtection->newToken(),
+            'products' => '',
+        ];
     }
 
     private function sendJsonWithLogs(array $data): void

@@ -70,6 +70,37 @@
         }
     }
 
+    function createSupplierFromPurchases() {
+        const modal = document.getElementById('newSupplierModal');
+        if (modal === null) {
+            return false;
+        }
+
+        for (const input of modal.querySelectorAll('input, select')) {
+            if (false === input.reportValidity()) {
+                return false;
+            }
+        }
+
+        return purchasesFormAction('create-supplier', '0');
+    }
+
+    function showSupplierModal() {
+        $('#newSupplierModal').one('hidden.bs.modal', function () {
+            $('#findSupplierModal').modal('show');
+            $('#findSupplierInput').focus();
+        }).modal('hide');
+        return false;
+    }
+
+    function showNewSupplierModal() {
+        $('#findSupplierModal').one('hidden.bs.modal', function () {
+            $('#newSupplierModal').modal('show');
+            $('#newSupplierName').focus();
+        }).modal('hide');
+        return false;
+    }
+
     function purchasesFormAction(action, selectedLine) {
         animateSpinner('add');
         $('#headerModal').modal('hide');
@@ -99,6 +130,15 @@
             }
             return Promise.reject(response);
         }).then(function (data) {
+            if (typeof data.multireqtoken === 'string') {
+                document.forms['purchasesForm']['multireqtoken'].value = data.multireqtoken;
+            }
+            if (data.supplierCreated === true) {
+                $('#newSupplierModal').modal('hide');
+                document.getElementById('newSupplierName').closest('.modal-body').querySelectorAll('input').forEach(function (input) {
+                    input.value = input.defaultValue;
+                });
+            }
             if (data.header !== '') {
                 document.getElementById("purchasesFormHeader").innerHTML = data.header;
             }
