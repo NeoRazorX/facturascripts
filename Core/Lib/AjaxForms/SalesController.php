@@ -310,7 +310,7 @@ abstract class SalesController extends PanelController
     {
         $this->setTemplate(false);
         $model = $this->getModel();
-        $formData = json_decode($this->request->input('data'), true);
+        $formData = json_decode($this->request->input('data'), true) ?? [];
         SalesHeaderHTML::apply($model, $formData);
         SalesFooterHTML::apply($model, $formData);
         SalesModalHTML::apply($model, $formData);
@@ -380,7 +380,7 @@ abstract class SalesController extends PanelController
         $this->setTemplate(false);
         $model = $this->getModel();
         $lines = $model->getLines();
-        $formData = json_decode($this->request->input('data'), true);
+        $formData = json_decode($this->request->input('data'), true) ?? [];
         SalesHeaderHTML::apply($model, $formData);
         SalesFooterHTML::apply($model, $formData);
         SalesLineHTML::apply($model, $lines, $formData);
@@ -409,7 +409,15 @@ abstract class SalesController extends PanelController
         }
 
         $model = $this->getModel();
+
+        // si los datos del formulario no llegan o no son JSON válido (petición truncada,
+        // límites post_max_size / max_input_vars), rechazamos en lugar de guardar en blanco
         $formData = json_decode($this->request->input('data'), true);
+        if (false === is_array($formData)) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
 
         // bloqueo optimista: si el estado del documento ha cambiado desde que se cargó el formulario,
         // rechazamos para no borrar líneas a partir de un formulario obsoleto (tarea 4673)
@@ -486,6 +494,11 @@ abstract class SalesController extends PanelController
         // cargamos el modelo actualizado y los datos del form
         $model = $this->getModel();
         $formData = json_decode($this->request->input('data'), true);
+        if (false === is_array($formData)) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
 
         // si la factura es de 0 €, la marcamos como pagada
         if (empty($model->total) && $model->hasColumn('pagada')) {
