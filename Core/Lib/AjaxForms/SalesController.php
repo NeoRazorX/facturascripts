@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
@@ -220,6 +222,9 @@ abstract class SalesController extends PanelController
             case 'delete-doc':
                 return $this->deleteDocAction();
 
+            case 'create-customer':
+                return $this->createCustomerAction();
+
             case 'delete-file':
                 return $this->deleteFileAction();
 
@@ -253,6 +258,123 @@ abstract class SalesController extends PanelController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function createCustomerAction(): bool
+    {
+        $this->setTemplate(false);
+
+        if (false === $this->canCreateCustomer()) {
+            Tools::log()->warning('not-allowed-modify');
+            $this->sendJsonWithLogs($this->emptySalesResponse());
+            return false;
+        }
+
+        if (false === $this->validateFormToken()) {
+            $this->sendJsonWithLogs($this->emptySalesResponse());
+            return false;
+        }
+
+        $formData = json_decode($this->request->input('data'), true);
+        if (false === is_array($formData)) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs($this->emptySalesResponse());
+            return false;
+        }
+
+        foreach (['newcustomer_nombre', 'newcustomer_direccion', 'newcustomer_ciudad', 'newcustomer_provincia'] as $field) {
+            if (false === is_string($formData[$field] ?? null) || trim($formData[$field]) === '') {
+                Tools::log()->warning('invalid-request');
+                $this->sendJsonWithLogs($this->emptySalesResponse());
+                return false;
+            }
+
+            $formData[$field] = trim($formData[$field]);
+        }
+
+        $countryCode = is_string($formData['newcustomer_codpais'] ?? null) ? $formData['newcustomer_codpais'] : '';
+        if (empty($countryCode) || false === Paises::get($countryCode)->exists()) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs($this->emptySalesResponse());
+            return false;
+        }
+
+        $customer = new Cliente();
+        $customer->cifnif = $formData['newcustomer_cifnif'] ?? '';
+        $customer->codagente = $this->user->codagente;
+        $customer->email = $formData['newcustomer_email'] ?? '';
+        $customer->nombre = $formData['newcustomer_nombre'] ?? '';
+        $customer->telefono1 = $formData['newcustomer_telefono'] ?? '';
+
+        $this->db()->beginTransaction();
+        try {
+            if (false === $customer->save()) {
+                $this->db()->rollback();
+                $this->sendJsonWithLogs($this->emptySalesResponse());
+                return false;
+            }
+
+            $address = $customer->getDefaultAddress();
+            $address->cifnif = $customer->cifnif;
+            $address->ciudad = $formData['newcustomer_ciudad'] ?? '';
+            $address->codpais = $countryCode;
+            $address->codpostal = $formData['newcustomer_codpostal'] ?? '';
+            $address->direccion = $formData['newcustomer_direccion'] ?? '';
+            $address->provincia = $formData['newcustomer_provincia'] ?? '';
+            if (false === $address->save()) {
+                $this->db()->rollback();
+                $this->sendJsonWithLogs($this->emptySalesResponse());
+                return false;
+            }
+
+            $this->db()->commit();
+        } catch (Throwable $e) {
+            $this->db()->rollback();
+            Tools::log()->error($e->getMessage());
+            $this->sendJsonWithLogs($this->emptySalesResponse());
+            return false;
+        }
+
+        Cache::deleteMulti('model-Cliente-sales-modal-');
+        $formData['action'] = 'set-customer';
+        $formData['codcliente'] = $customer->codcliente;
+
+        $model = $this->getModel();
+        $lines = $model->getLines();
+        SalesHeaderHTML::apply($model, $formData);
+        SalesFooterHTML::apply($model, $formData);
+        SalesLineHTML::apply($model, $lines, $formData);
+        Calculator::calculate($model, $lines, false);
+
+        $this->sendJsonWithLogs([
+            'customerCreated' => true,
+            'footer' => SalesFooterHTML::render($model),
+            'header' => SalesHeaderHTML::render($model),
+            'lines' => SalesLineHTML::render($lines, $model),
+            'linesMap' => [],
+            'multireqtoken' => $this->multiRequestProtection->newToken(),
+            'products' => '',
+        ]);
+        return false;
+    }
+
+    private function canCreateCustomer(): bool
+    {
+        if (false === $this->user->can('EditCliente', 'update')) {
+            return false;
+        }
+
+        if ($this->user->admin || false === empty($this->user->codagente)) {
+            return true;
+        }
+
+        foreach (RoleAccess::allFromUser($this->user->nick, 'EditCliente') as $access) {
+            if (false === $access->onlyownerdata) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function exportAction()
@@ -571,6 +693,19 @@ abstract class SalesController extends PanelController
         $this->db()->commit();
         $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
+    }
+
+    private function emptySalesResponse(): array
+    {
+        return [
+            'customerCreated' => false,
+            'footer' => '',
+            'header' => '',
+            'lines' => '',
+            'linesMap' => [],
+            'multireqtoken' => $this->multiRequestProtection->newToken(),
+            'products' => '',
+        ];
     }
 
     private function sendJsonWithLogs(array $data): void
