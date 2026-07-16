@@ -262,6 +262,18 @@ abstract class JoinModel
     }
 
     /**
+     * Comprueba si el modelo contiene la columna indicada.
+     *
+     * @param string $columnName
+     * @return bool
+     */
+    public function hasColumn(string $columnName): bool
+    {
+        $fields = $this->getModelFields();
+        return isset($fields[$columnName]);
+    }
+
+    /**
      * Carga un registro del modelo utilizando el código de la clave primaria del master model.
      *
      * @param mixed $code
