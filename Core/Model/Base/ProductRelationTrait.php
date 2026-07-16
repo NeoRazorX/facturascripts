@@ -26,7 +26,7 @@ use FacturaScripts\Dinamic\Model\Producto;
  */
 trait ProductRelationTrait
 {
-    /** @var int */
+    /** Identificador del producto asociado. @var int */
     public $idproducto;
 
     public function getProducto(): Producto

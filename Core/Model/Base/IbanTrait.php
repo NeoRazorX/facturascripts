@@ -24,10 +24,10 @@ use PHP_IBAN\IBAN;
 
 trait IbanTrait
 {
-    /** @var bool */
+    /** Indica si se debe omitir la validación del código IBAN. @var bool */
     private $disable_iban_test = false;
 
-    /** @var string */
+    /** Código IBAN de la cuenta bancaria. @var string */
     public $iban;
 
     /**

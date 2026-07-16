@@ -56,14 +56,14 @@ abstract class SalesDocument extends TransformerDocument
     public $ciudad;
 
     /**
-     * Agente que creó este documento. Modelo Agente.
+     * Código del agente comercial asociado al documento.
      *
      * @var string
      */
     public $codagente;
 
     /**
-     * Cliente de este documento.
+     * Código del cliente asociado al documento.
      *
      * @var string
      */
@@ -77,7 +77,7 @@ abstract class SalesDocument extends TransformerDocument
     public $codigoenv;
 
     /**
-     * País del cliente.
+     * Código del país del cliente.
      *
      * @var string
      */
@@ -91,7 +91,7 @@ abstract class SalesDocument extends TransformerDocument
     public $codpostal;
 
     /**
-     * Código de transporte del envío.
+     * Código de la agencia de transporte del envío.
      *
      * @var string
      */
@@ -105,14 +105,14 @@ abstract class SalesDocument extends TransformerDocument
     public $direccion;
 
     /**
-     * ID del contacto de envío.
+     * Identificador del contacto de envío.
      *
      * @var int
      */
     public $idcontactoenv;
 
     /**
-     * ID del contacto de facturación.
+     * Identificador del contacto de facturación.
      *
      * @var int
      */

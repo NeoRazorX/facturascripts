@@ -38,7 +38,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     use TaxRelationTrait;
 
     /**
-     * Estado de actualización de stock.
+     * Define cómo afecta la línea al stock del producto.
      *
      * @var int
      */
@@ -58,27 +58,27 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     public $descripcion;
 
-    /** @var bool */
+    /** Indica si se debe omitir la actualización automática del stock. @var bool */
     private $disable_update_stock = false;
 
-    /** @var array */
+    /** Campos que no se deben copiar al transformar la línea. @var array */
     protected static $dont_copy_fields = ['idlinea', 'orden', 'servido'];
 
     /**
-     * Porcentaje de descuento.
+     * Primer porcentaje de descuento de la línea.
      *
      * @var float|int
      */
     public $dtopor;
 
     /**
-     * Porcentaje de segundo descuento.
+     * Segundo porcentaje de descuento de la línea.
      *
      * @var float|int
      */
     public $dtopor2;
 
-    /** @var string */
+    /** Código de la excepción de IVA aplicable a la línea. @var string */
     public $excepcioniva;
 
     /**
@@ -88,7 +88,7 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     public $idlinea;
 
-    /** @var int */
+    /** Identificador del producto asociado a la línea. @var int */
     public $idproducto;
 
     /**
@@ -148,13 +148,13 @@ abstract class BusinessDocumentLine extends NewModelClass
     public $referencia;
 
     /**
-     * Servido.
+     * Cantidad de la línea que ya se ha servido o transformado.
      *
      * @var float|int
      */
     public $servido;
 
-    /** @var bool */
+    /** Indica si la línea corresponde a un suplido. @var bool */
     public $suplido;
 
     /**

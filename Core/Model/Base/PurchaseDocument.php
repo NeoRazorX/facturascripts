@@ -50,7 +50,7 @@ abstract class PurchaseDocument extends TransformerDocument
     public $ciudad;
 
     /**
-     * País del proveedor.
+     * Código del país del proveedor.
      *
      * @var string
      */

@@ -23,7 +23,7 @@ use FacturaScripts\Dinamic\Model\Asiento;
 
 trait AccEntryRelationTrait
 {
-    /** @var int */
+    /** Identificador del asiento contable asociado. @var int */
     public $idasiento;
 
     public function getAccountingEntry(): Asiento
