@@ -141,7 +141,7 @@ class Producto extends ModelClass
         $this->secompra = true;
         $this->sevende = true;
         $this->stockfis = 0.0;
-        $this->ventasinstock = (bool)Tools::settings('default', 'ventasinstock', false);
+        $this->ventasinstock = (bool)Tools::settings('default', 'ventasinstock', true);
     }
 
     public function delete(): bool

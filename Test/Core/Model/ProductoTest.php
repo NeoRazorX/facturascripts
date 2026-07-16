@@ -67,6 +67,23 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
+    public function testAllowSaleWithoutStockDefault(): void
+    {
+        $originalValue = Tools::settings('default', 'ventasinstock');
+
+        try {
+            // sin configuración explícita, se debe permitir la venta sin stock
+            Tools::settingsSet('default', 'ventasinstock', null);
+            $this->assertTrue((new Producto())->ventasinstock, 'sale-without-stock-not-enabled-by-default');
+
+            // una configuración explícita debe prevalecer sobre el valor por defecto
+            Tools::settingsSet('default', 'ventasinstock', false);
+            $this->assertFalse((new Producto())->ventasinstock, 'sale-without-stock-setting-not-respected');
+        } finally {
+            Tools::settingsSet('default', 'ventasinstock', $originalValue);
+        }
+    }
+
     public function testJoinModelAllWhereEq(): void
     {
         // creamos un producto
