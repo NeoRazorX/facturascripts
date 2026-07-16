@@ -396,6 +396,8 @@
     "countries": "Countries",
     "country": "Country",
     "country-not-in-eu": "%codiso% does not belong to any country in the European Union",
+    "crash-files-found": "Archivos de error fatal encontrados",
+    "crash-files-p": "Se han encontrado archivos de error fatal en la instalación. Puedes borrarlos o enviárnoslos para ayudarnos a solucionar estos errores.",
     "create": "Create",
     "create-accounting-entry": "Create Accounting Entry",
     "create-delivery-note": "Create delivery note",

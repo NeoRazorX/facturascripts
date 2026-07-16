@@ -396,6 +396,8 @@
     "countries": "Länder",
     "country": "Land",
     "country-not-in-eu": "Das Land mit dem Code %codiso% gehört nicht zur Europäischen Union",
+    "crash-files-found": "Archivos de error fatal encontrados",
+    "crash-files-p": "Se han encontrado archivos de error fatal en la instalación. Puedes borrarlos o enviárnoslos para ayudarnos a solucionar estos errores.",
     "create": "erstellen",
     "create-accounting-entry": "Buchung erstellen",
     "create-delivery-note": "Lieferschein erstellen",

@@ -396,6 +396,8 @@
     "countries": "Países",
     "country": "País",
     "country-not-in-eu": "El %codiso% no pertenece a ningún país de la unión Europea",
+    "crash-files-found": "Archivos de error fatal encontrados",
+    "crash-files-p": "Se han encontrado archivos de error fatal en la instalación. Puedes borrarlos o enviárnoslos para ayudarnos a solucionar estos errores.",
     "create": "Crear",
     "create-accounting-entry": "Crear Asiento Contable",
     "create-delivery-note": "Crear albarán",

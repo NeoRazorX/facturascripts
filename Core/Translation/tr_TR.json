@@ -396,6 +396,8 @@
     "countries": "Ülkeler",
     "country": "Ülke",
     "country-not-in-eu": "%codiso% Avrupa Birliği'ne ait bir ülke değildir.",
+    "crash-files-found": "Archivos de error fatal encontrados",
+    "crash-files-p": "Se han encontrado archivos de error fatal en la instalación. Puedes borrarlos o enviárnoslos para ayudarnos a solucionar estos errores.",
     "create": "Oluştur",
     "create-accounting-entry": "Muhasebe kaydı oluştur",
     "create-delivery-note": "Teslimat belgesi oluştur",
