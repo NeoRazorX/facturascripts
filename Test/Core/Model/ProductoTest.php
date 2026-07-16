@@ -62,9 +62,11 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->save(), 'product-cant-save');
         $this->assertNotNull($product->id(), 'estado-product-not-stored');
         $this->assertTrue($product->exists(), 'product-cant-persist');
+        $this->assertSame(1, Producto::countWhereEq('referencia', self::TEST_REFERENCE));
 
         // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertSame(0, Producto::countWhereEq('referencia', self::TEST_REFERENCE));
     }
 
     public function testAllowSaleWithoutStockDefault(): void
@@ -93,6 +95,7 @@ final class ProductoTest extends TestCase
         // buscamos su variante con el JoinModel VarianteProducto
         $found = VarianteProducto::allWhereEq('variantes.referencia', self::TEST_REFERENCE);
         $this->assertCount(1, $found, 'join-allwhereeq-wrong-count');
+        $this->assertSame(1, VarianteProducto::countWhereEq('variantes.referencia', self::TEST_REFERENCE));
         $this->assertEquals(self::TEST_REFERENCE, $found[0]->referencia, 'join-allwhereeq-wrong-referencia');
         $this->assertEquals($product->idproducto, $found[0]->idproducto, 'join-allwhereeq-wrong-idproducto');
 

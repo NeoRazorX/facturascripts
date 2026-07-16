@@ -191,6 +191,17 @@ abstract class JoinModel
         return $final;
     }
 
+    /**
+     * Devuelve el número de registros donde el campo es igual al valor.
+     *
+     * @param string $field
+     * @param mixed $value
+     */
+    public static function countWhereEq(string $field, $value): int
+    {
+        return static::count([Where::eq($field, $value)]);
+    }
+
     /** Elimina los datos del modelo master de la base de datos. */
     public function delete(): bool
     {

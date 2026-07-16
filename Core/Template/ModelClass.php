@@ -73,6 +73,9 @@ abstract class ModelClass
     /** Cuenta los registros que cumplen las condiciones especificadas. */
     abstract public static function count(array $where = []): int;
 
+    /** Cuenta los registros cuyo campo coincide con el valor indicado. */
+    abstract public static function countWhereEq(string $field, $value): int;
+
     /** Crea y guarda un nuevo registro con los datos proporcionados. */
     abstract public static function create(array $data): ?static;
 

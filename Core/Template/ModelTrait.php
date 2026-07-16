@@ -97,6 +97,19 @@ trait ModelTrait
             ->count();
     }
 
+    /**
+     * Cuenta los registros donde el campo es igual al valor.
+     *
+     * @param string $field
+     * @param mixed $value
+     */
+    public static function countWhereEq(string $field, $value): int
+    {
+        return self::table()
+            ->whereEq($field, $value)
+            ->count();
+    }
+
     public static function create(array $data): ?static
     {
         $model = new static($data);
