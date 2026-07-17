@@ -556,7 +556,10 @@ class CronJob extends ModelClass
     public function test(): bool
     {
         $this->jobname = Tools::noHtml($this->jobname);
-        $this->pluginname = Tools::noHtml($this->pluginname);
+
+        // normalizamos el nombre del plugin a null si está vacío, ya que el cron
+        // busca los jobs del core con pluginname IS NULL
+        $this->pluginname = empty($this->pluginname) ? null : Tools::noHtml($this->pluginname);
 
         if (empty($this->date)) {
             $this->date = $this->getCurrentDateTime();

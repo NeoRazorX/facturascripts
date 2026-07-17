@@ -130,9 +130,14 @@ END;
         $job = new CronJob();
         $where = [
             Where::eq('jobname', $name),
-            Where::isNull('pluginname')
+            // algunas filas antiguas tienen cadena vacía en lugar de null
+            Where::sub([
+                Where::isNull('pluginname'),
+                Where::orEq('pluginname', '')
+            ])
         ];
-        if (false === $job->loadWhere($where)) {
+        // en caso de duplicados, cargamos la fila más antigua
+        if (false === $job->loadWhere($where, ['id' => 'ASC'])) {
             // no se había ejecutado nunca, lo creamos
             $job->jobname = $name;
         }
