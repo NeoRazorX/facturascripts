@@ -120,16 +120,18 @@ class Updater extends Controller
 
         $this->telemetryManager = new Telemetry();
 
-        // Folders writable?
-        $folders = $this->notWritableFolders();
-        if ($folders) {
-            Tools::log()->warning('folders-not-writable', [
-                '%folders%' => implode(', ', $folders)
-            ]);
-            return;
+        // en las acciones que escriben en disco, comprobamos que las carpetas sean escribibles
+        $action = $this->request->get('action', '');
+        if (in_array($action, ['cancel', 'download', 'post-update', 'update'])) {
+            $folders = $this->notWritableFolders();
+            if ($folders) {
+                Tools::log()->warning('folders-not-writable', [
+                    '%folders%' => implode(', ', $folders)
+                ]);
+                return;
+            }
         }
 
-        $action = $this->request->get('action', '');
         $this->execAction($action);
     }
 
