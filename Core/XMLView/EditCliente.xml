@@ -84,7 +84,7 @@
         <group name="comercial" title="commercial-terms" numcolumns="12">
             <column name="agent" titleurl="ListAgente" numcolumns="2" order="100">
                 <widget type="select" fieldname="codagente" onclick="EditAgente" icon="fa-solid fa-user-tie">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"/>
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre" fieldfilter="debaja:0"/>
                 </widget>
             </column>
             <column name="rate" titleurl="ListTarifa" numcolumns="2" order="110">
@@ -104,7 +104,7 @@
             </column>
             <column name="payment-method" titleurl="ListFormaPago" numcolumns="2" order="140">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"
+                    <values source="formaspago" fieldcode="codpago" fieldfilter="activa:1" fieldtitle="descripcion"
                             group_source="empresas" group_fieldcode="idempresa" group_title="nombrecorto"/>
                 </widget>
             </column>
