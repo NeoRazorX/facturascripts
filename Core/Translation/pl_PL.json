@@ -1567,6 +1567,7 @@
     "register-installation-p": "Zarejestruj swoją instalację, aby móc aktualizować płatne lub prywatne wtyczki.",
     "register-symbol": "#",
     "registered-installation": "Zarejestrowana instalacja #%number%",
+    "registered-installation-claim-p": "Instalación registrada correctamente. Para terminar, pulsa el botón finalizar para vincularla con tu cuenta de facturascripts.com.",
     "registered-installation-p": "Ta instalacja została już zarejestrowana. Jeśli masz płatne wtyczki, naciśnij przycisk zarządzania, aby je powiązać i móc zaktualizować.",
     "regularization-operation": "Regulacja",
     "reject": "Odrzuć",

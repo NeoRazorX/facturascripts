@@ -1567,6 +1567,7 @@
     "register-installation-p": "Registre su instalación para poder actualizar plugins de pago o privados.",
     "register-symbol": "#",
     "registered-installation": "Instalación registrada #%number%",
+    "registered-installation-claim-p": "Instalación registrada correctamente. Para terminar, pulsa el botón finalizar para vincularla con tu cuenta de facturascripts.com.",
     "registered-installation-p": "Esta instalación ya ha sido registrada. Si tienes plugins de pago, pulsa el botón administrar para vincularlos y poder actualizar.",
     "regularization-operation": "Regularización",
     "reject": "Rechazar",

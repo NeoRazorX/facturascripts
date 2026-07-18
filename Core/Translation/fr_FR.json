@@ -1567,6 +1567,7 @@
     "register-installation-p": "Enregistrez votre installation pour pouvoir mettre à jour les modules externes payants ou privés.",
     "register-symbol": "#",
     "registered-installation": "Installation enregistrée avec le numéro #%number%",
+    "registered-installation-claim-p": "Instalación registrada correctamente. Para terminar, pulsa el botón finalizar para vincularla con tu cuenta de facturascripts.com.",
     "registered-installation-p": "Cette installation a déjà été enregistrée. Si vous possédez des modules payants, cliquez sur le bouton 'Gérer' pour les lier et débloquer la fonction de mise à jour.",
     "regularization-operation": "Regularización",
     "reject": "Rechazar",

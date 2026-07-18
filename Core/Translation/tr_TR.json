@@ -1567,6 +1567,7 @@
     "register-installation-p": "Ücretli veya özel eklentileri güncellemek için kurulumunuzu kaydedin.",
     "register-symbol": "#",
     "registered-installation": "Kayıtlı kurulum #%number%",
+    "registered-installation-claim-p": "Instalación registrada correctamente. Para terminar, pulsa el botón finalizar para vincularla con tu cuenta de facturascripts.com.",
     "registered-installation-p": "Bu kurulum zaten kaydedildi. Eğer ücretli eklentilerin varsa, bağlantı kurmak ve güncelleyebilmek için yönet düğmesine bas.",
     "regularization-operation": "Düzenleme",
     "reject": "Reddet",
