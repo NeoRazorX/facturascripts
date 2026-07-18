@@ -42,40 +42,40 @@ class RegularizacionImpuesto extends ModelClass
     use AccEntryRelationTrait;
     use ExerciseRelationTrait;
 
-    /** Indica si se deben bloquear los asientos comprendidos en el periodo. @var bool */
+    /** @var bool Indica si se deben bloquear los asientos comprendidos en el periodo. */
     public $bloquear;
 
-    /** Código de la subcuenta acreedora de la regularización. @var string */
+    /** @var string Código de la subcuenta acreedora de la regularización. */
     public $codsubcuentaacr;
 
-    /** Código de la subcuenta deudora de la regularización. @var string */
+    /** @var string Código de la subcuenta deudora de la regularización. */
     public $codsubcuentadeu;
 
-    /** Indica si se omiten las comprobaciones adicionales del modelo. @var bool */
+    /** @var bool Indica si se omiten las comprobaciones adicionales del modelo. */
     private $disable_additional_test = false;
 
-    /** Fecha del asiento contable de regularización. @var string */
+    /** @var string Fecha del asiento contable de regularización. */
     public $fechaasiento;
 
-    /** Fecha final del periodo regularizado. @var string */
+    /** @var string Fecha final del periodo regularizado. */
     public $fechafin;
 
-    /** Fecha inicial del periodo regularizado. @var string */
+    /** @var string Fecha inicial del periodo regularizado. */
     public $fechainicio;
 
-    /** Identificador de la empresa asociada. @var int */
+    /** @var int Identificador de la empresa asociada. */
     public $idempresa;
 
-    /** Identificador único de la regularización de impuestos. @var int */
+    /** @var int Identificador único de la regularización de impuestos. */
     public $idregiva;
 
-    /** Identificador de la subcuenta acreedora. @var int */
+    /** @var int Identificador de la subcuenta acreedora. */
     public $idsubcuentaacr;
 
-    /** Identificador de la subcuenta deudora. @var int */
+    /** @var int Identificador de la subcuenta deudora. */
     public $idsubcuentadeu;
 
-    /** Nombre o código del periodo regularizado. @var string */
+    /** @var string Nombre o código del periodo regularizado. */
     public $periodo;
 
     public function clear(): void

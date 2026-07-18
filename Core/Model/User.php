@@ -49,64 +49,64 @@ class User extends ModelClass
     const DEFAULT_LEVEL = 2;
     const UPDATE_ACTIVITY_PERIOD = 3600;
 
-    /** Indica si el usuario tiene permisos de administrador. @var bool */
+    /** @var bool Indica si el usuario tiene permisos de administrador. */
     public $admin;
 
-    /** Código del agente comercial asociado al usuario. @var string */
+    /** @var string Código del agente comercial asociado al usuario. */
     public $codagente;
 
-    /** Código del almacén predeterminado del usuario. @var string|null */
+    /** @var string|null Código del almacén predeterminado del usuario. */
     public $codalmacen;
 
-    /** Código de la serie predeterminada del usuario. @var string */
+    /** @var string Código de la serie predeterminada del usuario. */
     public $codserie;
 
-    /** Fecha de creación de la cuenta de usuario. @var string */
+    /** @var string Fecha de creación de la cuenta de usuario. */
     public $creationdate;
 
-    /** Dirección de correo electrónico del usuario. @var string */
+    /** @var string Dirección de correo electrónico del usuario. */
     public $email;
 
-    /** Indica si la cuenta de usuario está activa. @var bool */
+    /** @var bool Indica si la cuenta de usuario está activa. */
     public $enabled;
 
-    /** Página de inicio predeterminada del usuario. @var string */
+    /** @var string Página de inicio predeterminada del usuario. */
     public $homepage;
 
-    /** Código del idioma seleccionado por el usuario. @var string */
+    /** @var string Código del idioma seleccionado por el usuario. */
     public $langcode;
 
-    /** Fecha y hora de la última actividad del usuario. @var string */
+    /** @var string Fecha y hora de la última actividad del usuario. */
     public $lastactivity;
 
-    /** Navegador utilizado en la última actividad del usuario. @var string */
+    /** @var string Navegador utilizado en la última actividad del usuario. */
     public $lastbrowser;
 
-    /** Dirección IP de la última actividad del usuario. @var string */
+    /** @var string Dirección IP de la última actividad del usuario. */
     public $lastip;
 
-    /** Nivel de permisos del usuario. @var integer */
+    /** @var integer Nivel de permisos del usuario. */
     public $level;
 
-    /** Clave para mantener la sesión iniciada. @var string */
+    /** @var string Clave para mantener la sesión iniciada. */
     public $logkey;
 
-    /** Nombre de usuario utilizado para iniciar sesión. @var string */
+    /** @var string Nombre de usuario utilizado para iniciar sesión. */
     public $nick;
 
-    /** Nueva contraseña introducida por el usuario. @var string */
+    /** @var string Nueva contraseña introducida por el usuario. */
     public $newPassword;
 
-    /** Confirmación de la nueva contraseña. @var string */
+    /** @var string Confirmación de la nueva contraseña. */
     public $newPassword2;
 
-    /** Contraseña cifrada del usuario. @var string */
+    /** @var string Contraseña cifrada del usuario. */
     public $password;
 
-    /** Indica si el usuario tiene activada la autenticación en dos pasos. @var bool */
+    /** @var bool Indica si el usuario tiene activada la autenticación en dos pasos. */
     public $two_factor_enabled;
 
-    /** Clave secreta para la autenticación en dos pasos. @var string */
+    /** @var string Clave secreta para la autenticación en dos pasos. */
     public $two_factor_secret_key;
 
     public function addRole(?string $code): bool

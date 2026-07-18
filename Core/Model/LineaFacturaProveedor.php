@@ -34,13 +34,13 @@ class LineaFacturaProveedor extends BusinessDocumentLine
     use ModelTrait;
     use InvoiceLineTrait;
 
-    /** Resultado en caché de la comprobación de cantidades rectificadas. @var bool */
+    /** @var bool Resultado en caché de la comprobación de cantidades rectificadas. */
     private $has_refunded_quantity = null;
 
-    /** Identificador de la factura de proveedor a la que pertenece la línea. @var int */
+    /** @var int Identificador de la factura de proveedor a la que pertenece la línea. */
     public $idfactura;
 
-    /** Identificador de la línea original que se está rectificando. @var int */
+    /** @var int Identificador de la línea original que se está rectificando. */
     public $idlinearect;
 
     public function documentColumn(): string

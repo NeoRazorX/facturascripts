@@ -52,67 +52,67 @@ class Proveedor extends ModelClass
     const SPECIAL_ACCOUNT = 'PROVEE';
     const SPECIAL_CREDITOR_ACCOUNT = 'ACREED';
 
-    /** Indica si el proveedor actúa como acreedor. @var bool */
+    /** @var bool Indica si el proveedor actúa como acreedor. */
     public $acreedor;
 
-    /** Código del cliente vinculado al proveedor. @var string */
+    /** @var string Código del cliente vinculado al proveedor. */
     public $codcliente;
 
-    /** Código de la forma de pago habitual del proveedor. @var string */
+    /** @var string Código de la forma de pago habitual del proveedor. */
     public $codpago;
 
-    /** Código identificativo del proveedor. @var string */
+    /** @var string Código identificativo del proveedor. */
     public $codproveedor;
 
-    /** Código de la retención aplicable al proveedor. @var string */
+    /** @var string Código de la retención aplicable al proveedor. */
     public $codretencion;
 
-    /** Código de la serie predeterminada para el proveedor. @var string */
+    /** @var string Código de la serie predeterminada para el proveedor. */
     public $codserie;
 
-    /** Código de la subcuenta contable del proveedor. @var string */
+    /** @var string Código de la subcuenta contable del proveedor. */
     public $codsubcuenta;
 
-    /** Indica si el proveedor está dado de baja. @var bool */
+    /** @var bool Indica si el proveedor está dado de baja. */
     public $debaja;
 
-    /** Código de la excepción de IVA aplicable al proveedor. @var string */
+    /** @var string Código de la excepción de IVA aplicable al proveedor. */
     public $excepcioniva;
 
-    /** Número de fax del proveedor. @var string */
+    /** @var string Número de fax del proveedor. */
     public $fax;
 
-    /** Fecha de alta del proveedor. @var string */
+    /** @var string Fecha de alta del proveedor. */
     public $fechaalta;
 
-    /** Fecha de baja del proveedor. @var string */
+    /** @var string Fecha de baja del proveedor. */
     public $fechabaja;
 
-    /** Identificador del contacto predeterminado del proveedor. @var int */
+    /** @var int Identificador del contacto predeterminado del proveedor. */
     public $idcontacto;
 
-    /** Código del idioma preferido del proveedor. @var string */
+    /** @var string Código del idioma preferido del proveedor. */
     public $langcode;
 
-    /** Nombre comercial o nombre completo del proveedor. @var string */
+    /** @var string Nombre comercial o nombre completo del proveedor. */
     public $nombre;
 
-    /** Clave de operación de IVA aplicable al proveedor. @var string */
+    /** @var string Clave de operación de IVA aplicable al proveedor. */
     public $operacion;
 
-    /** Observaciones internas sobre el proveedor. @var string */
+    /** @var string Observaciones internas sobre el proveedor. */
     public $observaciones;
 
-    /** Indica si el proveedor es una persona física. @var bool */
+    /** @var bool Indica si el proveedor es una persona física. */
     public $personafisica;
 
-    /** Razón social del proveedor. @var string */
+    /** @var string Razón social del proveedor. */
     public $razonsocial;
 
-    /** Régimen de IVA aplicable al proveedor. @var string */
+    /** @var string Régimen de IVA aplicable al proveedor. */
     public $regimeniva;
 
-    /** Sitio web del proveedor. @var string */
+    /** @var string Sitio web del proveedor. */
     public $web;
 
     public function checkVies(bool $msg = true): bool

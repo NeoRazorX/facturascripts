@@ -42,55 +42,55 @@ class ReciboProveedor extends ModelClass
     use CompanyRelationTrait;
     use PaymentRelationTrait;
 
-    /** Código de la divisa del recibo. @var string */
+    /** @var string Código de la divisa del recibo. */
     public $coddivisa;
 
-    /** Código visible de la factura asociada. @var string */
+    /** @var string Código visible de la factura asociada. */
     public $codigofactura;
 
-    /** Código del proveedor asociado al recibo. @var string */
+    /** @var string Código del proveedor asociado al recibo. */
     public $codproveedor;
 
-    /** Indica si se debe omitir la actualización automática de la factura. @var bool */
+    /** @var bool Indica si se debe omitir la actualización automática de la factura. */
     protected $disable_invoice_update = false;
 
-    /** Indica si se debe omitir la generación automática del pago. @var bool */
+    /** @var bool Indica si se debe omitir la generación automática del pago. */
     protected $disable_payment_generation = false;
 
-    /** Fecha de emisión del recibo. @var string */
+    /** @var string Fecha de emisión del recibo. */
     public $fecha;
 
-    /** Fecha en la que se completó el pago del recibo. @var string */
+    /** @var string Fecha en la que se completó el pago del recibo. */
     public $fechapago;
 
-    /** Identificador de la factura de proveedor asociada. @var int */
+    /** @var int Identificador de la factura de proveedor asociada. */
     public $idfactura;
 
-    /** Identificador único del recibo de proveedor. @var int */
+    /** @var int Identificador único del recibo de proveedor. */
     public $idrecibo;
 
-    /** Importe total del recibo. @var float */
+    /** @var float Importe total del recibo. */
     public $importe;
 
-    /** Importe del recibo que ya ha sido pagado. @var float */
+    /** @var float Importe del recibo que ya ha sido pagado. */
     public $liquidado;
 
-    /** Nombre del usuario que creó el recibo. @var string */
+    /** @var string Nombre del usuario que creó el recibo. */
     public $nick;
 
-    /** Número de vencimiento del recibo dentro de la factura. @var int */
+    /** @var int Número de vencimiento del recibo dentro de la factura. */
     public $numero;
 
-    /** Observaciones internas sobre el recibo. @var string */
+    /** @var string Observaciones internas sobre el recibo. */
     public $observaciones;
 
-    /** Indica si el recibo está completamente pagado. @var bool */
+    /** @var bool Indica si el recibo está completamente pagado. */
     public $pagado;
 
-    /** Indica si el recibo está vencido y pendiente de pago. @var bool */
+    /** @var bool Indica si el recibo está vencido y pendiente de pago. */
     public $vencido;
 
-    /** Fecha de vencimiento del recibo. @var string */
+    /** @var string Fecha de vencimiento del recibo. */
     public $vencimiento;
 
     public function clear(): void

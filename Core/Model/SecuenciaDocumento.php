@@ -33,37 +33,37 @@ class SecuenciaDocumento extends ModelClass
 {
     use ModelTrait;
 
-    /** Código del ejercicio al que pertenece la secuencia. @var string */
+    /** @var string Código del ejercicio al que pertenece la secuencia. */
     public $codejercicio;
 
-    /** Código de la serie a la que pertenece la secuencia. @var string */
+    /** @var string Código de la serie a la que pertenece la secuencia. */
     public $codserie;
 
-    /** Identificador de la empresa asociada. @var int */
+    /** @var int Identificador de la empresa asociada. */
     public $idempresa;
 
-    /** Identificador único de la secuencia documental. @var int */
+    /** @var int Identificador único de la secuencia documental. */
     public $idsecuencia;
 
-    /** Primer número permitido para la secuencia. @var int */
+    /** @var int Primer número permitido para la secuencia. */
     public $inicio;
 
-    /** Longitud utilizada al rellenar con ceros el número. @var int */
+    /** @var int Longitud utilizada al rellenar con ceros el número. */
     public $longnumero;
 
-    /** Siguiente número disponible de la secuencia. @var int */
+    /** @var int Siguiente número disponible de la secuencia. */
     public $numero;
 
-    /** Patrón utilizado para generar el código del documento. @var string */
+    /** @var string Patrón utilizado para generar el código del documento. */
     public $patron;
 
-    /** Indica si debe validarse la composición del patrón. @var bool */
+    /** @var bool Indica si debe validarse la composición del patrón. */
     private static $pattern_test = false;
 
-    /** Tipo de documento al que se aplica la secuencia. @var string */
+    /** @var string Tipo de documento al que se aplica la secuencia. */
     public $tipodoc;
 
-    /** Indica si se pueden reutilizar huecos existentes en la numeración. @var bool */
+    /** @var bool Indica si se pueden reutilizar huecos existentes en la numeración. */
     public $usarhuecos;
 
     public function clear(): void

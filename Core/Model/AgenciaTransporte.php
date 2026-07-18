@@ -35,19 +35,19 @@ class AgenciaTransporte extends ModelClass
 {
     use ModelTrait;
 
-    /** Indica si la agencia de transporte está activa. @var bool */
+    /** @var bool Indica si la agencia de transporte está activa. */
     public $activo;
 
-    /** Código identificativo de la agencia de transporte. @var string */
+    /** @var string Código identificativo de la agencia de transporte. */
     public $codtrans;
 
-    /** Nombre de la agencia de transporte. @var string */
+    /** @var string Nombre de la agencia de transporte. */
     public $nombre;
 
-    /** Número de teléfono de la agencia de transporte. @var string */
+    /** @var string Número de teléfono de la agencia de transporte. */
     public $telefono;
 
-    /** Dirección web de la agencia de transporte. @var string */
+    /** @var string Dirección web de la agencia de transporte. */
     public $web;
 
     public function clearCache(): void

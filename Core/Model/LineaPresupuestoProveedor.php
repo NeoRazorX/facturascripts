@@ -33,7 +33,7 @@ class LineaPresupuestoProveedor extends BusinessDocumentLine
 {
     use ModelTrait;
 
-    /** Identificador del presupuesto de proveedor al que pertenece la línea. @var int */
+    /** @var int Identificador del presupuesto de proveedor al que pertenece la línea. */
     public $idpresupuesto;
 
     public function documentColumn(): string

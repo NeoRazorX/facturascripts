@@ -46,55 +46,55 @@ class Empresa extends ModelClass
     use FiscalNumberTrait;
     use GravatarTrait;
 
-    /** Nombre del administrador o representante de la empresa. @var string */
+    /** @var string Nombre del administrador o representante de la empresa. */
     public $administrador;
 
-    /** Apartado de correos de la empresa. @var string */
+    /** @var string Apartado de correos de la empresa. */
     public $apartado;
 
-    /** Ciudad donde se encuentra la empresa. @var string */
+    /** @var string Ciudad donde se encuentra la empresa. */
     public $ciudad;
 
-    /** Código del país donde se encuentra la empresa. @var string */
+    /** @var string Código del país donde se encuentra la empresa. */
     public $codpais;
 
-    /** Código postal de la empresa. @var string */
+    /** @var string Código postal de la empresa. */
     public $codpostal;
 
-    /** Dirección postal de la empresa. @var string */
+    /** @var string Dirección postal de la empresa. */
     public $direccion;
 
-    /** Número de fax de la empresa. @var string */
+    /** @var string Número de fax de la empresa. */
     public $fax;
 
-    /** Fecha de alta de la empresa. @var string */
+    /** @var string Fecha de alta de la empresa. */
     public $fechaalta;
 
-    /** Identificador único de la empresa. @var int */
+    /** @var int Identificador único de la empresa. */
     public $idempresa;
 
-    /** Identificador del archivo utilizado como logotipo. @var int */
+    /** @var int Identificador del archivo utilizado como logotipo. */
     public $idlogo;
 
-    /** Nombre o razón social de la empresa. @var string */
+    /** @var string Nombre o razón social de la empresa. */
     public $nombre;
 
-    /** Nombre abreviado de la empresa. @var string */
+    /** @var string Nombre abreviado de la empresa. */
     public $nombrecorto;
 
-    /** Observaciones internas sobre la empresa. @var string */
+    /** @var string Observaciones internas sobre la empresa. */
     public $observaciones;
 
-    /** Indica si la empresa corresponde a una persona física. @var bool */
+    /** @var bool Indica si la empresa corresponde a una persona física. */
     public $personafisica;
 
-    /** Provincia donde se encuentra la empresa. @var string */
+    /** @var string Provincia donde se encuentra la empresa. */
     public $provincia;
 
-    /** Régimen de IVA aplicado por la empresa. @var string */
+    /** @var string Régimen de IVA aplicado por la empresa. */
     public $regimeniva;
 
-    /** Sitio web de la empresa. @var string */
+    /** @var string Sitio web de la empresa. */
     public $web;
 
     public function checkVies(bool $msg = true): bool

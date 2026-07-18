@@ -37,16 +37,16 @@ class GrupoClientes extends ModelClass
 {
     use ModelTrait;
 
-    /** Código identificativo del grupo de clientes. @var string */
+    /** @var string Código identificativo del grupo de clientes. */
     public $codgrupo;
 
-    /** Código de la subcuenta contable asociada al grupo. @var string */
+    /** @var string Código de la subcuenta contable asociada al grupo. */
     public $codsubcuenta;
 
-    /** Código de la tarifa de precios aplicada al grupo. @var string */
+    /** @var string Código de la tarifa de precios aplicada al grupo. */
     public $codtarifa;
 
-    /** Nombre del grupo de clientes. @var string */
+    /** @var string Nombre del grupo de clientes. */
     public $nombre;
 
     public function clearCache(): void

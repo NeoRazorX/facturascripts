@@ -32,13 +32,13 @@ class IdentificadorFiscal extends ModelClass
 {
     use ModelTrait;
 
-    /** Código oficial asociado al tipo de identificación fiscal. @var string */
+    /** @var string Código oficial asociado al tipo de identificación fiscal. */
     public $codeid;
 
-    /** Nombre o código del tipo de identificación fiscal. @var string */
+    /** @var string Nombre o código del tipo de identificación fiscal. */
     public $tipoidfiscal;
 
-    /** Indica si se debe validar el formato del identificador fiscal. @var bool */
+    /** @var bool Indica si se debe validar el formato del identificador fiscal. */
     public $validar;
 
     public function clear(): void

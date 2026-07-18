@@ -24,7 +24,7 @@ use FacturaScripts\Dinamic\Model\Empresa;
 
 trait CompanyRelationTrait
 {
-    /** Identificador de la empresa asociada. @var int|null */
+    /** @var int|null Identificador de la empresa asociada. */
     public $idempresa;
 
     public function getCompany(): Empresa

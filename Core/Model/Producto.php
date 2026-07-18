@@ -39,67 +39,67 @@ class Producto extends ModelClass
 
     const ROUND_DECIMALS = 5;
 
-    /** Fecha y hora de la última actualización del producto. @var string */
+    /** @var string Fecha y hora de la última actualización del producto. */
     public $actualizado;
 
-    /** Indica si el producto está bloqueado u obsoleto. @var bool */
+    /** @var bool Indica si el producto está bloqueado u obsoleto. */
     public $bloqueado;
 
-    /** Código del fabricante del producto. @var string */
+    /** @var string Código del fabricante del producto. */
     public $codfabricante;
 
-    /** Código de la familia a la que pertenece el producto. @var string */
+    /** @var string Código de la familia a la que pertenece el producto. */
     public $codfamilia;
 
-    /** Código de la subcuenta contable utilizada para compras. @var string */
+    /** @var string Código de la subcuenta contable utilizada para compras. */
     public $codsubcuentacom;
 
-    /** Código de la subcuenta de compras utilizada cuando se aplica IRPF. @var string */
+    /** @var string Código de la subcuenta de compras utilizada cuando se aplica IRPF. */
     public $codsubcuentairpfcom;
 
-    /** Código de la subcuenta contable utilizada para ventas. @var string */
+    /** @var string Código de la subcuenta contable utilizada para ventas. */
     public $codsubcuentaven;
 
-    /** Descripción del producto. @var string */
+    /** @var string Descripción del producto. */
     public $descripcion;
 
-    /** Código de la excepción de IVA aplicable al producto. @var string */
+    /** @var string Código de la excepción de IVA aplicable al producto. */
     public $excepcioniva;
 
-    /** Fecha de alta del producto. @var string */
+    /** @var string Fecha de alta del producto. */
     public $fechaalta;
 
-    /** Identificador único del producto. @var int */
+    /** @var int Identificador único del producto. */
     public $idproducto;
 
-    /** Indica si el producto no requiere control de stock. @var bool */
+    /** @var bool Indica si el producto no requiere control de stock. */
     public $nostock;
 
-    /** Observaciones internas sobre el producto. @var string */
+    /** @var string Observaciones internas sobre el producto. */
     public $observaciones;
 
-    /** Precio de venta del producto sin impuestos. @var float|int */
+    /** @var float|int Precio de venta del producto sin impuestos. */
     public $precio;
 
-    /** Indica si el producto se publica o sincroniza con la tienda online. @var bool */
+    /** @var bool Indica si el producto se publica o sincroniza con la tienda online. */
     public $publico;
 
-    /** Referencia principal o SKU del producto. @var string */
+    /** @var string Referencia principal o SKU del producto. */
     public $referencia;
 
-    /** Indica si el producto se puede comprar a proveedores. @var bool */
+    /** @var bool Indica si el producto se puede comprar a proveedores. */
     public $secompra;
 
-    /** Indica si el producto se puede vender a clientes. @var bool */
+    /** @var bool Indica si el producto se puede vender a clientes. */
     public $sevende;
 
-    /** Stock físico total del producto. @var float|int */
+    /** @var float|int Stock físico total del producto. */
     public $stockfis;
 
-    /** Tipo o clasificación adicional del producto. @var string */
+    /** @var string Tipo o clasificación adicional del producto. */
     public $tipo;
 
-    /** Indica si se permite vender el producto sin stock disponible. @var bool */
+    /** @var bool Indica si se permite vender el producto sin stock disponible. */
     public $ventasinstock;
 
     public function __get($key)

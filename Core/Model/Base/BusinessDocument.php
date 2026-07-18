@@ -68,7 +68,7 @@ abstract class BusinessDocument extends NewModelClass
      */
     public $codigo;
 
-    /** Campos que no se deben copiar al duplicar o transformar el documento. @var array */
+    /** @var array Campos que no se deben copiar al duplicar o transformar el documento. */
     protected static $dont_copy_fields = ['codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora',
         'idasiento', 'idestado', 'idfacturarect', 'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf',
         'totaliva', 'totalrecargo', 'totalsuplidos'];

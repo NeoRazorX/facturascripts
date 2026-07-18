@@ -46,40 +46,40 @@ class LogMessage extends ModelClass
         Logger::LEVEL_WARNING,
     ];
 
-    /** Canal al que pertenece el mensaje de log. @var string */
+    /** @var string Canal al que pertenece el mensaje de log. */
     public $channel;
 
-    /** Contexto adicional del mensaje codificado en formato JSON. @var string */
+    /** @var string Contexto adicional del mensaje codificado en formato JSON. */
     public $context;
 
-    /** Identificador único del mensaje de log. @var int */
+    /** @var int Identificador único del mensaje de log. */
     public $id;
 
-    /** Identificador del contacto relacionado con el mensaje. @var int */
+    /** @var int Identificador del contacto relacionado con el mensaje. */
     public $idcontacto;
 
-    /** Dirección IP desde la que se generó el mensaje. @var string */
+    /** @var string Dirección IP desde la que se generó el mensaje. */
     public $ip;
 
-    /** Nivel de severidad del mensaje de log. @var string */
+    /** @var string Nivel de severidad del mensaje de log. */
     public $level;
 
-    /** Contenido del mensaje de log. @var string */
+    /** @var string Contenido del mensaje de log. */
     public $message;
 
-    /** Nombre del modelo relacionado con el mensaje. @var string */
+    /** @var string Nombre del modelo relacionado con el mensaje. */
     public $model;
 
-    /** Código del registro relacionado con el mensaje. @var string */
+    /** @var string Código del registro relacionado con el mensaje. */
     public $modelcode;
 
-    /** Nombre del usuario que generó el mensaje. @var string */
+    /** @var string Nombre del usuario que generó el mensaje. */
     public $nick;
 
-    /** Fecha y hora en la que se generó el mensaje. @var string */
+    /** @var string Fecha y hora en la que se generó el mensaje. */
     public $time;
 
-    /** URI de la solicitud durante la que se generó el mensaje. @var string */
+    /** @var string URI de la solicitud durante la que se generó el mensaje. */
     public $uri;
 
     public function clear(): void

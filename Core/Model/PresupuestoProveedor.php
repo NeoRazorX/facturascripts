@@ -34,7 +34,7 @@ class PresupuestoProveedor extends PurchaseDocument
 {
     use ModelTrait;
 
-    /** Identificador único del presupuesto de proveedor. @var int */
+    /** @var int Identificador único del presupuesto de proveedor. */
     public $idpresupuesto;
 
     /**

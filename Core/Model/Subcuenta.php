@@ -74,7 +74,7 @@ class Subcuenta extends ModelClass
      */
     public $descripcion;
 
-    /** Indica si se omiten las comprobaciones adicionales del modelo. @var bool */
+    /** @var bool Indica si se omiten las comprobaciones adicionales del modelo. */
     private $disable_additional_test = false;
 
     /**

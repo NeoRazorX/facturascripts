@@ -35,25 +35,25 @@ class Tarifa extends ModelClass
     const APPLY_COST = 'coste';
     const APPLY_PRICE = 'pvp';
 
-    /** Base sobre la que se aplica la fórmula: coste o precio de venta. @var string */
+    /** @var string Base sobre la que se aplica la fórmula: coste o precio de venta. */
     public $aplicar;
 
-    /** Código identificativo de la tarifa. @var string */
+    /** @var string Código identificativo de la tarifa. */
     public $codtarifa;
 
-    /** Indica si el precio calculado no puede superar el precio de venta. @var bool */
+    /** @var bool Indica si el precio calculado no puede superar el precio de venta. */
     public $maxpvp;
 
-    /** Indica si el precio calculado no puede ser inferior al coste. @var bool */
+    /** @var bool Indica si el precio calculado no puede ser inferior al coste. */
     public $mincoste;
 
-    /** Nombre de la tarifa. @var string */
+    /** @var string Nombre de la tarifa. */
     public $nombre;
 
-    /** Porcentaje que se suma o resta en la fórmula de la tarifa. @var float */
+    /** @var float Porcentaje que se suma o resta en la fórmula de la tarifa. */
     public $valorx;
 
-    /** Importe fijo que se suma o resta en la fórmula de la tarifa. @var float */
+    /** @var float Importe fijo que se suma o resta en la fórmula de la tarifa. */
     public $valory;
 
     /**

@@ -24,10 +24,10 @@ use FacturaScripts\Dinamic\Lib\FiscalNumberValidator;
 
 trait FiscalNumberTrait
 {
-    /** Número de identificación fiscal. @var string */
+    /** @var string Número de identificación fiscal. */
     public $cifnif;
 
-    /** Tipo de identificación fiscal utilizado. @var string */
+    /** @var string Tipo de identificación fiscal utilizado. */
     public $tipoidfiscal;
 
     protected function testFiscalNumber(): bool

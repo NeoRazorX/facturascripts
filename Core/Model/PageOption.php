@@ -34,25 +34,25 @@ class PageOption extends ModelClass
 {
     use ModelTrait;
 
-    /** Definición de los grupos y columnas de la vista. @var array */
+    /** @var array Definición de los grupos y columnas de la vista. */
     public $columns;
 
-    /** Identificador único de la configuración visual. @var int */
+    /** @var int Identificador único de la configuración visual. */
     public $id;
 
-    /** Fecha y hora de la última actualización. @var string */
+    /** @var string Fecha y hora de la última actualización. */
     public $last_update;
 
-    /** Definición de los formularios modales de la vista. @var array */
+    /** @var array Definición de los formularios modales de la vista. */
     public $modals;
 
-    /** Nombre de la página o controlador al que pertenece la configuración. @var string */
+    /** @var string Nombre de la página o controlador al que pertenece la configuración. */
     public $name;
 
-    /** Nombre del usuario propietario de la configuración. @var string */
+    /** @var string Nombre del usuario propietario de la configuración. */
     public $nick;
 
-    /** Definición del tratamiento visual especial de las filas. @var array */
+    /** @var array Definición del tratamiento visual especial de las filas. */
     public $rows;
 
     public function clear(): void

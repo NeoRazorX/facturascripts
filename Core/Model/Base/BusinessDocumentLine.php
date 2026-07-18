@@ -58,10 +58,10 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     public $descripcion;
 
-    /** Indica si se debe omitir la actualización automática del stock. @var bool */
+    /** @var bool Indica si se debe omitir la actualización automática del stock. */
     private $disable_update_stock = false;
 
-    /** Campos que no se deben copiar al transformar la línea. @var array */
+    /** @var array Campos que no se deben copiar al transformar la línea. */
     protected static $dont_copy_fields = ['idlinea', 'orden', 'servido'];
 
     /**
@@ -78,7 +78,7 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     public $dtopor2;
 
-    /** Código de la excepción de IVA aplicable a la línea. @var string */
+    /** @var string Código de la excepción de IVA aplicable a la línea. */
     public $excepcioniva;
 
     /**
@@ -88,7 +88,7 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     public $idlinea;
 
-    /** Identificador del producto asociado a la línea. @var int */
+    /** @var int Identificador del producto asociado a la línea. */
     public $idproducto;
 
     /**
@@ -154,7 +154,7 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     public $servido;
 
-    /** Indica si la línea corresponde a un suplido. @var bool */
+    /** @var bool Indica si la línea corresponde a un suplido. */
     public $suplido;
 
     /**

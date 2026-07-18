@@ -40,40 +40,40 @@ class ProductoProveedor extends ModelClass
     use ModelTrait;
     use ProductRelationTrait;
 
-    /** Fecha y hora de la última actualización de los datos del proveedor. @var string */
+    /** @var string Fecha y hora de la última actualización de los datos del proveedor. */
     public $actualizado;
 
-    /** Código de la divisa utilizada por el proveedor. @var string */
+    /** @var string Código de la divisa utilizada por el proveedor. */
     public $coddivisa;
 
-    /** Código del proveedor asociado al producto. @var string */
+    /** @var string Código del proveedor asociado al producto. */
     public $codproveedor;
 
-    /** Primer porcentaje de descuento aplicado por el proveedor. @var float */
+    /** @var float Primer porcentaje de descuento aplicado por el proveedor. */
     public $dtopor;
 
-    /** Segundo porcentaje de descuento aplicado por el proveedor. @var float */
+    /** @var float Segundo porcentaje de descuento aplicado por el proveedor. */
     public $dtopor2;
 
-    /** Identificador único de la relación con el proveedor. @var int */
+    /** @var int Identificador único de la relación con el proveedor. */
     public $id;
 
-    /** Precio neto tras aplicar los descuentos. @var float */
+    /** @var float Precio neto tras aplicar los descuentos. */
     public $neto;
 
-    /** Precio neto convertido a euros. @var float */
+    /** @var float Precio neto convertido a euros. */
     public $netoeuros;
 
-    /** Precio del producto indicado por el proveedor antes de descuentos. @var float */
+    /** @var float Precio del producto indicado por el proveedor antes de descuentos. */
     public $precio;
 
-    /** Referencia interna de la variante del producto. @var string */
+    /** @var string Referencia interna de la variante del producto. */
     public $referencia;
 
-    /** Referencia utilizada por el proveedor para el producto. @var string */
+    /** @var string Referencia utilizada por el proveedor para el producto. */
     public $refproveedor;
 
-    /** Stock del producto informado por el proveedor. @var float */
+    /** @var float Stock del producto informado por el proveedor. */
     public $stock;
 
     public function __get($key)

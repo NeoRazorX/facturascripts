@@ -36,31 +36,31 @@ class ApiKey extends ModelClass
 {
     use ModelTrait;
 
-    /** Clave utilizada para autenticarse en la API. @var string */
+    /** @var string Clave utilizada para autenticarse en la API. */
     public $apikey;
 
-    /** Fecha de creación de la clave API. @var string */
+    /** @var string Fecha de creación de la clave API. */
     public $creationdate;
 
-    /** Descripción de la clave API. @var string */
+    /** @var string Descripción de la clave API. */
     public $description;
 
-    /** Indica si la clave API está habilitada. @var bool */
+    /** @var bool Indica si la clave API está habilitada. */
     public $enabled;
 
-    /** Indica si la clave permite acceder a todos los recursos de la API. @var bool */
+    /** @var bool Indica si la clave permite acceder a todos los recursos de la API. */
     public $fullaccess;
 
-    /** Identificador único de la clave API. @var int */
+    /** @var int Identificador único de la clave API. */
     public $id;
 
-    /** Fecha y hora de la última actividad de la clave API. @var string */
+    /** @var string Fecha y hora de la última actividad de la clave API. */
     public $lastactivity;
 
-    /** Dirección IP desde la que se utilizó la clave API por última vez. @var string */
+    /** @var string Dirección IP desde la que se utilizó la clave API por última vez. */
     public $lastip;
 
-    /** Nombre del usuario asociado a la clave API. @var string */
+    /** @var string Nombre del usuario asociado a la clave API. */
     public $nick;
 
     /**

@@ -35,10 +35,10 @@ class PedidoCliente extends SalesDocument
 {
     use ModelTrait;
 
-    /** Fecha hasta la que se mantiene la validez de la oferta. @var string */
+    /** @var string Fecha hasta la que se mantiene la validez de la oferta. */
     public $finoferta;
 
-    /** Identificador único del pedido de cliente. @var integer */
+    /** @var integer Identificador único del pedido de cliente. */
     public $idpedido;
 
     public function clear(): void

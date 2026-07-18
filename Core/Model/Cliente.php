@@ -54,85 +54,85 @@ class Cliente extends ModelClass
 
     const SPECIAL_ACCOUNT = 'CLIENT';
 
-    /** Código del agente comercial asignado al cliente. @var string */
+    /** @var string Código del agente comercial asignado al cliente. */
     public $codagente;
 
-    /** Código identificativo del cliente. @var string */
+    /** @var string Código identificativo del cliente. */
     public $codcliente;
 
-    /** Código del grupo al que pertenece el cliente. @var string */
+    /** @var string Código del grupo al que pertenece el cliente. */
     public $codgrupo;
 
-    /** Código de la forma de pago habitual del cliente. @var string */
+    /** @var string Código de la forma de pago habitual del cliente. */
     public $codpago;
 
-    /** Código del proveedor vinculado al cliente. @var string */
+    /** @var string Código del proveedor vinculado al cliente. */
     public $codproveedor;
 
-    /** Código de la retención aplicable al cliente. @var string */
+    /** @var string Código de la retención aplicable al cliente. */
     public $codretencion;
 
-    /** Código de la serie predeterminada para el cliente. @var string */
+    /** @var string Código de la serie predeterminada para el cliente. */
     public $codserie;
 
-    /** Código de la subcuenta contable del cliente. @var string */
+    /** @var string Código de la subcuenta contable del cliente. */
     public $codsubcuenta;
 
-    /** Código de la tarifa de precios aplicada al cliente. @var string */
+    /** @var string Código de la tarifa de precios aplicada al cliente. */
     public $codtarifa;
 
-    /** Indica si el cliente está dado de baja. @var bool */
+    /** @var bool Indica si el cliente está dado de baja. */
     public $debaja;
 
-    /** Días preferidos de pago del cliente. @var string */
+    /** @var string Días preferidos de pago del cliente. */
     public $diaspago;
 
-    /** Código de la excepción de IVA aplicable al cliente. @var string */
+    /** @var string Código de la excepción de IVA aplicable al cliente. */
     public $excepcioniva;
 
-    /** Número de fax del cliente. @var string */
+    /** @var string Número de fax del cliente. */
     public $fax;
 
-    /** Fecha de alta del cliente. @var string */
+    /** @var string Fecha de alta del cliente. */
     public $fechaalta;
 
-    /** Fecha de baja del cliente. @var string */
+    /** @var string Fecha de baja del cliente. */
     public $fechabaja;
 
-    /** Identificador del contacto predeterminado para envíos. @var integer */
+    /** @var integer Identificador del contacto predeterminado para envíos. */
     public $idcontactoenv;
 
-    /** Identificador del contacto predeterminado para facturación. @var integer */
+    /** @var integer Identificador del contacto predeterminado para facturación. */
     public $idcontactofact;
 
-    /** Código del idioma preferido del cliente. @var string */
+    /** @var string Código del idioma preferido del cliente. */
     public $langcode;
 
-    /** Nombre comercial o nombre completo del cliente. @var string */
+    /** @var string Nombre comercial o nombre completo del cliente. */
     public $nombre;
 
-    /** Clave de operación de IVA aplicable al cliente. @var string */
+    /** @var string Clave de operación de IVA aplicable al cliente. */
     public $operacion;
 
-    /** Observaciones internas sobre el cliente. @var string */
+    /** @var string Observaciones internas sobre el cliente. */
     public $observaciones;
 
-    /** Indica si el cliente es una persona física. @var bool */
+    /** @var bool Indica si el cliente es una persona física. */
     public $personafisica;
 
-    /** Razón social del cliente. @var string */
+    /** @var string Razón social del cliente. */
     public $razonsocial;
 
-    /** Régimen de IVA aplicable al cliente. @var string */
+    /** @var string Régimen de IVA aplicable al cliente. */
     public $regimeniva;
 
-    /** Riesgo comercial actualmente alcanzado por el cliente. @var float */
+    /** @var float Riesgo comercial actualmente alcanzado por el cliente. */
     public $riesgoalcanzado;
 
-    /** Riesgo comercial máximo autorizado para el cliente. @var float */
+    /** @var float Riesgo comercial máximo autorizado para el cliente. */
     public $riesgomax;
 
-    /** Sitio web del cliente. @var string */
+    /** @var string Sitio web del cliente. */
     public $web;
 
     public function checkVies(bool $msg = true): bool

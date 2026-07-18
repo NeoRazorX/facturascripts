@@ -32,10 +32,10 @@ class ConceptoPartida extends ModelClass
 {
     use ModelTrait;
 
-    /** Código identificativo del concepto de partida. @var string */
+    /** @var string Código identificativo del concepto de partida. */
     public $codconcepto;
 
-    /** Descripción del concepto predefinido para la partida. @var string */
+    /** @var string Descripción del concepto predefinido para la partida. */
     public $descripcion;
 
     public static function primaryColumn(): string

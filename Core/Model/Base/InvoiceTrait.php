@@ -33,31 +33,31 @@ trait InvoiceTrait
 {
     use AccEntryRelationTrait;
 
-    /** Código de la factura rectificada por esta factura. @var string */
+    /** @var string Código de la factura rectificada por esta factura. */
     public $codigorect;
 
-    /** Indica si la factura se puede editar. @var bool */
+    /** @var bool Indica si la factura se puede editar. */
     public $editable;
 
-    /** Fecha de emisión de la factura. @var string */
+    /** @var string Fecha de emisión de la factura. */
     public $fecha;
 
-    /** Fecha de devengo de la factura. @var string */
+    /** @var string Fecha de devengo de la factura. */
     public $fechadevengo;
 
-    /** Identificador único de la factura. @var int */
+    /** @var int Identificador único de la factura. */
     public $idfactura;
 
-    /** Identificador de la factura rectificada por esta factura. @var int */
+    /** @var int Identificador de la factura rectificada por esta factura. */
     public $idfacturarect;
 
-    /** Indica si la factura está completamente pagada. @var bool */
+    /** @var bool Indica si la factura está completamente pagada. */
     public $pagada;
 
-    /** Facturas rectificativas asociadas, almacenadas temporalmente. @var array */
+    /** @var array Facturas rectificativas asociadas, almacenadas temporalmente. */
     private $refunds;
 
-    /** Indica si la factura tiene recibos vencidos pendientes de pago. @var bool */
+    /** @var bool Indica si la factura tiene recibos vencidos pendientes de pago. */
     public $vencida;
 
     abstract public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 0): array;

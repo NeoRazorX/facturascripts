@@ -34,7 +34,7 @@ class PedidoProveedor extends PurchaseDocument
 {
     use ModelTrait;
 
-    /** Identificador único del pedido de proveedor. @var int */
+    /** @var int Identificador único del pedido de proveedor. */
     public $idpedido;
 
     /**

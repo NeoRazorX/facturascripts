@@ -33,7 +33,7 @@ class LineaPresupuestoCliente extends SalesDocumentLine
 {
     use ModelTrait;
 
-    /** Identificador del presupuesto de cliente al que pertenece la línea. @var int */
+    /** @var int Identificador del presupuesto de cliente al que pertenece la línea. */
     public $idpresupuesto;
 
     public function documentColumn(): string

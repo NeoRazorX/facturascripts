@@ -28,37 +28,37 @@ class WorkEvent extends ModelClass
 {
     use ModelTrait;
 
-    /** Fecha y hora de creación del evento de trabajo. @var string */
+    /** @var string Fecha y hora de creación del evento de trabajo. */
     public $creation_date;
 
-    /** Indica si el evento ha terminado de procesarse. @var bool */
+    /** @var bool Indica si el evento ha terminado de procesarse. */
     public $done;
 
-    /** Fecha y hora en la que finalizó el evento. @var string */
+    /** @var string Fecha y hora en la que finalizó el evento. */
     public $done_date;
 
-    /** Tiempo total de ejecución del evento, en segundos. @var float */
+    /** @var float Tiempo total de ejecución del evento, en segundos. */
     public $execution_time;
 
-    /** Identificador único del evento de trabajo. @var int */
+    /** @var int Identificador único del evento de trabajo. */
     public $id;
 
-    /** Nombre identificativo del evento. @var string */
+    /** @var string Nombre identificativo del evento. */
     public $name;
 
-    /** Nombre del usuario que creó el evento. @var string */
+    /** @var string Nombre del usuario que creó el evento. */
     public $nick;
 
-    /** Parámetros del evento codificados en JSON o referenciados desde un archivo. @var string */
+    /** @var string Parámetros del evento codificados en JSON o referenciados desde un archivo. */
     protected $params;
 
-    /** Valor asociado al evento de trabajo. @var string */
+    /** @var string Valor asociado al evento de trabajo. */
     public $value;
 
-    /** Número de workers ejecutados para procesar el evento. @var int */
+    /** @var int Número de workers ejecutados para procesar el evento. */
     public $workers;
 
-    /** Lista de nombres de los workers que procesaron el evento. @var string */
+    /** @var string Lista de nombres de los workers que procesaron el evento. */
     public $worker_list;
 
     public function clear(): void

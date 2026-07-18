@@ -36,10 +36,10 @@ class CuentaEspecial extends ModelClass
 {
     use ModelTrait;
 
-    /** Código identificativo de la cuenta especial. @var string */
+    /** @var string Código identificativo de la cuenta especial. */
     public $codcuentaesp;
 
-    /** Descripción de la finalidad de la cuenta especial. @var string */
+    /** @var string Descripción de la finalidad de la cuenta especial. */
     public $descripcion;
 
     public function getCuenta(string $codejercicio): Cuenta

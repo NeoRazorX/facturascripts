@@ -35,28 +35,28 @@ class DocTransformation extends ModelClass
 {
     use ModelTrait;
 
-    /** Cantidad transformada entre las dos líneas de documento. @var float */
+    /** @var float Cantidad transformada entre las dos líneas de documento. */
     public $cantidad;
 
-    /** Identificador único de la transformación. @var int */
+    /** @var int Identificador único de la transformación. */
     public $id;
 
-    /** Identificador del documento de origen. @var int */
+    /** @var int Identificador del documento de origen. */
     public $iddoc1;
 
-    /** Identificador del documento de destino. @var int */
+    /** @var int Identificador del documento de destino. */
     public $iddoc2;
 
-    /** Identificador de la línea del documento de origen. @var int */
+    /** @var int Identificador de la línea del documento de origen. */
     public $idlinea1;
 
-    /** Identificador de la línea del documento de destino. @var int */
+    /** @var int Identificador de la línea del documento de destino. */
     public $idlinea2;
 
-    /** Nombre del modelo del documento de origen. @var string */
+    /** @var string Nombre del modelo del documento de origen. */
     public $model1;
 
-    /** Nombre del modelo del documento de destino. @var string */
+    /** @var string Nombre del modelo del documento de destino. */
     public $model2;
 
     public function clear(): void

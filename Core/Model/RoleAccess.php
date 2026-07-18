@@ -38,28 +38,28 @@ class RoleAccess extends ModelClass
 {
     use ModelTrait;
 
-    /** Indica si el rol puede eliminar registros en la página. @var bool */
+    /** @var bool Indica si el rol puede eliminar registros en la página. */
     public $allowdelete;
 
-    /** Indica si el rol puede exportar datos de la página. @var bool */
+    /** @var bool Indica si el rol puede exportar datos de la página. */
     public $allowexport;
 
-    /** Indica si el rol puede importar datos en la página. @var bool */
+    /** @var bool Indica si el rol puede importar datos en la página. */
     public $allowimport;
 
-    /** Indica si el rol puede crear o modificar registros en la página. @var bool */
+    /** @var bool Indica si el rol puede crear o modificar registros en la página. */
     public $allowupdate;
 
-    /** Código del rol al que pertenece el permiso. @var string */
+    /** @var string Código del rol al que pertenece el permiso. */
     public $codrole;
 
-    /** Identificador único del permiso de acceso. @var int */
+    /** @var int Identificador único del permiso de acceso. */
     public $id;
 
-    /** Indica si el rol solo puede acceder a los datos de su propietario. @var bool */
+    /** @var bool Indica si el rol solo puede acceder a los datos de su propietario. */
     public $onlyownerdata;
 
-    /** Nombre de la página a la que se aplica el permiso. @var string */
+    /** @var string Nombre de la página a la que se aplica el permiso. */
     public $pagename;
 
     /**

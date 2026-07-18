@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\FormaPago;
  */
 trait PaymentRelationTrait
 {
-    /** Código de la forma de pago asociada. @var string */
+    /** @var string Código de la forma de pago asociada. */
     public $codpago;
 
     public function getPaymentMethod(): FormaPago

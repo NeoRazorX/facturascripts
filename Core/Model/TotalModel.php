@@ -31,13 +31,13 @@ use FacturaScripts\Core\Where;
  */
 class TotalModel
 {
-    /** Conexión compartida con la base de datos. @var DataBase */
+    /** @var DataBase Conexión compartida con la base de datos. */
     private static $dataBase;
 
-    /** Código por el que se agrupan los totales. @var string */
+    /** @var string Código por el que se agrupan los totales. */
     public $code;
 
-    /** Valores totales calculados para cada campo solicitado. @var array */
+    /** @var array Valores totales calculados para cada campo solicitado. */
     public $totals;
 
     public function __construct(array $data = [])

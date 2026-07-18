@@ -35,19 +35,19 @@ class CuentaBancoProveedor extends ModelClass
     use ModelTrait;
     use IbanTrait;
 
-    /** Código identificativo de la cuenta bancaria. @var string */
+    /** @var string Código identificativo de la cuenta bancaria. */
     public $codcuenta;
 
-    /** Código del proveedor titular de la cuenta bancaria. @var string */
+    /** @var string Código del proveedor titular de la cuenta bancaria. */
     public $codproveedor;
 
-    /** Descripción de la cuenta bancaria. @var string */
+    /** @var string Descripción de la cuenta bancaria. */
     public $descripcion;
 
-    /** Indica si es la cuenta bancaria principal del proveedor. @var bool */
+    /** @var bool Indica si es la cuenta bancaria principal del proveedor. */
     public $principal;
 
-    /** Código SWIFT o BIC de la entidad bancaria. @var string */
+    /** @var string Código SWIFT o BIC de la entidad bancaria. */
     public $swift;
 
     public function clear(): void

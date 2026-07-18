@@ -34,25 +34,25 @@ class ApiAccess extends ModelClass
 {
     use ModelTrait;
 
-    /** Indica si se permite eliminar el recurso mediante la API. @var bool */
+    /** @var bool Indica si se permite eliminar el recurso mediante la API. */
     public $allowdelete;
 
-    /** Indica si se permite consultar el recurso mediante la API. @var bool */
+    /** @var bool Indica si se permite consultar el recurso mediante la API. */
     public $allowget;
 
-    /** Indica si se permite crear el recurso mediante la API. @var bool */
+    /** @var bool Indica si se permite crear el recurso mediante la API. */
     public $allowpost;
 
-    /** Indica si se permite modificar el recurso mediante la API. @var bool */
+    /** @var bool Indica si se permite modificar el recurso mediante la API. */
     public $allowput;
 
-    /** Identificador de la clave API asociada. @var int */
+    /** @var int Identificador de la clave API asociada. */
     public $idapikey;
 
-    /** Identificador único del permiso de acceso. @var int */
+    /** @var int Identificador único del permiso de acceso. */
     public $id;
 
-    /** Nombre del recurso de la API al que se aplica el permiso. @var string */
+    /** @var string Nombre del recurso de la API al que se aplica el permiso. */
     public $resource;
 
     /**

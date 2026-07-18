@@ -36,40 +36,40 @@ class EmailSent extends ModelClass
 {
     use ModelTrait;
 
-    /** Dirección de correo electrónico del destinatario. @var string */
+    /** @var string Dirección de correo electrónico del destinatario. */
     public $addressee;
 
-    /** Indica si el correo contiene archivos adjuntos. @var bool */
+    /** @var bool Indica si el correo contiene archivos adjuntos. */
     public $attachment;
 
-    /** Cuerpo del correo en texto sin formato. @var string */
+    /** @var string Cuerpo del correo en texto sin formato. */
     public $body;
 
-    /** Fecha y hora de envío del correo. @var string */
+    /** @var string Fecha y hora de envío del correo. */
     public $date;
 
-    /** Dirección de correo electrónico del remitente. @var string */
+    /** @var string Dirección de correo electrónico del remitente. */
     public $email_from;
 
-    /** Cuerpo del correo en formato HTML. @var string */
+    /** @var string Cuerpo del correo en formato HTML. */
     public $html;
 
-    /** Identificador único del correo enviado. @var string */
+    /** @var string Identificador único del correo enviado. */
     public $id;
 
-    /** Nombre del usuario que envió el correo. @var string */
+    /** @var string Nombre del usuario que envió el correo. */
     public $nick;
 
-    /** Indica si el destinatario ha abierto o verificado el correo. @var bool */
+    /** @var bool Indica si el destinatario ha abierto o verificado el correo. */
     public $opened;
 
-    /** Asunto del correo enviado. @var string */
+    /** @var string Asunto del correo enviado. */
     public $subject;
 
-    /** Identificador utilizado para agrupar el correo y sus archivos adjuntos. @var string */
+    /** @var string Identificador utilizado para agrupar el correo y sus archivos adjuntos. */
     public $uuid;
 
-    /** Código utilizado para verificar la interacción del destinatario. @var string */
+    /** @var string Código utilizado para verificar la interacción del destinatario. */
     public $verificode;
 
     public function clear(): void

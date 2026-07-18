@@ -37,43 +37,43 @@ class Provincia extends ModelClass
 {
     use ModelTrait;
 
-    /** Nombre alternativo o alias de la provincia. @var string */
+    /** @var string Nombre alternativo o alias de la provincia. */
     public $alias;
 
-    /** Código geográfico identificativo de la provincia. @var string */
+    /** @var string Código geográfico identificativo de la provincia. */
     public $codeid;
 
-    /** Código normalizado utilizado para identificar la provincia. @var string */
+    /** @var string Código normalizado utilizado para identificar la provincia. */
     public $codisoprov;
 
-    /** Código del país al que pertenece la provincia. @var string */
+    /** @var string Código del país al que pertenece la provincia. */
     public $codpais;
 
-    /** Fecha y hora de creación de la provincia. @var string */
+    /** @var string Fecha y hora de creación de la provincia. */
     public $creation_date;
 
-    /** Identificador único de la provincia. @var string */
+    /** @var string Identificador único de la provincia. */
     public $idprovincia;
 
-    /** Nombre del último usuario que modificó la provincia. @var string */
+    /** @var string Nombre del último usuario que modificó la provincia. */
     public $last_nick;
 
-    /** Fecha y hora de la última modificación. @var string */
+    /** @var string Fecha y hora de la última modificación. */
     public $last_update;
 
-    /** Latitud geográfica de referencia de la provincia. @var float */
+    /** @var float Latitud geográfica de referencia de la provincia. */
     public $latitude;
 
-    /** Longitud geográfica de referencia de la provincia. @var float */
+    /** @var float Longitud geográfica de referencia de la provincia. */
     public $longitude;
 
-    /** Nombre del usuario que creó la provincia. @var string */
+    /** @var string Nombre del usuario que creó la provincia. */
     public $nick;
 
-    /** Nombre de la provincia. @var string */
+    /** @var string Nombre de la provincia. */
     public $provincia;
 
-    /** Prefijo telefónico de la provincia. @var string */
+    /** @var string Prefijo telefónico de la provincia. */
     public $telephone_prefix;
 
     public function clear(): void

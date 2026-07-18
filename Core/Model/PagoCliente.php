@@ -39,34 +39,34 @@ class PagoCliente extends ModelClass
     use AccEntryRelationTrait;
     use PaymentRelationTrait;
 
-    /** Identificador del pago en un sistema externo. @var string */
+    /** @var string Identificador del pago en un sistema externo. */
     public $customid;
 
-    /** Estado del pago asignado por un sistema externo. @var string */
+    /** @var string Estado del pago asignado por un sistema externo. */
     public $customstatus;
 
-    /** Indica si se debe omitir la generación automática del asiento contable. @var bool */
+    /** @var bool Indica si se debe omitir la generación automática del asiento contable. */
     protected $disable_accounting_generation = false;
 
-    /** Fecha en la que se realizó el pago del cliente. @var string */
+    /** @var string Fecha en la que se realizó el pago del cliente. */
     public $fecha;
 
-    /** Gastos bancarios asociados al pago. @var float */
+    /** @var float Gastos bancarios asociados al pago. */
     public $gastos;
 
-    /** Hora en la que se realizó el pago del cliente. @var string */
+    /** @var string Hora en la que se realizó el pago del cliente. */
     public $hora;
 
-    /** Identificador único del pago del cliente. @var int */
+    /** @var int Identificador único del pago del cliente. */
     public $idpago;
 
-    /** Identificador del recibo de cliente pagado. @var int */
+    /** @var int Identificador del recibo de cliente pagado. */
     public $idrecibo;
 
-    /** Importe del pago realizado. @var float */
+    /** @var float Importe del pago realizado. */
     public $importe;
 
-    /** Nombre del usuario que registró el pago. @var string */
+    /** @var string Nombre del usuario que registró el pago. */
     public $nick;
 
     public function clear(): void

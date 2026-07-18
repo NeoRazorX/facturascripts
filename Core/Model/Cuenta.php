@@ -39,34 +39,34 @@ class Cuenta extends ModelClass
     use ModelTrait;
     use ExerciseRelationTrait;
 
-    /** Código identificativo de la cuenta contable. @var string */
+    /** @var string Código identificativo de la cuenta contable. */
     public $codcuenta;
 
-    /** Código de la cuenta especial asociada. @var string */
+    /** @var string Código de la cuenta especial asociada. */
     public $codcuentaesp;
 
-    /** Importe acumulado en el debe de la cuenta. @var float */
+    /** @var float Importe acumulado en el debe de la cuenta. */
     public $debe;
 
-    /** Descripción de la cuenta contable. @var string */
+    /** @var string Descripción de la cuenta contable. */
     public $descripcion;
 
-    /** Indica si se omiten las comprobaciones adicionales del modelo. @var bool */
+    /** @var bool Indica si se omiten las comprobaciones adicionales del modelo. */
     private $disable_additional_test = false;
 
-    /** Importe acumulado en el haber de la cuenta. @var float */
+    /** @var float Importe acumulado en el haber de la cuenta. */
     public $haber;
 
-    /** Identificador único de la cuenta contable. @var int */
+    /** @var int Identificador único de la cuenta contable. */
     public $idcuenta;
 
-    /** Código de la cuenta contable superior. @var string */
+    /** @var string Código de la cuenta contable superior. */
     public $parent_codcuenta;
 
-    /** Identificador de la cuenta contable superior. @var int */
+    /** @var int Identificador de la cuenta contable superior. */
     public $parent_idcuenta;
 
-    /** Saldo acumulado de la cuenta contable. @var float */
+    /** @var float Saldo acumulado de la cuenta contable. */
     public $saldo;
 
     public function clear(): void

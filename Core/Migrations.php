@@ -64,7 +64,7 @@ final class Migrations
     /** Nombre del fichero JSON, dentro de MyFiles, donde se persisten las migraciones ya ejecutadas. */
     const FILE_NAME = 'migrations.json';
 
-    /** Conexión perezosa a la base de datos, compartida entre todas las migraciones de la ejecución. @var DataBase */
+    /** @var DataBase Conexión perezosa a la base de datos, compartida entre todas las migraciones de la ejecución. */
     private static $database;
 
     /**

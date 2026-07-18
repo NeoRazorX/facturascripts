@@ -34,28 +34,28 @@ class ImpuestoZona extends ModelClass
 {
     use ModelTrait;
 
-    /** Código del impuesto original que se desea sustituir. @var string */
+    /** @var string Código del impuesto original que se desea sustituir. */
     public $codimpuesto;
 
-    /** Código del impuesto que se aplicará en la zona. @var string */
+    /** @var string Código del impuesto que se aplicará en la zona. */
     public $codimpuestosel;
 
-    /** Identificador de la provincia a la que se aplica la regla. @var string */
+    /** @var string Identificador de la provincia a la que se aplica la regla. */
     public $codisopro;
 
-    /** Código del país al que se aplica la regla. @var string */
+    /** @var string Código del país al que se aplica la regla. */
     public $codpais;
 
-    /** Código de la excepción de IVA que se aplicará en la zona. @var string */
+    /** @var string Código de la excepción de IVA que se aplicará en la zona. */
     public $excepcioniva;
 
-    /** Identificador único de la regla de impuesto por zona. @var int */
+    /** @var int Identificador único de la regla de impuesto por zona. */
     public $id;
 
-    /** Prioridad con la que se evalúa la regla de impuesto. @var int */
+    /** @var int Prioridad con la que se evalúa la regla de impuesto. */
     public $prioridad;
 
-    /** Nombre de la provincia almacenado temporalmente para las comparaciones. @var string */
+    /** @var string Nombre de la provincia almacenado temporalmente para las comparaciones. */
     protected $provincia;
 
     public function clear(): void
