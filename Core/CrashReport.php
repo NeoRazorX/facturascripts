@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,7 +64,7 @@ final class CrashReport
         return implode("\n", $result);
     }
 
-    public static function getErrorInfo(int $code, string $message, string $file, int $line): array
+    public static function getErrorInfo($code, string $message, string $file, int $line): array
     {
         // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
         $errorUrl = parse_url($_SERVER["REQUEST_URI"] ?? '', PHP_URL_PATH);
