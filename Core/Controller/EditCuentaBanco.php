@@ -140,6 +140,9 @@ class EditCuentaBanco extends EditController
             case 'ListSubcuenta':
                 $codejercicios = $this->getExerciseOfCompany();
                 $codsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'codsubcuenta');
+                if (empty($codejercicios) || empty($codsubcuenta)) {
+                    break;
+                }
                 $where = [
                     Where::in('codejercicio', $codejercicios),
                     Where::eq('codsubcuenta', $codsubcuenta),

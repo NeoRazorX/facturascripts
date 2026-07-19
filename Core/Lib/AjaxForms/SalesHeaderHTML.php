@@ -20,8 +20,10 @@
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Contract\SalesModInterface;
+use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\DataSrc\Provincias;
 use FacturaScripts\Core\Model\AgenciaTransporte;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Cliente;
@@ -30,7 +32,6 @@ use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Pais;
-use FacturaScripts\Dinamic\Model\Provincia;
 
 /**
  * Description of SalesHeaderHTML
@@ -329,7 +330,7 @@ class SalesHeaderHTML
     {
         $options = ['<option value="">------</option>'];
         $agenciaTransporte = new AgenciaTransporte();
-        foreach ($agenciaTransporte->all() as $agencia) {
+        foreach (AgenciasTransporte::all() as $agencia) {
             $options[] = ($agencia->codtrans === $model->codtrans) ?
                 '<option value="' . $agencia->codtrans . '" selected>' . $agencia->nombre . '</option>' :
                 '<option value="' . $agencia->codtrans . '">' . $agencia->nombre . '</option>';
@@ -506,7 +507,7 @@ class SalesHeaderHTML
             $list = 'list="provincias"';
             $dataList = '<datalist id="provincias">';
 
-            foreach (Provincia::all([], ['provincia' => 'ASC'], 0, 0) as $provincia) {
+            foreach (Provincias::all() as $provincia) {
                 $dataList .= '<option value="' . $provincia->provincia . '">' . $provincia->provincia . '</option>';
             }
             $dataList .= '</datalist>';

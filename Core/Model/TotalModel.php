@@ -80,8 +80,10 @@ class TotalModel
 
         // validamos las claves y valores de fieldList
         foreach ($fieldList as $alias => $expression) {
-            if (false === self::isValidAlias((string)$alias)
-                || false === self::isValidAggregate((string)$expression)) {
+            if (
+                false === self::isValidAlias((string)$alias)
+                || false === self::isValidAggregate((string)$expression)
+            ) {
                 Tools::log()->error('invalid-field-list: ' . $alias . ' => ' . $expression);
                 return self::emptyResult($fieldList);
             }

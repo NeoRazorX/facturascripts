@@ -5,9 +5,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\AjaxForms\SalesController;
 use FacturaScripts\Dinamic\Lib\Calculator;
@@ -259,7 +259,7 @@ class EditFacturaCliente extends SalesController
 
         switch ($viewName) {
             case self::VIEW_RECEIPTS:
-                $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
+                $where = [Where::eq('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
                 $view->loadData('', $where);
                 if (empty($view->query)) {
                     $this->checkReceiptsTotal($view->cursor);
@@ -267,7 +267,7 @@ class EditFacturaCliente extends SalesController
                 break;
 
             case self::VIEW_ACCOUNTS:
-                $where = [new DataBaseWhere('idasiento', $this->getViewModelValue($mvn, 'idasiento'))];
+                $where = [Where::eq('idasiento', $this->getViewModelValue($mvn, 'idasiento'))];
                 $view->loadData('', $where);
                 break;
 
@@ -276,7 +276,7 @@ class EditFacturaCliente extends SalesController
                     $this->setSettings($viewName, 'active', false);
                     break;
                 }
-                $where = [new DataBaseWhere('idfacturarect', $this->getViewModelValue($mvn, 'idfactura'))];
+                $where = [Where::eq('idfacturarect', $this->getViewModelValue($mvn, 'idfactura'))];
                 $view->loadData('', $where);
                 break;
 

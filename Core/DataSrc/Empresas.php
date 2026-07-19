@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -61,7 +61,16 @@ final class Empresas implements DataSrcInterface
     public static function default(): Empresa
     {
         $id = Tools::settings('default', 'idempresa');
-        return self::get($id);
+        if ($id) {
+            return self::get($id);
+        }
+
+        // instalación nueva: aún no hay empresa predeterminada, devolvemos la primera
+        foreach (self::all() as $item) {
+            return $item;
+        }
+
+        return new Empresa();
     }
 
     /**

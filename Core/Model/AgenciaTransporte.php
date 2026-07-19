@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -64,6 +65,12 @@ class AgenciaTransporte extends ModelClass
      * @var string
      */
     public $web;
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        AgenciasTransporte::clear();
+    }
 
     public static function primaryColumn(): string
     {

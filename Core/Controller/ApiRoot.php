@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,12 +27,13 @@ class ApiRoot extends ApiController
 {
     /** @var array */
     private static $custom_resources = [
-        'attachedfiles', 'crearAlbaranCliente', 'crearAlbaranProveedor', 'crearFacturaCliente', 'crearFacturaProveedor',
+        'crearAlbaranCliente', 'crearAlbaranProveedor', 'crearFacturaCliente', 'crearFacturaProveedor',
         'crearFacturaRectificativaCliente', 'crearPedidoCliente', 'crearPedidoProveedor', 'crearPresupuestoCliente',
-        'crearPresupuestoProveedor', 'exportarAlbaranCliente', 'exportarAlbaranProveedor', 'exportarFacturaCliente',
+        'crearPresupuestoProveedor', 'editarAlbaranCliente', 'editarAlbaranProveedor', 'editarFacturaCliente',
+        'editarFacturaProveedor', 'editarPedidoCliente', 'editarPedidoProveedor', 'editarPresupuestoCliente',
+        'editarPresupuestoProveedor', 'exportarAlbaranCliente', 'exportarAlbaranProveedor', 'exportarFacturaCliente',
         'exportarFacturaProveedor', 'exportarPedidoCliente', 'exportarPedidoProveedor', 'exportarPresupuestoCliente',
-        'exportarPresupuestoProveedor', 'pagarFacturaCliente', 'pagarFacturaProveedor', 'plugins', 'productoimagenes',
-        'uploadFiles'
+        'exportarPresupuestoProveedor', 'pagarFacturaCliente', 'pagarFacturaProveedor', 'plugins', 'uploadFiles'
     ];
 
     public static function addCustomResource(string $name): void
@@ -40,22 +41,21 @@ class ApiRoot extends ApiController
         self::$custom_resources[] = $name;
     }
 
-    protected function exposeResources(array &$map): void
-    {
-        $json = ['resources' => self::$custom_resources];
-        foreach (array_keys($map) as $key) {
-            $json['resources'][] = $key;
-        }
-
-        // ordenamos
-        sort($json['resources']);
-
-        $this->response->json($json);
-    }
-
     public static function getCustomResources(): array
     {
         return self::$custom_resources;
+    }
+
+    protected function exposeResources(array &$map): void
+    {
+        // unimos los recursos personalizados con los modelos autoexpuestos,
+        // eliminando duplicados (p. ej. attachedfiles existe en ambos)
+        $resources = array_unique(array_merge(self::$custom_resources, array_keys($map)));
+
+        // ordenamos
+        sort($resources);
+
+        $this->response->json(['resources' => $resources]);
     }
 
     protected function getResourcesMap(): array

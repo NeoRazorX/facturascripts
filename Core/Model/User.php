@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
@@ -27,6 +26,7 @@ use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Agente as DinAgente;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
@@ -56,7 +56,7 @@ class User extends ModelClass
     /** @var string */
     public $codagente;
 
-    /** @var string */
+    /** @var string|null */
     public $codalmacen;
 
     /** @var string */
@@ -160,6 +160,12 @@ class User extends ModelClass
      */
     public function can(string $pageName, string $permission = 'access'): bool
     {
+        // si el usuario no existe (nick vacío), no puede acceder a nada
+        if (empty($this->nick)) {
+            Tools::log()->warning('no-user-specified');
+            return false;
+        }
+
         // si está desactivado, no puede acceder a nada
         if (false === $this->enabled) {
             return false;
@@ -186,10 +192,10 @@ class User extends ModelClass
     {
         parent::clear();
         $this->admin = false;
-        $this->codalmacen = Tools::settings('default', 'codalmacen');
+        $this->codalmacen = null;
         $this->creationdate = Tools::date();
         $this->enabled = true;
-        $this->idempresa = Tools::settings('default', 'idempresa', 1);
+        $this->idempresa = null;
         $this->langcode = Tools::config('lang');
         $this->level = self::DEFAULT_LEVEL;
         $this->two_factor_enabled = false;
@@ -248,7 +254,10 @@ class User extends ModelClass
      */
     public function getApiFieldsToHide(): array
     {
-        return ['password', 'logkey', 'two_factor_secret_key'];
+        return array_unique(array_merge(
+            ['password', 'logkey', 'two_factor_secret_key'],
+            parent::getApiFieldsToHide()
+        ));
     }
 
     /**
@@ -260,7 +269,7 @@ class User extends ModelClass
     {
         $roles = [];
 
-        $where = [new DataBaseWhere('nick', $this->nick)];
+        $where = [Where::eq('nick', $this->nick)];
         foreach (DinRoleUser::all($where, [], 0, 0) as $role) {
             $roles[] = $role->getRole();
         }
@@ -420,8 +429,8 @@ class User extends ModelClass
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
         $this->lastbrowser = mb_substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200, 'UTF-8');
 
-        // escapamos el html de lastip y comprobamos que no excede los 40 caracteres
-        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 40);
+        // escapamos el html de lastip y comprobamos que no excede los 45 caracteres
+        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 45);
 
         if ($this->admin) {
             $this->level = 99;
@@ -521,16 +530,19 @@ class User extends ModelClass
 
     protected function testWarehouse(): bool
     {
-        if (empty($this->codalmacen)) {
-            $this->codalmacen = Tools::settings('default', 'codalmacen');
-            $this->idempresa = Tools::settings('default', 'idempresa');
+        // empresa y almacén son opcionales: si falta alguno, se dejan vacíos y los
+        // documentos usarán los valores por defecto del panel de control
+        if (empty($this->codalmacen) || empty($this->idempresa)) {
+            $this->codalmacen = null;
+            $this->idempresa = null;
             return true;
         }
 
+        // si se indica almacén, debe existir y pertenecer a la empresa indicada
         $warehouse = new Almacen();
         if (false === $warehouse->load($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
-            $this->codalmacen = Tools::settings('default', 'codalmacen');
-            $this->idempresa = Tools::settings('default', 'idempresa');
+            $this->codalmacen = null;
+            $this->idempresa = null;
         }
 
         return true;

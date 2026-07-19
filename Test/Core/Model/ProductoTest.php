@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\AttachedFile;
@@ -37,6 +36,7 @@ use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -48,7 +48,7 @@ final class ProductoTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        $where = [new DataBaseWhere('referencia', self::TEST_REFERENCE)];
+        $where = [Where::eq('referencia', self::TEST_REFERENCE)];
         foreach (Producto::all($where, [], 0, 0) as $product) {
             $product->delete();
         }
@@ -507,7 +507,7 @@ final class ProductoTest extends TestCase
             . $variant->referencia . ' === ' . $variant->getProducto()->referencia);
 
         // comprobamos que no podemos eliminar la única variante
-        $where = [new DataBaseWhere('referencia', $product->referencia)];
+        $where = [Where::eq('referencia', $product->referencia)];
         $this->assertTrue($variant->loadWhere($where), 'cant-reload-variant');
         $this->assertFalse($variant->delete(), 'can-delete-only-variant');
 

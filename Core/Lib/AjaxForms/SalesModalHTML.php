@@ -21,15 +21,17 @@ namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Contract\SalesModalInterface;
+use FacturaScripts\Core\DataSrc\Fabricantes;
+use FacturaScripts\Core\DataSrc\Familias;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
@@ -64,8 +66,21 @@ class SalesModalHTML
     /** @var bool */
     protected static $vendido;
 
+    /** @var SalesModalInterface[] */
+    private static $mods = [];
+
+    public static function addMod(SalesModalInterface $mod): void
+    {
+        self::$mods[] = $mod;
+    }
+
     public static function apply(SalesDocument &$model, array $formData): void
     {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->applyBefore($model, $formData);
+        }
+
         self::$codalmacen = $model->codalmacen;
         self::$codcliente = $model->codcliente;
         self::$codfabricante = $formData['fp_codfabricante'] ?? '';
@@ -74,6 +89,19 @@ class SalesModalHTML
         self::$vendido = (bool)($formData['fp_vendido'] ?? false);
         self::$query = isset($formData['fp_query']) ?
             Tools::noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
+
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->apply($model, $formData);
+        }
+    }
+
+    public static function assets(): void
+    {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->assets();
+        }
     }
 
     public static function render(SalesDocument $model, string $url): string
@@ -104,7 +132,8 @@ class SalesModalHTML
                 . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return salesFormAction(\'add-product\', this.dataset.reference);">'
                 . '<td><b>' . $reference . '</b> ' . $description . '</td>'
-                . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>';
+                . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
+                . self::renderNewProduct($row);
 
             if (self::$vendido) {
                 $tbody .= '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['ultimo_precio'])) . '</td>';
@@ -126,6 +155,7 @@ class SalesModalHTML
             . '<tr>'
             . '<th>' . Tools::trans('product') . '</th>'
             . '<th class="text-end">' . Tools::trans('price') . '</th>'
+            . self::renderNewProductHeads()
             . $extraTh
             . '<th class="text-end">' . Tools::trans('stock') . '</th>'
             . '</tr>'
@@ -138,7 +168,7 @@ class SalesModalHTML
     {
         $options = '<option value="">' . Tools::trans('manufacturer') . '</option>'
             . '<option value="">------</option>';
-        foreach (Fabricante::all([], ['nombre' => 'ASC'], 0, 0) as $man) {
+        foreach (Fabricantes::all() as $man) {
             $options .= '<option value="' . $man->codfabricante . '">' . $man->nombre . '</option>';
         }
 
@@ -151,9 +181,7 @@ class SalesModalHTML
         $options = '<option value="">' . Tools::trans('family') . '</option>'
             . '<option value="">------</option>';
 
-        $where = [new DataBaseWhere('madre', null, 'IS')];
-        $orderBy = ['descripcion' => 'ASC'];
-        foreach (Familia::all($where, $orderBy, 0, 0) as $fam) {
+        foreach (Familias::children() as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">' . $fam->descripcion . '</option>';
 
             // añadimos las subfamilias de forma recursiva
@@ -178,10 +206,11 @@ class SalesModalHTML
             }
 
             // consultamos la base de datos
-            $where = [new DataBaseWhere('fechabaja', null, 'IS')];
+            $where = [Where::isNull('fechabaja')];
             if ($permissions->onlyOwnerData && !$showAll) {
-                $where[] = new DataBaseWhere('codagente', $user->codagente);
-                $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+                // Mantener alineado con OwnerDataTrait/getOwnerFilter si Cliente añade más criterios de propiedad.
+                $where[] = Where::eq('codagente', $user->codagente);
+                $where[] = Where::isNotNull('codagente');
             }
             return Cliente::all($where, ['LOWER(nombre)' => 'ASC'], 0, 50);
         });
@@ -198,15 +227,17 @@ class SalesModalHTML
         $dataBase = new DataBase();
         $dataBase->connect();
 
-        $sql = 'SELECT v.referencia, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
-            . ' v.idatributovalor4, v.precio, COALESCE(s.disponible, 0) as disponible, p.nostock'
+        // Los mods pueden añadir columnas con cualquier campo de variantes o productos.
+        // Listamos primero p.* y después v.*, de forma que en los campos comunes
+        // (referencia, precio, idproducto, stockfis) prevalezca el valor de la variante.
+        $sql = 'SELECT p.*, v.*, COALESCE(s.disponible, 0) as disponible'
             . ' FROM variantes v'
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
             . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
             . ' WHERE p.sevende = true AND p.bloqueado = false';
 
         if (self::$codfabricante) {
-            $sql .= ' AND codfabricante = ' . $dataBase->var2str(self::$codfabricante);
+            $sql .= ' AND p.codfabricante = ' . $dataBase->var2str(self::$codfabricante);
         }
 
         if (self::$codfamilia) {
@@ -220,7 +251,7 @@ class SalesModalHTML
                 }
             }
 
-            $sql .= ' AND codfamilia IN (' . implode(',', $codFamilias) . ')';
+            $sql .= ' AND p.codfamilia IN (' . implode(',', $codFamilias) . ')';
         }
 
         if (self::$vendido) {
@@ -248,19 +279,19 @@ class SalesModalHTML
 
         switch (self::$orden) {
             case 'desc_asc':
-                $sql .= " ORDER BY 2 ASC";
+                $sql .= " ORDER BY p.descripcion ASC";
                 break;
 
             case 'price_desc':
-                $sql .= " ORDER BY 7 DESC";
+                $sql .= " ORDER BY v.precio DESC";
                 break;
 
             case 'ref_asc':
-                $sql .= " ORDER BY 1 ASC";
+                $sql .= " ORDER BY v.referencia ASC";
                 break;
 
             case 'stock_desc':
-                $sql .= " ORDER BY 8 DESC";
+                $sql .= " ORDER BY disponible DESC";
                 break;
         }
 
@@ -298,6 +329,7 @@ class SalesModalHTML
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'salesForm\'][\'codcliente\'].value = \''
                 . $cli->codcliente . '\'; $(\'#findCustomerModal\').modal(\'hide\'); salesFormAction(\'set-customer\', \'0\'); return false;">'
                 . '<td><i class="fa-solid fa-user fa-fw"></i> ' . $name . '</td>'
+                . self::renderNewCustomer($cli)
                 . '</tr>';
         }
 
@@ -408,10 +440,115 @@ class SalesModalHTML
         }
     }
 
+    /**
+     * Lista unificada (sin duplicados) de las columnas que los mods añaden al modal de clientes.
+     *
+     * @return string[]
+     */
+    private static function newCustomerFields(): array
+    {
+        $fields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newCustomerFields() as $field) {
+                if (false === in_array($field, $fields, true)) {
+                    $fields[] = $field;
+                }
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * Lista unificada (sin duplicados) de las columnas que los mods añaden al modal de productos.
+     *
+     * @return string[]
+     */
+    private static function newProductFields(): array
+    {
+        $fields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newProductFields() as $field) {
+                if (false === in_array($field, $fields, true)) {
+                    $fields[] = $field;
+                }
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * Renderiza las celdas añadidas por los mods a una fila del modal de clientes.
+     * Recorre la misma lista de campos para todas las filas y emite una celda vacía
+     * cuando ningún mod resuelve el campo, de forma que todas las filas tengan el mismo
+     * número de columnas.
+     *
+     * @param Cliente $cli
+     * @return string
+     */
+    private static function renderNewCustomer(Cliente $cli): string
+    {
+        $html = '';
+        foreach (self::newCustomerFields() as $field) {
+            $cell = null;
+            foreach (self::$mods as $mod) {
+                $cell = $mod->renderField($cli, $field);
+                if ($cell !== null) {
+                    break;
+                }
+            }
+            $html .= $cell ?? '<td></td>';
+        }
+        return $html;
+    }
+
+    /**
+     * Renderiza las celdas añadidas por los mods a una fila del modal de productos.
+     *
+     * @param array $row
+     * @return string
+     */
+    private static function renderNewProduct(array $row): string
+    {
+        $html = '';
+        foreach (self::newProductFields() as $field) {
+            $cell = null;
+            foreach (self::$mods as $mod) {
+                $cell = $mod->renderField($row, $field);
+                if ($cell !== null) {
+                    break;
+                }
+            }
+            $html .= $cell ?? '<td></td>';
+        }
+        return $html;
+    }
+
+    /**
+     * Renderiza las cabeceras de las columnas añadidas por los mods al modal de productos.
+     * Usa la misma lista de campos que renderNewProduct() para mantener alineadas cabecera y celdas.
+     *
+     * @return string
+     */
+    private static function renderNewProductHeads(): string
+    {
+        $html = '';
+        foreach (self::newProductFields() as $field) {
+            $cell = null;
+            foreach (self::$mods as $mod) {
+                $cell = $mod->renderFieldHead($field);
+                if ($cell !== null) {
+                    break;
+                }
+            }
+            $html .= $cell ?? '<th></th>';
+        }
+        return $html;
+    }
+
     private static function subfamilias(Familia $family, int $level = 1): string
     {
         $options = '';
-        foreach ($family->getSubfamilias() as $fam) {
+        foreach (Familias::children($family->codfamilia) as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">'
                 . str_repeat('-', $level) . ' ' . $fam->descripcion
                 . '</option>';

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\PageOption;
@@ -247,8 +247,8 @@ class EditPageOption extends Controller
     private function loadPageOptionsForAll(): bool
     {
         $where = [
-            new DataBaseWhere('name', $this->selectedViewName),
-            new DataBaseWhere('nick', null, 'IS'),
+            Where::eq('name', $this->selectedViewName),
+            Where::isNull('nick'),
         ];
         return $this->model->loadWhere($where);
     }
@@ -263,8 +263,8 @@ class EditPageOption extends Controller
     private function loadPageOptionsForUser(): bool
     {
         $where = [
-            new DataBaseWhere('name', $this->selectedViewName),
-            new DataBaseWhere('nick', $this->selectedUser),
+            Where::eq('name', $this->selectedViewName),
+            Where::eq('nick', $this->selectedUser),
         ];
         if ($this->model->loadWhere($where)) {
             // Existen opciones para el usuario.

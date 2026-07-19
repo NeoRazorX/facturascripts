@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Model\Role;
@@ -211,7 +210,7 @@ class EditRole extends EditController
         switch ($viewName) {
             case 'EditRoleUser':
                 $code = $this->getViewModelValue($this->getMainViewName(), 'codrole');
-                $where = [new DataBaseWhere('codrole', $code)];
+                $where = [Where::eq('codrole', $code)];
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;
 
@@ -230,7 +229,7 @@ class EditRole extends EditController
         $orphanPages = array_diff($roleAccessPageNames, $pageNames);
         foreach ($orphanPages as $pageName) {
             $page = new RoleAccess();
-            $page->loadWhere([new DataBaseWhere('pagename', $pageName)]);
+            $page->loadWhere([Where::eq('pagename', $pageName)]);
             $page->delete();
 
             // si el rol ya no tiene permisos, lo eliminamos.
@@ -238,7 +237,7 @@ class EditRole extends EditController
 
             if ($rolesLength === 0) {
                 $role = new Role();
-                $role->loadWhere([new DataBaseWhere('codrole', $page->codrole)]);
+                $role->loadWhere([Where::eq('codrole', $page->codrole)]);
                 $role->delete();
 
                 // redireccionamos al listado, ya que el rol lo hemos borrado

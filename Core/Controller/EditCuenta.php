@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -170,7 +170,7 @@ class EditCuenta extends EditController
 
         switch ($viewName) {
             case 'ListCuenta':
-                $where = [new DataBaseWhere('parent_idcuenta', $idcuenta)];
+                $where = [Where::eq('parent_idcuenta', $idcuenta)];
                 $view->loadData('', $where);
 
                 // ocultamos la columna saldo de los totales
@@ -178,7 +178,7 @@ class EditCuenta extends EditController
                 break;
 
             case 'ListSubcuenta':
-                $where = [new DataBaseWhere('idcuenta', $idcuenta)];
+                $where = [Where::eq('idcuenta', $idcuenta)];
                 $view->loadData('', $where);
                 if ($view->count == 0) {
                     break;

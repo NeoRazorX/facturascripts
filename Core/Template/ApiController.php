@@ -103,7 +103,7 @@ abstract class ApiController implements ControllerInterface
 
         // actualizamos la última actividad de la API key
         if ($this->apiKey->id && false === $this->apiKey->fullaccess) {
-            $this->apiKey->updateActivity();
+            $this->apiKey->updateActivity(Session::getClientIp());
         }
 
         // comprobamos los permisos

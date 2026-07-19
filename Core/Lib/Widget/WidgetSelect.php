@@ -216,7 +216,7 @@ class WidgetSelect extends BaseWidget
                 'value' => $codeModel->code,
                 'title' => $codeModel->description,
             ];
-            if (isset($groups[$codeModel->code])) {
+            if ($codeModel->code !== null && isset($groups[$codeModel->code])) {
                 $entry['group'] = $groups[$codeModel->code];
             }
             $this->values[] = $entry;
@@ -452,8 +452,11 @@ class WidgetSelect extends BaseWidget
                 // Construir mapa fieldcode => etiqueta del grupo
                 $groups = [];
                 foreach ($values as $row) {
+                    if ($row->code === null) {
+                        continue;
+                    }
                     $groupFieldValue = $groupFieldMap[$row->code] ?? null;
-                    $groups[$row->code] = $groupLabelMap[$groupFieldValue] ?? '';
+                    $groups[$row->code] = $groupFieldValue === null ? '' : ($groupLabelMap[$groupFieldValue] ?? '');
                 }
 
                 $this->setValuesFromCodeModel($values, $this->translate, $groups);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,10 +22,11 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
-use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -197,6 +198,40 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Adds a select or autocomplete filter to a ListView depending on the number of available
+     * values: a select when there are few, an autocomplete when they exceed the CodeModel limit.
+     * The where conditions apply to both.
+     *
+     * @param string $viewName
+     * @param string $key (Filter identifier)
+     * @param string $label (Human reader description)
+     * @param string $field (Field of the table to apply filter)
+     * @param string $table (Table to read the values from)
+     * @param string $fieldcode (Code column; defaults to $field)
+     * @param string $fieldtitle (Title column; defaults to $fieldcode)
+     * @param array $where (Extra where conditions)
+     * @return ListView
+     */
+    protected function addFilterSelectAuto(string $viewName, string $key, string $label, string $field, string $table, string $fieldcode = '', string $fieldtitle = '', array $where = []): ListView
+    {
+        if (empty($fieldcode)) {
+            $fieldcode = $field;
+        }
+        if (empty($fieldtitle)) {
+            $fieldtitle = $fieldcode;
+        }
+
+        $values = $this->codeModel->all($table, $fieldcode, $fieldtitle, true, $where);
+
+        // si supera el límite, mostramos un autocompletado; si no, un select
+        if (count($values) >= CodeModel::getLimit()) {
+            return $this->listView($viewName)->addFilterAutocomplete($key, $label, $field, $table, $fieldcode, $fieldtitle, $where);
+        }
+
+        return $this->listView($viewName)->addFilterSelect($key, $label, $field, $values);
+    }
+
+    /**
      * Add a select where type filter to a ListView.
      *
      * @param string $viewName
@@ -272,15 +307,12 @@ abstract class ListController extends BaseController
      */
     protected function clearFiltersAction(): void
     {
-        $viewName = $this->active;
-        $nick = Session::user()->nick;
-        $cacheKey = 'filters-' . Session::get('controllerName') . '-' . $viewName . '-' . $nick;
+        $view = $this->listView($this->active);
 
         // clear cache
-        Cache::clear($cacheKey);
+        Cache::delete($view->filtersCacheKey());
 
         // clear filter values from request
-        $view = $this->listView($viewName);
         foreach ($view->filters as $filter) {
             $this->request->request->remove('filter' . $filter->key);
         }
@@ -386,27 +418,36 @@ abstract class ListController extends BaseController
      *
      * @param ModelClass $model
      *
-     * @return DataBaseWhere[]
+     * @return Where[]
      */
     protected function getOwnerFilter($model): array
     {
-        $where = [];
+        // criterios de propiedad que el usuario puede cumplir en este modelo
+        $owner = [];
 
-        if (property_exists($model, 'nick')) {
-            // DatabaseWhere applies parentheses grouping the ORs
-            // result: (`nick` = 'username' OR `nick` IS NULL OR `codagente` = 'agent') AND [... user filters]
-            $where[] = new DataBaseWhere('nick', $this->user->nick);
-            $where[] = new DataBaseWhere('nick', null, 'IS', 'OR');
-            if (property_exists($model, 'codagente') && $this->user->codagente) {
-                $where[] = new DataBaseWhere('codagente', $this->user->codagente, '=', 'OR');
-            }
-            return $where;
+        // si el modelo y el usuario tienen agente, filtramos por agente
+        if ($model->hasColumn('codagente') && false === empty($this->user->codagente)) {
+            $owner[] = Where::eq('codagente', $this->user->codagente);
         }
 
-        if (property_exists($model, 'codagente')) {
-            $where[] = new DataBaseWhere('codagente', $this->user->codagente);
+        // si el modelo tiene nick, añadimos el nick (con OR si ya filtramos por agente)
+        if ($model->hasColumn('nick')) {
+            $owner[] = empty($owner)
+                ? Where::eq('nick', $this->user->nick)
+                : Where::orEq('nick', $this->user->nick);
         }
-        return $where;
+
+        // si el modelo tiene criterio de propiedad pero el usuario no puede cumplir
+        // ninguno (tiene codagente pero el usuario no tiene agente, y no hay nick),
+        // no posee nada: filtro imposible para no devolver filas
+        if (empty($owner) && $model->hasColumn('codagente')) {
+            return [Where::isNull($model->primaryColumn())];
+        }
+
+        // agrupamos los criterios entre paréntesis para que el OR no se mezcle con
+        // los filtros (AND) que se añaden después:
+        // result: (`codagente` = 'agent' OR `nick` = 'username') AND [... user filters]
+        return empty($owner) ? [] : [Where::sub($owner)];
     }
 
     /**
@@ -441,7 +482,7 @@ abstract class ListController extends BaseController
             ];
 
             $fields = implode('|', $listView->searchFields);
-            $where = [new DataBaseWhere($fields, $this->request->queryOrInput('query', ''), 'LIKE')];
+            $where = [Where::like($fields, $this->request->queryOrInput('query', ''))];
             $listView->loadData(false, $where);
             foreach ($listView->cursor as $model) {
                 $item = ['url' => $model->url()];
@@ -456,6 +497,20 @@ abstract class ListController extends BaseController
         }
 
         $this->response->json($json);
+    }
+
+    /**
+     * Saves filter values for active view and user.
+     */
+    protected function saveFilterAction(): void
+    {
+        $id_filter = $this->listView($this->active)->savePageFilter($this->request, $this->user);
+        if (!empty($id_filter)) {
+            Tools::log()->notice('record-updated-correctly');
+
+            // load filters in request
+            $this->request->request->set('loadfilter', $id_filter);
+        }
     }
 
     /**
@@ -475,19 +530,5 @@ abstract class ListController extends BaseController
         }
 
         return $result;
-    }
-
-    /**
-     * Saves filter values for active view and user.
-     */
-    protected function saveFilterAction(): void
-    {
-        $id_filter = $this->listView($this->active)->savePageFilter($this->request, $this->user);
-        if (!empty($id_filter)) {
-            Tools::log()->notice('record-updated-correctly');
-
-            // load filters in request
-            $this->request->request->set('loadfilter', $id_filter);
-        }
     }
 }

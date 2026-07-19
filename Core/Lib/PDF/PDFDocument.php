@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,11 +20,11 @@
 namespace FacturaScripts\Core\Lib\PDF;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Template\ExtensionsTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -86,7 +86,7 @@ abstract class PDFDocument extends PDFCore
      */
     protected function getDocAddress($subject, $model): string
     {
-        if (isset($model->codproveedor)) {
+        if (isset($model->codproveedor) && empty($model->direccion)) {
             $contacto = $subject->getDefaultAddress();
             return $this->combineAddress($contacto);
         }
@@ -114,7 +114,7 @@ abstract class PDFDocument extends PDFCore
 
         // Domiciliado. Mostramos la cuenta bancaria del cliente
         $cuentaBcoCli = new CuentaBancoCliente();
-        $where = [new DataBaseWhere('codcliente', $receipt->codcliente)];
+        $where = [Where::eq('codcliente', $receipt->codcliente)];
         if ($payMethod->domiciliado && $cuentaBcoCli->loadWhere($where, ['principal' => 'DESC'])) {
             return $payMethod->descripcion . ' : ' . $cuentaBcoCli->getIban(true, true);
         }
@@ -535,7 +535,7 @@ abstract class PDFDocument extends PDFCore
         ];
         if (isset($model->codigorect) && !empty($model->codigorect)) {
             $original = new $model();
-            if ($original->loadFromCode('', [new DataBaseWhere('codigo', $model->codigorect)])) {
+            if ($original->loadWhereEq('codigo', $model->codigorect)) {
                 $tableData[3] = [
                     'key' => $this->i18n->trans('original'),
                     'value' => $model->codigorect . ', ' . $original->fecha

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
@@ -55,7 +55,7 @@ class EditEmailSent extends EditController
     {
         $contact = new Contacto();
         $email = $this->getViewModelValue($this->getMainViewName(), 'addressee');
-        $where = [new DataBaseWhere('email', $email)];
+        $where = [Where::eq('email', $email)];
         if ($contact->loadWhere($where)) {
             $this->redirect($contact->url());
             return;
@@ -182,8 +182,8 @@ class EditEmailSent extends EditController
                 $addressee = $this->getViewModelValue($mvn, 'addressee');
                 $id = $this->getViewModelValue($mvn, 'id');
                 $where = [
-                    new DataBaseWhere('addressee', $addressee),
-                    new DataBaseWhere('id', $id, '!=')
+                    Where::eq('addressee', $addressee),
+                    Where::notEq('id', $id)
                 ];
                 $view->loadData('', $where);
                 break;

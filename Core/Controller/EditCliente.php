@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Lib\ExtendedController\EditListView;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
@@ -119,7 +119,14 @@ class EditCliente extends ComercialContactController
     protected function createInvoiceView(string $viewName): void
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices')
-            ->setSettings('btnPrint', true);
+            ->setSettings('btnPrint', true)
+            ->addFilterSelectWhere('status', [
+                ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+                ['label' => '------', 'where' => []],
+                ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagada', true)]],
+                ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagada', false)]],
+                ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencida', true)]],
+            ]);
 
         // agrupamos las acciones de facturas en un dropdown
         $this->tab($viewName)->addButtonGroup([
@@ -162,7 +169,14 @@ class EditCliente extends ComercialContactController
             $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
         }
         if ($this->user->can('EditReciboCliente')) {
-            $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
+            $this->createReceiptView('ListReciboCliente', 'ReciboCliente')
+                ->addFilterSelectWhere('status', [
+                    ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+                    ['label' => '------', 'where' => []],
+                    ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagado', true)]],
+                    ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagado', false)]],
+                    ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencido', true)]],
+                ]);
         }
     }
 
@@ -232,7 +246,7 @@ class EditCliente extends ComercialContactController
     {
         $mainViewName = $this->getMainViewName();
         $codcliente = $this->getViewModelValue($mainViewName, 'codcliente');
-        $where = [new DataBaseWhere('codcliente', $codcliente)];
+        $where = [Where::eq('codcliente', $codcliente)];
 
         switch ($viewName) {
             case 'EditCuentaBancoCliente':
@@ -257,7 +271,7 @@ class EditCliente extends ComercialContactController
 
             case 'ListLineaFacturaCliente':
                 $inSQL = 'SELECT idfactura FROM facturascli WHERE codcliente = ' . $this->dataBase->var2str($codcliente);
-                $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
+                $where = [Where::in('idfactura', $inSQL)];
                 $view->loadData('', $where);
                 break;
 
@@ -323,7 +337,7 @@ class EditCliente extends ComercialContactController
 
         // Search for client contacts
         $codcliente = $this->getViewModelValue($viewName, 'codcliente');
-        $where = [new DataBaseWhere('codcliente', $codcliente)];
+        $where = [Where::eq('codcliente', $codcliente)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
         // Load values option to default billing address from client contacts list
@@ -374,9 +388,9 @@ class EditCliente extends ComercialContactController
 
         // filtros
         $where = [
-            new DataBaseWhere('codcliente', $codcliente),
-            new DataBaseWhere('idcontactofact', $idcontacto),
-            new DataBaseWhere('editable', true)
+            Where::eq('codcliente', $codcliente),
+            Where::eq('idcontactofact', $idcontacto),
+            Where::eq('editable', true)
         ];
         // para cada documento de venta
         foreach (['AlbaranCliente', 'FacturaCliente', 'PedidoCliente', 'PresupuestoCliente'] as $modelName) {

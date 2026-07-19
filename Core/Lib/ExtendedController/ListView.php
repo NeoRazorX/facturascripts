@@ -171,9 +171,9 @@ class ListView extends BaseView
             return false;
         }
 
-        // print list
+        // print list, siempre desde el primer registro, no desde la página actual
         $exportManager->addListModelPage(
-            $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
+            $this->model, $this->where, $this->order, 0, $this->getColumns(), $this->title
         );
 
         // print totals
@@ -186,6 +186,12 @@ class ListView extends BaseView
         }
 
         return true;
+    }
+
+    /** Clave de caché donde se guardan los filtros de esta vista para el usuario actual. */
+    public function filtersCacheKey(): string
+    {
+        return 'filters-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . Session::user()->nick;
     }
 
     /**
@@ -362,7 +368,7 @@ class ListView extends BaseView
         }
 
         // si la request es GET, obtenemos los filtros desde la caché
-        $cacheKeyFiltros = 'filters-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . Session::user()->nick;
+        $cacheKeyFiltros = $this->filtersCacheKey();
         if ($request->isMethod('GET')) {
             $filtrosCache = Cache::get($cacheKeyFiltros);
             if ($filtrosCache) {

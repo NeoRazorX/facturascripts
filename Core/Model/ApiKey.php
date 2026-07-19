@@ -58,6 +58,9 @@ class ApiKey extends ModelClass
     public $lastactivity;
 
     /** @var string */
+    public $lastip;
+
+    /** @var string */
     public $nick;
 
     /**
@@ -132,7 +135,7 @@ class ApiKey extends ModelClass
      */
     public function getApiFieldsToHide(): array
     {
-        return ['apikey'];
+        return array_unique(array_merge(['apikey'], parent::getApiFieldsToHide()));
     }
 
     /**
@@ -187,9 +190,10 @@ class ApiKey extends ModelClass
         return parent::test();
     }
 
-    public function updateActivity(): bool
+    public function updateActivity(?string $ip = null): bool
     {
         $this->lastactivity = Tools::dateTime();
+        $this->lastip = $ip;
         return $this->save();
     }
 

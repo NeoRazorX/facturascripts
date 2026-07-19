@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\Calculator;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -152,8 +152,8 @@ final class ProductoProveedorTest extends TestCase
 
         $model = new ProductoProveedor();
         $productosProveedor = $model->all([
-            new DataBaseWhere('referencia', $product->referencia),
-            new DataBaseWhere('codproveedor', $subject->codproveedor),
+            Where::eq('referencia', $product->referencia),
+            Where::eq('codproveedor', $subject->codproveedor),
         ]);
 
         $this->assertCount(1, $productosProveedor);
@@ -252,8 +252,8 @@ final class ProductoProveedorTest extends TestCase
 
         // buscamos el producto del proveedor
         $productosProveedor = ProductoProveedor::all([
-            new DataBaseWhere('referencia', $product->referencia),
-            new DataBaseWhere('codproveedor', $subject->codproveedor),
+            Where::eq('referencia', $product->referencia),
+            Where::eq('codproveedor', $subject->codproveedor),
         ]);
 
         // comprobamos que se han creado dos productos proveedor

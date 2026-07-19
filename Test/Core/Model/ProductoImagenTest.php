@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -179,7 +179,7 @@ final class ProductoImagenTest extends TestCase
         $this->assertFileExists($expectedPath . '_100x100.jpg');
         $this->assertFileExists($expectedPath . '_200x200.jpg');
         $this->assertFileExists($expectedPath . '_300x500.jpg');
-        $this->assertTrue((new ProductoImagen())->loadFromCode($productoImagen->id));
+        $this->assertTrue((new ProductoImagen())->load($productoImagen->id));
 
         // BORRAMOS
         $productoImagen->delete();
@@ -189,7 +189,7 @@ final class ProductoImagenTest extends TestCase
         $this->assertFileDoesNotExist($expectedPath . '_100x100.jpg');
         $this->assertFileDoesNotExist($expectedPath . '_200x200.jpg');
         $this->assertFileDoesNotExist($expectedPath . '_300x500.jpg');
-        $this->assertFalse((new ProductoImagen())->loadFromCode($productoImagen->id));
+        $this->assertFalse((new ProductoImagen())->load($productoImagen->id));
 
         // eliminamos
         $attachedFile->delete();

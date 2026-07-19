@@ -47,6 +47,9 @@ class Updater extends Controller
     /** @var array */
     public $coreUpdateWarnings = [];
 
+    /** @var bool */
+    public $justRegistered = false;
+
     /** @var Telemetry */
     public $telemetryManager;
 
@@ -100,6 +103,12 @@ class Updater extends Controller
         return $items;
     }
 
+    public function hasErrorFiles(): bool
+    {
+        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json') ?: [];
+        return !empty($files);
+    }
+
     /**
      * @param Response $response
      * @param User $user
@@ -137,6 +146,57 @@ class Updater extends Controller
 
         Tools::log()->notice('reloading');
         $this->redirect($this->getClassName() . '?action=post-update', 3);
+    }
+
+    private function deleteCrashFilesAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json') ?: [];
+        foreach ($files as $file) {
+            unlink($file);
+        }
+
+        Tools::log()->notice('record-deleted-correctly');
+    }
+
+    private function sendCrashFilesAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json') ?: [];
+        foreach ($files as $file) {
+            $info = json_decode(file_get_contents($file), true);
+            if (empty($info['hash']) || !is_array($info['hash'])) {
+                continue;
+            }
+
+            $response = Http::post($info['report_url'], [
+                'error_code' => $info['code'],
+                'error_message' => $info['message'],
+                'error_file' => $info['file'],
+                'error_line' => $info['line'],
+                'error_hash' => $info['hash'],
+                'error_url' => $info['url'],
+                'error_core_version' => $info['core_version'],
+                'error_plugin_list' => $info['plugin_list'],
+                'error_php_version' => $info['php_version'],
+                'error_os' => $info['os'],
+            ]);
+
+            if ($response->failed()) {
+                Tools::log()->error('send-crash-file-error', ['%file%' => basename($file)]);
+                return;
+            }
+
+            unlink($file);
+        }
+
+        Tools::log()->notice('crash-files-sent');
     }
 
     private function disableBetaUpdatesAction(): void
@@ -196,6 +256,14 @@ class Updater extends Controller
                 $this->cancelAction();
                 return;
 
+            case 'delete-crash-files':
+                $this->deleteCrashFilesAction();
+                return;
+
+            case 'send-crash-files':
+                $this->sendCrashFilesAction();
+                return;
+
             case 'claim-install':
                 $this->redirect($this->telemetryManager->claimUrl());
                 return;
@@ -215,6 +283,10 @@ class Updater extends Controller
             case 'register':
                 if ($this->telemetryManager->install()) {
                     Tools::log()->notice('record-updated-correctly');
+                    // marcamos que se acaba de registrar para que la vista abra el modal
+                    // y el usuario pueda vincular la instalación con su contacto (el claim
+                    // necesita la cookie del portal, por eso lo tiene que hacer el navegador)
+                    $this->justRegistered = true;
                     break;
                 }
                 Tools::log()->error('record-save-error');
@@ -445,6 +517,7 @@ class Updater extends Controller
             Plugins::deploy(true, false);
             Cache::clear();
             $this->setTemplate(false);
+            $this->response->setContent('reloading...');
             $this->redirect($this->getClassName() . '?action=post-update&init=' . $init, 3);
         }
     }
@@ -452,7 +525,7 @@ class Updater extends Controller
     private function updateCore(ZipArchive $zip, string $fileName): bool
     {
         // extract zip content
-        if (false === $zip->extractTo(FS_FOLDER)) {
+        if (false === $zip->extractTo(Tools::folder())) {
             Tools::log()->critical('ZIP EXTRACT ERROR: ' . $fileName);
             $zip->close();
             return false;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Where;
 
 /**
  * EditCiudad
@@ -72,7 +72,7 @@ class EditCiudad extends EditController
         switch ($viewName) {
             case 'ListPuntoInteresCiudad':
                 $id_ciudad = $this->getViewModelValue($this->getMainViewName(), 'idciudad');
-                $where = [new DataBaseWhere('idciudad', $id_ciudad)];
+                $where = [Where::eq('idciudad', $id_ciudad)];
                 $view->loadData('', $where);
                 break;
 

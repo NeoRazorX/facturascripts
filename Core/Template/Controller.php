@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -88,6 +88,14 @@ abstract class Controller implements ControllerInterface
         return $this->className;
     }
 
+    /**
+     * Devuelve los datos básicos de esta página (nombre, título, icono, menú, etc.).
+     *
+     * Esta función solamente sirve para eso. No se debe añadir aquí ningún otro código,
+     * ya que en este punto el usuario ni siquiera se ha logueado todavía.
+     *
+     * @return array
+     */
     public function getPageData(): array
     {
         return [
@@ -145,7 +153,9 @@ abstract class Controller implements ControllerInterface
             throw new KernelException('AccessDenied', 'access-denied');
         }
 
-        $this->empresa = Empresas::default();
+        // empresa del usuario, o la predeterminada si no tiene ninguna asignada
+        $idempresa = empty($this->user) ? null : $this->user->idempresa;
+        $this->empresa = empty($idempresa) ? Empresas::default() : Empresas::get($idempresa);
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($this->className);
@@ -242,14 +252,14 @@ abstract class Controller implements ControllerInterface
             $this->multiRequestProtection = new MultiRequestProtection();
         }
 
-        // valid request?
+        // ¿petición válida?
         $token = $this->request()->inputOrQuery('multireqtoken', '');
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
             Tools::log()->warning('invalid-request');
             return false;
         }
 
-        // duplicated request?
+        // ¿petición duplicada?
         if ($this->multiRequestProtection->tokenExist($token)) {
             Tools::log()->warning('duplicated-request');
             return false;

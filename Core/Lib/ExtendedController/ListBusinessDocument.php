@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
@@ -29,8 +29,10 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\GruposClientes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 
 /**
@@ -57,12 +59,11 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterNumber($viewName, 'min-total', 'total', 'total', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'total', 'total', '<=');
 
-        $where = [new DataBaseWhere('tipodoc', $modelName)];
-        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $statusValues = EstadosDocumentos::codeModelByTipoDoc($modelName);
         $this->addFilterSelect($viewName, 'idestado', 'state', 'idestado', $statusValues);
 
         if ($this->permissions->onlyOwnerData === false) {
-            $users = $this->codeModel->all('users', 'nick', 'nick');
+            $users = Users::codeModel();
             if (count($users) > 1) {
                 $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
             }
@@ -202,7 +203,7 @@ abstract class ListBusinessDocument extends ListController
             ['label' => Tools::trans('any-group'), 'where' => []],
             [
                 'label' => Tools::trans('without-groups'),
-                'where' => [new DataBaseWhere('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo IS NULL", 'IN')]
+                'where' => [Where::in('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo IS NULL")]
             ],
             ['label' => '------', 'where' => []],
         ];
@@ -210,7 +211,7 @@ abstract class ListBusinessDocument extends ListController
             $sqlGrupo = 'SELECT DISTINCT codcliente FROM clientes WHERE codgrupo = ' . $this->dataBase->var2str($grupo->codgrupo);
             $optionsGroup[] = [
                 'label' => $grupo->nombre,
-                'where' => [new DataBaseWhere('codcliente', $sqlGrupo, 'IN')]
+                'where' => [Where::in('codcliente', $sqlGrupo)]
             ];
         }
         if (count($optionsGroup) > 3) {
@@ -229,8 +230,7 @@ abstract class ListBusinessDocument extends ListController
             }
         }
 
-        $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
-        $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
+        $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', AgenciasTransporte::codeModel());
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
 
         // asignamos los colores

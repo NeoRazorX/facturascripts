@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,10 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -110,6 +110,50 @@ final class ContactoTest extends TestCase
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
         $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'supplier-cant-delete');
+    }
+
+    public function testDeleteUnlinksCustomersAndSuppliers(): void
+    {
+        // creamos un contacto
+        $contacto = new Contacto();
+        $contacto->nombre = 'Test Contacto';
+        $this->assertTrue($contacto->save(), 'contact-cant-save');
+
+        // creamos dos clientes vinculados al contacto
+        $cliente = $this->getRandomCustomer('ContactoTest');
+        $cliente->idcontactoenv = $contacto->idcontacto;
+        $cliente->idcontactofact = $contacto->idcontacto;
+        $this->assertTrue($cliente->save(), 'customer-cant-save');
+
+        $cliente2 = $this->getRandomCustomer('ContactoTest');
+        $cliente2->idcontactoenv = $contacto->idcontacto;
+        $cliente2->idcontactofact = $contacto->idcontacto;
+        $this->assertTrue($cliente2->save(), 'customer-cant-save');
+
+        // creamos un proveedor vinculado al contacto
+        $proveedor = $this->getRandomSupplier('ContactoTest');
+        $proveedor->idcontacto = $contacto->idcontacto;
+        $this->assertTrue($proveedor->save(), 'supplier-cant-save');
+
+        // eliminamos el contacto
+        $this->assertTrue($contacto->delete(), 'contact-cant-delete');
+
+        // recargamos desde la base de datos y comprobamos que se ha desvinculado
+        $this->assertTrue($cliente->reload());
+        $this->assertNull($cliente->idcontactoenv);
+        $this->assertNull($cliente->idcontactofact);
+
+        $this->assertTrue($cliente2->reload());
+        $this->assertNull($cliente2->idcontactoenv);
+        $this->assertNull($cliente2->idcontactofact);
+
+        $this->assertTrue($proveedor->reload());
+        $this->assertNull($proveedor->idcontacto);
+
+        // eliminamos
+        $this->assertTrue($cliente->delete());
+        $this->assertTrue($cliente2->delete());
+        $this->assertTrue($proveedor->delete());
     }
 
     public function testCantCreateEmpty(): void
@@ -299,7 +343,7 @@ final class ContactoTest extends TestCase
         // Pasando una cláusula where devuelve el resultado de la consulta
         $query = '';
         $fieldCode = '';
-        $where = [new DataBaseWhere('empresa', $contact2->empresa)];
+        $where = [Where::eq('empresa', $contact2->empresa)];
         $results = (new Contacto())->codeModelSearch($query, $fieldCode, $where);
         $this->assertCount(1, $results);
         $this->assertEquals($contact2->descripcion, trim($results[0]->description));

@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -451,12 +452,105 @@ final class CodeModelTest extends TestCase
 
     public function testAllWithJoinModelName(): void
     {
-        // Pasar 'Join\StockProducto' debe entrar en el branch de modelo
-        // (la clase JoinModel base no expone codeModelAll/modelClassName, así
-        // que cae al check de tabla — debe terminar como "tabla no encontrada"
-        // sin lanzar error por validación de nombre.)
-        $result = CodeModel::all('Join\\StockProducto', '', '', false);
+        // Pasar 'Join\StockProducto' debe entrar en el branch de modelo y, al
+        // ser instancia de JoinModel, delegar en su propio ::all() en lugar de
+        // caer al fallback SQL (que trataría 'Join\StockProducto' como tabla).
+        // Se prefija la tabla en 'referencia' porque también existe en
+        // 'variantes' y el JOIN haría la columna ambigua sin el prefijo.
+        $result = CodeModel::all('Join\\StockProducto', 'stocks.referencia', 'descripcion', false);
         $this->assertIsArray($result);
+    }
+
+    public function testGetWithJoinModel(): void
+    {
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save());
+
+        $warehouse = $this->getRandomWarehouse();
+        $this->assertTrue($warehouse->save());
+
+        $stock = new Stock();
+        $stock->idproducto = $product->idproducto;
+        $stock->referencia = $product->referencia;
+        $stock->codalmacen = $warehouse->codalmacen;
+        $stock->cantidad = 5;
+        $this->assertTrue($stock->save());
+
+        $codeModel = new CodeModel();
+        $result = $codeModel->get('Join\\StockProducto', 'stocks.referencia', $product->referencia, 'descripcion');
+        $this->assertEquals($product->referencia, $result->code);
+        $this->assertEquals($product->descripcion, $result->description);
+
+        // sin coincidencia devuelve CodeModel vacío
+        $missing = $codeModel->get('Join\\StockProducto', 'stocks.referencia', 'no-existe-xyz', 'descripcion');
+        $this->assertEquals('', $missing->code);
+        $this->assertEquals('', $missing->description);
+
+        // sin fieldCode no se puede consultar
+        $empty = $codeModel->get('Join\\StockProducto', '', $product->referencia, 'descripcion');
+        $this->assertEquals('', $empty->code);
+
+        $this->assertTrue($stock->delete());
+        $this->assertTrue($product->delete());
+        $this->assertTrue($warehouse->delete());
+    }
+
+    public function testAllWithJoinModel(): void
+    {
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save());
+
+        $warehouse = $this->getRandomWarehouse();
+        $this->assertTrue($warehouse->save());
+
+        $stock = new Stock();
+        $stock->idproducto = $product->idproducto;
+        $stock->referencia = $product->referencia;
+        $stock->codalmacen = $warehouse->codalmacen;
+        $stock->cantidad = 3;
+        $this->assertTrue($stock->save());
+
+        $result = CodeModel::all('Join\\StockProducto', 'stocks.referencia', 'descripcion', false);
+        $this->assertIsArray($result);
+
+        $codes = array_map(fn($r) => $r->code, $result);
+        $this->assertContains($product->referencia, $codes);
+
+        foreach ($result as $row) {
+            if ($row->code === $product->referencia) {
+                $this->assertEquals($product->descripcion, $row->description);
+            }
+        }
+
+        $this->assertTrue($stock->delete());
+        $this->assertTrue($product->delete());
+        $this->assertTrue($warehouse->delete());
+    }
+
+    public function testSearchWithJoinModel(): void
+    {
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save());
+
+        $warehouse = $this->getRandomWarehouse();
+        $this->assertTrue($warehouse->save());
+
+        $stock = new Stock();
+        $stock->idproducto = $product->idproducto;
+        $stock->referencia = $product->referencia;
+        $stock->codalmacen = $warehouse->codalmacen;
+        $stock->cantidad = 7;
+        $this->assertTrue($stock->save());
+
+        // búsqueda por descripción debe encontrar el registro
+        $result = CodeModel::search('Join\\StockProducto', 'stocks.referencia', 'descripcion', $product->descripcion);
+        $this->assertIsArray($result);
+        $codes = array_map(fn($r) => $r->code, $result);
+        $this->assertContains($product->referencia, $codes);
+
+        $this->assertTrue($stock->delete());
+        $this->assertTrue($product->delete());
+        $this->assertTrue($warehouse->delete());
     }
 
     public function testAllWithInvalidTableNameContainingBackslash(): void

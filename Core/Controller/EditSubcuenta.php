@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
@@ -199,7 +198,7 @@ class EditSubcuenta extends EditController
         switch ($viewName) {
             case 'ListPartidaAsiento':
                 $idsubcuenta = $this->getViewModelValue($mainViewName, 'idsubcuenta');
-                $where = [new DataBaseWhere('idsubcuenta', $idsubcuenta)];
+                $where = [Where::eq('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);
                 if ($view->count == 0) {
                     break;

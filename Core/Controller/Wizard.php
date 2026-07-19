@@ -115,7 +115,7 @@ class Wizard extends Controller
                 break;
 
             default:
-                if (empty($this->empresa->email) && $this->user->email) {
+                if ($this->empresa->exists() && empty($this->empresa->email) && $this->user->email) {
                     $this->empresa->email = $this->user->email;
                     $this->empresa->save();
                 }

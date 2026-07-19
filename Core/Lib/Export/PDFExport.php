@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\PDF\PDFDocument;
@@ -235,7 +235,7 @@ class PDFExport extends PDFDocument
 
         if (!empty($idformat)) {
             $this->format = new FormatoDocumento();
-            $this->format->loadFromCode($idformat);
+            $this->format->load($idformat);
         }
 
         if (!empty($langcode)) {

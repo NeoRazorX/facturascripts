@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Familias;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -118,6 +118,12 @@ class Familia extends ModelClass
     {
         parent::clear();
         $this->numproductos = 0;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Familias::clear();
     }
 
     /**
@@ -234,7 +240,7 @@ class Familia extends ModelClass
         // comprobamos las subcuentas vinculadas
         $subAccount = new DinSubcuenta();
         if ($this->codsubcuentacom) {
-            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentacom)];
+            $where = [Where::eq('codsubcuenta', $this->codsubcuentacom)];
             if (false === $subAccount->loadWhere($where)) {
                 Tools::log()->warning('family-purchases-subaccount-not-found', [
                     '%family%' => $this->codfamilia,
@@ -244,14 +250,14 @@ class Familia extends ModelClass
             }
         }
         if (false === empty($this->codsubcuentairpfcom)) {
-            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentairpfcom)];
+            $where = [Where::eq('codsubcuenta', $this->codsubcuentairpfcom)];
             if (false === $subAccount->loadWhere($where)) {
                 Tools::log()->warning('irpf-subaccount-not-found');
                 return false;
             }
         }
         if (false === empty($this->codsubcuentaven)) {
-            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentaven)];
+            $where = [Where::eq('codsubcuenta', $this->codsubcuentaven)];
             if (false === $subAccount->loadWhere($where)) {
                 Tools::log()->warning('sales-subaccount-not-found');
                 return false;

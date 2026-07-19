@@ -399,6 +399,7 @@ trait CommonSalesPurchases
                 . '<button type="button" class="' . $btnClass . '">'
                 . '<i class="' . static::idestadoIcon($status) . ' fa-fw"></i> ' . $status->nombre
                 . '</button>'
+                . '<input type="hidden" name="idestado" value="' . $model->idestado . '">'
                 . '</div>'
                 . '</div>';
         }
@@ -432,6 +433,7 @@ trait CommonSalesPurchases
             . '</button>'
             . '<div class="dropdown-menu dropdown-menu-right">' . implode('', $options) . '</div>'
             . '</div>'
+            . '<input type="hidden" name="idestado" value="' . $model->idestado . '">'
             . '</div>'
             . '</div>';
     }

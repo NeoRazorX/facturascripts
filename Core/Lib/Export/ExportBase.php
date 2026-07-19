@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
@@ -208,7 +208,8 @@ abstract class ExportBase
 
     protected function escapeSpreadsheetFormula(string $value): string
     {
-        if ($value === '') {
+        // un string puramente numérico no puede ser una fórmula
+        if ($value === '' || is_numeric($value)) {
             return $value;
         }
 
@@ -238,19 +239,32 @@ abstract class ExportBase
             Where::eq('autoaplicar', true),
             Where::eq('idempresa', $model->idempresa)
         ];
-        foreach ($documentFormat->all($where, ['tipodoc' => 'DESC', 'codserie' => 'DESC']) as $format) {
+
+        // Buscamos el formato más específico. No dependemos del ORDER BY porque
+        // el orden de los NULL difiere entre MySQL (NULL al final) y PostgreSQL
+        // (NULL al principio), así que puntuamos cada coincidencia y nos quedamos
+        // con la de mayor prioridad.
+        $best = null;
+        $bestScore = -1;
+        foreach ($documentFormat->all($where) as $format) {
+            $score = -1;
             if ($format->tipodoc === $model->modelClassName() && $format->codserie === $model->codserie) {
-                return $format;
+                $score = 3;
             } elseif ($format->tipodoc === $model->modelClassName() && $format->codserie === null) {
-                return $format;
+                $score = 2;
             } elseif ($format->tipodoc === null && $format->codserie === $model->codserie) {
-                return $format;
+                $score = 1;
             } elseif ($format->tipodoc === null && $format->codserie === null) {
-                return $format;
+                $score = 0;
+            }
+
+            if ($score > $bestScore) {
+                $best = $format;
+                $bestScore = $score;
             }
         }
 
-        return $documentFormat;
+        return $best ?? $documentFormat;
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\AccEntryRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
@@ -231,8 +231,8 @@ class Partida extends ModelClass
         // get by parameter
         if (!empty($codsubcuenta)) {
             $where = [
-                new DataBaseWhere('codejercicio', $accEntry->codejercicio),
-                new DataBaseWhere('codsubcuenta', $codsubcuenta)
+                Where::eq('codejercicio', $accEntry->codejercicio),
+                Where::eq('codsubcuenta', $codsubcuenta)
             ];
             $subCta->loadWhere($where);
             return $subCta;
@@ -250,8 +250,8 @@ class Partida extends ModelClass
 
         // get by code and exercise
         $where2 = [
-            new DataBaseWhere('codejercicio', $accEntry->codejercicio),
-            new DataBaseWhere('codsubcuenta', $this->codsubcuenta)
+            Where::eq('codejercicio', $accEntry->codejercicio),
+            Where::eq('codsubcuenta', $this->codsubcuenta)
         ];
         $subCta->loadWhere($where2);
         return $subCta;

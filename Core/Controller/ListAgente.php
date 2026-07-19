@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Controller to list the items in the Agentes model
@@ -49,8 +49,8 @@ class ListAgente extends ListController
 
         // Filters
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => Tools::trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => Tools::trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => Tools::trans('only-active'), 'where' => [Where::eq('debaja', false)]],
+            ['label' => Tools::trans('only-suspended'), 'where' => [Where::eq('debaja', true)]],
             ['label' => Tools::trans('all'), 'where' => []]
         ]);
 

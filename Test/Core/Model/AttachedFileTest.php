@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -96,6 +96,54 @@ final class AttachedFileTest extends TestCase
 
         // eliminamos el archivo
         $this->assertTrue($att2->delete(), 'can-not-delete-file');
+    }
+
+    public function testStoredNameKeepsOriginal(): void
+    {
+        $source = FS_FOLDER . '/Test/__files/product_image.jpg';
+        $this->assertTrue(file_exists($source), 'File not found: ' . $source);
+
+        // copiamos el archivo a MyFiles con un nombre con espacios, acentos y mayúsculas
+        $original = 'Cámara Fotos.JPG';
+        $this->assertTrue(copy($source, FS_FOLDER . '/MyFiles/' . $original), 'File not copied');
+
+        $model = new AttachedFile();
+        $model->path = $original;
+        $this->assertTrue($model->save(), 'can-not-save-file');
+
+        // se guarda como {idfile}_{slug}.{ext}, conservando parte del nombre original
+        $this->assertEquals(
+            $model->idfile . '_camara_fotos.jpg',
+            basename($model->path),
+            'stored-name-without-slug'
+        );
+
+        // el archivo físico existe en esa ruta
+        $this->assertTrue(file_exists($model->getFullPath()), 'stored-file-not-found');
+
+        // podemos eliminar
+        $this->assertTrue($model->delete(), 'can-not-delete-file');
+        $this->assertFalse(file_exists($model->getFullPath()));
+    }
+
+    public function testStoredNameFallbackWhenSlugEmpty(): void
+    {
+        $source = FS_FOLDER . '/Test/__files/product_image.jpg';
+        $this->assertTrue(file_exists($source), 'File not found: ' . $source);
+
+        // un nombre sin caracteres alfanuméricos deja el slug vacío
+        $original = '___.jpg';
+        $this->assertTrue(copy($source, FS_FOLDER . '/MyFiles/' . $original), 'File not copied');
+
+        $model = new AttachedFile();
+        $model->path = $original;
+        $this->assertTrue($model->save(), 'can-not-save-file');
+
+        // sin slug, se usa solo el identificador: {idfile}.{ext}
+        $this->assertEquals($model->idfile . '.jpg', basename($model->path), 'stored-name-fallback');
+        $this->assertTrue(file_exists($model->getFullPath()), 'stored-file-not-found');
+
+        $this->assertTrue($model->delete(), 'can-not-delete-file');
     }
 
     protected function tearDown(): void

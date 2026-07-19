@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\InvoiceTrait;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Template\ModelTrait;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor as LineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboProveedor as DinReciboProveedor;
 
@@ -58,7 +58,7 @@ class FacturaProveedor extends PurchaseDocument
      */
     public function getLines(): array
     {
-        $where = [new DataBaseWhere('idfactura', $this->idfactura)];
+        $where = [Where::eq('idfactura', $this->idfactura)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
         return LineaFactura::all($where, $order, 0, 0);
     }
@@ -124,7 +124,7 @@ class FacturaProveedor extends PurchaseDocument
      */
     public function getReceipts(): array
     {
-        $where = [new DataBaseWhere('idfactura', $this->idfactura)];
+        $where = [Where::eq('idfactura', $this->idfactura)];
         return DinReciboProveedor::all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
     }
 

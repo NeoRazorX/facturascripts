@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,11 +36,46 @@ use FacturaScripts\Dinamic\Model\Variante;
 abstract class PurchaseDocument extends TransformerDocument
 {
     /**
+     * Apartado de correos del proveedor.
+     *
+     * @var string
+     */
+    public $apartado;
+
+    /**
+     * Ciudad del proveedor.
+     *
+     * @var string
+     */
+    public $ciudad;
+
+    /**
+     * País del proveedor.
+     *
+     * @var string
+     */
+    public $codpais;
+
+    /**
+     * Código postal del proveedor.
+     *
+     * @var string
+     */
+    public $codpostal;
+
+    /**
      * Código de proveedor de este documento.
      *
      * @var string
      */
     public $codproveedor;
+
+    /**
+     * Dirección del proveedor.
+     *
+     * @var string
+     */
+    public $direccion;
 
     /**
      * Nombre del proveedor.
@@ -57,9 +92,18 @@ abstract class PurchaseDocument extends TransformerDocument
      */
     public $numproveedor;
 
+    /**
+     * Provincia del proveedor.
+     *
+     * @var string
+     */
+    public $provincia;
+
     public function clear(): void
     {
         parent::clear();
+
+        $this->direccion = '';
 
         // seleccionamos la divisa por defecto
         $coddivisa = Tools::settings('default', 'coddivisa');
@@ -171,6 +215,15 @@ abstract class PurchaseDocument extends TransformerDocument
         $this->nombre = $subject->razonsocial;
         $this->cifnif = $subject->cifnif ?? '';
 
+        // dirección del proveedor
+        $address = $subject->getDefaultAddress();
+        $this->apartado = $address->apartado;
+        $this->ciudad = $address->ciudad;
+        $this->codpais = $address->codpais;
+        $this->codpostal = $address->codpostal;
+        $this->direccion = $address->direccion;
+        $this->provincia = $address->provincia;
+
         // datos comerciales
         if (empty($this->id())) {
             $this->codpago = $subject->codpago ?? $this->codpago;
@@ -197,8 +250,13 @@ abstract class PurchaseDocument extends TransformerDocument
      */
     public function test(): bool
     {
+        $this->apartado = Tools::noHtml($this->apartado);
+        $this->ciudad = Tools::noHtml($this->ciudad);
+        $this->codpostal = Tools::noHtml($this->codpostal);
+        $this->direccion = Tools::noHtml($this->direccion);
         $this->nombre = Tools::noHtml($this->nombre);
         $this->numproveedor = Tools::noHtml($this->numproveedor);
+        $this->provincia = Tools::noHtml($this->provincia);
 
         return parent::test();
     }

@@ -41,6 +41,9 @@ abstract class JoinModel
     /** @var DataBase */
     protected static $dataBase;
 
+    /** @var array Caché de campos (con tipos) por clase, para evitar reintrospección. */
+    private static $modelFieldsCache = [];
+
     /** @var ModelClass Modelo principal para las operaciones de datos. */
     protected $masterModel;
 
@@ -150,7 +153,7 @@ abstract class JoinModel
         }
 
         // buscamos en caché
-        $cacheKey = 'join-model-' . md5($instance->getSQLFrom()) . '-count';
+        $cacheKey = $instance->getCacheKey('count');
         if (empty($where)) {
             $count = Cache::get($cacheKey);
             if (is_numeric($count)) {
@@ -195,7 +198,15 @@ abstract class JoinModel
 
     public function getModelFields(): array
     {
+        // la definición de campos es fija por clase, así que memoizamos el
+        // resultado para no volver a introspeccionar la estructura de tablas
+        $class = static::class;
+        if (isset(self::$modelFieldsCache[$class])) {
+            return self::$modelFieldsCache[$class];
+        }
+
         $fields = [];
+        $tableColumns = [];
         foreach ($this->getFields() as $key => $field) {
             $fields[$key] = [
                 'name' => $field,
@@ -219,12 +230,16 @@ abstract class JoinModel
             }
 
             // consultamos la información de la tabla para obtener el tipo
-            $columns = self::db()->getColumns($arrayField[0]);
-            if (isset($columns[$arrayField[1]])) {
-                $fields[$key]['type'] = $columns[$arrayField[1]]['type'];
+            // (una sola vez por tabla, aunque haya varios campos de la misma)
+            if (false === isset($tableColumns[$arrayField[0]])) {
+                $tableColumns[$arrayField[0]] = self::db()->getColumns($arrayField[0]);
+            }
+            if (isset($tableColumns[$arrayField[0]][$arrayField[1]])) {
+                $fields[$key]['type'] = $tableColumns[$arrayField[0]][$arrayField[1]]['type'];
             }
         }
 
+        self::$modelFieldsCache[$class] = $fields;
         return $fields;
     }
 
@@ -332,7 +347,7 @@ abstract class JoinModel
     public function totalSum(string $field, array $where = []): float
     {
         // buscamos en caché
-        $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-' . $field . '-total-sum';
+        $cacheKey = $this->getCacheKey($field . '-total-sum');
         if (empty($where)) {
             $count = Cache::get($cacheKey);
             if (is_numeric($count)) {
@@ -369,6 +384,15 @@ abstract class JoinModel
         }
 
         return '';
+    }
+
+    /**
+     * Construye la clave de caché incluyendo las tablas del join,
+     * para poder invalidarla solamente cuando cambia alguna de ellas.
+     */
+    private function getCacheKey(string $suffix): string
+    {
+        return 'join-model-' . implode('-', $this->getTables()) . '-' . md5($this->getSQLFrom()) . '-' . $suffix;
     }
 
     /** Comprueba que existen todas las tablas necesarias. */

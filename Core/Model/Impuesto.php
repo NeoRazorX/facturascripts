@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Cuenta as DinCuenta;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
@@ -39,6 +39,7 @@ class Impuesto extends ModelClass
 
     const SPECIAL_TAX_IMPACTED_ACCOUNT = 'IVAREP';
     const SPECIAL_TAX_SUPPORTED_ACCOUNT = 'IVASOP';
+    const SPECIAL_TAX_SURCHARGE_ACCOUNT = 'IVARRE';
     const TYPE_PERCENTAGE = 1;
     const TYPE_FIXED_VALUE = 2;
 
@@ -157,9 +158,18 @@ class Impuesto extends ModelClass
     public function getOutputSurchargeAccount(string $codejercicio): DinSubcuenta
     {
         // si tenemos una cuenta definida, la devolvemos
-        return $this->codsubcuentarepre ?
-            $this->getSubAccount($codejercicio, $this->codsubcuentarepre, static::SPECIAL_TAX_IMPACTED_ACCOUNT) :
-            $this->getOutputTaxAccount($codejercicio);
+        if ($this->codsubcuentarepre) {
+            return $this->getSubAccount($codejercicio, $this->codsubcuentarepre, static::SPECIAL_TAX_SURCHARGE_ACCOUNT);
+        }
+
+        // si hay una subcuenta marcada como recargo de equivalencia repercutido, la usamos
+        $surcharge = $this->getSpecialSubAccount($codejercicio, static::SPECIAL_TAX_SURCHARGE_ACCOUNT);
+        if ($surcharge->exists()) {
+            return $surcharge;
+        }
+
+        // en otro caso, usamos la cuenta de IVA repercutido
+        return $this->getOutputTaxAccount($codejercicio);
     }
 
     public function getOutputTaxAccount(string $codejercicio): DinSubcuenta
@@ -212,8 +222,8 @@ class Impuesto extends ModelClass
         // buscamos una subcuenta marcada con esa cuenta especial
         $subcuenta = new DinSubcuenta();
         $whereSubcuenta = [
-            new DataBaseWhere('codejercicio', $codejercicio),
-            new DataBaseWhere('codcuentaesp', $codcuentaesp),
+            Where::eq('codejercicio', $codejercicio),
+            Where::eq('codcuentaesp', $codcuentaesp),
         ];
         if ($subcuenta->loadWhere($whereSubcuenta)) {
             return $subcuenta;
@@ -222,8 +232,8 @@ class Impuesto extends ModelClass
         // no hay subcuenta especial, devolvemos la primera de la cuenta especial
         $cuenta = new DinCuenta();
         $whereCuenta = [
-            new DataBaseWhere('codejercicio', $codejercicio),
-            new DataBaseWhere('codcuentaesp', $codcuentaesp),
+            Where::eq('codejercicio', $codejercicio),
+            Where::eq('codcuentaesp', $codcuentaesp),
         ];
         if ($cuenta->loadWhere($whereCuenta)) {
             foreach ($cuenta->getSubcuentas() as $subcuenta) {
@@ -239,8 +249,8 @@ class Impuesto extends ModelClass
     {
         $subcuenta = new DinSubcuenta();
         $whereSubcuenta = [
-            new DataBaseWhere('codejercicio', $codejercicio),
-            new DataBaseWhere('codsubcuenta', $codsubcuenta),
+            Where::eq('codejercicio', $codejercicio),
+            Where::eq('codsubcuenta', $codsubcuenta),
         ];
         if ($subcuenta->loadWhere($whereSubcuenta)) {
             return $subcuenta;
@@ -249,8 +259,8 @@ class Impuesto extends ModelClass
         // no hemos encontrado la subcuenta, la creamos, pero primero necesitamos la cuenta
         $cuenta = new DinCuenta();
         $whereCuenta = [
-            new DataBaseWhere('codejercicio', $codejercicio),
-            new DataBaseWhere('codcuentaesp', $codcuentaesp),
+            Where::eq('codejercicio', $codejercicio),
+            Where::eq('codcuentaesp', $codcuentaesp),
         ];
         if ($cuenta->loadWhere($whereCuenta)) {
             // creamos la subcuenta

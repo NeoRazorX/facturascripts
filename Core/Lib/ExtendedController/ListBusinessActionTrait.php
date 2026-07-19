@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,9 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\Receipt;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 
 /**
@@ -36,6 +35,8 @@ trait ListBusinessActionTrait
     abstract public function addButton(string $viewName, array $btnArray);
 
     abstract public function redirect(string $url, int $delay = 0);
+
+    abstract protected function checkOwnerData($model): bool;
 
     abstract protected function validateFormToken(): bool;
 
@@ -81,15 +82,15 @@ trait ListBusinessActionTrait
         }
 
         $where = [
-            new DataBaseWhere('idasiento', null, 'IS'),
-            new DataBaseWhere('fecha', Tools::date('-1 year'), '>'),
-            new DataBaseWhere('total', 0, '!=')
+            Where::isNull('idasiento'),
+            Where::gt('fecha', Tools::date('-1 year')),
+            Where::notEq('total', 0)
         ];
 
-        if (false === empty($code) && property_exists($model, 'codcliente')) {
-            $where[] = new DataBaseWhere('codcliente', $code);
-        } elseif (false === empty($code) && property_exists($model, 'codproveedor')) {
-            $where[] = new DataBaseWhere('codproveedor', $code);
+        if (false === empty($code) && $model->hasColumn('codcliente')) {
+            $where[] = Where::eq('codcliente', $code);
+        } elseif (false === empty($code) && $model->hasColumn('codproveedor')) {
+            $where[] = Where::eq('codproveedor', $code);
         }
 
         if ($model->count($where) <= 0) {
@@ -202,7 +203,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
@@ -211,8 +212,14 @@ trait ListBusinessActionTrait
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (false === $model->loadFromCode($code)) {
+            if (false === $model->load($code)) {
                 Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            // ¿el usuario puede modificar este documento?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
                 continue;
             }
 
@@ -253,12 +260,17 @@ trait ListBusinessActionTrait
 
         $dataBase->beginTransaction();
         $where = [
-            new DataBaseWhere('idasiento', null, 'IS'),
-            new DataBaseWhere('fecha', Tools::date('-1 year'), '>'),
-            new DataBaseWhere('total', 0, '!=')
+            Where::isNull('idasiento'),
+            Where::gt('fecha', Tools::date('-1 year')),
+            Where::notEq('total', 0)
         ];
         foreach ($model->all($where, ['idfactura' => 'ASC'], 0, 300) as $invoice) {
             if (false === empty($invoice->idasiento)) {
+                continue;
+            }
+
+            // ¿el usuario puede generar el asiento de esta factura ajena?
+            if (false === $this->checkOwnerData($invoice)) {
                 continue;
             }
 
@@ -293,6 +305,16 @@ trait ListBusinessActionTrait
     protected function groupDocumentAction($codes, $model): bool
     {
         if (!empty($codes) && $model) {
+            // comprobamos la propiedad de cada documento antes de pasarlos al stitcher
+            foreach ($codes as $code) {
+                if ($model->load($code) && false === $this->checkOwnerData($model)) {
+                    Tools::log()->warning('not-allowed-modify');
+                    $model->clear();
+                    return true;
+                }
+            }
+            $model->clear();
+
             $codes = implode(',', $codes);
             $url = 'DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $codes;
             $this->redirect($url);
@@ -318,7 +340,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
@@ -327,8 +349,14 @@ trait ListBusinessActionTrait
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (false === $model->loadFromCode($code)) {
+            if (false === $model->load($code)) {
                 Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            // ¿el usuario puede modificar este documento?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
                 continue;
             }
 
@@ -384,8 +412,14 @@ trait ListBusinessActionTrait
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (false === $model->loadFromCode($code)) {
+            if (false === $model->load($code)) {
                 Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            // ¿el usuario puede modificar este documento?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
                 continue;
             }
 
@@ -413,7 +447,7 @@ trait ListBusinessActionTrait
      * Sets selected receipts as paid.
      *
      * @param mixed $codes
-     * @param Receipt $model
+     * @param \FacturaScripts\Dinamic\Model\ReciboCliente|\FacturaScripts\Dinamic\Model\ReciboProveedor $model
      * @param bool $allowUpdate
      * @param DataBase $dataBase
      * @param string $nick
@@ -425,7 +459,7 @@ trait ListBusinessActionTrait
         if (false === $allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === is_array($codes) || empty($model)) {
+        } elseif (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
@@ -434,8 +468,14 @@ trait ListBusinessActionTrait
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (false === $model->loadFromCode($code)) {
+            if (false === $model->load($code)) {
                 Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            // ¿el usuario puede modificar este recibo?
+            if (false === $this->checkOwnerData($model)) {
+                Tools::log()->warning('not-allowed-modify');
                 continue;
             }
 

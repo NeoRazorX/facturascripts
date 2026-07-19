@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -83,11 +83,12 @@ final class Cache
 
     /**
      * Elimina todas las entradas cuya clave (transformada en nombre de fichero) empiece por `$prefix`.
+     * Si se indica `$contains`, sólo se eliminan las que además contengan esa subcadena.
      *
      * El prefijo se compara contra el nombre del fichero ya saneado, así que las barras del
      * prefijo deberán reemplazarse por `_` por parte del llamador si se quiere usar tal cual.
      */
-    public static function deleteMulti(string $prefix): void
+    public static function deleteMulti(string $prefix, string $contains = ''): void
     {
         // buscamos los archivos que contengan el prefijo y los borramos
         $folder = FS_FOLDER . self::FILE_PATH;
@@ -101,11 +102,18 @@ final class Cache
                 continue;
             }
 
-            // si el archivo empieza por el prefijo, lo borramos
+            // si no empieza por el prefijo, continuamos
             $len = strlen($prefix);
-            if (substr($fileName, 0, $len) === $prefix) {
-                unlink($folder . '/' . $fileName);
+            if (substr($fileName, 0, $len) !== $prefix) {
+                continue;
             }
+
+            // si no contiene la subcadena, continuamos
+            if ($contains !== '' && !str_contains($fileName, $contains)) {
+                continue;
+            }
+
+            unlink($folder . '/' . $fileName);
         }
     }
 
@@ -155,10 +163,18 @@ final class Cache
             // todavía no ha expirado, devolvemos el contenido
             $data = file_get_contents($fileName);
             try {
-                return unserialize($data);
+                $value = unserialize($data);
             } catch (Throwable $e) {
                 return $default;
             }
+
+            // unserialize() devuelve false (sin lanzar excepción) cuando el dato está corrupto.
+            // Distinguimos ese caso de un false legítimamente cacheado.
+            if (false === $value && $data !== serialize(false)) {
+                return $default;
+            }
+
+            return $value;
         }
 
         return $default;
