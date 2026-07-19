@@ -1567,7 +1567,7 @@
     "register-installation-p": "Registreu la vostra instalació per a poder actualitzar complements de pagament o privats",
     "register-symbol": "#",
     "registered-installation": "Instalació registrada en el número #%number%",
-    "registered-installation-claim-p": "Instalación registrada correctamente. Para terminar, pulsa el botón finalizar para vincularla con tu cuenta de facturascripts.com.",
+    "registered-installation-claim-p": "Instal·lació registrada correctament. Per a terminar, prem el botó finalitzar per a vincular-la amb el teu compte de facturascripts.com.",
     "registered-installation-p": "Esta instal·lació ja ha sigut registrada.",
     "regularization-operation": "Regularització",
     "reject": "Rechazar",

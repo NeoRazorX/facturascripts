@@ -239,7 +239,7 @@
     "cant-load-controller": "Controller kann nicht geladen werden.",
     "cant-lock-next-code": "Der nächste Code kann nicht gesperrt werden",
     "cant-modify-reference": "Kann keine Referenz bearbeiten.",
-    "cant-refund-a-refund": "No se puede crear una rectificativa de una factura que ya es rectificativa",
+    "cant-refund-a-refund": "Eine Stornorechnung kann nicht für eine bereits stornierte Rechnung erstellt werden",
     "cant-remove-account-entry": "Der Buchungssatz kann nicht gelöscht werden",
     "cant-remove-accounting-entry": "Buchung kann nicht gelöscht werden",
     "cant-remove-invoice-refund": "Eine Rechnung mit Gutschrift (Rückzahlung) kann nicht gelöscht werden",
