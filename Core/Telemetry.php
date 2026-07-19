@@ -221,6 +221,7 @@ final class Telemetry
             $data['dbengine'] = $this->getDatabaseEngine();
             $data['fingerprints'] = $this->collectFingerprints();
             $data['pluginlist'] = implode(',', Plugins::enabled());
+            $data['url'] = $this->getUrl();
         }
 
         return $data;
@@ -239,6 +240,19 @@ final class Telemetry
             }
         }
         return implode(',', $fingerprints);
+    }
+
+    private function getUrl(): string
+    {
+        // preferimos la url configurada, y si no, la del host de la petición;
+        // en cli (cron) no hay host, así que enviamos vacío en lugar del
+        // localhost por defecto para no dar una señal falsa al servidor
+        $url = Tools::settings('default', 'site_url', '');
+        if (!empty($url)) {
+            return $url;
+        }
+
+        return array_key_exists('HTTP_HOST', $_SERVER) ? Tools::siteUrl() : '';
     }
 
     private function getDatabaseEngine(): string
