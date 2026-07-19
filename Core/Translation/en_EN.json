@@ -335,6 +335,7 @@
     "common-error": "Error",
     "companies": "Companies",
     "company": "Company",
+    "company-address": "Company address",
     "company-admin-no-data": "Company %company% has no administrator and it is required",
     "company-commission-info": "It will only apply to the selected company",
     "company-iban-changed": "The IBAN of bank account %account% has been changed. It was %old% and now it is %new%.",

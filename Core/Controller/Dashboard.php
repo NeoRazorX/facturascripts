@@ -197,6 +197,14 @@ class Dashboard extends Controller
 
         $steps = [
             [
+                'complete' => !empty($this->empresa->direccion) && !empty($this->empresa->ciudad)
+                    && !empty($this->empresa->provincia),
+                'icon' => 'fa-solid fa-building',
+                'label' => 'company-address',
+                'page' => 'EditEmpresa',
+                'url' => $this->empresa->url(),
+            ],
+            [
                 'complete' => $customerCount > 0,
                 'icon' => 'fa-solid fa-plus',
                 'label' => 'customer',
@@ -217,7 +225,7 @@ class Dashboard extends Controller
         ];
 
         foreach ($steps as $step) {
-            if (false === $this->user->can($step['url'], 'update')) {
+            if (false === $this->user->can($step['page'] ?? $step['url'], 'update')) {
                 continue;
             }
 
