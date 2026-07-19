@@ -201,6 +201,19 @@ final class Telemetry
         return $this->save();
     }
 
+    public function url(): string
+    {
+        // preferimos la url configurada, y si no, la del host de la petición;
+        // en cli (cron) no hay host, así que enviamos vacío en lugar del
+        // localhost por defecto para no dar una señal falsa al servidor
+        $url = Tools::settings('default', 'site_url', '');
+        if (!empty($url)) {
+            return $url;
+        }
+
+        return array_key_exists('HTTP_HOST', $_SERVER) ? Tools::siteUrl() : '';
+    }
+
     private function calculateHash(array &$data): void
     {
         $data['hash'] = sha1($data['randomnum'] . $this->sign_key);
@@ -220,8 +233,9 @@ final class Telemetry
         if (false === $minimum) {
             $data['dbengine'] = $this->getDatabaseEngine();
             $data['fingerprints'] = $this->collectFingerprints();
+            $data['os'] = PHP_OS;
             $data['pluginlist'] = implode(',', Plugins::enabled());
-            $data['url'] = $this->getUrl();
+            $data['url'] = $this->url();
         }
 
         return $data;
@@ -240,19 +254,6 @@ final class Telemetry
             }
         }
         return implode(',', $fingerprints);
-    }
-
-    private function getUrl(): string
-    {
-        // preferimos la url configurada, y si no, la del host de la petición;
-        // en cli (cron) no hay host, así que enviamos vacío en lugar del
-        // localhost por defecto para no dar una señal falsa al servidor
-        $url = Tools::settings('default', 'site_url', '');
-        if (!empty($url)) {
-            return $url;
-        }
-
-        return array_key_exists('HTTP_HOST', $_SERVER) ? Tools::siteUrl() : '';
     }
 
     private function getDatabaseEngine(): string
