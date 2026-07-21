@@ -29,6 +29,12 @@ class MyFilesToken
     /** @var string */
     private static $date;
 
+    /**
+     * Extensiones que, al servirse a través de un token, deben forzar la descarga
+     * (Content-Disposition: attachment) en lugar de abrirse/previsualizarse en el navegador.
+     */
+    private const FORCE_DOWNLOAD_EXTENSIONS = ['csv', 'ods', 'xls', 'xlsx'];
+
     public static function get(string $path, bool $permanent, string $expiration = ''): string
     {
         self::checkPath($path);
@@ -62,6 +68,16 @@ class MyFilesToken
     public static function setCurrentDate(string $date): void
     {
         self::$date = $date;
+    }
+
+    /**
+     * Indica si el archivo, por su extensión, debe forzar la descarga en lugar
+     * de dejar que el navegador decida cómo mostrarlo.
+     */
+    public static function shouldForceDownload(string $path): bool
+    {
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        return in_array($extension, self::FORCE_DOWNLOAD_EXTENSIONS, true);
     }
 
     public static function validate(string $path, string $token): bool

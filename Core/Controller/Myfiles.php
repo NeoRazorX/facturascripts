@@ -108,8 +108,9 @@ class Myfiles implements ControllerInterface
             ob_end_flush();
         }
 
-        // forzamos la descarga de archivos svg, xml y html para evitar ataques XSS
-        if ($this->shouldForceDownload($this->filePath)) {
+        // forzamos la descarga de archivos svg, xml y html para evitar ataques XSS,
+        // y también de los tipos de archivo marcados como descarga forzosa en MyFilesToken
+        if ($this->shouldForceDownload($this->filePath) || MyFilesToken::shouldForceDownload($this->filePath)) {
             header('Content-Disposition: attachment; filename="' . basename($this->filePath) . '"');
         }
 
