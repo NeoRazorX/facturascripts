@@ -397,7 +397,7 @@
     "country": "Estatua",
     "country-not-in-eu": "%codiso% ez da Europako Batasunaren herrialde baterik",
     "crash-files-found": "Eraso larriko errore-fitxategiak aurkitu dira",
-    "crash-files-p": "Se han encontrado archivos de error fatal en la instalación. Puedes borrarlos o enviárnoslos para ayudarnos a solucionar estos errores.",
+    "crash-files-p": "Instalazioan eraso larriko errore-fitxategiak aurkitu dira. Ezabatu ditzakezu edo bidali iezaguzu errore hauek konpontzen laguntzeko.",
     "create": "Sortu",
     "create-accounting-entry": "Kontabilitate Idazpena Sortu",
     "create-delivery-note": "Entregue-nota sortu",
