@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
+use FacturaScripts\Core\Contract\AccountingModInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\CodePatterns;
 use FacturaScripts\Core\Tools;
@@ -37,8 +38,21 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
  */
 class AccountingHeaderHTML
 {
+    /** @var AccountingModInterface[] */
+    private static $mods = [];
+
+    public static function addMod(AccountingModInterface $mod): void
+    {
+        self::$mods[] = $mod;
+    }
+
     public static function apply(Asiento &$model, array $formData): void
     {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->applyBefore($model, $formData);
+        }
+
         $model->idempresa = $formData['idempresa'] ?? $model->idempresa;
         $model->setDate($formData['fecha'] ?? $model->fecha);
         $model->canal = $formData['canal'] ?? $model->canal;
@@ -46,19 +60,33 @@ class AccountingHeaderHTML
         $model->iddiario = !empty($formData['iddiario']) ? $formData['iddiario'] : null;
         $model->documento = $formData['documento'] ?? $model->documento;
         $model->operacion = !empty($formData['operacion']) ? $formData['operacion'] : null;
+
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->apply($model, $formData);
+        }
+    }
+
+    public static function assets(): void
+    {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->assets();
+        }
     }
 
     public static function render(Asiento $model): string
     {
         return '<div class="container-fluid">'
             . '<div class="row g-2">'
-            . static::idempresa($model)
-            . static::fecha($model)
-            . static::concepto($model)
-            . static::documento($model)
-            . static::diario($model)
-            . static::canal($model)
-            . static::operacion($model)
+            . static::renderField($model, 'idempresa')
+            . static::renderField($model, 'fecha')
+            . static::renderField($model, 'concepto')
+            . static::renderField($model, 'documento')
+            . static::renderField($model, 'diario')
+            . static::renderField($model, 'canal')
+            . static::renderField($model, 'operacion')
+            . static::renderNewFields($model)
             . '</div></div><br/>';
     }
 
@@ -80,6 +108,23 @@ class AccountingHeaderHTML
             . '<div class="mb-2">' . Tools::trans('concept')
             . '<input type="text" list="concept-items" ' . $attributes . ' value="' . Tools::noHtml($model->concepto) . '" class="form-control"/>'
             . '<datalist id="concept-items">' . static::getConceptItems($model) . '</datalist>'
+            . '</div>'
+            . '</div>';
+    }
+
+    protected static function diario(Asiento $model): string
+    {
+        $options = '<option value="">' . Tools::trans('optional') . '</option>'
+            . '<option value="">------</option>';
+        foreach (Diario::all([], [], 0, 0) as $diario) {
+            $check = $diario->iddiario === $model->iddiario ? 'selected' : '';
+            $options .= '<option value="' . $diario->iddiario . '" ' . $check . '>' . $diario->descripcion . '</option>';
+        }
+
+        $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
+        return '<div class="col-sm-6 col-md-4 col-lg-2">'
+            . '<div class="mb-2">' . Tools::trans('daily')
+            . '<select ' . $attributes . ' class="form-select">' . $options . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -122,23 +167,6 @@ class AccountingHeaderHTML
             . '<div class="mb-2">' . Tools::trans('document')
             . '<input type="text" value="' . Tools::noHtml($model->documento) . '" class="form-control" readonly/>'
             . '</div></div>';
-    }
-
-    protected static function diario(Asiento $model): string
-    {
-        $options = '<option value="">' . Tools::trans('optional') . '</option>'
-            . '<option value="">------</option>';
-        foreach (Diario::all([], [], 0, 0) as $diario) {
-            $check = $diario->iddiario === $model->iddiario ? 'selected' : '';
-            $options .= '<option value="' . $diario->iddiario . '" ' . $check . '>' . $diario->descripcion . '</option>';
-        }
-
-        $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
-        return '<div class="col-sm-6 col-md-4 col-lg-2">'
-            . '<div class="mb-2">' . Tools::trans('daily')
-            . '<select ' . $attributes . ' class="form-select">' . $options . '</select>'
-            . '</div>'
-            . '</div>';
     }
 
     protected static function fecha(Asiento $model): string
@@ -205,5 +233,66 @@ class AccountingHeaderHTML
             . '</select>'
             . '</div>'
             . '</div>';
+    }
+
+    private static function renderField(Asiento $model, string $field): ?string
+    {
+        foreach (self::$mods as $mod) {
+            $html = $mod->renderField($model, $field);
+            if ($html !== null) {
+                return $html;
+            }
+        }
+
+        switch ($field) {
+            case 'canal':
+                return static::canal($model);
+
+            case 'concepto':
+                return static::concepto($model);
+
+            case 'diario':
+                return static::diario($model);
+
+            case 'documento':
+                return static::documento($model);
+
+            case 'fecha':
+                return static::fecha($model);
+
+            case 'idempresa':
+                return static::idempresa($model);
+
+            case 'operacion':
+                return static::operacion($model);
+        }
+
+        return null;
+    }
+
+    private static function renderNewFields(Asiento $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
     }
 }

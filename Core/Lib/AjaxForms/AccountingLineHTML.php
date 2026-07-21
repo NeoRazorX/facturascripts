@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
+use FacturaScripts\Core\Contract\AccountingLineModInterface;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Tools;
@@ -38,8 +39,16 @@ class AccountingLineHTML
     /** @var array */
     protected static $deletedLines = [];
 
+    /** @var AccountingLineModInterface[] */
+    private static $mods = [];
+
     /** @var int */
     protected static $num = 0;
+
+    public static function addMod(AccountingLineModInterface $mod): void
+    {
+        self::$mods[] = $mod;
+    }
 
     /**
      * @param Asiento $model
@@ -91,6 +100,30 @@ class AccountingLineHTML
 
             static::calculateUnbalance($model, $lines);
         }
+
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->apply($model, $lines, $formData);
+        }
+    }
+
+    public static function assets(): void
+    {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->assets();
+        }
+    }
+
+    public static function calculateUnbalance(Asiento &$model, array $lines): void
+    {
+        $model->debe = 0.0;
+        $model->haber = 0.0;
+        foreach ($lines as $line) {
+            $model->debe += $line->debe;
+            $model->haber += $line->haber;
+        }
+        $model->importe = max([$model->debe, $model->haber]);
     }
 
     /**
@@ -126,50 +159,13 @@ class AccountingLineHTML
         $cssClass = static::$num % 2 == 0 ? 'bg-white border-top' : 'bg-light border-top';
         return '<div class="' . $cssClass . ' line ps-2 pe-2">'
             . '<div class="row g-2 align-items-end">'
-            . static::subcuenta($line, $model)
-            . static::debe($line, $model)
-            . static::haber($line, $model)
+            . static::renderField($idlinea, $line, $model, 'subcuenta')
+            . static::renderField($idlinea, $line, $model, 'debe')
+            . static::renderField($idlinea, $line, $model, 'haber')
+            . static::renderNewFields($idlinea, $line, $model)
             . static::renderExpandButton($idlinea, $model)
             . '</div>'
             . self::renderLineModal($line, $idlinea, $model)
-            . '</div>';
-    }
-
-    private static function renderLineModal(Partida $line, string $idlinea, Asiento $model): string
-    {
-        return '<div class="modal fade" id="lineModal-' . $idlinea . '" tabindex="-1" aria-labelledby="lineModal-' . $idlinea . 'Label" aria-hidden="true">'
-            . '<div class="modal-dialog modal-dialog-centered">'
-            . '<div class="modal-content">'
-            . '<div class="modal-header">'
-            . '<h5 class="modal-title">' . $line->codsubcuenta . '</h5>'
-            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
-            . ''
-            . '</button>'
-            . '</div>'
-            . '<div class="modal-body">'
-            . '<div class="row g-2">'
-            . static::iva($line, $model)
-            . static::recargo($line, $model)
-            . '</div>'
-            . '<div class="row g-2">'
-            . static::baseimponible($line, $model)
-            . static::cifnif($line, $model)
-            . '</div>'
-            . '<div class="row g-2">'
-            . static::documento($line, $model)
-            . static::codserie($line, $model)
-            . '</div>'
-            . '</div>'
-            . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
-            . Tools::trans('close')
-            . '</button>'
-            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">'
-            . Tools::trans('accept')
-            . '</button>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
             . '</div>';
     }
 
@@ -199,6 +195,11 @@ class AccountingLineHTML
 
         $line->orden = (int)($formData['orden_' . $id] ?? '0');
         $line->recargo = (float)($formData['recargo_' . $id] ?? '0');
+
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->applyToLine($formData, $line, $id);
+        }
     }
 
     /**
@@ -212,17 +213,6 @@ class AccountingLineHTML
             . '<input type="number" ' . $attributes . ' value="' . floatval($line->baseimponible)
             . '" class="form-control" step="any" autocomplete="off">'
             . '</div>';
-    }
-
-    public static function calculateUnbalance(Asiento &$model, array $lines): void
-    {
-        $model->debe = 0.0;
-        $model->haber = 0.0;
-        foreach ($lines as $line) {
-            $model->debe += $line->debe;
-            $model->haber += $line->haber;
-        }
-        $model->importe = max([$model->debe, $model->haber]);
     }
 
     protected static function cifnif(Partida $line, Asiento $model): string
@@ -384,6 +374,146 @@ class AccountingLineHTML
         return '<div class="col-sm-auto pb-1">'
             . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
             . Tools::trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button></div>';
+    }
+
+    private static function renderField(string $idlinea, Partida $line, Asiento $model, string $field): ?string
+    {
+        foreach (self::$mods as $mod) {
+            $html = $mod->renderField($idlinea, $line, $model, $field);
+            if ($html !== null) {
+                return $html;
+            }
+        }
+
+        switch ($field) {
+            case 'baseimponible':
+                return static::baseimponible($line, $model);
+
+            case 'cifnif':
+                return static::cifnif($line, $model);
+
+            case 'codserie':
+                return static::codserie($line, $model);
+
+            case 'concepto':
+                return static::concepto($line, $model);
+
+            case 'contrapartida':
+                return static::contrapartida($line, $model);
+
+            case 'debe':
+                return static::debe($line, $model);
+
+            case 'documento':
+                return static::documento($line, $model);
+
+            case 'haber':
+                return static::haber($line, $model);
+
+            case 'iva':
+                return static::iva($line, $model);
+
+            case 'recargo':
+                return static::recargo($line, $model);
+
+            case 'subcuenta':
+                return static::subcuenta($line, $model);
+        }
+
+        return null;
+    }
+
+    private static function renderLineModal(Partida $line, string $idlinea, Asiento $model): string
+    {
+        return '<div class="modal fade" id="lineModal-' . $idlinea . '" tabindex="-1" aria-labelledby="lineModal-' . $idlinea . 'Label" aria-hidden="true">'
+            . '<div class="modal-dialog modal-dialog-centered">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title">' . $line->codsubcuenta . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
+            . '</button>'
+            . '</div>'
+            . '<div class="modal-body">'
+            . '<div class="row g-2">'
+            . static::renderField($idlinea, $line, $model, 'iva')
+            . static::renderField($idlinea, $line, $model, 'recargo')
+            . '</div>'
+            . '<div class="row g-2">'
+            . static::renderField($idlinea, $line, $model, 'baseimponible')
+            . static::renderField($idlinea, $line, $model, 'cifnif')
+            . '</div>'
+            . '<div class="row g-2">'
+            . static::renderField($idlinea, $line, $model, 'documento')
+            . static::renderField($idlinea, $line, $model, 'codserie')
+            . '</div>'
+            . '<div class="row g-2">'
+            . static::renderNewModalFields($idlinea, $line, $model)
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer">'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+            . Tools::trans('close')
+            . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">'
+            . Tools::trans('accept')
+            . '</button>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function renderNewFields(string $idlinea, Partida $line, Asiento $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($idlinea, $line, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
+    }
+
+    private static function renderNewModalFields(string $idlinea, Partida $line, Asiento $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newModalFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($idlinea, $line, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
     }
 
     protected static function saldo(Subcuenta $subcuenta): string
