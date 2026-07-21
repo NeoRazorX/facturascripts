@@ -38,22 +38,22 @@ final class Response
     public const HTTP_UNAUTHORIZED = 401;
     public const HTTP_UNPROCESSABLE_ENTITY = 422;
 
-    /** Cuerpo de la respuesta que se enviará al cliente. @var string */
+    /** @var string Cuerpo de la respuesta que se enviará al cliente. */
     private $content;
 
-    /** Cookies pendientes de enviar, indexadas por nombre. @var array */
+    /** @var array Cookies pendientes de enviar, indexadas por nombre. */
     private $cookies;
 
-    /** Cabeceras HTTP de la respuesta. @var ResponseHeaders */
+    /** @var ResponseHeaders Cabeceras HTTP de la respuesta. */
     public $headers;
 
-    /** Código de estado HTTP. @var int */
+    /** @var int Código de estado HTTP. */
     private $http_code;
 
-    /** Si es true, send()/sendHeaders() no emiten nada (útil en tests o CLI). @var bool */
+    /** @var bool Si es true, send()/sendHeaders() no emiten nada (útil en tests o CLI). */
     private $send_disabled = false;
 
-    /** Indica si la respuesta ya se ha enviado, para evitar enviarla dos veces. @var bool */
+    /** @var bool Indica si la respuesta ya se ha enviado, para evitar enviarla dos veces. */
     private $sent = false;
 
     /**

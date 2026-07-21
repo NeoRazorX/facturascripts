@@ -50,7 +50,7 @@ class EditEmailNotification extends EditController
         parent::createViews();
 
         // desactivamos los botones nuevo, opciones e imprimir
-        $viewName = $this->getMainViewName();
+        $viewName = $this->mainTabName();
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnOptions', false);
         $this->setSettings($viewName, 'btnPrint', false);

@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 trait ExerciseRelationTrait
 {
     /**
-     * Exercise code.
+     * Código del ejercicio contable asociado.
      *
      * @var string
      */

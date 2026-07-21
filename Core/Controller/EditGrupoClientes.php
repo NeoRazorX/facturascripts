@@ -127,7 +127,7 @@ class EditGrupoClientes extends EditController
         $this->createViewCommon($viewName);
 
         // add action button
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'remove-customer',
             'color' => 'danger',
             'confirm' => true,
@@ -145,7 +145,7 @@ class EditGrupoClientes extends EditController
         $this->createViewCommon($viewName);
 
         // add action button
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'add-customer',
             'color' => 'success',
             'icon' => 'fa-solid fa-folder-plus',
@@ -181,7 +181,7 @@ class EditGrupoClientes extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
+        $codgrupo = $this->tabModelValue('EditGrupoClientes', 'codgrupo');
         switch ($viewName) {
             case 'ListCliente':
                 $where = [Where::eq('codgrupo', $codgrupo)];

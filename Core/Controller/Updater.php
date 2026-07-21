@@ -120,16 +120,18 @@ class Updater extends Controller
 
         $this->telemetryManager = new Telemetry();
 
-        // Folders writable?
-        $folders = $this->notWritableFolders();
-        if ($folders) {
-            Tools::log()->warning('folders-not-writable', [
-                '%folders%' => implode(', ', $folders)
-            ]);
-            return;
+        // en las acciones que escriben en disco, comprobamos que las carpetas sean escribibles
+        $action = $this->request->get('action', '');
+        if (in_array($action, ['cancel', 'download', 'post-update', 'update'])) {
+            $folders = $this->notWritableFolders();
+            if ($folders) {
+                Tools::log()->warning('folders-not-writable', [
+                    '%folders%' => implode(', ', $folders)
+                ]);
+                return;
+            }
         }
 
-        $action = $this->request->get('action', '');
         $this->execAction($action);
     }
 
@@ -138,6 +140,10 @@ class Updater extends Controller
      */
     private function cancelAction(): void
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
         $fileName = 'update-' . $this->request->get('item', '') . '.zip';
         if (file_exists(Tools::folder($fileName))) {
             unlink(Tools::folder($fileName));
@@ -216,6 +222,10 @@ class Updater extends Controller
      */
     private function downloadAction(): void
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
         $idItem = $this->request->get('item', '');
         $this->updaterItems = self::getUpdateItems();
         foreach ($this->updaterItems as $key => $item) {
@@ -484,6 +494,10 @@ class Updater extends Controller
      */
     private function updateAction(): void
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
         $idItem = $this->request->get('item', '');
         $fileName = 'update-' . $idItem . '.zip';
 

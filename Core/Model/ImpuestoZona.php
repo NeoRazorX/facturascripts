@@ -34,55 +34,28 @@ class ImpuestoZona extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * Foreign key with tax table. varchar(10).
-     *
-     * @var string
-     */
+    /** @var string Código del impuesto original que se desea sustituir. */
     public $codimpuesto;
 
-    /**
-     * Foreign key with tax table. varchar(10).
-     *
-     * @var string
-     */
+    /** @var string Código del impuesto que se aplicará en la zona. */
     public $codimpuestosel;
 
-    /**
-     * Foreign key with provincias table. varchar(10).
-     *
-     * @var string
-     */
+    /** @var string Identificador de la provincia a la que se aplica la regla. */
     public $codisopro;
 
-    /**
-     * Foreign key with country table. varchar(20).
-     *
-     * @var string
-     */
+    /** @var string Código del país al que se aplica la regla. */
     public $codpais;
 
-    /** @var string */
+    /** @var string Código de la excepción de IVA que se aplicará en la zona. */
     public $excepcioniva;
 
-    /**
-     * Primary key autoincremental
-     *
-     * @var int
-     */
+    /** @var int Identificador único de la regla de impuesto por zona. */
     public $id;
 
-    /**
-     * Priority of taxt by zone.
-     *
-     * @var int
-     */
+    /** @var int Prioridad con la que se evalúa la regla de impuesto. */
     public $prioridad;
 
-    /**
-     *
-     * @var string
-     */
+    /** @var string Nombre de la provincia almacenado temporalmente para las comparaciones. */
     protected $provincia;
 
     public function clear(): void

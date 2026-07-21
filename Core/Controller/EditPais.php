@@ -70,7 +70,7 @@ class EditPais extends EditController
     {
         switch ($viewName) {
             case 'ListProvincia':
-                $codpais = $this->getViewModelValue($this->getMainViewName(), 'codpais');
+                $codpais = $this->mainTabModelValue('codpais');
                 $where = [Where::eq('codpais', $codpais)];
                 $view->loadData('', $where);
                 break;

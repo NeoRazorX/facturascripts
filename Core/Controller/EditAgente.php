@@ -44,7 +44,7 @@ class EditAgente extends ComercialContactController
     public function calcAgentInvoicePending(): string
     {
         $where = [
-            Where::eq('codagente', $this->getViewModelValue($this->getMainViewName(), 'codagente')),
+            Where::eq('codagente', $this->mainTabModelValue('codagente')),
             Where::eq('pagada', false)
         ];
 
@@ -157,11 +157,10 @@ class EditAgente extends ComercialContactController
         if ($return && $this->active == 'EditContacto') {
             // update agent data when contact data is updated
             $agente = new Agente();
-            $where = [Where::eq('idcontacto', $this->views[$this->active]->model->idcontacto)];
-            if ($agente->load('', $where)) {
-                $agente->email = $this->views[$this->active]->model->email;
-                $agente->telefono1 = $this->views[$this->active]->model->telefono1;
-                $agente->telefono2 = $this->views[$this->active]->model->telefono2;
+            if ($agente->loadWhereEq('idcontacto', $this->activeTab()->model->idcontacto)) {
+                $agente->email = $this->activeTab()->model->email;
+                $agente->telefono1 = $this->activeTab()->model->telefono1;
+                $agente->telefono2 = $this->activeTab()->model->telefono2;
                 $agente->save();
             }
         }
@@ -177,11 +176,11 @@ class EditAgente extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'EditContacto':
-                $idcontacto = $this->getViewModelValue($mvn, 'idcontacto');
+                $idcontacto = $this->mainTabModelValue('idcontacto');
                 if (empty($idcontacto)) {
                     $view->setSettings('active', false);
                     break;
@@ -196,13 +195,13 @@ class EditAgente extends ComercialContactController
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
-                $codagente = $this->getViewModelValue($mvn, 'codagente');
+                $codagente = $this->mainTabModelValue('codagente');
                 $where = [Where::eq('codagente', $codagente)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListEmailSent':
-                $email = $this->getViewModelValue($mvn, 'email');
+                $email = $this->mainTabModelValue('email');
                 if (empty($email)) {
                     $view->setSettings('active', false);
                     break;
@@ -213,7 +212,7 @@ class EditAgente extends ComercialContactController
 
                 // añadimos un botón para enviar un nuevo email
                 $view->addButton([
-                    'action' => 'SendMail?email=' . $email,
+                    'action' => 'SendMail?email-to=' . $email,
                     'color' => 'success',
                     'icon' => 'fa-solid fa-envelope',
                     'label' => 'send',

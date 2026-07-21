@@ -73,8 +73,8 @@ class EditEstadoDocumento extends EditController
     {
         switch ($viewName) {
             case 'ListEstadoDocumento':
-                $idestado = $this->getViewModelValue($this->getMainViewName(), 'idestado');
-                $tipoDoc = $this->getViewModelValue($this->getMainViewName(), 'tipodoc');
+                $idestado = $this->mainTabModelValue('idestado');
+                $tipoDoc = $this->mainTabModelValue('tipodoc');
                 $where = [
                     Where::eq('tipodoc', $tipoDoc),
                     Where::notEq('idestado', $idestado),

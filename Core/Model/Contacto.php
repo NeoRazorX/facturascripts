@@ -44,73 +44,73 @@ class Contacto extends ModelClass
     use FiscalNumberTrait;
     use GravatarTrait;
 
-    /** @var bool */
+    /** @var bool Indica si el contacto ha aceptado la política de privacidad. */
     public $aceptaprivacidad;
 
-    /** @var bool */
+    /** @var bool Indica si el contacto acepta comunicaciones de marketing. */
     public $admitemarketing;
 
-    /** @var string */
+    /** @var string Apartado de correos del contacto. */
     public $apartado;
 
-    /** @var string */
+    /** @var string Apellidos del contacto. */
     public $apellidos;
 
-    /** @var string */
+    /** @var string Cargo o puesto del contacto. */
     public $cargo;
 
-    /** @var string */
+    /** @var string Ciudad de la dirección del contacto. */
     public $ciudad;
 
-    /** @var string */
+    /** @var string Código del agente comercial vinculado al contacto. */
     public $codagente;
 
-    /** @var string */
+    /** @var string Código del cliente vinculado al contacto. */
     public $codcliente;
 
-    /** @var string */
+    /** @var string Código del país de la dirección del contacto. */
     public $codpais;
 
-    /** @var string */
+    /** @var string Código postal de la dirección del contacto. */
     public $codpostal;
 
-    /** @var string */
+    /** @var string Código del proveedor vinculado al contacto. */
     public $codproveedor;
 
-    /** @var string */
+    /** @var string Descripción identificativa del contacto. */
     public $descripcion;
 
-    /** @var string */
+    /** @var string Dirección postal del contacto. */
     public $direccion;
 
-    /** @var string */
+    /** @var string Empresa a la que pertenece el contacto. */
     public $empresa;
 
-    /** @var string */
+    /** @var string Fecha de alta del contacto. */
     public $fechaalta;
 
-    /** @var int */
+    /** @var int Identificador único del contacto. */
     public $idcontacto;
 
-    /** @var string */
+    /** @var string Código del idioma preferido del contacto. */
     public $langcode;
 
-    /** @var string */
+    /** @var string Nombre del contacto. */
     public $nombre;
 
-    /** @var string */
+    /** @var string Observaciones internas sobre el contacto. */
     public $observaciones;
 
-    /** @var bool */
+    /** @var bool Indica si el contacto es una persona física. */
     public $personafisica;
 
-    /** @var string */
+    /** @var string Provincia de la dirección del contacto. */
     public $provincia;
 
-    /** @var bool */
+    /** @var bool Indica si los datos del contacto han sido verificados. */
     public $verificado;
 
-    /** @var string */
+    /** @var string Sitio web del contacto. */
     public $web;
 
     public function checkVies(bool $msg = true): bool

@@ -65,7 +65,6 @@ class Cron implements ControllerInterface
         header('Content-Type: text/plain');
         $this->echoLogo();
 
-        Tools::log('cron')->notice('starting-cron');
         echo PHP_EOL . PHP_EOL . Tools::trans('starting-cron');
         ob_flush();
 
@@ -99,7 +98,6 @@ class Cron implements ControllerInterface
             '%memoryUsed%' => $this->getMemorySize(memory_get_peak_usage())
         ];
         echo PHP_EOL . PHP_EOL . Tools::trans('finished-cron', $context) . PHP_EOL . PHP_EOL;
-        Tools::log()->notice('finished-cron', $context);
     }
 
     private function echoLogo(): void
@@ -130,9 +128,14 @@ END;
         $job = new CronJob();
         $where = [
             Where::eq('jobname', $name),
-            Where::isNull('pluginname')
+            // algunas filas antiguas tienen cadena vacía en lugar de null
+            Where::sub([
+                Where::isNull('pluginname'),
+                Where::orEq('pluginname', '')
+            ])
         ];
-        if (false === $job->loadWhere($where)) {
+        // en caso de duplicados, cargamos la fila más antigua
+        if (false === $job->loadWhere($where, ['id' => 'ASC'])) {
             // no se había ejecutado nunca, lo creamos
             $job->jobname = $name;
         }
@@ -287,7 +290,6 @@ END;
             }
 
             echo PHP_EOL . Tools::trans('running-plugin-cron', ['%pluginName%' => $pluginName]) . ' ... ';
-            Tools::log('cron')->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
 
             try {
                 $cron = new $cronClass($pluginName);
@@ -298,6 +300,14 @@ END;
             }
 
             ob_flush();
+
+            // si se ha superado el tiempo máximo de ejecución definido, se detiene
+            if (CronJob::isMaxExecutionTimeReached()) {
+                echo PHP_EOL . PHP_EOL . Tools::trans('cron-max-execution-time-reached', [
+                        '%seconds%' => CronJob::getMaxExecutionTime(),
+                    ]);
+                break;
+            }
 
             // si no se está ejecutando en modo cli y lleva más de 20 segundos, se detiene
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 20) {
@@ -323,6 +333,14 @@ END;
             ob_flush();
 
             --$max;
+
+            // si se ha superado el tiempo máximo de ejecución definido, terminamos
+            if (CronJob::isMaxExecutionTimeReached()) {
+                echo PHP_EOL . PHP_EOL . Tools::trans('cron-max-execution-time-reached', [
+                        '%seconds%' => CronJob::getMaxExecutionTime(),
+                    ]);
+                return;
+            }
 
             // si no se está ejecutando en modo cli y lleva más de 25 segundos, terminamos
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 25) {

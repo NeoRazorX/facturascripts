@@ -40,147 +40,67 @@ class Partida extends ModelClass
     use ModelTrait;
     use AccEntryRelationTrait;
 
-    /**
-     * Amount of the tax base.
-     *
-     * @var float|int
-     */
+    /** @var float|int Importe de la base imponible asociada a la partida. */
     public $baseimponible;
 
-    /**
-     * CIF / NIF of the item.
-     *
-     * @var string
-     */
+    /** @var string Identificador fiscal relacionado con la partida. */
     public $cifnif;
 
-    /**
-     * Counterparty code.
-     *
-     * @var string
-     */
+    /** @var string Código de la subcuenta de contrapartida. */
     public $codcontrapartida;
 
-    /**
-     * Currency code.
-     *
-     * @var string
-     */
+    /** @var string Código de la divisa utilizada en la partida. */
     public $coddivisa;
 
-    /**
-     * Serie code.
-     *
-     * @var string
-     */
+    /** @var string Código de la serie documental asociada. */
     public $codserie;
 
-    /**
-     * Code, not ID, of the related account.
-     *
-     * @var string
-     */
+    /** @var string Código de la subcuenta contable asociada. */
     public $codsubcuenta;
 
-    /**
-     * Concept.
-     *
-     * @var string
-     */
+    /** @var string Concepto de la partida contable. */
     public $concepto;
 
-    /**
-     * Debit of the accounting entry.
-     *
-     * @var float|int
-     */
+    /** @var float|int Importe anotado en el debe. */
     public $debe;
 
-    /**
-     * @var bool
-     */
+    /** @var bool Indica si se omiten las comprobaciones adicionales del modelo. */
     private $disable_additional_test = false;
 
-    /**
-     * Document of departure.
-     *
-     * @var string
-     */
+    /** @var string Documento relacionado con la partida. */
     public $documento;
 
-    /**
-     * Invoice number of the departure.
-     *
-     * @var string
-     */
+    /** @var string Número de factura relacionado con la partida. */
     public $factura;
 
-    /**
-     * Credit of the accounting entry.
-     *
-     * @var float|int
-     */
+    /** @var float|int Importe anotado en el haber. */
     public $haber;
 
-    /**
-     * Identifier of the counterpart.
-     *
-     * @var int
-     */
+    /** @var int Identificador de la subcuenta de contrapartida. */
     public $idcontrapartida;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int Identificador único de la partida contable. */
     public $idpartida;
 
-    /**
-     * Related account ID.
-     *
-     * @var int
-     */
+    /** @var int Identificador de la subcuenta contable asociada. */
     public $idsubcuenta;
 
-    /**
-     * VAT percentage.
-     *
-     * @var float|int
-     */
+    /** @var float|int Porcentaje de IVA aplicado. */
     public $iva;
 
-    /**
-     * Visual order index
-     *
-     * @var int
-     */
+    /** @var int Posición visual de la partida dentro del asiento. */
     public $orden;
 
-    /**
-     * True if it is dotted, but False.
-     *
-     * @var bool
-     */
+    /** @var bool Indica si la partida ha sido punteada o conciliada. */
     public $punteada;
 
-    /**
-     * Equivalence surcharge percentage.
-     *
-     * @var float|int
-     */
+    /** @var float|int Porcentaje de recargo de equivalencia aplicado. */
     public $recargo;
 
-    /**
-     * @var float
-     */
+    /** @var float Saldo acumulado de la subcuenta tras la partida. */
     public $saldo;
 
-    /**
-     * Value of the conversion rate.
-     *
-     * @var float|int
-     */
+    /** @var float|int Tasa de conversión de la divisa utilizada. */
     public $tasaconv;
 
     public function clear(): void
@@ -328,10 +248,8 @@ class Partida extends ModelClass
         $this->concepto = Tools::noHtml($this->concepto);
         $this->documento = Tools::noHtml($this->documento);
 
-        if (strlen($this->concepto) < 1 || strlen($this->concepto) > 255) {
-            Tools::log()->warning('invalid-column-lenght', [
-                '%column%' => 'concepto', '%min%' => '1', '%max%' => '255'
-            ]);
+        if (strlen($this->concepto ?? '') < 1) {
+            Tools::log()->warning('field-required', ['%field%' => 'concepto']);
             return false;
         }
 

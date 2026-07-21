@@ -50,7 +50,7 @@ class EditCronJob extends EditController
         parent::createViews();
 
         // desactivamos los botones nuevo y opciones
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         $this->setSettings($mvn, 'btnNew', false);
         $this->setSettings($mvn, 'btnOptions', false);
 
@@ -79,7 +79,7 @@ class EditCronJob extends EditController
     {
         switch ($viewName) {
             case 'ListLogMessage':
-                $name = $this->getViewModelValue($this->getMainViewName(), 'jobname');
+                $name = $this->mainTabModelValue('jobname');
                 $where = [Where::eq('channel', $name)];
                 $view->loadData('', $where);
                 break;

@@ -31,6 +31,9 @@ use FacturaScripts\Core\Mod\CalculatorModSpain;
  */
 final class Kernel
 {
+    /** @var float|null */
+    private static $mock_execution_time;
+
     /** @var array */
     private static $routes = [];
 
@@ -40,6 +43,14 @@ final class Kernel
     /** @var array */
     private static $timers = [];
 
+    /**
+     * Añade una ruta y el controlador que la atiende.
+     *
+     * @param string $route Ruta relativa, por ejemplo '/ListAsiento'. Si termina en *, actúa como comodín.
+     * @param string $controller Clase del controlador, con namespace completo.
+     * @param int $position Prioridad de la ruta: se comprueban primero las de posición menor.
+     * @param string $customId Identificador propio: si ya existe una ruta con el mismo, la reemplaza.
+     */
     public static function addRoute(string $route, string $controller, int $position = 0, string $customId = ''): void
     {
         // si el customId ya existe, eliminamos la ruta anterior
@@ -59,23 +70,51 @@ final class Kernel
         ];
     }
 
+    /**
+     * Registra una función que añadirá rutas cuando se reconstruyan con rebuildRoutes().
+     *
+     * @param Closure $closure Función que recibe el array de rutas actuales.
+     */
     public static function addRoutes(Closure $closure): void
     {
         self::$routesCallbacks[] = $closure;
     }
 
+    /**
+     * Elimina todas las rutas registradas.
+     */
     public static function clearRoutes(): void
     {
         self::$routes = [];
     }
 
+    /**
+     * Devuelve los segundos transcurridos desde el arranque de FacturaScripts,
+     * o el tiempo simulado si se ha establecido con setMockExecutionTime().
+     *
+     * @param int $decimals Número de decimales del resultado.
+     *
+     * @return float
+     */
     public static function getExecutionTime(int $decimals = 5): float
     {
+        if (self::$mock_execution_time !== null) {
+            return round(self::$mock_execution_time, $decimals);
+        }
+
         $start = self::$timers['kernel::init']['start'] ?? microtime(true);
         $diff = microtime(true) - $start;
         return round($diff, $decimals);
     }
 
+    /**
+     * Devuelve los segundos transcurridos del temporizador indicado, entre su inicio
+     * y su parada, o hasta ahora si sigue en marcha. 0.0 si no existe.
+     *
+     * @param string $name Nombre del temporizador.
+     *
+     * @return float
+     */
     public static function getTimer(string $name): float
     {
         if (!array_key_exists($name, self::$timers)) {
@@ -87,11 +126,20 @@ final class Kernel
         return round($stop - $start, 5);
     }
 
+    /**
+     * Devuelve todos los temporizadores, con su inicio, parada y memoria usada.
+     *
+     * @return array
+     */
     public static function getTimers(): array
     {
         return self::$timers;
     }
 
+    /**
+     * Inicializa FacturaScripts: define las constantes de compatibilidad con
+     * versiones antiguas, establece el idioma, y carga los mods y workers.
+     */
     public static function init(): void
     {
         self::startTimer('kernel::init');
@@ -134,6 +182,15 @@ final class Kernel
         self::stopTimer('kernel::init');
     }
 
+    /**
+     * Intenta bloquear el proceso indicado para que no se ejecute más de una vez
+     * a la vez, mediante un archivo de bloqueo en MyFiles. Los bloqueos de más
+     * de 2 horas se descartan.
+     *
+     * @param string $processName Nombre del proceso a bloquear.
+     *
+     * @return bool True si se ha conseguido el bloqueo, false si ya estaba bloqueado.
+     */
     public static function lock(string $processName): bool
     {
         $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
@@ -149,6 +206,11 @@ final class Kernel
         return false !== file_put_contents($lockFile, $processName);
     }
 
+    /**
+     * Reconstruye todas las rutas: las predeterminadas, una por cada controlador
+     * de Dinamic/Controller, y las registradas con addRoutes(). Después se pueden
+     * guardar con saveRoutes().
+     */
     public static function rebuildRoutes(): void
     {
         self::$routes = [];
@@ -187,6 +249,12 @@ final class Kernel
         });
     }
 
+    /**
+     * Ejecuta el controlador correspondiente a la url indicada. Si se produce una
+     * excepción, la gestiona con el controlador de errores adecuado.
+     *
+     * @param string $url Url solicitada.
+     */
     public static function run(string $url): void
     {
         Kernel::startTimer('kernel::run');
@@ -207,6 +275,12 @@ final class Kernel
         Kernel::stopTimer('kernel::run');
     }
 
+    /**
+     * Guarda las rutas en el archivo MyFiles/routes.json, de donde se cargarán
+     * en las siguientes peticiones.
+     *
+     * @return bool
+     */
     public static function saveRoutes(): bool
     {
         // si la carpeta MyFiles no existe, la creamos
@@ -217,6 +291,22 @@ final class Kernel
         return false !== file_put_contents($filePath, $content);
     }
 
+    /**
+     * Establece un tiempo de ejecución simulado para los tests.
+     *
+     * @param float|null $seconds Segundos simulados, null para volver al tiempo real.
+     */
+    public static function setMockExecutionTime(?float $seconds): void
+    {
+        self::$mock_execution_time = $seconds;
+    }
+
+    /**
+     * Inicia un temporizador con el nombre indicado, anotando el momento y la
+     * memoria en uso. Si ya existía, lo reinicia.
+     *
+     * @param string $name Nombre del temporizador.
+     */
     public static function startTimer(string $name): void
     {
         self::$timers[$name] = [
@@ -225,6 +315,14 @@ final class Kernel
         ];
     }
 
+    /**
+     * Detiene el temporizador indicado y devuelve los segundos transcurridos.
+     * Si no existía, lo crea en ese momento.
+     *
+     * @param string $name Nombre del temporizador.
+     *
+     * @return float
+     */
     public static function stopTimer(string $name): float
     {
         if (!array_key_exists($name, self::$timers)) {
@@ -237,17 +335,37 @@ final class Kernel
         return round(self::$timers[$name]['stop'] - self::$timers[$name]['start'], 5);
     }
 
+    /**
+     * Libera el bloqueo del proceso indicado, eliminando su archivo de bloqueo.
+     *
+     * @param string $processName Nombre del proceso a desbloquear.
+     *
+     * @return bool True si existía el bloqueo y se ha eliminado.
+     */
     public static function unlock(string $processName): bool
     {
         $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
         return file_exists($lockFile) && @unlink($lockFile);
     }
 
+    /**
+     * Devuelve la versión de FacturaScripts.
+     *
+     * @return float
+     */
     public static function version(): float
     {
-        return 2026.5;
+        return 2026.51;
     }
 
+    /**
+     * Resuelve la clase del controlador: si no tiene namespace, lo busca en Dinamic,
+     * y si la clase no existe, en Core.
+     *
+     * @param string $controller Clase del controlador, con o sin namespace.
+     *
+     * @return array La clase resuelta y el nombre del controlador.
+     */
     private static function checkControllerClass(string $controller): array
     {
         $class = explode('\\', $controller);
@@ -266,6 +384,11 @@ final class Kernel
         return [$controller, $name];
     }
 
+    /**
+     * Envía la respuesta al cliente y cierra la conexión, para que el trabajo que
+     * quede pendiente en el servidor no haga esperar al navegador. En modo cli no
+     * hace nada.
+     */
     private static function finishRequest(): void
     {
         // solo ejecutamos si estamos en un entorno web (no CLI)
@@ -291,6 +414,15 @@ final class Kernel
         flush();
     }
 
+    /**
+     * Devuelve el controlador de errores adecuado para la excepción: el que indique
+     * la propia excepción si es una KernelException, o DefaultError en su defecto,
+     * dando prioridad a las versiones de Dinamic.
+     *
+     * @param Exception $exception Excepción a gestionar.
+     *
+     * @return ErrorControllerInterface
+     */
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
     {
         if ($exception instanceof KernelException) {
@@ -311,6 +443,14 @@ final class Kernel
         return new DefaultError($exception);
     }
 
+    /**
+     * Devuelve la url relativa, sin la ruta base de la instalación, saneada
+     * para prevenir path traversal.
+     *
+     * @param string $url Url solicitada.
+     *
+     * @return string
+     */
     private static function getRelativeUrl(string $url): string
     {
         // sanitizamos la URL de entrada para prevenir path traversal
@@ -343,6 +483,10 @@ final class Kernel
             $url;
     }
 
+    /**
+     * Añade las rutas predeterminadas: raíz, api, cron, login, archivos estáticos, etc.
+     * Para cada una usa el controlador de Dinamic si existe, o el de Core en su defecto.
+     */
     private static function loadDefaultRoutes(): void
     {
         // añadimos las rutas por defecto
@@ -409,6 +553,11 @@ final class Kernel
         }
     }
 
+    /**
+     * Carga todas las rutas: si no hay base de datos configurada, solo el instalador;
+     * en caso contrario, las predeterminadas más las del archivo MyFiles/routes.json,
+     * ordenadas por posición.
+     */
     private static function loadRoutes(): void
     {
         if ('' === Tools::config('db_name', '')) {
@@ -441,6 +590,15 @@ final class Kernel
         });
     }
 
+    /**
+     * Comprueba si la url encaja con la ruta, ya sea por coincidencia exacta o
+     * por comodín (rutas terminadas en *).
+     *
+     * @param string $url Url relativa a comprobar.
+     * @param string $route Ruta registrada.
+     *
+     * @return bool
+     */
     private static function matchesRoute(string $url, string $route): bool
     {
         // coincidencia exacta
@@ -456,6 +614,12 @@ final class Kernel
         return false;
     }
 
+    /**
+     * Busca la primera ruta que encaje con la url y ejecuta su controlador.
+     * Si ninguna encaja, lanza una KernelException de página no encontrada.
+     *
+     * @param string $url Url relativa solicitada.
+     */
     private static function runController(string $url): void
     {
         foreach (self::$routes as $route => $info) {

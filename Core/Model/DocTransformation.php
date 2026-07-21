@@ -35,58 +35,28 @@ class DocTransformation extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * @var float
-     */
+    /** @var float Cantidad transformada entre las dos líneas de documento. */
     public $cantidad;
 
-    /**
-     * Primary key. Autoincremental.
-     *
-     * @var int
-     */
+    /** @var int Identificador único de la transformación. */
     public $id;
 
-    /**
-     * id of document 1
-     *
-     * @var int
-     */
+    /** @var int Identificador del documento de origen. */
     public $iddoc1;
 
-    /**
-     * id of document 2
-     *
-     * @var int
-     */
+    /** @var int Identificador del documento de destino. */
     public $iddoc2;
 
-    /**
-     * id of the line in document 1
-     *
-     * @var int
-     */
+    /** @var int Identificador de la línea del documento de origen. */
     public $idlinea1;
 
-    /**
-     * id of the line in document 2
-     *
-     * @var int
-     */
+    /** @var int Identificador de la línea del documento de destino. */
     public $idlinea2;
 
-    /**
-     * Name of model1. Varchar(30)
-     *
-     * @var string
-     */
+    /** @var string Nombre del modelo del documento de origen. */
     public $model1;
 
-    /**
-     * Name of model2. Varchar(30)
-     *
-     * @var string
-     */
+    /** @var string Nombre del modelo del documento de destino. */
     public $model2;
 
     public function clear(): void

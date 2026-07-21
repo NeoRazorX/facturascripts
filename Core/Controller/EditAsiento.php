@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -234,7 +234,7 @@ class EditAsiento extends PanelController
 
     protected function exportAction()
     {
-        if (false === $this->views[$this->active]->settings['btnPrint'] || false === $this->permissions->allowExport) {
+        if (false === $this->activeTab()->settings['btnPrint'] || false === $this->permissions->allowExport) {
             Tools::log()->warning('no-print-permission');
             return;
         }
@@ -313,7 +313,7 @@ class EditAsiento extends PanelController
                 }
 
                 $this->title .= ' ' . $view->model->primaryDescription();
-                $this->addButton($viewName, [
+                $view->addButton([
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->id(),
                     'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',

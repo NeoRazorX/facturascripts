@@ -45,14 +45,14 @@ class EditProveedor extends ComercialContactController
      */
     public function getDeliveryNotesRisk(): string
     {
-        $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $code = $this->tabModelValue('EditProveedor', 'codproveedor');
         $total = SupplierRiskTools::getDeliveryNotesRisk($code);
         return Tools::money($total);
     }
 
     public function getImageUrl(): string
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         return $this->views[$mvn]->model->gravatar();
     }
 
@@ -63,7 +63,7 @@ class EditProveedor extends ComercialContactController
      */
     public function getInvoicesRisk(): string
     {
-        $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $code = $this->tabModelValue('EditProveedor', 'codproveedor');
         $total = SupplierRiskTools::getInvoicesRisk($code);
         return Tools::money($total);
     }
@@ -180,7 +180,7 @@ class EditProveedor extends ComercialContactController
     protected function editAction(): bool
     {
         $return = parent::editAction();
-        if ($return && $this->active === $this->getMainViewName()) {
+        if ($return && $this->active === $this->mainTabName()) {
             $this->checkSubaccountLength($this->getModel()->codsubcuenta);
         }
 
@@ -199,7 +199,7 @@ class EditProveedor extends ComercialContactController
             return true;
         }
 
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
         if (strpos($return_url, '?') === false) {
             $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->id());
         } else {
@@ -217,8 +217,8 @@ class EditProveedor extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
-        $codproveedor = $this->getViewModelValue($mainViewName, 'codproveedor');
+        $mainViewName = $this->mainTabName();
+        $codproveedor = $this->mainTabModelValue('codproveedor');
         $where = [Where::eq('codproveedor', $codproveedor)];
 
         switch ($viewName) {
@@ -309,7 +309,7 @@ class EditProveedor extends ComercialContactController
         }
 
         // Search for supplier contacts
-        $codproveedor = $this->getViewModelValue($viewName, 'codproveedor');
+        $codproveedor = $this->tabModelValue($viewName, 'codproveedor');
         $where = [Where::eq('codproveedor', $codproveedor)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 

@@ -126,6 +126,19 @@ abstract class JoinModel
         return $result;
     }
 
+    /**
+     * Devuelve todos los registros donde el campo es igual al valor.
+     *
+     * @param string $field
+     * @param mixed $value
+     * @param array $order
+     * @return static[]
+     */
+    public static function allWhereEq(string $field, $value, array $order = []): array
+    {
+        return static::all([Where::eq($field, $value)], $order);
+    }
+
     /** Restablece los valores de todos los atributos del modelo. */
     public function clear(): void
     {
@@ -178,6 +191,17 @@ abstract class JoinModel
         return $final;
     }
 
+    /**
+     * Devuelve el número de registros donde el campo es igual al valor.
+     *
+     * @param string $field
+     * @param mixed $value
+     */
+    public static function countWhereEq(string $field, $value): int
+    {
+        return static::count([Where::eq($field, $value)]);
+    }
+
     /** Elimina los datos del modelo master de la base de datos. */
     public function delete(): bool
     {
@@ -196,6 +220,11 @@ abstract class JoinModel
         return isset($this->masterModel) ? $this->masterModel->exists() : static::count() > 0;
     }
 
+    /**
+     * Devuelve la definición y el tipo de los campos incluidos en la vista.
+     *
+     * @return array
+     */
     public function getModelFields(): array
     {
         // la definición de campos es fija por clase, así que memoizamos el
@@ -244,6 +273,18 @@ abstract class JoinModel
     }
 
     /**
+     * Comprueba si el modelo contiene la columna indicada.
+     *
+     * @param string $columnName
+     * @return bool
+     */
+    public function hasColumn(string $columnName): bool
+    {
+        $fields = $this->getModelFields();
+        return isset($fields[$columnName]);
+    }
+
+    /**
      * Carga un registro del modelo utilizando el código de la clave primaria del master model.
      *
      * @param mixed $code
@@ -275,6 +316,12 @@ abstract class JoinModel
     }
 
     /**
+     * Carga un registro mediante un código o condiciones adicionales.
+     *
+     * @param mixed $cod
+     * @param Where[] $where
+     * @param array $orderby
+     * @return bool
      * @deprecated Usar load() cuando solo se necesita cargar por código, o loadWhere() cuando
      *             se requieren condiciones WHERE u ordenamiento adicionales.
      */
@@ -290,6 +337,13 @@ abstract class JoinModel
         return $this->load($cod);
     }
 
+    /**
+     * Carga el primer registro cuyo campo coincide con el valor indicado.
+     *
+     * @param string $field
+     * @param mixed $value
+     * @return bool
+     */
     public function loadWhereEq(string $field, $value): bool
     {
         return $this->loadWhere([Where::eq($field, $value)]);
@@ -333,7 +387,10 @@ abstract class JoinModel
     }
 
     /**
-     * @deprecated Use id() instead
+     * Devuelve el valor de la clave primaria del modelo principal.
+     *
+     * @return mixed
+     * @deprecated Usar id() en su lugar.
      */
     #[Deprecated(
         reason: 'Use id() instead',
@@ -344,6 +401,13 @@ abstract class JoinModel
         return $this->id();
     }
 
+    /**
+     * Suma los valores de un campo para los registros que cumplen las condiciones.
+     *
+     * @param string $field
+     * @param Where[] $where
+     * @return float
+     */
     public function totalSum(string $field, array $where = []): float
     {
         // buscamos en caché

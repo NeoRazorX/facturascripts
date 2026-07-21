@@ -53,12 +53,12 @@ class EditSecuenciaDocumento extends EditController
 
         // desactivamos la columna de empresa si solo hay una
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->mainTab()->disableColumn('company');
         }
 
         // desactivamos los botones de opciones e imprimir
-        $this->setSettings($this->getMainViewName(), 'btnOptions', false);
-        $this->setSettings($this->getMainViewName(), 'btnPrint', false);
+        $this->setSettings($this->mainTabName(), 'btnOptions', false);
+        $this->setSettings($this->mainTabName(), 'btnPrint', false);
 
         // añadimos las vistas de los documentos
         $this->createViewsDocuments('ListFacturaCliente', 'FacturaCliente', 'customer-invoices');
@@ -85,7 +85,7 @@ class EditSecuenciaDocumento extends EditController
 
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'ListAlbaranCliente':
@@ -97,8 +97,8 @@ class EditSecuenciaDocumento extends EditController
             case 'ListPresupuestoCliente':
             case 'ListPresupuestoProveedor':
                 $where = [
-                    Where::eq('codserie', $this->getViewModelValue($mvn, 'codserie')),
-                    Where::eq('idempresa', $this->getViewModelValue($mvn, 'idempresa'))
+                    Where::eq('codserie', $this->mainTabModelValue('codserie')),
+                    Where::eq('idempresa', $this->mainTabModelValue('idempresa'))
                 ];
                 // si tiene ejercicio, solo mostramos los resultados de ese ejercicio
                 if ($this->views[$mvn]->model->codejercicio) {

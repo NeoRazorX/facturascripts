@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,7 +38,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     use TaxRelationTrait;
 
     /**
-     * Estado de actualización de stock.
+     * Define cómo afecta la línea al stock del producto.
      *
      * @var int
      */
@@ -58,27 +58,27 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     public $descripcion;
 
-    /** @var bool */
+    /** @var bool Indica si se debe omitir la actualización automática del stock. */
     private $disable_update_stock = false;
 
-    /** @var array */
+    /** @var array Campos que no se deben copiar al transformar la línea. */
     protected static $dont_copy_fields = ['idlinea', 'orden', 'servido'];
 
     /**
-     * Porcentaje de descuento.
+     * Primer porcentaje de descuento de la línea.
      *
      * @var float|int
      */
     public $dtopor;
 
     /**
-     * Porcentaje de segundo descuento.
+     * Segundo porcentaje de descuento de la línea.
      *
      * @var float|int
      */
     public $dtopor2;
 
-    /** @var string */
+    /** @var string Código de la excepción de IVA aplicable a la línea. */
     public $excepcioniva;
 
     /**
@@ -88,7 +88,7 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     public $idlinea;
 
-    /** @var int */
+    /** @var int Identificador del producto asociado a la línea. */
     public $idproducto;
 
     /**
@@ -148,13 +148,13 @@ abstract class BusinessDocumentLine extends NewModelClass
     public $referencia;
 
     /**
-     * Servido.
+     * Cantidad de la línea que ya se ha servido o transformado.
      *
      * @var float|int
      */
     public $servido;
 
-    /** @var bool */
+    /** @var bool Indica si la línea corresponde a un suplido. */
     public $suplido;
 
     /**
@@ -535,8 +535,7 @@ abstract class BusinessDocumentLine extends NewModelClass
 
         // buscamos la variante
         $variante = new Variante();
-        $where = [Where::eq('referencia', $this->referencia)];
-        if (empty($this->referencia) || false === $variante->loadWhere($where)) {
+        if (empty($this->referencia) || false === $variante->loadWhereEq('referencia', $this->referencia)) {
             return true;
         }
 

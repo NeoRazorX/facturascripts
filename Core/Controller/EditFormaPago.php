@@ -51,7 +51,7 @@ class EditFormaPago extends EditController
 
         // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->mainTab()->disableColumn('company');
         }
     }
 
@@ -63,7 +63,7 @@ class EditFormaPago extends EditController
     {
         parent::loadData($viewName, $view);
 
-        if ($viewName === $this->getMainViewName() && false === $view->model->exists()) {
+        if ($viewName === $this->mainTabName() && false === $view->model->exists()) {
             $view->disableColumn('bank-account');
         }
     }

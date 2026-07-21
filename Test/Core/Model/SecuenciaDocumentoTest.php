@@ -128,8 +128,7 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertEquals(1, $doc->numero, 'document-not-one');
 
         // comprobamos que se creó la secuencia
-        $where = [Where::eq('tipodoc', 'PresupuestoCliente')];
-        $sequence->loadWhere($where);
+        $sequence->loadWhereEq('tipodoc', 'PresupuestoCliente');
         $this->assertTrue($sequence->exists(), 'document-sequence-not-created');
 
         // comprobamos que el número de inicio de la secuencia es 1
@@ -178,8 +177,7 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertEquals('PRE' . $doc->codejercicio . 'A000031', $doc->codigo, 'document-bad-codigo');
 
         // comprobamos que el siguiente número para la secuencia es 32
-        $where = [Where::eq('tipodoc', 'PresupuestoCliente')];
-        $sequence->loadWhere($where);
+        $sequence->loadWhereEq('tipodoc', 'PresupuestoCliente');
         $this->assertEquals(32, $sequence->numero, 'document-sequence-next-not-thirty-two');
 
         // eliminamos
@@ -219,8 +217,7 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertEquals(21, $doc->numero, 'document-not-twenty-one');
 
         // comprobamos que el siguiente número para la secuencia es 22
-        $where = [Where::eq('tipodoc', 'PresupuestoCliente')];
-        $sequence->loadWhere($where);
+        $sequence->loadWhereEq('tipodoc', 'PresupuestoCliente');
         $this->assertEquals(22, $sequence->numero, 'document-sequence-next-not-twenty-two');
 
         // eliminamos
@@ -316,8 +313,7 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertEquals(7, $doc->numero, 'document-not-seven');
 
         // comprobamos que el siguiente número para la secuencia es 8
-        $where = [Where::eq('tipodoc', 'PresupuestoCliente')];
-        $sequence->loadWhere($where);
+        $sequence->loadWhereEq('tipodoc', 'PresupuestoCliente');
         $this->assertEquals(8, $sequence->numero, 'document-sequence-next-not-eight');
 
         // eliminamos

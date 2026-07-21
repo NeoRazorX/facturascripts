@@ -70,14 +70,14 @@ class ListLogMessage extends ListController
             ]);
 
         // añadimos los botones de activar y desactivar
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'enable-cronjob',
             'color' => 'success',
             'icon' => 'fa-solid fa-check-square',
             'label' => 'enable'
         ]);
 
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'disable-cronjob',
             'color' => 'warning',
             'icon' => 'fa-regular fa-square',
@@ -107,7 +107,7 @@ class ListLogMessage extends ListController
             ->addFilterPeriod('time', 'period', 'time', true);
 
         // añadimos un botón para el modal delete-logs
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'delete-logs',
             'color' => 'warning',
             'icon' => 'fa-solid fa-trash-alt',

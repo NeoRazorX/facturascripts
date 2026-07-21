@@ -49,37 +49,37 @@ class EstadoDocumento extends ModelClass
 {
     use ModelTrait;
 
-    /** @var bool */
+    /** @var bool Indica si el estado está disponible para su uso. */
     public $activo;
 
-    /** @var int */
+    /** @var int Define cómo modifica el documento el stock de los productos. */
     public $actualizastock;
 
-    /** @var bool */
+    /** @var bool Indica si el estado queda protegido frente a modificaciones y borrado. */
     public $bloquear;
 
-    /** @var string */
+    /** @var string Color utilizado para representar el estado. */
     public $color;
 
-    /** @var bool */
+    /** @var bool Indica si los documentos con este estado se pueden editar. */
     public $editable;
 
-    /** @var string */
+    /** @var string Tipo de documento que se genera al aplicar este estado. */
     public $generadoc;
 
-    /** @var string */
+    /** @var string Icono utilizado para representar el estado. */
     public $icon;
 
-    /** @var int */
+    /** @var int Identificador único del estado de documento. */
     public $idestado;
 
-    /** @var string */
+    /** @var string Nombre del estado de documento. */
     public $nombre;
 
-    /** @var bool */
+    /** @var bool Indica si es el estado predeterminado para su tipo de documento. */
     public $predeterminado;
 
-    /** @var string */
+    /** @var string Tipo de documento al que pertenece el estado. */
     public $tipodoc;
 
     public function clear(): void

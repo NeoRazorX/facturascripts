@@ -36,31 +36,31 @@ class ApiKey extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** @var string Clave utilizada para autenticarse en la API. */
     public $apikey;
 
-    /** @var string */
+    /** @var string Fecha de creación de la clave API. */
     public $creationdate;
 
-    /** @var string */
+    /** @var string Descripción de la clave API. */
     public $description;
 
-    /** @var bool */
+    /** @var bool Indica si la clave API está habilitada. */
     public $enabled;
 
-    /** @var bool */
+    /** @var bool Indica si la clave permite acceder a todos los recursos de la API. */
     public $fullaccess;
 
-    /** @var int */
+    /** @var int Identificador único de la clave API. */
     public $id;
 
-    /** @var string */
+    /** @var string Fecha y hora de la última actividad de la clave API. */
     public $lastactivity;
 
-    /** @var string */
+    /** @var string Dirección IP desde la que se utilizó la clave API por última vez. */
     public $lastip;
 
-    /** @var string */
+    /** @var string Nombre del usuario asociado a la clave API. */
     public $nick;
 
     /**
@@ -101,8 +101,7 @@ class ApiKey extends ModelClass
 
     public function getAccesses(): array
     {
-        $where = [Where::eq('idapikey', $this->id)];
-        return ApiAccess::all($where, [], 0, 0);
+        return ApiAccess::allWhereEq('idapikey', $this->id);
     }
 
     /**

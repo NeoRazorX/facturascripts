@@ -59,7 +59,7 @@ class EditCuenta extends EditController
         parent::createViews();
 
         // desactivamos el botón de imprimir
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         $this->tab($mvn)->setSettings('btnPrint', false);
 
         // ponemos las pestañas en la parte inferior
@@ -165,8 +165,8 @@ class EditCuenta extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
-        $idcuenta = $this->getViewModelValue($mainViewName, 'idcuenta');
+        $mainViewName = $this->mainTabName();
+        $idcuenta = $this->mainTabModelValue('idcuenta');
 
         switch ($viewName) {
             case 'ListCuenta':
@@ -188,7 +188,7 @@ class EditCuenta extends EditController
                 unset($view->totalAmounts['saldo']);
 
                 // añadimos botón de imprimir mayor
-                $this->addButton($mainViewName, [
+                $this->tab($mainViewName)->addButton([
                     'action' => 'ledger',
                     'color' => 'info',
                     'icon' => 'fa-solid fa-print fa-fw',
@@ -231,7 +231,7 @@ class EditCuenta extends EditController
 
     private function setLedgerReportValues(string $viewName): void
     {
-        $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
+        $codeExercise = $this->tabModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();
         $exercise->load($codeExercise);
 

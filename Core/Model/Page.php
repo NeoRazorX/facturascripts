@@ -32,55 +32,25 @@ class Page extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * Icon of the page.
-     *
-     * @var string
-     */
+    /** @var string Icono utilizado para representar la página. */
     public $icon;
 
-    /**
-     * Title of the menu option where it is displayed.
-     *
-     * @var string
-     */
+    /** @var string Título de la opción principal del menú donde se muestra la página. */
     public $menu;
 
-    /**
-     * Primary key. Varchar (30).
-     * Name of the page (controller).
-     *
-     * @var string
-     */
+    /** @var string Nombre del controlador asociado a la página. */
     public $name;
 
-    /**
-     * Position where it is placed in the menu.
-     *
-     * @var int
-     */
+    /** @var int Posición de la página dentro del menú. */
     public $ordernum;
 
-    /**
-     * Indicates if it is displayed in the menu.
-     * False -> hide in the menu.
-     *
-     * @var bool
-     */
+    /** @var bool Indica si la página se muestra en el menú. */
     public $showonmenu;
 
-    /**
-     * Title of the menu sub-option where it is displayed (if it uses 2 levels).
-     *
-     * @var string
-     */
+    /** @var string Título del submenú donde se muestra la página. */
     public $submenu;
 
-    /**
-     * Page title.
-     *
-     * @var string
-     */
+    /** @var string Título de la página. */
     public $title;
 
     public function clear(): void

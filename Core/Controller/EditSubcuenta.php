@@ -67,7 +67,7 @@ class EditSubcuenta extends EditController
         CodeModel::setLimit(9999);
 
         // ocultamos el botón imprimir
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         $this->tab($mvn)->setSettings('btnPrint', false);
 
         // añadimos las partidas de asientos
@@ -97,13 +97,13 @@ class EditSubcuenta extends EditController
             ->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
 
         // botones
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'dot-accounting-on',
             'color' => 'info',
             'icon' => 'fa-solid fa-check-double',
             'label' => 'checked'
         ]);
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'dot-accounting-off',
             'color' => 'warning',
             'icon' => 'fa-regular fa-square',
@@ -193,11 +193,11 @@ class EditSubcuenta extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
 
         switch ($viewName) {
             case 'ListPartidaAsiento':
-                $idsubcuenta = $this->getViewModelValue($mainViewName, 'idsubcuenta');
+                $idsubcuenta = $this->mainTabModelValue('idsubcuenta');
                 $where = [Where::eq('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);
                 if ($view->count == 0) {
@@ -208,7 +208,7 @@ class EditSubcuenta extends EditController
                 unset($view->totalAmounts['saldo']);
 
                 // añadimos botón de informe de mayor
-                $this->addButton($mainViewName, [
+                $this->tab($mainViewName)->addButton([
                     'action' => 'ledger',
                     'color' => 'info',
                     'icon' => 'fa-solid fa-print fa-fw',
@@ -277,7 +277,7 @@ class EditSubcuenta extends EditController
 
     private function setLedgerReportValues(string $viewName): void
     {
-        $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
+        $codeExercise = $this->tabModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();
         $exercise->load($codeExercise);
 

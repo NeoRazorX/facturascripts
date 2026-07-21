@@ -37,49 +37,43 @@ class Provincia extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** @var string Nombre alternativo o alias de la provincia. */
     public $alias;
 
-    /** @var string */
+    /** @var string Código geográfico identificativo de la provincia. */
     public $codeid;
 
-    /**
-     * 'Normalized' code in Spain to identify the provinces.
-     *
-     * @url: https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias
-     *
-     * @var string
-     */
+    /** @var string Código normalizado utilizado para identificar la provincia. */
     public $codisoprov;
 
-    /** @var string */
+    /** @var string Código del país al que pertenece la provincia. */
     public $codpais;
 
-    /** @var string */
+    /** @var string Fecha y hora de creación de la provincia. */
     public $creation_date;
 
-    /** @var string */
+    /** @var string Identificador único de la provincia. */
     public $idprovincia;
 
-    /** @var string */
+    /** @var string Nombre del último usuario que modificó la provincia. */
     public $last_nick;
 
-    /** @var string */
+    /** @var string Fecha y hora de la última modificación. */
     public $last_update;
 
-    /** @var float */
+    /** @var float Latitud geográfica de referencia de la provincia. */
     public $latitude;
 
-    /** @var float */
+    /** @var float Longitud geográfica de referencia de la provincia. */
     public $longitude;
 
-    /** @var string */
+    /** @var string Nombre del usuario que creó la provincia. */
     public $nick;
 
-    /** @var string */
+    /** @var string Nombre de la provincia. */
     public $provincia;
 
-    /** @var string */
+    /** @var string Prefijo telefónico de la provincia. */
     public $telephone_prefix;
 
     public function clear(): void

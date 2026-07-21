@@ -68,9 +68,7 @@ class WidgetSubcuenta extends WidgetText
         if ($this->readonly()) {
             $subcuenta = new Subcuenta();
             if (false === empty($this->value)) {
-                $subcuenta->loadWhere([
-                    Where::eq($this->match, $this->value)
-                ]);
+                $subcuenta->loadWhereEq($this->match, $this->value);
             }
 
             return '<div class="mb-3 d-grid">'
@@ -117,7 +115,7 @@ class WidgetSubcuenta extends WidgetText
 
         // cargamos y añadimos la subcuenta seleccionada
         $model = new Subcuenta();
-        if ($this->value && $model->loadWhere([Where::eq($this->match, $this->value)])) {
+        if ($this->value && $model->loadWhereEq($this->match, $this->value)) {
             $list[] = clone $model;
             $where[] = Where::notEq($model->primaryColumn(), $model->id());
         }
@@ -197,9 +195,7 @@ class WidgetSubcuenta extends WidgetText
 
         $subcuenta = new Subcuenta();
         if (false === empty($this->value)) {
-            $subcuenta->loadWhere([
-                Where::eq($this->match, $this->value)
-            ]);
+            $subcuenta->loadWhereEq($this->match, $this->value);
         }
 
         return '<td class="' . $class . '">' . $this->onclickHtml($this->escapeHtml($subcuenta->nombre ?? $this->value)) . '</td>';

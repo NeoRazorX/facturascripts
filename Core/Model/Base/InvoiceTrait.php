@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -34,31 +33,31 @@ trait InvoiceTrait
 {
     use AccEntryRelationTrait;
 
-    /** @var string */
+    /** @var string Código de la factura rectificada por esta factura. */
     public $codigorect;
 
-    /** @var bool */
+    /** @var bool Indica si la factura se puede editar. */
     public $editable;
 
-    /** @var string */
+    /** @var string Fecha de emisión de la factura. */
     public $fecha;
 
-    /** @var string */
+    /** @var string Fecha de devengo de la factura. */
     public $fechadevengo;
 
-    /** @var int */
+    /** @var int Identificador único de la factura. */
     public $idfactura;
 
-    /** @var int */
+    /** @var int Identificador de la factura rectificada por esta factura. */
     public $idfacturarect;
 
-    /** @var bool */
+    /** @var bool Indica si la factura está completamente pagada. */
     public $pagada;
 
-    /** @var array */
+    /** @var array Facturas rectificativas asociadas, almacenadas temporalmente. */
     private $refunds;
 
-    /** @return bool */
+    /** @var bool Indica si la factura tiene recibos vencidos pendientes de pago. */
     public $vencida;
 
     abstract public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 0): array;
@@ -110,8 +109,7 @@ trait InvoiceTrait
         }
 
         if (!isset($this->refunds)) {
-            $where = [Where::eq('idfacturarect', $this->idfactura)];
-            $this->refunds = $this->all($where, ['idfactura' => 'DESC'], 0, 0);
+            $this->refunds = $this->allWhereEq('idfacturarect', $this->idfactura, ['idfactura' => 'DESC']);
         }
 
         return $this->refunds;
@@ -146,8 +144,7 @@ trait InvoiceTrait
     public function parentDocuments(): array
     {
         $parents = parent::parentDocuments();
-        $where = [Where::eq('idfactura', $this->idfacturarect)];
-        foreach ($this->all($where, ['idfactura' => 'DESC'], 0, 0) as $invoice) {
+        foreach ($this->allWhereEq('idfactura', $this->idfacturarect, ['idfactura' => 'DESC']) as $invoice) {
             // ¿está esta factura en los padres?
             foreach ($parents as $parent) {
                 if ($parent->primaryColumnValue() == $invoice->primaryColumnValue()) {

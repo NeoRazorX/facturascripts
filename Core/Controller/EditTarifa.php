@@ -64,14 +64,14 @@ class EditTarifa extends EditController
             ->setSettings('btnNew', false);
 
         // add custom buttons
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'setgrouprate',
             'color' => 'success',
             'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add',
             'type' => 'modal'
         ]);
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'unsetgrouprate',
             'color' => 'danger',
             'confirm' => true,
@@ -90,14 +90,14 @@ class EditTarifa extends EditController
             ->setSettings('btnDelete', false)
             ->setSettings('btnNew', false);
 
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'setcustomerrate',
             'color' => 'success',
             'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add',
             'type' => 'modal'
         ]);
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'unsetcustomerrate',
             'color' => 'danger',
             'confirm' => true,
@@ -143,7 +143,7 @@ class EditTarifa extends EditController
             case 'ListCliente':
             case 'ListGrupoClientes':
             case 'ListTarifaProducto':
-                $codtarifa = $this->getViewModelValue($this->getMainViewName(), 'codtarifa');
+                $codtarifa = $this->mainTabModelValue('codtarifa');
                 $where = [Where::eq('codtarifa', $codtarifa)];
                 $view->loadData('', $where);
                 break;

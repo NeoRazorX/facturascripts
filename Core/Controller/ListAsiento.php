@@ -246,7 +246,7 @@ class ListAsiento extends ListController
         }
 
         $codes = $this->request->request->getArray('codes');
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
         if (false === is_array($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return;

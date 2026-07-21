@@ -33,55 +33,31 @@ class FormatoDocumento extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * @var bool
-     */
+    /** @var bool Indica si el formato se aplica automáticamente al imprimir. */
     public $autoaplicar;
 
-    /**
-     * Foreign key with series table
-     *
-     * @var string
-     */
+    /** @var string Código de la serie a la que se aplica el formato. */
     public $codserie;
 
-    /**
-     * Primary key
-     *
-     * @var int
-     */
+    /** @var int Identificador único del formato de documento. */
     public $id;
 
-    /**
-     * Foreign key with table business
-     *
-     * @var int
-     */
+    /** @var int Identificador de la empresa a la que pertenece el formato. */
     public $idempresa;
 
-    /**
-     * @var int
-     */
+    /** @var int Identificador del archivo utilizado como logotipo. */
     public $idlogo;
 
-    /**
-     * @var string
-     */
+    /** @var string Nombre identificativo del formato de documento. */
     public $nombre;
 
-    /**
-     * @var string
-     */
+    /** @var string Texto adicional que se imprime en el documento. */
     public $texto;
 
-    /**
-     * @var string
-     */
+    /** @var string Tipo de documento al que se aplica el formato. */
     public $tipodoc;
 
-    /**
-     * @var string
-     */
+    /** @var string Título que se muestra al imprimir el documento. */
     public $titulo;
 
     public function clear(): void

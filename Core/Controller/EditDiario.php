@@ -79,7 +79,7 @@ class EditDiario extends EditController
     {
         switch ($viewName) {
             case 'ListAsiento':
-                $id = $this->getViewModelValue($this->getMainViewName(), 'iddiario');
+                $id = $this->mainTabModelValue('iddiario');
                 $where = [Where::eq('iddiario', $id)];
                 $view->loadData('', $where);
                 break;

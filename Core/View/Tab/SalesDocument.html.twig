@@ -70,6 +70,37 @@
         }
     }
 
+    function createCustomerFromSales() {
+        const modal = document.getElementById('newCustomerModal');
+        if (modal === null) {
+            return false;
+        }
+
+        for (const input of modal.querySelectorAll('input, select')) {
+            if (false === input.reportValidity()) {
+                return false;
+            }
+        }
+
+        return salesFormAction('create-customer', '0');
+    }
+
+    function showCustomerModal() {
+        $('#newCustomerModal').one('hidden.bs.modal', function () {
+            $('#findCustomerModal').modal('show');
+            $('#findCustomerInput').focus();
+        }).modal('hide');
+        return false;
+    }
+
+    function showNewCustomerModal() {
+        $('#findCustomerModal').one('hidden.bs.modal', function () {
+            $('#newCustomerModal').modal('show');
+            $('#newCustomerName').focus();
+        }).modal('hide');
+        return false;
+    }
+
     function salesFormAction(action, selectedLine) {
         animateSpinner('add');
         $('#headerModal').modal('hide');
@@ -99,6 +130,15 @@
             }
             return Promise.reject(response);
         }).then(function (data) {
+            if (typeof data.multireqtoken === 'string') {
+                document.forms['salesForm']['multireqtoken'].value = data.multireqtoken;
+            }
+            if (data.customerCreated === true) {
+                $('#newCustomerModal').modal('hide');
+                document.getElementById('newCustomerName').closest('.modal-body').querySelectorAll('input').forEach(function (input) {
+                    input.value = input.defaultValue;
+                });
+            }
             if (data.header !== '') {
                 document.getElementById("salesFormHeader").innerHTML = data.header;
             }

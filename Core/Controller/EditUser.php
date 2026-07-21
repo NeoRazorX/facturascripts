@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -65,13 +65,48 @@ class EditUser extends EditController
             return $this->user->admin;
         }
 
+        return $this->canUpdateUser($user);
+    }
+
+    private function canUpdateUser(User $user): bool
+    {
         // admin puede actualizar todos los usuarios
         if ($this->user->admin) {
             return true;
         }
 
         // los usuarios no admin solo pueden actualizar sus propios datos
-        return $user->nick === $this->user->nick;
+        return $user->exists() && $user->nick === $this->user->nick;
+    }
+
+    private function protectRestrictedFields(User $user): void
+    {
+        if ($this->user->admin) {
+            return;
+        }
+
+        // estos campos no son editables por usuarios normales, aunque manipulen el formulario
+        $fields = [
+            'idempresa', 'codalmacen', 'codserie', 'codagente', 'level',
+            'creationdate', 'lastactivity', 'lastip', 'lastbrowser',
+        ];
+        foreach ($fields as $field) {
+            $this->request->request->set($field, $user->{$field});
+        }
+
+        foreach (['admin', 'enabled'] as $field) {
+            if ($user->{$field}) {
+                $this->request->request->set($field, 'TRUE');
+            } else {
+                $this->request->request->remove($field);
+            }
+        }
+    }
+
+    private function requestTargetMatches(string $code): bool
+    {
+        $queryCode = $this->request->query('code', '');
+        return $queryCode === '' || $queryCode === $code;
     }
 
     /**
@@ -126,18 +161,34 @@ class EditUser extends EditController
         // solo el admin puede borrar usuarios
         $this->permissions->allowDelete = $this->user->admin;
 
+        // ningún usuario puede borrarse a sí mismo
+        $codes = $this->request->request->getArray('codes');
+        $code = $this->request->input('code', '');
+        if ($code === $this->user->nick || in_array($this->user->nick, $codes, true)) {
+            Tools::log()->warning('not-allowed-delete');
+            return false;
+        }
+
         return parent::deleteAction();
     }
 
     protected function editAction(): bool
     {
-        $this->permissions->allowUpdate = $this->allowUpdate();
-
         // impedimos cambiar el nick: el nick es inmutable una vez creado
         $code = $this->request->input('code', '');
-        if ($code !== '' && $this->request->input('nick', $code) !== $code) {
+        if (
+            false === $this->requestTargetMatches($code)
+            || ($code !== '' && $this->request->input('nick', $code) !== $code)
+        ) {
             Tools::log()->warning('not-allowed-modify');
             return false;
+        }
+
+        // autorizamos exactamente el usuario que se va a modificar
+        $user = new User();
+        $this->permissions->allowUpdate = $user->load($code) && $this->canUpdateUser($user);
+        if ($this->permissions->allowUpdate) {
+            $this->protectRestrictedFields($user);
         }
 
         // impedimos algunos cambios del propio usuario
@@ -212,8 +263,7 @@ class EditUser extends EditController
             return $pageList;
         }
 
-        $where = [Where::eq('nick', $user->nick)];
-        foreach (RoleUser::all($where) as $roleUser) {
+        foreach (RoleUser::allWhereEq('nick', $user->nick) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
                 $page = $roleAccess->getPage();
                 if (false === $page->exists() || false === $page->showonmenu) {
@@ -243,8 +293,7 @@ class EditUser extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
-        $nick = $this->getViewModelValue($mvn, 'nick');
+        $nick = $this->mainTabModelValue('nick');
 
         switch ($viewName) {
             case 'EditRoleUser':
@@ -359,18 +408,19 @@ class EditUser extends EditController
 
     protected function twoFactorDisableAction(): void
     {
-        if (!$this->allowUpdate()) {
-            Tools::log()->warning('not-allowed-update');
-            return;
-        } elseif (!$this->validateFormToken()) {
-            return;
-        }
-
         // cargamos el usuario por código
         $user = new User();
         $code = $this->request->input('code');
-        if (false === $user->load($code)) {
+        if (false === $this->requestTargetMatches($code ?? '')) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $user->load($code)) {
             Tools::log()->error('record-not-found');
+            return;
+        } elseif (false === $this->canUpdateUser($user)) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (!$this->validateFormToken()) {
             return;
         }
 
@@ -391,16 +441,18 @@ class EditUser extends EditController
 
     protected function twoFactorEnableAction(): void
     {
-        if (!$this->allowUpdate()) {
+        $user = $this->getModel();
+        if (false === $user->exists()) {
+            Tools::log()->error('record-not-found');
+            return;
+        } elseif (false === $this->canUpdateUser($user)) {
             Tools::log()->warning('not-allowed-update');
             return;
         } elseif (!$this->validateFormToken()) {
             return;
-        }
-
-        $user = $this->getModel();
-        if (false === $user->exists()) {
-            Tools::log()->error('record-not-found');
+        } elseif ($user->two_factor_enabled) {
+            // no volvemos a mostrar un secreto 2FA que ya está en uso
+            Tools::log()->warning('not-allowed-modify');
             return;
         }
 
@@ -415,18 +467,16 @@ class EditUser extends EditController
 
     protected function twoFactorVerifyAction(): void
     {
-        if (!$this->allowUpdate()) {
-            Tools::log()->warning('not-allowed-update');
-            return;
-        } elseif (!$this->validateFormToken()) {
-            return;
-        }
-
         // cargamos el usuario por código
         $user = new User();
         $code = $this->request->queryOrInput('code');
         if (false === $user->load($code)) {
             Tools::log()->error('record-not-found');
+            return;
+        } elseif (false === $this->canUpdateUser($user)) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (!$this->validateFormToken()) {
             return;
         }
 

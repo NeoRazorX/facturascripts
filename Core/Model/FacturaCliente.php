@@ -64,9 +64,8 @@ class FacturaCliente extends SalesDocument
      */
     public function getLines(): array
     {
-        $where = [Where::eq('idfactura', $this->idfactura)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-        return LineaFactura::all($where, $order, 0, 0);
+        return LineaFactura::allWhereEq('idfactura', $this->idfactura, $order);
     }
 
     /**
@@ -130,8 +129,11 @@ class FacturaCliente extends SalesDocument
      */
     public function getReceipts(): array
     {
-        $where = [Where::eq('idfactura', $this->idfactura)];
-        return DinReciboCliente::all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
+        return DinReciboCliente::allWhereEq(
+            'idfactura',
+            $this->idfactura,
+            ['numero' => 'ASC', 'idrecibo' => 'ASC']
+        );
     }
 
     public static function tableName(): string

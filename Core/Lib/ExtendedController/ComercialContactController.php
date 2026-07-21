@@ -318,7 +318,7 @@ abstract class ComercialContactController extends EditController
     {
         $allowUpdate = $this->permissions->allowUpdate;
         $codes = $this->request->request->getArray('codes');
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
 
         switch ($action) {
             case 'add-file':
@@ -401,7 +401,7 @@ abstract class ComercialContactController extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case $mvn:
@@ -422,14 +422,14 @@ abstract class ComercialContactController extends EditController
                 break;
 
             case 'ListSubcuenta':
-                $codsubcuenta = $this->getViewModelValue($mvn, 'codsubcuenta');
+                $codsubcuenta = $this->mainTabModelValue('codsubcuenta');
                 $where = [Where::eq('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->count > 0);
                 break;
 
             case 'ListEmailSent':
-                $email = $this->getViewModelValue($mvn, 'email');
+                $email = $this->mainTabModelValue('email');
                 if (empty($email)) {
                     $this->setSettings($viewName, 'active', false);
                     break;

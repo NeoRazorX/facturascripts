@@ -59,8 +59,7 @@ final class EjercicioCierreTest extends TestCase
 
         // obtenemos el almacén por defecto
         $almacen = new Almacen();
-        $where = [Where::eq('idempresa', $empresa->idempresa)];
-        $this->assertTrue($almacen->loadWhere($where));
+        $this->assertTrue($almacen->loadWhereEq('idempresa', $empresa->idempresa));
 
         // creamos el ejercicio para 2020
         $ejercicio = new Ejercicio();
@@ -134,8 +133,7 @@ final class EjercicioCierreTest extends TestCase
 
         // obtenemos el almacén por defecto
         $almacen = new Almacen();
-        $where = [Where::eq('idempresa', $empresa->idempresa)];
-        $this->assertTrue($almacen->loadWhere($where));
+        $this->assertTrue($almacen->loadWhereEq('idempresa', $empresa->idempresa));
 
         // creamos el ejercicio para 2026
         $ejercicio = new Ejercicio();
@@ -190,8 +188,7 @@ final class EjercicioCierreTest extends TestCase
 
         // obtenemos el almacén por defecto
         $almacen = new Almacen();
-        $where = [Where::eq('idempresa', $empresa->idempresa)];
-        $this->assertTrue($almacen->loadWhere($where));
+        $this->assertTrue($almacen->loadWhereEq('idempresa', $empresa->idempresa));
 
         // creamos el ejercicio para 2019 SIN importar el plan contable
         $ejercicio = new Ejercicio();

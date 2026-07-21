@@ -156,7 +156,7 @@ class ListProducto extends ListController
             ->setSettings('btnNew', false);
 
         // filtros
-        if (count(Almacenes::all()) > 1) {
+        if (Almacenes::count() > 1) {
             $warehouses = Almacenes::codeModel();
             $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
         } else {

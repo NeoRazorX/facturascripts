@@ -57,10 +57,10 @@ class EditEjercicio extends EditController
      */
     protected function addExerciseActionButtons(string $viewName): void
     {
-        $status = $this->getViewModelValue($viewName, 'estado');
+        $status = $this->tabModelValue($viewName, 'estado');
         switch ($status) {
             case Ejercicio::EXERCISE_STATUS_OPEN:
-                $this->addButton($viewName, [
+                $this->tab($viewName)->addButton([
                     'row' => 'footer-actions',
                     'action' => 'import-accounting',
                     'color' => 'warning',
@@ -69,7 +69,7 @@ class EditEjercicio extends EditController
                     'type' => 'modal'
                 ]);
 
-                $this->addButton($viewName, [
+                $this->tab($viewName)->addButton([
                     'row' => 'footer-actions',
                     'action' => 'close-exercise',
                     'color' => 'danger',
@@ -80,7 +80,7 @@ class EditEjercicio extends EditController
                 break;
 
             case Ejercicio::EXERCISE_STATUS_CLOSED:
-                $this->addButton($viewName, [
+                $this->tab($viewName)->addButton([
                     'row' => 'footer-actions',
                     'action' => 'open-exercise',
                     'color' => 'warning',
@@ -138,7 +138,7 @@ class EditEjercicio extends EditController
 
         // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->mainTab()->disableColumn('company');
         }
 
         $this->createViewsAccounting();
@@ -305,7 +305,7 @@ class EditEjercicio extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $codejercicio = $this->tabModelValue('EditEjercicio', 'codejercicio');
 
         switch ($viewName) {
             case 'EditEjercicio':

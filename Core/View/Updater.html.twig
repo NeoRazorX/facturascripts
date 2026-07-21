@@ -36,6 +36,8 @@
 {% endblock %}
 
 {% block body %}
+    {% set betaUpdatesEnabled = settings('default', 'enableupdatesbeta', false) %}
+    {% set hasErrorFiles = fsc.hasErrorFiles() %}
     <div class="container">
         <div class="row pt-3 pb-3">
             <div class="col-sm-6">
@@ -91,13 +93,13 @@
                                         {% if item.mincore > fsc.getCoreVersion() %}
                                             {{ trans('requires-core', {'%version%': item.mincore}) }}
                                         {% elseif item.downloaded %}
-                                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}"
+                                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}&multireqtoken={{ formToken(false) }}"
                                                class="btn btn-spin-action btn-sm btn-success"
                                                onclick="animateSpinner('add')">
                                                 <i class="fa-solid fa-rocket fa-fw fa-bounce me-1"
                                                    aria-hidden="true"></i>{{ trans('update') }}
                                             </a>
-                                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}"
+                                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}&multireqtoken={{ formToken(false) }}"
                                                class="btn btn-spin-action btn-sm btn-warning"
                                                onclick="animateSpinner('add')">
                                                 <i class="fa-solid fa-times fa-fw me-1"
@@ -110,13 +112,13 @@
                                                 <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
                                             </button>
                                         {% elseif item.stable %}
-                                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&multireqtoken={{ formToken(false) }}"
                                                class="btn btn-spin-action btn-sm btn-secondary"
                                                onclick="animateSpinner('add')">
                                                 <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
                                             </a>
                                         {% else %}
-                                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&multireqtoken={{ formToken(false) }}"
                                                class="btn btn-spin-action btn-sm btn-secondary"
                                                onclick="animateSpinner('add')">
                                                 <i class="fa-solid fa-flask-vial fa-fw me-1" aria-hidden="true"></i>{{ trans('beta') }}
@@ -135,27 +137,7 @@
                         </table>
                     </div>
                 </div>
-                {% if settings('default', 'enableupdatesbeta', false) %}
-                    <hr/>
-                    <div class="card shadow-sm mt-4 mb-4">
-                        <div class="card-body">
-                            <h5>
-                                <i class="fa-solid fa-flask-vial text-danger me-2" aria-hidden="true"></i>
-                                {{ trans('updates-beta-warning') }}
-                            </h5>
-                            <p class="card-text">{{ trans('updates-beta-warning-p') }}</p>
-                        </div>
-                        <div class="card-footer p-2">
-                            <form method="post">
-                                {{ formToken() }}
-                                <input type="hidden" name="action" value="disable-beta"/>
-                                <button type="submit" class="btn btn-sm btn-outline-secondary btn-spin-action">
-                                    {{ trans('disable') }}
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                {% elseif fsc.telemetryManager.ready() == false %}
+                {% if betaUpdatesEnabled == false and fsc.telemetryManager.ready() == false %}
                     <hr/>
                     <div class="mt-4 mb-3">
                         {{ Utils.registerInstall(false) }}
@@ -164,6 +146,66 @@
             </div>
         </div>
     </div>
+    {% if hasErrorFiles or betaUpdatesEnabled %}
+        <div class="container">
+            <hr/>
+            <div class="row g-3 mt-2 mb-4">
+                {% if hasErrorFiles %}
+                    <div class="col-12{% if betaUpdatesEnabled %} col-lg-6{% endif %}">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5>
+                                    <i class="fa-solid fa-bug text-danger me-2" aria-hidden="true"></i>
+                                    {{ trans('crash-files-found') }}
+                                </h5>
+                                <p class="card-text">{{ trans('crash-files-p') }}</p>
+                            </div>
+                            <div class="card-footer p-2">
+                                <div class="d-flex gap-2">
+                                    <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                                        {{ formToken() }}
+                                        <input type="hidden" name="action" value="send-crash-files"/>
+                                        <button type="submit" class="btn btn-sm btn-success btn-spin-action">
+                                            <i class="fa-solid fa-paper-plane fa-fw me-1" aria-hidden="true"></i>{{ trans('send') }}
+                                        </button>
+                                    </form>
+                                    <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                                        {{ formToken() }}
+                                        <input type="hidden" name="action" value="delete-crash-files"/>
+                                        <button type="submit" class="btn btn-sm btn-danger btn-spin-action">
+                                            <i class="fa-solid fa-trash fa-fw me-1" aria-hidden="true"></i>{{ trans('delete') }}
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if betaUpdatesEnabled %}
+                    <div class="col-12{% if hasErrorFiles %} col-lg-6{% endif %}">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5>
+                                    <i class="fa-solid fa-flask-vial text-danger me-2" aria-hidden="true"></i>
+                                    {{ trans('updates-beta-warning') }}
+                                </h5>
+                                <p class="card-text">{{ trans('updates-beta-warning-p') }}</p>
+                            </div>
+                            <div class="card-footer p-2">
+                                <form method="post">
+                                    {{ formToken() }}
+                                    <input type="hidden" name="action" value="disable-beta"/>
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary btn-spin-action">
+                                        {{ trans('disable') }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
     <div class="modal fade" id="modalTelemetry" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -230,46 +272,6 @@
             </div>
         </div>
     </div>
-    {% if fsc.hasErrorFiles() %}
-        <div class="container">
-            <div class="row">
-                <div class="col-sm">
-                    <hr/>
-                    <div class="card shadow-sm mt-4 mb-4">
-                        <div class="card-body">
-                            <h5>
-                                <i class="fa-solid fa-bug text-warning me-2" aria-hidden="true"></i>
-                                {{ trans('crash-files-found') }}
-                            </h5>
-                            <p class="card-text">{{ trans('crash-files-p') }}</p>
-                        </div>
-                        <div class="card-footer p-2">
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
-                                        {{ formToken() }}
-                                        <input type="hidden" name="action" value="delete-crash-files"/>
-                                        <button type="submit" class="btn btn-sm btn-danger btn-spin-action w-100">
-                                            <i class="fa-solid fa-trash fa-fw me-1" aria-hidden="true"></i>{{ trans('delete') }}
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="col-6">
-                                    <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
-                                        {{ formToken() }}
-                                        <input type="hidden" name="action" value="send-crash-files"/>
-                                        <button type="submit" class="btn btn-sm btn-success btn-spin-action w-100">
-                                            <i class="fa-solid fa-paper-plane fa-fw me-1" aria-hidden="true"></i>{{ trans('send') }}
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endif %}
     {% if fsc.coreUpdateWarnings %}
         <div class="modal fade" id="coreWarningModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
@@ -292,7 +294,7 @@
                         {% for item in fsc.updaterItems %}
                             {% if item.name == 'CORE' and fsc.coreUpdateWarnings %}
                                 <div class="btn-group">
-                                    <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}"
+                                    <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}&multireqtoken={{ formToken(false) }}"
                                        class="btn btn-spin-action btn-warning"
                                        onclick="animateSpinner('add')">
                                         <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
@@ -303,7 +305,7 @@
                                         <span class="visually-hidden">{{ trans('options') }}</span>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end">
-                                        <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                                        <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&multireqtoken={{ formToken(false) }}"
                                            class="btn btn-warning"
                                            onclick="animateSpinner('add')">
                                             <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('do-not-disable-plugins') }}

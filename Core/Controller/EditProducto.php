@@ -130,7 +130,7 @@ class EditProducto extends EditController
         $this->addEditListView($viewName, 'Stock', 'stock', 'fa-solid fa-dolly');
 
         // si solamente hay un almacén, ocultamos la columna
-        if (count(Almacenes::all()) <= 1) {
+        if (Almacenes::count() <= 1) {
             $this->views[$viewName]->disableColumn('warehouse');
         }
     }
@@ -258,7 +258,7 @@ class EditProducto extends EditController
     protected function loadCustomReferenceWidget(string $viewName): void
     {
         $references = [];
-        $id = $this->getViewModelValue('EditProducto', 'idproducto');
+        $id = $this->tabModelValue('EditProducto', 'idproducto');
         $where = [Where::eq('idproducto', $id)];
         $values = $this->codeModel->all('variantes', 'referencia', 'referencia', false, $where);
         foreach ($values as $code) {
@@ -279,7 +279,7 @@ class EditProducto extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $id = $this->getViewModelValue('EditProducto', 'idproducto');
+        $id = $this->tabModelValue('EditProducto', 'idproducto');
         $where = [Where::eq('idproducto', $id)];
 
         switch ($viewName) {
@@ -287,7 +287,7 @@ class EditProducto extends EditController
                 $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
                 break;
 
-            case $this->getMainViewName():
+            case $this->mainTabName():
                 parent::loadData($viewName, $view);
                 $this->loadTypes($viewName);
                 $this->loadExceptionVat($viewName);
@@ -300,7 +300,7 @@ class EditProducto extends EditController
                 $this->loadCustomReferenceWidget('EditProductoProveedor');
                 $this->loadCustomReferenceWidget('EditStock');
                 if (false === empty($view->model->primaryColumnValue())) {
-                    $this->addButton($viewName, [
+                    $view->addButton([
                         'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
                         'icon' => 'fa-solid fa-cut',
                         'label' => 'copy',

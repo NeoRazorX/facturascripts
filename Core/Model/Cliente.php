@@ -54,85 +54,85 @@ class Cliente extends ModelClass
 
     const SPECIAL_ACCOUNT = 'CLIENT';
 
-    /** @var string */
+    /** @var string Código del agente comercial asignado al cliente. */
     public $codagente;
 
-    /** @var string */
+    /** @var string Código identificativo del cliente. */
     public $codcliente;
 
-    /** @var string */
+    /** @var string Código del grupo al que pertenece el cliente. */
     public $codgrupo;
 
-    /** @var string */
+    /** @var string Código de la forma de pago habitual del cliente. */
     public $codpago;
 
-    /** @var string */
+    /** @var string Código del proveedor vinculado al cliente. */
     public $codproveedor;
 
-    /** @var string */
+    /** @var string Código de la retención aplicable al cliente. */
     public $codretencion;
 
-    /** @var string */
+    /** @var string Código de la serie predeterminada para el cliente. */
     public $codserie;
 
-    /** @var string */
+    /** @var string Código de la subcuenta contable del cliente. */
     public $codsubcuenta;
 
-    /** @var string */
+    /** @var string Código de la tarifa de precios aplicada al cliente. */
     public $codtarifa;
 
-    /** @var bool */
+    /** @var bool Indica si el cliente está dado de baja. */
     public $debaja;
 
-    /** @var string */
+    /** @var string Días preferidos de pago del cliente. */
     public $diaspago;
 
-    /** @var string */
+    /** @var string Código de la excepción de IVA aplicable al cliente. */
     public $excepcioniva;
 
-    /** @var string */
+    /** @var string Número de fax del cliente. */
     public $fax;
 
-    /** @var string */
+    /** @var string Fecha de alta del cliente. */
     public $fechaalta;
 
-    /** @var string */
+    /** @var string Fecha de baja del cliente. */
     public $fechabaja;
 
-    /** @var integer */
+    /** @var integer Identificador del contacto predeterminado para envíos. */
     public $idcontactoenv;
 
-    /** @var integer */
+    /** @var integer Identificador del contacto predeterminado para facturación. */
     public $idcontactofact;
 
-    /** @var string */
+    /** @var string Código del idioma preferido del cliente. */
     public $langcode;
 
-    /** @var string */
+    /** @var string Nombre comercial o nombre completo del cliente. */
     public $nombre;
 
-    /** @var string */
+    /** @var string Clave de operación de IVA aplicable al cliente. */
     public $operacion;
 
-    /** @var string */
+    /** @var string Observaciones internas sobre el cliente. */
     public $observaciones;
 
-    /** @var bool */
+    /** @var bool Indica si el cliente es una persona física. */
     public $personafisica;
 
-    /** @var string */
+    /** @var string Razón social del cliente. */
     public $razonsocial;
 
-    /** @var string */
+    /** @var string Régimen de IVA aplicable al cliente. */
     public $regimeniva;
 
-    /** @var float */
+    /** @var float Riesgo comercial actualmente alcanzado por el cliente. */
     public $riesgoalcanzado;
 
-    /** @var float */
+    /** @var float Riesgo comercial máximo autorizado para el cliente. */
     public $riesgomax;
 
-    /** @var string */
+    /** @var string Sitio web del cliente. */
     public $web;
 
     public function checkVies(bool $msg = true): bool
@@ -175,8 +175,7 @@ class Cliente extends ModelClass
      */
     public function getAddresses(): array
     {
-        $where = [Where::eq($this->primaryColumn(), $this->id())];
-        return DinContacto::all($where, [], 0, 0);
+        return DinContacto::allWhereEq($this->primaryColumn(), $this->id());
     }
 
     /**
@@ -186,8 +185,7 @@ class Cliente extends ModelClass
      */
     public function getBankAccounts(): array
     {
-        $where = [Where::eq($this->primaryColumn(), $this->id())];
-        return DinCuentaBancoCliente::all($where, [], 0, 0);
+        return DinCuentaBancoCliente::allWhereEq($this->primaryColumn(), $this->id());
     }
 
     /**
@@ -314,6 +312,9 @@ class Cliente extends ModelClass
     public function test(): bool
     {
         $this->debaja = !empty($this->fechabaja);
+        if (empty($this->fechaalta)) {
+            $this->fechaalta = Tools::date();
+        }
         $this->fax = Tools::noHtml($this->fax) ?? '';
         $this->langcode = Tools::noHtml($this->langcode);
         $this->nombre = Tools::noHtml($this->nombre);

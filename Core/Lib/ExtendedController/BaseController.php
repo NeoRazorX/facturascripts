@@ -152,8 +152,20 @@ abstract class BaseController extends Controller
      * Returns the name assigned to the main view
      *
      * @return string
+     *
+     * @deprecated since 2026. Use $this->mainTabName() instead.
      */
     public function getMainViewName(): string
+    {
+        return $this->mainTabName();
+    }
+
+    /**
+     * Returns the name assigned to the main view
+     *
+     * @return string
+     */
+    public function mainTabName(): string
     {
         foreach (array_keys($this->views) as $key) {
             return $key;
@@ -180,8 +192,38 @@ abstract class BaseController extends Controller
      * @param string $viewName
      * @param string $fieldName
      * @return mixed
+     *
+     * @deprecated since 2026. Use $this->tabModelValue($viewName, $fieldName) instead.
      */
     public function getViewModelValue(string $viewName, string $fieldName)
+    {
+        return $this->tabModelValue($viewName, $fieldName);
+    }
+
+    public function mainTab(): BaseView
+    {
+        return $this->tab($this->mainTabName());
+    }
+
+    /**
+     * Return the value for a field in the model of the main view.
+     *
+     * @param string $fieldName
+     * @return mixed
+     */
+    public function mainTabModelValue(string $fieldName)
+    {
+        return $this->tabModelValue($this->mainTabName(), $fieldName);
+    }
+
+    /**
+     * Return the value for a field in the model of the view.
+     *
+     * @param string $viewName
+     * @param string $fieldName
+     * @return mixed
+     */
+    public function tabModelValue(string $viewName, string $fieldName)
     {
         return $this->tab($viewName)->model->{$fieldName} ?? null;
     }
@@ -229,6 +271,11 @@ abstract class BaseController extends Controller
     public function setSettings(string $viewName, string $property, $value): BaseView
     {
         return $this->tab($viewName)->setSettings($property, $value);
+    }
+
+    public function activeTab(): BaseView
+    {
+        return $this->tab($this->active);
     }
 
     public function tab(string $viewName): BaseView
@@ -317,14 +364,14 @@ abstract class BaseController extends Controller
     protected function deleteAction()
     {
         // check user permissions
-        if (false === $this->permissions->allowDelete || false === $this->views[$this->active]->settings['btnDelete']) {
+        if (false === $this->permissions->allowDelete || false === $this->activeTab()->settings['btnDelete']) {
             Tools::log()->warning('not-allowed-delete');
             return false;
         } elseif (false === $this->validateFormToken()) {
             return false;
         }
 
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
         $codes = $this->request->request->getArray('codes');
         $code = $this->request->input('code');
         if (empty($codes) && empty($code)) {
@@ -369,7 +416,7 @@ abstract class BaseController extends Controller
     protected function exportAction()
     {
         if (
-            false === $this->views[$this->active]->settings['btnPrint'] ||
+            false === $this->activeTab()->settings['btnPrint'] ||
             false === $this->permissions->allowExport
         ) {
             Tools::log()->warning('no-print-permission');

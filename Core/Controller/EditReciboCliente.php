@@ -55,15 +55,15 @@ class EditReciboCliente extends EditController
         $this->setTabsPosition('bottom');
 
         // desactivamos selects con una sola opción
-        if (count(Empresas::all()) <= 1) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+        if (Empresas::count() <= 1) {
+            $this->mainTab()->disableColumn('company');
         }
-        if (count(Divisas::all()) <= 1) {
-            $this->views[$this->getMainViewName()]->disableColumn('currency');
+        if (Divisas::count() <= 1) {
+            $this->mainTab()->disableColumn('currency');
         }
 
         // desactivamos el botón nuevo
-        $this->setSettings($this->getMainViewName(), 'btnNew', false);
+        $this->setSettings($this->mainTabName(), 'btnNew', false);
 
         $this->createViewPayments();
     }
@@ -77,7 +77,7 @@ class EditReciboCliente extends EditController
         $this->setSettings($viewName, 'btnNew', false);
 
         // añadimos el botón de generar asiento
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'generate-accounting',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entry'
@@ -138,7 +138,7 @@ class EditReciboCliente extends EditController
     {
         switch ($viewName) {
             case 'ListPagoCliente':
-                $id = $this->getViewModelValue('EditReciboCliente', 'idrecibo');
+                $id = $this->tabModelValue('EditReciboCliente', 'idrecibo');
                 $where = [Where::eq('idrecibo', $id)];
                 $this->views[$viewName]->loadData('', $where);
                 break;

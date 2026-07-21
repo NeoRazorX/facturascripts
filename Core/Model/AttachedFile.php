@@ -24,7 +24,6 @@ use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use finfo;
 
 /**
@@ -40,25 +39,25 @@ class AttachedFile extends ModelClass
     const MAX_FILENAME_LEN = 100;
     const STORAGE_USED_KEY = 'storage-used';
 
-    /** @var string */
+    /** @var string Fecha en la que se adjuntó el archivo. */
     public $date;
 
-    /** @var string */
+    /** @var string Nombre original del archivo. */
     public $filename;
 
-    /** @var string */
+    /** @var string Hora en la que se adjuntó el archivo. */
     public $hour;
 
-    /** @var int */
+    /** @var int Identificador único del archivo adjunto. */
     public $idfile;
 
-    /** @var string */
+    /** @var string Tipo MIME del archivo. */
     public $mimetype;
 
-    /** @var string */
+    /** @var string Ruta relativa donde se almacena el archivo. */
     public $path;
 
-    /** @var int */
+    /** @var int Tamaño del archivo en bytes. */
     public $size;
 
     public function clear(): void
@@ -79,8 +78,7 @@ class AttachedFile extends ModelClass
         }
 
         // eliminamos las relaciones con los productos
-        $where = [Where::eq('idfile', $this->idfile)];
-        foreach (ProductoImagen::all($where, [], 0, 0) as $productoImage) {
+        foreach (ProductoImagen::allWhereEq('idfile', $this->idfile) as $productoImage) {
             $productoImage->delete();
         }
 
@@ -173,13 +171,13 @@ class AttachedFile extends ModelClass
 
     public function shortFileName(int $length = 20): string
     {
-        if (strlen($this->filename) <= $length) {
+        if (mb_strlen($this->filename ?? '', 'UTF-8') <= $length) {
             return $this->filename ?? '';
         }
 
         $parts = explode('.', $this->filename);
         $extension = count($parts) > 1 ? end($parts) : '';
-        $name = substr($this->filename, 0, $length - strlen('...' . $extension));
+        $name = mb_substr($this->filename, 0, $length - mb_strlen('...' . $extension, 'UTF-8'), 'UTF-8');
         return $name . '...' . $extension;
     }
 

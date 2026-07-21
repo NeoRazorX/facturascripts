@@ -85,7 +85,7 @@ class EditFabricante extends EditController
         $this->createViewProductsCommon($viewName);
 
         // botón añadir producto
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'add-product',
             'color' => 'success',
             'icon' => 'fa-solid fa-folder-plus',
@@ -99,7 +99,7 @@ class EditFabricante extends EditController
         $this->createViewProductsCommon($viewName);
 
         // botón quitar producto
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'remove-product',
             'color' => 'danger',
             'confirm' => true,
@@ -177,7 +177,7 @@ class EditFabricante extends EditController
     {
         switch ($viewName) {
             case 'ListProducto':
-                $codfabricante = $this->getViewModelValue($this->getMainViewName(), 'codfabricante');
+                $codfabricante = $this->mainTabModelValue('codfabricante');
                 $where = [Where::eq('codfabricante', $codfabricante)];
                 $view->loadData('', $where);
                 break;

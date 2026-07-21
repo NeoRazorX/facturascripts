@@ -35,9 +35,7 @@ abstract class TransformerDocument extends BusinessDocument
 {
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
-    /**
-     * @var bool
-     */
+    /** @var bool Indica si los cambios de estado pueden generar documentos relacionados. */
     private static $document_generation = true;
 
     /**

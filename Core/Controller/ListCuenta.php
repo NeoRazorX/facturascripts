@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
@@ -88,7 +89,7 @@ class ListCuenta extends ListController
 
         // add restore button
         if ($this->user->admin) {
-            $this->addButton($viewName, [
+            $this->tab($viewName)->addButton([
                 'action' => 'restore-special',
                 'color' => 'warning',
                 'confirm' => true,
@@ -148,6 +149,16 @@ class ListCuenta extends ListController
 
     protected function restoreSpecialAccountsAction(): void
     {
+        if (false === $this->user->admin) {
+            Tools::log()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->request->isMethod(Request::METHOD_POST)) {
+            Tools::log()->warning('invalid-request');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $sql = CSVImport::updateTableSQL(CuentaEspecial::tableName());
         if (!empty($sql)) {
             $this->dataBase->exec($sql);

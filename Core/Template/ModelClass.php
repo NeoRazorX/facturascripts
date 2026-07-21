@@ -61,42 +61,71 @@ abstract class ModelClass
      */
     protected $original = [];
 
+    /** Añade una extensión al modelo con la prioridad indicada. */
     abstract public static function addExtension($extension, int $priority = 100): void;
 
+    /** Devuelve los registros que cumplen las condiciones especificadas. */
     abstract public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 0): array;
 
+    /** Devuelve los registros cuyo campo coincide con el valor indicado. */
+    abstract public static function allWhereEq(string $field, $value, array $order = []): array;
+
+    /** Cuenta los registros que cumplen las condiciones especificadas. */
     abstract public static function count(array $where = []): int;
 
+    /** Cuenta los registros cuyo campo coincide con el valor indicado. */
+    abstract public static function countWhereEq(string $field, $value): int;
+
+    /** Crea y guarda un nuevo registro con los datos proporcionados. */
     abstract public static function create(array $data): ?static;
 
+    /** Elimina los registros que cumplen las condiciones especificadas. */
     abstract public static function deleteWhere(array $where): bool;
 
+    /** Busca un registro mediante su clave primaria. */
     abstract public static function find($code): ?static;
 
+    /** Busca el primer registro que cumple las condiciones especificadas. */
     abstract public static function findWhere(array $where, array $order = []): ?static;
 
+    /** Busca un registro o lo crea cuando no existe. */
     abstract public static function findOrCreate(array $where, array $data = []): ?static;
 
+    /** Devuelve la definición de los campos del modelo. */
     abstract public function getModelFields(): array;
 
+    /** Comprueba si el modelo tiene registrada la extensión indicada. */
     abstract public function hasExtension($extension): bool;
 
+    /** Carga la definición de los campos del modelo. */
     abstract protected function loadModelFields(): void;
 
+    /** Devuelve el nombre de la clase del modelo sin el espacio de nombres. */
     abstract public function modelClassName(): string;
 
+    /** Ejecuta las extensiones asociadas al punto indicado y devuelve su resultado. */
     abstract public function pipe($name, ...$arguments);
 
+    /** Ejecuta las extensiones y devuelve false si alguna cancela la operación. */
     abstract public function pipeFalse($name, ...$arguments): bool;
 
+    /** Devuelve el constructor de consultas asociado a la tabla del modelo. */
     abstract public static function table(): DbQuery;
 
+    /** Devuelve el nombre de la tabla asociada al modelo. */
     abstract public static function tableName(): string;
 
+    /** Suma los valores de un campo para los registros que cumplen las condiciones. */
     abstract public static function totalSum(string $field, array $where = []): float;
 
+    /** Actualiza el registro coincidente o crea uno nuevo. */
     abstract public static function updateOrCreate(array $where, array $data): ?static;
 
+    /**
+     * Inicializa el modelo, comprueba su tabla y carga los datos proporcionados.
+     *
+     * @param array $data
+     */
     public function __construct(array $data = [])
     {
         if (self::$dataBase === null) {
@@ -128,26 +157,36 @@ abstract class ModelClass
         }
     }
 
+    /** Devuelve el valor de un atributo dinámico. */
     public function __get(string $key)
     {
         return $this->attributes[$key] ?? null;
     }
 
+    /** Comprueba si existe un atributo dinámico con valor no nulo. */
     public function __isset(string $key): bool
     {
         return isset($this->attributes[$key]);
     }
 
+    /** Asigna el valor de un atributo dinámico. */
     public function __set(string $key, $value): void
     {
         $this->attributes[$key] = $value;
     }
 
+    /** Elimina un atributo dinámico. */
     public function __unset(string $key): void
     {
         unset($this->attributes[$key]);
     }
 
+    /**
+     * Cambia el valor de la clave primaria del registro.
+     *
+     * @param mixed $new_id
+     * @return bool
+     */
     public function changeId($new_id): bool
     {
         if (empty($new_id) || $new_id === $this->id()) {
@@ -176,7 +215,9 @@ abstract class ModelClass
     }
 
     /**
-     * @param $new_id
+     * Cambia el valor de la clave primaria del registro.
+     *
+     * @param mixed $new_id
      * @return bool
      * @deprecated replace with changeId()
      */
@@ -185,6 +226,7 @@ abstract class ModelClass
         return $this->changeId($new_id);
     }
 
+    /** Restablece los campos del modelo a sus valores predeterminados. */
     public function clear(): void
     {
         foreach ($this->getModelFields() as $key => $field) {
@@ -217,6 +259,7 @@ abstract class ModelClass
         $this->pipeFalse('clear');
     }
 
+    /** Elimina de la caché los datos relacionados con el modelo y su tabla. */
     public function clearCache(): void
     {
         CacheWithMemory::deleteMulti('model-' . $this->modelClassName() . '-');
@@ -224,6 +267,11 @@ abstract class ModelClass
         CacheWithMemory::deleteMulti('table-' . static::tableName() . '-');
     }
 
+    /**
+     * Elimina el registro actual de la base de datos.
+     *
+     * @return bool
+     */
     public function delete(): bool
     {
         if (null === $this->id()) {
@@ -254,6 +302,11 @@ abstract class ModelClass
         return $this->pipeFalse('delete');
     }
 
+    /**
+     * Comprueba si el registro actual existe en la base de datos.
+     *
+     * @return bool
+     */
     public function exists(): bool
     {
         if (null === $this->id() || '' === $this->id()) {
@@ -266,6 +319,10 @@ abstract class ModelClass
     }
 
     /**
+     * Busca un registro mediante su clave primaria y devuelve una nueva instancia.
+     *
+     * @param mixed $code
+     * @return static|false
      * @deprecated Use find() instead
      */
     public function get($code)
@@ -349,17 +406,33 @@ abstract class ModelClass
         return $this->isDirty($field);
     }
 
+    /**
+     * Comprueba si el modelo contiene la columna indicada.
+     *
+     * @param string $columnName
+     * @return bool
+     */
     public function hasColumn(string $columnName): bool
     {
         $fields = $this->getModelFields();
         return isset($fields[$columnName]);
     }
 
+    /**
+     * Devuelve el valor de la clave primaria del modelo.
+     *
+     * @return mixed
+     */
     public function id()
     {
         return $this->{static::primaryColumn()};
     }
 
+    /**
+     * Devuelve el SQL inicial necesario para instalar los datos del modelo.
+     *
+     * @return string
+     */
     public function install(): string
     {
         return CSVImport::importTableSQL(static::tableName());
@@ -449,6 +522,13 @@ abstract class ModelClass
         return $this->load($code);
     }
 
+    /**
+     * Carga los campos y atributos del modelo desde un array.
+     *
+     * @param array $data
+     * @param array $exclude Campos que no se deben cargar.
+     * @param bool $sync Indica si se deben sincronizar los valores originales.
+     */
     public function loadFromData(array $data = [], array $exclude = [], bool $sync = true): void
     {
         $fields = $this->getModelFields();
@@ -515,11 +595,43 @@ abstract class ModelClass
         return true;
     }
 
+    /**
+     * Carga el primer registro cuyo campo coincide con el valor indicado.
+     *
+     * @param string $field
+     * @param mixed $value
+     * @return bool
+     */
     public function loadWhereEq(string $field, $value): bool
     {
         return $this->loadWhere([Where::eq($field, $value)]);
     }
 
+    /**
+     * Devuelve la longitud máxima de un campo de texto, o 0 si no tiene límite o no es un campo de texto.
+     *
+     * @param string $field Nombre del campo
+     * @return int Longitud máxima del campo
+     */
+    public function maxLength(string $field): int
+    {
+        $fields = $this->getModelFields();
+        if (!isset($fields[$field])) {
+            return 0;
+        }
+
+        return preg_match('/^(?:varchar|character varying|char|character)\((\d+)\)/i', $fields[$field]['type'], $matches) ?
+            (int)$matches[1] :
+            0;
+    }
+
+    /**
+     * Calcula el siguiente código numérico disponible para un campo.
+     *
+     * @param string $field
+     * @param array $where
+     * @return int
+     */
     public function newCode(string $field = '', array $where = [])
     {
         // if not field value take PK Field
@@ -544,12 +656,20 @@ abstract class ModelClass
         return empty($data) ? 1 : 1 + (int)$data[0]['cod'];
     }
 
+    /**
+     * Devuelve el nombre de la columna que actúa como clave primaria.
+     *
+     * @return string
+     */
     public static function primaryColumn(): string
     {
         return 'id';
     }
 
     /**
+     * Devuelve el valor de la clave primaria del modelo.
+     *
+     * @return mixed
      * @deprecated Use id() instead
      */
     #[Deprecated(
@@ -561,11 +681,21 @@ abstract class ModelClass
         return $this->{static::primaryColumn()};
     }
 
+    /**
+     * Devuelve la descripción principal del registro.
+     *
+     * @return mixed
+     */
     public function primaryDescription()
     {
         return $this->{$this->primaryDescriptionColumn()};
     }
 
+    /**
+     * Devuelve el nombre de la columna utilizada como descripción principal.
+     *
+     * @return string
+     */
     public function primaryDescriptionColumn(): string
     {
         $fields = $this->getModelFields();
@@ -582,6 +712,11 @@ abstract class ModelClass
         return static::primaryColumn();
     }
 
+    /**
+     * Vuelve a cargar desde la base de datos el registro actual.
+     *
+     * @return bool
+     */
     public function reload(): bool
     {
         if (null === $this->id()) {
@@ -631,6 +766,7 @@ abstract class ModelClass
         return $this->pipeFalse('save');
     }
 
+    /** Sincroniza los valores actuales con la copia original del modelo. */
     public function syncOriginal(): void
     {
         $this->original = [];
@@ -672,6 +808,17 @@ abstract class ModelClass
                 $return = false;
             } elseif ($this->fieldValueExceedsMaxLength($value, $this->{$key})) {
                 Tools::log()->warning('value-too-long');
+                $return = false;
+            }
+
+            // comprobamos que los campos de texto no superen la longitud máxima
+            $max_length = $this->maxLength($key);
+            if ($max_length > 0 && is_string($this->{$key}) && mb_strlen($this->{$key}) > $max_length) {
+                Tools::log()->warning('field-value-too-long', [
+                    '%fieldName%' => $key,
+                    '%tableName%' => static::tableName(),
+                    '%length%' => $max_length
+                ]);
                 $return = false;
             }
         }
@@ -823,6 +970,13 @@ abstract class ModelClass
         return self::$dataBase;
     }
 
+    /**
+     * Convierte un valor al tipo booleano definido por el campo.
+     *
+     * @param array $field
+     * @param mixed $value
+     * @return bool|null
+     */
     private function getBoolValueForField(array $field, $value): ?bool
     {
         if ($value === null) {
@@ -834,6 +988,14 @@ abstract class ModelClass
         return in_array(strtolower($value), ['true', 't', '1'], false);
     }
 
+   /**
+    * Comprueba si el valor de un campo de texto supera la longitud máxima permitida.
+    *
+    * @param array $field Definición del campo.
+    * @param mixed $value Valor que se debe comprobar.
+    *
+    * @return bool
+    */
     private function fieldValueExceedsMaxLength(array $field, $value): bool
     {
         if ($value === null || is_array($value) || is_object($value)) {
@@ -847,6 +1009,13 @@ abstract class ModelClass
         return strlen((string)$value) > (int)$matches[1];
     }
 
+    /**
+     * Convierte un valor al tipo entero definido por el campo.
+     *
+     * @param array $field
+     * @param mixed $value
+     * @return int|null
+     */
     private function getIntegerValueForField(array $field, $value): ?int
     {
         if (is_numeric($value)) {
@@ -860,6 +1029,13 @@ abstract class ModelClass
         return $field['is_nullable'] === 'NO' ? 0 : null;
     }
 
+    /**
+     * Convierte un valor al tipo decimal definido por el campo.
+     *
+     * @param array $field
+     * @param mixed $value
+     * @return float|null
+     */
     private function getFloatValueForField(array $field, $value): ?float
     {
         if (is_numeric($value)) {
@@ -870,7 +1046,7 @@ abstract class ModelClass
     }
 
     /**
-     * Define a one-to-many relationship.
+     * Define una relación uno a muchos.
      *
      * @param string $modelName
      * @param string $foreignKey
@@ -905,7 +1081,7 @@ abstract class ModelClass
     }
 
     /**
-     * Este método se llama antes de guardar (insertar) un nuevo registro en la base de datos.
+     * Comprueba un campo modificado antes de actualizar el registro.
      *
      * @param string $field
      * @return bool
@@ -936,13 +1112,18 @@ abstract class ModelClass
     }
 
     /**
-     * Este método se llama al insertar un nuevo registro en la base de datos (saveUpdate).
+     * Este método se llama al actualizar un registro en la base de datos.
      */
     protected function onUpdate(): void
     {
         $this->pipe('onUpdate');
     }
 
+    /**
+     * Inserta un nuevo registro en la base de datos.
+     *
+     * @return bool
+     */
     protected function saveInsert(): bool
     {
         if (false === $this->pipeFalse('saveInsertBefore')) {

@@ -37,16 +37,16 @@ class GrupoClientes extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** @var string Código identificativo del grupo de clientes. */
     public $codgrupo;
 
-    /** @var string */
+    /** @var string Código de la subcuenta contable asociada al grupo. */
     public $codsubcuenta;
 
-    /** @var string */
+    /** @var string Código de la tarifa de precios aplicada al grupo. */
     public $codtarifa;
 
-    /** @var string */
+    /** @var string Nombre del grupo de clientes. */
     public $nombre;
 
     public function clearCache(): void
@@ -68,7 +68,7 @@ class GrupoClientes extends ModelClass
             Where::eq('codsubcuenta', $this->codsubcuenta),
             Where::eq('codejercicio', $codejercicio),
         ];
-        if ($subAccount->load('', $where)) {
+        if ($subAccount->loadWhere($where)) {
             return $subAccount;
         }
 

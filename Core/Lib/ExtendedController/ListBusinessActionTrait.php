@@ -64,8 +64,8 @@ trait ListBusinessActionTrait
             $approveButton['group'] = $group;
         }
 
-        $this->addButton($viewName, $approveButton);
-        $this->addButton($viewName, $sameDateButton);
+        $this->tab($viewName)->addButton($approveButton);
+        $this->tab($viewName)->addButton($sameDateButton);
     }
 
     /**
@@ -107,7 +107,7 @@ trait ListBusinessActionTrait
             $button['group'] = $group;
         }
 
-        $this->addButton($viewName, $button);
+        $this->tab($viewName)->addButton($button);
     }
 
     /**
@@ -126,7 +126,7 @@ trait ListBusinessActionTrait
             $button['group'] = $group;
         }
 
-        $this->addButton($viewName, $button);
+        $this->tab($viewName)->addButton($button);
     }
 
     /**
@@ -146,7 +146,7 @@ trait ListBusinessActionTrait
             $button['group'] = $group;
         }
 
-        $this->addButton($viewName, $button);
+        $this->tab($viewName)->addButton($button);
     }
 
     /**
@@ -168,7 +168,7 @@ trait ListBusinessActionTrait
             $button['group'] = $group;
         }
 
-        $this->addButton($viewName, $button);
+        $this->tab($viewName)->addButton($button);
     }
 
     /**
@@ -178,7 +178,7 @@ trait ListBusinessActionTrait
      */
     protected function addButtonPayReceipt(string $viewName): void
     {
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'pay-receipt',
             'color' => 'outline-success',
             'confirm' => 'true',

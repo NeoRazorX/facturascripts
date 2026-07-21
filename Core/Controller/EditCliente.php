@@ -52,14 +52,14 @@ class EditCliente extends ComercialContactController
      */
     public function getDeliveryNotesRisk(): string
     {
-        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $codcliente = $this->tabModelValue('EditCliente', 'codcliente');
         $total = empty($codcliente) ? 0 : CustomerRiskTools::getDeliveryNotesRisk($codcliente);
         return Tools::money($total);
     }
 
     public function getImageUrl(): string
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         return $this->views[$mvn]->model->gravatar();
     }
 
@@ -70,7 +70,7 @@ class EditCliente extends ComercialContactController
      */
     public function getInvoicesRisk(): string
     {
-        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $codcliente = $this->tabModelValue('EditCliente', 'codcliente');
         $total = empty($codcliente) ? 0 : CustomerRiskTools::getInvoicesRisk($codcliente);
         return Tools::money($total);
     }
@@ -87,7 +87,7 @@ class EditCliente extends ComercialContactController
      */
     public function getOrdersRisk(): string
     {
-        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $codcliente = $this->tabModelValue('EditCliente', 'codcliente');
         $total = empty($codcliente) ? 0 : CustomerRiskTools::getOrdersRisk($codcliente);
         return Tools::money($total);
     }
@@ -198,7 +198,7 @@ class EditCliente extends ComercialContactController
     protected function editAction(): bool
     {
         $return = parent::editAction();
-        if ($return && $this->active === $this->getMainViewName()) {
+        if ($return && $this->active === $this->mainTabName()) {
             $this->checkSubaccountLength($this->getModel()->codsubcuenta);
         }
 
@@ -226,7 +226,7 @@ class EditCliente extends ComercialContactController
             return true;
         }
 
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
         if (strpos($return_url, '?') === false) {
             $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->id());
         } else {
@@ -244,8 +244,8 @@ class EditCliente extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
-        $codcliente = $this->getViewModelValue($mainViewName, 'codcliente');
+        $mainViewName = $this->mainTabName();
+        $codcliente = $this->mainTabModelValue('codcliente');
         $where = [Where::eq('codcliente', $codcliente)];
 
         switch ($viewName) {
@@ -336,7 +336,7 @@ class EditCliente extends ComercialContactController
         }
 
         // Search for client contacts
-        $codcliente = $this->getViewModelValue($viewName, 'codcliente');
+        $codcliente = $this->tabModelValue($viewName, 'codcliente');
         $where = [Where::eq('codcliente', $codcliente)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 

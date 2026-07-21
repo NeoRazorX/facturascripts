@@ -43,7 +43,7 @@ class EditWorkEvent extends EditController
         $this->setTabsPosition('bottom');
 
         // desactivamos el botón nuevo
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         $this->setSettings($mvn, 'btnNew', false);
     }
 }

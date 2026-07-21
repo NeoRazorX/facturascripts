@@ -105,7 +105,7 @@ class EditSerie extends EditController
         switch ($viewName) {
             case 'ListFormatoDocumento':
             case 'ListSecuenciaDocumento':
-                $codserie = $this->getViewModelValue($this->getMainViewName(), 'codserie');
+                $codserie = $this->mainTabModelValue('codserie');
                 $where = [Where::eq('codserie', $codserie)];
                 $view->loadData('', $where);
                 break;

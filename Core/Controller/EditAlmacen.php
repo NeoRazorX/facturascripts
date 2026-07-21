@@ -106,7 +106,7 @@ class EditAlmacen extends EditController
 
         // desactivamos la columna de empresa, si solo hay una
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->mainTab()->disableColumn('company');
         }
 
         $this->createStockView();
@@ -122,7 +122,7 @@ class EditAlmacen extends EditController
     {
         switch ($viewName) {
             case 'ListStock':
-                $code = $this->getViewModelValue($this->getMainViewName(), 'codalmacen');
+                $code = $this->mainTabModelValue('codalmacen');
                 $where = [Where::eq('stocks.codalmacen', $code)];
                 $view->loadData('', $where);
                 break;

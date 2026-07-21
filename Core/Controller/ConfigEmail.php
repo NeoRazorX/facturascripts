@@ -70,14 +70,14 @@ class ConfigEmail extends PanelController
             ->setSettings('btnNew', false);
 
         // añadimos los botones de activar y desactivar
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'enable-notification',
             'color' => 'success',
             'icon' => 'fa-solid fa-check-square',
             'label' => 'enable'
         ]);
 
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'disable-notification',
             'color' => 'warning',
             'icon' => 'fa-regular fa-square',
@@ -104,7 +104,7 @@ class ConfigEmail extends PanelController
             ->addFilterCheckbox('attachment', 'has-attachments');
 
         // añadimos un botón para el modal delete-multi
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'delete-multi',
             'color' => 'warning',
             'icon' => 'fa-solid fa-trash-alt',
@@ -253,7 +253,7 @@ class ConfigEmail extends PanelController
                 $this->loadMailerValues($viewName);
                 if ($view->model->mailer === 'smtp' || $view->model->mailer === 'SMTP') {
                     // añadimos el botón test
-                    $this->addButton($viewName, [
+                    $view->addButton([
                         'action' => 'testmail',
                         'color' => 'info',
                         'icon' => 'fa-solid fa-envelope',

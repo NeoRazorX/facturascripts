@@ -85,7 +85,7 @@ class EditCuentaEspecial extends EditController
         parent::createViews();
 
         // disable buttons
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
         $this->setSettings($mainViewName, 'btnDelete', false);
         $this->setSettings($mainViewName, 'btnNew', false);
 
@@ -103,7 +103,7 @@ class EditCuentaEspecial extends EditController
         switch ($viewName) {
             case 'ListCuenta':
             case 'ListSubcuenta':
-                $codcuentaesp = $this->getViewModelValue('EditCuentaEspecial', 'codcuentaesp');
+                $codcuentaesp = $this->tabModelValue('EditCuentaEspecial', 'codcuentaesp');
                 $where = [Where::eq('codcuentaesp', $codcuentaesp)];
                 $view->loadData('', $where);
                 break;

@@ -32,11 +32,7 @@ class LineaAlbaranCliente extends SalesDocumentLine
 {
     use ModelTrait;
 
-    /**
-     * Delivery note ID of this line.
-     *
-     * @var int
-     */
+    /** @var int Identificador del albarán de cliente al que pertenece la línea. */
     public $idalbaran;
 
     public function documentColumn(): string
