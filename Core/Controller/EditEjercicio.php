@@ -27,6 +27,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\WorkEvent;
 
 /**
  * Controller to edit a single item from the Ejercicio model
@@ -89,6 +90,30 @@ class EditEjercicio extends EditController
                     'type' => 'modal'
                 ]);
                 break;
+        }
+    }
+
+    /**
+     * Informa al usuario si todavía hay eventos en la cola de trabajo
+     * recalculando los saldos de cuentas y subcuentas.
+     */
+    private function checkPendingBalanceJobs(): void
+    {
+        $where = [
+            Where::eq('done', false),
+            Where::in('name', [
+                'Model.Partida.Save',
+                'Model.Partida.Delete',
+                'Model.Subcuenta.Update',
+                'Model.Subcuenta.Delete',
+                'Model.Cuenta.Update',
+                'Model.Cuenta.Delete',
+            ]),
+        ];
+
+        $pending = WorkEvent::count($where);
+        if ($pending > 0) {
+            Tools::log()->warning('balances-updating-in-background', ['%count%' => $pending]);
         }
     }
 
@@ -311,6 +336,7 @@ class EditEjercicio extends EditController
             case 'EditEjercicio':
                 parent::loadData($viewName, $view);
                 $this->addExerciseActionButtons($viewName);
+                $this->checkPendingBalanceJobs();
                 break;
 
             case 'ListAsiento':
