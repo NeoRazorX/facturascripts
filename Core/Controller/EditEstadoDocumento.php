@@ -47,11 +47,10 @@ class EditEstadoDocumento extends EditController
 
     protected function createOtherStatusView($viewName = 'ListEstadoDocumento')
     {
-        $this->addListView($viewName, 'EstadoDocumento', 'document-states');
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'EstadoDocumento', 'document-states')
+            // desactivamos los botones de crear y eliminar
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false);
     }
 
     /**

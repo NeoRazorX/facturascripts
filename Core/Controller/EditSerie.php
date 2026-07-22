@@ -50,11 +50,10 @@ class EditSerie extends EditController
 
     protected function createFormatView(string $viewName = 'ListFormatoDocumento'): void
     {
-        $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fa-solid fa-print');
-        $this->views[$viewName]->addOrderBy(['tipodoc'], 'doc-type', 2);
-
-        // desactivamos la columna serie
-        $this->views[$viewName]->disableColumn('serie');
+        $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fa-solid fa-print')
+            ->addOrderBy(['tipodoc'], 'doc-type', 2)
+            // desactivamos la columna serie
+            ->disableColumn('serie');
     }
 
     protected function createSequenceView(string $viewName = 'ListSecuenciaDocumento'): void

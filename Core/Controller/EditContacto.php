@@ -41,7 +41,7 @@ class EditContacto extends EditController
     public function getImageUrl(): string
     {
         $mvn = $this->mainTabName();
-        return $this->views[$mvn]->model->gravatar();
+        return $this->tab($mvn)->model->gravatar();
     }
 
     public function getModelClassName(): string
@@ -102,7 +102,7 @@ class EditContacto extends EditController
         }
 
         $mvn = $this->mainTabName();
-        $customer = $this->views[$mvn]->model->getCustomer();
+        $customer = $this->tab($mvn)->model->getCustomer();
         if ($customer->exists()) {
             Tools::log()->notice('record-updated-correctly');
             $this->redirect($customer->url() . '&action=save-ok');
@@ -137,7 +137,7 @@ class EditContacto extends EditController
         }
 
         $mvn = $this->mainTabName();
-        $supplier = $this->views[$mvn]->model->getSupplier();
+        $supplier = $this->tab($mvn)->model->getSupplier();
         if ($supplier->exists()) {
             Tools::log()->notice('record-updated-correctly');
             $this->redirect($supplier->url() . '&action=save-ok');
@@ -309,7 +309,7 @@ class EditContacto extends EditController
      */
     protected function loadLanguageValues(string $viewName): void
     {
-        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        $columnLangCode = $this->tab($viewName)->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
             foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {

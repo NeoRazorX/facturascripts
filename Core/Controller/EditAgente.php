@@ -234,7 +234,7 @@ class EditAgente extends ComercialContactController
      */
     protected function loadLanguageValues(string $viewName): void
     {
-        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        $columnLangCode = $this->tab($viewName)->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
             foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
@@ -247,6 +247,5 @@ class EditAgente extends ComercialContactController
 
     protected function setCustomWidgetValues(string $viewName): void
     {
-        ;
     }
 }

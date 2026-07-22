@@ -92,30 +92,29 @@ class EditGrupoClientes extends EditController
      */
     protected function createViewCommon(string $viewName)
     {
-        $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
-        $this->views[$viewName]->addOrderBy(['email'], 'email');
-        $this->views[$viewName]->addOrderBy(['fechaalta'], 'creation-date');
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
-        $this->views[$viewName]->addOrderBy(['riesgoalcanzado'], 'current-risk');
-        $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
-
-        // settings
-        $this->views[$viewName]->disableColumn('group');
-        $this->views[$viewName]->settings['btnNew'] = false;
-        $this->views[$viewName]->settings['btnDelete'] = false;
-
-        // filters
         $i18n = Tools::lang();
         $values = [
             ['label' => $i18n->trans('only-active'), 'where' => [Where::eq('debaja', false)]],
             ['label' => $i18n->trans('only-suspended'), 'where' => [Where::eq('debaja', true)]],
             ['label' => $i18n->trans('all'), 'where' => []]
         ];
-        $this->views[$viewName]->addFilterSelectWhere('status', $values);
 
-        $this->views[$viewName]->addFilterSelect('codserie', 'series', 'codserie', Series::codeModel());
-        $this->views[$viewName]->addFilterSelect('codretencion', 'retentions', 'codretencion', Retenciones::codeModel());
-        $this->views[$viewName]->addFilterSelect('codpago', 'payment-methods', 'codpago', FormasPago::codeModel());
+        $this->listView($viewName)
+            ->addOrderBy(['codcliente'], 'code')
+            ->addOrderBy(['email'], 'email')
+            ->addOrderBy(['fechaalta'], 'creation-date')
+            ->addOrderBy(['nombre'], 'name', 1)
+            ->addOrderBy(['riesgoalcanzado'], 'current-risk')
+            ->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'])
+            // filtros
+            ->addFilterSelectWhere('status', $values)
+            ->addFilterSelect('codserie', 'series', 'codserie', Series::codeModel())
+            ->addFilterSelect('codretencion', 'retentions', 'codretencion', Retenciones::codeModel())
+            ->addFilterSelect('codpago', 'payment-methods', 'codpago', FormasPago::codeModel())
+            // ocultamos la columna grupo y desactivamos los botones de nuevo y eliminar
+            ->disableColumn('group')
+            ->setSettings('btnNew', false)
+            ->setSettings('btnDelete', false);
     }
 
     /**

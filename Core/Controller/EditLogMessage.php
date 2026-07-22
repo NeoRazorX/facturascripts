@@ -53,9 +53,9 @@ class EditLogMessage extends EditController
         parent::createViews();
 
         // desactivamos los botones nuevo y opciones
-        $mvn = $this->mainTabName();
-        $this->setSettings($mvn, 'btnNew', false);
-        $this->setSettings($mvn, 'btnOptions', false);
+        $this->mainTab()
+            ->setSettings('btnNew', false)
+            ->setSettings('btnOptions', false);
 
         // añadimos la pestaña de logs
         $this->createViewsOtherLogs();
@@ -66,13 +66,12 @@ class EditLogMessage extends EditController
 
     protected function createViewsOtherLogs(string $viewName = 'ListLogMessage')
     {
-        $this->addListView($viewName, 'LogMessage', 'related', 'fa-solid fa-file-medical-alt');
-        $this->views[$viewName]->addSearchFields(['ip', 'message', 'uri']);
-        $this->views[$viewName]->addOrderBy(['time', 'id'], 'date', 2);
-        $this->views[$viewName]->addOrderBy(['level'], 'level');
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'LogMessage', 'related', 'fa-solid fa-file-medical-alt')
+            ->addSearchFields(['ip', 'message', 'uri'])
+            ->addOrderBy(['time', 'id'], 'date', 2)
+            ->addOrderBy(['level'], 'level')
+            // desactivamos el botón nuevo
+            ->setSettings('btnNew', false);
     }
 
     /**

@@ -47,34 +47,28 @@ class EditCuentaEspecial extends EditController
 
     protected function createAccountsView(string $viewName = 'ListCuenta')
     {
-        $this->addListView($viewName, 'Cuenta', 'accounts', 'fa-solid fa-book');
-        $this->views[$viewName]->addOrderBy(['codejercicio', 'codcuenta'], 'exercise', 2);
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addSearchFields(['codcuenta', 'descripcion']);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('special-account');
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'checkBoxes', false);
+        $this->addListView($viewName, 'Cuenta', 'accounts', 'fa-solid fa-book')
+            ->addOrderBy(['codejercicio', 'codcuenta'], 'exercise', 2)
+            ->addOrderBy(['descripcion'], 'description')
+            ->addSearchFields(['codcuenta', 'descripcion'])
+            // desactivamos columnas y botones
+            ->disableColumn('special-account')
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false)
+            ->setSettings('checkBoxes', false);
     }
 
     protected function createSubaccountsView(string $viewName = 'ListSubcuenta')
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-th-list');
-        $this->views[$viewName]->addOrderBy(['codejercicio', 'codsubcuenta'], 'exercise', 2);
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('special-account');
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'checkBoxes', false);
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-th-list')
+            ->addOrderBy(['codejercicio', 'codsubcuenta'], 'exercise', 2)
+            ->addOrderBy(['descripcion'], 'description')
+            ->addSearchFields(['codsubcuenta', 'descripcion'])
+            // desactivamos columnas y botones
+            ->disableColumn('special-account')
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false)
+            ->setSettings('checkBoxes', false);
     }
 
     /**

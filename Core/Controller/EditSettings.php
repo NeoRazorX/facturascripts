@@ -201,10 +201,11 @@ class EditSettings extends PanelController
         $this->addEditView($name, $model, $title, $icon);
 
         // change icon
-        $groups = $this->views[$name]->getColumns();
+        $view = $this->tab($name);
+        $groups = $view->getColumns();
         foreach ($groups as $group) {
             if (!empty($group->icon)) {
-                $this->views[$name]->icon = $group->icon;
+                $view->icon = $group->icon;
                 break;
             }
         }
@@ -334,7 +335,7 @@ class EditSettings extends PanelController
 
     protected function loadLogoImageValues($viewName): void
     {
-        $columnLogo = $this->views[$viewName]->columnForName('login-image');
+        $columnLogo = $this->tab($viewName)->columnForName('login-image');
         if ($columnLogo && $columnLogo->widget->getType() === 'select') {
             $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
                 Where::in('mimetype', 'image/gif,image/jpeg,image/png')
@@ -349,7 +350,7 @@ class EditSettings extends PanelController
         $where = [Where::eq('idempresa', $idempresa)];
         $methods = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
 
-        $columnPayment = $this->views[$viewName]->columnForName('payment-method');
+        $columnPayment = $this->tab($viewName)->columnForName('payment-method');
         if ($columnPayment && $columnPayment->widget->getType() === 'select') {
             $columnPayment->widget->setValuesFromCodeModel($methods);
         }
@@ -357,7 +358,7 @@ class EditSettings extends PanelController
 
     protected function loadRegimeValues(string $viewName): void
     {
-        $columnVATRegime = $this->views[$viewName]->columnForName('vat-regime');
+        $columnVATRegime = $this->tab($viewName)->columnForName('vat-regime');
         if ($columnVATRegime && $columnVATRegime->widget->getType() === 'select') {
             $columnVATRegime->widget->setValuesFromArrayKeys(RegimenIVA::all(), true, true);
         }
@@ -365,7 +366,7 @@ class EditSettings extends PanelController
 
     protected function loadSerie(string $viewName): void
     {
-        $columnSerie = $this->views[$viewName]->columnForName('serie');
+        $columnSerie = $this->tab($viewName)->columnForName('serie');
         if ($columnSerie && $columnSerie->widget->getType() === 'select') {
             $series = $this->codeModel->all('series', 'codserie', 'descripcion', false, [
                 Where::notEq('tipo', 'R'),
@@ -377,7 +378,7 @@ class EditSettings extends PanelController
 
     protected function loadSerieRectifying(string $viewName): void
     {
-        $columnSerie = $this->views[$viewName]->columnForName('rectifying-serie');
+        $columnSerie = $this->tab($viewName)->columnForName('rectifying-serie');
         if ($columnSerie && $columnSerie->widget->getType() === 'select') {
             $series = $this->codeModel->all('series', 'codserie', 'descripcion', false, [
                 Where::eq('tipo', 'R')
@@ -392,7 +393,7 @@ class EditSettings extends PanelController
         $where = [Where::eq('idempresa', $idempresa)];
         $almacenes = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
 
-        $columnWarehouse = $this->views[$viewName]->columnForName('warehouse');
+        $columnWarehouse = $this->tab($viewName)->columnForName('warehouse');
         if ($columnWarehouse && $columnWarehouse->widget->getType() === 'select') {
             $columnWarehouse->widget->setValuesFromCodeModel($almacenes);
         }

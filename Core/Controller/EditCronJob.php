@@ -63,12 +63,11 @@ class EditCronJob extends EditController
 
     protected function createViewsLogs(string $viewName = 'ListLogMessage')
     {
-        $this->addListView($viewName, 'LogMessage', 'related', 'fa-solid fa-file-medical-alt');
-        $this->views[$viewName]->addSearchFields(['ip', 'message', 'uri']);
-        $this->views[$viewName]->addOrderBy(['time', 'id'], 'date', 2);
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'LogMessage', 'related', 'fa-solid fa-file-medical-alt')
+            ->addSearchFields(['ip', 'message', 'uri'])
+            ->addOrderBy(['time', 'id'], 'date', 2)
+            // desactivamos el botón nuevo
+            ->setSettings('btnNew', false);
     }
 
     /**

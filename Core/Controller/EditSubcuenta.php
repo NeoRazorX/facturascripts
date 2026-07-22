@@ -265,7 +265,7 @@ class EditSubcuenta extends EditController
 
     private function setLedgerReportExportOptions(string $viewName): void
     {
-        $columnFormat = $this->views[$viewName]->columnModalForName('format');
+        $columnFormat = $this->tab($viewName)->columnModalForName('format');
         if ($columnFormat && $columnFormat->widget->getType() === 'select') {
             $values = [];
             foreach ($this->exportManager->options() as $key => $options) {
@@ -281,7 +281,7 @@ class EditSubcuenta extends EditController
         $exercise = new Ejercicio();
         $exercise->load($codeExercise);
 
-        $model = $this->views[$viewName]->model;
+        $model = $this->tab($viewName)->model;
         $model->dateFrom = $exercise->fechainicio;
         $model->dateTo = $exercise->fechafin;
     }

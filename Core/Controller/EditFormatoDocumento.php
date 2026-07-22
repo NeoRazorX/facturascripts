@@ -57,8 +57,8 @@ class EditFormatoDocumento extends EditController
                 parent::loadData($viewName, $view);
 
                 // desactivamos los botones de imprimir y opciones
-                $this->setSettings($viewName, 'btnOptions', false);
-                $this->setSettings($viewName, 'btnPrint', false);
+                $view->setSettings('btnOptions', false)
+                    ->setSettings('btnPrint', false);
 
                 // deshabilitar la columna de empresa si solo hay una
                 if ($this->empresa->count() < 2) {

@@ -57,22 +57,24 @@ class EditAsiento extends PanelController
      */
     public function getModel(): Asiento
     {
+        $view = $this->tab(static::MAIN_VIEW_NAME);
+
         // loaded record? just return it
-        if ($this->views[static::MAIN_VIEW_NAME]->model->id()) {
-            return $this->views[static::MAIN_VIEW_NAME]->model;
+        if ($view->model->id()) {
+            return $view->model;
         }
 
         // get the record identifier
-        $primaryKey = $this->request->input($this->views[static::MAIN_VIEW_NAME]->model->primaryColumn());
+        $primaryKey = $this->request->input($view->model->primaryColumn());
         $code = $this->request->query('code', $primaryKey);
         if (empty($code)) {
             // new record
-            return $this->views[static::MAIN_VIEW_NAME]->model;
+            return $view->model;
         }
 
         // existing record
-        $this->views[static::MAIN_VIEW_NAME]->model->load($code);
-        return $this->views[static::MAIN_VIEW_NAME]->model;
+        $view->model->load($code);
+        return $view->model;
     }
 
     public function getModelClassName(): string

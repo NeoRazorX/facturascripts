@@ -101,13 +101,13 @@ class EditSecuenciaDocumento extends EditController
                     Where::eq('idempresa', $this->mainTabModelValue('idempresa'))
                 ];
                 // si tiene ejercicio, solo mostramos los resultados de ese ejercicio
-                if ($this->views[$mvn]->model->codejercicio) {
-                    $where[] = Where::eq('codejercicio', $this->views[$mvn]->model->codejercicio);
+                if ($this->tab($mvn)->model->codejercicio) {
+                    $where[] = Where::eq('codejercicio', $this->tab($mvn)->model->codejercicio);
                     $view->loadData('', $where);
                     break;
                 }
                 // no tiene ejercicio, mostramos los resultados otros ejercicios que no están en otras secuencias
-                $other = implode(',', BusinessDocumentCode::getOtherExercises($this->views[$mvn]->model));
+                $other = implode(',', BusinessDocumentCode::getOtherExercises($this->tab($mvn)->model));
                 if (!empty($other)) {
                     $where[] = Where::notIn('codejercicio', $other);
                 }

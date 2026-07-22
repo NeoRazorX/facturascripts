@@ -57,16 +57,13 @@ class EditDiario extends EditController
 
     protected function createViewsEntries(string $viewName = 'ListAsiento')
     {
-        $this->addListView($viewName, 'Asiento', 'accounting-entry');
-        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
-        $this->views[$viewName]->addOrderBy(['importe'], 'amount');
-        $this->views[$viewName]->addSearchFields(['concepto']);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('journal');
-
-        // disable button
-        $this->setSettings($viewName, 'btnDelete', false);
+        $this->addListView($viewName, 'Asiento', 'accounting-entry')
+            ->addOrderBy(['fecha'], 'date', 2)
+            ->addOrderBy(['importe'], 'amount')
+            ->addSearchFields(['concepto'])
+            // desactivamos la columna diario y el botón de eliminar
+            ->disableColumn('journal')
+            ->setSettings('btnDelete', false);
     }
 
     /**

@@ -70,11 +70,10 @@ class EditReciboProveedor extends EditController
 
     protected function createViewPayments($viewName = 'ListPagoProveedor'): void
     {
-        $this->addListView($viewName, 'PagoProveedor', 'payments');
-        $this->views[$viewName]->addOrderBy(['fecha', 'hora'], 'date', 1);
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'PagoProveedor', 'payments')
+            ->addOrderBy(['fecha', 'hora'], 'date', 1)
+            // desactivamos el botón nuevo
+            ->setSettings('btnNew', false);
 
         // añadimos el botón de generar asiento
         $this->tab($viewName)->addButton([
@@ -140,15 +139,15 @@ class EditReciboProveedor extends EditController
             case 'ListPagoProveedor':
                 $id = $this->tabModelValue('EditReciboProveedor', 'idrecibo');
                 $where = [Where::eq('idrecibo', $id)];
-                $this->views[$viewName]->loadData('', $where);
+                $view->loadData('', $where);
                 break;
 
             case 'EditReciboProveedor':
                 parent::loadData($viewName, $view);
-                $this->views[$viewName]->model->nick = $this->user->nick;
-                if ($this->views[$viewName]->model->pagado) {
-                    $this->views[$viewName]->disableColumn('amount', false, 'true');
-                    $this->views[$viewName]->disableColumn('payment', false, 'true');
+                $view->model->nick = $this->user->nick;
+                if ($view->model->pagado) {
+                    $view->disableColumn('amount', false, 'true');
+                    $view->disableColumn('payment', false, 'true');
                 }
                 break;
         }

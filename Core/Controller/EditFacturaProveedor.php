@@ -112,8 +112,9 @@ class EditFacturaProveedor extends PurchasesController
         ]);
 
         // disable columns
-        $this->views[$viewName]->disableColumn('supplier');
-        $this->views[$viewName]->disableColumn('invoice');
+        $this->tab($viewName)
+            ->disableColumn('supplier')
+            ->disableColumn('invoice');
 
         // settings
         $this->setSettings($viewName, 'modalInsert', 'generate-receipts');

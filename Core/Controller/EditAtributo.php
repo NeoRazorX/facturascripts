@@ -59,11 +59,9 @@ class EditAtributo extends EditController
 
     protected function createViewsAttValues(string $viewName = 'EditAtributoValor')
     {
-        $this->addEditListView($viewName, 'AtributoValor', 'attribute-values');
-        $this->views[$viewName]->setInLine(true);
-
-        // disable column
-        $this->views[$viewName]->disableColumn('attribute');
+        $this->addEditListView($viewName, 'AtributoValor', 'attribute-values')
+            ->setInLine(true)
+            ->disableColumn('attribute');
     }
 
     /**

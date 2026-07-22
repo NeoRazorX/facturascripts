@@ -60,7 +60,7 @@ class EditCliente extends ComercialContactController
     public function getImageUrl(): string
     {
         $mvn = $this->mainTabName();
-        return $this->views[$mvn]->model->gravatar();
+        return $this->tab($mvn)->model->gravatar();
     }
 
     /**
@@ -290,7 +290,7 @@ class EditCliente extends ComercialContactController
 
     protected function loadExceptionVat(string $viewName): void
     {
-        $column = $this->views[$viewName]->columnForName('vat-exception');
+        $column = $this->tab($viewName)->columnForName('vat-exception');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(TaxExceptions::all(), true, true);
         }
@@ -298,7 +298,7 @@ class EditCliente extends ComercialContactController
 
     protected function loadOperationValues(string $viewName): void
     {
-        $column = $this->views[$viewName]->columnForName('operation');
+        $column = $this->tab($viewName)->columnForName('operation');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(InvoiceOperation::allForSales(), true, true);
         }
@@ -309,7 +309,7 @@ class EditCliente extends ComercialContactController
      */
     protected function loadLanguageValues(string $viewName): void
     {
-        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        $columnLangCode = $this->tab($viewName)->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
             foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
@@ -322,16 +322,18 @@ class EditCliente extends ComercialContactController
 
     protected function setCustomWidgetValues(string $viewName): void
     {
+        $view = $this->tab($viewName);
+
         // Load values option to VAT Type select input
-        $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
+        $columnVATType = $view->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
             $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all(), true);
         }
 
         // Model exists?
-        if (false === $this->views[$viewName]->model->exists()) {
-            $this->views[$viewName]->disableColumn('billing-address');
-            $this->views[$viewName]->disableColumn('shipping-address');
+        if (false === $view->model->exists()) {
+            $view->disableColumn('billing-address');
+            $view->disableColumn('shipping-address');
             return;
         }
 
@@ -341,13 +343,13 @@ class EditCliente extends ComercialContactController
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
         // Load values option to default billing address from client contacts list
-        $columnBilling = $this->views[$viewName]->columnForName('billing-address');
+        $columnBilling = $view->columnForName('billing-address');
         if ($columnBilling && $columnBilling->widget->getType() === 'select') {
             $columnBilling->widget->setValuesFromCodeModel($contacts);
         }
 
         // Load values option to default shipping address from client contacts list
-        $columnShipping = $this->views[$viewName]->columnForName('shipping-address');
+        $columnShipping = $view->columnForName('shipping-address');
         if ($columnShipping && $columnShipping->widget->getType() === 'select') {
             $contacts2 = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', true, $where);
             $columnShipping->widget->setValuesFromCodeModel($contacts2);

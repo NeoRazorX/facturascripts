@@ -165,7 +165,7 @@ class EditEmailSent extends EditController
 
         switch ($viewName) {
             case 'EmailSentAttachment':
-                $attachments = $this->views[$mvn]->model->getAttachments();
+                $attachments = $this->tab($mvn)->model->getAttachments();
 
                 // si no hay adjuntos ocultamos la pestaña
                 if (empty($attachments)) {

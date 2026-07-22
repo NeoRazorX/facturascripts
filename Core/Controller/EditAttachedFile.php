@@ -60,12 +60,11 @@ class EditAttachedFile extends EditController
 
     protected function createViewsRelations(string $viewName = 'ListAttachedFileRelation')
     {
-        $this->addListView($viewName, 'AttachedFileRelation', 'related', 'fa-solid fa-copy');
-        $this->views[$viewName]->addSearchFields(['observations']);
-        $this->views[$viewName]->addOrderBy(['creationdate'], 'date', 2);
-
-        // disable button
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'AttachedFileRelation', 'related', 'fa-solid fa-copy')
+            ->addSearchFields(['observations'])
+            ->addOrderBy(['creationdate'], 'date', 2)
+            // desactivamos el botón de crear
+            ->setSettings('btnNew', false);
     }
 
     /**

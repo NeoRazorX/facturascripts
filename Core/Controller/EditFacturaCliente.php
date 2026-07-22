@@ -111,8 +111,9 @@ class EditFacturaCliente extends SalesController
         ]);
 
         // disable columns
-        $this->views[$viewName]->disableColumn('customer');
-        $this->views[$viewName]->disableColumn('invoice');
+        $this->tab($viewName)
+            ->disableColumn('customer')
+            ->disableColumn('invoice');
 
         // settings
         $this->setSettings($viewName, 'modalInsert', 'generate-receipts');
