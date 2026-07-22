@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\PageOption;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Edit option for any page.
+ * Controlador para editar las opciones de visualización (columnas y filtros) de cualquier página.
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Jose Antonio Cuello          <yopli2000@gmail.com>

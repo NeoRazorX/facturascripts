@@ -30,6 +30,9 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use mysqli;
 
+/**
+ * Controlador del instalador que configura la aplicación en su primera puesta en marcha.
+ */
 class Installer implements ControllerInterface
 {
     /** @var string */

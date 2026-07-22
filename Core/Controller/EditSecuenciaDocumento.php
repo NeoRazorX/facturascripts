@@ -25,7 +25,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the SecuenciaDocumento model.
+ * Controlador para editar un único elemento del modelo SecuenciaDocumento
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>

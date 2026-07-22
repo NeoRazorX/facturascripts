@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
- * Controller to edit main settings
+ * Controlador para editar la configuración general de la aplicación.
  *
  * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>

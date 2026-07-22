@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\Atributo;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
- * Controller to edit a single item from the EditProducto model
+ * Controlador para editar un único elemento del modelo Producto
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

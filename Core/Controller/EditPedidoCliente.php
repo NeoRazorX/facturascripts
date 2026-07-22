@@ -8,7 +8,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Dinamic\Lib\AjaxForms\SalesController;
 
 /**
- * Description of EditPedidoCliente
+ * Controlador para editar un único elemento del modelo PedidoCliente
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

@@ -26,7 +26,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\TaxExceptions;
 
 /**
- * Controller to edit a single item from the Impuesto model
+ * Controlador para editar un único elemento del modelo Impuesto
  *
  * @author Carlos García Gómez              <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>

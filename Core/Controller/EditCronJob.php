@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Where;
 
 /**
- * Description of EditCronJob
+ * Controlador para editar un único elemento del modelo CronJob
  *
  * @author Raul Jimenez         <raljopa@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>

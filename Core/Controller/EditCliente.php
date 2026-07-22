@@ -36,7 +36,7 @@ use FacturaScripts\Dinamic\Model\PedidoCliente;
 use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 
 /**
- * Controller to edit a single item from the Cliente model
+ * Controlador para editar un único elemento del modelo Cliente
  *
  * @author       Carlos García Gómez           <carlos@facturascripts.com>
  * @author       Jose Antonio Cuello Principal <yopli2000@gmail.com>

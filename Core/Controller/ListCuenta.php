@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\CuentaEspecial;
 use FacturaScripts\Dinamic\Model\WorkEvent;
 
 /**
- * Controller to list the items in the Cuenta model.
+ * Controlador para listar los elementos del modelo Cuenta
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

@@ -42,7 +42,7 @@ use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Description of Dashboard
+ * Controlador del panel de inicio (dashboard) que se muestra tras iniciar sesión.
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

@@ -22,6 +22,9 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Template\Controller;
 
+/**
+ * Controlador de la página raíz, que redirige al panel de inicio o a la pantalla de acceso.
+ */
 class Root extends Controller
 {
     public function getPageData(): array

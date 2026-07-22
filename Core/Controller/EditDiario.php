@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the Diario model
+ * Controlador para editar un único elemento del modelo Diario
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>

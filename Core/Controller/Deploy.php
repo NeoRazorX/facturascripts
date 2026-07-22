@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,9 @@ use FacturaScripts\Core\CrashReport;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Controlador que despliega los archivos dinámicos (carpeta Dinamic) regenerando los plugins.
+ */
 class Deploy implements ControllerInterface
 {
     public function __construct(string $className, string $url = '')

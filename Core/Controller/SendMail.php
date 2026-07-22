@@ -33,7 +33,7 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
- * Description of SendMail
+ * Controlador para redactar y enviar por correo electrónico un documento con sus adjuntos.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Javier García Iceta      <javigarciaiceta@gmail.com>

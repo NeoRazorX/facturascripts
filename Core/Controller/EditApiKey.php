@@ -25,7 +25,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
- * Controller to edit a single item from the ApiKey model.
+ * Controlador para editar un único elemento del modelo ApiKey
  *
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>

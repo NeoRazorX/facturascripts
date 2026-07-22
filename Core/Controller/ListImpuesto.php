@@ -23,7 +23,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Lib\OperacionIVA;
 
 /**
- * Controller to list the items in the Impuesto model
+ * Controlador para listar los elementos del modelo Impuesto
  *
  * @author Carlos García Gómez              <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>

@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Lib\Accounting\PaymentToAccounting;
 use FacturaScripts\Dinamic\Model\PagoProveedor;
 
 /**
- * Description of EditReciboProveedor
+ * Controlador para editar un único elemento del modelo ReciboProveedor
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

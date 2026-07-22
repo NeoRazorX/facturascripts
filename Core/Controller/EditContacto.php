@@ -28,7 +28,7 @@ use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
 /**
- * Controller to edit a single item from the Contacto model
+ * Controlador para editar un único elemento del modelo Contacto
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

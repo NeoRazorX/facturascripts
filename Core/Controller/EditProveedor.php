@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
 use FacturaScripts\Core\Lib\TaxExceptions;
 
 /**
- * Controller to edit a single item from the Proveedor model
+ * Controlador para editar un único elemento del modelo Proveedor
  *
  * @author       Nazca Networks             <comercial@nazcanetworks.com>
  * @author       Fco. Antonio Moreno Pérez  <famphuelva@gmail.com>

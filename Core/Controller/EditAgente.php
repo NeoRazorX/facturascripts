@@ -28,7 +28,7 @@ use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
- * Controller to edit a single item from the Agente model
+ * Controlador para editar un único elemento del modelo Agente
  *
  * @author Carlos Garcia Gomez            <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal  <yopli2000@gmail.com>

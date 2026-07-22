@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Controller to edit a single item from the SubCuenta model
+ * Controlador para editar un único elemento del modelo Subcuenta
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

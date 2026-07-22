@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Lib\Accounting\PaymentToAccounting;
 use FacturaScripts\Dinamic\Model\PagoCliente;
 
 /**
- * Description of EditReciboCliente
+ * Controlador para editar un único elemento del modelo ReciboCliente
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

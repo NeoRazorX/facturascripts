@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Cliente;
 
 /**
- * Controller to edit a single item from the GrupoClientes model
+ * Controlador para editar un único elemento del modelo GrupoClientes
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

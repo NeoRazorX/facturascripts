@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\RoleUser;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Controller to edit a single item from the User model
+ * Controlador para editar un único elemento del modelo User
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

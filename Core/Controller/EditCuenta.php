@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\WorkEvent;
 
 /**
- * Controller to edit a single item from the Cuenta model
+ * Controlador para editar un único elemento del modelo Cuenta
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

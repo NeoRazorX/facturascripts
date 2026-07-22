@@ -27,7 +27,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Producto;
 
 /**
- * Controller to edit a single item from the Familia model
+ * Controlador para editar un único elemento del modelo Familia
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

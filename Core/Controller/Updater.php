@@ -35,7 +35,7 @@ use FacturaScripts\Dinamic\Model\User;
 use ZipArchive;
 
 /**
- * Description of Updater
+ * Controlador para actualizar el núcleo de FacturaScripts y los plugins instalados.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

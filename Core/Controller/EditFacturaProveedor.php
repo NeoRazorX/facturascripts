@@ -16,7 +16,7 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 
 /**
- * Description of EditFacturaProveedor
+ * Controlador para editar un único elemento del modelo FacturaProveedor
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

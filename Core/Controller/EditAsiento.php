@@ -34,7 +34,7 @@ use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 
 /**
- * Description of EditAsiento
+ * Controlador para editar un único elemento del modelo Asiento
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

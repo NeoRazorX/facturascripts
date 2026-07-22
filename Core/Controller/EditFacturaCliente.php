@@ -16,7 +16,7 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 
 /**
- * Description of EditFacturaCliente
+ * Controlador para editar un único elemento del modelo FacturaCliente
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

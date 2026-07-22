@@ -24,6 +24,9 @@ use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
+/**
+ * Controlador de la API para subir archivos al servidor.
+ */
 class ApiUploadFiles extends ApiController
 {
     protected function runResource(): void

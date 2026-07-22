@@ -23,7 +23,7 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
- * Controller to list the items in the FormaPago model
+ * Controlador para listar los elementos del modelo FormaPago
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

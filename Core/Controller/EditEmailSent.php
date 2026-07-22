@@ -26,7 +26,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
- * Controller to edit a single register of EmailSent
+ * Controlador para editar un único elemento del modelo EmailSent
  *
  * @author Raul                     <raljopa@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>

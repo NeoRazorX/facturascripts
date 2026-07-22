@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Where;
 
 /**
- * EditCiudad
+ * Controlador para editar un único elemento del modelo Ciudad
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Frank Aguirre        <faguirre@soenac.com>

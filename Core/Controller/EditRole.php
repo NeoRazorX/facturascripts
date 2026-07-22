@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
 /**
- * Controller to edit a single item from the Role model.
+ * Controlador para editar un único elemento del modelo Role
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>
