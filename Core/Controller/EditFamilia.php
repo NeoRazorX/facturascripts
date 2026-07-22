@@ -126,7 +126,6 @@ class EditFamilia extends EditController
 
     protected function createViewProductsCommon(string $viewName): void
     {
-        $i18n = Tools::lang();
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
         $taxes = Impuestos::codeModel();
 
@@ -137,10 +136,10 @@ class EditFamilia extends EditController
             ->addOrderBy(['stockfis'], 'stock')
             // filtros
             ->addFilterSelectWhere('status', [
-                ['label' => $i18n->trans('only-active'), 'where' => [Where::eq('bloqueado', false)]],
-                ['label' => $i18n->trans('blocked'), 'where' => [Where::eq('bloqueado', true)]],
-                ['label' => $i18n->trans('public'), 'where' => [Where::eq('publico', true)]],
-                ['label' => $i18n->trans('all'), 'where' => []]
+                ['label' => Tools::trans('only-active'), 'where' => [Where::eq('bloqueado', false)]],
+                ['label' => Tools::trans('blocked'), 'where' => [Where::eq('bloqueado', true)]],
+                ['label' => Tools::trans('public'), 'where' => [Where::eq('publico', true)]],
+                ['label' => Tools::trans('all'), 'where' => []]
             ])
             ->addFilterSelect('codfabricante', 'manufacturer', 'codfabricante', $manufacturers)
             ->addFilterNumber('min-price', 'price', 'precio', '<=')

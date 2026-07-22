@@ -92,11 +92,10 @@ class EditGrupoClientes extends EditController
      */
     protected function createViewCommon(string $viewName)
     {
-        $i18n = Tools::lang();
         $values = [
-            ['label' => $i18n->trans('only-active'), 'where' => [Where::eq('debaja', false)]],
-            ['label' => $i18n->trans('only-suspended'), 'where' => [Where::eq('debaja', true)]],
-            ['label' => $i18n->trans('all'), 'where' => []]
+            ['label' => Tools::trans('only-active'), 'where' => [Where::eq('debaja', false)]],
+            ['label' => Tools::trans('only-suspended'), 'where' => [Where::eq('debaja', true)]],
+            ['label' => Tools::trans('all'), 'where' => []]
         ];
 
         $this->listView($viewName)

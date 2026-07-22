@@ -115,17 +115,16 @@ class EditFabricante extends EditController
             ->addOrderBy(['precio'], 'price')
             ->addOrderBy(['stockfis'], 'stock');
 
-        $i18n = Tools::lang();
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $taxes = Impuestos::codeModel();
 
         // filtros
         $this->listView($viewName)
             ->addFilterSelectWhere('status', [
-                ['label' => $i18n->trans('only-active'), 'where' => [Where::eq('bloqueado', false)]],
-                ['label' => $i18n->trans('blocked'), 'where' => [Where::eq('bloqueado', true)]],
-                ['label' => $i18n->trans('public'), 'where' => [Where::eq('publico', true)]],
-                ['label' => $i18n->trans('all'), 'where' => []]
+                ['label' => Tools::trans('only-active'), 'where' => [Where::eq('bloqueado', false)]],
+                ['label' => Tools::trans('blocked'), 'where' => [Where::eq('bloqueado', true)]],
+                ['label' => Tools::trans('public'), 'where' => [Where::eq('publico', true)]],
+                ['label' => Tools::trans('all'), 'where' => []]
             ])
             ->addFilterSelect('codfamilia', 'family', 'codfamilia', $families)
             ->addFilterNumber('min-price', 'price', 'precio', '<=')
