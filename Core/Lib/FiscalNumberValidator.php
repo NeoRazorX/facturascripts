@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -147,6 +147,25 @@ class FiscalNumberValidator
         return mb_substr($dni, -1) === $letter;
     }
 
+    public static function normaliceCifNif(string $cifNif, string $pattern = '', string $default = ''): string
+    {
+        if (empty($cifNif)) {
+            return $default;
+        }
+
+        // Eliminar lo que no sea alfanumérico
+        $nif = strtoupper(preg_replace('/[^A-Z0-9]/i', '', $cifNif));
+
+        // Aplicar patrón si se proporciona
+        if (!empty($pattern)) {
+            if (!preg_match($pattern, $nif)) {
+                return $default;
+            }
+        }
+
+        return $nif;
+    }
+
     /**
      * Check the number depend on type and return true if the number if valid.
      *
@@ -199,7 +218,6 @@ class FiscalNumberValidator
 
         return true;
     }
-
 
     private static function sumDigits(int $num): int
     {
