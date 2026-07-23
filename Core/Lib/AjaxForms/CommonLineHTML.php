@@ -335,7 +335,8 @@ trait CommonLineHTML
             return ($line->coste + $profit + $tax) * $line->cantidad;
         }
 
-        return $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+        return $line->pvptotal * $model->getEUDiscount()
+            * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
     }
 
     private static function suplido(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
