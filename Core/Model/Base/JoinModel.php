@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Where;
 
 /**
  * @deprecated Usar FacturaScripts\Core\Template\JoinModel en su lugar.
@@ -130,7 +131,7 @@ abstract class JoinModel
     /**
      * Load data for the indicated where.
      *
-     * @param DataBaseWhere[] $where filters to apply to model records.
+     * @param DataBaseWhere[]|Where[] $where filters to apply to model records.
      * @param array $order fields to use in the sorting. For example ['code' => 'ASC']
      * @param int $offset
      * @param int $limit
@@ -142,7 +143,7 @@ abstract class JoinModel
         $result = [];
         if ($this->checkTables()) {
             $sql = 'SELECT ' . $this->fieldsList() . ' FROM ' . $this->getSQLFrom()
-                . DataBaseWhere::getSQLWhere($where) . $this->getGroupBy() . $this->getOrderBy($order);
+                . Where::multiSqlLegacy($where) . $this->getGroupBy() . $this->getOrderBy($order);
             foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $row) {
                 $result[] = new static($row);
             }
@@ -164,7 +165,7 @@ abstract class JoinModel
     /**
      * Returns the number of records that meet the condition.
      *
-     * @param DataBaseWhere[] $where filters to apply to records.
+     * @param DataBaseWhere[]|Where[] $where filters to apply to records.
      *
      * @return int
      */
@@ -186,7 +187,7 @@ abstract class JoinModel
 
         $sql = 'SELECT ' . $groupFields . 'COUNT(*) count_total'
             . ' FROM ' . $this->getSQLFrom()
-            . DataBaseWhere::getSQLWhere($where)
+            . Where::multiSqlLegacy($where)
             . $this->getGroupBy();
 
         $data = self::$dataBase->select($sql);
@@ -285,7 +286,7 @@ abstract class JoinModel
 
         $sql = 'SELECT ' . $this->fieldsList()
             . ' FROM ' . $this->getSQLFrom()
-            . DataBaseWhere::getSQLWhere($where)
+            . Where::multiSqlLegacy($where)
             . $this->getGroupBy()
             . $this->getOrderBy($orderby);
 
@@ -330,8 +331,8 @@ abstract class JoinModel
         $field = $fields[$field] ?? $field;
 
         $sql = false !== strpos($field, '(') ?
-            'SELECT ' . $field . ' AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where) :
-            'SELECT SUM(' . $field . ') AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where);
+            'SELECT ' . $field . ' AS total_sum' . ' FROM ' . $this->getSQLFrom() . Where::multiSqlLegacy($where) :
+            'SELECT SUM(' . $field . ') AS total_sum' . ' FROM ' . $this->getSQLFrom() . Where::multiSqlLegacy($where);
 
         $data = self::$dataBase->select($sql);
         $sum = count($data) == 1 ? (float)$data[0]['total_sum'] : 0.0;
