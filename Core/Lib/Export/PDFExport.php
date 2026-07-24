@@ -243,7 +243,7 @@ class PDFExport extends PDFDocument
         }
     }
 
-    public function setCompany(int $idempresa): void
+    public function setCompany($idempresa)
     {
         // new page
         if ($this->pdf === null) {
