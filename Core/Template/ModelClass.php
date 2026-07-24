@@ -372,6 +372,7 @@ abstract class ModelClass
      */
     public function getDirty(): array
     {
+        // buscamos los campos que han cambiado
         $dirty = [];
         foreach (array_keys($this->getModelFields()) as $key) {
             if ($this->isDirty($key)) {
@@ -449,6 +450,12 @@ abstract class ModelClass
      */
     public function isDirty(?string $key = null): bool
     {
+        // si el modelo no está creado, no puede estar modificado
+        if (false === $this->exists()) {
+            return false;
+        }
+
+        // si no se especifica clave, comprobamos todos los campos
         if ($key === null) {
             $current = [];
             foreach (array_keys($this->getModelFields()) as $key) {
@@ -457,6 +464,7 @@ abstract class ModelClass
             return $current !== $this->original;
         }
 
+        // comprobamos la clave específica
         $current = $this->{$key} ?? null;
         $original = $this->original[$key] ?? null;
 
