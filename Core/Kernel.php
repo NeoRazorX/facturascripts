@@ -178,6 +178,7 @@ final class Kernel
         WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.FacturaProveedor.Update');
         WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PedidoProveedor.Update');
         WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PresupuestoProveedor.Update');
+        WorkQueue::addWorker('FormaPagoWorker', 'Model.FormaPago.Update');
 
         self::stopTimer('kernel::init');
     }
