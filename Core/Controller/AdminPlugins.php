@@ -194,7 +194,7 @@ class AdminPlugins extends Controller
         }
 
         if ($ok) {
-            Tools::log()->notice('reloading');
+            Tools::log()->notice('reloading')->bloquearInteraccion();
             $this->redirect($this->url(), 3);
         }
     }
@@ -278,7 +278,7 @@ class AdminPlugins extends Controller
         Cache::clear();
 
         if ($ok) {
-            Tools::log()->notice('reloading');
+            Tools::log()->notice('reloading')->bloquearInteraccion();
             $this->redirect($this->url(), 3);
         }
     }
