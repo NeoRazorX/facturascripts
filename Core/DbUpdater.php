@@ -80,6 +80,10 @@ final class DbUpdater
             $structure = self::readTableXml($file_path);
         }
 
+        if (false === self::validateStructure($table_name, $structure)) {
+            return false;
+        }
+
         $sql = self::sqlTool()->sqlCreateTable($table_name, $structure['columns'], $structure['constraints'], $structure['indexes']) . $sql_after;
         if (false === self::db()->exec($sql)) {
             self::$last_error = 'Error creating table ' . $table_name . ': ' . $sql;
@@ -237,6 +241,10 @@ final class DbUpdater
         if (empty($structure)) {
             $file_path = self::getTableXmlLocation($table_name);
             $structure = self::readTableXml($file_path);
+        }
+
+        if (false === self::validateStructure($table_name, $structure)) {
+            return false;
         }
 
         // comparamos las columnas, restricciones y los índices de la tabla con los del XML
@@ -550,5 +558,15 @@ final class DbUpdater
         }
 
         return self::$sql_tool;
+    }
+
+    private static function validateStructure(string $table_name, array $structure): bool
+    {
+        if (!empty($structure['columns'])) {
+            return true;
+        }
+
+        self::$last_error = 'Invalid or empty structure for table ' . $table_name;
+        return false;
     }
 }
