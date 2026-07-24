@@ -169,14 +169,21 @@ class EditPageOption extends Controller
      */
     protected function loadPageOptions(): void
     {
-        if ($this->selectedUser && false === $this->loadPageOptionsForUser()) {
+        // comprobamos si existen personalizaciones guardadas
+        $customized = $this->selectedUser ?
+            $this->loadPageOptionsForUser() :
+            $this->loadPageOptionsForAll();
+
+        // partimos de la estructura actual del XML y, si hay personalización, aplicamos sus cambios sobre ella
+        if ($customized) {
+            $custom = clone $this->model;
+            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
+            VisualItemLoadEngine::mergeCustomization($this->model, $custom);
+        } else {
             VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
         }
 
-        if (empty($this->selectedUser) && false === $this->loadPageOptionsForAll()) {
-            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
-        }
-
+        // creamos la estructura visual
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->model);
     }
 
