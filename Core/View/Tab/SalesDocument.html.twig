@@ -293,7 +293,11 @@
     }
 
     function salesLineTotalWithTaxes(id) {
-        const total = parseFloat(prompt('{{ trans('total-with-taxes') }}').replace(',', '.')) || 0;
+        const totalInput = prompt('{{ trans('total-with-taxes') }}');
+        if (totalInput === null) {
+            return false;
+        }
+        const total = parseFloat(totalInput.replace(',', '.')) || 0;
         const dtopor = parseFloat(document.forms['salesForm']['dtopor_' + id].value) || 0;
         const dtopor2 = parseFloat(document.forms['salesForm']['dtopor2_' + id].value) || 0;
         const globalDtopor = parseFloat(document.forms['salesForm']['dtopor1'].value) || 0;
@@ -308,6 +312,7 @@
         } else if (cantidad <= 0) {
             alert('cantidad > 0');
         } else {
+            document.forms['salesForm']['linetotal_' + id].value = total;
             let pvpSinDto = (100 * total / cantidad) / (100 + iva + recargo - irpf);
             let pvp = 10000 * pvpSinDto / ((100 - dtopor) * (100 - dtopor2) * globalDiscount);
             document.forms['salesForm']['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
@@ -316,7 +321,11 @@
     }
 
     function salesLineTotalWithoutTaxes(id) {
-        const total = parseFloat(prompt('{{ trans('net') }}').replace(',', '.')) || 0;
+        const totalInput = prompt('{{ trans('net') }}');
+        if (totalInput === null) {
+            return false;
+        }
+        const total = parseFloat(totalInput.replace(',', '.')) || 0;
         const dtopor = parseFloat(document.forms['salesForm']['dtopor_' + id].value) || 0;
         const dtopor2 = parseFloat(document.forms['salesForm']['dtopor2_' + id].value) || 0;
         const cantidad = parseFloat(document.forms['salesForm']['cantidad_' + id].value) || 0;
@@ -325,6 +334,7 @@
         } else if (cantidad <= 0) {
             alert('cantidad > 0');
         } else {
+            document.forms['salesForm']['lineneto_' + id].value = total;
             let pvpSinDto = (100 * total / cantidad) / 100;
             let pvp = 10000 * pvpSinDto / ((100 - dtopor) * (100 - dtopor2));
             document.forms['salesForm']['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
