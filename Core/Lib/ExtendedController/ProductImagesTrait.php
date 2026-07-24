@@ -69,8 +69,13 @@ trait ProductImagesTrait
             try {
                 $folder = Tools::folder('MyFiles');
                 Tools::folderCheckOrCreate($folder);
-                $uploadFile->move($folder, $uploadFile->getClientOriginalName());
-                $idfile = $this->createAttachedFile($uploadFile->getClientOriginalName());
+                // el nombre lo pone el navegador del cliente, por lo que dos subidas simultáneas
+                // con el mismo nombre se pisarían el archivo; añadimos un componente único
+                $parts = pathinfo($uploadFile->getClientOriginalName());
+                $fileName = $parts['filename'] . '_' . uniqid('', true)
+                    . (empty($parts['extension']) ? '' : '.' . $parts['extension']);
+                $uploadFile->move($folder, $fileName);
+                $idfile = $this->createAttachedFile($fileName);
                 if (empty($idfile)) {
                     Tools::log()->error('record-save-error');
                     return true;

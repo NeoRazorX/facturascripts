@@ -140,8 +140,13 @@ class ApiAttachedFiles extends ApiController
                 continue;
             }
 
-            $file->move('MyFiles', $file->getClientOriginalName());
-            $this->model->path = $file->getClientOriginalName();
+            // el nombre lo pone el navegador del cliente, por lo que dos subidas simultáneas
+            // con el mismo nombre se pisarían el archivo; añadimos un componente único
+            $parts = pathinfo($file->getClientOriginalName());
+            $fileName = $parts['filename'] . '_' . uniqid('', true)
+                . (empty($parts['extension']) ? '' : '.' . $parts['extension']);
+            $file->move('MyFiles', $fileName);
+            $this->model->path = $fileName;
         }
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
