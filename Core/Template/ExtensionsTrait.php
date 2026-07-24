@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Template;
 
 use BadMethodCallException;
 use Closure;
+use FacturaScripts\Core\Tools;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -41,6 +42,14 @@ trait ExtensionsTrait
     protected static $extensionCache = [];
 
     /**
+     * Stores the method name conflicts already reported, to avoid logging
+     * the same warning on every call.
+     *
+     * @var array
+     */
+    protected static $reportedConflicts = [];
+
+    /**
      * Executes the first matched extension.
      *
      * @param string $name
@@ -59,6 +68,22 @@ trait ExtensionsTrait
 
         // Execute first extension found (respecting priority)
         if (!empty(static::$extensionCache[$name])) {
+            // When several extensions register a method with the same name, __call()
+            // only runs the first one. This is a common source of confusion for
+            // developers whose implementation is silently ignored, so we warn them
+            // about the name conflict (use pipe() to chain several implementations).
+            if (count(static::$extensionCache[$name]) > 1) {
+                $conflictKey = static::class . '::' . $name;
+                if (false === isset(static::$reportedConflicts[$conflictKey])) {
+                    static::$reportedConflicts[$conflictKey] = true;
+                    Tools::log()->warning(
+                        'There are ' . count(static::$extensionCache[$name]) . ' extensions with the method "'
+                        . $name . '" on class ' . static::class . '. Only the first one is executed. '
+                        . 'Use pipe() if you need to chain several implementations.'
+                    );
+                }
+            }
+
             return call_user_func_array(static::$extensionCache[$name][0]->bindTo($this, static::class), $arguments);
         }
 
@@ -104,6 +129,7 @@ trait ExtensionsTrait
     {
         static::$extensions = [];
         static::$extensionCache = [];
+        static::$reportedConflicts = [];
     }
 
     /**
