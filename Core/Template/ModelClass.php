@@ -806,6 +806,9 @@ abstract class ModelClass
             } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
                 Tools::log()->warning('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]);
                 $return = false;
+            } elseif ($this->fieldValueExceedsMaxLength($value, $this->{$key})) {
+                Tools::log()->warning('value-too-long');
+                $return = false;
             }
 
             // comprobamos que los campos de texto no superen la longitud máxima
@@ -983,6 +986,27 @@ abstract class ModelClass
         }
 
         return in_array(strtolower($value), ['true', 't', '1'], false);
+    }
+
+   /**
+    * Comprueba si el valor de un campo de texto supera la longitud máxima permitida.
+    *
+    * @param array $field Definición del campo.
+    * @param mixed $value Valor que se debe comprobar.
+    *
+    * @return bool
+    */
+    private function fieldValueExceedsMaxLength(array $field, $value): bool
+    {
+        if ($value === null || is_array($value) || is_object($value)) {
+            return false;
+        }
+
+        if (preg_match('/^(?:character varying|varchar|char)\((\d+)\)$/i', (string)$field['type'], $matches) !== 1) {
+            return false;
+        }
+
+        return strlen((string)$value) > (int)$matches[1];
     }
 
     /**
