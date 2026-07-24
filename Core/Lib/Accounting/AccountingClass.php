@@ -77,6 +77,10 @@ abstract class AccountingClass extends AccountingAccounts
     protected function addLinesFromTotals($accountEntry, $totals, $isDebit, $counterpart, $accountError, $saveError): bool
     {
         foreach ($totals as $code => $total) {
+            if (empty($total)) {
+                continue;
+            }
+
             $subaccount = $this->getSubAccount($code);
             if (empty($subaccount->codsubcuenta)) {
                 Tools::log()->warning($accountError, [
