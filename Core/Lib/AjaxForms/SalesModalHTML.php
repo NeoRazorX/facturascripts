@@ -627,16 +627,21 @@ class SalesModalHTML
         return $html;
     }
 
-    private static function subfamilias(Familia $family, int $level = 1): string
+    private static function subfamilias(Familia $family, int $level = 1, array $visited = []): string
     {
+        $visited[$family->codfamilia] = true;
         $options = '';
         foreach (Familias::children($family->codfamilia) as $fam) {
+            if (isset($visited[$fam->codfamilia])) {
+                continue;
+            }
+
             $options .= '<option value="' . $fam->codfamilia . '">'
                 . str_repeat('-', $level) . ' ' . $fam->descripcion
                 . '</option>';
 
             // añadimos las subfamilias de forma recursiva
-            $options .= static::subfamilias($fam, $level + 1);
+            $options .= static::subfamilias($fam, $level + 1, $visited);
         }
 
         return $options;

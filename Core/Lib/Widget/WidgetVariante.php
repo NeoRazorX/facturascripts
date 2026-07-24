@@ -208,15 +208,20 @@ class WidgetVariante extends WidgetText
             . '</select>';
     }
 
-    private function familyOption(Familia $family, int $level = 0): string
+    private function familyOption(Familia $family, int $level = 0, array $visited = []): string
     {
+        $visited[$family->codfamilia] = true;
         $prefix = $level > 0 ? str_repeat('-', $level) . ' ' : '';
         $html = '<option value="' . $this->escapeHtml($family->codfamilia) . '">'
             . $prefix . $this->escapeHtml($family->descripcion) . '</option>';
 
         // añadimos las subfamilias de forma recursiva
         foreach (Familias::children($family->codfamilia) as $child) {
-            $html .= $this->familyOption($child, $level + 1);
+            if (isset($visited[$child->codfamilia])) {
+                continue;
+            }
+
+            $html .= $this->familyOption($child, $level + 1, $visited);
         }
 
         return $html;
