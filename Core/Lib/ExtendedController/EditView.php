@@ -33,6 +33,7 @@ class EditView extends BaseView
 {
     const DEFAULT_TEMPLATE = 'Master/EditView.html.twig';
     const READONLY_TEMPLATE = 'Master/EditViewReadOnly.html.twig';
+    const TEXTONLY_TEMPLATE = 'Master/EditViewTextOnly.html.twig';
 
     /**
      * Method to export the view data.
@@ -104,6 +105,26 @@ class EditView extends BaseView
     public function setReadOnly(bool $value): EditView
     {
         $this->template = $value ? static::READONLY_TEMPLATE : static::DEFAULT_TEMPLATE;
+
+        return $this;
+    }
+
+    /**
+     * Allows you to set the view as text only
+     *
+     * @param bool $value
+     * @return EditView
+     */
+    public function setTextOnly(bool $value): EditView
+    {
+        // if the view is called from the edit form, then it is not text only
+        $request = Request::createFromGlobals();
+        $action = $request->request->get('action');
+        if ($action === 'mostrar-formulario-editar') {
+            return $this;
+        }
+
+        $this->template = $value ? static::TEXTONLY_TEMPLATE : static::DEFAULT_TEMPLATE;
 
         return $this;
     }
