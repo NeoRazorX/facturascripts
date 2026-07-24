@@ -32,6 +32,7 @@ use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 
 /**
  * Controller for editing models that are related and show
@@ -161,6 +162,29 @@ abstract class ComercialContactController extends EditController
 
         if ($model->checkVies()) {
             Tools::log()->notice('vies-check-success', ['%vat-number%' => $model->cifnif]);
+        }
+
+        return true;
+    }
+
+    protected function addSubaccountAction(): bool
+    {
+
+        $model = $this->getModel();
+        $primaryKey = $this->request->input($model->primaryColumn());
+        $code = $this->request->query('code', $primaryKey);
+        if (false === $model->loadFromCode($code)) {
+            Tools::log()->error('record-not-found');
+            return true;
+        }
+
+        $ejercicio = new DinEjercicio();
+        $ejercicio->idempresa = Tools::settings('default', 'idempresa');
+        if ($ejercicio->loadFromDate(Tools::date(), true, false)) {
+            $subAccount = $model->createSubaccount($ejercicio->codejercicio);
+            if ($subAccount->exists()) {
+                Tools::log()->notice('record-updated-correctly');
+            }
         }
 
         return true;
@@ -323,6 +347,9 @@ abstract class ComercialContactController extends EditController
         switch ($action) {
             case 'add-file':
                 return $this->addFileAction();
+            
+            case 'add-subaccount':
+                return $this->addSubaccountAction();
 
             case 'approve-document':
                 return $this->approveDocumentAction($codes, $model, $allowUpdate, $this->dataBase);
@@ -425,7 +452,14 @@ abstract class ComercialContactController extends EditController
                 $codsubcuenta = $this->mainTabModelValue('codsubcuenta');
                 $where = [Where::eq('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
-                $this->setSettings($viewName, 'active', $view->count > 0);
+                if ($view->count <= 0) {
+                    $this->addButton($viewName, [
+                        'action' => 'add-subaccount',
+                        'color' => 'outline-success',
+                        'icon' => 'fa-solid fa-plus',
+                        'label' => 'add'
+                    ]);
+                }
                 break;
 
             case 'ListEmailSent':
