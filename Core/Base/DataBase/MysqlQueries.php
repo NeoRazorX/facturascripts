@@ -223,7 +223,7 @@ class MysqlQueries implements DataBaseQueries
 
     public function sqlDropIndex(string $tableName, array $colData): string
     {
-        return 'DROP INDEX IF EXISTS ' . $colData['name'] . ' ON ' . $tableName . ';';
+        return 'DROP INDEX ' . $colData['name'] . ' ON ' . $tableName . ';';
     }
 
     /**

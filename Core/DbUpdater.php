@@ -404,6 +404,13 @@ final class DbUpdater
 
     private static function compareIndexes(string $table_name, array $xml_indexes, array $db_indexes, array &$sqlQueries): void
     {
+        // los índices compuestos aparecen una vez por columna, así que los agrupamos por nombre
+        $unique_db_indexes = [];
+        foreach ($db_indexes as $db_idx) {
+            $unique_db_indexes[$db_idx['name']] = $db_idx;
+        }
+        $db_indexes = array_values($unique_db_indexes);
+
         // Agregamos fs_ al inicio del 'name'
         // Así la comparación es correcta al buscar los índices
         foreach ($xml_indexes as $key => $value) {
