@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Component\ComponentBlock;
+use FacturaScripts\Core\Component\HasComponentBlocks;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
@@ -32,6 +34,7 @@ use FacturaScripts\Dinamic\Model\User;
  */
 abstract class PanelController extends BaseController
 {
+    use HasComponentBlocks;
     /**
      * Indicates if the main view has data or is empty.
      *
@@ -107,6 +110,9 @@ abstract class PanelController extends BaseController
             }
         }
 
+        // Process active component block (if any)
+        $this->processActiveComponentBlock();
+
         // General operations with the loaded data
         $this->execAfterAction($action);
         $this->pipeFalse('execAfterAction', $action);
@@ -140,6 +146,10 @@ abstract class PanelController extends BaseController
 
         foreach (array_keys($this->views) as $viewName) {
             $this->views[$viewName]->settings['card'] = $this->tabsPosition !== 'top';
+        }
+
+        foreach ($this->componentBlocks as $block) {
+            $block->settings['card'] = $this->tabsPosition !== 'top';
         }
     }
 

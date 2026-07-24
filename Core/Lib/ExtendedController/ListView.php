@@ -128,6 +128,10 @@ class ListView extends BaseView
 
     public function btnNewUrl(): string
     {
+        if (!empty($this->settings['btnNewUrl'])) {
+            return $this->settings['btnNewUrl'];
+        }
+
         $url = empty($this->model) ? '' : $this->model->url('new');
         $params = [];
         foreach (DataBaseWhere::getFieldsFilter($this->where) as $key => $value) {
