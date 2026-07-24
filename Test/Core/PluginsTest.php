@@ -411,6 +411,43 @@ final class PluginsTest extends TestCase
         $this->assertNull(Plugins::get('RenameFolder'));
     }
 
+    public function testStaleFolderInPluginsJson(): void
+    {
+        // instalamos TestPlugin2 de forma normal
+        $this->assertTrue(Plugins::add(__DIR__ . '/../__files/TestPlugin2.zip'));
+
+        // verificamos que el folder instalado es correcto
+        $this->assertEquals('TestPlugin2', Plugins::get('TestPlugin2')->folder);
+
+        // corrompemos plugins.json con un folder obsoleto (simula el escenario del bug:
+        // el usuario tenía la carpeta con otro nombre y la renombró manualmente)
+        $jsonPath = Tools::folder('MyFiles', Plugins::FILE_NAME);
+        $data = json_decode(file_get_contents($jsonPath), true);
+        foreach ($data as &$item) {
+            if ($item['name'] === 'TestPlugin2') {
+                $item['folder'] = 'TestPlugin2-old-folder';
+                break;
+            }
+        }
+        file_put_contents($jsonPath, json_encode($data, JSON_PRETTY_PRINT));
+
+        // reseteamos el caché estático para forzar recarga desde disco
+        $ref = new \ReflectionClass(Plugins::class);
+        $prop = $ref->getProperty('plugins');
+        $prop->setAccessible(true);
+        $prop->setValue(null, null);
+
+        // con el bug: enable() falla porque folder='TestPlugin2-old-folder' !== name='TestPlugin2'
+        // con el fix: enable() funciona porque loadFromFile() corrige el folder obsoleto
+        $this->assertTrue(Plugins::enable('TestPlugin2'));
+
+        // limpieza
+        $this->assertTrue(Plugins::disable('TestPlugin2'));
+        $this->assertTrue(Plugins::remove('TestPlugin2'));
+        $this->assertNull(Plugins::get('TestPlugin2'));
+    }
+
+
     public function testPluginsOrder(): void
     {
         // añadimos los plugins TestPlugin3, TestPlugin2 y TestPlugin4
