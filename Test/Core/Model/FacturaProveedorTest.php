@@ -198,6 +198,9 @@ final class FacturaProveedorTest extends TestCase
         $this->assertEquals($invoice->fecha, $entry->fecha, 'accounting-entry-bad-fecha');
         $this->assertEquals($invoice->idasiento, $entry->idasiento, 'accounting-entry-bad-idasiento');
 
+        // el asiento generado desde la factura debe nacer bloqueado (no editable)
+        $this->assertFalse($entry->editable, 'accounting-entry-should-be-locked');
+
         // cambiamos el descuento para que cambie el total (el asiento debe cambiar)
         $invoice->dtopor1 = 50;
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice-discount');
