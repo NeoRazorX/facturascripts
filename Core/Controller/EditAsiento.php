@@ -194,6 +194,23 @@ class EditAsiento extends PanelController
      */
     protected function execPreviousAction($action)
     {
+        // estas acciones se ejecutan por AJAX desde el editor de asientos y deben
+        // validar el token para asegurar que la petición procede del formulario (CSRF, tarea #1110)
+        $tokenActions = ['find-subaccount', 'new-line', 'rm-line', 'recalculate', 'save-doc'];
+        if (in_array($action, $tokenActions, true) && false === $this->validateFormToken()) {
+            $this->setTemplate(false);
+            $this->response->json([
+                'header' => '',
+                'lines' => '',
+                'footer' => '',
+                'list' => '',
+                'ok' => false,
+                'messages' => Tools::log()::read('master', $this->logLevels),
+                'multireqtoken' => $this->multiRequestProtection->newToken()
+            ]);
+            return false;
+        }
+
         switch ($action) {
             case 'add-file':
                 return $this->addFileAction();
@@ -268,7 +285,8 @@ class EditAsiento extends PanelController
             'lines' => '',
             'footer' => '',
             'list' => AccountingModalHTML::renderSubaccountList($model),
-            'messages' => Tools::log()::read('master', $this->logLevels)
+            'messages' => Tools::log()::read('master', $this->logLevels),
+            'multireqtoken' => $this->multiRequestProtection->newToken()
         ];
         $this->response->json($content);
         return false;
@@ -344,7 +362,8 @@ class EditAsiento extends PanelController
             'lines' => $renderLines ? AccountingLineHTML::render($lines, $model) : '',
             'footer' => AccountingFooterHTML::render($model),
             'list' => '',
-            'messages' => Tools::log()::read('master', $this->logLevels)
+            'messages' => Tools::log()::read('master', $this->logLevels),
+            'multireqtoken' => $this->multiRequestProtection->newToken()
         ];
         $this->response->json($content);
         return false;
@@ -395,7 +414,11 @@ class EditAsiento extends PanelController
 
     protected function sendJsonError(): bool
     {
-        $this->response->json(['ok' => false, 'messages' => Tools::log()::read('master', $this->logLevels)]);
+        $this->response->json([
+            'ok' => false,
+            'messages' => Tools::log()::read('master', $this->logLevels),
+            'multireqtoken' => $this->multiRequestProtection->newToken()
+        ]);
         return false;
     }
 
