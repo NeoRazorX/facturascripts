@@ -594,6 +594,15 @@ class InvoiceToAccounting extends AccountingClass
             return;
         }
 
+        // el asiento generado automáticamente desde la factura queda bloqueado:
+        // así se evita descuadrarlo a mano. Al modificar/eliminar la factura, el
+        // flujo de contabilización vuelve a marcarlo editable antes de borrarlo.
+        $entry->editable = false;
+        if (false === $entry->save()) {
+            Tools::log()->warning('accounting-entry-error', ['%document%' => $this->document->codigo]);
+            return;
+        }
+
         $this->document->idasiento = $entry->id();
     }
 
@@ -660,6 +669,15 @@ class InvoiceToAccounting extends AccountingClass
                 '%difference%' => abs($entry->debe - $entry->haber)
             ]);
             $entry->delete();
+            return;
+        }
+
+        // el asiento generado automáticamente desde la factura queda bloqueado:
+        // así se evita descuadrarlo a mano. Al modificar/eliminar la factura, el
+        // flujo de contabilización vuelve a marcarlo editable antes de borrarlo.
+        $entry->editable = false;
+        if (false === $entry->save()) {
+            Tools::log()->warning('accounting-entry-error', ['%document%' => $this->document->codigo]);
             return;
         }
 
