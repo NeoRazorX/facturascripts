@@ -250,9 +250,9 @@ class PurchasesLineHTML
         // buscamos el código de barras en las variantes
         $whereBarcode = [Where::eq('codbarras', $formData['fastli'])];
         foreach (Variante::all($whereBarcode, [], 0, 5) as $variante) {
-            // comprobamos que el producto se puede comprar
+            // comprobamos que la variante no esté bloqueada y que el producto se pueda comprar
             $product = $variante->getProducto();
-            if (!$product->bloqueado && $product->secompra) {
+            if (false === $variante->bloqueada && !$product->bloqueado && $product->secompra) {
                 return $model->getNewProductLine($variante->referencia);
             }
         }
