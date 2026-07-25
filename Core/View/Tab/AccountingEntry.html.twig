@@ -69,6 +69,9 @@
             animateSpinner('remove', false);
             return Promise.reject(response);
         }).then(function (data) {
+            if (typeof data.multireqtoken === 'string') {
+                document.forms['accEntryForm']['multireqtoken'].value = data.multireqtoken;
+            }
             if (data.header !== '') {
                 document.getElementById("accEntryFormHeader").innerHTML = data.header;
             }
@@ -124,6 +127,9 @@
             animateSpinner('remove', false);
             return Promise.reject(response);
         }).then(function (data) {
+            if (typeof data.multireqtoken === 'string') {
+                document.forms['accEntryForm']['multireqtoken'].value = data.multireqtoken;
+            }
             if (Array.isArray(data.messages)) {
                 data.messages.forEach(item => alert(item.message));
             }
