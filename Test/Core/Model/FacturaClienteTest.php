@@ -277,6 +277,9 @@ final class FacturaClienteTest extends TestCase
         $this->assertEquals($invoice->fecha, $entry->fecha, 'accounting-entry-bad-date');
         $this->assertEquals($invoice->idasiento, $entry->idasiento, 'accounting-entry-bad-idasiento');
 
+        // el asiento generado desde la factura debe nacer bloqueado (no editable)
+        $this->assertFalse($entry->editable, 'accounting-entry-should-be-locked');
+
         // aplicamos un descuento para modificar el total de la factura
         $invoice->dtopor1 = 50;
         Calculator::calculate($invoice, $lines, false);
