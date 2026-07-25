@@ -47,7 +47,6 @@ final class FamiliasTest extends TestCase
         $this->setFamilies([$familyA, $familyB]);
 
         $method = new ReflectionMethod(SalesModalHTML::class, 'subfamilias');
-        $method->setAccessible(true);
         $html = $method->invoke(null, $familyA);
 
         $this->assertStringContainsString('value="B"', $html);
@@ -74,7 +73,6 @@ final class FamiliasTest extends TestCase
     private function setFamilies(array $families): void
     {
         $property = new ReflectionProperty(Familias::class, 'list');
-        $property->setAccessible(true);
         $property->setValue(null, $families);
     }
 }
