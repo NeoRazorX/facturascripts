@@ -312,7 +312,7 @@ trait CommonLineHTML
             return '<div class="col-auto order-9">'
                 . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-light me-2" title="'
                 . Tools::trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button>'
-                . '<button class="btn btn-sm btn-danger btn-spin-action" type="button" title="' . Tools::trans('delete') . '"'
+                . '<button class="btn btn-sm btn-outline-danger btn-spin-action" type="button" title="' . Tools::trans('delete') . '"'
                 . ' onclick="return ' . $jsName . '(\'rm-line\', \'' . $idlinea . '\');">'
                 . '<i class="fa-solid fa-trash-alt"></i></button>'
                 . '</div>';
