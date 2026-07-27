@@ -27,6 +27,7 @@ use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
 use FacturaScripts\Core\Lib\TaxExceptions;
+use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
  * Controlador para editar un único elemento del modelo Proveedor
@@ -139,6 +140,9 @@ class EditProveedor extends ComercialContactController
     protected function createViews(): void
     {
         parent::createViews();
+
+        // avisa si el cifnif ya lo usa otro proveedor
+        AssetManager::addJs(Tools::config('route') . '/Dinamic/Assets/JS/CheckDuplicatedCifnif.js');
 
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fa-solid fa-piggy-bank');

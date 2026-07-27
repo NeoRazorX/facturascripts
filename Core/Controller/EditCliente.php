@@ -28,6 +28,7 @@ use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Core\Lib\TaxExceptions;
+use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -144,6 +145,9 @@ class EditCliente extends ComercialContactController
     protected function createViews(): void
     {
         parent::createViews();
+
+        // avisa si el cifnif ya lo usa otro cliente
+        AssetManager::addJs(Tools::config('route') . '/Dinamic/Assets/JS/CheckDuplicatedCifnif.js');
 
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-solid fa-piggy-bank');
