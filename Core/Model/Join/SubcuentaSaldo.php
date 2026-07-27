@@ -47,6 +47,31 @@ class SubcuentaSaldo extends JoinModel
         $this->canal = 0;
     }
 
+    public function loadFromData(array $data): void
+    {
+        parent::loadFromData($data);
+        $this->saldo = round($this->debe - $this->haber, FS_NF0);
+    }
+
+    /**
+     * Load in an array "detail" the monthly and channel balances of a sub-account
+     * and return the sum of them.
+     */
+    public function setSubAccountBalance($idSubAccount, $channel, &$detail): float
+    {
+        $result = 0;
+        $where = [
+            Where::eq('partidas.idsubcuenta', $idSubAccount),
+            Where::eq('asientos.canal', empty($channel) ? null : $channel),
+        ];
+        foreach (static::all($where, ['mes' => 'ASC']) as $values) {
+            $detail[$values->mes - 1] = round($values->saldo, (int)FS_NF0);
+            $result += $values->saldo;
+        }
+
+        return round($result, (int)FS_NF0);
+    }
+
     protected function getFields(): array
     {
         return [
@@ -81,30 +106,5 @@ class SubcuentaSaldo extends JoinModel
             'asientos',
             'partidas'
         ];
-    }
-
-    public function loadFromData(array $data): void
-    {
-        parent::loadFromData($data);
-        $this->saldo = round($this->debe - $this->haber, FS_NF0);
-    }
-
-    /**
-     * Load in an array "detail" the monthly and channel balances of a sub-account
-     * and return the sum of them.
-     */
-    public function setSubAccountBalance($idSubAccount, $channel, &$detail): float
-    {
-        $result = 0;
-        $where = [
-            Where::eq('partidas.idsubcuenta', $idSubAccount),
-            Where::eq('asientos.canal', empty($channel) ? null : $channel),
-        ];
-        foreach (static::all($where, ['mes' => 'ASC']) as $values) {
-            $detail[$values->mes - 1] = round($values->saldo, (int)FS_NF0);
-            $result += $values->saldo;
-        }
-
-        return round($result, (int)FS_NF0);
     }
 }

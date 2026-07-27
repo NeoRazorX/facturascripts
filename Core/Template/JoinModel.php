@@ -50,14 +50,14 @@ abstract class JoinModel
     /** @var array Atributos del modelo. */
     private $attributes = [];
 
-    /** Devuelve la lista de tablas necesarias para la ejecución de la vista. */
-    abstract protected function getTables(): array;
-
     /** Devuelve la lista de campos o columnas para la cláusula SELECT. */
     abstract protected function getFields(): array;
 
     /** Devuelve las tablas relacionadas para la cláusula FROM. */
     abstract protected function getSQLFrom(): string;
+
+    /** Devuelve la lista de tablas necesarias para la ejecución de la vista. */
+    abstract protected function getTables(): array;
 
     /** Constructor e inicializador de la clase. */
     public function __construct(array $data = [])
@@ -284,6 +284,17 @@ abstract class JoinModel
         return isset($fields[$columnName]);
     }
 
+    /** Devuelve el valor de la clave primaria del modelo master. */
+    public function id()
+    {
+        if (isset($this->masterModel)) {
+            $primaryColumn = $this->masterModel->primaryColumn();
+            return $this->{$primaryColumn};
+        }
+
+        return null;
+    }
+
     /**
      * Carga un registro del modelo utilizando el código de la clave primaria del master model.
      *
@@ -337,16 +348,12 @@ abstract class JoinModel
         return $this->load($cod);
     }
 
-    /**
-     * Carga el primer registro cuyo campo coincide con el valor indicado.
-     *
-     * @param string $field
-     * @param mixed $value
-     * @return bool
-     */
-    public function loadWhereEq(string $field, $value): bool
+    /** Asigna los valores del array $data a los atributos del modelo. */
+    public function loadFromData(array $data): void
     {
-        return $this->loadWhere([Where::eq($field, $value)]);
+        foreach ($data as $field => $value) {
+            $this->attributes[$field] = $value;
+        }
     }
 
     /**
@@ -375,15 +382,16 @@ abstract class JoinModel
         return true;
     }
 
-    /** Devuelve el valor de la clave primaria del modelo master. */
-    public function id()
+    /**
+     * Carga el primer registro cuyo campo coincide con el valor indicado.
+     *
+     * @param string $field
+     * @param mixed $value
+     * @return bool
+     */
+    public function loadWhereEq(string $field, $value): bool
     {
-        if (isset($this->masterModel)) {
-            $primaryColumn = $this->masterModel->primaryColumn();
-            return $this->{$primaryColumn};
-        }
-
-        return null;
+        return $this->loadWhere([Where::eq($field, $value)]);
     }
 
     /**
@@ -450,15 +458,6 @@ abstract class JoinModel
         return '';
     }
 
-    /**
-     * Construye la clave de caché incluyendo las tablas del join,
-     * para poder invalidarla solamente cuando cambia alguna de ellas.
-     */
-    private function getCacheKey(string $suffix): string
-    {
-        return 'join-model-' . implode('-', $this->getTables()) . '-' . md5($this->getSQLFrom()) . '-' . $suffix;
-    }
-
     /** Comprueba que existen todas las tablas necesarias. */
     private function checkTables(): bool
     {
@@ -498,6 +497,15 @@ abstract class JoinModel
         return $result;
     }
 
+    /**
+     * Construye la clave de caché incluyendo las tablas del join,
+     * para poder invalidarla solamente cuando cambia alguna de ellas.
+     */
+    private function getCacheKey(string $suffix): string
+    {
+        return 'join-model-' . implode('-', $this->getTables()) . '-' . md5($this->getSQLFrom()) . '-' . $suffix;
+    }
+
     /** Devuelve la cláusula GROUP BY. */
     private function getGroupBy(): string
     {
@@ -521,14 +529,6 @@ abstract class JoinModel
             $coma = ', ';
         }
         return $result;
-    }
-
-    /** Asigna los valores del array $data a los atributos del modelo. */
-    public function loadFromData(array $data): void
-    {
-        foreach ($data as $field => $value) {
-            $this->attributes[$field] = $value;
-        }
     }
 
     /** Establece el modelo master para las operaciones de datos. */
