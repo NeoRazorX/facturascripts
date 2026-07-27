@@ -400,7 +400,7 @@
     "country": "Land",
     "country-not-in-eu": "Das Land mit dem Code %codiso% gehört nicht zur Europäischen Union",
     "crash-files-found": "Dateien mit schwerwiegenden Fehlern gefunden",
-    "crash-files-p": "Se han encontrado archivos de error fatal en la instalación. Puedes borrarlos o enviárnoslos para ayudarnos a solucionar estos errores.",
+    "crash-files-p": "In der Installation wurden Dateien mit schwerwiegenden Fehlern gefunden. Sie können sie löschen oder uns zusenden, damit wir helfen können, diese Fehler zu beheben.",
     "create": "erstellen",
     "create-accounting-entry": "Buchung erstellen",
     "create-delivery-note": "Lieferschein erstellen",

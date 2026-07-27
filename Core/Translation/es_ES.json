@@ -2000,7 +2000,7 @@
     "unsafe-file-p": "Por motivos de seguridad impedimos las descargas de algunos tipos de archivos, como este: %file%",
     "unsafe-folder": "Carpeta no segura",
     "until-accounting-entry": "Hasta asiento",
-    "until-date": "Hasta el %date%",
+    "until-date": "Hasta",
     "until-hour": "Hora fin",
     "until-subaccount": "Hasta subcuenta",
     "update": "Actualizar",
