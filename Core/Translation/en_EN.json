@@ -264,6 +264,7 @@
     "change": "Change",
     "change-customer": "Change customer",
     "change-password-online-warning": "If this installation is going to be online, you should change the password to a more secure one.",
+    "change-supplier": "Change supplier",
     "change-warehouse": "Change warehouse",
     "changed-agent-to": "Changed agent %oldAgent% to agent %newAgent%",
     "changed-customer-to": "Customer %oldCustomer% has been changed to customer %newCustomer%",
