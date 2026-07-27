@@ -24,7 +24,10 @@ use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 
 /**
- * Description of PartidaAsiento
+ * Modelo auxiliar para cargar partidas junto con los datos de su asiento
+ * (fecha, número y canal). Combina las tablas partidas y asientos, con
+ * Partida como modelo master, y se utiliza para listar los movimientos
+ * de una subcuenta sin tener que cargar cada asiento por separado.
  *
  * @author Carlos Garcia Gomez              <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
@@ -41,6 +44,7 @@ class PartidaAsiento extends JoinModel
         $this->asiento = new Asiento();
     }
 
+    /** Devuelve el modelo Partida completo correspondiente a esta línea. */
     public function getPartida(): Partida
     {
         $partida = new Partida();
@@ -48,6 +52,7 @@ class PartidaAsiento extends JoinModel
         return $partida;
     }
 
+    /** Devuelve la URL del asiento, en lugar de la de la partida. */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         $this->asiento->idasiento = $this->idasiento;

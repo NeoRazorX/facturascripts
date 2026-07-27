@@ -23,7 +23,10 @@ use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Core\Where;
 
 /**
- * Auxiliary model to load a summary of subaccount
+ * Modelo auxiliar para cargar el resumen de saldos de una subcuenta.
+ * Combina las tablas partidas y asientos, agrupando por subcuenta, ejercicio,
+ * canal y mes, con la suma del debe y del haber de cada grupo. El saldo se
+ * calcula al cargar cada registro (debe menos haber).
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
@@ -47,6 +50,7 @@ class SubcuentaSaldo extends JoinModel
         $this->canal = 0;
     }
 
+    /** Además de asignar los datos, calcula el saldo (debe menos haber). */
     public function loadFromData(array $data): void
     {
         parent::loadFromData($data);
@@ -54,8 +58,13 @@ class SubcuentaSaldo extends JoinModel
     }
 
     /**
-     * Load in an array "detail" the monthly and channel balances of a sub-account
-     * and return the sum of them.
+     * Carga en el array $detail los saldos mensuales de una subcuenta para el
+     * canal indicado (índices 0 a 11, de enero a diciembre) y devuelve la suma
+     * de todos ellos, es decir, el saldo de la subcuenta en ese canal.
+     *
+     * @param mixed $idSubAccount id de la subcuenta
+     * @param mixed $channel canal del asiento; si está vacío se buscan los asientos sin canal
+     * @param array $detail array donde se cargan los saldos por mes
      */
     public function setSubAccountBalance($idSubAccount, $channel, &$detail): float
     {
