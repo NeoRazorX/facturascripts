@@ -142,7 +142,9 @@ class EditProveedor extends ComercialContactController
         parent::createViews();
 
         // avisa si el cifnif ya lo usa otro proveedor
-        AssetManager::addJs(Tools::config('route') . '/Dinamic/Assets/JS/CheckDuplicatedCifnif.js');
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/CheckDuplicatedCifnif.css');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/CheckDuplicatedCifnif.js');
 
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fa-solid fa-piggy-bank');

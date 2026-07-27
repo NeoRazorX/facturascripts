@@ -1,0 +1,7 @@
+.tooltip-cifnif {
+    --bs-tooltip-bg: var(--bs-warning);
+    --bs-tooltip-color: #000;
+    --bs-tooltip-max-width: 320px;
+    --bs-tooltip-opacity: 1;
+    pointer-events: none;
+}

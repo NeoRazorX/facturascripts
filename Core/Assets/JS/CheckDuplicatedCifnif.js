@@ -16,11 +16,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function checkDuplicatedCifnif(input, warning) {
+function showCifnifWarning(input, message) {
+    let tooltip = bootstrap.Tooltip.getInstance(input);
+    if (tooltip === null) {
+        tooltip = new bootstrap.Tooltip(input, {
+            customClass: 'tooltip-cifnif',
+            placement: 'bottom',
+            title: message,
+            trigger: 'manual'
+        });
+    }
+
+    tooltip.setContent({'.tooltip-inner': message});
+    input.classList.add('border-warning');
+    tooltip.show();
+}
+
+function hideCifnifWarning(input) {
+    const tooltip = bootstrap.Tooltip.getInstance(input);
+    if (tooltip !== null) {
+        tooltip.hide();
+    }
+
+    input.classList.remove('border-warning');
+}
+
+function checkDuplicatedCifnif(input) {
     const cifnif = input.value.trim();
     if (cifnif === '') {
-        warning.textContent = '';
-        warning.classList.add('d-none');
+        hideCifnifWarning(input);
         return;
     }
 
@@ -38,16 +62,13 @@ function checkDuplicatedCifnif(input, warning) {
         dataType: 'json',
         success: function (data) {
             if (data.duplicated === true) {
-                warning.textContent = data.message;
-                warning.classList.remove('d-none');
+                showCifnifWarning(input, data.message);
                 return;
             }
-            warning.textContent = '';
-            warning.classList.add('d-none');
+            hideCifnifWarning(input);
         },
         error: function () {
-            warning.textContent = '';
-            warning.classList.add('d-none');
+            hideCifnifWarning(input);
         }
     });
 }
@@ -56,17 +77,16 @@ $(document).ready(function () {
     $('form[id^="formEdit"] input[name="cifnif"]').each(function () {
         const input = this;
 
-        const warning = document.createElement('div');
-        warning.className = 'small text-danger mt-1 d-none';
-        input.parentNode.appendChild(warning);
-
-        $(input).on('change', function () {
-            checkDuplicatedCifnif(input, warning);
+        // mientras escribe ocultamos el aviso anterior, y comprobamos al salir del campo
+        $(input).on('input', function () {
+            hideCifnifWarning(input);
+        }).on('change', function () {
+            checkDuplicatedCifnif(input);
         });
 
         // si el registro ya venía con un cifnif duplicado, avisamos al cargar
         if (input.value.trim() !== '') {
-            checkDuplicatedCifnif(input, warning);
+            checkDuplicatedCifnif(input);
         }
     });
 });
