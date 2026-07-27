@@ -557,21 +557,29 @@ trait CommonSalesPurchases
             return '<div class="col-sm-auto">'
                 . '<div class="mb-2">'
                 . '<button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
-                . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</button>'
+                . '<i class="fa-solid fa-square-check fa-fw"></i> ' . Tools::trans('paid') . '</button>'
                 . '<div class="dropdown-menu dropdown-menu-end">'
                 . '<a class="dropdown-item text-danger" href="#" onclick="prepareForm(\'save-paid\', {\'paid-status\': 0});">'
-                . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::trans('unpaid') . '</a></div>'
+                . '<i class="fa-solid fa-money-bill-wave fa-fw"></i> ' . Tools::trans('unpaid') . '</a></div>'
                 . '</div>'
                 . '</div>';
         }
 
+        // en rojo solo si además está vencida; si todavía está en plazo, en neutro
+        $overdue = property_exists($model, 'vencida') && $model->vencida;
+        $btnClass = $overdue ? 'btn-outline-danger' : 'btn-outline-secondary';
+        $btnIcon = $overdue ? 'fa-calendar-xmark' : 'fa-money-bill-wave';
+        $btnLabel = $overdue ? Tools::trans('overdue') : Tools::trans('unpaid');
+        $btnTitle = $overdue ? ' title="' . Tools::trans('unpaid') . '"' : '';
+
         $html = '<div class="col-sm-auto">'
             . '<div class="mb-2">'
-            . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
-            . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::trans('unpaid') . '</button>'
+            . '<button class="btn btn-spin-action ' . $btnClass . ' dropdown-toggle" type="button"'
+            . $btnTitle . ' data-bs-toggle="dropdown" aria-expanded="false">'
+            . '<i class="fa-solid ' . $btnIcon . ' fa-fw"></i> ' . $btnLabel . '</button>'
             . '<div class="dropdown-menu dropdown-menu-end">'
             . '<button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#modalPaymentConditions">'
-            . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</button>'
+            . '<i class="fa-solid fa-square-check fa-fw"></i> ' . Tools::trans('paid') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
