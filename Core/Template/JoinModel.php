@@ -348,10 +348,19 @@ abstract class JoinModel
         return $this->load($cod);
     }
 
-    /** Asigna los valores del array $data a los atributos del modelo. */
-    public function loadFromData(array $data): void
+    /**
+     * Asigna los valores del array $data a los atributos del modelo.
+     *
+     * @param array $data
+     * @param array $exclude Campos que no se deben cargar.
+     */
+    public function loadFromData(array $data = [], array $exclude = []): void
     {
         foreach ($data as $field => $value) {
+            if (in_array($field, $exclude)) {
+                continue;
+            }
+
             $this->attributes[$field] = $value;
         }
     }

@@ -51,9 +51,9 @@ class SubcuentaSaldo extends JoinModel
     }
 
     /** Además de asignar los datos, calcula el saldo (debe menos haber). */
-    public function loadFromData(array $data): void
+    public function loadFromData(array $data = [], array $exclude = []): void
     {
-        parent::loadFromData($data);
+        parent::loadFromData($data, $exclude);
         $this->saldo = round($this->debe - $this->haber, FS_NF0);
     }
 
