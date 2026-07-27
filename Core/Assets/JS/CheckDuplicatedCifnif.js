@@ -20,7 +20,7 @@ function showCifnifWarning(input, message) {
     let tooltip = bootstrap.Tooltip.getInstance(input);
     if (tooltip === null) {
         tooltip = new bootstrap.Tooltip(input, {
-            customClass: 'tooltip-cifnif',
+            customClass: 'tooltip-warning',
             placement: 'bottom',
             title: message,
             trigger: 'manual'

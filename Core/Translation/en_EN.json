@@ -602,6 +602,7 @@
     "duplicated-cifnif": "Tax ID %cifnif% is already in use: %records%",
     "duplicated-cifnif-customer": "There is already a customer with the tax ID %cifnif%: %customers%. Do you want to create it anyway?",
     "duplicated-cifnif-supplier": "There is already a supplier with the tax ID %cifnif%: %suppliers%. Do you want to create it anyway?",
+    "duplicated-numsupplier": "Supplier number %numsupplier% is already in use: %documents%",
     "duplicated-reference": "Reference '%reference%' duplicated",
     "duplicated-request": "Duplicated request",
     "duration": "Duration",

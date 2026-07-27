@@ -602,6 +602,7 @@
     "duplicated-cifnif": "El CIF\/NIF %cifnif% ya está en uso: %records%",
     "duplicated-cifnif-customer": "Ya existe un cliente con el CIF\/NIF %cifnif%: %customers%. ¿Quieres crearlo de todas formas?",
     "duplicated-cifnif-supplier": "Ya existe un proveedor con el CIF\/NIF %cifnif%: %suppliers%. ¿Quieres crearlo de todas formas?",
+    "duplicated-numsupplier": "El número de proveedor %numsupplier% ya está en uso: %documents%",
     "duplicated-reference": "Referencia '%reference%' duplicada",
     "duplicated-request": "Petición duplicada",
     "duration": "Duración",

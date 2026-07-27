@@ -149,6 +149,9 @@
             }
             if (data.header !== '') {
                 document.getElementById("purchasesFormHeader").innerHTML = data.header;
+                if (typeof checkDuplicatedNumProveedor === 'function') {
+                    checkDuplicatedNumProveedor();
+                }
             }
             if (data.lines !== '') {
                 document.getElementById("purchasesFormLines").innerHTML = data.lines;

@@ -148,7 +148,7 @@ class EditCliente extends ComercialContactController
 
         // avisa si el cifnif ya lo usa otro cliente
         $route = Tools::config('route');
-        AssetManager::addCss($route . '/Dinamic/Assets/CSS/CheckDuplicatedCifnif.css');
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/TooltipWarning.css');
         AssetManager::addJs($route . '/Dinamic/Assets/JS/CheckDuplicatedCifnif.js');
 
         $this->createContactsView();

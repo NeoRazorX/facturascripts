@@ -1,4 +1,4 @@
-.tooltip-cifnif {
+.tooltip-warning {
     --bs-tooltip-bg: var(--bs-warning);
     --bs-tooltip-color: #000;
     --bs-tooltip-max-width: 320px;
