@@ -599,6 +599,8 @@
     "dto-2": "Dto. 2",
     "duplicate-customer-name-or-cif": "Existe un cliente con el mismo nombre o CIF\/NIF",
     "duplicate-record": "Registro duplicado",
+    "duplicated-cifnif-customer": "Ya existe un cliente con el CIF\/NIF %cifnif%: %customers%. ¿Quieres crearlo de todas formas?",
+    "duplicated-cifnif-supplier": "Ya existe un proveedor con el CIF\/NIF %cifnif%: %suppliers%. ¿Quieres crearlo de todas formas?",
     "duplicated-reference": "Referencia '%reference%' duplicada",
     "duplicated-request": "Petición duplicada",
     "duration": "Duración",

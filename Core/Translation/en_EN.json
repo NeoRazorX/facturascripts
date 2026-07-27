@@ -599,6 +599,8 @@
     "dto-2": "Discount 2",
     "duplicate-customer-name-or-cif": "A customer with the same name or VAT number exists",
     "duplicate-record": "Duplicated record",
+    "duplicated-cifnif-customer": "There is already a customer with the tax ID %cifnif%: %customers%. Do you want to create it anyway?",
+    "duplicated-cifnif-supplier": "There is already a supplier with the tax ID %cifnif%: %suppliers%. Do you want to create it anyway?",
     "duplicated-reference": "Reference '%reference%' duplicated",
     "duplicated-request": "Duplicated request",
     "duration": "Duration",

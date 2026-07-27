@@ -297,8 +297,25 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
+        // si el cifnif ya existe en otro proveedor avisamos, pero permitimos crearlo igualmente
+        $cifnif = trim($formData['newsupplier_cifnif'] ?? '');
+        $confirmed = ($formData['newsupplier_cifnif_confirmed'] ?? '') === '1';
+        if ($cifnif !== '' && false === $confirmed) {
+            $duplicated = $this->findSuppliersByCifnif($cifnif);
+            if (false === empty($duplicated)) {
+                $response = $this->emptyPurchasesResponse();
+                $response['duplicatedCifnif'] = true;
+                $response['duplicatedCifnifMessage'] = Tools::trans('duplicated-cifnif-supplier', [
+                    '%cifnif%' => $cifnif,
+                    '%suppliers%' => implode(', ', $duplicated)
+                ]);
+                $this->sendJsonWithLogs($response);
+                return false;
+            }
+        }
+
         $supplier = new Proveedor();
-        $supplier->cifnif = $formData['newsupplier_cifnif'] ?? '';
+        $supplier->cifnif = $cifnif;
         $supplier->email = $formData['newsupplier_email'] ?? '';
         $supplier->nombre = $formData['newsupplier_nombre'] ?? '';
         $supplier->telefono1 = $formData['newsupplier_telefono'] ?? '';
@@ -352,6 +369,18 @@ abstract class PurchasesController extends PanelController
             'products' => '',
         ]);
         return false;
+    }
+
+    /** Devuelve los proveedores que ya tienen este cifnif, como 'código - nombre'. */
+    private function findSuppliersByCifnif(string $cifnif): array
+    {
+        $names = [];
+        $where = [Where::eq('cifnif', $cifnif)];
+        foreach (Proveedor::all($where, ['LOWER(nombre)' => 'ASC'], 0, 5) as $supplier) {
+            $names[] = $supplier->codproveedor . ' - ' . $supplier->nombre;
+        }
+
+        return $names;
     }
 
     protected function exportAction()

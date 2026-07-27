@@ -298,8 +298,25 @@ abstract class SalesController extends PanelController
             return false;
         }
 
+        // si el cifnif ya existe en otro cliente avisamos, pero permitimos crearlo igualmente
+        $cifnif = trim($formData['newcustomer_cifnif'] ?? '');
+        $confirmed = ($formData['newcustomer_cifnif_confirmed'] ?? '') === '1';
+        if ($cifnif !== '' && false === $confirmed) {
+            $duplicated = $this->findCustomersByCifnif($cifnif);
+            if (false === empty($duplicated)) {
+                $response = $this->emptySalesResponse();
+                $response['duplicatedCifnif'] = true;
+                $response['duplicatedCifnifMessage'] = Tools::trans('duplicated-cifnif-customer', [
+                    '%cifnif%' => $cifnif,
+                    '%customers%' => implode(', ', $duplicated)
+                ]);
+                $this->sendJsonWithLogs($response);
+                return false;
+            }
+        }
+
         $customer = new Cliente();
-        $customer->cifnif = $formData['newcustomer_cifnif'] ?? '';
+        $customer->cifnif = $cifnif;
         $customer->codagente = $this->user->codagente;
         $customer->email = $formData['newcustomer_email'] ?? '';
         $customer->nombre = $formData['newcustomer_nombre'] ?? '';
@@ -373,6 +390,18 @@ abstract class SalesController extends PanelController
         }
 
         return false;
+    }
+
+    /** Devuelve los clientes que ya tienen este cifnif, como 'código - nombre'. */
+    private function findCustomersByCifnif(string $cifnif): array
+    {
+        $names = [];
+        $where = [Where::eq('cifnif', $cifnif)];
+        foreach (Cliente::all($where, ['LOWER(nombre)' => 'ASC'], 0, 5) as $customer) {
+            $names[] = $customer->codcliente . ' - ' . $customer->nombre;
+        }
+
+        return $names;
     }
 
     protected function exportAction()

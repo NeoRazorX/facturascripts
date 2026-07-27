@@ -133,6 +133,14 @@
             if (typeof data.multireqtoken === 'string') {
                 document.forms['purchasesForm']['multireqtoken'].value = data.multireqtoken;
             }
+            if (data.duplicatedCifnif === true) {
+                if (false === confirm(data.duplicatedCifnifMessage)) {
+                    return;
+                }
+                document.forms['purchasesForm']['newsupplier_cifnif_confirmed'].value = '1';
+                purchasesFormAction('create-supplier', '0');
+                return;
+            }
             if (data.supplierCreated === true) {
                 $('#newSupplierModal').modal('hide');
                 document.getElementById('newSupplierName').closest('.modal-body').querySelectorAll('input').forEach(function (input) {
