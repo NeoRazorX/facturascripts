@@ -392,19 +392,8 @@ trait CommonSalesPurchases
             $btnClass = 'btn w-100 btn-danger btn-spin-action';
         }
 
-        // si el estado genera documento, no se puede cambiar, sin eliminar el nuevo documento
-        if ($status->generadoc) {
-            return '<div class="col-sm-auto">'
-                . '<div class="mb-2">'
-                . '<button type="button" class="' . $btnClass . '">'
-                . '<i class="' . static::idestadoIcon($status) . ' fa-fw"></i> ' . $status->nombre
-                . '</button>'
-                . '<input type="hidden" name="idestado" value="' . $model->idestado . '">'
-                . '</div>'
-                . '</div>';
-        }
-
-        // añadimos los estados posibles
+        // añadimos los estados posibles. Siempre se puede cambiar el estado, incluso si
+        // ya generó documentos: al reabrir y volver a aprobar solamente se genera lo pendiente.
         $options = [];
         foreach ($model->getAvailableStatus() as $sta) {
             // si está seleccionado o no activo, lo saltamos

@@ -299,6 +299,8 @@
     "close": "Cerrar",
     "close-box": "Cerrar caja",
     "close-exercise": "Cerrar ejercicio",
+    "close-without-generating": "Cerrar sin generar",
+    "close-without-generating-p": "Cierra los documentos seleccionados cambiando su estado. No se genera ningún documento nuevo.",
     "closed": "Cerrado",
     "closed-exercise": "El ejercicio %exerciseName% está cerrado.",
     "closed-exercise-cant-change-date": "El ejercicio %exerciseName% está cerrado. No se puede modificar la fecha.",

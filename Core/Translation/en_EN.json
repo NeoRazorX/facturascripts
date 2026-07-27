@@ -299,6 +299,8 @@
     "close": "Close",
     "close-box": "Close box",
     "close-exercise": "Close exercise",
+    "close-without-generating": "Close without generating",
+    "close-without-generating-p": "Closes the selected documents by changing their status. No new document is generated.",
     "closed": "Closed",
     "closed-exercise": "Exercise %exerciseName% is closed.",
     "closed-exercise-cant-change-date": "Exercise %exerciseName% is closed. You can't change the date.",
