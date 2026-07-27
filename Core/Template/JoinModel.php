@@ -524,7 +524,7 @@ abstract class JoinModel
     }
 
     /** Asigna los valores del array $data a los atributos del modelo. */
-    protected function loadFromData(array $data): void
+    public function loadFromData(array $data): void
     {
         foreach ($data as $field => $value) {
             $this->attributes[$field] = $value;

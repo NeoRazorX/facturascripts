@@ -83,7 +83,7 @@ class SubcuentaSaldo extends JoinModel
         ];
     }
 
-    protected function loadFromData(array $data): void
+    public function loadFromData(array $data): void
     {
         parent::loadFromData($data);
         $this->saldo = round($this->debe - $this->haber, FS_NF0);
