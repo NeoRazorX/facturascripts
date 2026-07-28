@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -65,7 +65,7 @@ class Validator
      */
     public static function string(string $text, int $min = 1, int $max = 99): bool
     {
-        return strlen($text) >= $min && strlen($text) <= $max;
+        return mb_strlen($text) >= $min && mb_strlen($text) <= $max;
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\EstadoDocumento;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -69,7 +69,7 @@ final class EstadoDocumentoTest extends TestCase
     {
         // get the initial default count
         $status = new EstadoDocumento();
-        $where = [new DataBaseWhere('predeterminado', true)];
+        $where = [Where::eq('predeterminado', true)];
         $defaultsCount = $status->count($where);
 
         // create a new default status
@@ -82,8 +82,8 @@ final class EstadoDocumentoTest extends TestCase
 
         // find the default on the database
         $where2 = [
-            new DataBaseWhere('predeterminado', true),
-            new DataBaseWhere('tipodoc', $type)
+            Where::eq('predeterminado', true),
+            Where::eq('tipodoc', $type)
         ];
         $this->assertEquals(1, $status->count($where2), 'estado-documento-more-than-one-default');
         foreach ($status->all($where2) as $sta) {
@@ -191,7 +191,7 @@ final class EstadoDocumentoTest extends TestCase
 
         // recargamos y comprobamos que en BD sigue sin generadoc
         $reloaded = new EstadoDocumento();
-        $this->assertTrue($reloaded->loadFromCode($status->idestado), 'estado-documento-cant-reload');
+        $this->assertTrue($reloaded->load($status->idestado), 'estado-documento-cant-reload');
         $this->assertEmpty($reloaded->generadoc, 'estado-documento-generadoc-was-persisted');
         $this->assertEquals(1, $reloaded->actualizastock, 'estado-documento-actualizastock-changed');
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,15 +19,15 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Producto;
 
 /**
- * Controller to edit a single item from the Fabricante model
+ * Controlador para editar un único elemento del modelo Fabricante
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -85,7 +85,7 @@ class EditFabricante extends EditController
         $this->createViewProductsCommon($viewName);
 
         // botón añadir producto
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'add-product',
             'color' => 'success',
             'icon' => 'fa-solid fa-folder-plus',
@@ -99,7 +99,7 @@ class EditFabricante extends EditController
         $this->createViewProductsCommon($viewName);
 
         // botón quitar producto
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'remove-product',
             'color' => 'danger',
             'confirm' => true,
@@ -115,17 +115,16 @@ class EditFabricante extends EditController
             ->addOrderBy(['precio'], 'price')
             ->addOrderBy(['stockfis'], 'stock');
 
-        $i18n = Tools::lang();
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $taxes = Impuestos::codeModel();
 
         // filtros
         $this->listView($viewName)
             ->addFilterSelectWhere('status', [
-                ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
-                ['label' => $i18n->trans('blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
-                ['label' => $i18n->trans('public'), 'where' => [new DataBaseWhere('publico', true)]],
-                ['label' => $i18n->trans('all'), 'where' => []]
+                ['label' => Tools::trans('only-active'), 'where' => [Where::eq('bloqueado', false)]],
+                ['label' => Tools::trans('blocked'), 'where' => [Where::eq('bloqueado', true)]],
+                ['label' => Tools::trans('public'), 'where' => [Where::eq('publico', true)]],
+                ['label' => Tools::trans('all'), 'where' => []]
             ])
             ->addFilterSelect('codfamilia', 'family', 'codfamilia', $families)
             ->addFilterNumber('min-price', 'price', 'precio', '<=')
@@ -177,13 +176,13 @@ class EditFabricante extends EditController
     {
         switch ($viewName) {
             case 'ListProducto':
-                $codfabricante = $this->getViewModelValue($this->getMainViewName(), 'codfabricante');
-                $where = [new DataBaseWhere('codfabricante', $codfabricante)];
+                $codfabricante = $this->mainTabModelValue('codfabricante');
+                $where = [Where::eq('codfabricante', $codfabricante)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListProducto-new':
-                $where = [new DataBaseWhere('codfabricante', null, 'IS')];
+                $where = [Where::isNull('codfabricante')];
                 $view->loadData('', $where);
                 break;
 

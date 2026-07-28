@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
@@ -29,6 +29,7 @@ use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\RoleAccess;
@@ -75,7 +76,7 @@ abstract class SalesController extends PanelController
         }
 
         // existing record
-        $this->views[static::MAIN_VIEW_NAME]->model->loadFromCode($code);
+        $this->views[static::MAIN_VIEW_NAME]->model->load($code);
         return $this->views[static::MAIN_VIEW_NAME]->model;
     }
 
@@ -119,8 +120,8 @@ abstract class SalesController extends PanelController
         $variante = new Variante();
         $query = (string)$this->request->queryOrInput('term');
         $where = [
-            new DataBaseWhere('p.bloqueado', 0),
-            new DataBaseWhere('p.sevende', 1)
+            Where::eq('p.bloqueado', 0),
+            Where::eq('p.sevende', 1)
         ];
         foreach ($variante->codeModelSearch($query, 'referencia', $where) as $value) {
             $list[] = [
@@ -157,6 +158,7 @@ abstract class SalesController extends PanelController
         SalesHeaderHTML::assets();
         SalesLineHTML::assets();
         SalesFooterHTML::assets();
+        SalesModalHTML::assets();
     }
 
     protected function deleteDocAction(): bool
@@ -187,6 +189,19 @@ abstract class SalesController extends PanelController
      */
     protected function execPreviousAction($action)
     {
+        // control de acceso: si se opera (o exporta) sobre un documento existente
+        // que no pertenece al usuario, denegamos. Evita el acceso por código directo.
+        $code = $this->request->queryOrInput('code');
+        if (
+            false === empty($action) && false === empty($code)
+            && false === $this->checkOwnerData($this->getModel())
+        ) {
+            $this->setTemplate(false);
+            Tools::log()->warning('access-denied');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
         switch ($action) {
             case 'add-file':
                 return $this->addFileAction();
@@ -205,6 +220,9 @@ abstract class SalesController extends PanelController
 
             case 'delete-doc':
                 return $this->deleteDocAction();
+
+            case 'create-customer':
+                return $this->createCustomerAction();
 
             case 'delete-file':
                 return $this->deleteFileAction();
@@ -239,6 +257,151 @@ abstract class SalesController extends PanelController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function createCustomerAction(): bool
+    {
+        $this->setTemplate(false);
+
+        if (false === $this->canCreateCustomer()) {
+            Tools::log()->warning('not-allowed-modify');
+            $this->sendJsonWithLogs($this->emptySalesResponse());
+            return false;
+        }
+
+        if (false === $this->validateFormToken()) {
+            $this->sendJsonWithLogs($this->emptySalesResponse());
+            return false;
+        }
+
+        $formData = json_decode($this->request->input('data'), true);
+        if (false === is_array($formData)) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs($this->emptySalesResponse());
+            return false;
+        }
+
+        foreach (['newcustomer_nombre', 'newcustomer_direccion', 'newcustomer_ciudad', 'newcustomer_provincia'] as $field) {
+            if (false === is_string($formData[$field] ?? null) || trim($formData[$field]) === '') {
+                Tools::log()->warning('invalid-request');
+                $this->sendJsonWithLogs($this->emptySalesResponse());
+                return false;
+            }
+
+            $formData[$field] = trim($formData[$field]);
+        }
+
+        $countryCode = is_string($formData['newcustomer_codpais'] ?? null) ? $formData['newcustomer_codpais'] : '';
+        if (empty($countryCode) || false === Paises::get($countryCode)->exists()) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs($this->emptySalesResponse());
+            return false;
+        }
+
+        // si el cifnif ya existe en otro cliente avisamos, pero permitimos crearlo igualmente
+        $cifnif = trim($formData['newcustomer_cifnif'] ?? '');
+        $confirmed = ($formData['newcustomer_cifnif_confirmed'] ?? '') === '1';
+        if ($cifnif !== '' && false === $confirmed) {
+            $duplicated = $this->findCustomersByCifnif($cifnif);
+            if (false === empty($duplicated)) {
+                $response = $this->emptySalesResponse();
+                $response['duplicatedCifnif'] = true;
+                $response['duplicatedCifnifMessage'] = Tools::trans('duplicated-cifnif-customer', [
+                    '%cifnif%' => $cifnif,
+                    '%customers%' => implode(', ', $duplicated)
+                ]);
+                $this->sendJsonWithLogs($response);
+                return false;
+            }
+        }
+
+        $customer = new Cliente();
+        $customer->cifnif = $cifnif;
+        $customer->codagente = $this->user->codagente;
+        $customer->email = $formData['newcustomer_email'] ?? '';
+        $customer->nombre = $formData['newcustomer_nombre'] ?? '';
+        $customer->telefono1 = $formData['newcustomer_telefono'] ?? '';
+
+        $this->db()->beginTransaction();
+        try {
+            if (false === $customer->save()) {
+                $this->db()->rollback();
+                $this->sendJsonWithLogs($this->emptySalesResponse());
+                return false;
+            }
+
+            $address = $customer->getDefaultAddress();
+            $address->cifnif = $customer->cifnif;
+            $address->ciudad = $formData['newcustomer_ciudad'] ?? '';
+            $address->codpais = $countryCode;
+            $address->codpostal = $formData['newcustomer_codpostal'] ?? '';
+            $address->direccion = $formData['newcustomer_direccion'] ?? '';
+            $address->provincia = $formData['newcustomer_provincia'] ?? '';
+            if (false === $address->save()) {
+                $this->db()->rollback();
+                $this->sendJsonWithLogs($this->emptySalesResponse());
+                return false;
+            }
+
+            $this->db()->commit();
+        } catch (Throwable $e) {
+            $this->db()->rollback();
+            Tools::log()->error($e->getMessage());
+            $this->sendJsonWithLogs($this->emptySalesResponse());
+            return false;
+        }
+
+        $formData['action'] = 'set-customer';
+        $formData['codcliente'] = $customer->codcliente;
+
+        $model = $this->getModel();
+        $lines = $model->getLines();
+        SalesHeaderHTML::apply($model, $formData);
+        SalesFooterHTML::apply($model, $formData);
+        SalesLineHTML::apply($model, $lines, $formData);
+        Calculator::calculate($model, $lines, false);
+
+        $this->sendJsonWithLogs([
+            'customerCreated' => true,
+            'footer' => SalesFooterHTML::render($model),
+            'header' => SalesHeaderHTML::render($model),
+            'lines' => SalesLineHTML::render($lines, $model),
+            'linesMap' => [],
+            'multireqtoken' => $this->multiRequestProtection->newToken(),
+            'products' => '',
+        ]);
+        return false;
+    }
+
+    private function canCreateCustomer(): bool
+    {
+        if (false === $this->user->can('EditCliente', 'update')) {
+            return false;
+        }
+
+        if ($this->user->admin || false === empty($this->user->codagente)) {
+            return true;
+        }
+
+        foreach (RoleAccess::allFromUser($this->user->nick, 'EditCliente') as $access) {
+            if (false === $access->onlyownerdata) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** Devuelve los clientes que ya tienen este cifnif, como 'código - nombre'. */
+    private function findCustomersByCifnif(string $cifnif): array
+    {
+        $names = [];
+        $where = [Where::eq('cifnif', $cifnif)];
+        foreach (Cliente::all($where, ['LOWER(nombre)' => 'ASC'], 0, 5) as $customer) {
+            $names[] = $customer->codcliente . ' - ' . $customer->nombre;
+        }
+
+        return $names;
     }
 
     protected function exportAction()
@@ -277,8 +440,9 @@ abstract class SalesController extends PanelController
         }
         $where = [];
         if ($this->permissions->onlyOwnerData && !$showAll) {
-            $where[] = new DataBaseWhere('codagente', $this->user->codagente);
-            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+            // Mantener alineado con OwnerDataTrait/getOwnerFilter si Cliente añade más criterios de propiedad.
+            $where[] = Where::eq('codagente', $this->user->codagente);
+            $where[] = Where::isNotNull('codagente');
         }
 
         $list = [];
@@ -295,7 +459,7 @@ abstract class SalesController extends PanelController
     {
         $this->setTemplate(false);
         $model = $this->getModel();
-        $formData = json_decode($this->request->input('data'), true);
+        $formData = json_decode($this->request->input('data'), true) ?? [];
         SalesHeaderHTML::apply($model, $formData);
         SalesFooterHTML::apply($model, $formData);
         SalesModalHTML::apply($model, $formData);
@@ -333,8 +497,15 @@ abstract class SalesController extends PanelController
                     break;
                 }
 
-                // data not found?
                 $view->loadData($code);
+
+                // ¿el usuario puede acceder a este documento?
+                if (false === $this->checkOwnerData($view->model)) {
+                    $this->setTemplate('Error/AccessDenied');
+                    break;
+                }
+
+                // data not found?
                 $action = $this->request->input('action', '');
                 if ('' === $action && empty($view->model->primaryColumnValue())) {
                     Tools::log()->warning('record-not-found');
@@ -343,7 +514,7 @@ abstract class SalesController extends PanelController
 
                 $this->title .= ' ' . $view->model->primaryDescription();
                 $view->settings['btnPrint'] = true;
-                $this->addButton($viewName, [
+                $view->addButton([
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
                     'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',
@@ -358,7 +529,7 @@ abstract class SalesController extends PanelController
         $this->setTemplate(false);
         $model = $this->getModel();
         $lines = $model->getLines();
-        $formData = json_decode($this->request->input('data'), true);
+        $formData = json_decode($this->request->input('data'), true) ?? [];
         SalesHeaderHTML::apply($model, $formData);
         SalesFooterHTML::apply($model, $formData);
         SalesLineHTML::apply($model, $lines, $formData);
@@ -386,10 +557,27 @@ abstract class SalesController extends PanelController
             return false;
         }
 
+        $model = $this->getModel();
+
+        // si los datos del formulario no llegan o no son JSON válido (petición truncada,
+        // límites post_max_size / max_input_vars), rechazamos en lugar de guardar en blanco
+        $formData = json_decode($this->request->input('data'), true);
+        if (false === is_array($formData)) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
+        // bloqueo optimista: si el estado del documento ha cambiado desde que se cargó el formulario,
+        // rechazamos para no borrar líneas a partir de un formulario obsoleto (tarea 4673)
+        if (isset($formData['idestado']) && (int)$formData['idestado'] !== (int)$model->idestado) {
+            Tools::log()->warning('document-state-changed');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
         $this->db()->beginTransaction();
 
-        $model = $this->getModel();
-        $formData = json_decode($this->request->input('data'), true);
         SalesHeaderHTML::apply($model, $formData);
         SalesFooterHTML::apply($model, $formData);
 
@@ -455,6 +643,11 @@ abstract class SalesController extends PanelController
         // cargamos el modelo actualizado y los datos del form
         $model = $this->getModel();
         $formData = json_decode($this->request->input('data'), true);
+        if (false === is_array($formData)) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
 
         // si la factura es de 0 €, la marcamos como pagada
         if (empty($model->total) && $model->hasColumn('pagada')) {
@@ -527,6 +720,19 @@ abstract class SalesController extends PanelController
         $this->db()->commit();
         $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
+    }
+
+    private function emptySalesResponse(): array
+    {
+        return [
+            'customerCreated' => false,
+            'footer' => '',
+            'header' => '',
+            'lines' => '',
+            'linesMap' => [],
+            'multireqtoken' => $this->multiRequestProtection->newToken(),
+            'products' => '',
+        ];
     }
 
     private function sendJsonWithLogs(array $data): void

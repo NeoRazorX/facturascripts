@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,15 +19,15 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 
 /**
- * Controller to edit a single item from the Tarifa model
+ * Controlador para editar un único elemento del modelo Tarifa
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -64,14 +64,14 @@ class EditTarifa extends EditController
             ->setSettings('btnNew', false);
 
         // add custom buttons
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'setgrouprate',
             'color' => 'success',
             'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add',
             'type' => 'modal'
         ]);
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'unsetgrouprate',
             'color' => 'danger',
             'confirm' => true,
@@ -90,14 +90,14 @@ class EditTarifa extends EditController
             ->setSettings('btnDelete', false)
             ->setSettings('btnNew', false);
 
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'setcustomerrate',
             'color' => 'success',
             'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add',
             'type' => 'modal'
         ]);
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'unsetcustomerrate',
             'color' => 'danger',
             'confirm' => true,
@@ -143,8 +143,8 @@ class EditTarifa extends EditController
             case 'ListCliente':
             case 'ListGrupoClientes':
             case 'ListTarifaProducto':
-                $codtarifa = $this->getViewModelValue($this->getMainViewName(), 'codtarifa');
-                $where = [new DataBaseWhere('codtarifa', $codtarifa)];
+                $codtarifa = $this->mainTabModelValue('codtarifa');
+                $where = [Where::eq('codtarifa', $codtarifa)];
                 $view->loadData('', $where);
                 break;
 

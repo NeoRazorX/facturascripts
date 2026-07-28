@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,7 +72,7 @@ final class StockTest extends TestCase
         $this->assertEquals(10, $stock->cantidad, 'stock-quantity-changed');
 
         // refrescamos producto
-        $product->loadFromCode($product->idproducto);
+        $product->load($product->idproducto);
         $this->assertEquals(10, $product->stockfis, 'product-stock-not-update');
 
         // cambiamos el stock
@@ -81,14 +81,14 @@ final class StockTest extends TestCase
         $this->assertEquals(7, $stock->cantidad, 'stock-quantity-not-changed');
 
         // refrescamos producto
-        $product->loadFromCode($product->idproducto);
+        $product->load($product->idproducto);
         $this->assertEquals(7, $product->stockfis, 'product-stock-not-update');
 
         // borramos el stock
         $this->assertTrue($stock->delete(), 'stock-cant-delete');
 
         // refrescamos producto
-        $product->loadFromCode($product->idproducto);
+        $product->load($product->idproducto);
         $this->assertEquals(0, $product->stockfis, 'stock-not-update');
 
         // borramos el producto
@@ -124,7 +124,7 @@ final class StockTest extends TestCase
         $this->assertTrue($stock2->save(), 'stock-cant-save');
 
         // comprobamos que el stock del producto es el stock de todos los almacenes
-        $product->loadFromCode($product->idproducto);
+        $product->load($product->idproducto);
         $this->assertEquals(15, $product->stockfis, 'producto-stock-not-the-sum');
 
         // borramos
@@ -172,7 +172,7 @@ final class StockTest extends TestCase
         }
 
         // comprobamos que el stock del producto es el stock de todas las variantes en los almacenes
-        $product->loadFromCode($product->idproducto);
+        $product->load($product->idproducto);
         $this->assertEquals(24, $product->stockfis, 'producto-stock-not-the-sum');
 
         // borramos

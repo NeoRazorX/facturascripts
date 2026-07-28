@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,12 +24,12 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\ControllerPermissions;
-use FacturaScripts\Core\Lib\MenuManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Lib\MenuManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
@@ -153,7 +153,9 @@ abstract class Controller implements ControllerInterface
             throw new KernelException('AccessDenied', 'access-denied');
         }
 
-        $this->empresa = Empresas::default();
+        // empresa del usuario, o la predeterminada si no tiene ninguna asignada
+        $idempresa = empty($this->user) ? null : $this->user->idempresa;
+        $this->empresa = empty($idempresa) ? Empresas::default() : Empresas::get($idempresa);
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($this->className);

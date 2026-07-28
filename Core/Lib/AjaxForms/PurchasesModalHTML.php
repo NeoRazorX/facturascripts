@@ -20,11 +20,17 @@
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Contract\PurchasesModalInterface;
+use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\DataSrc\Fabricantes;
+use FacturaScripts\Core\DataSrc\Familias;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
+use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AtributoValor;
-use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
@@ -57,23 +63,53 @@ class PurchasesModalHTML
     /** @var array */
     protected static $idatributovalores = [];
 
+    /** @var int */
+    protected static $idempresa;
+
     /** @var string */
     protected static $orden;
 
     /** @var string */
     protected static $query;
 
+    /** @var PurchasesModalInterface[] */
+    private static $mods = [];
+
+    public static function addMod(PurchasesModalInterface $mod): void
+    {
+        self::$mods[] = $mod;
+    }
+
     public static function apply(PurchaseDocument &$model, array $formData): void
     {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->applyBefore($model, $formData);
+        }
+
         self::$codalmacen = $model->codalmacen;
         self::$coddivisa = $model->coddivisa;
         self::$codfabricante = $formData['fp_codfabricante'] ?? '';
         self::$codfamilia = $formData['fp_codfamilia'] ?? '';
         self::$codproveedor = $model->codproveedor;
+        self::$idempresa = $model->idempresa;
         self::$orden = $formData['fp_orden'] ?? 'ref_asc';
         self::$comprado = (bool)($formData['fp_comprado'] ?? false);
         self::$query = isset($formData['fp_query']) ?
             Tools::noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
+
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->apply($model, $formData);
+        }
+    }
+
+    public static function assets(): void
+    {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->assets();
+        }
     }
 
     public static function render(PurchaseDocument $model, string $url = ''): string
@@ -81,6 +117,7 @@ class PurchasesModalHTML
         self::$codalmacen = $model->codalmacen;
         self::$coddivisa = $model->coddivisa;
         self::$codproveedor = $model->codproveedor;
+        self::$idempresa = $model->idempresa;
 
         if (empty($model->id()) && !$model->editable) {
             return '<div class="alert alert-warning mt-4">'
@@ -113,6 +150,7 @@ class PurchasesModalHTML
                 . '<td>' . $label . ' ' . $description . '</td>'
                 . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($cost)) . '</td>'
                 . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
+                . self::renderNewProduct($row)
                 . '<td class="text-end">' . $row['disponible'] . '</td>'
                 . '</tr>';
         }
@@ -127,6 +165,7 @@ class PurchasesModalHTML
             . '<th>' . Tools::trans('product') . '</th>'
             . '<th class="text-end">' . Tools::trans('cost-price') . '</th>'
             . '<th class="text-end">' . Tools::trans('price') . '</th>'
+            . self::renderNewProductHeads()
             . '<th class="text-end">' . Tools::trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
@@ -138,7 +177,7 @@ class PurchasesModalHTML
     {
         $options = '<option value="">' . Tools::trans('manufacturer') . '</option>'
             . '<option value="">------</option>';
-        foreach (Fabricante::all([], ['nombre' => 'ASC'], 0, 0) as $man) {
+        foreach (Fabricantes::all() as $man) {
             $options .= '<option value="' . $man->codfabricante . '">' . $man->nombre . '</option>';
         }
 
@@ -151,9 +190,7 @@ class PurchasesModalHTML
         $options = '<option value="">' . Tools::trans('family') . '</option>'
             . '<option value="">------</option>';
 
-        $where = [new DataBaseWhere('madre', null, 'IS')];
-        $orderBy = ['descripcion' => 'ASC'];
-        foreach (Familia::all($where, $orderBy, 0, 0) as $fam) {
+        foreach (Familias::children() as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">' . $fam->descripcion . '</option>';
 
             // añadimos las subfamilias de forma recursiva
@@ -175,8 +212,10 @@ class PurchasesModalHTML
         $dataBase = new DataBase();
         $dataBase->connect();
 
-        $sql = 'SELECT v.referencia, pp.refproveedor, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
-            . ' v.idatributovalor4, v.coste, v.precio, pp.neto, COALESCE(s.disponible, 0) as disponible, p.nostock'
+        // Los mods pueden añadir columnas con cualquier campo de variantes o productos.
+        // Listamos primero p.* y después v.*, de forma que en los campos comunes
+        // (referencia, precio, idproducto, stockfis) prevalezca el valor de la variante.
+        $sql = 'SELECT p.*, v.*, pp.refproveedor, pp.neto, COALESCE(s.disponible, 0) as disponible'
             . ' FROM variantes v'
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
             . ' LEFT JOIN stocks s ON v.referencia = s.referencia'
@@ -187,7 +226,7 @@ class PurchasesModalHTML
             . ' WHERE p.secompra = true AND p.bloqueado = false';
 
         if (self::$codfabricante) {
-            $sql .= ' AND codfabricante = ' . $dataBase->var2str(self::$codfabricante);
+            $sql .= ' AND p.codfabricante = ' . $dataBase->var2str(self::$codfabricante);
         }
 
         if (self::$codfamilia) {
@@ -201,7 +240,7 @@ class PurchasesModalHTML
                 }
             }
 
-            $sql .= ' AND codfamilia IN (' . implode(',', $codFamilias) . ')';
+            $sql .= ' AND p.codfamilia IN (' . implode(',', $codFamilias) . ')';
         }
 
         if (self::$comprado) {
@@ -229,19 +268,19 @@ class PurchasesModalHTML
 
         switch (self::$orden) {
             case 'desc_asc':
-                $sql .= " ORDER BY 3 ASC";
+                $sql .= " ORDER BY p.descripcion ASC";
                 break;
 
             case 'price_desc':
-                $sql .= " ORDER BY 9 DESC";
+                $sql .= " ORDER BY v.precio DESC";
                 break;
 
             case 'ref_asc':
-                $sql .= " ORDER BY 1 ASC";
+                $sql .= " ORDER BY v.referencia ASC";
                 break;
 
             case 'stock_desc':
-                $sql .= " ORDER BY 11 DESC";
+                $sql .= " ORDER BY disponible DESC";
                 break;
         }
 
@@ -308,20 +347,30 @@ class PurchasesModalHTML
     protected static function modalProveedores(string $url): string
     {
         $trs = '';
-        $where = [new DataBaseWhere('fechabaja', null, 'IS')];
-        foreach (Proveedor::all($where, ['LOWER(nombre)' => 'ASC'], 0, 50) as $pro) {
+        $where = [Where::isNull('fechabaja')];
+        foreach (Proveedor::all($where, ['fechaalta' => 'DESC', 'LOWER(nombre)' => 'ASC'], 0, 50) as $pro) {
             $name = ($pro->nombre === $pro->razonsocial) ? $pro->nombre : $pro->nombre . ' <small>(' . $pro->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'purchasesForm\'][\'codproveedor\'].value = \''
                 . $pro->codproveedor . '\'; $(\'#findSupplierModal\').modal(\'hide\'); purchasesFormAction(\'set-supplier\', \'0\'); return false;">'
                 . '<td><i class="fa-solid fa-user fa-fw"></i> ' . $name . '</td>'
+                . self::renderNewSupplier($pro)
                 . '</tr>';
+        }
+
+        $newSupplierButton = '';
+        $newSupplierModal = '';
+        if (static::canCreateSupplier(Session::user())) {
+            $newSupplierButton = '<button type="button" class="btn w-100 btn-success" onclick="return showNewSupplierModal();">'
+                . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::trans('new')
+                . '</button>';
+            $newSupplierModal = static::modalNewSupplier();
         }
 
         return '<div class="modal" id="findSupplierModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-scrollable">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-users fa-fw"></i> ' . Tools::trans('suppliers') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-users fa-fw me-1"></i> ' . Tools::trans('suppliers') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . '</button>'
             . '</div>'
@@ -329,20 +378,79 @@ class PurchasesModalHTML
             . '<div class="p-3">'
             . '<div class="input-group">'
             . '<input type="text" id="findSupplierInput" class="form-control" placeholder="' . Tools::trans('search') . '" />'
-            . '<div class="input-group-apend">'
-            . '<button type="button" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>'
-            . '</div>'
+            . '<button type="button" class="btn btn-secondary"><i class="fa-solid fa-search"></i></button>'
             . '</div>'
             . '</div>'
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
             . '<div class="modal-footer bg-light">'
-            . '<a href="EditProveedor?return=' . urlencode($url) . '" class="btn w-100 btn-success">'
-            . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::trans('new')
-            . '</a>'
+            . $newSupplierButton
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . $newSupplierModal;
+    }
+
+    protected static function modalNewSupplier(): string
+    {
+        $company = Empresas::get(self::$idempresa);
+        $countryOptions = '';
+        $defaultCountry = Tools::settings('default', 'codpais');
+        foreach (Paises::all() as $country) {
+            $selected = $country->codpais === $defaultCountry ? ' selected' : '';
+            $countryOptions .= '<option value="' . static::html($country->codpais) . '"' . $selected . '>'
+                . static::html($country->nombre) . '</option>';
+        }
+
+        return '<div class="modal" id="newSupplierModal" tabindex="-1" aria-hidden="true">'
+            . '<div class="modal-dialog modal-lg modal-dialog-scrollable">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title"><i class="fa-solid fa-user-plus fa-fw me-1"></i> '
+            . Tools::trans('new-supplier') . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'
+            . '</div>'
+            . '<div class="modal-body">'
+            . '<div class="row g-2">'
+            . '<div class="col-sm-8"><label for="newSupplierName" class="form-label">' . Tools::trans('name') . '</label>'
+            . '<input type="text" name="newsupplier_nombre" id="newSupplierName" class="form-control" maxlength="100" required></div>'
+            . '<div class="col-sm-4"><label for="newSupplierCifnif" class="form-label">' . Tools::trans('cifnif') . '</label>'
+            . '<input type="text" name="newsupplier_cifnif" id="newSupplierCifnif" class="form-control" maxlength="30"'
+            . ' oninput="document.forms[\'purchasesForm\'][\'newsupplier_cifnif_confirmed\'].value = \'0\';">'
+            . '<input type="hidden" name="newsupplier_cifnif_confirmed" value="0"></div>'
+            . '<div class="col-sm-4"><label for="newSupplierPhone" class="form-label">' . Tools::trans('phone') . '</label>'
+            . '<input type="tel" name="newsupplier_telefono" id="newSupplierPhone" class="form-control" maxlength="30"></div>'
+            . '<div class="col-sm-8"><label for="newSupplierEmail" class="form-label">' . Tools::trans('email') . '</label>'
+            . '<input type="email" name="newsupplier_email" id="newSupplierEmail" class="form-control" maxlength="100"></div>'
+            . '<div class="col-sm-9"><label for="newSupplierAddress" class="form-label">' . Tools::trans('address') . '</label>'
+            . '<input type="text" name="newsupplier_direccion" id="newSupplierAddress" class="form-control" maxlength="200" required></div>'
+            . '<div class="col-sm-3"><label for="newSupplierPostalCode" class="form-label">' . Tools::trans('zip-code') . '</label>'
+            . '<input type="text" name="newsupplier_codpostal" id="newSupplierPostalCode" class="form-control" maxlength="10" value="'
+            . static::html($company->codpostal) . '"></div>'
+            . '<div class="col-sm-4"><label for="newSupplierCity" class="form-label">' . Tools::trans('city') . '</label>'
+            . '<input type="text" name="newsupplier_ciudad" id="newSupplierCity" class="form-control" maxlength="100" value="'
+            . static::html($company->ciudad) . '" required></div>'
+            . '<div class="col-sm-4"><label for="newSupplierProvince" class="form-label">' . Tools::trans('province') . '</label>'
+            . '<input type="text" name="newsupplier_provincia" id="newSupplierProvince" class="form-control" maxlength="100" value="'
+            . static::html($company->provincia) . '" required></div>'
+            . '<div class="col-sm-4"><label for="newSupplierCountry" class="form-label">' . Tools::trans('country') . '</label>'
+            . '<select name="newsupplier_codpais" id="newSupplierCountry" class="form-select" required>' . $countryOptions . '</select></div>'
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer bg-light">'
+            . '<button type="button" class="btn btn-secondary" onclick="return showSupplierModal();">'
+            . '<i class="fa-solid fa-arrow-left fa-fw"></i> ' . Tools::trans('back') . '</button>'
+            . '<button type="button" class="btn btn-success btn-spin-action" onclick="return createSupplierFromPurchases();">'
+            . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::trans('save') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
+    }
+
+    protected static function canCreateSupplier(User $user): bool
+    {
+        return $user->can('EditProveedor', 'update');
     }
 
     protected static function orden(): string
@@ -360,16 +468,126 @@ class PurchasesModalHTML
             . '</div>';
     }
 
-    private static function subfamilias(Familia $family, int $level = 1): string
+    /**
+     * Lista unificada (sin duplicados) de las columnas que los mods añaden al modal de productos.
+     *
+     * @return string[]
+     */
+    private static function newProductFields(): array
     {
+        $fields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newProductFields() as $field) {
+                if (false === in_array($field, $fields, true)) {
+                    $fields[] = $field;
+                }
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * Lista unificada (sin duplicados) de las columnas que los mods añaden al modal de proveedores.
+     *
+     * @return string[]
+     */
+    private static function newSupplierFields(): array
+    {
+        $fields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newSupplierFields() as $field) {
+                if (false === in_array($field, $fields, true)) {
+                    $fields[] = $field;
+                }
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * Renderiza las celdas añadidas por los mods a una fila del modal de productos.
+     * Recorre la misma lista de campos para todas las filas y emite una celda vacía
+     * cuando ningún mod resuelve el campo, de forma que todas las filas tengan el mismo
+     * número de columnas.
+     *
+     * @param array $row
+     * @return string
+     */
+    private static function renderNewProduct(array $row): string
+    {
+        $html = '';
+        foreach (self::newProductFields() as $field) {
+            $cell = null;
+            foreach (self::$mods as $mod) {
+                $cell = $mod->renderField($row, $field);
+                if ($cell !== null) {
+                    break;
+                }
+            }
+            $html .= $cell ?? '<td></td>';
+        }
+        return $html;
+    }
+
+    /**
+     * Renderiza las cabeceras de las columnas añadidas por los mods al modal de productos.
+     * Usa la misma lista de campos que renderNewProduct() para mantener alineadas cabecera y celdas.
+     *
+     * @return string
+     */
+    private static function renderNewProductHeads(): string
+    {
+        $html = '';
+        foreach (self::newProductFields() as $field) {
+            $cell = null;
+            foreach (self::$mods as $mod) {
+                $cell = $mod->renderFieldHead($field);
+                if ($cell !== null) {
+                    break;
+                }
+            }
+            $html .= $cell ?? '<th></th>';
+        }
+        return $html;
+    }
+
+    /**
+     * Renderiza las celdas añadidas por los mods a una fila del modal de proveedores.
+     *
+     * @param Proveedor $pro
+     * @return string
+     */
+    private static function renderNewSupplier(Proveedor $pro): string
+    {
+        $html = '';
+        foreach (self::newSupplierFields() as $field) {
+            $cell = null;
+            foreach (self::$mods as $mod) {
+                $cell = $mod->renderField($pro, $field);
+                if ($cell !== null) {
+                    break;
+                }
+            }
+            $html .= $cell ?? '<td></td>';
+        }
+        return $html;
+    }
+
+    private static function subfamilias(Familia $family, int $level = 1, array $visited = []): string
+    {
+        $visited[$family->codfamilia] = true;
         $options = '';
-        foreach ($family->getSubfamilias() as $fam) {
+        foreach (Familias::children($family->codfamilia) as $fam) {
+            if (isset($visited[$fam->codfamilia])) {
+                continue;
+            }
+
             $options .= '<option value="' . $fam->codfamilia . '">'
                 . str_repeat('-', $level) . ' ' . $fam->descripcion
                 . '</option>';
 
             // añadimos las subfamilias de forma recursiva
-            $options .= static::subfamilias($fam, $level + 1);
+            $options .= static::subfamilias($fam, $level + 1, $visited);
         }
 
         return $options;

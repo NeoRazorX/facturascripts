@@ -21,17 +21,17 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\PageOption;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Edit option for any page.
+ * Controlador para editar las opciones de visualización (columnas y filtros) de cualquier página.
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Jose Antonio Cuello          <yopli2000@gmail.com>
@@ -254,8 +254,8 @@ class EditPageOption extends Controller
     private function loadPageOptionsForAll(): bool
     {
         $where = [
-            new DataBaseWhere('name', $this->selectedViewName),
-            new DataBaseWhere('nick', null, 'IS'),
+            Where::eq('name', $this->selectedViewName),
+            Where::isNull('nick'),
         ];
         return $this->model->loadWhere($where);
     }
@@ -270,8 +270,8 @@ class EditPageOption extends Controller
     private function loadPageOptionsForUser(): bool
     {
         $where = [
-            new DataBaseWhere('name', $this->selectedViewName),
-            new DataBaseWhere('nick', $this->selectedUser),
+            Where::eq('name', $this->selectedViewName),
+            Where::eq('nick', $this->selectedUser),
         ];
         if ($this->model->loadWhere($where)) {
             // Existen opciones para el usuario.

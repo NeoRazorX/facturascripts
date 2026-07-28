@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,9 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Template\Controller;
 
+/**
+ * Controlador de la página raíz, que redirige al panel de inicio o a la pantalla de acceso.
+ */
 class Root extends Controller
 {
     public function getPageData(): array
@@ -37,6 +40,12 @@ class Root extends Controller
     public function run(): void
     {
         parent::run();
+
+        // si no hay usuario autenticado, al login (evita fatal al llamar homepageUrl() sobre null)
+        if (empty($this->user)) {
+            $this->response()->redirect('Login')->send();
+            return;
+        }
 
         // homepageUrl ya garantiza un nombre de controlador valido, asi evitamos open-redirect
         $homepage = $this->user->homepageUrl();

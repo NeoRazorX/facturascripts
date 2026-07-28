@@ -119,6 +119,20 @@ class Tools
     }
 
     /**
+     * Devuelve el valor de una variable de entorno o el valor por defecto si no existe.
+     *
+     * @param string $key Nombre de la variable de entorno.
+     * @param mixed $default Valor por defecto si la variable no está definida.
+     *
+     * @return mixed El valor de la variable de entorno o el valor por defecto.
+     */
+    public static function env(string $key, $default = null)
+    {
+        $value = getenv($key);
+        return $value !== false ? $value : $default;
+    }
+
+    /**
      * Obtiene el número de decimales configurado en el sistema.
      *
      * @return int El número de decimales configurado, por defecto 2.
@@ -692,7 +706,7 @@ class Tools
         }
 
         if (false === array_key_exists('HTTP_HOST', $_SERVER)) {
-            return 'http://localhost';
+            return self::env('FS_SITE_URL', 'http://localhost');
         }
 
         $url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';

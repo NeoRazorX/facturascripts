@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the Atributo model
+ * Controlador para editar un único elemento del modelo Atributo
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -59,11 +59,9 @@ class EditAtributo extends EditController
 
     protected function createViewsAttValues(string $viewName = 'EditAtributoValor')
     {
-        $this->addEditListView($viewName, 'AtributoValor', 'attribute-values');
-        $this->views[$viewName]->setInLine(true);
-
-        // disable column
-        $this->views[$viewName]->disableColumn('attribute');
+        $this->addEditListView($viewName, 'AtributoValor', 'attribute-values')
+            ->setInLine(true)
+            ->disableColumn('attribute');
     }
 
     /**
@@ -76,8 +74,8 @@ class EditAtributo extends EditController
     {
         switch ($viewName) {
             case 'EditAtributoValor':
-                $code = $this->getViewModelValue($this->getMainViewName(), 'codatributo');
-                $where = [new DataBaseWhere('codatributo', $code)];
+                $code = $this->mainTabModelValue('codatributo');
+                $where = [Where::eq('codatributo', $code)];
                 $view->loadData('', $where, ['orden' => 'ASC', 'id' => 'DESC']);
                 break;
 

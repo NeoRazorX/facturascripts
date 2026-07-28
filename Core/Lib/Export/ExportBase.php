@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
@@ -208,7 +208,8 @@ abstract class ExportBase
 
     protected function escapeSpreadsheetFormula(string $value): string
     {
-        if ($value === '') {
+        // un string puramente numérico no puede ser una fórmula
+        if ($value === '' || is_numeric($value)) {
             return $value;
         }
 

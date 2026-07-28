@@ -165,6 +165,66 @@ final class VarianteTest extends TestCase
         $this->assertTrue($attribute2->delete());
     }
 
+    public function testCodeModelSearch(): void
+    {
+        // creamos un producto con referencia y descripción conocidas
+        $producto = new Producto();
+        $producto->referencia = 'tst-zzqmid-987';
+        $producto->descripcion = 'Producto zzqdesc especial';
+        $this->assertTrue($producto->save(), 'producto-cant-save');
+
+        // asignamos un código de barras a la variante por defecto
+        $variante = $producto->getVariants()[0];
+        $variante->codbarras = 'zzqbar123';
+        $this->assertTrue($variante->save(), 'variante-cant-save');
+
+        $id = (int)$variante->idvariante;
+        $search = new Variante();
+
+        // referencia: empieza por
+        $this->assertFindsVariant($id, $search->codeModelSearch('tst-zzq'), 'reference-prefix');
+
+        // referencia: termina en
+        $this->assertFindsVariant($id, $search->codeModelSearch('mid-987'), 'reference-suffix');
+
+        // referencia: fragmento interno (comportamiento del PR #1987)
+        $this->assertFindsVariant($id, $search->codeModelSearch('zzqmid'), 'reference-internal');
+
+        // código de barras: coincidencia exacta
+        $this->assertFindsVariant($id, $search->codeModelSearch('zzqbar123'), 'codbarras');
+
+        // descripción del producto: fragmento
+        $this->assertFindsVariant($id, $search->codeModelSearch('zzqdesc'), 'descripcion');
+
+        // rama con % en el query (str_contains): el comodín se usa tal cual
+        $this->assertFindsVariant($id, $search->codeModelSearch('tst%987'), 'wildcard');
+
+        // un texto que no coincide no debe devolver la variante
+        $this->assertVariantNotFound($id, $search->codeModelSearch('zzqnoexiste'), 'no-match');
+
+        // eliminamos
+        $this->assertTrue($producto->delete(), 'producto-cant-delete');
+    }
+
+    private function assertFindsVariant(int $id, array $results, string $case): void
+    {
+        foreach ($results as $row) {
+            if ((int)$row->code === $id) {
+                return;
+            }
+        }
+
+        $this->fail('variant-not-found-by-' . $case);
+    }
+
+    private function assertVariantNotFound(int $id, array $results, string $case): void
+    {
+        foreach ($results as $row) {
+            $this->assertNotEquals($id, (int)$row->code, 'variant-found-by-' . $case);
+        }
+        $this->assertTrue(true);
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

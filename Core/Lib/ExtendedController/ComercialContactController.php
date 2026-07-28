@@ -19,15 +19,18 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 
 /**
@@ -41,6 +44,7 @@ abstract class ComercialContactController extends EditController
 {
     use ListBusinessActionTrait;
     use DocFilesTrait;
+    use ProvinceCityFilterTrait;
 
     private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
 
@@ -48,7 +52,7 @@ abstract class ComercialContactController extends EditController
     {
         $listView = $this->listView($viewName);
 
-        $where = [new DataBaseWhere('tipodoc', $modelName)];
+        $where = [Where::eq('tipodoc', $modelName)];
         $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
 
         $listView->addFilterPeriod('date', 'period', 'fecha')
@@ -57,7 +61,7 @@ abstract class ComercialContactController extends EditController
             ->addFilterSelect('idestado', 'state', 'idestado', $statusValues);
 
         if ($this->permissions->onlyOwnerData === false) {
-            $users = $this->codeModel->all('users', 'nick', 'nick');
+            $users = Users::codeModel();
             if (count($users) > 1) {
                 $listView->addFilterSelect('nick', 'user', 'nick', $users);
             }
@@ -97,10 +101,29 @@ abstract class ComercialContactController extends EditController
             $listView->addFilterSelect('coddivisa', 'currency', 'coddivisa', $currencies);
         }
 
+        // filtros de dirección (solo en documentos que tienen estas columnas, p.ej. los de venta)
+        $model = $listView->model;
+        if ($model->hasColumn('codtrans')) {
+            $listView->addFilterSelect('codtrans', 'carrier', 'codtrans', AgenciasTransporte::codeModel());
+        }
+        if ($model->hasColumn('codpais')) {
+            $listView->addFilterSelect('country', 'country', 'codpais', Paises::codeModel());
+        }
+        if ($model->hasColumn('provincia')) {
+            $listView->addFilterAutocomplete('provincia', 'province', 'provincia', 'provincias');
+        }
+        if ($model->hasColumn('ciudad')) {
+            $listView->addFilterAutocomplete('ciudad', 'city', 'ciudad', 'ciudades');
+        }
+
         $listView->addFilterCheckbox('totalrecargo', 'surcharge', 'totalrecargo', '!=', 0)
             ->addFilterCheckbox('totalirpf', 'retention', 'totalirpf', '!=', 0)
             ->addFilterCheckbox('totalsuplidos', 'supplied-amount', 'totalsuplidos', '!=', 0)
             ->addFilterCheckbox('numdocs', 'has-attachments', 'numdocs', '!=', 0);
+
+        if ($model->hasColumn('femail')) {
+            $listView->addFilterCheckbox('femail', 'email-not-sent', 'femail', 'IS', null);
+        }
     }
 
     /**
@@ -128,11 +151,49 @@ abstract class ComercialContactController extends EditController
         }
     }
 
+    /**
+     * Devuelve, en json, los registros que ya usan este cifnif. Solo avisa, no impide guardar.
+     */
+    protected function checkCifnifAction(): bool
+    {
+        $this->setTemplate(false);
+
+        $cifnif = trim($this->request->input('cifnif', ''));
+        if (empty($cifnif)) {
+            $this->response->json(['duplicated' => false, 'message' => '']);
+            return false;
+        }
+
+        $model = $this->getModel();
+        $where = [Where::eq('cifnif', $cifnif)];
+
+        // excluimos el propio registro, si ya está guardado
+        $code = $this->request->input('code');
+        if (false === empty($code)) {
+            $where[] = Where::notEq($model->primaryColumn(), $code);
+        }
+
+        $names = [];
+        foreach ($model::all($where, ['LOWER(nombre)' => 'ASC'], 0, 5) as $row) {
+            $names[] = $row->primaryColumnValue() . ' - ' . $row->nombre;
+        }
+
+        $this->response->json([
+            'duplicated' => false === empty($names),
+            'message' => empty($names) ? '' : Tools::trans('duplicated-cifnif', [
+                '%cifnif%' => $cifnif,
+                '%records%' => implode(', ', $names)
+            ])
+        ]);
+
+        return false;
+    }
+
     protected function checkViesAction(): bool
     {
         $model = $this->getModel();
         $code = $this->request->input('code');
-        if (false === $model->loadFromCode($code)) {
+        if (false === $model->load($code)) {
             return true;
         }
 
@@ -295,7 +356,7 @@ abstract class ComercialContactController extends EditController
     {
         $allowUpdate = $this->permissions->allowUpdate;
         $codes = $this->request->request->getArray('codes');
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
 
         switch ($action) {
             case 'add-file':
@@ -307,6 +368,9 @@ abstract class ComercialContactController extends EditController
             case 'approve-document-same-date':
                 BusinessDocumentGenerator::setSameDate(true);
                 return $this->approveDocumentAction($codes, $model, $allowUpdate, $this->dataBase);
+
+            case 'check-cifnif':
+                return $this->checkCifnifAction();
 
             case 'check-vies':
                 return $this->checkViesAction();
@@ -378,7 +442,7 @@ abstract class ComercialContactController extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case $mvn:
@@ -399,20 +463,20 @@ abstract class ComercialContactController extends EditController
                 break;
 
             case 'ListSubcuenta':
-                $codsubcuenta = $this->getViewModelValue($mvn, 'codsubcuenta');
-                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
+                $codsubcuenta = $this->mainTabModelValue('codsubcuenta');
+                $where = [Where::eq('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->count > 0);
                 break;
 
             case 'ListEmailSent':
-                $email = $this->getViewModelValue($mvn, 'email');
+                $email = $this->mainTabModelValue('email');
                 if (empty($email)) {
                     $this->setSettings($viewName, 'active', false);
                     break;
                 }
 
-                $where = [new DataBaseWhere('addressee', $email)];
+                $where = [Where::eq('addressee', $email)];
                 $view->loadData('', $where);
 
                 // añadimos un botón para enviar un nuevo email

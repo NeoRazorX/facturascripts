@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ReceiptGenerator;
 use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\ReciboCliente;
@@ -220,7 +221,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // obtenemos el subject
@@ -294,7 +295,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // marcamos un recibo como impagado
@@ -305,7 +306,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que la factura está impagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertFalse($invoice->pagada, 'invoice-paid');
 
         // marcamos todos como pagados
@@ -315,7 +316,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // eliminamos un recibo
@@ -325,7 +326,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que la factura está impagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertFalse($invoice->pagada, 'invoice-paid');
 
         // obtenemos el subject
@@ -351,7 +352,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($receipt->save(), 'can-not-set-paid-receipt');
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // añadimos una línea con precio 0
@@ -367,7 +368,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'can-not-calculate-invoice');
 
         // comprobamos que la factura sigue pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // comprobamos que solamente hay un recibo
@@ -420,7 +421,7 @@ final class ReciboClienteTest extends TestCase
         }
 
         // comprobamos que el riesgo es menor que el anterior
-        $customer->loadFromCode($customer->primaryColumnValue());
+        $customer->load($customer->primaryColumnValue());
         $this->assertLessThan($risk, $customer->riesgoalcanzado, 'bad-customer-risk');
 
         // obtenemos el subject
@@ -460,6 +461,56 @@ final class ReciboClienteTest extends TestCase
 
         // comprobamos que el pago tiene un asiento
         $this->assertNotEmpty($payments[0]->idasiento, 'payment-should-have-accounting-entry');
+
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testPayReceiptWithBankFeesAccounting(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // obtenemos el recibo impagado
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+
+        // marcamos el recibo como pagado con gastos bancarios
+        $receipts[0]->gastos = 10.0;
+        $receipts[0]->pagado = true;
+        $this->assertTrue($receipts[0]->save(), 'can-not-set-paid-receipt');
+
+        // obtenemos el pago y comprobamos que arrastra los gastos y tiene asiento
+        $payments = $receipts[0]->getPayments();
+        $this->assertCount(1, $payments, 'should-have-one-payment');
+        $this->assertEqualsWithDelta(10.0, $payments[0]->gastos, 0.001, 'bad-payment-expenses');
+        $this->assertNotEmpty($payments[0]->idasiento, 'payment-should-have-accounting-entry');
+
+        // cargamos el asiento del pago
+        $entry = new Asiento();
+        $this->assertTrue($entry->load($payments[0]->idasiento), 'can-not-load-accounting-entry');
+
+        // el asiento debe estar cuadrado
+        $this->assertTrue($entry->isBalanced(), 'accounting-entry-not-balanced');
+
+        // los gastos bancarios no deben inflar los totales: el movimiento del asiento
+        // (debe = haber) debe coincidir con el importe del recibo, no con importe + gastos
+        $debe = 0.0;
+        $haber = 0.0;
+        foreach ($entry->getLines() as $line) {
+            $debe += $line->debe;
+            $haber += $line->haber;
+        }
+        $this->assertEqualsWithDelta($receipts[0]->importe, $debe, 0.001, 'bad-accounting-entry-debit');
+        $this->assertEqualsWithDelta($receipts[0]->importe, $haber, 0.001, 'bad-accounting-entry-credit');
 
         // obtenemos el subject
         $subject = $invoice->getSubject();

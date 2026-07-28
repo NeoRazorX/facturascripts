@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Template\ModelTrait;
@@ -36,11 +35,7 @@ class AlbaranCliente extends SalesDocument
 {
     use ModelTrait;
 
-    /**
-     * Primary key. Integer.
-     *
-     * @var int
-     */
+    /** @var int Identificador único del albarán de cliente. */
     public $idalbaran;
 
     /**
@@ -50,9 +45,8 @@ class AlbaranCliente extends SalesDocument
      */
     public function getLines(): array
     {
-        $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-        return LineaAlbaran::all($where, $order, 0, 0);
+        return LineaAlbaran::allWhereEq('idalbaran', $this->idalbaran, $order);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,19 +35,19 @@ class CuentaBancoProveedor extends ModelClass
     use ModelTrait;
     use IbanTrait;
 
-    /** @var string */
+    /** @var string Código identificativo de la cuenta bancaria. */
     public $codcuenta;
 
-    /** @var string */
+    /** @var string Código del proveedor titular de la cuenta bancaria. */
     public $codproveedor;
 
-    /** @var string */
+    /** @var string Descripción de la cuenta bancaria. */
     public $descripcion;
 
-    /** @var bool */
+    /** @var bool Indica si es la cuenta bancaria principal del proveedor. */
     public $principal;
 
-    /** @var string */
+    /** @var string Código SWIFT o BIC de la entidad bancaria. */
     public $swift;
 
     public function clear(): void
@@ -128,9 +128,16 @@ class CuentaBancoProveedor extends ModelClass
         }
     }
 
-    public function url(string $type = 'auto', string $list = 'List'): string
+    public function url(string $type = 'auto', string $list = 'ListProveedor?activetab=List'): string
     {
-        return empty($this->codproveedor) || $type == 'list' ? parent::url($type, $list) : $this->getSubject()->url();
+        if (empty($this->codproveedor) || $type == 'list') {
+            return parent::url($type, $list);
+        }
+
+        // construimos la url del proveedor sin cargarlo de la base de datos
+        $provider = new DinProveedor();
+        $provider->codproveedor = $this->codproveedor;
+        return $provider->url();
     }
 
     protected function saveInsert(): bool

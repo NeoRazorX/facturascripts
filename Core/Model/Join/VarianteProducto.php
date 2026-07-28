@@ -20,10 +20,14 @@
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Template\JoinModel;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
 /**
- * Model Variante with Producto data
+ * Modelo Variante con datos del Producto y de su impuesto. Combina las tablas
+ * variantes, productos e impuestos para listar las variantes con su descripción
+ * y el precio con IVA incluido (columna calculada precio_iva), con Producto
+ * como modelo master.
  *
  * @author Raul Jimenez                     <raul.jimenez@nazcanetworks.com>
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
@@ -68,5 +72,25 @@ class VarianteProducto extends JoinModel
     protected function getTables(): array
     {
         return ['productos', 'variantes', 'impuestos'];
+    }
+
+    /**
+     * El campo precio_iva es una expresión matemática: (variantes.precio * (100 + impuestos.iva) / 100).
+     * El método base no puede envolverla en SUM() porque confunde la expresión con una función agregada.
+     * Aquí la gestionamos explícitamente.
+     *
+     * @param Where[] $where
+     */
+    public function totalSum(string $field, array $where = []): float
+    {
+        if ($field === 'precio_iva') {
+            $sql = 'SELECT SUM(variantes.precio * (100 + impuestos.iva) / 100) AS total_sum'
+                . ' FROM ' . $this->getSQLFrom()
+                . Where::multiSqlLegacy($where);
+            $data = self::db()->select($sql);
+            return count($data) === 1 ? (float)$data[0]['total_sum'] : 0.0;
+        }
+
+        return parent::totalSum($field, $where);
     }
 }

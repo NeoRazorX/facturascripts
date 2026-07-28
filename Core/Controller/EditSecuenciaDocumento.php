@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,13 +19,13 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocumentCode;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the SecuenciaDocumento model.
+ * Controlador para editar un único elemento del modelo SecuenciaDocumento
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
@@ -53,12 +53,12 @@ class EditSecuenciaDocumento extends EditController
 
         // desactivamos la columna de empresa si solo hay una
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->mainTab()->disableColumn('company');
         }
 
         // desactivamos los botones de opciones e imprimir
-        $this->setSettings($this->getMainViewName(), 'btnOptions', false);
-        $this->setSettings($this->getMainViewName(), 'btnPrint', false);
+        $this->setSettings($this->mainTabName(), 'btnOptions', false);
+        $this->setSettings($this->mainTabName(), 'btnPrint', false);
 
         // añadimos las vistas de los documentos
         $this->createViewsDocuments('ListFacturaCliente', 'FacturaCliente', 'customer-invoices');
@@ -85,7 +85,7 @@ class EditSecuenciaDocumento extends EditController
 
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'ListAlbaranCliente':
@@ -97,19 +97,19 @@ class EditSecuenciaDocumento extends EditController
             case 'ListPresupuestoCliente':
             case 'ListPresupuestoProveedor':
                 $where = [
-                    new DataBaseWhere('codserie', $this->getViewModelValue($mvn, 'codserie')),
-                    new DataBaseWhere('idempresa', $this->getViewModelValue($mvn, 'idempresa'))
+                    Where::eq('codserie', $this->mainTabModelValue('codserie')),
+                    Where::eq('idempresa', $this->mainTabModelValue('idempresa'))
                 ];
                 // si tiene ejercicio, solo mostramos los resultados de ese ejercicio
-                if ($this->views[$mvn]->model->codejercicio) {
-                    $where[] = new DataBaseWhere('codejercicio', $this->views[$mvn]->model->codejercicio);
+                if ($this->tab($mvn)->model->codejercicio) {
+                    $where[] = Where::eq('codejercicio', $this->tab($mvn)->model->codejercicio);
                     $view->loadData('', $where);
                     break;
                 }
                 // no tiene ejercicio, mostramos los resultados otros ejercicios que no están en otras secuencias
-                $other = implode(',', BusinessDocumentCode::getOtherExercises($this->views[$mvn]->model));
+                $other = implode(',', BusinessDocumentCode::getOtherExercises($this->tab($mvn)->model));
                 if (!empty($other)) {
-                    $where[] = new DataBaseWhere('codejercicio', $other, 'NOT IN');
+                    $where[] = Where::notIn('codejercicio', $other);
                 }
                 $view->loadData('', $where);
                 break;

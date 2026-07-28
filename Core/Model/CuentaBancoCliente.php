@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,25 +35,25 @@ class CuentaBancoCliente extends ModelClass
     use ModelTrait;
     use IbanTrait;
 
-    /** @var string */
+    /** @var string Código del cliente titular de la cuenta bancaria. */
     public $codcliente;
 
-    /** @var string */
+    /** @var string Código identificativo de la cuenta bancaria. */
     public $codcuenta;
 
-    /** @var string */
+    /** @var string Descripción de la cuenta bancaria. */
     public $descripcion;
 
-    /** @var string */
+    /** @var string Fecha de firma del mandato SEPA. */
     public $fmandato;
 
-    /** @var string */
+    /** @var string Referencia única del mandato SEPA. */
     public $mandato;
 
-    /** @var bool */
+    /** @var bool Indica si es la cuenta bancaria principal del cliente. */
     public $principal;
 
-    /** @var string */
+    /** @var string Código SWIFT o BIC de la entidad bancaria. */
     public $swift;
 
     public function clear(): void
@@ -132,9 +132,16 @@ class CuentaBancoCliente extends ModelClass
         }
     }
 
-    public function url(string $type = 'auto', string $list = 'List'): string
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
-        return empty($this->codcliente) || $type == 'list' ? parent::url($type, $list) : $this->getSubject()->url();
+        if (empty($this->codcliente) || $type == 'list') {
+            return parent::url($type, $list);
+        }
+
+        // construimos la url del cliente sin cargarlo de la base de datos
+        $customer = new DinCliente();
+        $customer->codcliente = $this->codcliente;
+        return $customer->url();
     }
 
     protected function saveInsert(): bool

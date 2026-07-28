@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\EmailSent;
 use FacturaScripts\Core\Tools;
@@ -27,7 +28,7 @@ use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 
 /**
- * Controller to edit main settings
+ * Controlador para editar la configuración del correo electrónico.
  *
  * @author Daniel Fernández Giménez  <contacto@danielfg.es>
  * @author Carlos Garcia Gomez       <carlos@facturascripts.com>
@@ -69,14 +70,14 @@ class ConfigEmail extends PanelController
             ->setSettings('btnNew', false);
 
         // añadimos los botones de activar y desactivar
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'enable-notification',
             'color' => 'success',
             'icon' => 'fa-solid fa-check-square',
             'label' => 'enable'
         ]);
 
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'disable-notification',
             'color' => 'warning',
             'icon' => 'fa-regular fa-square',
@@ -91,7 +92,7 @@ class ConfigEmail extends PanelController
             ->addOrderBy(['date'], 'date', 2)
             ->setSettings('btnNew', false);
 
-        $users = $this->codeModel->all('users', 'nick', 'nick');
+        $users = Users::codeModel();
         $from = $this->codeModel->all('emails_sent', 'email_from', 'email_from');
 
         // filtros
@@ -103,7 +104,7 @@ class ConfigEmail extends PanelController
             ->addFilterCheckbox('attachment', 'has-attachments');
 
         // añadimos un botón para el modal delete-multi
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'delete-multi',
             'color' => 'warning',
             'icon' => 'fa-solid fa-trash-alt',
@@ -252,7 +253,7 @@ class ConfigEmail extends PanelController
                 $this->loadMailerValues($viewName);
                 if ($view->model->mailer === 'smtp' || $view->model->mailer === 'SMTP') {
                     // añadimos el botón test
-                    $this->addButton($viewName, [
+                    $view->addButton([
                         'action' => 'testmail',
                         'color' => 'info',
                         'icon' => 'fa-solid fa-envelope',

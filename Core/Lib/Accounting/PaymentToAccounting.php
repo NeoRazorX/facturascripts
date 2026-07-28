@@ -112,7 +112,6 @@ class PaymentToAccounting
             ' - ' . $invoice->nombrecliente;
 
         $this->setCommonData($entry, $concept, $invoice);
-        $entry->importe += $this->payment->gastos;
         if (false === $entry->save()) {
             Tools::log()->warning('accounting-entry-error', ['%document%' => $this->receipt->getCode()]);
             return false;
@@ -158,7 +157,8 @@ class PaymentToAccounting
 
     /**
      * Añade la línea bancaria del pago de cliente cargando en la subcuenta de la
-     * forma de pago el importe del pago más los gastos bancarios.
+     * forma de pago el importe del pago menos los gastos bancarios (lo que realmente
+     * entra en la cuenta).
      */
     protected function customerPaymentBankLine(Asiento &$entry): bool
     {
@@ -171,7 +171,7 @@ class PaymentToAccounting
             return false;
         }
 
-        $amount = $this->payment->importe + abs($this->payment->gastos);
+        $amount = $this->payment->importe - abs($this->payment->gastos);
 
         $newLine = $entry->getNewLine($account);
         $newLine->debe = max($amount, 0);
@@ -180,7 +180,7 @@ class PaymentToAccounting
     }
 
     /**
-     * Añade la línea de gastos bancarios del pago, abonando la subcuenta de gastos
+     * Añade la línea de gastos bancarios del pago, cargando la subcuenta de gastos
      * configurada en la forma de pago. Si el pago no tiene gastos, no hace nada.
      */
     protected function customerPaymentExpenseLine(Asiento &$entry): bool
@@ -201,7 +201,7 @@ class PaymentToAccounting
 
         $expLine = $entry->getNewLine($account);
         $expLine->concepto = Tools::trans('receipt-expense-account', ['%document%' => $entry->documento]);
-        $expLine->haber = abs($this->payment->gastos);
+        $expLine->debe = abs($this->payment->gastos);
         return $expLine->save();
     }
 

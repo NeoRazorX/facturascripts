@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
+use FacturaScripts\Core\Where;
 
 /**
  * A model to manage the transformations of documents. For example aprove order to delivery note.
@@ -35,58 +35,28 @@ class DocTransformation extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * @var float
-     */
+    /** @var float Cantidad transformada entre las dos líneas de documento. */
     public $cantidad;
 
-    /**
-     * Primary key. Autoincremental.
-     *
-     * @var int
-     */
+    /** @var int Identificador único de la transformación. */
     public $id;
 
-    /**
-     * id of document 1
-     *
-     * @var int
-     */
+    /** @var int Identificador del documento de origen. */
     public $iddoc1;
 
-    /**
-     * id of document 2
-     *
-     * @var int
-     */
+    /** @var int Identificador del documento de destino. */
     public $iddoc2;
 
-    /**
-     * id of the line in document 1
-     *
-     * @var int
-     */
+    /** @var int Identificador de la línea del documento de origen. */
     public $idlinea1;
 
-    /**
-     * id of the line in document 2
-     *
-     * @var int
-     */
+    /** @var int Identificador de la línea del documento de destino. */
     public $idlinea2;
 
-    /**
-     * Name of model1. Varchar(30)
-     *
-     * @var string
-     */
+    /** @var string Nombre del modelo del documento de origen. */
     public $model1;
 
-    /**
-     * Name of model2. Varchar(30)
-     *
-     * @var string
-     */
+    /** @var string Nombre del modelo del documento de destino. */
     public $model2;
 
     public function clear(): void
@@ -100,22 +70,15 @@ class DocTransformation extends ModelClass
      *
      * @param string $tipoDoc
      * @param int $idDoc
-     * @param bool $updateServido
      */
-    public function deleteFrom(string $tipoDoc, int $idDoc, bool $updateServido = false): void
+    public function deleteFrom(string $tipoDoc, int $idDoc): void
     {
         $options = [
-            [new DataBaseWhere('model1', $tipoDoc), new DataBaseWhere('iddoc1', $idDoc)],
-            [new DataBaseWhere('model2', $tipoDoc), new DataBaseWhere('iddoc2', $idDoc)]
+            [Where::eq('model1', $tipoDoc), Where::eq('iddoc1', $idDoc)],
+            [Where::eq('model2', $tipoDoc), Where::eq('iddoc2', $idDoc)]
         ];
         foreach ($options as $where) {
             foreach ($this->all($where, [], 0, 0) as $line) {
-                if ($updateServido && $line->cantidad) {
-                    $parentLine = $line->getParentLine();
-                    $parentLine->servido -= $line->cantidad;
-                    $parentLine->save();
-                }
-
                 $line->delete();
             }
         }
@@ -129,7 +92,7 @@ class DocTransformation extends ModelClass
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model1;
         if (class_exists($modelClass)) {
             $line = new $modelClass();
-            $line->loadFromCode($this->idlinea1);
+            $line->load($this->idlinea1);
             return $line;
         }
 
@@ -144,7 +107,7 @@ class DocTransformation extends ModelClass
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model2;
         if (class_exists($modelClass)) {
             $line = new $modelClass();
-            $line->loadFromCode($this->idlinea2);
+            $line->load($this->idlinea2);
             return $line;
         }
 
@@ -154,5 +117,19 @@ class DocTransformation extends ModelClass
     public static function tableName(): string
     {
         return 'doctransformations';
+    }
+
+    protected function onDelete(): void
+    {
+        // restamos la cantidad al servido de la línea del documento padre
+        if ($this->cantidad) {
+            $parentLine = $this->getParentLine();
+            if ($parentLine->exists()) {
+                $parentLine->servido -= $this->cantidad;
+                $parentLine->save();
+            }
+        }
+
+        parent::onDelete();
     }
 }

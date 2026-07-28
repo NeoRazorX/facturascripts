@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,18 +33,10 @@ class Diario extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * Description of journal.
-     *
-     * @var string
-     */
+    /** @var string Descripción del diario contable. */
     public $descripcion;
 
-    /**
-     * Primary key.
-     *
-     * @var integer
-     */
+    /** @var integer Identificador único del diario contable. */
     public $iddiario;
 
     public static function primaryColumn(): string
@@ -60,8 +52,8 @@ class Diario extends ModelClass
     public function test(): bool
     {
         $this->descripcion = Tools::noHtml($this->descripcion);
-        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
-            Tools::log()->warning('invalid-column-lenght', ['%column%' => 'description', '%min%' => '1', '%max%' => '100']);
+        if (strlen($this->descripcion ?? '') < 1) {
+            Tools::log()->warning('field-required', ['%field%' => 'descripcion']);
             return false;
         }
 

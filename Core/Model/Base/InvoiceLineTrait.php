@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,8 +35,7 @@ trait InvoiceLineTrait
 
         // comprobamos líneas de facturas rectificativas
         $quantity = 0.0;
-        $where = [Where::eq('idlinearect', $this->idlinea)];
-        foreach (self::all($where, [], 0, 0) as $line) {
+        foreach (self::allWhereEq('idlinearect', $this->idlinea) as $line) {
             $quantity += abs($line->cantidad);
         }
         if ($quantity) {

@@ -35,7 +35,7 @@ use FacturaScripts\Dinamic\Model\User;
 use ZipArchive;
 
 /**
- * Description of Updater
+ * Controlador para actualizar el núcleo de FacturaScripts y los plugins instalados.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -103,6 +103,12 @@ class Updater extends Controller
         return $items;
     }
 
+    public function hasErrorFiles(): bool
+    {
+        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json') ?: [];
+        return !empty($files);
+    }
+
     /**
      * @param Response $response
      * @param User $user
@@ -114,16 +120,18 @@ class Updater extends Controller
 
         $this->telemetryManager = new Telemetry();
 
-        // Folders writable?
-        $folders = $this->notWritableFolders();
-        if ($folders) {
-            Tools::log()->warning('folders-not-writable', [
-                '%folders%' => implode(', ', $folders)
-            ]);
-            return;
+        // en las acciones que escriben en disco, comprobamos que las carpetas sean escribibles
+        $action = $this->request->get('action', '');
+        if (in_array($action, ['cancel', 'download', 'post-update', 'update'])) {
+            $folders = $this->notWritableFolders();
+            if ($folders) {
+                Tools::log()->warning('folders-not-writable', [
+                    '%folders%' => implode(', ', $folders)
+                ]);
+                return;
+            }
         }
 
-        $action = $this->request->get('action', '');
         $this->execAction($action);
     }
 
@@ -132,6 +140,10 @@ class Updater extends Controller
      */
     private function cancelAction(): void
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
         $fileName = 'update-' . $this->request->get('item', '') . '.zip';
         if (file_exists(Tools::folder($fileName))) {
             unlink(Tools::folder($fileName));
@@ -140,6 +152,57 @@ class Updater extends Controller
 
         Tools::log()->notice('reloading');
         $this->redirect($this->getClassName() . '?action=post-update', 3);
+    }
+
+    private function deleteCrashFilesAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json') ?: [];
+        foreach ($files as $file) {
+            unlink($file);
+        }
+
+        Tools::log()->notice('record-deleted-correctly');
+    }
+
+    private function sendCrashFilesAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json') ?: [];
+        foreach ($files as $file) {
+            $info = json_decode(file_get_contents($file), true);
+            if (empty($info['hash']) || !is_array($info['hash'])) {
+                continue;
+            }
+
+            $response = Http::post($info['report_url'], [
+                'error_code' => $info['code'],
+                'error_message' => $info['message'],
+                'error_file' => $info['file'],
+                'error_line' => $info['line'],
+                'error_hash' => $info['hash'],
+                'error_url' => $info['url'],
+                'error_core_version' => $info['core_version'],
+                'error_plugin_list' => $info['plugin_list'],
+                'error_php_version' => $info['php_version'],
+                'error_os' => $info['os'],
+            ]);
+
+            if ($response->failed()) {
+                Tools::log()->error('send-crash-file-error', ['%file%' => basename($file)]);
+                return;
+            }
+
+            unlink($file);
+        }
+
+        Tools::log()->notice('crash-files-sent');
     }
 
     private function disableBetaUpdatesAction(): void
@@ -159,6 +222,10 @@ class Updater extends Controller
      */
     private function downloadAction(): void
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
         $idItem = $this->request->get('item', '');
         $this->updaterItems = self::getUpdateItems();
         foreach ($this->updaterItems as $key => $item) {
@@ -197,6 +264,14 @@ class Updater extends Controller
         switch ($action) {
             case 'cancel':
                 $this->cancelAction();
+                return;
+
+            case 'delete-crash-files':
+                $this->deleteCrashFilesAction();
+                return;
+
+            case 'send-crash-files':
+                $this->sendCrashFilesAction();
                 return;
 
             case 'claim-install':
@@ -419,6 +494,10 @@ class Updater extends Controller
      */
     private function updateAction(): void
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
         $idItem = $this->request->get('item', '');
         $fileName = 'update-' . $idItem . '.zip';
 
@@ -460,7 +539,7 @@ class Updater extends Controller
     private function updateCore(ZipArchive $zip, string $fileName): bool
     {
         // extract zip content
-        if (false === $zip->extractTo(FS_FOLDER)) {
+        if (false === $zip->extractTo(Tools::folder())) {
             Tools::log()->critical('ZIP EXTRACT ERROR: ' . $fileName);
             $zip->close();
             return false;

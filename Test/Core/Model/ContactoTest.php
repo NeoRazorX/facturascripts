@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,10 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -343,7 +343,7 @@ final class ContactoTest extends TestCase
         // Pasando una cláusula where devuelve el resultado de la consulta
         $query = '';
         $fieldCode = '';
-        $where = [new DataBaseWhere('empresa', $contact2->empresa)];
+        $where = [Where::eq('empresa', $contact2->empresa)];
         $results = (new Contacto())->codeModelSearch($query, $fieldCode, $where);
         $this->assertCount(1, $results);
         $this->assertEquals($contact2->descripcion, trim($results[0]->description));

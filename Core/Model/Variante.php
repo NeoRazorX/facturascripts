@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Model\Base\ProductRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ProductType;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
@@ -42,79 +42,37 @@ class Variante extends ModelClass
     use ModelTrait;
     use ProductRelationTrait;
 
-    /**
-     * Barcode. Maximum 20 characters.
-     *
-     * @var string
-     */
+    /** @var string Código de barras de la variante. */
     public $codbarras;
 
-    /**
-     * Cost price.
-     *
-     * @var int|float
-     */
+    /** @var int|float Precio de coste de la variante. */
     public $coste;
 
-    /**
-     * Foreign key of table atributo_valores.
-     *
-     * @var int
-     */
+    /** @var int Identificador del primer valor de atributo de la variante. */
     public $idatributovalor1;
 
-    /**
-     * Foreign key of table atributo_valores.
-     *
-     * @var int
-     */
+    /** @var int Identificador del segundo valor de atributo de la variante. */
     public $idatributovalor2;
 
-    /**
-     * Foreign key of table atributo_valores.
-     *
-     * @var int
-     */
+    /** @var int Identificador del tercer valor de atributo de la variante. */
     public $idatributovalor3;
 
-    /**
-     * Foreign key of table atributo_valores.
-     *
-     * @var int
-     */
+    /** @var int Identificador del cuarto valor de atributo de la variante. */
     public $idatributovalor4;
 
-    /**
-     * Primary Key, autoincremental.
-     *
-     * @var int
-     */
+    /** @var int Identificador único de la variante. */
     public $idvariante;
 
-    /**
-     * @var float
-     */
+    /** @var float Porcentaje de margen de beneficio de la variante. */
     public $margen;
 
-    /**
-     * Price of the variant. Without tax.
-     *
-     * @var int|float
-     */
+    /** @var int|float Precio de venta de la variante sin impuestos. */
     public $precio;
 
-    /**
-     * Reference of the variant. Maximum 30 characters.
-     *
-     * @var string
-     */
+    /** @var string Referencia o SKU de la variante. */
     public $referencia;
 
-    /**
-     * Physical stock.
-     *
-     * @var float|int
-     */
+    /** @var float|int Stock físico total de la variante. */
     public $stockfis;
 
     public function clear(): void
@@ -129,7 +87,7 @@ class Variante extends ModelClass
     /**
      * @param string $query
      * @param string $fieldCode
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      *
      * @return CodeModel[]
      */
@@ -139,30 +97,17 @@ class Variante extends ModelClass
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $find = Tools::noHtml(mb_strtolower($query, 'UTF8'));
 
-        // añadimos opciones al inicio del where
-        if (str_contains($find, '%')) {
-            // si ya contiene %, usamos directamente sin añadir más %
-            array_unshift(
-                $where,
-                new DataBaseWhere('LOWER(v.referencia)', $find, 'LIKE'),
-                new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
-                new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
-            );
-        } else {
-            // búsqueda normal con % automático
-            array_unshift(
-                $where,
-                new DataBaseWhere('LOWER(v.referencia)', $find . '%', 'LIKE'),
-                new DataBaseWhere('LOWER(v.referencia)', '%' . $find, 'LIKE', 'OR'),
-                new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
-                new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
-            );
-        }
+        // agrupamos las opciones de búsqueda en un sub-where (Where::like ya añade los % si faltan)
+        array_unshift($where, Where::sub([
+            Where::like('LOWER(v.referencia)', $find),
+            Where::orEq('LOWER(v.codbarras)', $find),
+            Where::orLike('LOWER(p.descripcion)', $find)
+        ]));
 
         $sql = "SELECT v." . $field . " AS code, p.descripcion AS description, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4"
             . " FROM " . static::tableName() . " v"
             . " LEFT JOIN " . DinProducto::tableName() . " p ON v.idproducto = p.idproducto"
-            . DataBaseWhere::getSQLWhere($where)
+            . Where::multiSqlLegacy($where)
             . " ORDER BY v." . $field . " ASC";
 
         foreach (self::db()->selectLimit($sql, CodeModel::getlimit()) as $data) {
@@ -278,7 +223,7 @@ class Variante extends ModelClass
     {
         // buscamos las imágenes propias de esta variante
         $image = new DinProductoImagen();
-        $whereVar = [new DataBaseWhere('referencia', $this->referencia)];
+        $whereVar = [Where::eq('referencia', $this->referencia)];
         $orderBy = ['orden' => 'ASC'];
         $images = $image->all($whereVar, $orderBy, 0, 0);
 
@@ -289,8 +234,8 @@ class Variante extends ModelClass
 
         // añadimos las imágenes del producto para todas las variantes
         $whereProd = [
-            new DataBaseWhere('idproducto', $this->idproducto),
-            new DataBaseWhere('referencia', null, 'IS')
+            Where::eq('idproducto', $this->idproducto),
+            Where::isNull('referencia')
         ];
         return array_merge($images, $image->all($whereProd, $orderBy, 0, 0));
     }
@@ -394,13 +339,6 @@ class Variante extends ModelClass
         if (empty($this->referencia)) {
             $this->referencia = (string)$this->newCode('referencia');
         }
-        if (strlen($this->referencia) > 30) {
-            Tools::log()->warning(
-                'invalid-column-lenght',
-                ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
-            );
-            return false;
-        }
 
         return parent::test();
     }
@@ -413,7 +351,7 @@ class Variante extends ModelClass
     protected function saveInsert(): bool
     {
         // comprobamos si la referencia ya existe
-        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        $where = [Where::eq('referencia', $this->referencia)];
         if ($this->count($where) > 0) {
             Tools::log()->warning('duplicated-reference', ['%reference%' => $this->referencia]);
             return false;

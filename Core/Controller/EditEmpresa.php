@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,14 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
- * Controller to edit a single item from the  Empresa model
+ * Controlador para editar un único elemento del modelo Empresa
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -116,15 +116,15 @@ class EditEmpresa extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'EditAlmacen':
             case 'ListCuentaBanco':
             case 'ListEjercicio':
             case 'ListFormaPago':
-                $id = $this->getViewModelValue($this->getMainViewName(), 'idempresa');
-                $where = [new DataBaseWhere('idempresa', $id)];
+                $id = $this->mainTabModelValue('idempresa');
+                $where = [Where::eq('idempresa', $id)];
                 $view->loadData('', $where);
                 break;
 
@@ -132,7 +132,7 @@ class EditEmpresa extends EditController
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($view);
                 if ($view->model->exists() && $view->model->cifnif) {
-                    $this->addButton($viewName, [
+                    $view->addButton([
                         'action' => 'check-vies',
                         'color' => 'info',
                         'icon' => 'fa-solid fa-check-double',

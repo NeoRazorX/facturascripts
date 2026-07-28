@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,7 @@ trait ModelTrait
     use ExtensionsTrait;
 
     /**
-     * List of fields in the table.
+     * Lista de campos de la tabla del modelo.
      *
      * @var array
      */
@@ -67,10 +67,46 @@ trait ModelTrait
         return $list;
     }
 
+    /**
+     * Devuelve todos los registros donde el campo es igual al valor.
+     *
+     * @param string $field
+     * @param mixed $value
+     * @param array $order
+     * @return static[]
+     */
+    public static function allWhereEq(string $field, $value, array $order = []): array
+    {
+        $data = self::table()
+            ->whereEq($field, $value)
+            ->orderMulti($order)
+            ->get();
+
+        $list = [];
+        foreach ($data as $row) {
+            $list[] = new static($row);
+        }
+
+        return $list;
+    }
+
     public static function count(array $where = []): int
     {
         return self::table()
             ->where($where)
+            ->count();
+    }
+
+    /**
+     * Cuenta los registros donde el campo es igual al valor.
+     *
+     * @param string $field
+     * @param mixed $value
+     */
+    public static function countWhereEq(string $field, $value): int
+    {
+        return self::table()
+            ->whereEq($field, $value)
             ->count();
     }
 

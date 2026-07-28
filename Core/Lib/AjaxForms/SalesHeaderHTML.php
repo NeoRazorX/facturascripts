@@ -20,8 +20,10 @@
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Contract\SalesModInterface;
+use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\DataSrc\Provincias;
 use FacturaScripts\Core\Model\AgenciaTransporte;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Cliente;
@@ -30,7 +32,6 @@ use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Pais;
-use FacturaScripts\Dinamic\Model\Provincia;
 
 /**
  * Description of SalesHeaderHTML
@@ -264,7 +265,7 @@ class SalesHeaderHTML
                 . '<div class="mb-2">' . Tools::trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
                 . '<a href="#" id="btnFindCustomerModal" class="btn w-100 btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
-                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
+                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw me-1"></i> '
                 . Tools::trans('select') . '</a>'
                 . '</div>'
                 . '</div>'
@@ -272,9 +273,11 @@ class SalesHeaderHTML
         }
 
         $btnCliente = $model->editable ?
-            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findCustomerModal\').modal(\'show\');'
+            '<button class="btn btn-outline-secondary" type="button" title="' . Tools::trans('change-customer')
+            . '" onclick="$(\'#findCustomerModal\').modal(\'show\');'
             . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-pen"></i></button>' :
-            '<button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-lock"></i></button>';
+            '<button class="btn btn-outline-secondary" type="button" title="' . Tools::trans('non-editable-document')
+            . '"><i class="fa-solid fa-lock"></i></button>';
 
         $html = '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">'
@@ -329,7 +332,7 @@ class SalesHeaderHTML
     {
         $options = ['<option value="">------</option>'];
         $agenciaTransporte = new AgenciaTransporte();
-        foreach ($agenciaTransporte->all() as $agencia) {
+        foreach (AgenciasTransporte::all() as $agencia) {
             $options[] = ($agencia->codtrans === $model->codtrans) ?
                 '<option value="' . $agencia->codtrans . '" selected>' . $agencia->nombre . '</option>' :
                 '<option value="' . $agencia->codtrans . '">' . $agencia->nombre . '</option>';
@@ -506,7 +509,7 @@ class SalesHeaderHTML
             $list = 'list="provincias"';
             $dataList = '<datalist id="provincias">';
 
-            foreach (Provincia::all([], ['provincia' => 'ASC'], 0, 0) as $provincia) {
+            foreach (Provincias::all() as $provincia) {
                 $dataList .= '<option value="' . $provincia->provincia . '">' . $provincia->provincia . '</option>';
             }
             $dataList .= '</datalist>';

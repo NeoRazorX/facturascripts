@@ -298,7 +298,7 @@
                                 <div class="form-check">
                                     <label class="form-check-label">
                                         <input class="form-check-input" type="checkbox" name="fs_debug"
-                                               value="true"/>
+                                               value="true" {% if fsc.debug %}checked{% endif %}/>
                                         {{ trans('debug-mode') }}
                                     </label>
                                 </div>

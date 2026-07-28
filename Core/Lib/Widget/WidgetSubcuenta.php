@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
-use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
@@ -68,9 +68,7 @@ class WidgetSubcuenta extends WidgetText
         if ($this->readonly()) {
             $subcuenta = new Subcuenta();
             if (false === empty($this->value)) {
-                $subcuenta->loadWhere([
-                    Where::eq($this->match, $this->value)
-                ]);
+                $subcuenta->loadWhereEq($this->match, $this->value);
             }
 
             return '<div class="mb-3 d-grid">'
@@ -109,8 +107,7 @@ class WidgetSubcuenta extends WidgetText
 
         // si no se especifica ejercicio, usamos el primero (filtrado por empresa si la conocemos)
         if (empty($codejercicio)) {
-            $ejWhere = $this->idempresa ? [Where::eq('idempresa', $this->idempresa)] : [];
-            $ejercicios = Ejercicio::all($ejWhere, ['codejercicio' => 'DESC'], 0, 1);
+            $ejercicios = Ejercicios::byEmpresa($this->idempresa);
             if (!empty($ejercicios)) {
                 $codejercicio = $ejercicios[0]->codejercicio;
             }
@@ -118,7 +115,7 @@ class WidgetSubcuenta extends WidgetText
 
         // cargamos y añadimos la subcuenta seleccionada
         $model = new Subcuenta();
-        if ($this->value && $model->loadWhere([Where::eq($this->match, $this->value)])) {
+        if ($this->value && $model->loadWhereEq($this->match, $this->value)) {
             $list[] = clone $model;
             $where[] = Where::notEq($model->primaryColumn(), $model->id());
         }
@@ -198,9 +195,7 @@ class WidgetSubcuenta extends WidgetText
 
         $subcuenta = new Subcuenta();
         if (false === empty($this->value)) {
-            $subcuenta->loadWhere([
-                Where::eq($this->match, $this->value)
-            ]);
+            $subcuenta->loadWhereEq($this->match, $this->value);
         }
 
         return '<td class="' . $class . '">' . $this->onclickHtml($this->escapeHtml($subcuenta->nombre ?? $this->value)) . '</td>';
@@ -209,7 +204,7 @@ class WidgetSubcuenta extends WidgetText
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Core/Assets/JS/WidgetSubcuenta.js?v=' . Tools::date());
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSubcuenta.js?v=' . Tools::date());
     }
 
     protected function renderModal(string $icon, string $label): string
@@ -248,8 +243,7 @@ class WidgetSubcuenta extends WidgetText
     protected function renderExerciseFilter(): string
     {
         $options = [];
-        $where = $this->idempresa ? [Where::eq('idempresa', $this->idempresa)] : [];
-        $ejercicios = Ejercicio::all($where, ['codejercicio' => 'DESC']);
+        $ejercicios = Ejercicios::byEmpresa($this->idempresa);
         $first = true;
 
         foreach ($ejercicios as $item) {

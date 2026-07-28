@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,6 @@ use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaProveedor as DinFacturaProveedor;
 use FacturaScripts\Dinamic\Model\FormaPago;
@@ -43,55 +42,55 @@ class ReciboProveedor extends ModelClass
     use CompanyRelationTrait;
     use PaymentRelationTrait;
 
-    /** @var string */
+    /** @var string Código de la divisa del recibo. */
     public $coddivisa;
 
-    /** @var string */
+    /** @var string Código visible de la factura asociada. */
     public $codigofactura;
 
-    /** @var string */
+    /** @var string Código del proveedor asociado al recibo. */
     public $codproveedor;
 
-    /** @var bool */
+    /** @var bool Indica si se debe omitir la actualización automática de la factura. */
     protected $disable_invoice_update = false;
 
-    /** @var bool */
+    /** @var bool Indica si se debe omitir la generación automática del pago. */
     protected $disable_payment_generation = false;
 
-    /** @var string */
+    /** @var string Fecha de emisión del recibo. */
     public $fecha;
 
-    /** @var string */
+    /** @var string Fecha en la que se completó el pago del recibo. */
     public $fechapago;
 
-    /** @var int */
+    /** @var int Identificador de la factura de proveedor asociada. */
     public $idfactura;
 
-    /** @var int */
+    /** @var int Identificador único del recibo de proveedor. */
     public $idrecibo;
 
-    /** @var float */
+    /** @var float Importe total del recibo. */
     public $importe;
 
-    /** @var float */
+    /** @var float Importe del recibo que ya ha sido pagado. */
     public $liquidado;
 
-    /** @var string */
+    /** @var string Nombre del usuario que creó el recibo. */
     public $nick;
 
-    /** @var int */
+    /** @var int Número de vencimiento del recibo dentro de la factura. */
     public $numero;
 
-    /** @var string */
+    /** @var string Observaciones internas sobre el recibo. */
     public $observaciones;
 
-    /** @var bool */
+    /** @var bool Indica si el recibo está completamente pagado. */
     public $pagado;
 
-    /** @var bool */
+    /** @var bool Indica si el recibo está vencido y pendiente de pago. */
     public $vencido;
 
-    /** @var string */
+    /** @var string Fecha de vencimiento del recibo. */
     public $vencimiento;
 
     public function clear(): void
@@ -150,9 +149,8 @@ class ReciboProveedor extends ModelClass
      */
     public function getPayments(): array
     {
-        $where = [Where::eq('idrecibo', $this->idrecibo)];
         $orderBy = ['fecha' => 'DESC', 'hora' => 'DESC', 'idpago' => 'DESC'];
-        return DinPagoProveedor::all($where, $orderBy, 0, 0);
+        return DinPagoProveedor::allWhereEq('idrecibo', $this->idrecibo, $orderBy);
     }
 
     public function getSubject(): DinProveedor

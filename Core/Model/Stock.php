@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ProductRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
@@ -41,72 +40,34 @@ class Stock extends ModelClass
 
     const MAX_DECIMALS = 3;
 
-    /**
-     * Quantity.
-     *
-     * @var float|int
-     */
+    /** @var float|int Cantidad física almacenada. */
     public $cantidad;
 
-    /**
-     * Warehouse code.
-     *
-     * @var string
-     */
+    /** @var string Código del almacén al que corresponde el stock. */
     public $codalmacen;
 
-    /**
-     * Available. Is the quantity minus reserved.
-     *
-     * @var float|int
-     */
+    /** @var float|int Cantidad disponible tras descontar la reservada. */
     public $disponible;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int Identificador único del registro de stock. */
     public $idstock;
 
-    /**
-     * Pending receipt. Merchandise pending receipt from the supplier.
-     *
-     * @var float|int
-     */
+    /** @var float|int Cantidad pendiente de recibir de proveedores. */
     public $pterecibir;
 
-    /**
-     * Reference.
-     *
-     * @var string
-     */
+    /** @var string Referencia de la variante del producto. */
     public $referencia;
 
-    /**
-     * Reserved on customer orders.
-     *
-     * @var float|int
-     */
+    /** @var float|int Cantidad reservada en pedidos de clientes. */
     public $reservada;
 
-    /**
-     * Maximum stock.
-     *
-     * @var float|int
-     */
+    /** @var float|int Cantidad máxima de stock recomendada. */
     public $stockmax;
 
-    /**
-     * Minimum stock.
-     *
-     * @var float|int
-     */
+    /** @var float|int Cantidad mínima de stock recomendada. */
     public $stockmin;
 
-    /**
-     * @var string
-     */
+    /** @var string Ubicación física del producto dentro del almacén. */
     public $ubicacion;
 
     public function clear(): void
@@ -205,8 +166,7 @@ class Stock extends ModelClass
         $this->referencia = Tools::noHtml($this->referencia);
         if (empty($this->idproducto)) {
             $variante = new DinVariante();
-            $whereRef = [new DataBaseWhere('referencia', $this->referencia)];
-            if ($variante->loadWhere($whereRef)) {
+            if ($variante->loadWhereEq('referencia', $this->referencia)) {
                 $this->idproducto = $variante->idproducto;
             }
         }

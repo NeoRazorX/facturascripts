@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Core\Lib\TaxExceptions;
@@ -52,67 +52,67 @@ class Proveedor extends ModelClass
     const SPECIAL_ACCOUNT = 'PROVEE';
     const SPECIAL_CREDITOR_ACCOUNT = 'ACREED';
 
-    /** @var bool */
+    /** @var bool Indica si el proveedor actúa como acreedor. */
     public $acreedor;
 
-    /** @var string */
+    /** @var string Código del cliente vinculado al proveedor. */
     public $codcliente;
 
-    /** @var string */
+    /** @var string Código de la forma de pago habitual del proveedor. */
     public $codpago;
 
-    /** @var string */
+    /** @var string Código identificativo del proveedor. */
     public $codproveedor;
 
-    /** @var string */
+    /** @var string Código de la retención aplicable al proveedor. */
     public $codretencion;
 
-    /** @var string */
+    /** @var string Código de la serie predeterminada para el proveedor. */
     public $codserie;
 
-    /** @var string */
+    /** @var string Código de la subcuenta contable del proveedor. */
     public $codsubcuenta;
 
-    /** @var bool */
+    /** @var bool Indica si el proveedor está dado de baja. */
     public $debaja;
 
-    /** @var string */
+    /** @var string Código de la excepción de IVA aplicable al proveedor. */
     public $excepcioniva;
 
-    /** @var string */
+    /** @var string Número de fax del proveedor. */
     public $fax;
 
-    /** @var string */
+    /** @var string Fecha de alta del proveedor. */
     public $fechaalta;
 
-    /** @var string */
+    /** @var string Fecha de baja del proveedor. */
     public $fechabaja;
 
-    /** @var int */
+    /** @var int Identificador del contacto predeterminado del proveedor. */
     public $idcontacto;
 
-    /** @var string */
+    /** @var string Código del idioma preferido del proveedor. */
     public $langcode;
 
-    /** @var string */
+    /** @var string Nombre comercial o nombre completo del proveedor. */
     public $nombre;
 
-    /** @var string */
+    /** @var string Clave de operación de IVA aplicable al proveedor. */
     public $operacion;
 
-    /** @var string */
+    /** @var string Observaciones internas sobre el proveedor. */
     public $observaciones;
 
-    /** @var bool */
+    /** @var bool Indica si el proveedor es una persona física. */
     public $personafisica;
 
-    /** @var string */
+    /** @var string Razón social del proveedor. */
     public $razonsocial;
 
-    /** @var string */
+    /** @var string Régimen de IVA aplicable al proveedor. */
     public $regimeniva;
 
-    /** @var string */
+    /** @var string Sitio web del proveedor. */
     public $web;
 
     public function checkVies(bool $msg = true): bool
@@ -137,8 +137,8 @@ class Proveedor extends ModelClass
     {
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
-        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
-        $where[] = new DataBaseWhere('fechabaja', null, 'IS');
+        $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
+        $where[] = Where::isNull('fechabaja');
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
@@ -149,8 +149,7 @@ class Proveedor extends ModelClass
      */
     public function getAddresses(): array
     {
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
-        return DinContacto::all($where, [], 0, 0);
+        return DinContacto::allWhereEq($this->primaryColumn(), $this->id());
     }
 
     /**
@@ -160,8 +159,7 @@ class Proveedor extends ModelClass
      */
     public function getBankAccounts(): array
     {
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
-        return DinCuentaBancoProveedor::all($where, [], 0, 0);
+        return DinCuentaBancoProveedor::allWhereEq($this->primaryColumn(), $this->id());
     }
 
     /**
@@ -187,8 +185,8 @@ class Proveedor extends ModelClass
             // buscamos la subcuenta para el ejercicio
             $subAccount = new DinSubcuenta();
             $where = [
-                new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
-                new DataBaseWhere('codejercicio', $codejercicio),
+                Where::eq('codsubcuenta', $this->codsubcuenta),
+                Where::eq('codejercicio', $codejercicio),
             ];
             if ($subAccount->loadWhere($where)) {
                 return $subAccount;
@@ -258,6 +256,9 @@ class Proveedor extends ModelClass
     public function test(): bool
     {
         $this->debaja = !empty($this->fechabaja);
+        if (empty($this->fechaalta)) {
+            $this->fechaalta = Tools::date();
+        }
         $this->fax = Tools::noHtml($this->fax) ?? '';
         $this->langcode = Tools::noHtml($this->langcode);
         $this->nombre = Tools::noHtml($this->nombre);

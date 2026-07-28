@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Lib\ExtendedController\OwnerDataTrait;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -43,6 +44,8 @@ use FacturaScripts\Dinamic\Model\User;
  */
 class DocumentStitcher extends Controller
 {
+    use OwnerDataTrait;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /** @var array */
@@ -74,6 +77,24 @@ class DocumentStitcher extends Controller
         $status = [];
         foreach (EstadosDocumentos::byTipoDoc($this->modelName) as $docState) {
             if ($docState->activo && $docState->generadoc) {
+                $status[] = $docState;
+            }
+        }
+
+        return $status;
+    }
+
+    /**
+     * Devuelve los estados con los que se puede cerrar el documento: los activos
+     * y no editables. Pueden tener generadoc, porque al cerrar no se genera nada.
+     *
+     * @return array
+     */
+    public function getCloseStatus(): array
+    {
+        $status = [];
+        foreach (EstadosDocumentos::byTipoDoc($this->modelName) as $docState) {
+            if ($docState->activo && false === (bool)$docState->editable) {
                 $status[] = $docState;
             }
         }
@@ -129,6 +150,11 @@ class DocumentStitcher extends Controller
         if ($statusCode) {
             // ¿validar el token del formulario?
             if (false === $this->validateFormToken()) {
+                return;
+            }
+
+            // Evita aprobar más cantidad de la que realmente queda pendiente en cada línea.
+            if (false === $this->validateSelectedQuantities()) {
                 return;
             }
 
@@ -232,9 +258,13 @@ class DocumentStitcher extends Controller
             $quantities[$line->id()] = $quantity;
 
             if (empty($quantity) && $line->cantidad) {
-                $full = $full && $line->servido >= $line->cantidad;
+                // no se aprueba nada de esta línea: solo está completa si ya estaba
+                // toda servida (comparando en el sentido correcto según el signo).
+                $full = $full && ($line->cantidad < 0 ? $line->servido <= $line->cantidad : $line->servido >= $line->cantidad);
                 continue;
-            } elseif (($quantity + $line->servido) < $line->cantidad) {
+            } elseif ($line->cantidad < 0 && ($quantity + $line->servido) > $line->cantidad) {
+                $full = false;
+            } elseif ($line->cantidad >= 0 && ($quantity + $line->servido) < $line->cantidad) {
                 $full = false;
             }
 
@@ -251,12 +281,14 @@ class DocumentStitcher extends Controller
             }
         }
 
-        // volvemos a obtener las líneas por si han sido actualizadas
+        // reponemos las referencias con líneas frescas, porque el cambio de estado
+        // puede haberlas actualizado sobre otras instancias
         foreach ($doc->getLines() as $line) {
-            $line->servido += $quantities[$line->id()];
-            if (false === $line->save()) {
-                Tools::log()->error('record-save-error');
-                return false;
+            foreach ($newLines as $num => $newLine) {
+                if ($newLine->id() === $line->id()) {
+                    $newLines[$num] = $line;
+                    break;
+                }
             }
         }
 
@@ -265,6 +297,19 @@ class DocumentStitcher extends Controller
 
     protected function closeDocuments(int $idestado): void
     {
+        // solamente permitimos cerrar con un estado de cierre válido
+        $valid = false;
+        foreach ($this->getCloseStatus() as $docState) {
+            if ($docState->id() == $idestado) {
+                $valid = true;
+                break;
+            }
+        }
+        if (false === $valid) {
+            Tools::log()->warning('record-not-found');
+            return;
+        }
+
         foreach ($this->documents as $doc) {
             if (false === $doc->editable) {
                 Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
@@ -444,9 +489,17 @@ class DocumentStitcher extends Controller
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         foreach ($this->codes as $code) {
             $doc = new $modelClass();
-            if ($doc->loadFromCode($code)) {
-                $this->addDocument($doc);
+            if (false === $doc->load($code)) {
+                continue;
             }
+
+            // no permitimos agrupar/partir documentos ajenos
+            if (false === $this->checkOwnerData($doc)) {
+                Tools::log()->warning('not-allowed-modify');
+                continue;
+            }
+
+            $this->addDocument($doc);
         }
 
         // ordenamos por fecha
@@ -479,9 +532,16 @@ class DocumentStitcher extends Controller
         $this->where[] = Where::eq($model->subjectColumn(), $this->documents[0]->subjectColumnValue());
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
         foreach ($model->all($this->where, $orderBy, 0, 0) as $doc) {
-            if (false === in_array($doc->id(), $this->getCodes())) {
-                $this->moreDocuments[] = $doc;
+            if (in_array($doc->id(), $this->getCodes())) {
+                continue;
             }
+
+            // no sugerimos documentos ajenos cuando el usuario solo ve los suyos
+            if (false === $this->checkOwnerData($doc)) {
+                continue;
+            }
+
+            $this->moreDocuments[] = $doc;
         }
     }
 
@@ -505,5 +565,37 @@ class DocumentStitcher extends Controller
             $this->where[] = Where::lte('fecha', $this->filters['hasta']);
             $this->showFilters = true;
         }
+    }
+
+    protected function validateSelectedQuantities(): bool
+    {
+        foreach ($this->documents as $document) {
+            foreach ($document->getLines() as $line) {
+                $quantity = (float)$this->request->input('approve_quant_' . $line->id(), '0');
+
+                // en líneas negativas lo pendiente es negativo; comparamos en el
+                // sentido correcto para no aprobar más de lo que queda pendiente.
+                if ($line->cantidad < 0) {
+                    $pending = min(0, $line->cantidad - $line->servido);
+                    if ($quantity >= $pending && $quantity <= 0) {
+                        continue;
+                    }
+                } else {
+                    $pending = max(0, $line->cantidad - $line->servido);
+                    if ($quantity <= $pending) {
+                        continue;
+                    }
+                }
+
+                Tools::log()->error('error-more-quant-than-pending', [
+                    '%description%' => $line->descripcion,
+                    '%pending%' => $pending,
+                    '%selected_quantity%' => $quantity,
+                ]);
+                return false;
+            }
+        }
+
+        return true;
     }
 }

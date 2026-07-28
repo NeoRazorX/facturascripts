@@ -39,7 +39,7 @@ use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Description of Wizard
+ * Controlador del asistente de configuración inicial de la aplicación.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -115,7 +115,7 @@ class Wizard extends Controller
                 break;
 
             default:
-                if (empty($this->empresa->email) && $this->user->email) {
+                if ($this->empresa->exists() && empty($this->empresa->email) && $this->user->email) {
                     $this->empresa->email = $this->user->email;
                     $this->empresa->save();
                 }

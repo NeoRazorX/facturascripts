@@ -41,20 +41,23 @@ abstract class JoinModel
     /** @var DataBase */
     protected static $dataBase;
 
+    /** @var array Caché de campos (con tipos) por clase, para evitar reintrospección. */
+    private static $modelFieldsCache = [];
+
     /** @var ModelClass Modelo principal para las operaciones de datos. */
     protected $masterModel;
 
     /** @var array Atributos del modelo. */
     private $attributes = [];
 
-    /** Devuelve la lista de tablas necesarias para la ejecución de la vista. */
-    abstract protected function getTables(): array;
-
     /** Devuelve la lista de campos o columnas para la cláusula SELECT. */
     abstract protected function getFields(): array;
 
     /** Devuelve las tablas relacionadas para la cláusula FROM. */
     abstract protected function getSQLFrom(): string;
+
+    /** Devuelve la lista de tablas necesarias para la ejecución de la vista. */
+    abstract protected function getTables(): array;
 
     /** Constructor e inicializador de la clase. */
     public function __construct(array $data = [])
@@ -123,6 +126,19 @@ abstract class JoinModel
         return $result;
     }
 
+    /**
+     * Devuelve todos los registros donde el campo es igual al valor.
+     *
+     * @param string $field
+     * @param mixed $value
+     * @param array $order
+     * @return static[]
+     */
+    public static function allWhereEq(string $field, $value, array $order = []): array
+    {
+        return static::all([Where::eq($field, $value)], $order);
+    }
+
     /** Restablece los valores de todos los atributos del modelo. */
     public function clear(): void
     {
@@ -150,7 +166,7 @@ abstract class JoinModel
         }
 
         // buscamos en caché
-        $cacheKey = 'join-model-' . md5($instance->getSQLFrom()) . '-count';
+        $cacheKey = $instance->getCacheKey('count');
         if (empty($where)) {
             $count = Cache::get($cacheKey);
             if (is_numeric($count)) {
@@ -175,6 +191,17 @@ abstract class JoinModel
         return $final;
     }
 
+    /**
+     * Devuelve el número de registros donde el campo es igual al valor.
+     *
+     * @param string $field
+     * @param mixed $value
+     */
+    public static function countWhereEq(string $field, $value): int
+    {
+        return static::count([Where::eq($field, $value)]);
+    }
+
     /** Elimina los datos del modelo master de la base de datos. */
     public function delete(): bool
     {
@@ -193,9 +220,22 @@ abstract class JoinModel
         return isset($this->masterModel) ? $this->masterModel->exists() : static::count() > 0;
     }
 
+    /**
+     * Devuelve la definición y el tipo de los campos incluidos en la vista.
+     *
+     * @return array
+     */
     public function getModelFields(): array
     {
+        // la definición de campos es fija por clase, así que memoizamos el
+        // resultado para no volver a introspeccionar la estructura de tablas
+        $class = static::class;
+        if (isset(self::$modelFieldsCache[$class])) {
+            return self::$modelFieldsCache[$class];
+        }
+
         $fields = [];
+        $tableColumns = [];
         foreach ($this->getFields() as $key => $field) {
             $fields[$key] = [
                 'name' => $field,
@@ -219,13 +259,40 @@ abstract class JoinModel
             }
 
             // consultamos la información de la tabla para obtener el tipo
-            $columns = self::db()->getColumns($arrayField[0]);
-            if (isset($columns[$arrayField[1]])) {
-                $fields[$key]['type'] = $columns[$arrayField[1]]['type'];
+            // (una sola vez por tabla, aunque haya varios campos de la misma)
+            if (false === isset($tableColumns[$arrayField[0]])) {
+                $tableColumns[$arrayField[0]] = self::db()->getColumns($arrayField[0]);
+            }
+            if (isset($tableColumns[$arrayField[0]][$arrayField[1]])) {
+                $fields[$key]['type'] = $tableColumns[$arrayField[0]][$arrayField[1]]['type'];
             }
         }
 
+        self::$modelFieldsCache[$class] = $fields;
         return $fields;
+    }
+
+    /**
+     * Comprueba si el modelo contiene la columna indicada.
+     *
+     * @param string $columnName
+     * @return bool
+     */
+    public function hasColumn(string $columnName): bool
+    {
+        $fields = $this->getModelFields();
+        return isset($fields[$columnName]);
+    }
+
+    /** Devuelve el valor de la clave primaria del modelo master. */
+    public function id()
+    {
+        if (isset($this->masterModel)) {
+            $primaryColumn = $this->masterModel->primaryColumn();
+            return $this->{$primaryColumn};
+        }
+
+        return null;
     }
 
     /**
@@ -260,6 +327,12 @@ abstract class JoinModel
     }
 
     /**
+     * Carga un registro mediante un código o condiciones adicionales.
+     *
+     * @param mixed $cod
+     * @param Where[] $where
+     * @param array $orderby
+     * @return bool
      * @deprecated Usar load() cuando solo se necesita cargar por código, o loadWhere() cuando
      *             se requieren condiciones WHERE u ordenamiento adicionales.
      */
@@ -275,9 +348,21 @@ abstract class JoinModel
         return $this->load($cod);
     }
 
-    public function loadWhereEq(string $field, $value): bool
+    /**
+     * Asigna los valores del array $data a los atributos del modelo.
+     *
+     * @param array $data
+     * @param array $exclude Campos que no se deben cargar.
+     */
+    public function loadFromData(array $data = [], array $exclude = []): void
     {
-        return $this->loadWhere([Where::eq($field, $value)]);
+        foreach ($data as $field => $value) {
+            if (in_array($field, $exclude)) {
+                continue;
+            }
+
+            $this->attributes[$field] = $value;
+        }
     }
 
     /**
@@ -306,19 +391,23 @@ abstract class JoinModel
         return true;
     }
 
-    /** Devuelve el valor de la clave primaria del modelo master. */
-    public function id()
+    /**
+     * Carga el primer registro cuyo campo coincide con el valor indicado.
+     *
+     * @param string $field
+     * @param mixed $value
+     * @return bool
+     */
+    public function loadWhereEq(string $field, $value): bool
     {
-        if (isset($this->masterModel)) {
-            $primaryColumn = $this->masterModel->primaryColumn();
-            return $this->{$primaryColumn};
-        }
-
-        return null;
+        return $this->loadWhere([Where::eq($field, $value)]);
     }
 
     /**
-     * @deprecated Use id() instead
+     * Devuelve el valor de la clave primaria del modelo principal.
+     *
+     * @return mixed
+     * @deprecated Usar id() en su lugar.
      */
     #[Deprecated(
         reason: 'Use id() instead',
@@ -329,10 +418,17 @@ abstract class JoinModel
         return $this->id();
     }
 
+    /**
+     * Suma los valores de un campo para los registros que cumplen las condiciones.
+     *
+     * @param string $field
+     * @param Where[] $where
+     * @return float
+     */
     public function totalSum(string $field, array $where = []): float
     {
         // buscamos en caché
-        $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-' . $field . '-total-sum';
+        $cacheKey = $this->getCacheKey($field . '-total-sum');
         if (empty($where)) {
             $count = Cache::get($cacheKey);
             if (is_numeric($count)) {
@@ -410,6 +506,15 @@ abstract class JoinModel
         return $result;
     }
 
+    /**
+     * Construye la clave de caché incluyendo las tablas del join,
+     * para poder invalidarla solamente cuando cambia alguna de ellas.
+     */
+    private function getCacheKey(string $suffix): string
+    {
+        return 'join-model-' . implode('-', $this->getTables()) . '-' . md5($this->getSQLFrom()) . '-' . $suffix;
+    }
+
     /** Devuelve la cláusula GROUP BY. */
     private function getGroupBy(): string
     {
@@ -433,14 +538,6 @@ abstract class JoinModel
             $coma = ', ';
         }
         return $result;
-    }
-
-    /** Asigna los valores del array $data a los atributos del modelo. */
-    protected function loadFromData(array $data): void
-    {
-        foreach ($data as $field => $value) {
-            $this->attributes[$field] = $value;
-        }
     }
 
     /** Establece el modelo master para las operaciones de datos. */

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -213,7 +213,7 @@ class ReciboProveedorTest extends TestCase
         }
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // obtenemos el subject
@@ -287,7 +287,7 @@ class ReciboProveedorTest extends TestCase
         }
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // marcamos un recibo como impagado
@@ -298,7 +298,7 @@ class ReciboProveedorTest extends TestCase
         }
 
         // comprobamos que la factura está impagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertFalse($invoice->pagada, 'invoice-paid');
 
         // marcamos todos como pagados
@@ -308,7 +308,7 @@ class ReciboProveedorTest extends TestCase
         }
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // eliminamos un recibo
@@ -318,7 +318,7 @@ class ReciboProveedorTest extends TestCase
         }
 
         // comprobamos que la factura está impagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertFalse($invoice->pagada, 'invoice-paid');
 
         // obtenemos el subject
@@ -344,7 +344,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($receipt->save(), 'can-not-set-paid-receipt');
 
         // comprobamos que la factura está pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // añadimos una línea con precio 0
@@ -360,7 +360,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'can-not-recalculate-invoice');
 
         // comprobamos que la factura sigue pagada
-        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $invoice->load($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
         // comprobamos que solamente hay un recibo

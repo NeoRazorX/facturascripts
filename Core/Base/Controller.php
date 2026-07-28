@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,6 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
-use FacturaScripts\Core\Lib\MenuManager as NewMenuManager;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Request;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Lib\MenuManager as NewMenuManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 
@@ -228,8 +228,8 @@ class Controller implements ControllerInterface
             throw new KernelException('AccessDenied', Tools::lang()->trans('access-denied'));
         }
 
-        // Seleccionamos la empresa por defecto del usuario
-        $this->empresa = Empresas::get($this->user->idempresa);
+        // Si el usuario tiene asignada una empresa distinta a la predeterminada, la seleccionamos
+        $this->setCompany($this->user->idempresa);
 
         // Añadimos el usuario a la semilla de generación del token
         $this->multiRequestProtection->addSeed($user->nick);
@@ -246,6 +246,20 @@ class Controller implements ControllerInterface
             $this->response->cookie('fsHomepage', $this->user->homepage, $cookiesExpire);
             $this->user->save();
         }
+    }
+
+    /**
+     * Selecciona la empresa indicada, salvo que esté vacía o ya sea la cargada.
+     *
+     * @param int|null $idempresa
+     */
+    protected function setCompany($idempresa): void
+    {
+        if (empty($idempresa) || $this->empresa->idempresa == $idempresa) {
+            return;
+        }
+
+        $this->empresa = Empresas::get($idempresa);
     }
 
     /**

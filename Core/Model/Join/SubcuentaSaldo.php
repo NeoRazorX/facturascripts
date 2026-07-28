@@ -23,7 +23,10 @@ use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Core\Where;
 
 /**
- * Auxiliary model to load a summary of subaccount
+ * Modelo auxiliar para cargar el resumen de saldos de una subcuenta.
+ * Combina las tablas partidas y asientos, agrupando por subcuenta, ejercicio,
+ * canal y mes, con la suma del debe y del haber de cada grupo. El saldo se
+ * calcula al cargar cada registro (debe menos haber).
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
@@ -45,6 +48,37 @@ class SubcuentaSaldo extends JoinModel
         $this->saldo = 0.0;
         $this->mes = 0;
         $this->canal = 0;
+    }
+
+    /** Además de asignar los datos, calcula el saldo (debe menos haber). */
+    public function loadFromData(array $data = [], array $exclude = []): void
+    {
+        parent::loadFromData($data, $exclude);
+        $this->saldo = round($this->debe - $this->haber, FS_NF0);
+    }
+
+    /**
+     * Carga en el array $detail los saldos mensuales de una subcuenta para el
+     * canal indicado (índices 0 a 11, de enero a diciembre) y devuelve la suma
+     * de todos ellos, es decir, el saldo de la subcuenta en ese canal.
+     *
+     * @param mixed $idSubAccount id de la subcuenta
+     * @param mixed $channel canal del asiento; si está vacío se buscan los asientos sin canal
+     * @param array $detail array donde se cargan los saldos por mes
+     */
+    public function setSubAccountBalance($idSubAccount, $channel, &$detail): float
+    {
+        $result = 0;
+        $where = [
+            Where::eq('partidas.idsubcuenta', $idSubAccount),
+            Where::eq('asientos.canal', empty($channel) ? null : $channel),
+        ];
+        foreach (static::all($where, ['mes' => 'ASC']) as $values) {
+            $detail[$values->mes - 1] = round($values->saldo, (int)FS_NF0);
+            $result += $values->saldo;
+        }
+
+        return round($result, (int)FS_NF0);
     }
 
     protected function getFields(): array
@@ -81,30 +115,5 @@ class SubcuentaSaldo extends JoinModel
             'asientos',
             'partidas'
         ];
-    }
-
-    protected function loadFromData(array $data): void
-    {
-        parent::loadFromData($data);
-        $this->saldo = round($this->debe - $this->haber, FS_NF0);
-    }
-
-    /**
-     * Load in an array "detail" the monthly and channel balances of a sub-account
-     * and return the sum of them.
-     */
-    public function setSubAccountBalance($idSubAccount, $channel, &$detail): float
-    {
-        $result = 0;
-        $where = [
-            Where::eq('partidas.idsubcuenta', $idSubAccount),
-            Where::eq('asientos.canal', empty($channel) ? null : $channel),
-        ];
-        foreach (static::all($where, ['mes' => 'ASC']) as $values) {
-            $detail[$values->mes - 1] = round($values->saldo, (int)FS_NF0);
-            $result += $values->saldo;
-        }
-
-        return round($result, (int)FS_NF0);
     }
 }

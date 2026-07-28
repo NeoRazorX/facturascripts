@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,6 +62,12 @@ class PurchaseDocumentWorker extends WorkerClass
                 continue;
             }
 
+            // topamos la fecha del documento a "ahora" para no guardar fechas futuras
+            // (un error en la fecha del documento bloquearía futuras actualizaciones del precio)
+            $fecha = strtotime($doc->fecha . ' ' . $doc->hora) > time()
+                ? Tools::dateTime()
+                : Tools::dateTime($doc->fecha . ' ' . $doc->hora);
+
             // buscamos el producto del proveedor
             $product = new ProductoProveedor();
             $where = [
@@ -71,9 +77,9 @@ class PurchaseDocumentWorker extends WorkerClass
             ];
             if (
                 false === $product->loadWhere($where) ||
-                strtotime($product->actualizado) <= strtotime($doc->fecha . ' ' . $doc->hora)
+                strtotime($product->actualizado) <= strtotime($fecha)
             ) {
-                $product->actualizado = Tools::dateTime($doc->fecha . ' ' . $doc->hora);
+                $product->actualizado = $fecha;
                 $product->coddivisa = $doc->coddivisa;
                 $product->codproveedor = $doc->codproveedor;
                 $product->dtopor = $line->dtopor;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\AgenciasTransporte;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -34,36 +35,26 @@ class AgenciaTransporte extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * Contains True if is enabled.
-     *
-     * @var bool
-     */
+    /** @var bool Indica si la agencia de transporte está activa. */
     public $activo;
 
-    /**
-     * Primary key. Varchar(8).
-     *
-     * @var string
-     */
+    /** @var string Código identificativo de la agencia de transporte. */
     public $codtrans;
 
-    /**
-     * Name of the agency.
-     *
-     * @var string
-     */
+    /** @var string Nombre de la agencia de transporte. */
     public $nombre;
 
-    /**
-     * @var string
-     */
+    /** @var string Número de teléfono de la agencia de transporte. */
     public $telefono;
 
-    /**
-     * @var string
-     */
+    /** @var string Dirección web de la agencia de transporte. */
     public $web;
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        AgenciasTransporte::clear();
+    }
 
     public static function primaryColumn(): string
     {

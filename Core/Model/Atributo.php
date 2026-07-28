@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,13 +33,13 @@ class Atributo extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** @var string Código identificativo del atributo. */
     public $codatributo;
 
-    /** @var string */
+    /** @var string Nombre del atributo. */
     public $nombre;
 
-    /** @var int */
+    /** @var int Posición del selector de variantes en el que se muestra el atributo. */
     public $num_selector;
 
     public function addValue(string $value): bool
@@ -76,8 +76,7 @@ class Atributo extends ModelClass
      */
     public function getValues(): array
     {
-        $orderBy = ['orden' => 'ASC'];
-        return $this->hasMany(AtributoValor::class, 'codatributo', [], $orderBy);
+        return $this->hasMany(AtributoValor::class, 'codatributo', [], ['orden' => 'ASC'], true);
     }
 
     public function hasValue(string $value): bool

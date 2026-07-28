@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\CodePatterns;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\ConceptoPartida;
 use FacturaScripts\Dinamic\Model\Diario;
@@ -93,8 +93,8 @@ class AccountingHeaderHTML
         $link = '';
         $facturaCliente = new FacturaCliente();
         $where = [
-            new DataBaseWhere('codigo', $model->documento),
-            new DataBaseWhere('idasiento', $model->idasiento),
+            Where::eq('codigo', $model->documento),
+            Where::eq('idasiento', $model->idasiento),
         ];
         if ($facturaCliente->loadWhere($where)) {
             $link = $facturaCliente->url();
