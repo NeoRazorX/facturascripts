@@ -50,7 +50,7 @@ abstract class PurchaseDocument extends TransformerDocument
     public $ciudad;
 
     /**
-     * País del proveedor.
+     * Código del país del proveedor.
      *
      * @var string
      */
@@ -127,9 +127,10 @@ abstract class PurchaseDocument extends TransformerDocument
         }
 
         $variant = new Variante();
-        $where1 = [Where::eq('referencia', Tools::noHtml($reference))];
-        $where2 = [Where::eq('codbarras', Tools::noHtml($reference))];
-        if ($variant->loadWhere($where1) || $variant->loadWhere($where2)) {
+        if (
+            $variant->loadWhereEq('referencia', Tools::noHtml($reference))
+            || $variant->loadWhereEq('codbarras', Tools::noHtml($reference))
+        ) {
             $product = $variant->getProducto();
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;

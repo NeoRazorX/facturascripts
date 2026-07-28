@@ -26,7 +26,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the Serie model
+ * Controlador para editar un único elemento del modelo Serie
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -50,11 +50,10 @@ class EditSerie extends EditController
 
     protected function createFormatView(string $viewName = 'ListFormatoDocumento'): void
     {
-        $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fa-solid fa-print');
-        $this->views[$viewName]->addOrderBy(['tipodoc'], 'doc-type', 2);
-
-        // desactivamos la columna serie
-        $this->views[$viewName]->disableColumn('serie');
+        $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fa-solid fa-print')
+            ->addOrderBy(['tipodoc'], 'doc-type', 2)
+            // desactivamos la columna serie
+            ->disableColumn('serie');
     }
 
     protected function createSequenceView(string $viewName = 'ListSecuenciaDocumento'): void
@@ -105,7 +104,7 @@ class EditSerie extends EditController
         switch ($viewName) {
             case 'ListFormatoDocumento':
             case 'ListSecuenciaDocumento':
-                $codserie = $this->getViewModelValue($this->getMainViewName(), 'codserie');
+                $codserie = $this->mainTabModelValue('codserie');
                 $where = [Where::eq('codserie', $codserie)];
                 $view->loadData('', $where);
                 break;

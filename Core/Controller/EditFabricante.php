@@ -27,7 +27,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Producto;
 
 /**
- * Controller to edit a single item from the Fabricante model
+ * Controlador para editar un único elemento del modelo Fabricante
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -85,7 +85,7 @@ class EditFabricante extends EditController
         $this->createViewProductsCommon($viewName);
 
         // botón añadir producto
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'add-product',
             'color' => 'success',
             'icon' => 'fa-solid fa-folder-plus',
@@ -99,7 +99,7 @@ class EditFabricante extends EditController
         $this->createViewProductsCommon($viewName);
 
         // botón quitar producto
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'remove-product',
             'color' => 'danger',
             'confirm' => true,
@@ -115,17 +115,16 @@ class EditFabricante extends EditController
             ->addOrderBy(['precio'], 'price')
             ->addOrderBy(['stockfis'], 'stock');
 
-        $i18n = Tools::lang();
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $taxes = Impuestos::codeModel();
 
         // filtros
         $this->listView($viewName)
             ->addFilterSelectWhere('status', [
-                ['label' => $i18n->trans('only-active'), 'where' => [Where::eq('bloqueado', false)]],
-                ['label' => $i18n->trans('blocked'), 'where' => [Where::eq('bloqueado', true)]],
-                ['label' => $i18n->trans('public'), 'where' => [Where::eq('publico', true)]],
-                ['label' => $i18n->trans('all'), 'where' => []]
+                ['label' => Tools::trans('only-active'), 'where' => [Where::eq('bloqueado', false)]],
+                ['label' => Tools::trans('blocked'), 'where' => [Where::eq('bloqueado', true)]],
+                ['label' => Tools::trans('public'), 'where' => [Where::eq('publico', true)]],
+                ['label' => Tools::trans('all'), 'where' => []]
             ])
             ->addFilterSelect('codfamilia', 'family', 'codfamilia', $families)
             ->addFilterNumber('min-price', 'price', 'precio', '<=')
@@ -177,7 +176,7 @@ class EditFabricante extends EditController
     {
         switch ($viewName) {
             case 'ListProducto':
-                $codfabricante = $this->getViewModelValue($this->getMainViewName(), 'codfabricante');
+                $codfabricante = $this->mainTabModelValue('codfabricante');
                 $where = [Where::eq('codfabricante', $codfabricante)];
                 $view->loadData('', $where);
                 break;

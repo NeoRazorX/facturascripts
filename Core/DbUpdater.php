@@ -80,6 +80,10 @@ final class DbUpdater
             $structure = self::readTableXml($file_path);
         }
 
+        if (false === self::validateStructure($table_name, $structure)) {
+            return false;
+        }
+
         $sql = self::sqlTool()->sqlCreateTable($table_name, $structure['columns'], $structure['constraints'], $structure['indexes']) . $sql_after;
         if (false === self::db()->exec($sql)) {
             self::$last_error = 'Error creating table ' . $table_name . ': ' . $sql;
@@ -237,6 +241,10 @@ final class DbUpdater
         if (empty($structure)) {
             $file_path = self::getTableXmlLocation($table_name);
             $structure = self::readTableXml($file_path);
+        }
+
+        if (false === self::validateStructure($table_name, $structure)) {
+            return false;
         }
 
         // comparamos las columnas, restricciones y los índices de la tabla con los del XML
@@ -404,6 +412,13 @@ final class DbUpdater
 
     private static function compareIndexes(string $table_name, array $xml_indexes, array $db_indexes, array &$sqlQueries): void
     {
+        // los índices compuestos aparecen una vez por columna, así que los agrupamos por nombre
+        $unique_db_indexes = [];
+        foreach ($db_indexes as $db_idx) {
+            $unique_db_indexes[$db_idx['name']] = $db_idx;
+        }
+        $db_indexes = array_values($unique_db_indexes);
+
         // Agregamos fs_ al inicio del 'name'
         // Así la comparación es correcta al buscar los índices
         foreach ($xml_indexes as $key => $value) {
@@ -543,5 +558,15 @@ final class DbUpdater
         }
 
         return self::$sql_tool;
+    }
+
+    private static function validateStructure(string $table_name, array $structure): bool
+    {
+        if (!empty($structure['columns'])) {
+            return true;
+        }
+
+        self::$last_error = 'Invalid or empty structure for table ' . $table_name;
+        return false;
     }
 }

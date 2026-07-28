@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
@@ -153,10 +154,57 @@ abstract class PurchasesController extends PanelController
         AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
 
+        // avisa si el numproveedor ya lo usa otro documento del mismo proveedor
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/TooltipWarning.css');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/CheckDuplicatedNumProveedor.js');
+
         PurchasesHeaderHTML::assets();
         PurchasesLineHTML::assets();
         PurchasesFooterHTML::assets();
         PurchasesModalHTML::assets();
+    }
+
+    /**
+     * Devuelve, en json, los documentos del mismo tipo y proveedor que ya usan
+     * este numproveedor. Solo avisa, no impide guardar.
+     */
+    protected function checkNumProveedorAction(): bool
+    {
+        $this->setTemplate(false);
+
+        $numproveedor = trim($this->request->input('numproveedor', ''));
+        $codproveedor = $this->request->input('codproveedor', '');
+        if (empty($numproveedor) || empty($codproveedor)) {
+            $this->response->json(['duplicated' => false, 'message' => '']);
+            return false;
+        }
+
+        $model = $this->getModel();
+        $where = [
+            Where::eq('codproveedor', $codproveedor),
+            Where::eq('numproveedor', $numproveedor)
+        ];
+
+        // excluimos el propio documento, si ya está guardado
+        $code = $this->request->input('code');
+        if (false === empty($code)) {
+            $where[] = Where::notEq($model->primaryColumn(), $code);
+        }
+
+        $codes = [];
+        foreach ($model::all($where, ['fecha' => 'DESC'], 0, 5) as $doc) {
+            $codes[] = $doc->codigo;
+        }
+
+        $this->response->json([
+            'duplicated' => false === empty($codes),
+            'message' => empty($codes) ? '' : Tools::trans('duplicated-numsupplier', [
+                '%numsupplier%' => $numproveedor,
+                '%documents%' => implode(', ', $codes)
+            ])
+        ]);
+
+        return false;
     }
 
     protected function deleteDocAction(): bool
@@ -216,6 +264,12 @@ abstract class PurchasesController extends PanelController
             case 'set-supplier':
                 return $this->recalculateAction(true);
 
+            case 'check-numproveedor':
+                return $this->checkNumProveedorAction();
+
+            case 'create-supplier':
+                return $this->createSupplierAction();
+
             case 'delete-doc':
                 return $this->deleteDocAction();
 
@@ -252,6 +306,131 @@ abstract class PurchasesController extends PanelController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function createSupplierAction(): bool
+    {
+        $this->setTemplate(false);
+
+        if (false === $this->user->can('EditProveedor', 'update')) {
+            Tools::log()->warning('not-allowed-modify');
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        if (false === $this->validateFormToken()) {
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        $formData = json_decode($this->request->input('data'), true);
+        if (false === is_array($formData)) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        foreach (['newsupplier_nombre', 'newsupplier_direccion', 'newsupplier_ciudad', 'newsupplier_provincia'] as $field) {
+            if (false === is_string($formData[$field] ?? null) || trim($formData[$field]) === '') {
+                Tools::log()->warning('invalid-request');
+                $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+                return false;
+            }
+
+            $formData[$field] = trim($formData[$field]);
+        }
+
+        $countryCode = is_string($formData['newsupplier_codpais'] ?? null) ? $formData['newsupplier_codpais'] : '';
+        if (empty($countryCode) || false === Paises::get($countryCode)->exists()) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        // si el cifnif ya existe en otro proveedor avisamos, pero permitimos crearlo igualmente
+        $cifnif = trim($formData['newsupplier_cifnif'] ?? '');
+        $confirmed = ($formData['newsupplier_cifnif_confirmed'] ?? '') === '1';
+        if ($cifnif !== '' && false === $confirmed) {
+            $duplicated = $this->findSuppliersByCifnif($cifnif);
+            if (false === empty($duplicated)) {
+                $response = $this->emptyPurchasesResponse();
+                $response['duplicatedCifnif'] = true;
+                $response['duplicatedCifnifMessage'] = Tools::trans('duplicated-cifnif-supplier', [
+                    '%cifnif%' => $cifnif,
+                    '%suppliers%' => implode(', ', $duplicated)
+                ]);
+                $this->sendJsonWithLogs($response);
+                return false;
+            }
+        }
+
+        $supplier = new Proveedor();
+        $supplier->cifnif = $cifnif;
+        $supplier->email = $formData['newsupplier_email'] ?? '';
+        $supplier->nombre = $formData['newsupplier_nombre'] ?? '';
+        $supplier->telefono1 = $formData['newsupplier_telefono'] ?? '';
+
+        $this->db()->beginTransaction();
+        try {
+            if (false === $supplier->save()) {
+                $this->db()->rollback();
+                $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+                return false;
+            }
+
+            $address = $supplier->getDefaultAddress();
+            $address->cifnif = $supplier->cifnif;
+            $address->ciudad = $formData['newsupplier_ciudad'] ?? '';
+            $address->codpais = $countryCode;
+            $address->codpostal = $formData['newsupplier_codpostal'] ?? '';
+            $address->direccion = $formData['newsupplier_direccion'] ?? '';
+            $address->provincia = $formData['newsupplier_provincia'] ?? '';
+            if (false === $address->save()) {
+                $this->db()->rollback();
+                $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+                return false;
+            }
+
+            $this->db()->commit();
+        } catch (Throwable $e) {
+            $this->db()->rollback();
+            Tools::log()->error($e->getMessage());
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        $formData['action'] = 'set-supplier';
+        $formData['codproveedor'] = $supplier->codproveedor;
+
+        $model = $this->getModel();
+        $lines = $model->getLines();
+        PurchasesHeaderHTML::apply($model, $formData);
+        PurchasesFooterHTML::apply($model, $formData);
+        PurchasesLineHTML::apply($model, $lines, $formData);
+        Calculator::calculate($model, $lines, false);
+
+        $this->sendJsonWithLogs([
+            'supplierCreated' => true,
+            'footer' => PurchasesFooterHTML::render($model),
+            'header' => PurchasesHeaderHTML::render($model),
+            'lines' => PurchasesLineHTML::render($lines, $model),
+            'linesMap' => [],
+            'multireqtoken' => $this->multiRequestProtection->newToken(),
+            'products' => '',
+        ]);
+        return false;
+    }
+
+    /** Devuelve los proveedores que ya tienen este cifnif, como 'código - nombre'. */
+    private function findSuppliersByCifnif(string $cifnif): array
+    {
+        $names = [];
+        $where = [Where::eq('cifnif', $cifnif)];
+        foreach (Proveedor::all($where, ['LOWER(nombre)' => 'ASC'], 0, 5) as $supplier) {
+            $names[] = $supplier->codproveedor . ' - ' . $supplier->nombre;
+        }
+
+        return $names;
     }
 
     protected function exportAction()
@@ -294,7 +473,7 @@ abstract class PurchasesController extends PanelController
     {
         $this->setTemplate(false);
         $model = $this->getModel();
-        $formData = json_decode($this->request->input('data'), true);
+        $formData = json_decode($this->request->input('data'), true) ?? [];
         PurchasesHeaderHTML::apply($model, $formData);
         PurchasesFooterHTML::apply($model, $formData);
         PurchasesModalHTML::apply($model, $formData);
@@ -349,7 +528,7 @@ abstract class PurchasesController extends PanelController
 
                 $this->title .= ' ' . $view->model->primaryDescription();
                 $view->settings['btnPrint'] = true;
-                $this->addButton($viewName, [
+                $view->addButton([
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
                     'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',
@@ -364,7 +543,7 @@ abstract class PurchasesController extends PanelController
         $this->setTemplate(false);
         $model = $this->getModel();
         $lines = $model->getLines();
-        $formData = json_decode($this->request->input('data'), true);
+        $formData = json_decode($this->request->input('data'), true) ?? [];
         PurchasesHeaderHTML::apply($model, $formData);
         PurchasesFooterHTML::apply($model, $formData);
         PurchasesLineHTML::apply($model, $lines, $formData);
@@ -393,7 +572,15 @@ abstract class PurchasesController extends PanelController
         }
 
         $model = $this->getModel();
+
+        // si los datos del formulario no llegan o no son JSON válido (petición truncada,
+        // límites post_max_size / max_input_vars), rechazamos en lugar de guardar en blanco
         $formData = json_decode($this->request->input('data'), true);
+        if (false === is_array($formData)) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
 
         // bloqueo optimista: si el estado del documento ha cambiado desde que se cargó el formulario,
         // rechazamos para no borrar líneas a partir de un formulario obsoleto (tarea 4673)
@@ -543,6 +730,19 @@ abstract class PurchasesController extends PanelController
         $this->db()->commit();
         $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
+    }
+
+    private function emptyPurchasesResponse(): array
+    {
+        return [
+            'supplierCreated' => false,
+            'footer' => '',
+            'header' => '',
+            'lines' => '',
+            'linesMap' => [],
+            'multireqtoken' => $this->multiRequestProtection->newToken(),
+            'products' => '',
+        ];
     }
 
     private function sendJsonWithLogs(array $data): void

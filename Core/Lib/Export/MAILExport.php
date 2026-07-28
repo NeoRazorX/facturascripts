@@ -83,7 +83,7 @@ class MAILExport extends ParentClass
      */
     public function show(Response &$response)
     {
-        $fileName = $this->getFileName() . '_mail_' . time() . '.pdf';
+        $fileName = $this->getFileName() . '_mail_' . time() . '_' . Tools::randomString(10) . '.pdf';
         $filePath = FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName;
         if (
             false === Tools::folderCheckOrCreate(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH) ||

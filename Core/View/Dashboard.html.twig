@@ -18,7 +18,6 @@
  */
 #}
 {% extends "Master/MenuBghTemplate.html.twig" %}
-{% import 'Macro/Utils.html.twig' as Utils %}
 
 {% block body %}
     <div class="bg-light pt-4 pb-5">
@@ -44,6 +43,10 @@
         </div>
     </div>
     <div class="container" style="margin-top: -40px;">
+        {% if fsc.isOnboarding and fsc.firstSteps %}
+            {{ _self.sectionFirstSteps(fsc) }}
+        {% endif %}
+
         {# sectionLinks #}
         {% for includeView in getIncludeViews('Dashboard', 'sectionLinksBefore') %}
             {% include includeView['path'] %}
@@ -59,67 +62,45 @@
             {% include includeView['path'] %}
         {% endfor %}
 
-        {# backup warning #}
-        {% if fsc.showBackupWarning() %}
-            <div class="row">
-                <div class="col">
-                    <div class="card bg-warning shadow mb-3">
-                        <div class="card-body">
-                            <div class="h3">
-                                <i class="fa-solid fa-save me-1"></i> {{ trans('dashboard-backup') }}
-                            </div>
-                            <p class="card-text">{{ trans('dashboard-backup-p') }}</p>
-                            <ul class="mb-0">
-                                <li>{{ trans('dasboard-backup-li1') }}</li>
-                                <li>{{ trans('dasboard-backup-li2') }}</li>
-                                <li>{{ trans('dasboard-backup-li3') }}</li>
-                            </ul>
-                        </div>
-                        <div class="card-footer p-2">
-                            <a href="https://facturascripts.com/plugins/backup" target="_blank" rel="nofollow"
-                               class="btn btn-secondary"> Backup
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% elseif fsc.updated == false %}
-            <div class="mb-3">
-                {{ Utils.updateInstall() }}
-            </div>
-        {% elseif fsc.registered == false %}
-            <div class="mb-3">
-                {{ Utils.registerInstall() }}
-            </div>
+        {% if fsc.isOnboarding == false %}
+            {# sectionStats #}
+            {% for includeView in getIncludeViews('Dashboard', 'sectionStatsBefore') %}
+                {% include includeView['path'] %}
+            {% endfor %}
+            {% block sectionStats %}
+                {{ _self.sectionStats(fsc) }}
+            {% endblock %}
+            {% for includeView in getIncludeViews('Dashboard', 'sectionStatsAfter') %}
+                {% include includeView['path'] %}
+            {% endfor %}
         {% endif %}
-
-        {# sectionStats #}
-        {% for includeView in getIncludeViews('Dashboard', 'sectionStatsBefore') %}
-            {% include includeView['path'] %}
-        {% endfor %}
-        {% block sectionStats %}
-            {{ _self.sectionStats(fsc) }}
-        {% endblock %}
-        {% for includeView in getIncludeViews('Dashboard', 'sectionStatsAfter') %}
-            {% include includeView['path'] %}
-        {% endfor %}
 
         {# sections #}
         {% for includeView in getIncludeViews('Dashboard', 'sectionsBefore') %}
             {% include includeView['path'] %}
         {% endfor %}
         {% block sections %}
-            <div class="row">
-                <div class="col">
-                    {% if 'receipts' in fsc.sections %}
-                        {{ _self.sectionReceipts(fsc) }}
-                    {% endif %}
-                    {% if 'low-stock' in fsc.sections %}
-                        {{ _self.sectionLowStock(fsc) }}
-                    {% endif %}
+            {% set hasAlerts = (fsc.isOnboarding == false and fsc.showBackupWarning())
+                or fsc.updated == false or fsc.registered == false
+                or fsc.receiptCount > 0 or fsc.lowStockCount > 0 %}
+            <div class="row g-3 mb-3">
+                {% if hasAlerts %}
+                    <div class="col-lg-6">
+                        {{ _self.sectionAlerts(fsc) }}
+                    </div>
+                {% endif %}
+                <div class="{{ hasAlerts ? 'col-lg-6' : 'col-12' }}">
+                    {{ _self.sectionHelp() }}
                 </div>
             </div>
-            {{ _self.sectionNews(fsc) }}
+            {% if fsc.openLinks %}
+                <div class="mb-3">
+                    {{ _self.sectionRecent(fsc) }}
+                </div>
+            {% endif %}
+            {% if fsc.isOnboarding == false %}
+                {{ _self.sectionNews(fsc) }}
+            {% endif %}
         {% endblock %}
         {% for includeView in getIncludeViews('Dashboard', 'sectionsAfter') %}
             {% include includeView['path'] %}
@@ -129,92 +110,173 @@
 {% endblock %}
 
 {% macro drawStatsBox(fsc, group, color, ismoney) %}
-    <div class="card shadow mb-3">
-        <div class="card-body p-2 text-white {{ color }}">
-            <h2 class="h5 text-center mb-0">
-                {{ trans(group) }}
-            </h2>
+    {% set current = fsc.stats[group]['this-month'] %}
+    {% set previous = fsc.stats[group]['last-month'] %}
+    {% set change = fsc.statChanges[group] %}
+    <div class="card shadow-sm h-100">
+        <div class="card-body border-top border-4 {{ color }}">
+            <div class="d-flex justify-content-between align-items-start">
+                <h2 class="h6 text-muted mb-2">{{ trans(group) }}</h2>
+                {% if change is not null %}
+                    <span class="badge bg-light text-dark">
+                        <i class="fa-solid fa-arrow-{{ change >= 0 ? 'up' : 'down' }} me-1"></i>
+                        {{ number(change|abs, 1) }}%
+                    </span>
+                {% endif %}
+            </div>
+            <div class="h3 mb-0{{ current < 0 ? ' text-danger' : '' }}">
+                {{ ismoney ? money(current) : number(current) }}
+            </div>
+            <small class="text-muted">{{ trans('this-month') }}</small>
         </div>
-        <div class="table-responsive">
-            <table class="table mb-0">
-                {% for key, value in fsc.stats[group] %}
-                    <tr>
-                        <td>{{ trans(key) }}</td>
-                        {% set color = value < 0 ? ' text-danger' : '' %}
-                        {% if ismoney %}
-                            <td class="text-end{{ color }}">{{ money(value) }}</td>
-                        {% else %}
-                            <td class="text-end">{{ value }}</td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </table>
+        <div class="card-footer bg-transparent d-flex justify-content-between">
+            <small class="text-muted">{{ trans('last-month') }}</small>
+            <small>{{ ismoney ? money(previous) : number(previous) }}</small>
         </div>
     </div>
 {% endmacro %}
 
 {% macro sectionLinks(fsc) %}
-    <div class="card shadow mb-3">
-        <div class="ps-3 pt-1 pe-3 pb-3">
-            <div class="row">
-                <div class="col-md">
-                    <h2 class="h4 mt-3 mb-1">
-                        <i class="fa-solid fa-plus fa-fw"></i> {{ trans('create') }}
-                    </h2>
-                    <ul class="mb-1">
-                        {% for link, label in fsc.createLinks %}
-                            <li>
-                                <a href="{{ link }}">{{ trans(label) }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% if fsc.openLinks %}
-                    <div class="col-md">
-                        <h2 class="h4 mt-3 mb-1">
-                            <i class="fa-solid fa-folder-open fa-fw"></i> {{ trans('open') }}
-                        </h2>
-                        <ul class="mb-1">
-                            {% for link in fsc.openLinks %}
-                                <li>
-                                    {{ trans(link.type) }}
-                                    <a href="{{ link.url }}">{{ link.name }}</a>
-                                    <span class="text-muted">{{ link.date }}</span>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-                <div class="col-md">
-                    <h2 class="h4 mt-3 mb-1">
-                        <i class="fa-solid fa-question-circle fa-fw"></i> {{ trans('help') }}
-                    </h2>
-                    <ul class="mb-1">
-                        <li>
-                            <a href="https://facturascripts.com/publicaciones/configuracion-15" rel="nofollow"
-                               target="_blank">Configuración</a>
-                        </li>
-                        <li>
-                            <a href="https://facturascripts.com/publicaciones/primeros-pasos-303" rel="nofollow"
-                               target="_blank">Primeros pasos</a>
-                        </li>
-                        <li>
-                            <a href="https://facturascripts.com/publicaciones/problemas-frecuentes-469" rel="nofollow"
-                               target="_blank">Problemas frecuentes</a>
-                        </li>
-                        <li>
-                            <a href="https://facturascripts.com/cursos/curso-de-usuario" rel="nofollow"
-                               target="_blank">Curso de usuario
-                                <i class="fa-solid fa-graduation-cap"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://facturascripts.com/contacto" rel="nofollow" target="_blank">Soporte
-                                <i class="fa-regular fa-comment-dots"></i></a>
-                        </li>
-                    </ul>
+    {% if fsc.createLinks %}
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h2 class="h5 mb-3">
+                    <i class="fa-solid fa-bolt fa-fw me-1 text-warning"></i>{{ trans('create') }}
+                </h2>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for link, label in fsc.createLinks %}
+                        <a href="{{ link }}" class="btn btn-outline-primary">
+                            {% if link == 'EditFacturaCliente' or link == 'EditFacturaProveedor' %}
+                                <i class="fa-solid fa-file-invoice-dollar fa-fw me-1"></i>
+                            {% elseif link == 'EditCliente' %}
+                                <i class="fa-solid fa-user fa-fw me-1"></i>
+                            {% elseif link == 'EditProducto' %}
+                                <i class="fa-solid fa-box fa-fw me-1"></i>
+                            {% else %}
+                                <i class="fa-solid fa-plus fa-fw me-1"></i>
+                            {% endif %}
+                            {{ trans(label) }}
+                        </a>
+                    {% endfor %}
                 </div>
             </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro sectionFirstSteps(fsc) %}
+    {% set totalSteps = fsc.firstSteps|length %}
+    {% set progress = totalSteps > 0 ? (fsc.firstStepsCompleted * 100 / totalSteps)|round : 0 %}
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h4 mb-0">
+                    <i class="fa-solid fa-list-check fa-fw me-1 text-primary"></i>{{ trans('first-steps') }}
+                </h2>
+                <span class="text-muted">{{ fsc.firstStepsCompleted }}/{{ totalSteps }}</span>
+            </div>
+            <div class="progress mb-3" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0"
+                 aria-valuemax="100" style="height: 6px;">
+                <div class="progress-bar" style="width: {{ progress }}%"></div>
+            </div>
+            <div class="row g-2">
+                {% for step in fsc.firstSteps %}
+                    {% set stepClass = step.complete ? 'btn-outline-success' : 'btn-outline-primary' %}
+                    <div class="col-md-6 col-xl-3">
+                        <a href="{{ step.url }}"
+                           class="btn {{ stepClass }} text-start w-100 h-100"
+                           {% if step.url starts with 'http' %}target="_blank" rel="nofollow"{% endif %}>
+                            <i class="{{ step.complete ? 'fa-solid fa-circle-check' : step.icon }} fa-fw me-1"></i>
+                            {{ trans(step.label) }}
+                            {% if step.complete %}
+                                <small class="d-block ms-4">{{ trans('completed') }}</small>
+                            {% endif %}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sectionAlerts(fsc) %}
+    <div class="card shadow-sm h-100">
+        <div class="card-body pb-2">
+            <h2 class="h5 mb-0">
+                <i class="fa-solid fa-triangle-exclamation fa-fw me-1 text-warning"></i>{{ trans('warning') }}
+            </h2>
+        </div>
+        <div class="list-group list-group-flush">
+            {% if fsc.receiptCount > 0 %}
+                <a href="ListReciboCliente" class="list-group-item list-group-item-action d-flex align-items-center">
+                    <i class="fa-solid fa-money-bill-wave fa-fw me-2 text-danger"></i>
+                    <span class="flex-grow-1">{{ trans('receipts') }} · {{ trans('unpaid') }}</span>
+                    <span class="badge bg-danger rounded-pill">{{ fsc.receiptCount }}</span>
+                </a>
+            {% endif %}
+            {% if fsc.lowStockCount > 0 %}
+                <a href="ListProducto" class="list-group-item list-group-item-action d-flex align-items-center">
+                    <i class="fa-solid fa-pallet fa-fw me-2 text-danger"></i>
+                    <span class="flex-grow-1">{{ trans('minimum-stock') }}</span>
+                    <span class="badge bg-danger rounded-pill">{{ fsc.lowStockCount }}</span>
+                </a>
+            {% endif %}
+            {% if fsc.updated == false %}
+                <a href="Updater" class="list-group-item list-group-item-action">
+                    <i class="fa-solid fa-cloud-arrow-down fa-fw me-2 text-warning"></i>{{ trans('updates-available') }}
+                </a>
+            {% endif %}
+            {% if fsc.registered == false %}
+                <a href="Updater" class="list-group-item list-group-item-action">
+                    <i class="fa-solid fa-registered fa-fw me-2 text-secondary"></i>{{ trans('register-install-ad') }}
+                </a>
+            {% endif %}
+            {% if fsc.isOnboarding == false and fsc.showBackupWarning() %}
+                <a href="https://facturascripts.com/plugins/backup" target="_blank" rel="nofollow"
+                   class="list-group-item list-group-item-action">
+                    <i class="fa-solid fa-floppy-disk fa-fw me-2 text-warning"></i>{{ trans('dashboard-backup') }}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sectionHelp() %}
+    <div class="card shadow-sm h-100">
+        <div class="card-body pb-2">
+            <h2 class="h5 mb-0">
+                <i class="fa-solid fa-circle-question fa-fw me-1 text-primary"></i>{{ trans('help') }}
+            </h2>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="https://facturascripts.com/ayuda" target="_blank" rel="nofollow noopener"
+               class="list-group-item list-group-item-action">
+                <i class="fa-solid fa-book-open fa-fw me-2 text-secondary"></i>{{ trans('user-guide') }}
+            </a>
+            <a href="https://facturascripts.com/cursos/curso-de-usuario" target="_blank" rel="nofollow noopener"
+               class="list-group-item list-group-item-action">
+                <i class="fa-solid fa-graduation-cap fa-fw me-2 text-primary"></i>{{ trans('free-course') }}
+            </a>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sectionRecent(fsc) %}
+    <div class="card shadow-sm h-100">
+        <div class="card-body pb-2">
+            <h2 class="h5 mb-0">
+                <i class="fa-solid fa-clock-rotate-left fa-fw me-1 text-secondary"></i>{{ trans('open') }}
+            </h2>
+        </div>
+        <div class="list-group list-group-flush">
+            {% for link in fsc.openLinks %}
+                <a href="{{ link.url }}" class="list-group-item list-group-item-action d-flex align-items-center">
+                    <span class="flex-grow-1">
+                        <span class="text-muted">{{ trans(link.type) }}</span> {{ link.name }}
+                    </span>
+                    <small class="text-muted ms-2">{{ link.date }}</small>
+                </a>
+            {% endfor %}
         </div>
     </div>
 {% endmacro %}
@@ -311,18 +373,26 @@
 {% endmacro %}
 
 {% macro sectionStats(fsc) %}
-    <div class="row">
-        <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, 'purchases', 'bg-danger', true) }}
-        </div>
-        <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, 'sales', 'bg-success', true) }}
-        </div>
-        <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, 'taxes', 'bg-warning', true) }}
-        </div>
-        <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, 'new-customers', 'bg-info', false) }}
-        </div>
+    <div class="row g-3 mb-3">
+        {% if fsc.stats['purchases'] is defined %}
+            <div class="col-sm-6 col-xl-3">
+                {{ _self.drawStatsBox(fsc, 'purchases', 'border-danger', true) }}
+            </div>
+        {% endif %}
+        {% if fsc.stats['sales'] is defined %}
+            <div class="col-sm-6 col-xl-3">
+                {{ _self.drawStatsBox(fsc, 'sales', 'border-success', true) }}
+            </div>
+        {% endif %}
+        {% if fsc.stats['taxes'] is defined %}
+            <div class="col-sm-6 col-xl-3">
+                {{ _self.drawStatsBox(fsc, 'taxes', 'border-warning', true) }}
+            </div>
+        {% endif %}
+        {% if fsc.stats['new-customers'] is defined %}
+            <div class="col-sm-6 col-xl-3">
+                {{ _self.drawStatsBox(fsc, 'new-customers', 'border-info', false) }}
+            </div>
+        {% endif %}
     </div>
 {% endmacro %}

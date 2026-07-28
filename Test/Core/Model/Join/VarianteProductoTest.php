@@ -170,4 +170,14 @@ final class VarianteProductoTest extends TestCase
         // eliminamos
         $this->assertTrue($product->delete());
     }
+
+    public function testHasColumn(): void
+    {
+        $variant = new VarianteProducto();
+
+        $this->assertTrue($variant->hasColumn('referencia'));
+        $this->assertTrue($variant->hasColumn('precio_iva'));
+        $this->assertFalse($variant->hasColumn('columna_inexistente'));
+        $this->assertFalse($variant->hasColumn(''));
+    }
 }

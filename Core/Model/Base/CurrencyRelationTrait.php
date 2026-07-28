@@ -29,14 +29,14 @@ use FacturaScripts\Core\DataSrc\Divisas;
 trait CurrencyRelationTrait
 {
     /**
-     * Currency of the document.
+     * Código de la divisa utilizada en el documento.
      *
      * @var string
      */
     public $coddivisa;
 
     /**
-     * Rate of conversion to Euros of the selected currency.
+     * Tasa de conversión a euros de la divisa seleccionada.
      *
      * @var float|int
      */

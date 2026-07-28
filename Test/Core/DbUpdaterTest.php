@@ -241,6 +241,74 @@ final class DbUpdaterTest extends TestCase
         $this->assertTrue($dropped, 'test-table-not-dropped');
     }
 
+    public function testCanRemoveIndexes(): void
+    {
+        $table_name = 'test_table';
+
+        try {
+            // creamos la tabla con un índice compuesto
+            $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
+            $structure = DbUpdater::readTableXml($file_path);
+            $structure['indexes']['test_idx'] = [
+                'name' => 'test_idx',
+                'columns' => 'fechaalta, email',
+            ];
+            $created = DbUpdater::createTable($table_name, $structure);
+            $this->assertTrue($created, 'test-table-not-created');
+
+            $indexes = $this->db()->getIndexes($table_name);
+            $this->assertCount(2, $indexes, 'missing-indexes');
+
+            // actualizamos la tabla con una estructura sin índices
+            DbUpdater::rebuild();
+            $new_structure = DbUpdater::readTableXml($file_path);
+            $updated = DbUpdater::updateTable($table_name, $new_structure);
+            $this->assertTrue($updated, 'test-table-not-updated');
+
+            // comprobamos que se ha eliminado el índice
+            $indexes = $this->db()->getIndexes($table_name);
+            $this->assertEmpty($indexes, 'indexes-not-removed');
+        } finally {
+            if ($this->db()->tableExists($table_name)) {
+                DbUpdater::dropTable($table_name);
+            }
+        }
+    }
+
+    public function testMissingXmlDoesNotModifyTable(): void
+    {
+        $table_name = 'test_table';
+
+        try {
+            // creamos la tabla con un índice
+            $file_path = Tools::folder('Test', '__files', $table_name . '_update_4.xml');
+            $structure = DbUpdater::readTableXml($file_path);
+            $created = DbUpdater::createTable($table_name, $structure);
+            $this->assertTrue($created, 'test-table-not-created');
+            $this->assertCount(1, $this->db()->getIndexes($table_name), 'missing-indexes');
+
+            // intentamos actualizar sin que exista el XML de la tabla
+            DbUpdater::rebuild();
+            $xml_path = DbUpdater::getTableXmlLocation($table_name);
+            $this->assertFileDoesNotExist($xml_path, 'unexpected-table-xml-found');
+
+            $updated = DbUpdater::updateTable($table_name);
+            $this->assertFalse($updated, 'table-updated-without-xml');
+            $this->assertSame(
+                'Invalid or empty structure for table ' . $table_name,
+                DbUpdater::getLastError(),
+                'wrong-error-without-xml'
+            );
+
+            // la estructura existente no debe modificarse
+            $this->assertCount(1, $this->db()->getIndexes($table_name), 'indexes-removed-without-xml');
+        } finally {
+            if ($this->db()->tableExists($table_name)) {
+                DbUpdater::dropTable($table_name);
+            }
+        }
+    }
+
     private function db(): DataBase
     {
         if (null === $this->db) {

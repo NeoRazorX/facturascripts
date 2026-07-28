@@ -24,12 +24,12 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\ControllerPermissions;
-use FacturaScripts\Core\Lib\MenuManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Lib\MenuManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
@@ -155,7 +155,7 @@ abstract class Controller implements ControllerInterface
 
         // empresa del usuario, o la predeterminada si no tiene ninguna asignada
         $idempresa = empty($this->user) ? null : $this->user->idempresa;
-        $this->empresa = Empresas::get($idempresa ?? Tools::settings('default', 'idempresa'));
+        $this->empresa = empty($idempresa) ? Empresas::default() : Empresas::get($idempresa);
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($this->className);

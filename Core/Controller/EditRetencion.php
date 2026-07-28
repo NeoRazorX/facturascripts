@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the Retencion model
+ * Controlador para editar un único elemento del modelo Retencion
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
@@ -58,24 +58,22 @@ class EditRetencion extends EditController
 
     protected function createViewsCustomers(string $viewName = 'ListCliente')
     {
-        $this->addListView($viewName, 'Cliente', 'customers', 'fa-solid fa-users');
-        $this->views[$viewName]->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
+        $this->addListView($viewName, 'Cliente', 'customers', 'fa-solid fa-users')
+            ->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'])
+            ->addOrderBy(['nombre'], 'name', 1)
+            // desactivamos los botones de nuevo y eliminar
+            ->setSettings('btnNew', false)
+            ->setSettings('btnDelete', false);
     }
 
     protected function createViewsSuppliers(string $viewName = 'ListProveedor')
     {
-        $this->addListView($viewName, 'Proveedor', 'suppliers', 'fa-solid fa-users');
-        $this->views[$viewName]->addSearchFields(['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
+        $this->addListView($viewName, 'Proveedor', 'suppliers', 'fa-solid fa-users')
+            ->addSearchFields(['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'])
+            ->addOrderBy(['nombre'], 'name', 1)
+            // desactivamos los botones de nuevo y eliminar
+            ->setSettings('btnNew', false)
+            ->setSettings('btnDelete', false);
     }
 
     /**
@@ -89,7 +87,7 @@ class EditRetencion extends EditController
         switch ($viewName) {
             case 'ListCliente':
             case 'ListProveedor':
-                $codretencion = $this->getViewModelValue($this->getMainViewName(), 'codretencion');
+                $codretencion = $this->mainTabModelValue('codretencion');
                 $where = [Where::eq('codretencion', $codretencion)];
                 $view->loadData('', $where);
                 break;

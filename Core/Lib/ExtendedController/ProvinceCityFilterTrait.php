@@ -53,7 +53,7 @@ trait ProvinceCityFilterTrait
         $where = [];
         $codprovincia = $this->request->input('filterprovincia');
         if (false === empty($codprovincia)) {
-            $provincias = Provincia::all([Where::eq('provincia', $codprovincia)]);
+            $provincias = Provincia::allWhereEq('provincia', $codprovincia);
             if (empty($provincias)) {
                 return [];
             }

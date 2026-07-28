@@ -26,7 +26,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
- * Controller to edit a single register of EmailSent
+ * Controlador para editar un único elemento del modelo EmailSent
  *
  * @author Raul                     <raljopa@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
@@ -54,9 +54,8 @@ class EditEmailSent extends EditController
     protected function contactAction(): void
     {
         $contact = new Contacto();
-        $email = $this->getViewModelValue($this->getMainViewName(), 'addressee');
-        $where = [Where::eq('email', $email)];
-        if ($contact->loadWhere($where)) {
+        $email = $this->mainTabModelValue('addressee');
+        if ($contact->loadWhereEq('email', $email)) {
             $this->redirect($contact->url());
             return;
         }
@@ -76,8 +75,8 @@ class EditEmailSent extends EditController
         $this->createViewAttachments();
 
         // buttons
-        $mainView = $this->getMainViewName();
-        $this->addButton($mainView, [
+        $mainView = $this->mainTabName();
+        $this->tab($mainView)->addButton([
             'action' => 'contact',
             'color' => 'info',
             'icon' => 'fa-solid fa-address-book',
@@ -162,11 +161,11 @@ class EditEmailSent extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'EmailSentAttachment':
-                $attachments = $this->views[$mvn]->model->getAttachments();
+                $attachments = $this->tab($mvn)->model->getAttachments();
 
                 // si no hay adjuntos ocultamos la pestaña
                 if (empty($attachments)) {
@@ -179,8 +178,8 @@ class EditEmailSent extends EditController
                 break;
 
             case 'ListEmailSent':
-                $addressee = $this->getViewModelValue($mvn, 'addressee');
-                $id = $this->getViewModelValue($mvn, 'id');
+                $addressee = $this->mainTabModelValue('addressee');
+                $id = $this->mainTabModelValue('id');
                 $where = [
                     Where::eq('addressee', $addressee),
                     Where::notEq('id', $id)

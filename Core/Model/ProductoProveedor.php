@@ -24,7 +24,6 @@ use FacturaScripts\Core\Model\Base\ProductRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\CostPriceTools;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
@@ -41,40 +40,40 @@ class ProductoProveedor extends ModelClass
     use ModelTrait;
     use ProductRelationTrait;
 
-    /** @var string */
+    /** @var string Fecha y hora de la última actualización de los datos del proveedor. */
     public $actualizado;
 
-    /** @var string */
+    /** @var string Código de la divisa utilizada por el proveedor. */
     public $coddivisa;
 
-    /** @var string */
+    /** @var string Código del proveedor asociado al producto. */
     public $codproveedor;
 
-    /** @var float */
+    /** @var float Primer porcentaje de descuento aplicado por el proveedor. */
     public $dtopor;
 
-    /** @var float */
+    /** @var float Segundo porcentaje de descuento aplicado por el proveedor. */
     public $dtopor2;
 
-    /** @var int */
+    /** @var int Identificador único de la relación con el proveedor. */
     public $id;
 
-    /** @var float */
+    /** @var float Precio neto tras aplicar los descuentos. */
     public $neto;
 
-    /** @var float */
+    /** @var float Precio neto convertido a euros. */
     public $netoeuros;
 
-    /** @var float */
+    /** @var float Precio del producto indicado por el proveedor antes de descuentos. */
     public $precio;
 
-    /** @var string */
+    /** @var string Referencia interna de la variante del producto. */
     public $referencia;
 
-    /** @var string */
+    /** @var string Referencia utilizada por el proveedor para el producto. */
     public $refproveedor;
 
-    /** @var float */
+    /** @var float Stock del producto informado por el proveedor. */
     public $stock;
 
     public function __get($key)
@@ -134,8 +133,7 @@ class ProductoProveedor extends ModelClass
     public function getVariant(): DinVariante
     {
         $variant = new DinVariante();
-        $where = [Where::eq('referencia', $this->referencia)];
-        $variant->loadWhere($where);
+        $variant->loadWhereEq('referencia', $this->referencia);
         return $variant;
     }
 
@@ -177,6 +175,12 @@ class ProductoProveedor extends ModelClass
 
         if (empty($this->idproducto)) {
             $this->idproducto = $this->getVariant()->idproducto;
+        }
+
+        // no permitimos fechas de actualización en el futuro, ya que bloquearían
+        // futuras actualizaciones del precio de coste
+        if (empty($this->actualizado) || strtotime($this->actualizado) > time()) {
+            $this->actualizado = Tools::dateTime();
         }
 
         $this->neto = round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);

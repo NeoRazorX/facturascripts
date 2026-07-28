@@ -46,19 +46,19 @@ class ProductoImagen extends ModelClass
 
     const THUMBNAIL_PATH = '/MyFiles/Tmp/Thumbnails/';
 
-    /** @var int */
+    /** @var int Identificador único de la relación entre producto e imagen. */
     public $id;
 
-    /** @var int */
+    /** @var int Identificador del archivo de imagen adjunto. */
     public $idfile;
 
-    /** @var int */
+    /** @var int Identificador del producto asociado. */
     public $idproducto;
 
-    /** @var int */
+    /** @var int Posición utilizada para ordenar las imágenes del producto. */
     public $orden;
 
-    /** @var string */
+    /** @var string Referencia de la variante asociada a la imagen. */
     public $referencia;
 
     public function __construct(array $data = [])

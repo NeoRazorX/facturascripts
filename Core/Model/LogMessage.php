@@ -46,76 +46,40 @@ class LogMessage extends ModelClass
         Logger::LEVEL_WARNING,
     ];
 
-    /**
-     * @var string
-     */
+    /** @var string Canal al que pertenece el mensaje de log. */
     public $channel;
 
-    /**
-     * @var string
-     */
+    /** @var string Contexto adicional del mensaje codificado en formato JSON. */
     public $context;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int Identificador único del mensaje de log. */
     public $id;
 
-    /**
-     * @var int
-     */
+    /** @var int Identificador del contacto relacionado con el mensaje. */
     public $idcontacto;
 
-    /**
-     * IP address.
-     *
-     * @var string
-     */
+    /** @var string Dirección IP desde la que se generó el mensaje. */
     public $ip;
 
-    /**
-     * The type level of message.
-     *
-     * @var string
-     */
+    /** @var string Nivel de severidad del mensaje de log. */
     public $level;
 
-    /**
-     * The message.
-     *
-     * @var string
-     */
+    /** @var string Contenido del mensaje de log. */
     public $message;
 
-    /**
-     * @var string
-     */
+    /** @var string Nombre del modelo relacionado con el mensaje. */
     public $model;
 
-    /**
-     * @var string
-     */
+    /** @var string Código del registro relacionado con el mensaje. */
     public $modelcode;
 
-    /**
-     * User nick.
-     *
-     * @var string
-     */
+    /** @var string Nombre del usuario que generó el mensaje. */
     public $nick;
 
-    /**
-     * When was generated the message
-     *
-     * @var string
-     */
+    /** @var string Fecha y hora en la que se generó el mensaje. */
     public $time;
 
-    /**
-     * @var string
-     */
+    /** @var string URI de la solicitud durante la que se generó el mensaje. */
     public $uri;
 
     public function clear(): void

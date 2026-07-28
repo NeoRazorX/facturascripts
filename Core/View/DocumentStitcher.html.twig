@@ -65,29 +65,25 @@
                             <i class="fa-solid fa-magic fa-fw"></i> {{ trans('generate') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            {% set availableStatus = fsc.getAvailableStatus() %}
-                            {% for status in availableStatus %}
+                            {% for status in fsc.getAvailableStatus() %}
                                 <button type="button" onclick="sendFormData('{{ status.primaryColumnValue() }}');"
                                         class="dropdown-item">
                                     <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i>
                                     {{ trans(status.generadoc) }}
                                 </button>
                             {% endfor %}
-                            <div class="dropdown-divider"></div>
-                            {% for status in availableStatus %}
-                                <button type="button" onclick="sendFormData('close:{{ status.primaryColumnValue() }}');"
-                                        class="dropdown-item text-danger">
-                                    <i class="fa-solid fa-lock fa-fw" aria-hidden="true"></i>
-                                    {% if availableStatus | length > 1 %}
-                                        {{ trans('close') }}: {{ trans(status.generadoc) }}
-                                    {% else %}
-                                        {{ trans('close') }}
-                                    {% endif %}
-                                </button>
-                            {% endfor %}
                         </div>
                     </div>
                 </div>
+                {% set closeStatus = fsc.getCloseStatus() %}
+                {% if closeStatus | length > 0 %}
+                    <div class="col mb-2">
+                        <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal"
+                                data-bs-target="#closeDocsModal">
+                            <i class="fa-solid fa-lock fa-fw"></i> {{ trans('close-without-generating') }}
+                        </button>
+                    </div>
+                {% endif %}
                 <div class="col text-end mb-2">
                     <div class="dropdown">
                         <button class="btn btn-spin-action btn-secondary dropdown-toggle" type="button"
@@ -203,6 +199,45 @@
             </div>
         </div>
     </form>
+
+    {% if closeStatus | length > 0 %}
+        <div class="modal fade" id="closeDocsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-lock fa-fw text-danger" aria-hidden="true"></i>
+                            {{ trans('close-without-generating') }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="{{ trans('close') }}"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{ trans('close-without-generating-p') }}</p>
+                        <ul class="mb-3">
+                            {% for doc in fsc.documents %}
+                                <li>{{ trans(fsc.modelName) }} {{ doc.codigo }}</li>
+                            {% endfor %}
+                        </ul>
+                        <label class="form-label" for="closeDocsStatus">{{ trans('status') }}</label>
+                        <select name="closeDocsStatus" id="closeDocsStatus" class="form-select">
+                            {% for status in closeStatus %}
+                                <option value="{{ status.primaryColumnValue() }}">{{ status.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            {{ trans('cancel') }}
+                        </button>
+                        <button type="button" class="btn btn-spin-action btn-danger" onclick="closeDocuments();">
+                            <i class="fa-solid fa-lock fa-fw" aria-hidden="true"></i> {{ trans('close') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
     {% if fsc.moreDocuments or fsc.showFilters is same as(true) %}
         <div class="container-fluid">
@@ -370,6 +405,13 @@
             return false;
         }
 
+        function closeDocuments() {
+            const select = document.getElementById('closeDocsStatus');
+            if (select) {
+                sendFormData('close:' + select.value);
+            }
+        }
+
         let formDocStitcherSubmitted = false;
         function sendFormData(status) {
             if (formDocStitcherSubmitted) {
@@ -440,11 +482,13 @@
                             <input type="number" value="{{ line.servido }}" class="form-control text-end"
                                    readonly="true" tabindex="-1"/>
                         </td>
-                        {% set newQuantity = line.cantidad - line.servido > 0 ? line.cantidad - line.servido : 0 %}
+                        {% set pending = line.cantidad - line.servido %}
+                        {% set newQuantity = line.cantidad < 0 ? (pending < 0 ? pending : 0) : (pending > 0 ? pending : 0) %}
                         <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">
                             <input type="hidden" class="to_serve" value="{{ newQuantity }}"/>
                             <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}"
-                                   value="{{ newQuantity }}" step="any" min="0" max="{{ newQuantity }}"
+                                   value="{{ newQuantity }}" step="any"
+                                   min="{{ newQuantity < 0 ? newQuantity : 0 }}" max="{{ newQuantity < 0 ? 0 : newQuantity }}"
                                    class="form-control text-end to_be_served" autocomplete="off"/>
                         </td>
                     </tr>

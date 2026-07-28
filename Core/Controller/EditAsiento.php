@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,7 @@ use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 
 /**
- * Description of EditAsiento
+ * Controlador para editar un único elemento del modelo Asiento
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -57,22 +57,24 @@ class EditAsiento extends PanelController
      */
     public function getModel(): Asiento
     {
+        $view = $this->tab(static::MAIN_VIEW_NAME);
+
         // loaded record? just return it
-        if ($this->views[static::MAIN_VIEW_NAME]->model->id()) {
-            return $this->views[static::MAIN_VIEW_NAME]->model;
+        if ($view->model->id()) {
+            return $view->model;
         }
 
         // get the record identifier
-        $primaryKey = $this->request->input($this->views[static::MAIN_VIEW_NAME]->model->primaryColumn());
+        $primaryKey = $this->request->input($view->model->primaryColumn());
         $code = $this->request->query('code', $primaryKey);
         if (empty($code)) {
             // new record
-            return $this->views[static::MAIN_VIEW_NAME]->model;
+            return $view->model;
         }
 
         // existing record
-        $this->views[static::MAIN_VIEW_NAME]->model->load($code);
-        return $this->views[static::MAIN_VIEW_NAME]->model;
+        $view->model->load($code);
+        return $view->model;
     }
 
     public function getModelClassName(): string
@@ -234,7 +236,7 @@ class EditAsiento extends PanelController
 
     protected function exportAction()
     {
-        if (false === $this->views[$this->active]->settings['btnPrint'] || false === $this->permissions->allowExport) {
+        if (false === $this->activeTab()->settings['btnPrint'] || false === $this->permissions->allowExport) {
             Tools::log()->warning('no-print-permission');
             return;
         }
@@ -313,7 +315,7 @@ class EditAsiento extends PanelController
                 }
 
                 $this->title .= ' ' . $view->model->primaryDescription();
-                $this->addButton($viewName, [
+                $view->addButton([
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->id(),
                     'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',

@@ -23,6 +23,9 @@ use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Controlador raíz de la API, que expone los recursos disponibles y su documentación.
+ */
 class ApiRoot extends ApiController
 {
     /** @var array */

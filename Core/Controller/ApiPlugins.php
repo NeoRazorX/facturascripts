@@ -26,6 +26,9 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
 
+/**
+ * Controlador de la API para gestionar los plugins de la aplicación.
+ */
 class ApiPlugins extends ApiController
 {
     private function applyFilter(array $plugins, array $filter): array

@@ -46,90 +46,43 @@ class Asiento extends ModelClass
     const OPERATION_REGULARIZATION = 'R';
     const RENUMBER_LIMIT = 1000;
 
-    /**
-     * Accounting channel. For statistics purpose.
-     *
-     * @var int
-     */
+    /** @var int Canal contable utilizado con fines estadísticos. */
     public $canal;
 
-    /**
-     * Accounting entry concept.
-     *
-     * @var string
-     */
+    /** @var string Concepto del asiento contable. */
     public $concepto;
 
-    /** @var float */
+    /** @var float Importe total del debe del asiento. */
     public $debe = 0.0;
 
-    /**
-     * Document associated with the accounting entry.
-     *
-     * @var string
-     */
+    /** @var string Documento asociado al asiento contable. */
     public $documento;
 
-    /**
-     * True if it is editable, but false.
-     *
-     * @var bool
-     */
+    /** @var bool Indica si el asiento contable se puede editar. */
     public $editable;
 
-    /**
-     * Date of the accounting entry.
-     *
-     * @var string
-     */
+    /** @var string Fecha del asiento contable. */
     public $fecha;
 
-    /** @var float */
+    /** @var float Importe total del haber del asiento. */
     public $haber = 0.0;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int Identificador único del asiento contable. */
     public $idasiento;
 
-    /**
-     * Diary identifier.
-     *
-     * @var int
-     */
+    /** @var int Identificador del diario contable asociado. */
     public $iddiario;
 
-    /**
-     * Foreign Key with Empresas table.
-     *
-     * @var int
-     */
+    /** @var int Identificador de la empresa asociada. */
     public $idempresa;
 
-    /**
-     * Amount of the accounting entry.
-     *
-     * @var float|int
-     */
+    /** @var float|int Importe total del asiento contable. */
     public $importe;
 
-    /**
-     * Accounting entry number. It will be modified when renumbering.
-     *
-     * @var string
-     */
+    /** @var string Número del asiento contable, modificable durante la renumeración. */
     public $numero;
 
-    /**
-     * It establishes whether the accounting entry is of a special operation:
-     * - opening
-     * - regularization
-     * - closing
-     *
-     * @var string
-     */
+    /** @var string Tipo de operación especial del asiento: apertura, regularización o cierre. */
     public $operacion;
 
     /**
@@ -378,10 +331,8 @@ class Asiento extends ModelClass
         $this->concepto = Tools::noHtml($this->concepto);
         $this->documento = Tools::noHtml($this->documento);
 
-        if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
-            Tools::log()->warning('invalid-column-lenght', [
-                '%column%' => 'concepto', '%min%' => '1', '%max%' => '255'
-            ]);
+        if (strlen($this->concepto ?? '') < 1) {
+            Tools::log()->warning('field-required', ['%field%' => 'concepto']);
             return false;
         }
 

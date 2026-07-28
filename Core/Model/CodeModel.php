@@ -39,16 +39,16 @@ class CodeModel
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const SEARCH_LIMIT = 50;
 
-    /** @var DataBase */
+    /** @var DataBase Conexión compartida con la base de datos. */
     protected static $dataBase;
 
-    /** @var int */
+    /** @var int Número máximo de resultados que se pueden obtener. */
     protected static $limit;
 
-    /** @var string */
+    /** @var string Código identificativo del elemento. */
     public $code;
 
-    /** @var string */
+    /** @var string Descripción asociada al código. */
     public $description;
 
     public function __construct(array $data = [])

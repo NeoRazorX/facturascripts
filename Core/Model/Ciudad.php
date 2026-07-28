@@ -34,37 +34,37 @@ class Ciudad extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** @var string Nombre alternativo o alias de la ciudad. */
     public $alias;
 
-    /** @var string */
+    /** @var string Fecha y hora de creación de la ciudad. */
     public $creation_date;
 
-    /** @var string */
+    /** @var string Nombre de la ciudad. */
     public $ciudad;
 
-    /** @var string */
+    /** @var string Código geográfico identificativo de la ciudad. */
     public $codeid;
 
-    /** @var int */
+    /** @var int Identificador único de la ciudad. */
     public $idciudad;
 
-    /** @var int */
+    /** @var int Identificador de la provincia a la que pertenece la ciudad. */
     public $idprovincia;
 
-    /** @var string */
+    /** @var string Nombre del último usuario que modificó la ciudad. */
     public $last_nick;
 
-    /** @var string */
+    /** @var string Fecha y hora de la última modificación. */
     public $last_update;
 
-    /** @var float */
+    /** @var float Latitud geográfica de la ciudad. */
     public $latitude;
 
-    /** @var float */
+    /** @var float Longitud geográfica de la ciudad. */
     public $longitude;
 
-    /** @var string */
+    /** @var string Nombre del usuario que creó la ciudad. */
     public $nick;
 
     /** @return Provincia|null */

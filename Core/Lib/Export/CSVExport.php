@@ -26,7 +26,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
- * Class to export data to CSV format.
+ * Clase para exportar datos al formato CSV.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -35,28 +35,28 @@ class CSVExport extends ExportBase
     const LIST_LIMIT = 1000;
 
     /**
-     * Contains the CSV data in array format
+     * Contiene los datos del CSV en formato array
      *
      * @var array
      */
     private $csv = [];
 
     /**
-     * Text delimiter value
+     * Delimitador de texto
      *
      * @var string
      */
     private $delimiter = '"';
 
     /**
-     * Separator value
+     * Separador de campos
      *
      * @var string
      */
     private $separator = ';';
 
     /**
-     * Adds the fields form the business document, merging model and line data.
+     * Añade los campos del documento de negocio, combinando los datos del modelo y de las líneas.
      *
      * @param BusinessDocument $model
      *
@@ -75,7 +75,7 @@ class CSVExport extends ExportBase
                 $fields = array_merge($fields2, $fields1);
             }
 
-            /// merge
+            // combinamos los datos de la línea con los del documento
             $data2 = $this->getCursorRawData([$line]);
             $data[] = array_merge($data2[0], $data1[0]);
         }
@@ -88,12 +88,12 @@ class CSVExport extends ExportBase
 
         $this->writeData($data, $fields);
 
-        /// do not continue with export
+        // no continuamos con la exportación
         return false;
     }
 
     /**
-     * Adds a new page with a table listing the model data.
+     * Añade una nueva página con una tabla listando los datos del modelo.
      *
      * @param ModelClass $model
      * @param Where[] $where
@@ -124,17 +124,17 @@ class CSVExport extends ExportBase
                 break;
             }
 
-            /// Advance within the results
+            // avanzamos en los resultados
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
 
-        /// do not continue with export
+        // no continuamos con la exportación
         return false;
     }
 
     /**
-     * Adds a new page with the model data.
+     * Añade una nueva página con los datos del modelo.
      *
      * @param ModelClass $model
      * @param array $columns
@@ -148,12 +148,12 @@ class CSVExport extends ExportBase
         $data = $this->getCursorRawData([$model]);
         $this->writeData($data, $fields);
 
-        /// do not continue with export
+        // no continuamos con la exportación
         return false;
     }
 
     /**
-     * Adds a new page with the table.
+     * Añade una nueva página con la tabla.
      *
      * @param array $headers
      * @param array $rows
@@ -166,12 +166,12 @@ class CSVExport extends ExportBase
     {
         $this->writeData($rows, $headers);
 
-        /// do not continue with export
+        // no continuamos con la exportación
         return false;
     }
 
     /**
-     * Returns the received text delimiter assigned
+     * Devuelve el delimitador de texto asignado
      *
      * @return string
      */
@@ -181,7 +181,7 @@ class CSVExport extends ExportBase
     }
 
     /**
-     * Return the full document.
+     * Devuelve el documento completo.
      *
      * @return string
      */
@@ -192,7 +192,7 @@ class CSVExport extends ExportBase
     }
 
     /**
-     * Returns the assigned separator
+     * Devuelve el separador asignado
      *
      * @return string
      */
@@ -202,7 +202,7 @@ class CSVExport extends ExportBase
     }
 
     /**
-     * Blank document.
+     * Documento en blanco.
      *
      * @param string $title
      * @param int $idformat
@@ -215,8 +215,8 @@ class CSVExport extends ExportBase
     }
 
     /**
-     * Assigns the received text delimiter
-     * By default it will use '"' quotes.
+     * Asigna el delimitador de texto recibido.
+     * Por defecto utiliza comillas dobles '"'.
      *
      * @param string $del
      */
@@ -231,12 +231,12 @@ class CSVExport extends ExportBase
      */
     public function setOrientation(string $orientation)
     {
-        /// not implemented
+        // no implementado
     }
 
     /**
-     * Assigns the received separator.
-     * By default it will use ';' semicolons.
+     * Asigna el separador recibido.
+     * Por defecto utiliza el punto y coma ';'.
      *
      * @param string $sep
      */
@@ -246,7 +246,7 @@ class CSVExport extends ExportBase
     }
 
     /**
-     * Set headers and output document content to response.
+     * Asigna las cabeceras y vuelca el contenido del documento a la respuesta.
      *
      * @param Response $response
      */
@@ -258,7 +258,7 @@ class CSVExport extends ExportBase
     }
 
     /**
-     * Fills an array with the CSV data.
+     * Rellena un array con los datos del CSV.
      *
      * @param array $data
      * @param array $fields

@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Where;
 
 /**
- * EditCiudad
+ * Controlador para editar un único elemento del modelo Ciudad
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Frank Aguirre        <faguirre@soenac.com>
@@ -71,7 +71,7 @@ class EditCiudad extends EditController
     {
         switch ($viewName) {
             case 'ListPuntoInteresCiudad':
-                $id_ciudad = $this->getViewModelValue($this->getMainViewName(), 'idciudad');
+                $id_ciudad = $this->mainTabModelValue('idciudad');
                 $where = [Where::eq('idciudad', $id_ciudad)];
                 $view->loadData('', $where);
                 break;

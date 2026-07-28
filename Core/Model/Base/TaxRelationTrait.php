@@ -25,7 +25,7 @@ use FacturaScripts\Dinamic\Model\Impuesto;
 trait TaxRelationTrait
 {
     /**
-     * Tax identifier of the tax assigned.
+     * Código del impuesto asignado.
      *
      * @var string
      */
