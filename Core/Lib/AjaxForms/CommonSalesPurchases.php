@@ -85,7 +85,8 @@ trait CommonSalesPurchases
             case 1:
                 return '<div class="col-sm-auto">'
                     . '<div class="mb-2">'
-                    . '<a href="' . $children[0]->url() . '" class="btn w-100 btn-info">'
+                    . '<a href="' . $children[0]->url() . '" class="btn w-100 btn-outline-secondary" title="'
+                    . Tools::trans('documents-generated') . '">'
                     . '<i class="fa-solid fa-forward fa-fw" aria-hidden="true"></i> ' . $children[0]->primaryDescription()
                     . '</a>'
                     . '</div>'
@@ -95,7 +96,7 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="mb-2">'
-            . '<button class="btn w-100 btn-info" type="button" title="' . Tools::trans('documents-generated')
+            . '<button class="btn w-100 btn-outline-secondary" type="button" title="' . Tools::trans('documents-generated')
             . '" data-bs-toggle="modal" data-bs-target="#childrenModal"><i class="fa-solid fa-forward fa-fw" aria-hidden="true"></i> '
             . count($children) . ' </button>'
             . '</div>'
@@ -639,7 +640,8 @@ trait CommonSalesPurchases
             case 1:
                 return '<div class="col-sm-auto">'
                     . '<div class="mb-2">'
-                    . '<a href="' . $parents[0]->url() . '" class="btn w-100 btn-warning">'
+                    . '<a href="' . $parents[0]->url() . '" class="btn w-100 btn-outline-secondary" title="'
+                    . Tools::trans('previous-documents') . '">'
                     . '<i class="fa-solid fa-backward fa-fw" aria-hidden="true"></i> ' . $parents[0]->primaryDescription()
                     . '</a>'
                     . '</div>'
@@ -649,7 +651,7 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="mb-2">'
-            . '<button class="btn w-100 btn-warning" type="button" title="' . Tools::trans('previous-documents')
+            . '<button class="btn w-100 btn-outline-secondary" type="button" title="' . Tools::trans('previous-documents')
             . '" data-bs-toggle="modal" data-bs-target="#parentsModal"><i class="fa-solid fa-backward fa-fw" aria-hidden="true"></i> '
             . count($parents) . ' </button>'
             . '</div>'
