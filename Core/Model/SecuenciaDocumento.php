@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,37 +33,37 @@ class SecuenciaDocumento extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** @var string Código del ejercicio al que pertenece la secuencia. */
     public $codejercicio;
 
-    /** @var string */
+    /** @var string Código de la serie a la que pertenece la secuencia. */
     public $codserie;
 
-    /** @var int */
+    /** @var int Identificador de la empresa asociada. */
     public $idempresa;
 
-    /** @var int */
+    /** @var int Identificador único de la secuencia documental. */
     public $idsecuencia;
 
-    /** @var int */
+    /** @var int Primer número permitido para la secuencia. */
     public $inicio;
 
-    /** @var int */
+    /** @var int Longitud utilizada al rellenar con ceros el número. */
     public $longnumero;
 
-    /** @var int */
+    /** @var int Siguiente número disponible de la secuencia. */
     public $numero;
 
-    /** @var string */
+    /** @var string Patrón utilizado para generar el código del documento. */
     public $patron;
 
-    /** @var bool */
+    /** @var bool Indica si debe validarse la composición del patrón. */
     private static $pattern_test = false;
 
-    /** @var string */
+    /** @var string Tipo de documento al que se aplica la secuencia. */
     public $tipodoc;
 
-    /** @var bool */
+    /** @var bool Indica si se pueden reutilizar huecos existentes en la numeración. */
     public $usarhuecos;
 
     public function clear(): void
@@ -197,7 +197,7 @@ class SecuenciaDocumento extends ModelClass
         }
 
         // si el patrón generado tiene más de 20 caracteres, no dejamos guardar
-        if (strlen($this->generateCode()) > 20) {
+        if (mb_strlen($this->generateCode()) > 20) {
             Tools::log()->warning('pattern-too-long');
             return false;
         }

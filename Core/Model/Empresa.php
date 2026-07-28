@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Paises;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
 use FacturaScripts\Core\Model\Base\FiscalNumberTrait;
@@ -47,55 +46,55 @@ class Empresa extends ModelClass
     use FiscalNumberTrait;
     use GravatarTrait;
 
-    /** @var string */
+    /** @var string Nombre del administrador o representante de la empresa. */
     public $administrador;
 
-    /** @var string */
+    /** @var string Apartado de correos de la empresa. */
     public $apartado;
 
-    /** @var string */
+    /** @var string Ciudad donde se encuentra la empresa. */
     public $ciudad;
 
-    /** @var string */
+    /** @var string Código del país donde se encuentra la empresa. */
     public $codpais;
 
-    /** @var string */
+    /** @var string Código postal de la empresa. */
     public $codpostal;
 
-    /** @var string */
+    /** @var string Dirección postal de la empresa. */
     public $direccion;
 
-    /** @var string */
+    /** @var string Número de fax de la empresa. */
     public $fax;
 
-    /** @var string */
+    /** @var string Fecha de alta de la empresa. */
     public $fechaalta;
 
-    /** @var int */
+    /** @var int Identificador único de la empresa. */
     public $idempresa;
 
-    /** @var int */
+    /** @var int Identificador del archivo utilizado como logotipo. */
     public $idlogo;
 
-    /** @var string */
+    /** @var string Nombre o razón social de la empresa. */
     public $nombre;
 
-    /** @var string */
+    /** @var string Nombre abreviado de la empresa. */
     public $nombrecorto;
 
-    /** @var string */
+    /** @var string Observaciones internas sobre la empresa. */
     public $observaciones;
 
-    /** @var bool */
+    /** @var bool Indica si la empresa corresponde a una persona física. */
     public $personafisica;
 
-    /** @var string */
+    /** @var string Provincia donde se encuentra la empresa. */
     public $provincia;
 
-    /** @var string */
+    /** @var string Régimen de IVA aplicado por la empresa. */
     public $regimeniva;
 
-    /** @var string */
+    /** @var string Sitio web de la empresa. */
     public $web;
 
     public function checkVies(bool $msg = true): bool
@@ -138,8 +137,7 @@ class Empresa extends ModelClass
      */
     public function getBankAccounts(): array
     {
-        $where = [Where::eq('idempresa', $this->idempresa)];
-        return DinCuentaBanco::all($where, [], 0, 0);
+        return DinCuentaBanco::allWhereEq('idempresa', $this->idempresa);
     }
 
     /**
@@ -149,8 +147,7 @@ class Empresa extends ModelClass
      */
     public function getExercises(): array
     {
-        $where = [Where::eq('idempresa', $this->idempresa)];
-        return DinEjercicio::all($where, [], 0, 0);
+        return DinEjercicio::allWhereEq('idempresa', $this->idempresa);
     }
 
     /**
@@ -160,8 +157,7 @@ class Empresa extends ModelClass
      */
     public function getWarehouses(): array
     {
-        $where = [Where::eq('idempresa', $this->idempresa)];
-        return DinAlmacen::all($where, [], 0, 0);
+        return DinAlmacen::allWhereEq('idempresa', $this->idempresa);
     }
 
     public function install(): string

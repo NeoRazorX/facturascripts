@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
+use Throwable;
 
 /**
  * La clase que se encarga de gestionar los errores fatales.
@@ -64,7 +65,7 @@ final class CrashReport
         return implode("\n", $result);
     }
 
-    public static function getErrorInfo(int $code, string $message, string $file, int $line): array
+    public static function getErrorInfo($code, string $message, string $file, int $line): array
     {
         // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
         $errorUrl = parse_url($_SERVER["REQUEST_URI"] ?? '', PHP_URL_PATH);
@@ -73,6 +74,16 @@ final class CrashReport
         $errorHash = md5($code . $errorFile . $line . $errorMessage);
         $reportUrl = 'https://facturascripts.com/errores/' . $errorHash;
         $reportQr = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($reportUrl);
+
+        // añadimos el id de telemetría y la url de la instalación, si la base de datos está disponible
+        $telemetryId = 0;
+        $siteUrl = '';
+        try {
+            $telemetry = new Telemetry();
+            $telemetryId = (int)$telemetry->id();
+            $siteUrl = $telemetry->url();
+        } catch (Throwable $th) {
+        }
 
         return [
             'code' => $code,
@@ -88,6 +99,8 @@ final class CrashReport
             'php_version' => phpversion(),
             'os' => PHP_OS,
             'plugin_list' => implode(',', Plugins::enabled()),
+            'idinstall' => $telemetryId,
+            'site_url' => $siteUrl,
         ];
     }
 
@@ -408,7 +421,8 @@ final class CrashReport
                 . '<b>PHP</b>: ' . $info['php_version'] . ', <b>OS</b>: ' . $info['os'] . '</p>';
         }
 
-        echo '</div>'
+        echo '<p class="text-muted mb-0 mt-3">' . self::trans('to-report-info') . '</p>'
+            . '</div>'
             . '<div class="card-footer p-2">'
             . '<div class="row">'
             . '<div class="col">'
@@ -423,7 +437,9 @@ final class CrashReport
             . '<input type="hidden" name="error_plugin_list" value="' . Tools::noHtml($info['plugin_list']) . '">'
             . '<input type="hidden" name="error_php_version" value="' . Tools::noHtml($info['php_version']) . '">'
             . '<input type="hidden" name="error_os" value="' . Tools::noHtml($info['os']) . '">'
-            . '<button type="submit" class="btn btn-secondary">' . self::trans('to-report') . '</button>'
+            . '<input type="hidden" name="error_idinstall" value="' . Tools::noHtml($info['idinstall']) . '">'
+            . '<input type="hidden" name="error_site_url" value="' . Tools::noHtml($info['site_url']) . '">'
+            . '<button type="submit" class="btn btn-secondary">📤 ' . self::trans('to-report') . '</button>'
             . '</form>'
             . '</div>';
 
@@ -471,7 +487,8 @@ final class CrashReport
     {
         $translations = [
             'es_ES' => [
-                'to-report' => 'Enviar informe',
+                'to-report' => 'Informar y ver solución',
+                'to-report-info' => 'Envía el informe para ver los detalles de este error y comprobar si ya existe una solución.',
                 'disable-plugins' => 'Desactivar plugins',
                 'rebuild' => 'Reconstruir',
                 'recent-log-messages' => 'Últimos mensajes del log',
@@ -480,9 +497,20 @@ final class CrashReport
                 'channel' => 'Canal',
                 'code-fragment' => 'Fragmento de código',
             ],
+            'en_EN' => [
+                'to-report' => 'Report and see solution',
+                'to-report-info' => 'Send the report to see the details of this error and check if a solution already exists.',
+                'disable-plugins' => 'Disable plugins',
+                'rebuild' => 'Rebuild',
+                'recent-log-messages' => 'Recent log messages',
+                'level' => 'Level',
+                'message' => 'Message',
+                'channel' => 'Channel',
+                'code-fragment' => 'Code fragment',
+            ],
         ];
 
         $lang = Tools::config('lang', 'es_ES');
-        return $translations[$lang][$code] ?? $code;
+        return $translations[$lang][$code] ?? $translations['en_EN'][$code] ?? $code;
     }
 }

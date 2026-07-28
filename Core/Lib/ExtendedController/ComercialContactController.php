@@ -151,6 +151,44 @@ abstract class ComercialContactController extends EditController
         }
     }
 
+    /**
+     * Devuelve, en json, los registros que ya usan este cifnif. Solo avisa, no impide guardar.
+     */
+    protected function checkCifnifAction(): bool
+    {
+        $this->setTemplate(false);
+
+        $cifnif = trim($this->request->input('cifnif', ''));
+        if (empty($cifnif)) {
+            $this->response->json(['duplicated' => false, 'message' => '']);
+            return false;
+        }
+
+        $model = $this->getModel();
+        $where = [Where::eq('cifnif', $cifnif)];
+
+        // excluimos el propio registro, si ya está guardado
+        $code = $this->request->input('code');
+        if (false === empty($code)) {
+            $where[] = Where::notEq($model->primaryColumn(), $code);
+        }
+
+        $names = [];
+        foreach ($model::all($where, ['LOWER(nombre)' => 'ASC'], 0, 5) as $row) {
+            $names[] = $row->primaryColumnValue() . ' - ' . $row->nombre;
+        }
+
+        $this->response->json([
+            'duplicated' => false === empty($names),
+            'message' => empty($names) ? '' : Tools::trans('duplicated-cifnif', [
+                '%cifnif%' => $cifnif,
+                '%records%' => implode(', ', $names)
+            ])
+        ]);
+
+        return false;
+    }
+
     protected function checkViesAction(): bool
     {
         $model = $this->getModel();
@@ -318,7 +356,7 @@ abstract class ComercialContactController extends EditController
     {
         $allowUpdate = $this->permissions->allowUpdate;
         $codes = $this->request->request->getArray('codes');
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
 
         switch ($action) {
             case 'add-file':
@@ -330,6 +368,9 @@ abstract class ComercialContactController extends EditController
             case 'approve-document-same-date':
                 BusinessDocumentGenerator::setSameDate(true);
                 return $this->approveDocumentAction($codes, $model, $allowUpdate, $this->dataBase);
+
+            case 'check-cifnif':
+                return $this->checkCifnifAction();
 
             case 'check-vies':
                 return $this->checkViesAction();
@@ -401,7 +442,7 @@ abstract class ComercialContactController extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case $mvn:
@@ -422,14 +463,14 @@ abstract class ComercialContactController extends EditController
                 break;
 
             case 'ListSubcuenta':
-                $codsubcuenta = $this->getViewModelValue($mvn, 'codsubcuenta');
+                $codsubcuenta = $this->mainTabModelValue('codsubcuenta');
                 $where = [Where::eq('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->count > 0);
                 break;
 
             case 'ListEmailSent':
-                $email = $this->getViewModelValue($mvn, 'email');
+                $email = $this->mainTabModelValue('email');
                 if (empty($email)) {
                     $this->setSettings($viewName, 'active', false);
                     break;

@@ -29,7 +29,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 
 /**
- * Controller to list the items in the Proveedor model
+ * Controlador para listar los elementos del modelo Proveedor
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>

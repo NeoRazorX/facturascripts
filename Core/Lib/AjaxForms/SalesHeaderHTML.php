@@ -265,7 +265,7 @@ class SalesHeaderHTML
                 . '<div class="mb-2">' . Tools::trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
                 . '<a href="#" id="btnFindCustomerModal" class="btn w-100 btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
-                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
+                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw me-1"></i> '
                 . Tools::trans('select') . '</a>'
                 . '</div>'
                 . '</div>'
@@ -273,9 +273,11 @@ class SalesHeaderHTML
         }
 
         $btnCliente = $model->editable ?
-            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findCustomerModal\').modal(\'show\');'
+            '<button class="btn btn-outline-secondary" type="button" title="' . Tools::trans('change-customer')
+            . '" onclick="$(\'#findCustomerModal\').modal(\'show\');'
             . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-pen"></i></button>' :
-            '<button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-lock"></i></button>';
+            '<button class="btn btn-outline-secondary" type="button" title="' . Tools::trans('non-editable-document')
+            . '"><i class="fa-solid fa-lock"></i></button>';
 
         $html = '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">'

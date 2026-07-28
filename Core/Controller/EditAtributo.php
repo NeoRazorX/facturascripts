@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the Atributo model
+ * Controlador para editar un único elemento del modelo Atributo
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -59,11 +59,9 @@ class EditAtributo extends EditController
 
     protected function createViewsAttValues(string $viewName = 'EditAtributoValor')
     {
-        $this->addEditListView($viewName, 'AtributoValor', 'attribute-values');
-        $this->views[$viewName]->setInLine(true);
-
-        // disable column
-        $this->views[$viewName]->disableColumn('attribute');
+        $this->addEditListView($viewName, 'AtributoValor', 'attribute-values')
+            ->setInLine(true)
+            ->disableColumn('attribute');
     }
 
     /**
@@ -76,7 +74,7 @@ class EditAtributo extends EditController
     {
         switch ($viewName) {
             case 'EditAtributoValor':
-                $code = $this->getViewModelValue($this->getMainViewName(), 'codatributo');
+                $code = $this->mainTabModelValue('codatributo');
                 $where = [Where::eq('codatributo', $code)];
                 $view->loadData('', $where, ['orden' => 'ASC', 'id' => 'DESC']);
                 break;

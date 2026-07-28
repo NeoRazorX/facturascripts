@@ -29,7 +29,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 
 /**
- * Controller to list the items in the Cliente model
+ * Controlador para listar los elementos del modelo Cliente
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

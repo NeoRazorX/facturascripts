@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 
 /**
- * Controller to list the items in the FacturaCliente model
+ * Controlador para listar los elementos del modelo FacturaCliente
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -84,7 +84,7 @@ class ListFacturaCliente extends ListBusinessDocument
             ->setSettings('btnNew', false);
 
         // filtros
-        if (count(Empresas::all()) > 1) {
+        if (Empresas::count() > 1) {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
         }
 

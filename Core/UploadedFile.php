@@ -59,10 +59,10 @@ final class UploadedFile
      */
     public $error;
 
-    /** Nombre original del fichero tal y como lo envió el cliente (no se debe confiar en él). @var string */
+    /** @var string Nombre original del fichero tal y como lo envió el cliente (no se debe confiar en él). */
     public $name;
 
-    /** Tamaño del fichero en bytes según lo reportado por PHP. @var int */
+    /** @var int Tamaño del fichero en bytes según lo reportado por PHP. */
     public $size;
 
     /**
@@ -73,10 +73,10 @@ final class UploadedFile
      */
     public $test = false;
 
-    /** Ruta temporal donde PHP ha guardado el fichero subido. @var string */
+    /** @var string Ruta temporal donde PHP ha guardado el fichero subido. */
     public $tmp_name;
 
-    /** Tipo MIME declarado por el cliente (no fiable; usar `getMimeType()` para el real). @var string */
+    /** @var string Tipo MIME declarado por el cliente (no fiable; usar `getMimeType()` para el real). */
     public $type;
 
     /**

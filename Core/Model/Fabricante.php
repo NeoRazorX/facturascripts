@@ -34,25 +34,13 @@ class Fabricante extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * Primary key.
-     *
-     * @var string
-     */
+    /** @var string Código identificativo del fabricante. */
     public $codfabricante;
 
-    /**
-     * Manufacturer name.
-     *
-     * @var string
-     */
+    /** @var string Nombre del fabricante. */
     public $nombre;
 
-    /**
-     * Number of products
-     *
-     * @var int
-     */
+    /** @var int Número de productos asociados al fabricante. */
     public $numproductos;
 
     public function clear(): void
@@ -90,11 +78,8 @@ class Fabricante extends ModelClass
             return false;
         }
 
-        if (empty($this->nombre) || strlen($this->nombre) > 100) {
-            Tools::log()->warning(
-                'invalid-column-lenght',
-                ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
-            );
+        if (empty($this->nombre)) {
+            Tools::log()->warning('field-required', ['%field%' => 'nombre']);
             return false;
         }
 

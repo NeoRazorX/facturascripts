@@ -23,7 +23,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
- * Controller to edit a single item from the FormaPago model
+ * Controlador para editar un único elemento del modelo FormaPago
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -51,7 +51,7 @@ class EditFormaPago extends EditController
 
         // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->mainTab()->disableColumn('company');
         }
     }
 
@@ -63,7 +63,7 @@ class EditFormaPago extends EditController
     {
         parent::loadData($viewName, $view);
 
-        if ($viewName === $this->getMainViewName() && false === $view->model->exists()) {
+        if ($viewName === $this->mainTabName() && false === $view->model->exists()) {
             $view->disableColumn('bank-account');
         }
     }

@@ -24,7 +24,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the Almacen model
+ * Controlador para editar un único elemento del modelo Almacen
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -48,6 +48,10 @@ class EditAlmacen extends EditController
 
     protected function createStockView(string $viewName = 'ListStock'): void
     {
+        // datos para los filtros
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+
         $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fa-solid fa-dolly')
             ->addSearchFields(['stocks.referencia', 'stocks.ubicacion', 'productos.descripcion'])
             ->addOrderBy(['stocks.referencia'], 'reference')
@@ -55,43 +59,31 @@ class EditAlmacen extends EditController
             ->addOrderBy(['stocks.disponible'], 'available')
             ->addOrderBy(['stocks.reservada'], 'reserved')
             ->addOrderBy(['stocks.pterecibir'], 'pending-reception')
-            ->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product');
-
-        // filtros
-        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
-        $this->listView($viewName)->addFilterSelect('manufacturer', 'manufacturer', 'productos.codfabricante', $manufacturers);
-
-        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
-        $this->listView($viewName)->addFilterSelect('family', 'family', 'productos.codfamilia', $families);
-
-        $this->listView($viewName)->addFilterSelectWhere('type', [
-            [
-                'label' => Tools::trans('all'),
-                'where' => []
-            ],
-            [
-                'label' => '------',
-                'where' => []
-            ],
-            [
-                'label' => Tools::trans('under-minimums'),
-                'where' => [Where::lt('stocks.disponible', 'field:stockmin')->useField()]
-            ],
-            [
-                'label' => Tools::trans('excess'),
-                'where' => [Where::gt('stocks.disponible', 'field:stockmax')->useField()]
-            ]
-        ]);
-
-        $this->listView($viewName)
+            ->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product')
+            ->addFilterSelect('manufacturer', 'manufacturer', 'productos.codfabricante', $manufacturers)
+            ->addFilterSelect('family', 'family', 'productos.codfamilia', $families)
+            ->addFilterSelectWhere('type', [
+                [
+                    'label' => Tools::trans('all'),
+                    'where' => []
+                ],
+                [
+                    'label' => '------',
+                    'where' => []
+                ],
+                [
+                    'label' => Tools::trans('under-minimums'),
+                    'where' => [Where::lt('stocks.disponible', 'field:stockmin')->useField()]
+                ],
+                [
+                    'label' => Tools::trans('excess'),
+                    'where' => [Where::gt('stocks.disponible', 'field:stockmax')->useField()]
+                ]
+            ])
             ->addFilterNumber('max-stock', 'quantity', 'cantidad', '>=')
-            ->addFilterNumber('min-stock', 'quantity', 'cantidad', '<=');
-
-        // desactivamos la columna de almacén
-        $this->tab($viewName)->disableColumn('warehouse');
-
-        // desactivamos botones
-        $this->tab($viewName)
+            ->addFilterNumber('min-stock', 'quantity', 'cantidad', '<=')
+            // desactivamos la columna de almacén y los botones de crear/eliminar
+            ->disableColumn('warehouse')
             ->setSettings('btnDelete', false)
             ->setSettings('btnNew', false);
     }
@@ -106,7 +98,7 @@ class EditAlmacen extends EditController
 
         // desactivamos la columna de empresa, si solo hay una
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->mainTab()->disableColumn('company');
         }
 
         $this->createStockView();
@@ -122,7 +114,7 @@ class EditAlmacen extends EditController
     {
         switch ($viewName) {
             case 'ListStock':
-                $code = $this->getViewModelValue($this->getMainViewName(), 'codalmacen');
+                $code = $this->mainTabModelValue('codalmacen');
                 $where = [Where::eq('stocks.codalmacen', $code)];
                 $view->loadData('', $where);
                 break;

@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\Fabricante;
 use FacturaScripts\Core\Model\Familia;
 use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\Impuesto;
+use FacturaScripts\Core\Model\Join\VarianteProducto;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\ProductoImagen;
@@ -61,9 +62,49 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->save(), 'product-cant-save');
         $this->assertNotNull($product->id(), 'estado-product-not-stored');
         $this->assertTrue($product->exists(), 'product-cant-persist');
+        $this->assertSame(1, Producto::countWhereEq('referencia', self::TEST_REFERENCE));
 
         // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertSame(0, Producto::countWhereEq('referencia', self::TEST_REFERENCE));
+    }
+
+    public function testAllowSaleWithoutStockDefault(): void
+    {
+        $originalValue = Tools::settings('default', 'ventasinstock');
+
+        try {
+            // sin configuración explícita, se debe permitir la venta sin stock
+            Tools::settingsSet('default', 'ventasinstock', null);
+            $this->assertTrue((new Producto())->ventasinstock, 'sale-without-stock-not-enabled-by-default');
+
+            // una configuración explícita debe prevalecer sobre el valor por defecto
+            Tools::settingsSet('default', 'ventasinstock', false);
+            $this->assertFalse((new Producto())->ventasinstock, 'sale-without-stock-setting-not-respected');
+        } finally {
+            Tools::settingsSet('default', 'ventasinstock', $originalValue);
+        }
+    }
+
+    public function testJoinModelAllWhereEq(): void
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save-for-join-allwhereeq');
+
+        // buscamos su variante con el JoinModel VarianteProducto
+        $found = VarianteProducto::allWhereEq('variantes.referencia', self::TEST_REFERENCE);
+        $this->assertCount(1, $found, 'join-allwhereeq-wrong-count');
+        $this->assertSame(1, VarianteProducto::countWhereEq('variantes.referencia', self::TEST_REFERENCE));
+        $this->assertEquals(self::TEST_REFERENCE, $found[0]->referencia, 'join-allwhereeq-wrong-referencia');
+        $this->assertEquals($product->idproducto, $found[0]->idproducto, 'join-allwhereeq-wrong-idproducto');
+
+        // buscamos por una referencia sin coincidencias
+        $none = VarianteProducto::allWhereEq('variantes.referencia', 'no-existe');
+        $this->assertCount(0, $none, 'join-allwhereeq-not-empty');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete-after-join-allwhereeq');
     }
 
     public function testCreateWithOutReference(): void
@@ -507,8 +548,7 @@ final class ProductoTest extends TestCase
             . $variant->referencia . ' === ' . $variant->getProducto()->referencia);
 
         // comprobamos que no podemos eliminar la única variante
-        $where = [Where::eq('referencia', $product->referencia)];
-        $this->assertTrue($variant->loadWhere($where), 'cant-reload-variant');
+        $this->assertTrue($variant->loadWhereEq('referencia', $product->referencia), 'cant-reload-variant');
         $this->assertFalse($variant->delete(), 'can-delete-only-variant');
 
         // eliminamos el producto

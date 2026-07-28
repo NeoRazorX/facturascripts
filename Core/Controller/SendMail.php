@@ -33,7 +33,7 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
- * Description of SendMail
+ * Controlador para redactar y enviar por correo electrónico un documento con sus adjuntos.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Javier García Iceta      <javigarciaiceta@gmail.com>
@@ -324,9 +324,11 @@ class SendMail extends Controller
      */
     protected function removeOld(): void
     {
-        foreach (glob(FS_FOLDER . '/MyFiles/*_mail_*.pdf') as $fileName) {
-            $parts = explode('_', $fileName);
-            $time = (int)substr(end($parts), 0, -4);
+        foreach (glob(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . '*_mail_*.pdf') as $fileName) {
+            if (1 !== preg_match('/_mail_(\d+)/', $fileName, $matches)) {
+                continue;
+            }
+            $time = (int)$matches[1];
             if ($time < (time() - self::MAX_FILE_AGE)) {
                 unlink($fileName);
             }

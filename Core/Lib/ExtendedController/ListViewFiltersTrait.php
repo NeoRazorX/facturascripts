@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ListFilter\AutocompleteFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\CheckboxFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\DateFilter;
@@ -180,8 +180,8 @@ trait ListViewFiltersTrait
      *
      * Example of values:
      *   [
-     *    ['label' => 'Only active', 'where' => [new DataBaseWhere('suspended', false)]]
-     *    ['label' => 'Only suspended', 'where' => [new DataBaseWhere('suspended', true)]]
+     *    ['label' => 'Only active', 'where' => [Where::eq('suspended', false)]]
+     *    ['label' => 'Only suspended', 'where' => [Where::eq('suspended', true)]]
      *    ['label' => 'All records', 'where' => []],
      *   ]
      * @return ListView
@@ -275,7 +275,7 @@ trait ListViewFiltersTrait
     }
 
     /**
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      */
     private function loadSavedFilters(array $where): void
     {

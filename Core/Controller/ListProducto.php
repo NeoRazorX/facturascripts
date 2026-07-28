@@ -30,7 +30,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Atributo;
 
 /**
- * Controller to list the items in the Producto model
+ * Controlador para listar los elementos del modelo Producto
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -156,7 +156,7 @@ class ListProducto extends ListController
             ->setSettings('btnNew', false);
 
         // filtros
-        if (count(Almacenes::all()) > 1) {
+        if (Almacenes::count() > 1) {
             $warehouses = Almacenes::codeModel();
             $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
         } else {

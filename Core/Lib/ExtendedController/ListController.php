@@ -23,7 +23,6 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Response;
-use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
@@ -319,15 +318,12 @@ abstract class ListController extends BaseController
      */
     protected function clearFiltersAction(): void
     {
-        $viewName = $this->active;
-        $nick = Session::user()->nick;
-        $cacheKey = 'filters-' . Session::get('controllerName') . '-' . $viewName . '-' . $nick;
+        $view = $this->listView($this->active);
 
         // clear cache
-        Cache::clear($cacheKey);
+        Cache::delete($view->filtersCacheKey());
 
         // clear filter values from request
-        $view = $this->listView($viewName);
         foreach ($view->filters as $filter) {
             $this->request->request->remove('filter' . $filter->key);
         }
@@ -412,7 +408,7 @@ abstract class ListController extends BaseController
     protected function exportAction()
     {
         if (
-            false === $this->views[$this->active]->settings['btnPrint'] ||
+            false === $this->activeTab()->settings['btnPrint'] ||
             false === $this->permissions->allowExport
         ) {
             Tools::log()->warning('no-print-permission');
@@ -424,7 +420,7 @@ abstract class ListController extends BaseController
         $codes = $this->request->request->getArray('codes');
         $option = $this->request->queryOrInput('option', '');
         $this->exportManager->newDoc($option);
-        $this->views[$this->active]->export($this->exportManager, $codes);
+        $this->activeTab()->export($this->exportManager, $codes);
         $this->exportManager->show($this->response);
     }
 
@@ -515,6 +511,20 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Saves filter values for active view and user.
+     */
+    protected function saveFilterAction(): void
+    {
+        $id_filter = $this->listView($this->active)->savePageFilter($this->request, $this->user);
+        if (!empty($id_filter)) {
+            Tools::log()->notice('record-updated-correctly');
+
+            // load filters in request
+            $this->request->request->set('loadfilter', $id_filter);
+        }
+    }
+
+    /**
      * Returns columns title for megaSearchAction function.
      *
      * @param ListView $view
@@ -531,19 +541,5 @@ abstract class ListController extends BaseController
         }
 
         return $result;
-    }
-
-    /**
-     * Saves filter values for active view and user.
-     */
-    protected function saveFilterAction(): void
-    {
-        $id_filter = $this->listView($this->active)->savePageFilter($this->request, $this->user);
-        if (!empty($id_filter)) {
-            Tools::log()->notice('record-updated-correctly');
-
-            // load filters in request
-            $this->request->request->set('loadfilter', $id_filter);
-        }
     }
 }

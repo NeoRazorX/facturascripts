@@ -33,39 +33,19 @@ class AtributoValor extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * Code of the related attribute.
-     *
-     * @var string
-     */
+    /** @var string Código del atributo asociado. */
     public $codatributo;
 
-    /**
-     * Attribute name + value.
-     *
-     * @var string
-     */
+    /** @var string Descripción formada por el nombre y el valor del atributo. */
     public $descripcion;
 
-    /**
-     * Primary key
-     *
-     * @var int
-     */
+    /** @var int Identificador único del valor del atributo. */
     public $id;
 
-    /**
-     * Position for visualization and print
-     *
-     * @var int
-     */
+    /** @var int Posición utilizada para mostrar e imprimir el valor. */
     public $orden;
 
-    /**
-     * Value of the attribute
-     *
-     * @var string
-     */
+    /** @var string Valor asignado al atributo. */
     public $valor;
 
     public function clear(): void

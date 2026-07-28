@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
@@ -238,8 +237,12 @@ class AccountingClosingOpening extends AccountingClosingBase
         $this->newExercise->save();
 
         // copy accounts
-        $where = [Where::eq('codejercicio', $this->exercise->codejercicio)];
-        foreach (Cuenta::all($where, ['codcuenta' => 'ASC']) as $account) {
+        $accounts = Cuenta::allWhereEq(
+            'codejercicio',
+            $this->exercise->codejercicio,
+            ['codcuenta' => 'ASC']
+        );
+        foreach ($accounts as $account) {
             $newAccount = $accounting->copyAccountToExercise($account, $this->newExercise->codejercicio);
             if (!$newAccount->exists()) {
                 return false;
@@ -247,7 +250,12 @@ class AccountingClosingOpening extends AccountingClosingBase
         }
 
         // copy subaccounts
-        foreach (Subcuenta::all($where, ['codsubcuenta' => 'ASC']) as $subaccount) {
+        $subaccounts = Subcuenta::allWhereEq(
+            'codejercicio',
+            $this->exercise->codejercicio,
+            ['codsubcuenta' => 'ASC']
+        );
+        foreach ($subaccounts as $subaccount) {
             $newSubaccount = $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
             if (!$newSubaccount->exists()) {
                 return false;

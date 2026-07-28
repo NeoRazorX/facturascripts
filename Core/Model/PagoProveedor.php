@@ -39,25 +39,25 @@ class PagoProveedor extends ModelClass
     use AccEntryRelationTrait;
     use PaymentRelationTrait;
 
-    /** @var bool */
+    /** @var bool Indica si se debe omitir la generación automática del asiento contable. */
     protected $disable_accounting_generation = false;
 
-    /** @var string */
+    /** @var string Fecha en la que se realizó el pago al proveedor. */
     public $fecha;
 
-    /** @var string */
+    /** @var string Hora en la que se realizó el pago al proveedor. */
     public $hora;
 
-    /** @var int */
+    /** @var int Identificador único del pago al proveedor. */
     public $idpago;
 
-    /** @var int */
+    /** @var int Identificador del recibo de proveedor pagado. */
     public $idrecibo;
 
-    /** @var float */
+    /** @var float Importe del pago realizado. */
     public $importe;
 
-    /** @var string */
+    /** @var string Nombre del usuario que registró el pago. */
     public $nick;
 
     public function clear(): void

@@ -46,6 +46,11 @@ final class Retenciones implements DataSrcInterface
         self::$list = null;
     }
 
+    public static function count(): int
+    {
+        return count(self::all());
+    }
+
     public static function codeModel(bool $addEmpty = true): array
     {
         $codes = [];

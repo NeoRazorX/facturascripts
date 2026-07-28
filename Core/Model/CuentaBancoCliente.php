@@ -35,25 +35,25 @@ class CuentaBancoCliente extends ModelClass
     use ModelTrait;
     use IbanTrait;
 
-    /** @var string */
+    /** @var string Código del cliente titular de la cuenta bancaria. */
     public $codcliente;
 
-    /** @var string */
+    /** @var string Código identificativo de la cuenta bancaria. */
     public $codcuenta;
 
-    /** @var string */
+    /** @var string Descripción de la cuenta bancaria. */
     public $descripcion;
 
-    /** @var string */
+    /** @var string Fecha de firma del mandato SEPA. */
     public $fmandato;
 
-    /** @var string */
+    /** @var string Referencia única del mandato SEPA. */
     public $mandato;
 
-    /** @var bool */
+    /** @var bool Indica si es la cuenta bancaria principal del cliente. */
     public $principal;
 
-    /** @var string */
+    /** @var string Código SWIFT o BIC de la entidad bancaria. */
     public $swift;
 
     public function clear(): void
@@ -132,7 +132,7 @@ class CuentaBancoCliente extends ModelClass
         }
     }
 
-    public function url(string $type = 'auto', string $list = 'List'): string
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         if (empty($this->codcliente) || $type == 'list') {
             return parent::url($type, $list);

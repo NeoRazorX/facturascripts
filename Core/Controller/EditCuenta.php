@@ -26,9 +26,10 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\WorkEvent;
 
 /**
- * Controller to edit a single item from the Cuenta model
+ * Controlador para editar un único elemento del modelo Cuenta
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -59,7 +60,7 @@ class EditCuenta extends EditController
         parent::createViews();
 
         // desactivamos el botón de imprimir
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
         $this->tab($mvn)->setSettings('btnPrint', false);
 
         // ponemos las pestañas en la parte inferior
@@ -165,8 +166,8 @@ class EditCuenta extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
-        $idcuenta = $this->getViewModelValue($mainViewName, 'idcuenta');
+        $mainViewName = $this->mainTabName();
+        $idcuenta = $this->mainTabModelValue('idcuenta');
 
         switch ($viewName) {
             case 'ListCuenta':
@@ -188,7 +189,7 @@ class EditCuenta extends EditController
                 unset($view->totalAmounts['saldo']);
 
                 // añadimos botón de imprimir mayor
-                $this->addButton($mainViewName, [
+                $this->tab($mainViewName)->addButton([
                     'action' => 'ledger',
                     'color' => 'info',
                     'icon' => 'fa-solid fa-print fa-fw',
@@ -204,7 +205,32 @@ class EditCuenta extends EditController
                 if (!$view->model->exists()) {
                     $this->prepareCuenta($view);
                 }
+                $this->checkPendingBalanceJobs();
                 break;
+        }
+    }
+
+    /**
+     * Informa al usuario si todavía hay eventos en la cola de trabajo
+     * recalculando los saldos de cuentas y subcuentas.
+     */
+    private function checkPendingBalanceJobs(): void
+    {
+        $where = [
+            Where::eq('done', false),
+            Where::in('name', [
+                'Model.Partida.Save',
+                'Model.Partida.Delete',
+                'Model.Subcuenta.Update',
+                'Model.Subcuenta.Delete',
+                'Model.Cuenta.Update',
+                'Model.Cuenta.Delete',
+            ]),
+        ];
+
+        $pending = WorkEvent::count($where);
+        if ($pending > 0) {
+            Tools::log()->warning('balances-updating-in-background', ['%count%' => $pending]);
         }
     }
 
@@ -219,7 +245,7 @@ class EditCuenta extends EditController
 
     private function setLedgerReportExportOptions(string $viewName): void
     {
-        $columnFormat = $this->views[$viewName]->columnModalForName('format');
+        $columnFormat = $this->tab($viewName)->columnModalForName('format');
         if ($columnFormat && $columnFormat->widget->getType() === 'select') {
             $values = [];
             foreach ($this->exportManager->options() as $key => $options) {
@@ -231,11 +257,11 @@ class EditCuenta extends EditController
 
     private function setLedgerReportValues(string $viewName): void
     {
-        $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
+        $codeExercise = $this->tabModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();
         $exercise->load($codeExercise);
 
-        $model = $this->views[$viewName]->model;
+        $model = $this->tab($viewName)->model;
         $model->dateFrom = $exercise->fechainicio;
         $model->dateTo = $exercise->fechafin;
     }

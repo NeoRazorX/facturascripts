@@ -70,6 +70,37 @@
         }
     }
 
+    function createCustomerFromSales() {
+        const modal = document.getElementById('newCustomerModal');
+        if (modal === null) {
+            return false;
+        }
+
+        for (const input of modal.querySelectorAll('input, select')) {
+            if (false === input.reportValidity()) {
+                return false;
+            }
+        }
+
+        return salesFormAction('create-customer', '0');
+    }
+
+    function showCustomerModal() {
+        $('#newCustomerModal').one('hidden.bs.modal', function () {
+            $('#findCustomerModal').modal('show');
+            $('#findCustomerInput').focus();
+        }).modal('hide');
+        return false;
+    }
+
+    function showNewCustomerModal() {
+        $('#findCustomerModal').one('hidden.bs.modal', function () {
+            $('#newCustomerModal').modal('show');
+            $('#newCustomerName').focus();
+        }).modal('hide');
+        return false;
+    }
+
     function salesFormAction(action, selectedLine) {
         animateSpinner('add');
         $('#headerModal').modal('hide');
@@ -99,6 +130,23 @@
             }
             return Promise.reject(response);
         }).then(function (data) {
+            if (typeof data.multireqtoken === 'string') {
+                document.forms['salesForm']['multireqtoken'].value = data.multireqtoken;
+            }
+            if (data.duplicatedCifnif === true) {
+                if (false === confirm(data.duplicatedCifnifMessage)) {
+                    return;
+                }
+                document.forms['salesForm']['newcustomer_cifnif_confirmed'].value = '1';
+                salesFormAction('create-customer', '0');
+                return;
+            }
+            if (data.customerCreated === true) {
+                $('#newCustomerModal').modal('hide');
+                document.getElementById('newCustomerName').closest('.modal-body').querySelectorAll('input').forEach(function (input) {
+                    input.value = input.defaultValue;
+                });
+            }
             if (data.header !== '') {
                 document.getElementById("salesFormHeader").innerHTML = data.header;
             }
@@ -260,6 +308,9 @@
         const total = parseFloat(prompt('{{ trans('total-with-taxes') }}').replace(',', '.')) || 0;
         const dtopor = parseFloat(document.forms['salesForm']['dtopor_' + id].value) || 0;
         const dtopor2 = parseFloat(document.forms['salesForm']['dtopor2_' + id].value) || 0;
+        const globalDtopor = parseFloat(document.forms['salesForm']['dtopor1'].value) || 0;
+        const globalDtopor2 = parseFloat(document.forms['salesForm']['dtopor2'].value) || 0;
+        const globalDiscount = (100 - globalDtopor) * (100 - globalDtopor2) / 10000;
         const iva = parseFloat(document.forms['salesForm']['iva_' + id].value) || 0;
         const recargo = document.forms['salesForm']['recargo_' + id] ? parseFloat(document.forms['salesForm']['recargo_' + id].value) || 0 : 0;
         const irpf = parseFloat(document.forms['salesForm']['irpf_' + id].value) || 0;
@@ -270,7 +321,7 @@
             alert('cantidad > 0');
         } else {
             let pvpSinDto = (100 * total / cantidad) / (100 + iva + recargo - irpf);
-            let pvp = 10000 * pvpSinDto / ((100 - dtopor) * (100 - dtopor2));
+            let pvp = 10000 * pvpSinDto / ((100 - dtopor) * (100 - dtopor2) * globalDiscount);
             document.forms['salesForm']['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
             salesFormAction('recalculate', '0');
         }

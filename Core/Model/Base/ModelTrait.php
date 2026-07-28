@@ -36,7 +36,7 @@ trait ModelTrait
     use ExtensionsTrait;
 
     /**
-     * List of fields in the table.
+     * Lista de campos de la tabla del modelo.
      *
      * @var array
      */
