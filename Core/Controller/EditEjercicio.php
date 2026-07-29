@@ -59,7 +59,12 @@ class EditEjercicio extends EditController
      */
     protected function addExerciseActionButtons(string $viewName): void
     {
+        // si el ejercicio todavía no existe, no añadimos botones
         $codejercicio = $this->tabModelValue($viewName, 'codejercicio');
+        if (empty($codejercicio)) {
+            return;
+        }
+
         $hasAccounts = Cuenta::count([Where::eq('codejercicio', $codejercicio)]) > 0;
 
         // el plan contable solamente se puede exportar cuando hay cuentas
