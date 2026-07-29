@@ -105,8 +105,8 @@ class EditEjercicio extends EditController
                 $this->tab($viewName)->addButton([
                     'row' => 'footer-actions',
                     'action' => 'close-exercise',
-                    'color' => 'danger',
-                    'icon' => 'fa-solid fa-calendar-check',
+                    'color' => 'warning',
+                    'icon' => 'fa-solid fa-lock',
                     'label' => 'close-exercise',
                     'type' => 'modal'
                 ]);
@@ -117,7 +117,7 @@ class EditEjercicio extends EditController
                     'row' => 'footer-actions',
                     'action' => 'open-exercise',
                     'color' => 'warning',
-                    'icon' => 'fa-solid fa-calendar-plus',
+                    'icon' => 'fa-solid fa-lock-open',
                     'label' => 'open-exercise',
                     'type' => 'modal'
                 ]);
