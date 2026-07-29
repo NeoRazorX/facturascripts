@@ -726,6 +726,7 @@
     "exclude-valid": "Geçerli Olanları Hariç Tut",
     "exempt": "Muaf",
     "exercise": "Egzersiz",
+    "exercise-already-has-accounting-plan": "El ejercicio %code% ya tiene plan contable, no se puede importar otro. Si necesita reemplazarlo, elimine antes sus cuentas y subcuentas.",
     "exercise-company-mismatch": "Dönem şirkete ait değil",
     "exercise-date-out-range": "Tarih hesap dönemi dışında.",
     "exercise-date-range-exists": "Bu tarih aralığında (%start% - %end%) zaten bir dönem bulunmaktadır",

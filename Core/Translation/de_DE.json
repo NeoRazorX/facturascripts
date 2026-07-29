@@ -726,6 +726,7 @@
     "exclude-valid": "Gültige ausschließen",
     "exempt": "Befreit",
     "exercise": "Übung",
+    "exercise-already-has-accounting-plan": "El ejercicio %code% ya tiene plan contable, no se puede importar otro. Si necesita reemplazarlo, elimine antes sus cuentas y subcuentas.",
     "exercise-company-mismatch": "Das Geschäftsjahr gehört nicht zu diesem Unternehmen",
     "exercise-date-out-range": "Datum außerhalb des Aufgabenbereichs.",
     "exercise-date-range-exists": "Der Bereich des Aufgabendatums existiert bereits",

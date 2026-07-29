@@ -53,10 +53,7 @@
     </columns>
     <rows>
         <row type="footer">
-            <group name="footer-actions" footer="specials-actions">
-                <button type="action" label="export" color="info" action="export-accounting"
-                        icon="fa-solid fa-file-export"/>
-            </group>
+            <group name="footer-actions" footer="specials-actions"/>
         </row>
     </rows>
     <modals>

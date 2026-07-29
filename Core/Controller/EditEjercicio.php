@@ -26,6 +26,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
+use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\WorkEvent;
 
@@ -58,17 +59,35 @@ class EditEjercicio extends EditController
      */
     protected function addExerciseActionButtons(string $viewName): void
     {
+        $codejercicio = $this->tabModelValue($viewName, 'codejercicio');
+        $hasAccounts = Cuenta::count([Where::eq('codejercicio', $codejercicio)]) > 0;
+
+        // el plan contable solamente se puede exportar cuando hay cuentas
+        if ($hasAccounts) {
+            $this->tab($viewName)->addButton([
+                'row' => 'footer-actions',
+                'action' => 'export-accounting',
+                'color' => 'info',
+                'icon' => 'fa-solid fa-file-export',
+                'label' => 'export',
+                'type' => 'action'
+            ]);
+        }
+
         $status = $this->tabModelValue($viewName, 'estado');
         switch ($status) {
             case Ejercicio::EXERCISE_STATUS_OPEN:
-                $this->tab($viewName)->addButton([
-                    'row' => 'footer-actions',
-                    'action' => 'import-accounting',
-                    'color' => 'warning',
-                    'icon' => 'fa-solid fa-file-import',
-                    'label' => 'import-accounting-plan',
-                    'type' => 'modal'
-                ]);
+                // y solamente se puede importar cuando no hay cuentas
+                if (false === $hasAccounts) {
+                    $this->tab($viewName)->addButton([
+                        'row' => 'footer-actions',
+                        'action' => 'import-accounting',
+                        'color' => 'warning',
+                        'icon' => 'fa-solid fa-file-import',
+                        'label' => 'import-accounting-plan',
+                        'type' => 'modal'
+                    ]);
+                }
 
                 $this->tab($viewName)->addButton([
                     'row' => 'footer-actions',
@@ -266,6 +285,12 @@ class EditEjercicio extends EditController
         $codejercicio = $this->request->input('codejercicio', '');
         if (empty($codejercicio)) {
             Tools::log()->error('exercise-not-found');
+            return true;
+        }
+
+        // no se puede importar si el ejercicio ya tiene cuentas
+        if (Cuenta::count([Where::eq('codejercicio', $codejercicio)]) > 0) {
+            Tools::log()->error('exercise-already-has-accounting-plan', ['%code%' => $codejercicio]);
             return true;
         }
 

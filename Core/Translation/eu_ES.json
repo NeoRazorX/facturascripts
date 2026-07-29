@@ -726,6 +726,7 @@
     "exclude-valid": "Baliozkoak baztertu",
     "exempt": "Salbuetsita",
     "exercise": "Ekitaldia",
+    "exercise-already-has-accounting-plan": "El ejercicio %code% ya tiene plan contable, no se puede importar otro. Si necesita reemplazarlo, elimine antes sus cuentas y subcuentas.",
     "exercise-company-mismatch": "Ekitaldia ez dagokio enpresari",
     "exercise-date-out-range": "Data ez dago ekitaldiaren aldian.",
     "exercise-date-range-exists": "(%start% - %end%) data-tarte horretan ekitaldi bat dago dagoeneko",
