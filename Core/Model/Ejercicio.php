@@ -249,6 +249,14 @@ class Ejercicio extends ModelClass
             $this->nombre = Empresas::get($this->idempresa)->nombrecorto . ' ' . $this->nombre;
         }
 
+        // heredamos la longitud de subcuenta del ejercicio más reciente de la empresa
+        $previous = new static();
+        $wherePrevious = [Where::eq('idempresa', $this->idempresa)];
+        $orderPrevious = ['fechainicio' => 'DESC'];
+        if ($previous->loadWhere($wherePrevious, $orderPrevious)) {
+            $this->longsubcuenta = $previous->longsubcuenta;
+        }
+
         // códigos alternativos: año, 00+yy, 0+idempresa+yy, 0001-9999
         $new = new static();
         if ($this->exists()) {
@@ -272,6 +280,7 @@ class Ejercicio extends ModelClass
 
     protected function saveInsert(): bool
     {
+        $previous = null;
         foreach ($this->allWhereEq('idempresa', $this->idempresa) as $ejercicio) {
             if ($this->inRange($ejercicio->fechainicio) || $this->inRange($ejercicio->fechafin)) {
                 Tools::log()->warning(
@@ -279,6 +288,18 @@ class Ejercicio extends ModelClass
                 );
                 return false;
             }
+
+            if (null === $previous || strtotime($ejercicio->fechainicio) > strtotime($previous->fechainicio)) {
+                $previous = $ejercicio;
+            }
+        }
+
+        // avisamos si la longitud de subcuenta no coincide con la del ejercicio más reciente de la empresa
+        if ($previous !== null && (int)$previous->longsubcuenta !== (int)$this->longsubcuenta) {
+            Tools::log()->warning('exercise-different-subaccount-length', [
+                '%code%' => $previous->codejercicio,
+                '%length%' => $previous->longsubcuenta,
+            ]);
         }
 
         return parent::saveInsert();

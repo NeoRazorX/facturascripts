@@ -729,6 +729,7 @@
     "exercise-company-mismatch": "Dönem şirkete ait değil",
     "exercise-date-out-range": "Tarih hesap dönemi dışında.",
     "exercise-date-range-exists": "Bu tarih aralığında (%start% - %end%) zaten bir dönem bulunmaktadır",
+    "exercise-different-subaccount-length": "La longitud de subcuenta no coincide con la del ejercicio %code%, que usa %length% dígitos. Verifique que es correcta antes de cargar el plan contable.",
     "exercise-not-found": "Dönem bulunamadı.",
     "exercise-without-accounting-plan": "%exercise% dönemi için henüz bir muhasebe planı yok",
     "exercises": "Alıştırmalar",

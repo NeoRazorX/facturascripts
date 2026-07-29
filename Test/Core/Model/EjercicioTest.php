@@ -279,6 +279,78 @@ final class EjercicioTest extends TestCase
         $this->assertTrue($empresa2->delete());
     }
 
+    // Comprobar que al crear un ejercicio automáticamente hereda la longitud
+    // de subcuenta del ejercicio más reciente de la empresa.
+    public function testInheritSubaccountLengthOnCreate(): void
+    {
+        $empresa = $this->getRandomCompany();
+        $this->assertTrue($empresa->save());
+
+        // sin ejercicios previos, el ejercicio se crea con la longitud por defecto
+        $ej1 = new Ejercicio();
+        $ej1->idempresa = $empresa->idempresa;
+        $this->assertTrue($ej1->loadFromDate('2094-06-15'));
+        $this->assertEquals(10, $ej1->longsubcuenta, 'first-exercise-should-have-default-length');
+
+        // cambiamos la longitud del primer ejercicio
+        $ej1->longsubcuenta = 7;
+        $this->assertTrue($ej1->save());
+
+        // creamos manualmente un segundo ejercicio posterior con otra longitud
+        $ej2 = new Ejercicio();
+        $ej2->idempresa = $empresa->idempresa;
+        $ej2->codejercicio = 't012';
+        $ej2->nombre = 'exercise-test';
+        $ej2->fechainicio = '2095-01-01';
+        $ej2->fechafin = '2095-12-31';
+        $ej2->longsubcuenta = 9;
+        $this->assertTrue($ej2->save());
+
+        // el ejercicio creado automáticamente hereda la longitud del más reciente
+        $ej3 = new Ejercicio();
+        $ej3->idempresa = $empresa->idempresa;
+        $this->assertTrue($ej3->loadFromDate('2096-06-15'));
+        $this->assertEquals(9, $ej3->longsubcuenta, 'exercise-should-inherit-latest-length');
+
+        // Eliminamos
+        $this->assertTrue($ej3->delete());
+        $this->assertTrue($ej2->delete());
+        $this->assertTrue($ej1->delete());
+        $this->assertTrue($empresa->delete());
+    }
+
+    // Comprobar que se puede guardar un ejercicio con longitud de subcuenta distinta
+    // a la del ejercicio más reciente de la empresa (el aviso no es bloqueante).
+    public function testItCanCreateExerciseWithDifferentSubaccountLength(): void
+    {
+        $empresa = $this->getRandomCompany();
+        $this->assertTrue($empresa->save());
+
+        $ej1 = new Ejercicio();
+        $ej1->idempresa = $empresa->idempresa;
+        $ej1->codejercicio = 't013';
+        $ej1->nombre = 'exercise-test';
+        $ej1->fechainicio = '2092-01-01';
+        $ej1->fechafin = '2092-12-31';
+        $ej1->longsubcuenta = 7;
+        $this->assertTrue($ej1->save());
+
+        // guardamos otro ejercicio con longitud distinta y comprobamos que no se bloquea
+        $ej2 = new Ejercicio();
+        $ej2->idempresa = $empresa->idempresa;
+        $ej2->codejercicio = 't014';
+        $ej2->nombre = 'exercise-test';
+        $ej2->fechainicio = '2093-01-01';
+        $ej2->fechafin = '2093-12-31';
+        $ej2->longsubcuenta = 10;
+        $this->assertTrue($ej2->save(), 'exercise-should-save-with-different-length');
+
+        // Eliminamos
+        $this->assertTrue($ej2->delete());
+        $this->assertTrue($ej1->delete());
+        $this->assertTrue($empresa->delete());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

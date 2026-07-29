@@ -729,6 +729,7 @@
     "exercise-company-mismatch": "Ekitaldia ez dagokio enpresari",
     "exercise-date-out-range": "Data ez dago ekitaldiaren aldian.",
     "exercise-date-range-exists": "(%start% - %end%) data-tarte horretan ekitaldi bat dago dagoeneko",
+    "exercise-different-subaccount-length": "La longitud de subcuenta no coincide con la del ejercicio %code%, que usa %length% dígitos. Verifique que es correcta antes de cargar el plan contable.",
     "exercise-not-found": "Ekitaldia ez da aurkitu.",
     "exercise-without-accounting-plan": "%exercice% ariketak ez du oraindik kontu-planik",
     "exercises": "Ekitaldiak",

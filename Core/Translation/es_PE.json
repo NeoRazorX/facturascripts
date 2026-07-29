@@ -729,6 +729,7 @@
     "exercise-company-mismatch": "El ejercicio no pertenece a la empresa",
     "exercise-date-out-range": "La fecha no está en el periodo del ejercicio.",
     "exercise-date-range-exists": "Ya existe un ejercicio en ese rango de fechas (%start% - %end%)",
+    "exercise-different-subaccount-length": "La longitud de subcuenta no coincide con la del ejercicio %code%, que usa %length% dígitos. Verifique que es correcta antes de cargar el plan contable.",
     "exercise-not-found": "Ejercicio no encontrado.",
     "exercise-without-accounting-plan": "El ejercicio %exercise% todavía no tiene plan contable",
     "exercises": "Ejercicios",

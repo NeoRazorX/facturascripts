@@ -729,6 +729,7 @@
     "exercise-company-mismatch": "Okres rozliczeniowy nie należy do firmy",
     "exercise-date-out-range": "Data nie mieści się w okresie rocznym.",
     "exercise-date-range-exists": "Istnieje już ćwiczenie w tym przedziale dat (%start% - %end%)",
+    "exercise-different-subaccount-length": "La longitud de subcuenta no coincide con la del ejercicio %code%, que usa %length% dígitos. Verifique que es correcta antes de cargar el plan contable.",
     "exercise-not-found": "Ćwiczenie nie znalezione.",
     "exercise-without-accounting-plan": "Ćwiczenie %exercise% nie ma jeszcze planu rachunkowego",
     "exercises": "Ćwiczenia",

@@ -729,6 +729,7 @@
     "exercise-company-mismatch": "L'exercici no pertany a l'empresa",
     "exercise-date-out-range": "La data no pertany al periodo de l'eixercici.",
     "exercise-date-range-exists": "Ya n'hi ha un eixercici entre les dates (%start% - %end%)",
+    "exercise-different-subaccount-length": "La longitud de subcuenta no coincide con la del ejercicio %code%, que usa %length% dígitos. Verifique que es correcta antes de cargar el plan contable.",
     "exercise-not-found": "No s'ha trobat l'eixercici.",
     "exercise-without-accounting-plan": "L'exercici %exercise% encara no té plà comptable",
     "exercises": "Eixercicis",

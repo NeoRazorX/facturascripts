@@ -729,6 +729,7 @@
     "exercise-company-mismatch": "The fiscal year does not belong to the company",
     "exercise-date-out-range": "Date not in exercise range.",
     "exercise-date-range-exists": "There is already an exercise in that date range (%start% - %end%)",
+    "exercise-different-subaccount-length": "La longitud de subcuenta no coincide con la del ejercicio %code%, que usa %length% dígitos. Verifique que es correcta antes de cargar el plan contable.",
     "exercise-not-found": "Exercise not found.",
     "exercise-without-accounting-plan": "The exercise %exercise% does not yet have a chart of accounts",
     "exercises": "Exercises",
