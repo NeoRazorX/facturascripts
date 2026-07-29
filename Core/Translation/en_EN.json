@@ -364,6 +364,7 @@
     "configuration": "Configuration",
     "configure": "Configure",
     "configure-columns": "Column Configurator",
+    "configured-subaccounts-wrong-length": "There are %count% subaccount fields configured in %models% whose length differs from the exercise length of %length% digits.",
     "confirm": "Confirm",
     "confirm-delete": "Confirm delete?",
     "connect": "Connect",

@@ -364,6 +364,7 @@
     "configuration": "Configuració",
     "configure": "Configurar",
     "configure-columns": "Configurador de columnes",
+    "configured-subaccounts-wrong-length": "Hay %count% campos de subcuenta configurados en %models% con una longitud distinta de los %length% dígitos del ejercicio.",
     "confirm": "Confirmar",
     "confirm-delete": "Confirma esborrat?",
     "connect": "Connectar",

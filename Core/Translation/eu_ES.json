@@ -364,6 +364,7 @@
     "configuration": "Konfigurazioa",
     "configure": "Konfiguratu",
     "configure-columns": "Zutabe konfiguratzailea",
+    "configured-subaccounts-wrong-length": "Hay %count% campos de subcuenta configurados en %models% con una longitud distinta de los %length% dígitos del ejercicio.",
     "confirm": "Baieztatu",
     "confirm-delete": "Ziur zaude hau kendu nahi duzula?",
     "connect": "Konektatu",

@@ -26,8 +26,16 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
+use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Familia;
+use FacturaScripts\Dinamic\Model\GrupoClientes;
+use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\WorkEvent;
 
 /**
@@ -139,6 +147,72 @@ class EditEjercicio extends EditController
         if ($pending > 0) {
             Tools::log()->warning('balances-updating-in-background', ['%count%' => $pending]);
         }
+    }
+
+    /**
+     * Avisa si hay códigos de subcuenta configurados con una longitud distinta
+     * a la definida en el ejercicio.
+     */
+    protected function checkConfiguredSubaccountLengths(int $length, int $idempresa): void
+    {
+        $config = [
+            [Producto::class, 'products', ['codsubcuentacom', 'codsubcuentairpfcom', 'codsubcuentaven'], []],
+            [Familia::class, 'families', ['codsubcuentacom', 'codsubcuentairpfcom', 'codsubcuentaven'], []],
+            [Impuesto::class, 'taxes', [
+                'codsubcuentarep',
+                'codsubcuentarepintra',
+                'codsubcuentarepre',
+                'codsubcuentasop',
+                'codsubcuentasopintra',
+                'codsubcuentasopre',
+            ], []],
+            [Retencion::class, 'retentions', ['codsubcuentaret', 'codsubcuentaacr'], []],
+            [Cliente::class, 'customers', ['codsubcuenta'], []],
+            [GrupoClientes::class, 'customer-groups', ['codsubcuenta'], []],
+            [Proveedor::class, 'suppliers', ['codsubcuenta'], []],
+            [CuentaBanco::class, 'bank-accounts', ['codsubcuenta', 'codsubcuentagasto'], [
+                Where::eq('idempresa', $idempresa),
+            ]],
+        ];
+
+        $count = 0;
+        $labels = [];
+        foreach ($config as [$modelClass, $label, $fields, $where]) {
+            $modelCount = $this->countWrongLengthSubaccounts($modelClass, $fields, $length, $where);
+            if ($modelCount > 0) {
+                $count += $modelCount;
+                $labels[] = Tools::trans($label);
+            }
+        }
+
+        if ($count > 0) {
+            Tools::log()->warning('configured-subaccounts-wrong-length', [
+                '%count%' => $count,
+                '%length%' => $length,
+                '%models%' => implode(', ', $labels),
+            ]);
+        }
+    }
+
+    /**
+     * Cuenta los campos no vacíos cuya longitud no coincide con la indicada.
+     */
+    protected function countWrongLengthSubaccounts(
+        string $modelClass,
+        array $fields,
+        int $length,
+        array $where = []
+    ): int {
+        $count = 0;
+        foreach ($fields as $field) {
+            $fieldWhere = array_merge($where, [
+                Where::notEq($field, ''),
+                Where::notEq('LENGTH(' . $field . ')', $length),
+            ]);
+            $count += $modelClass::count($fieldWhere);
+        }
+
+        return $count;
     }
 
     private function checkAndLoad(string $code): bool
@@ -393,6 +467,12 @@ class EditEjercicio extends EditController
                         ->disableColumn('account-length', false, 'true')
                         ->disableColumn('start-date', false, 'true')
                         ->disableColumn('end-date', false, 'true');
+                }
+
+                if ($viewName === 'ListSubcuenta' && $view->count > 0) {
+                    $length = (int)$this->tabModelValue('EditEjercicio', 'longsubcuenta');
+                    $idempresa = (int)$this->tabModelValue('EditEjercicio', 'idempresa');
+                    $this->checkConfiguredSubaccountLengths($length, $idempresa);
                 }
                 break;
         }
