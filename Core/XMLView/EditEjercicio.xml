@@ -65,6 +65,9 @@
                     description="import-accounting-plan-p" numcolumns="12" order="110">
                 <widget type="file" fieldname="accountingfile" accept=".csv,.xml"/>
             </column>
+            <column name="account-length" description="import-accounting-plan-length-p" numcolumns="12" order="120">
+                <widget type="number" fieldname="longsubcuenta" decimal="0" max="15" min="4"/>
+            </column>
         </group>
         <group name="close-exercise" title="close-exercise" icon="fa-solid fa-calendar-check">
             <column name="code" display="none">

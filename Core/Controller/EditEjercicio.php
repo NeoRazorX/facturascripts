@@ -299,16 +299,18 @@ class EditEjercicio extends EditController
             return true;
         }
 
+        $length = (int)$this->request->input('longsubcuenta', 0);
+
         $uploadFile = $this->request->files->get('accountingfile');
         if (empty($uploadFile)) {
-            return $this->importDefaultPlan($codejercicio);
+            return $this->importDefaultPlan($codejercicio, $length);
         }
 
         $accountingPlanImport = new AccountingPlanImport();
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
             case 'text/xml':
-                if ($accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio)) {
+                if ($accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio, $length)) {
                     Tools::log()->notice('record-updated-correctly');
                     return true;
                 }
@@ -317,7 +319,7 @@ class EditEjercicio extends EditController
 
             case 'text/csv':
             case 'text/plain':
-                if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio)) {
+                if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio, $length)) {
                     Tools::log()->notice('record-updated-correctly');
                     return true;
                 }
@@ -329,7 +331,7 @@ class EditEjercicio extends EditController
         return true;
     }
 
-    protected function importDefaultPlan(string $codejercicio): bool
+    protected function importDefaultPlan(string $codejercicio, int $length = 0): bool
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . Tools::config('lang') . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
@@ -343,7 +345,7 @@ class EditEjercicio extends EditController
         }
 
         $accountingPlanImport = new AccountingPlanImport();
-        if ($accountingPlanImport->importCSV($filePath, $codejercicio)) {
+        if ($accountingPlanImport->importCSV($filePath, $codejercicio, $length)) {
             Tools::log()->notice('record-updated-correctly');
             return true;
         }
