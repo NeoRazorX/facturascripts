@@ -120,6 +120,16 @@ class AccountingPlanImport
         try {
             $this->dataBase->beginTransaction();
 
+            // la longitud de las subcuentas del plan debe coincidir con la del ejercicio
+            $lengths = [];
+            foreach ($data->subcuenta as $xmlSubaccount) {
+                $lengths[] = strlen((string)$xmlSubaccount->codsubcuenta);
+            }
+            if (false === empty($lengths) && false === $this->checkSubaccountLength(max($lengths))) {
+                $this->dataBase->rollback();
+                return false;
+            }
+
             $this->updateSpecialAccounts();
             if (false === $this->importEpigrafeGroup($data->grupo_epigrafes)) {
                 $this->dataBase->rollback();
@@ -148,6 +158,40 @@ class AccountingPlanImport
     }
 
     /**
+     * Comprueba que la longitud de las subcuentas del plan coincide con la del
+     * ejercicio. Si no coincide y el ejercicio está vacío, alinea la longitud
+     * del ejercicio avisando al usuario; si ya tiene subcuentas, devuelve false.
+     */
+    protected function checkSubaccountLength(int $length): bool
+    {
+        if ($length == $this->exercise->longsubcuenta) {
+            return true;
+        }
+
+        // si el ejercicio ya tiene subcuentas, no se puede cambiar la longitud
+        $where = [Where::eq('codejercicio', $this->exercise->codejercicio)];
+        if (Subcuenta::count($where) > 0) {
+            Tools::log()->error('accounting-plan-different-subaccount-length', [
+                '%length%' => $length,
+                '%exerciseLength%' => $this->exercise->longsubcuenta,
+            ]);
+            return false;
+        }
+
+        // como el ejercicio está vacío, alineamos su longitud con la del plan, avisando
+        $this->exercise->longsubcuenta = $length;
+        if (false === $this->exercise->save()) {
+            return false;
+        }
+
+        Tools::log()->warning('exercise-subaccount-length-changed', [
+            '%code%' => $this->exercise->codejercicio,
+            '%length%' => $length,
+        ]);
+        return true;
+    }
+
+    /**
      * Crea una cuenta en el ejercicio si no existe. Si ya existe con ese código,
      * la deja como está (no actualiza descripción ni cuenta especial).
      */
@@ -171,8 +215,8 @@ class AccountingPlanImport
     }
 
     /**
-     * Crea una subcuenta en el ejercicio si no existe, ajustando además la
-     * longitud de subcuenta del ejercicio al tamaño del primer código importado.
+     * Crea una subcuenta en el ejercicio si no existe. Si ya existe con ese
+     * código, la deja como está.
      */
     protected function createSubaccount(string $code, string $description, string $parentCode, ?string $codcuentaesp = ''): bool
     {
@@ -183,14 +227,6 @@ class AccountingPlanImport
         ];
         if ($subaccount->loadWhere($where)) {
             return true;
-        }
-
-        // alineamos la longitud de subcuenta del ejercicio con el código que se está importando
-        if ($this->exercise->longsubcuenta != strlen($code)) {
-            $this->exercise->longsubcuenta = strlen($code);
-            if (false === $this->exercise->save()) {
-                return false;
-            }
         }
 
         $subaccount->codcuenta = $parentCode;
@@ -315,6 +351,11 @@ class AccountingPlanImport
 
         $minLength = min($lengths);
         $maxLength = max($lengths);
+
+        // la longitud de las subcuentas del plan debe coincidir con la del ejercicio
+        if (false === $this->checkSubaccountLength($maxLength)) {
+            return false;
+        }
         $keys = array_keys($accountPlan);
         ksort($accountPlan);
 
