@@ -342,6 +342,7 @@
     "common-error": "Errorea",
     "companies": "Enpresak",
     "company": "Enpresa",
+    "company-address": "Enpresaren helbidea",
     "company-admin-no-data": "%company% enpresak ez du administratzailerik eta beharrezkoa da",
     "company-commission-info": "Aukeratutako enpresari bakarrik aplikatuko zaio",
     "company-iban-changed": "%account% banku kontuaren IBAN-a aldatu da. Lehen %old% zen eta orain %new% da.",

@@ -342,6 +342,7 @@
     "common-error": "Erro",
     "companies": "Empresas",
     "company": "Empresa",
+    "company-address": "Gestão da Empresa",
     "company-admin-no-data": "A empresa %company% não possui administrador e é obrigatório",
     "company-commission-info": "Informações de comissão da empresa",
     "company-iban-changed": "Foi alterado o IBAN da conta bancária %account%. Antes era %old% e agora é %new%",

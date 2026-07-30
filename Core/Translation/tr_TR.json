@@ -342,6 +342,7 @@
     "common-error": "Hata",
     "companies": "Şirketler",
     "company": "Şirket",
+    "company-address": "Şirket adresi",
     "company-admin-no-data": "Şirket %company% yöneticisi yok ve bu zorunludur",
     "company-commission-info": "Sadece seçilen şirkete uygulanacaktır",
     "company-iban-changed": "%account% banka hesabının IBAN'ı değiştirildi. Önceki: %old%, Şimdi: %new%",

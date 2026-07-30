@@ -342,6 +342,7 @@
     "common-error": "Error",
     "companies": "Empresas",
     "company": "Empresa",
+    "company-address": "Adresa společnosti",
     "company-admin-no-data": "Společnost %company% nemá žádného administrátora a je povinný",
     "company-commission-info": "Sólo se aplicará a la empresa seleccionada",
     "company-iban-changed": "Byl změněn IBAN bankovního účtu %account%. Předtím byl %old% a nyní je %new%",
