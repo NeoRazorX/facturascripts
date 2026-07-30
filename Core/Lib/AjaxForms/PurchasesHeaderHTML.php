@@ -156,9 +156,11 @@ class PurchasesHeaderHTML
         }
 
         $btnProveedor = $model->editable ?
-            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findSupplierModal\').modal(\'show\');'
+            '<button class="btn btn-outline-secondary" type="button" title="' . Tools::trans('change-supplier')
+            . '" onclick="$(\'#findSupplierModal\').modal(\'show\');'
             . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fa-solid fa-pen"></i></button>' :
-            '<button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-lock"></i></button>';
+            '<button class="btn btn-outline-secondary" type="button" title="' . Tools::trans('non-editable-document')
+            . '"><i class="fa-solid fa-lock"></i></button>';
 
         $html = '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">'

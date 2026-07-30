@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
- * Controller to edit a single item from the CuentaBanco model
+ * Controlador para editar un único elemento del modelo CuentaBanco
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

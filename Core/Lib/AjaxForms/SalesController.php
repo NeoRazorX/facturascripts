@@ -298,8 +298,25 @@ abstract class SalesController extends PanelController
             return false;
         }
 
+        // si el cifnif ya existe en otro cliente avisamos, pero permitimos crearlo igualmente
+        $cifnif = trim($formData['newcustomer_cifnif'] ?? '');
+        $confirmed = ($formData['newcustomer_cifnif_confirmed'] ?? '') === '1';
+        if ($cifnif !== '' && false === $confirmed) {
+            $duplicated = $this->findCustomersByCifnif($cifnif);
+            if (false === empty($duplicated)) {
+                $response = $this->emptySalesResponse();
+                $response['duplicatedCifnif'] = true;
+                $response['duplicatedCifnifMessage'] = Tools::trans('duplicated-cifnif-customer', [
+                    '%cifnif%' => $cifnif,
+                    '%customers%' => implode(', ', $duplicated)
+                ]);
+                $this->sendJsonWithLogs($response);
+                return false;
+            }
+        }
+
         $customer = new Cliente();
-        $customer->cifnif = $formData['newcustomer_cifnif'] ?? '';
+        $customer->cifnif = $cifnif;
         $customer->codagente = $this->user->codagente;
         $customer->email = $formData['newcustomer_email'] ?? '';
         $customer->nombre = $formData['newcustomer_nombre'] ?? '';
@@ -373,6 +390,18 @@ abstract class SalesController extends PanelController
         }
 
         return false;
+    }
+
+    /** Devuelve los clientes que ya tienen este cifnif, como 'código - nombre'. */
+    private function findCustomersByCifnif(string $cifnif): array
+    {
+        $names = [];
+        $where = [Where::eq('cifnif', $cifnif)];
+        foreach (Cliente::all($where, ['LOWER(nombre)' => 'ASC'], 0, 5) as $customer) {
+            $names[] = $customer->codcliente . ' - ' . $customer->nombre;
+        }
+
+        return $names;
     }
 
     protected function exportAction()
@@ -708,7 +737,55 @@ abstract class SalesController extends PanelController
 
     private function sendJsonWithLogs(array $data): void
     {
-        $data['messages'] = Tools::log()::read('master', $this->logLevels);
+        $messages = array_merge(
+            Tools::log()::read('master', $this->logLevels),
+            $this->humanizeDatabaseMessages(Tools::log()::read('database', $this->logLevels))
+        );
+
+        if (($data['ok'] ?? null) === false && empty($messages)) {
+            Tools::log()->error('record-save-error');
+            $messages = Tools::log()::read('master', $this->logLevels);
+        }
+
+        $data['messages'] = $messages;
         $this->response->json($data);
+    }
+
+    private function humanizeDatabaseMessages(array $messages): array
+    {
+        $model = $this->getModel();
+        foreach ($messages as &$item) {
+            // la consulta SQL puede contener datos del documento y no es necesaria en la interfaz
+            unset($item['context']);
+
+            $message = $item['message'] ?? '';
+            if (false !== stripos($message, 'uniq_codigo_')) {
+                $item['message'] = $this->translateDuplicateMessage(
+                    'document-code-already-exists',
+                    '%code%',
+                    $model->codigo
+                );
+            } elseif (preg_match('/uniq_(number|numero)_/i', $message)) {
+                $item['message'] = $this->translateDuplicateMessage(
+                    'document-number-already-exists',
+                    '%number%',
+                    $model->numero
+                );
+            } elseif (
+                preg_match('/duplicate (entry|key value)/i', $message)
+                || false !== stripos($message, 'SQLSTATE[23505]')
+            ) {
+                $item['message'] = Tools::trans('record-already-exists');
+            }
+        }
+        unset($item);
+
+        return $messages;
+    }
+
+    private function translateDuplicateMessage(string $key, string $parameter, $value): string
+    {
+        $message = Tools::trans($key, [$parameter => $value]);
+        return $message === $key ? Tools::trans('record-already-exists') . ': ' . $value : $message;
     }
 }

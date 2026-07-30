@@ -16,8 +16,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="success" fieldname="enabled">1</option>
-            <option color="warning" fieldname="enabled">0</option>
+            <option color="success" fieldname="enabled" title="enabled">1</option>
+            <option color="warning" fieldname="enabled" title="disabled">0</option>
         </row>
     </rows>
 </view>

@@ -26,10 +26,20 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Familia;
+use FacturaScripts\Dinamic\Model\GrupoClientes;
+use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Retencion;
+use FacturaScripts\Dinamic\Model\WorkEvent;
 
 /**
- * Controller to edit a single item from the Ejercicio model
+ * Controlador para editar un único elemento del modelo Ejercicio
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -57,23 +67,46 @@ class EditEjercicio extends EditController
      */
     protected function addExerciseActionButtons(string $viewName): void
     {
+        // si el ejercicio todavía no existe, no añadimos botones
+        $codejercicio = $this->tabModelValue($viewName, 'codejercicio');
+        if (empty($codejercicio)) {
+            return;
+        }
+
+        $hasAccounts = Cuenta::count([Where::eq('codejercicio', $codejercicio)]) > 0;
+
+        // el plan contable solamente se puede exportar cuando hay cuentas
+        if ($hasAccounts) {
+            $this->tab($viewName)->addButton([
+                'row' => 'footer-actions',
+                'action' => 'export-accounting',
+                'color' => 'info',
+                'icon' => 'fa-solid fa-file-export',
+                'label' => 'export',
+                'type' => 'action'
+            ]);
+        }
+
         $status = $this->tabModelValue($viewName, 'estado');
         switch ($status) {
             case Ejercicio::EXERCISE_STATUS_OPEN:
-                $this->tab($viewName)->addButton([
-                    'row' => 'footer-actions',
-                    'action' => 'import-accounting',
-                    'color' => 'warning',
-                    'icon' => 'fa-solid fa-file-import',
-                    'label' => 'import-accounting-plan',
-                    'type' => 'modal'
-                ]);
+                // y solamente se puede importar cuando no hay cuentas
+                if (false === $hasAccounts) {
+                    $this->tab($viewName)->addButton([
+                        'row' => 'footer-actions',
+                        'action' => 'import-accounting',
+                        'color' => 'warning',
+                        'icon' => 'fa-solid fa-file-import',
+                        'label' => 'import-accounting-plan',
+                        'type' => 'modal'
+                    ]);
+                }
 
                 $this->tab($viewName)->addButton([
                     'row' => 'footer-actions',
                     'action' => 'close-exercise',
-                    'color' => 'danger',
-                    'icon' => 'fa-solid fa-calendar-check',
+                    'color' => 'warning',
+                    'icon' => 'fa-solid fa-lock',
                     'label' => 'close-exercise',
                     'type' => 'modal'
                 ]);
@@ -84,12 +117,102 @@ class EditEjercicio extends EditController
                     'row' => 'footer-actions',
                     'action' => 'open-exercise',
                     'color' => 'warning',
-                    'icon' => 'fa-solid fa-calendar-plus',
+                    'icon' => 'fa-solid fa-lock-open',
                     'label' => 'open-exercise',
                     'type' => 'modal'
                 ]);
                 break;
         }
+    }
+
+    /**
+     * Informa al usuario si todavía hay eventos en la cola de trabajo
+     * recalculando los saldos de cuentas y subcuentas.
+     */
+    private function checkPendingBalanceJobs(): void
+    {
+        $where = [
+            Where::eq('done', false),
+            Where::in('name', [
+                'Model.Partida.Save',
+                'Model.Partida.Delete',
+                'Model.Subcuenta.Update',
+                'Model.Subcuenta.Delete',
+                'Model.Cuenta.Update',
+                'Model.Cuenta.Delete',
+            ]),
+        ];
+
+        $pending = WorkEvent::count($where);
+        if ($pending > 0) {
+            Tools::log()->warning('balances-updating-in-background', ['%count%' => $pending]);
+        }
+    }
+
+    /**
+     * Avisa si hay códigos de subcuenta configurados con una longitud distinta
+     * a la definida en el ejercicio.
+     */
+    protected function checkConfiguredSubaccountLengths(int $length, int $idempresa): void
+    {
+        $config = [
+            [Producto::class, 'products', ['codsubcuentacom', 'codsubcuentairpfcom', 'codsubcuentaven'], []],
+            [Familia::class, 'families', ['codsubcuentacom', 'codsubcuentairpfcom', 'codsubcuentaven'], []],
+            [Impuesto::class, 'taxes', [
+                'codsubcuentarep',
+                'codsubcuentarepintra',
+                'codsubcuentarepre',
+                'codsubcuentasop',
+                'codsubcuentasopintra',
+                'codsubcuentasopre',
+            ], []],
+            [Retencion::class, 'retentions', ['codsubcuentaret', 'codsubcuentaacr'], []],
+            [Cliente::class, 'customers', ['codsubcuenta'], []],
+            [GrupoClientes::class, 'customer-groups', ['codsubcuenta'], []],
+            [Proveedor::class, 'suppliers', ['codsubcuenta'], []],
+            [CuentaBanco::class, 'bank-accounts', ['codsubcuenta', 'codsubcuentagasto'], [
+                Where::eq('idempresa', $idempresa),
+            ]],
+        ];
+
+        $count = 0;
+        $labels = [];
+        foreach ($config as [$modelClass, $label, $fields, $where]) {
+            $modelCount = $this->countWrongLengthSubaccounts($modelClass, $fields, $length, $where);
+            if ($modelCount > 0) {
+                $count += $modelCount;
+                $labels[] = Tools::trans($label);
+            }
+        }
+
+        if ($count > 0) {
+            Tools::log()->warning('configured-subaccounts-wrong-length', [
+                '%count%' => $count,
+                '%length%' => $length,
+                '%models%' => implode(', ', $labels),
+            ]);
+        }
+    }
+
+    /**
+     * Cuenta los campos no vacíos cuya longitud no coincide con la indicada.
+     */
+    protected function countWrongLengthSubaccounts(
+        string $modelClass,
+        array $fields,
+        int $length,
+        array $where = []
+    ): int {
+        $count = 0;
+        foreach ($fields as $field) {
+            $fieldWhere = array_merge($where, [
+                Where::notEq($field, ''),
+                Where::notEq('LENGTH(' . $field . ')', $length),
+            ]);
+            $count += $modelClass::count($fieldWhere);
+        }
+
+        return $count;
     }
 
     private function checkAndLoad(string $code): bool
@@ -244,16 +367,24 @@ class EditEjercicio extends EditController
             return true;
         }
 
+        // no se puede importar si el ejercicio ya tiene cuentas
+        if (Cuenta::count([Where::eq('codejercicio', $codejercicio)]) > 0) {
+            Tools::log()->error('exercise-already-has-accounting-plan', ['%code%' => $codejercicio]);
+            return true;
+        }
+
+        $length = (int)$this->request->input('longsubcuenta', 0);
+
         $uploadFile = $this->request->files->get('accountingfile');
         if (empty($uploadFile)) {
-            return $this->importDefaultPlan($codejercicio);
+            return $this->importDefaultPlan($codejercicio, $length);
         }
 
         $accountingPlanImport = new AccountingPlanImport();
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
             case 'text/xml':
-                if ($accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio)) {
+                if ($accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio, $length)) {
                     Tools::log()->notice('record-updated-correctly');
                     return true;
                 }
@@ -262,7 +393,7 @@ class EditEjercicio extends EditController
 
             case 'text/csv':
             case 'text/plain':
-                if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio)) {
+                if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio, $length)) {
                     Tools::log()->notice('record-updated-correctly');
                     return true;
                 }
@@ -274,7 +405,7 @@ class EditEjercicio extends EditController
         return true;
     }
 
-    protected function importDefaultPlan(string $codejercicio): bool
+    protected function importDefaultPlan(string $codejercicio, int $length = 0): bool
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . Tools::config('lang') . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
@@ -288,7 +419,7 @@ class EditEjercicio extends EditController
         }
 
         $accountingPlanImport = new AccountingPlanImport();
-        if ($accountingPlanImport->importCSV($filePath, $codejercicio)) {
+        if ($accountingPlanImport->importCSV($filePath, $codejercicio, $length)) {
             Tools::log()->notice('record-updated-correctly');
             return true;
         }
@@ -311,6 +442,7 @@ class EditEjercicio extends EditController
             case 'EditEjercicio':
                 parent::loadData($viewName, $view);
                 $this->addExerciseActionButtons($viewName);
+                $this->checkPendingBalanceJobs();
                 break;
 
             case 'ListAsiento':
@@ -335,6 +467,12 @@ class EditEjercicio extends EditController
                         ->disableColumn('account-length', false, 'true')
                         ->disableColumn('start-date', false, 'true')
                         ->disableColumn('end-date', false, 'true');
+                }
+
+                if ($viewName === 'ListSubcuenta' && $view->count > 0) {
+                    $length = (int)$this->tabModelValue('EditEjercicio', 'longsubcuenta');
+                    $idempresa = (int)$this->tabModelValue('EditEjercicio', 'idempresa');
+                    $this->checkConfiguredSubaccountLengths($length, $idempresa);
                 }
                 break;
         }

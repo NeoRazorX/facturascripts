@@ -26,7 +26,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\TaxExceptions;
 
 /**
- * Controller to edit a single item from the Impuesto model
+ * Controlador para editar un único elemento del modelo Impuesto
  *
  * @author Carlos García Gómez              <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
@@ -139,7 +139,7 @@ class EditImpuesto extends EditController
 
     protected function loadVatExceptions(string $viewName): void
     {
-        $column = $this->views[$viewName]->columnForName('vat-exception');
+        $column = $this->tab($viewName)->columnForName('vat-exception');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(TaxExceptions::all(), true, true);
         }
@@ -147,7 +147,7 @@ class EditImpuesto extends EditController
 
     protected function loadOperations(string $viewName): void
     {
-        $column = $this->views[$viewName]->columnForName('operation');
+        $column = $this->tab($viewName)->columnForName('operation');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(OperacionIVA::all(), true, true);
         }

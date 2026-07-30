@@ -30,7 +30,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Atributo;
 
 /**
- * Controller to list the items in the Producto model
+ * Controlador para listar los elementos del modelo Producto
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

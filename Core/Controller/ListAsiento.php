@@ -27,7 +27,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
- * Controller to list the items in the Asiento model
+ * Controlador para listar los elementos del modelo Asiento
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

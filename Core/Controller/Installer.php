@@ -32,6 +32,9 @@ use FacturaScripts\Core\Base\DataBase\SqliteEngine;
 use mysqli;
 use PDO;
 
+/**
+ * Controlador del instalador que configura la aplicación en su primera puesta en marcha.
+ */
 class Installer implements ControllerInterface
 {
     /** @var string */

@@ -8,7 +8,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Dinamic\Lib\AjaxForms\SalesController;
 
 /**
- * Description of EditAlbaranCliente
+ * Controlador para editar un único elemento del modelo AlbaranCliente
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

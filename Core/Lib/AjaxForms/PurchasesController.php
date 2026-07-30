@@ -154,10 +154,57 @@ abstract class PurchasesController extends PanelController
         AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
 
+        // avisa si el numproveedor ya lo usa otro documento del mismo proveedor
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/TooltipWarning.css');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/CheckDuplicatedNumProveedor.js');
+
         PurchasesHeaderHTML::assets();
         PurchasesLineHTML::assets();
         PurchasesFooterHTML::assets();
         PurchasesModalHTML::assets();
+    }
+
+    /**
+     * Devuelve, en json, los documentos del mismo tipo y proveedor que ya usan
+     * este numproveedor. Solo avisa, no impide guardar.
+     */
+    protected function checkNumProveedorAction(): bool
+    {
+        $this->setTemplate(false);
+
+        $numproveedor = trim($this->request->input('numproveedor', ''));
+        $codproveedor = $this->request->input('codproveedor', '');
+        if (empty($numproveedor) || empty($codproveedor)) {
+            $this->response->json(['duplicated' => false, 'message' => '']);
+            return false;
+        }
+
+        $model = $this->getModel();
+        $where = [
+            Where::eq('codproveedor', $codproveedor),
+            Where::eq('numproveedor', $numproveedor)
+        ];
+
+        // excluimos el propio documento, si ya está guardado
+        $code = $this->request->input('code');
+        if (false === empty($code)) {
+            $where[] = Where::notEq($model->primaryColumn(), $code);
+        }
+
+        $codes = [];
+        foreach ($model::all($where, ['fecha' => 'DESC'], 0, 5) as $doc) {
+            $codes[] = $doc->codigo;
+        }
+
+        $this->response->json([
+            'duplicated' => false === empty($codes),
+            'message' => empty($codes) ? '' : Tools::trans('duplicated-numsupplier', [
+                '%numsupplier%' => $numproveedor,
+                '%documents%' => implode(', ', $codes)
+            ])
+        ]);
+
+        return false;
     }
 
     protected function deleteDocAction(): bool
@@ -216,6 +263,9 @@ abstract class PurchasesController extends PanelController
             case 'rm-line':
             case 'set-supplier':
                 return $this->recalculateAction(true);
+
+            case 'check-numproveedor':
+                return $this->checkNumProveedorAction();
 
             case 'create-supplier':
                 return $this->createSupplierAction();
@@ -297,8 +347,25 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
+        // si el cifnif ya existe en otro proveedor avisamos, pero permitimos crearlo igualmente
+        $cifnif = trim($formData['newsupplier_cifnif'] ?? '');
+        $confirmed = ($formData['newsupplier_cifnif_confirmed'] ?? '') === '1';
+        if ($cifnif !== '' && false === $confirmed) {
+            $duplicated = $this->findSuppliersByCifnif($cifnif);
+            if (false === empty($duplicated)) {
+                $response = $this->emptyPurchasesResponse();
+                $response['duplicatedCifnif'] = true;
+                $response['duplicatedCifnifMessage'] = Tools::trans('duplicated-cifnif-supplier', [
+                    '%cifnif%' => $cifnif,
+                    '%suppliers%' => implode(', ', $duplicated)
+                ]);
+                $this->sendJsonWithLogs($response);
+                return false;
+            }
+        }
+
         $supplier = new Proveedor();
-        $supplier->cifnif = $formData['newsupplier_cifnif'] ?? '';
+        $supplier->cifnif = $cifnif;
         $supplier->email = $formData['newsupplier_email'] ?? '';
         $supplier->nombre = $formData['newsupplier_nombre'] ?? '';
         $supplier->telefono1 = $formData['newsupplier_telefono'] ?? '';
@@ -352,6 +419,18 @@ abstract class PurchasesController extends PanelController
             'products' => '',
         ]);
         return false;
+    }
+
+    /** Devuelve los proveedores que ya tienen este cifnif, como 'código - nombre'. */
+    private function findSuppliersByCifnif(string $cifnif): array
+    {
+        $names = [];
+        $where = [Where::eq('cifnif', $cifnif)];
+        foreach (Proveedor::all($where, ['LOWER(nombre)' => 'ASC'], 0, 5) as $supplier) {
+            $names[] = $supplier->codproveedor . ' - ' . $supplier->nombre;
+        }
+
+        return $names;
     }
 
     protected function exportAction()

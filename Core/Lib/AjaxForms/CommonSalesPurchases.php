@@ -85,7 +85,8 @@ trait CommonSalesPurchases
             case 1:
                 return '<div class="col-sm-auto">'
                     . '<div class="mb-2">'
-                    . '<a href="' . $children[0]->url() . '" class="btn w-100 btn-info">'
+                    . '<a href="' . $children[0]->url() . '" class="btn w-100 btn-outline-secondary" title="'
+                    . Tools::trans('documents-generated') . '">'
                     . '<i class="fa-solid fa-forward fa-fw" aria-hidden="true"></i> ' . $children[0]->primaryDescription()
                     . '</a>'
                     . '</div>'
@@ -95,7 +96,7 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="mb-2">'
-            . '<button class="btn w-100 btn-info" type="button" title="' . Tools::trans('documents-generated')
+            . '<button class="btn w-100 btn-outline-secondary" type="button" title="' . Tools::trans('documents-generated')
             . '" data-bs-toggle="modal" data-bs-target="#childrenModal"><i class="fa-solid fa-forward fa-fw" aria-hidden="true"></i> '
             . count($children) . ' </button>'
             . '</div>'
@@ -392,19 +393,8 @@ trait CommonSalesPurchases
             $btnClass = 'btn w-100 btn-danger btn-spin-action';
         }
 
-        // si el estado genera documento, no se puede cambiar, sin eliminar el nuevo documento
-        if ($status->generadoc) {
-            return '<div class="col-sm-auto">'
-                . '<div class="mb-2">'
-                . '<button type="button" class="' . $btnClass . '">'
-                . '<i class="' . static::idestadoIcon($status) . ' fa-fw"></i> ' . $status->nombre
-                . '</button>'
-                . '<input type="hidden" name="idestado" value="' . $model->idestado . '">'
-                . '</div>'
-                . '</div>';
-        }
-
-        // añadimos los estados posibles
+        // añadimos los estados posibles. Siempre se puede cambiar el estado, incluso si
+        // ya generó documentos: al reabrir y volver a aprobar solamente se genera lo pendiente.
         $options = [];
         foreach ($model->getAvailableStatus() as $sta) {
             // si está seleccionado o no activo, lo saltamos
@@ -568,21 +558,29 @@ trait CommonSalesPurchases
             return '<div class="col-sm-auto">'
                 . '<div class="mb-2">'
                 . '<button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
-                . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</button>'
+                . '<i class="fa-solid fa-square-check fa-fw"></i> ' . Tools::trans('paid') . '</button>'
                 . '<div class="dropdown-menu dropdown-menu-end">'
                 . '<a class="dropdown-item text-danger" href="#" onclick="prepareForm(\'save-paid\', {\'paid-status\': 0});">'
-                . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::trans('unpaid') . '</a></div>'
+                . '<i class="fa-solid fa-money-bill-wave fa-fw"></i> ' . Tools::trans('unpaid') . '</a></div>'
                 . '</div>'
                 . '</div>';
         }
 
+        // en rojo solo si además está vencida; si todavía está en plazo, en neutro
+        $overdue = property_exists($model, 'vencida') && $model->vencida;
+        $btnClass = $overdue ? 'btn-outline-danger' : 'btn-outline-secondary';
+        $btnIcon = $overdue ? 'fa-calendar-xmark' : 'fa-money-bill-wave';
+        $btnLabel = $overdue ? Tools::trans('overdue') : Tools::trans('unpaid');
+        $btnTitle = $overdue ? ' title="' . Tools::trans('unpaid') . '"' : '';
+
         $html = '<div class="col-sm-auto">'
             . '<div class="mb-2">'
-            . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
-            . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::trans('unpaid') . '</button>'
+            . '<button class="btn btn-spin-action ' . $btnClass . ' dropdown-toggle" type="button"'
+            . $btnTitle . ' data-bs-toggle="dropdown" aria-expanded="false">'
+            . '<i class="fa-solid ' . $btnIcon . ' fa-fw"></i> ' . $btnLabel . '</button>'
             . '<div class="dropdown-menu dropdown-menu-end">'
             . '<button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#modalPaymentConditions">'
-            . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</button>'
+            . '<i class="fa-solid fa-square-check fa-fw"></i> ' . Tools::trans('paid') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -642,7 +640,8 @@ trait CommonSalesPurchases
             case 1:
                 return '<div class="col-sm-auto">'
                     . '<div class="mb-2">'
-                    . '<a href="' . $parents[0]->url() . '" class="btn w-100 btn-warning">'
+                    . '<a href="' . $parents[0]->url() . '" class="btn w-100 btn-outline-secondary" title="'
+                    . Tools::trans('previous-documents') . '">'
                     . '<i class="fa-solid fa-backward fa-fw" aria-hidden="true"></i> ' . $parents[0]->primaryDescription()
                     . '</a>'
                     . '</div>'
@@ -652,7 +651,7 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="mb-2">'
-            . '<button class="btn w-100 btn-warning" type="button" title="' . Tools::trans('previous-documents')
+            . '<button class="btn w-100 btn-outline-secondary" type="button" title="' . Tools::trans('previous-documents')
             . '" data-bs-toggle="modal" data-bs-target="#parentsModal"><i class="fa-solid fa-backward fa-fw" aria-hidden="true"></i> '
             . count($parents) . ' </button>'
             . '</div>'

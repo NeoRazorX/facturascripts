@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the EstadoDocumento model
+ * Controlador para editar un único elemento del modelo EstadoDocumento
  *
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
@@ -47,11 +47,10 @@ class EditEstadoDocumento extends EditController
 
     protected function createOtherStatusView($viewName = 'ListEstadoDocumento')
     {
-        $this->addListView($viewName, 'EstadoDocumento', 'document-states');
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'EstadoDocumento', 'document-states')
+            // desactivamos los botones de crear y eliminar
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false);
     }
 
     /**

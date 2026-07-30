@@ -133,6 +133,14 @@
             if (typeof data.multireqtoken === 'string') {
                 document.forms['purchasesForm']['multireqtoken'].value = data.multireqtoken;
             }
+            if (data.duplicatedCifnif === true) {
+                if (false === confirm(data.duplicatedCifnifMessage)) {
+                    return;
+                }
+                document.forms['purchasesForm']['newsupplier_cifnif_confirmed'].value = '1';
+                purchasesFormAction('create-supplier', '0');
+                return;
+            }
             if (data.supplierCreated === true) {
                 $('#newSupplierModal').modal('hide');
                 document.getElementById('newSupplierName').closest('.modal-body').querySelectorAll('input').forEach(function (input) {
@@ -141,6 +149,9 @@
             }
             if (data.header !== '') {
                 document.getElementById("purchasesFormHeader").innerHTML = data.header;
+                if (typeof checkDuplicatedNumProveedor === 'function') {
+                    checkDuplicatedNumProveedor();
+                }
             }
             if (data.lines !== '') {
                 document.getElementById("purchasesFormLines").innerHTML = data.lines;
@@ -296,6 +307,9 @@
         const total = parseFloat(prompt('{{ trans('total-with-taxes') }}').replace(',', '.')) || 0;
         const dtopor = parseFloat(document.forms['purchasesForm']['dtopor_' + id].value) || 0;
         const dtopor2 = parseFloat(document.forms['purchasesForm']['dtopor2_' + id].value) || 0;
+        const globalDtopor = parseFloat(document.forms['purchasesForm']['dtopor1'].value) || 0;
+        const globalDtopor2 = parseFloat(document.forms['purchasesForm']['dtopor2'].value) || 0;
+        const globalDiscount = (100 - globalDtopor) * (100 - globalDtopor2) / 10000;
         const iva = parseFloat(document.forms['purchasesForm']['iva_' + id].value) || 0;
         const recargo = document.forms['purchasesForm']['recargo_' + id] ? parseFloat(document.forms['purchasesForm']['recargo_' + id].value) || 0 : 0;
         const irpf = parseFloat(document.forms['purchasesForm']['irpf_' + id].value) || 0;
@@ -306,7 +320,7 @@
             alert('cantidad > 0');
         } else {
             let pvpSinDto = (100 * total / cantidad) / (100 + iva + recargo - irpf);
-            let pvp = 10000 * pvpSinDto / ((100 - dtopor) * (100 - dtopor2));
+            let pvp = 10000 * pvpSinDto / ((100 - dtopor) * (100 - dtopor2) * globalDiscount);
             document.forms['purchasesForm']['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
             purchasesFormAction('recalculate', '0');
         }

@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the AttachedFile model
+ * Controlador para editar un único elemento del modelo AttachedFile
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
@@ -60,12 +60,11 @@ class EditAttachedFile extends EditController
 
     protected function createViewsRelations(string $viewName = 'ListAttachedFileRelation')
     {
-        $this->addListView($viewName, 'AttachedFileRelation', 'related', 'fa-solid fa-copy');
-        $this->views[$viewName]->addSearchFields(['observations']);
-        $this->views[$viewName]->addOrderBy(['creationdate'], 'date', 2);
-
-        // disable button
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'AttachedFileRelation', 'related', 'fa-solid fa-copy')
+            ->addSearchFields(['observations'])
+            ->addOrderBy(['creationdate'], 'date', 2)
+            // desactivamos el botón de crear
+            ->setSettings('btnNew', false);
     }
 
     /**

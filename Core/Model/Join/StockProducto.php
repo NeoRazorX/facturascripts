@@ -23,7 +23,10 @@ use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Dinamic\Model\Producto;
 
 /**
- * Model Stock with Producto data
+ * Modelo Stock con datos del Producto y de la Variante. Combina las tablas
+ * stocks, variantes y productos para listar el stock con su descripción,
+ * coste, precio y valor total (cantidad por coste), con Producto como
+ * modelo master.
  *
  * @author Raul Jimenez                     <raul.jimenez@nazcanetworks.com>
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
@@ -40,7 +43,8 @@ class StockProducto extends JoinModel
     public function getModelFields(): array
     {
         $fields = parent::getModelFields();
-        // forzamos el tipo de la columna total, ya que no existe en las tablas
+        // forzamos el tipo de la columna total, ya que es una columna calculada
+        // (cantidad * coste) que no existe en las tablas y quedaría sin tipo
         $fields['total']['type'] = 'double';
         return $fields;
     }

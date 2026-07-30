@@ -28,7 +28,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
- * Controller to list the items in the FacturaProveedor model
+ * Controlador para listar los elementos del modelo FacturaProveedor
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

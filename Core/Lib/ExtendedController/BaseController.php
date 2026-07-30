@@ -111,7 +111,7 @@ abstract class BaseController extends Controller
      * @param array $btnArray
      * @return BaseView
      *
-     * @deprecated since 2026. Use $this->tab($viewName)->addButton($btnArray) instead.
+     * @deprecated since 2026.5. Use $this->tab($viewName)->addButton($btnArray) instead.
      */
     public function addButton(string $viewName, array $btnArray): BaseView
     {
@@ -153,7 +153,7 @@ abstract class BaseController extends Controller
      *
      * @return string
      *
-     * @deprecated since 2026. Use $this->mainTabName() instead.
+     * @deprecated since 2026.5. Use $this->mainTabName() instead.
      */
     public function getMainViewName(): string
     {
@@ -193,7 +193,7 @@ abstract class BaseController extends Controller
      * @param string $fieldName
      * @return mixed
      *
-     * @deprecated since 2026. Use $this->tabModelValue($viewName, $fieldName) instead.
+     * @deprecated since 2026.5. Use $this->tabModelValue($viewName, $fieldName) instead.
      */
     public function getViewModelValue(string $viewName, string $fieldName)
     {

@@ -42,7 +42,7 @@ use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Description of Dashboard
+ * Controlador del panel de inicio (dashboard) que se muestra tras iniciar sesión.
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -178,12 +178,12 @@ class Dashboard extends Controller
         $this->loadCreateLinks();
         $this->loadFirstSteps();
         $this->loadOpenLinks();
+        $this->loadNews();
 
         if (false === $this->isOnboarding) {
             $this->loadLowStockSection();
             $this->loadReceiptSection();
             $this->loadStats();
-            $this->loadNews();
         }
 
         $this->pipe('loadExtensions');
@@ -282,7 +282,7 @@ class Dashboard extends Controller
                 ->setTimeout(5)
                 ->json() ?? [];
         });
-        $this->news = is_array($news) ? array_slice($news, 0, 1) : [];
+        $this->news = is_array($news) ? array_slice($news, 0, 5) : [];
     }
 
     /**

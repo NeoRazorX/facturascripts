@@ -84,6 +84,24 @@ class DocumentStitcher extends Controller
         return $status;
     }
 
+    /**
+     * Devuelve los estados con los que se puede cerrar el documento: los activos
+     * y no editables. Pueden tener generadoc, porque al cerrar no se genera nada.
+     *
+     * @return array
+     */
+    public function getCloseStatus(): array
+    {
+        $status = [];
+        foreach (EstadosDocumentos::byTipoDoc($this->modelName) as $docState) {
+            if ($docState->activo && false === (bool)$docState->editable) {
+                $status[] = $docState;
+            }
+        }
+
+        return $status;
+    }
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -279,6 +297,19 @@ class DocumentStitcher extends Controller
 
     protected function closeDocuments(int $idestado): void
     {
+        // solamente permitimos cerrar con un estado de cierre válido
+        $valid = false;
+        foreach ($this->getCloseStatus() as $docState) {
+            if ($docState->id() == $idestado) {
+                $valid = true;
+                break;
+            }
+        }
+        if (false === $valid) {
+            Tools::log()->warning('record-not-found');
+            return;
+        }
+
         foreach ($this->documents as $doc) {
             if (false === $doc->editable) {
                 Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
