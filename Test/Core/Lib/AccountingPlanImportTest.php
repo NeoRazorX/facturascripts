@@ -33,7 +33,6 @@ final class AccountingPlanImportTest extends TestCase
     {
         $import = new AccountingPlanImport();
         $method = new ReflectionMethod(AccountingPlanImport::class, 'convertSubaccountCode');
-        $method->setAccessible(true);
 
         // si el código ya tiene la longitud pedida, no cambia
         $this->assertEquals('4300000001', $method->invoke($import, '4300000001', '430', 10));
