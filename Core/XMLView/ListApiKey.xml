@@ -53,9 +53,9 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="danger" fieldname="enabled">0</option>
-            <option color="info" fieldname="fullaccess">1</option>
-            <option color="success" fieldname="enabled">1</option>
+            <option color="danger" fieldname="enabled" title="disabled">0</option>
+            <option color="info" fieldname="fullaccess" title="full-access">1</option>
+            <option color="success" fieldname="enabled" title="enabled">1</option>
         </row>
     </rows>
 </view>
