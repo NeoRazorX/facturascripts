@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
@@ -44,73 +44,73 @@ class Contacto extends ModelClass
     use FiscalNumberTrait;
     use GravatarTrait;
 
-    /** @var bool */
+    /** @var bool Indica si el contacto ha aceptado la política de privacidad. */
     public $aceptaprivacidad;
 
-    /** @var bool */
+    /** @var bool Indica si el contacto acepta comunicaciones de marketing. */
     public $admitemarketing;
 
-    /** @var string */
+    /** @var string Apartado de correos del contacto. */
     public $apartado;
 
-    /** @var string */
+    /** @var string Apellidos del contacto. */
     public $apellidos;
 
-    /** @var string */
+    /** @var string Cargo o puesto del contacto. */
     public $cargo;
 
-    /** @var string */
+    /** @var string Ciudad de la dirección del contacto. */
     public $ciudad;
 
-    /** @var string */
+    /** @var string Código del agente comercial vinculado al contacto. */
     public $codagente;
 
-    /** @var string */
+    /** @var string Código del cliente vinculado al contacto. */
     public $codcliente;
 
-    /** @var string */
+    /** @var string Código del país de la dirección del contacto. */
     public $codpais;
 
-    /** @var string */
+    /** @var string Código postal de la dirección del contacto. */
     public $codpostal;
 
-    /** @var string */
+    /** @var string Código del proveedor vinculado al contacto. */
     public $codproveedor;
 
-    /** @var string */
+    /** @var string Descripción identificativa del contacto. */
     public $descripcion;
 
-    /** @var string */
+    /** @var string Dirección postal del contacto. */
     public $direccion;
 
-    /** @var string */
+    /** @var string Empresa a la que pertenece el contacto. */
     public $empresa;
 
-    /** @var string */
+    /** @var string Fecha de alta del contacto. */
     public $fechaalta;
 
-    /** @var int */
+    /** @var int Identificador único del contacto. */
     public $idcontacto;
 
-    /** @var string */
+    /** @var string Código del idioma preferido del contacto. */
     public $langcode;
 
-    /** @var string */
+    /** @var string Nombre del contacto. */
     public $nombre;
 
-    /** @var string */
+    /** @var string Observaciones internas sobre el contacto. */
     public $observaciones;
 
-    /** @var bool */
+    /** @var bool Indica si el contacto es una persona física. */
     public $personafisica;
 
-    /** @var string */
+    /** @var string Provincia de la dirección del contacto. */
     public $provincia;
 
-    /** @var bool */
+    /** @var bool Indica si los datos del contacto han sido verificados. */
     public $verificado;
 
-    /** @var string */
+    /** @var string Sitio web del contacto. */
     public $web;
 
     public function checkVies(bool $msg = true): bool
@@ -134,7 +134,7 @@ class Contacto extends ModelClass
     /**
      * @param string $query
      * @param string $fieldCode
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      *
      * @return CodeModel[]
      */
@@ -143,7 +143,7 @@ class Contacto extends ModelClass
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'apellidos|cifnif|descripcion|email|empresa|nombre|observaciones|telefono1|telefono2';
-        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
         foreach ($this->all($where) as $item) {
             $results[] = new CodeModel(['code' => $item->{$field}, 'description' => $item->fullName()]);
         }
@@ -240,6 +240,24 @@ class Contacto extends ModelClass
         new Proveedor();
 
         return parent::install();
+    }
+
+    protected function onDelete(): void
+    {
+        // desvinculamos el contacto de los clientes y proveedores
+        DinCliente::table()
+            ->whereEq('idcontactoenv', $this->idcontacto)
+            ->update(['idcontactoenv' => null]);
+
+        DinCliente::table()
+            ->whereEq('idcontactofact', $this->idcontacto)
+            ->update(['idcontactofact' => null]);
+
+        DinProveedor::table()
+            ->whereEq('idcontacto', $this->idcontacto)
+            ->update(['idcontacto' => null]);
+
+        parent::onDelete();
     }
 
     public static function primaryColumn(): string

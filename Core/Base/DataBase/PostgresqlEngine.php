@@ -175,13 +175,16 @@ class PostgresqlEngine extends DataBaseEngine
      */
     public function escapeColumn($link, $name): string
     {
+        $escape = static function (string $part): string {
+            return '"' . str_replace('"', '""', $part) . '"';
+        };
+
         // Si contiene un punto, escapar cada parte por separado (tabla.columna)
         if (strpos($name, '.') !== false) {
-            $parts = explode('.', $name);
-            return '"' . implode('"."', $parts) . '"';
+            return implode('.', array_map($escape, explode('.', $name)));
         }
 
-        return '"' . $name . '"';
+        return $escape($name);
     }
 
     /**

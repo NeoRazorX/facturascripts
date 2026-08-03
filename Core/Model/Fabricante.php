@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Fabricantes;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -33,31 +34,25 @@ class Fabricante extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * Primary key.
-     *
-     * @var string
-     */
+    /** @var string Código identificativo del fabricante. */
     public $codfabricante;
 
-    /**
-     * Manufacturer name.
-     *
-     * @var string
-     */
+    /** @var string Nombre del fabricante. */
     public $nombre;
 
-    /**
-     * Number of products
-     *
-     * @var int
-     */
+    /** @var int Número de productos asociados al fabricante. */
     public $numproductos;
 
     public function clear(): void
     {
         parent::clear();
         $this->numproductos = 0;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Fabricantes::clear();
     }
 
     public static function primaryColumn(): string
@@ -83,11 +78,8 @@ class Fabricante extends ModelClass
             return false;
         }
 
-        if (empty($this->nombre) || strlen($this->nombre) > 100) {
-            Tools::log()->warning(
-                'invalid-column-lenght',
-                ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
-            );
+        if (empty($this->nombre)) {
+            Tools::log()->warning('field-required', ['%field%' => 'nombre']);
             return false;
         }
 

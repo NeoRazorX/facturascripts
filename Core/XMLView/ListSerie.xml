@@ -47,8 +47,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="warning" fieldname="siniva">1</option>
-            <option color="danger" fieldname="tipo">R</option>
+            <option color="warning" fieldname="siniva" title="without-taxation">1</option>
+            <option color="danger" fieldname="tipo" title="rectifying">R</option>
         </row>
     </rows>
 </view>

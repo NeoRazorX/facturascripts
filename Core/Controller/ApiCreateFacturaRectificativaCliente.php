@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,9 @@ use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 
+/**
+ * Controlador de la API para crear una factura rectificativa de cliente.
+ */
 class ApiCreateFacturaRectificativaCliente extends ApiController
 {
     protected function runResource(): void
@@ -73,6 +76,12 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
             return null;
         }
 
+        // no se puede rectificar una factura que ya es rectificativa
+        if (!empty($invoice->idfacturarect)) {
+            $this->sendError('cant-refund-a-refund', Response::HTTP_BAD_REQUEST);
+            return null;
+        }
+
         $lines = [];
         $invoiceLines = $invoice->getLines();
         foreach ($invoiceLines as $line) {
@@ -102,6 +111,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
                     $this->db()->rollback();
                     return null;
                 }
+                break;
             }
         }
 

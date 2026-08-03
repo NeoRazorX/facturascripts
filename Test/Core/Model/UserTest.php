@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -266,6 +266,19 @@ final class UserTest extends TestCase
         // eliminamos
         $this->assertTrue($user->delete());
         $this->assertTrue($role->delete());
+    }
+
+    public function testCanReturnsFalseWhenNickEmpty(): void
+    {
+        // un usuario sin nick (no existe) no puede acceder a nada,
+        // aunque por defecto enabled sea true e incluso siendo admin
+        $user = new User();
+        $this->assertNull($user->nick);
+        $this->assertTrue($user->enabled);
+        $this->assertFalse($user->can('AdminPlugins'));
+
+        $user->admin = true;
+        $this->assertFalse($user->can('AdminPlugins'));
     }
 
     public function testAdminPermissions(): void
@@ -568,7 +581,7 @@ final class UserTest extends TestCase
         $this->assertTrue($user->addRole($role->codrole));
 
         // recargamos el usuario para obtener los cambios
-        $user->loadFromCode($user->nick);
+        $user->load($user->nick);
 
         // comprobamos que se ha establecido la homepage
         $this->assertEquals('ListTest', $user->homepage);
@@ -577,6 +590,94 @@ final class UserTest extends TestCase
         $this->assertTrue($user->delete());
         $this->assertTrue($role->delete());
         $this->assertTrue($page->delete());
+    }
+
+    public function testCantUseBadHomepage(): void
+    {
+        // formas inseguras de homepage que permitirian open-redirect tras login
+        $badValues = [
+            '//evil.com',
+            'http://evil.com',
+            'https://evil.com/x',
+            'javascript:alert(1)',
+            '/Dashboard',
+            'Dashboard?x=1',
+            'Dashboard/extra',
+            ' Dashboard',
+            '1Dashboard',
+        ];
+
+        foreach ($badValues as $value) {
+            $user = new User();
+            $user->nick = 'test_bad_home';
+            $user->setPassword('password1234');
+            $user->homepage = $value;
+            $this->assertFalse($user->save(), 'homepage no deberia aceptarse: ' . $value);
+        }
+    }
+
+    public function testHomepageUrlFallsBackWhenInvalid(): void
+    {
+        // ajuste por defecto controlado
+        $previousDefault = Tools::settings('default', 'homepage');
+        Tools::settingsSet('default', 'homepage', 'Dashboard');
+        Tools::settingsSave();
+
+        // creamos un usuario sin homepage
+        $user = new User();
+        $user->nick = 'test_home_url';
+        $user->setPassword('password5566');
+        $user->homepage = null;
+        $this->assertTrue($user->save());
+
+        // sin homepage -> cae al ajuste por defecto
+        $this->assertEquals('Dashboard', $user->homepageUrl());
+
+        // homepage corrupta en memoria (saltandose test() porque no llamamos save())
+        $user->homepage = '//evil.com';
+        $this->assertEquals('Dashboard', $user->homepageUrl());
+
+        // homepage con forma valida pero a pagina inexistente -> tambien fallback
+        $user->homepage = 'NoExisteEstaPagina';
+        $this->assertEquals('Dashboard', $user->homepageUrl());
+
+        // si el ajuste por defecto tambien es inseguro, ultimo fallback a Dashboard
+        Tools::settingsSet('default', 'homepage', 'http://evil.com');
+        Tools::settingsSave();
+        $user->homepage = 'OtraQueNoExiste';
+        $this->assertEquals('Dashboard', $user->homepageUrl());
+
+        // restauramos
+        Tools::settingsSet('default', 'homepage', $previousDefault);
+        Tools::settingsSave();
+        $this->assertTrue($user->delete());
+    }
+
+    public function testHomepageUrlReturnsUserHomepageWhenValid(): void
+    {
+        // creamos una pagina real
+        $page = new Page();
+        $page->name = 'HomeOK';
+        $page->title = 'Home OK';
+        $page->icon = 'fas fa-test';
+        $page->menu = 'admin';
+        $this->assertTrue($page->save());
+
+        // usuario con homepage que apunta a esa pagina
+        $user = new User();
+        $user->nick = 'test_home_ok';
+        $user->setPassword('password7788');
+        $user->homepage = 'HomeOK';
+        $this->assertTrue($user->save());
+
+        $this->assertEquals('HomeOK', $user->homepageUrl());
+
+        // si borramos la pagina, homepageUrl() ya no debe devolverla
+        $this->assertTrue($page->delete());
+        $user->homepage = 'HomeOK';
+        $this->assertNotEquals('HomeOK', $user->homepageUrl());
+
+        $this->assertTrue($user->delete());
     }
 
     protected function tearDown(): void

@@ -187,16 +187,31 @@ final class Telemetry
         // hacemos una petición a la url de telemetría
         $request = Http::post(self::TELEMETRY_URL, $params)->setTimeout(3);
         if ($request->failed()) {
+            $this->save();
             return false;
         }
 
         // comprobamos que la petición ha devuelto un json
         $data = $request->json();
         if (empty($data) || !isset($data['ok']) || !$data['ok']) {
+            $this->save();
             return false;
         }
 
         return $this->save();
+    }
+
+    public function url(): string
+    {
+        // preferimos la url configurada, y si no, la del host de la petición;
+        // en cli (cron) no hay host, así que enviamos vacío en lugar del
+        // localhost por defecto para no dar una señal falsa al servidor
+        $url = Tools::settings('default', 'site_url', '');
+        if (!empty($url)) {
+            return $url;
+        }
+
+        return array_key_exists('HTTP_HOST', $_SERVER) ? Tools::siteUrl() : '';
     }
 
     private function calculateHash(array &$data): void
@@ -218,7 +233,9 @@ final class Telemetry
         if (false === $minimum) {
             $data['dbengine'] = $this->getDatabaseEngine();
             $data['fingerprints'] = $this->collectFingerprints();
+            $data['os'] = PHP_OS;
             $data['pluginlist'] = implode(',', Plugins::enabled());
+            $data['url'] = $this->url();
         }
 
         return $data;
@@ -251,7 +268,9 @@ final class Telemetry
 
     private function save(): bool
     {
-        $this->last_update = time();
+        // sumamos un jitter aleatorio (hasta 1 día) para desincronizar las
+        // peticiones entre instalaciones y evitar picos en los mismos días/horas
+        $this->last_update = time() + mt_rand(0, 86400);
 
         Tools::settingsSet('default', 'telemetryinstall', $this->id_install);
         Tools::settingsSet('default', 'telemetrykey', $this->sign_key);

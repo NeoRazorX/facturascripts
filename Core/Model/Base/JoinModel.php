@@ -176,7 +176,7 @@ abstract class JoinModel
         }
 
         // buscamos en caché
-        $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-count';
+        $cacheKey = $this->getCacheKey('count');
         if (empty($where)) {
             $count = Cache::get($cacheKey);
             if (is_numeric($count)) {
@@ -317,7 +317,7 @@ abstract class JoinModel
     public function totalSum(string $field, array $where = []): float
     {
         // buscamos en caché
-        $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-' . $field . '-total-sum';
+        $cacheKey = $this->getCacheKey($field . '-total-sum');
         if (empty($where)) {
             $count = Cache::get($cacheKey);
             if (is_numeric($count)) {
@@ -361,6 +361,15 @@ abstract class JoinModel
         }
 
         return '';
+    }
+
+    /**
+     * Construye la clave de caché incluyendo las tablas del join,
+     * para poder invalidarla solamente cuando cambia alguna de ellas.
+     */
+    private function getCacheKey(string $suffix): string
+    {
+        return 'join-model-' . implode('-', $this->getTables()) . '-' . md5($this->getSQLFrom()) . '-' . $suffix;
     }
 
     /**

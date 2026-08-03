@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Template\ModelClass;
@@ -40,25 +39,25 @@ class AttachedFile extends ModelClass
     const MAX_FILENAME_LEN = 100;
     const STORAGE_USED_KEY = 'storage-used';
 
-    /** @var string */
+    /** @var string Fecha en la que se adjuntó el archivo. */
     public $date;
 
-    /** @var string */
+    /** @var string Nombre original del archivo. */
     public $filename;
 
-    /** @var string */
+    /** @var string Hora en la que se adjuntó el archivo. */
     public $hour;
 
-    /** @var int */
+    /** @var int Identificador único del archivo adjunto. */
     public $idfile;
 
-    /** @var string */
+    /** @var string Tipo MIME del archivo. */
     public $mimetype;
 
-    /** @var string */
+    /** @var string Ruta relativa donde se almacena el archivo. */
     public $path;
 
-    /** @var int */
+    /** @var int Tamaño del archivo en bytes. */
     public $size;
 
     public function clear(): void
@@ -79,8 +78,7 @@ class AttachedFile extends ModelClass
         }
 
         // eliminamos las relaciones con los productos
-        $where = [new DataBaseWhere('idfile', $this->idfile)];
-        foreach (ProductoImagen::all($where, [], 0, 0) as $productoImage) {
+        foreach (ProductoImagen::allWhereEq('idfile', $this->idfile) as $productoImage) {
             $productoImage->delete();
         }
 
@@ -173,13 +171,13 @@ class AttachedFile extends ModelClass
 
     public function shortFileName(int $length = 20): string
     {
-        if (strlen($this->filename) <= $length) {
+        if (mb_strlen($this->filename ?? '', 'UTF-8') <= $length) {
             return $this->filename ?? '';
         }
 
         $parts = explode('.', $this->filename);
         $extension = count($parts) > 1 ? end($parts) : '';
-        $name = substr($this->filename, 0, $length - strlen('...' . $extension));
+        $name = mb_substr($this->filename, 0, $length - mb_strlen('...' . $extension, 'UTF-8'), 'UTF-8');
         return $name . '...' . $extension;
     }
 
@@ -291,14 +289,16 @@ class AttachedFile extends ModelClass
             return false;
         }
 
+        // nombre con el que se guarda en disco: {idfile}_{slug}.{ext}
+        $storedName = $this->buildStoredName();
         if (
             empty($this->path) ||
-            false === rename($currentPath, $newFolderPath . '/' . $this->idfile . '.' . $this->getExtension())
+            false === rename($currentPath, $newFolderPath . '/' . $storedName)
         ) {
             return false;
         }
 
-        $this->path = $newFolder . '/' . $this->idfile . '.' . $this->getExtension();
+        $this->path = $newFolder . '/' . $storedName;
         $info = new finfo();
         $this->mimetype = $info->file($this->getFullPath(), FILEINFO_MIME_TYPE);
         if (strlen($this->mimetype) > 100) {
@@ -312,6 +312,19 @@ class AttachedFile extends ModelClass
         $this->size = filesize($this->getFullPath());
 
         return true;
+    }
+
+    /**
+     * Construye el nombre con el que se guarda el archivo en disco, conservando parte del
+     * nombre original como slug tras el identificador: {idfile}_{slug}.{ext}. El idfile va
+     * primero para garantizar un nombre único aunque el slug se repita o quede vacío.
+     */
+    protected function buildStoredName(): string
+    {
+        $extension = $this->getExtension();
+        $slug = Tools::slug(pathinfo($this->filename, PATHINFO_FILENAME), '_', static::MAX_FILENAME_LEN);
+        $base = empty($slug) ? (string)$this->idfile : $this->idfile . '_' . $slug;
+        return empty($extension) ? $base : $base . '.' . $extension;
     }
 
     /**

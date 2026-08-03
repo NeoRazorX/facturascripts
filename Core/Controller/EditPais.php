@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the Pais model
+ * Controlador para editar un único elemento del modelo Pais
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -70,8 +70,8 @@ class EditPais extends EditController
     {
         switch ($viewName) {
             case 'ListProvincia':
-                $codpais = $this->getViewModelValue($this->getMainViewName(), 'codpais');
-                $where = [new DataBaseWhere('codpais', $codpais)];
+                $codpais = $this->mainTabModelValue('codpais');
+                $where = [Where::eq('codpais', $codpais)];
                 $view->loadData('', $where);
                 break;
 

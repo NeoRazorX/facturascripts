@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,23 +21,31 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\EstadosDocumentos;
+use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Lib\ExtendedController\OwnerDataTrait;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\CodeModel;
-use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Class DocumentStitcher
+ * Controlador que permite agrupar o partir documentos de venta o compra
+ * (presupuestos, pedidos y albaranes) para generar un nuevo documento
+ * a partir de las líneas seleccionadas, o cerrar los documentos cambiando
+ * su estado. No admite facturas.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class DocumentStitcher extends Controller
 {
+    use OwnerDataTrait;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /** @var array */
@@ -46,21 +54,47 @@ class DocumentStitcher extends Controller
     /** @var TransformerDocument[] */
     public $documents = [];
 
+    /** @var array */
+    public $filters = ['codpago' => '', 'desde' => '', 'hasta' => ''];
+
     /** @var string */
     public $modelName;
 
     /** @var TransformerDocument[] */
     public $moreDocuments = [];
 
+    /** @var array */
+    public $payMethods = [];
+
+    /** @var bool */
+    public $showFilters = false;
+
+    /** @var array */
+    public $where = [];
+
     public function getAvailableStatus(): array
     {
         $status = [];
-        $where = [
-            new DataBaseWhere('activo', true),
-            new DataBaseWhere('tipodoc', $this->modelName)
-        ];
-        foreach (EstadoDocumento::all($where) as $docState) {
-            if ($docState->generadoc) {
+        foreach (EstadosDocumentos::byTipoDoc($this->modelName) as $docState) {
+            if ($docState->activo && $docState->generadoc) {
+                $status[] = $docState;
+            }
+        }
+
+        return $status;
+    }
+
+    /**
+     * Devuelve los estados con los que se puede cerrar el documento: los activos
+     * y no editables. Pueden tener generadoc, porque al cerrar no se genera nada.
+     *
+     * @return array
+     */
+    public function getCloseStatus(): array
+    {
+        $status = [];
+        foreach (EstadosDocumentos::byTipoDoc($this->modelName) as $docState) {
+            if ($docState->activo && false === (bool)$docState->editable) {
                 $status[] = $docState;
             }
         }
@@ -84,7 +118,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Runs the controller's private logic.
+     * Ejecuta la lógica privada del controlador.
      *
      * @param Response $response
      * @param User $user
@@ -93,6 +127,7 @@ class DocumentStitcher extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $action = $this->request->request->get('action', '');
 
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
@@ -104,12 +139,22 @@ class DocumentStitcher extends Controller
         }
 
         $this->loadDocuments();
+        $this->addFilters();
+        if ('search' === $action) {
+            $this->processFormDataLoad();
+        }
+
         $this->loadMoreDocuments();
 
         $statusCode = $this->request->input('status', '');
         if ($statusCode) {
-            // validate form request?
+            // ¿validar el token del formulario?
             if (false === $this->validateFormToken()) {
+                return;
+            }
+
+            // Evita aprobar más cantidad de la que realmente queda pendiente en cada línea.
+            if (false === $this->validateSelectedQuantities()) {
                 return;
             }
 
@@ -164,6 +209,21 @@ class DocumentStitcher extends Controller
         return true;
     }
 
+    protected function addFilters(): void
+    {
+        if (empty($this->documents)) {
+            return;
+        }
+
+        foreach (FormasPago::all() as $payMethod) {
+            if ($payMethod->activa && $payMethod->idempresa == $this->documents[0]->idempresa) {
+                $this->payMethods[$payMethod->id()] = $payMethod->descripcion;
+            }
+        }
+
+        asort($this->payMethods);
+    }
+
     /**
      * @param array $newLines
      * @param TransformerDocument $doc
@@ -176,6 +236,7 @@ class DocumentStitcher extends Controller
             'mostrar_cantidad' => false,
             'mostrar_precio' => false
         ]);
+
         $this->pipe('addInfoLine', $infoLine);
         $newLines[] = $infoLine;
     }
@@ -186,8 +247,10 @@ class DocumentStitcher extends Controller
      * @param array $newLines
      * @param array $quantities
      * @param int $idestado
+     *
+     * @return bool
      */
-    protected function breakDownLines(&$doc, &$docLines, &$newLines, &$quantities, $idestado): void
+    protected function breakDownLines(&$doc, &$docLines, &$newLines, &$quantities, $idestado): bool
     {
         $full = true;
         foreach ($docLines as $line) {
@@ -195,9 +258,13 @@ class DocumentStitcher extends Controller
             $quantities[$line->id()] = $quantity;
 
             if (empty($quantity) && $line->cantidad) {
-                $full = $full && $line->servido >= $line->cantidad;
+                // no se aprueba nada de esta línea: solo está completa si ya estaba
+                // toda servida (comparando en el sentido correcto según el signo).
+                $full = $full && ($line->cantidad < 0 ? $line->servido <= $line->cantidad : $line->servido >= $line->cantidad);
                 continue;
-            } elseif (($quantity + $line->servido) < $line->cantidad) {
+            } elseif ($line->cantidad < 0 && ($quantity + $line->servido) > $line->cantidad) {
+                $full = false;
+            } elseif ($line->cantidad >= 0 && ($quantity + $line->servido) < $line->cantidad) {
                 $full = false;
             }
 
@@ -209,55 +276,93 @@ class DocumentStitcher extends Controller
             $doc->setDocumentGeneration(false);
             $doc->idestado = $idestado;
             if (false === $doc->save()) {
-                $this->dataBase->rollback();
                 Tools::log()->error('record-save-error');
-                return;
+                return false;
             }
         }
 
-        // we get the lines again in case they have been updated
+        // reponemos las referencias con líneas frescas, porque el cambio de estado
+        // puede haberlas actualizado sobre otras instancias
         foreach ($doc->getLines() as $line) {
-            $line->servido += $quantities[$line->id()];
-            if (false === $line->save()) {
-                $this->dataBase->rollback();
-                Tools::log()->error('record-save-error');
-                return;
+            foreach ($newLines as $num => $newLine) {
+                if ($newLine->id() === $line->id()) {
+                    $newLines[$num] = $line;
+                    break;
+                }
             }
         }
+
+        return true;
     }
 
     protected function closeDocuments(int $idestado): void
     {
-        $this->dataBase->beginTransaction();
+        // solamente permitimos cerrar con un estado de cierre válido
+        $valid = false;
+        foreach ($this->getCloseStatus() as $docState) {
+            if ($docState->id() == $idestado) {
+                $valid = true;
+                break;
+            }
+        }
+        if (false === $valid) {
+            Tools::log()->warning('record-not-found');
+            return;
+        }
+
+        foreach ($this->documents as $doc) {
+            if (false === $doc->editable) {
+                Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
+                return;
+            }
+        }
+
+        $this->db()->beginTransaction();
 
         foreach ($this->documents as $doc) {
             $doc->setDocumentGeneration(false);
             $doc->idestado = $idestado;
             if (false === $doc->save()) {
-                $this->dataBase->rollback();
+                $this->db()->rollback();
                 Tools::log()->error('record-save-error');
                 return;
             }
         }
 
-        $this->dataBase->commit();
+        $this->db()->commit();
         Tools::log()->notice('record-updated-correctly');
     }
 
     /**
-     * Generates a new document with this data.
+     * Genera un nuevo documento con estos datos.
      *
      * @param int $idestado
      */
     protected function generateNewDocument(int $idestado): void
     {
-        $this->dataBase->beginTransaction();
+        foreach ($this->documents as $doc) {
+            if (false === $doc->editable) {
+                Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
+                return;
+            }
+        }
 
-        // group needed data
+        $this->db()->beginTransaction();
+
+        // agrupamos los datos necesarios
         $newLines = [];
-        $properties = ['fecha' => $this->request->input('fecha', '')];
+        $properties = [];
         $prototype = null;
         $quantities = [];
+
+        $newDate = $this->request->input('fecha', '');
+        if (!empty($newDate)) {
+            $properties['fecha'] = $newDate;
+            if (strtotime($newDate) === strtotime(Tools::date())) {
+                $properties['hora'] = Tools::hour();
+            }
+        }
+
         foreach ($this->documents as $doc) {
             $lines = $doc->getLines();
 
@@ -272,38 +377,41 @@ class DocumentStitcher extends Controller
                 $this->addInfoLine($newLines, $doc);
             }
 
-            // we break down quantities and lines
-            $this->breakDownLines($doc, $lines, $newLines, $quantities, $idestado);
+            // desglosamos las cantidades y líneas
+            if (false === $this->breakDownLines($doc, $lines, $newLines, $quantities, $idestado)) {
+                $this->db()->rollback();
+                return;
+            }
         }
 
         if (null === $prototype || empty($newLines)) {
-            $this->dataBase->rollback();
+            $this->db()->rollback();
             return;
         }
 
-        // allow plugins to do stuff on the prototype before save
+        // permitimos a los plugins actuar sobre el prototipo antes de guardar
         if (false === $this->pipe('checkPrototype', $prototype, $newLines)) {
-            $this->dataBase->rollback();
+            $this->db()->rollback();
             return;
         }
 
-        // generate new document
+        // generamos el nuevo documento
         $generator = new BusinessDocumentGenerator();
         $newClass = $this->getGenerateClass($idestado);
         if (empty($newClass)) {
-            $this->dataBase->rollback();
+            $this->db()->rollback();
             return;
         }
 
         if (false === $generator->generate($prototype, $newClass, $newLines, $quantities, $properties)) {
-            $this->dataBase->rollback();
+            $this->db()->rollback();
             Tools::log()->error('record-save-error');
             return;
         }
 
-        $this->dataBase->commit();
+        $this->db()->commit();
 
-        // redirect to the new document
+        // redirigimos al nuevo documento
         foreach ($generator->getLastDocs() as $doc) {
             $this->redirect($doc->url());
             Tools::log()->notice('record-updated-correctly');
@@ -312,7 +420,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Returns documents keys.
+     * Devuelve las claves de los documentos.
      *
      * @return array
      */
@@ -348,7 +456,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Returns the name of the new class to generate from this status.
+     * Devuelve el nombre de la nueva clase a generar a partir de este estado.
      *
      * @param int $idestado
      *
@@ -356,13 +464,11 @@ class DocumentStitcher extends Controller
      */
     protected function getGenerateClass(int $idestado): ?string
     {
-        $estado = new EstadoDocumento();
-        $estado->load($idestado);
-        return $estado->generadoc;
+        return EstadosDocumentos::get($idestado)->generadoc;
     }
 
     /**
-     * Returns model name.
+     * Devuelve el nombre del modelo.
      *
      * @return string
      */
@@ -372,7 +478,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Loads selected documents.
+     * Carga los documentos seleccionados.
      */
     protected function loadDocuments(): void
     {
@@ -383,12 +489,20 @@ class DocumentStitcher extends Controller
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         foreach ($this->codes as $code) {
             $doc = new $modelClass();
-            if ($doc->loadFromCode($code)) {
-                $this->addDocument($doc);
+            if (false === $doc->load($code)) {
+                continue;
             }
+
+            // no permitimos agrupar/partir documentos ajenos
+            if (false === $this->checkOwnerData($doc)) {
+                Tools::log()->warning('not-allowed-modify');
+                continue;
+            }
+
+            $this->addDocument($doc);
         }
 
-        // sort by date
+        // ordenamos por fecha
         uasort($this->documents, function ($doc1, $doc2) {
             if (strtotime($doc1->fecha . ' ' . $doc1->hora) > strtotime($doc2->fecha . ' ' . $doc2->hora)) {
                 return 1;
@@ -408,21 +522,80 @@ class DocumentStitcher extends Controller
 
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         $model = new $modelClass();
-        $where = [
-            new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen),
-            new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
-            new DataBaseWhere('codserie', $this->documents[0]->codserie),
-            new DataBaseWhere('dtopor1', $this->documents[0]->dtopor1),
-            new DataBaseWhere('dtopor2', $this->documents[0]->dtopor2),
-            new DataBaseWhere('editable', true),
-            new DataBaseWhere('idempresa', $this->documents[0]->idempresa),
-            new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
-        ];
+        $this->where[] = Where::eq('codalmacen', $this->documents[0]->codalmacen);
+        $this->where[] = Where::eq('coddivisa', $this->documents[0]->coddivisa);
+        $this->where[] = Where::eq('codserie', $this->documents[0]->codserie);
+        $this->where[] = Where::eq('dtopor1', $this->documents[0]->dtopor1);
+        $this->where[] = Where::eq('dtopor2', $this->documents[0]->dtopor2);
+        $this->where[] = Where::eq('editable', true);
+        $this->where[] = Where::eq('idempresa', $this->documents[0]->idempresa);
+        $this->where[] = Where::eq($model->subjectColumn(), $this->documents[0]->subjectColumnValue());
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
-        foreach ($model->all($where, $orderBy, 0, 0) as $doc) {
-            if (false === in_array($doc->id(), $this->getCodes())) {
-                $this->moreDocuments[] = $doc;
+        foreach ($model->all($this->where, $orderBy, 0, 0) as $doc) {
+            if (in_array($doc->id(), $this->getCodes())) {
+                continue;
+            }
+
+            // no sugerimos documentos ajenos cuando el usuario solo ve los suyos
+            if (false === $this->checkOwnerData($doc)) {
+                continue;
+            }
+
+            $this->moreDocuments[] = $doc;
+        }
+    }
+
+    protected function processFormDataLoad(): void
+    {
+        // filters
+        $this->filters['codpago'] = $this->request->request->get('codpago', '');
+        if ($this->filters['codpago']) {
+            $this->where[] = Where::eq('codpago', $this->filters['codpago']);
+            $this->showFilters = true;
+        }
+
+        $this->filters['desde'] = $this->request->request->get('desde', '');
+        if ($this->filters['desde']) {
+            $this->where[] = Where::gte('fecha', $this->filters['desde']);
+            $this->showFilters = true;
+        }
+
+        $this->filters['hasta'] = $this->request->request->get('hasta', '');
+        if ($this->filters['hasta']) {
+            $this->where[] = Where::lte('fecha', $this->filters['hasta']);
+            $this->showFilters = true;
+        }
+    }
+
+    protected function validateSelectedQuantities(): bool
+    {
+        foreach ($this->documents as $document) {
+            foreach ($document->getLines() as $line) {
+                $quantity = (float)$this->request->input('approve_quant_' . $line->id(), '0');
+
+                // en líneas negativas lo pendiente es negativo; comparamos en el
+                // sentido correcto para no aprobar más de lo que queda pendiente.
+                if ($line->cantidad < 0) {
+                    $pending = min(0, $line->cantidad - $line->servido);
+                    if ($quantity >= $pending && $quantity <= 0) {
+                        continue;
+                    }
+                } else {
+                    $pending = max(0, $line->cantidad - $line->servido);
+                    if ($quantity <= $pending) {
+                        continue;
+                    }
+                }
+
+                Tools::log()->error('error-more-quant-than-pending', [
+                    '%description%' => $line->descripcion,
+                    '%pending%' => $pending,
+                    '%selected_quantity%' => $quantity,
+                ]);
+                return false;
             }
         }
+
+        return true;
     }
 }

@@ -19,11 +19,16 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Widget\WidgetCheckbox;
+use FacturaScripts\Core\Lib\Widget\WidgetDate;
+use FacturaScripts\Core\Lib\Widget\WidgetDatetime;
+use FacturaScripts\Core\Lib\Widget\WidgetNumber;
+use FacturaScripts\Core\Lib\Widget\WidgetTime;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use XLSXWriter;
 
 /**
@@ -37,6 +42,9 @@ class XLSExport extends ExportBase
 
     /** @var int */
     protected $numSheets = 0;
+
+    /** @var array */
+    protected $sheetNames = [];
 
     /** @var XLSXWriter */
     protected $writer;
@@ -62,12 +70,12 @@ class XLSExport extends ExportBase
         }
 
         $lineRows = $this->getCursorRawData($cursor);
-        $this->writer->writeSheet($lineRows, Tools::trans('lines'), $lineHeaders);
+        $this->writer->writeSheet($lineRows, $this->getSheetName(Tools::trans('lines')), $this->escapeSpreadsheetFormulaHeaders($lineHeaders));
 
         // modelo
         $headers = $this->getModelHeaders($model);
         $rows = $this->getCursorRawData([$model]);
-        $this->writer->writeSheet($rows, $model->primaryDescription(), $headers);
+        $this->writer->writeSheet($rows, $this->getSheetName($model->primaryDescription()), $this->escapeSpreadsheetFormulaHeaders($headers));
 
         // no continuamos con la exportación del resto de pestañas
         return false;
@@ -77,7 +85,7 @@ class XLSExport extends ExportBase
      * Adds a new page with a table listing all models data.
      *
      * @param ModelClass $model
-     * @param DataBaseWhere[] $where
+     * @param Where[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -88,24 +96,31 @@ class XLSExport extends ExportBase
     public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
         $this->setFileName($title);
-        $name = empty($title) ? 'sheet' . $this->numSheets : Tools::slug($title);
+        $this->numSheets++;
+        $name = $this->getSheetName($title);
 
-        $headers = $this->getModelHeaders($model);
+        // usamos las columnas visibles de la vista; si no hay, todos los campos del modelo
+        $headers = empty($columns) ? $this->getModelHeaders($model) : $this->getColumnHeaders($columns);
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
             // no hay datos, añadimos solamente la cabecera
-            $this->writer->writeSheet([], $name, $headers);
+            $this->writer->writeSheet([], $name, $this->escapeSpreadsheetFormulaHeaders($headers));
             return true;
         }
 
         // hay datos, añadimos primero la cabecera
-        $this->writer->writeSheetHeader($name, $headers);
+        $this->writer->writeSheetHeader($name, $this->escapeSpreadsheetFormulaHeaders($headers));
 
         // añadimos los datos
         while (!empty($cursor)) {
-            $rows = $this->getCursorRawData($cursor);
+            $rows = $this->getRows($cursor, $columns);
             foreach ($rows as $row) {
                 $this->writer->writeSheetRow($name, $row);
+            }
+
+            // si el bloque no está completo, no hay más datos
+            if (count($cursor) < self::LIST_LIMIT) {
+                break;
             }
 
             // obtenemos el siguiente bloque de datos
@@ -127,9 +142,12 @@ class XLSExport extends ExportBase
      */
     public function addModelPage($model, $columns, $title = ''): bool
     {
-        $headers = $this->getModelHeaders($model);
-        $rows = $this->getCursorRawData([$model]);
-        $this->writer->writeSheet($rows, $title, $headers);
+        $this->numSheets++;
+
+        // usamos las columnas visibles de la vista; si no hay, todos los campos del modelo
+        $headers = empty($columns) ? $this->getModelHeaders($model) : $this->getColumnHeaders($columns);
+        $rows = $this->getRows([$model], $columns);
+        $this->writer->writeSheet($rows, $this->getSheetName($title), $this->escapeSpreadsheetFormulaHeaders($headers));
         return true;
     }
 
@@ -146,11 +164,11 @@ class XLSExport extends ExportBase
     public function addTablePage($headers, $rows, $options = [], $title = ''): bool
     {
         $this->numSheets++;
-        $sheetName = 'sheet' . $this->numSheets;
+        $sheetName = $this->getSheetName($title);
 
-        $this->writer->writeSheetRow($sheetName, $headers);
+        $this->writer->writeSheetRow($sheetName, $this->escapeSpreadsheetFormulaRow($headers));
         foreach ($rows as $row) {
-            $this->writer->writeSheetRow($sheetName, $row);
+            $this->writer->writeSheetRow($sheetName, $this->escapeSpreadsheetFormulaRow($row));
         }
 
         return true;
@@ -203,6 +221,10 @@ class XLSExport extends ExportBase
     }
 
     /**
+     * Devuelve las cabeceras a partir de las columnas de la vista, con el título
+     * traducido y el tipo de celda según el widget, para que los campos numéricos
+     * y moneda se puedan procesar en la hoja de cálculo.
+     *
      * @param array $columns
      *
      * @return array
@@ -210,8 +232,22 @@ class XLSExport extends ExportBase
     protected function getColumnHeaders(array $columns): array
     {
         $headers = [];
-        foreach ($this->getColumnTitles($columns) as $col) {
-            $headers[$col] = 'string';
+        $titles = $this->getColumnTitles($columns);
+        foreach ($this->getColumnWidgets($columns) as $key => $widget) {
+            $title = $titles[$key] ?? $key;
+            if ($widget instanceof WidgetNumber) {
+                $headers[$title] = empty($widget->decimal) ? 'integer' : 'price';
+            } elseif ($widget instanceof WidgetCheckbox) {
+                $headers[$title] = 'integer';
+            } elseif ($widget instanceof WidgetDate) {
+                $headers[$title] = 'date';
+            } elseif ($widget instanceof WidgetDatetime) {
+                $headers[$title] = 'datetime';
+            } elseif ($widget instanceof WidgetTime) {
+                $headers[$title] = 'time';
+            } else {
+                $headers[$title] = 'string';
+            }
         }
 
         return $headers;
@@ -228,11 +264,51 @@ class XLSExport extends ExportBase
         $data = parent::getCursorRawData($cursor, $fields);
         foreach ($data as $num => $row) {
             foreach ($row as $key => $value) {
-                $data[$num][$key] = Tools::fixHtml($value);
+                // los valores no string (números, booleanos) se escriben tal cual
+                if (is_string($value)) {
+                    $data[$num][$key] = $this->escapeSpreadsheetFormula(Tools::fixHtml($value));
+                }
             }
         }
 
         return $data;
+    }
+
+    private function escapeSpreadsheetFormulaHeaders(array $headers): array
+    {
+        $result = [];
+        foreach ($headers as $key => $value) {
+            $key = is_string($key) ? $this->escapeSpreadsheetFormula($key) : $key;
+            $result[$key] = $value;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Devuelve un nombre de hoja único y válido para Excel,
+     * que limita el nombre a 31 caracteres.
+     *
+     * @param string $title
+     *
+     * @return string
+     */
+    protected function getSheetName(string $title): string
+    {
+        $name = empty($title) ? 'sheet' . $this->numSheets : Tools::slug($title, '-', 31);
+
+        // si ya existe, añadimos un sufijo para hacerlo único
+        $num = 1;
+        while (in_array($name, $this->sheetNames, true)) {
+            $num++;
+            $suffix = '-' . $num;
+            $name = empty($title) ?
+                'sheet' . $this->numSheets . $suffix :
+                Tools::slug($title, '-', 31 - strlen($suffix)) . $suffix;
+        }
+
+        $this->sheetNames[] = $name;
+        return $name;
     }
 
     /**
@@ -245,12 +321,30 @@ class XLSExport extends ExportBase
         $headers = [];
         $modelFields = $model->getModelFields();
         foreach ($this->getModelFields($model) as $key) {
-            switch ($modelFields[$key]['type']) {
+            // extraemos el tipo base: int(10) unsigned -> int, numeric(10,2) -> numeric
+            $type = $modelFields[$key]['type'];
+            $pos = strpos($type, '(');
+            if ($pos !== false) {
+                $type = substr($type, 0, $pos);
+            }
+            $type = trim(str_replace(' unsigned', '', $type));
+
+            switch ($type) {
+                case 'bigint':
                 case 'int':
+                case 'integer':
+                case 'mediumint':
+                case 'serial':
+                case 'smallint':
                     $headers[$key] = 'integer';
                     break;
 
+                case 'decimal':
                 case 'double':
+                case 'double precision':
+                case 'float':
+                case 'numeric':
+                case 'real':
                     $headers[$key] = 'price';
                     break;
 
@@ -260,5 +354,33 @@ class XLSExport extends ExportBase
         }
 
         return $headers;
+    }
+
+    /**
+     * Devuelve las filas de datos del cursor. Si hay columnas de la vista,
+     * usa sus widgets para formatear los valores, igual que PDFExport.
+     *
+     * @param ModelClass[] $cursor
+     * @param array $columns
+     *
+     * @return array
+     */
+    protected function getRows(array $cursor, array $columns): array
+    {
+        if (empty($columns)) {
+            return $this->getCursorRawData($cursor);
+        }
+
+        $rows = [];
+        foreach ($this->getCursorData($cursor, $columns) as $row) {
+            foreach ($row as $key => $value) {
+                if (is_string($value)) {
+                    $row[$key] = $this->escapeSpreadsheetFormula(Tools::fixHtml($value));
+                }
+            }
+            $rows[] = $row;
+        }
+
+        return $rows;
     }
 }

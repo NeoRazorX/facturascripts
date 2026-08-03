@@ -24,13 +24,13 @@ use FacturaScripts\Core\Validator;
 
 trait EmailAndPhonesTrait
 {
-    /** @var string */
+    /** @var string Dirección de correo electrónico principal. */
     public $email;
 
-    /** @var string */
+    /** @var string Número de teléfono principal. */
     public $telefono1;
 
-    /** @var string */
+    /** @var string Número de teléfono secundario. */
     public $telefono2;
 
     protected function testEmailAndPhones(): bool

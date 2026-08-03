@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Cuenta as DinCuenta;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
 use FacturaScripts\Dinamic\Model\Partida as DinPartida;
@@ -74,9 +74,7 @@ class Subcuenta extends ModelClass
      */
     public $descripcion;
 
-    /**
-     * @var bool
-     */
+    /** @var bool Indica si se omiten las comprobaciones adicionales del modelo. */
     private $disable_additional_test = false;
 
     /**
@@ -146,8 +144,8 @@ class Subcuenta extends ModelClass
 
         // buscar cuenta por código y ejercicio
         $where = [
-            new DataBaseWhere('codcuenta', $this->codcuenta),
-            new DataBaseWhere('codejercicio', $this->codejercicio)
+            Where::eq('codcuenta', $this->codcuenta),
+            Where::eq('codejercicio', $this->codejercicio)
         ];
         $account->loadWhere($where);
         return $account;
@@ -214,12 +212,8 @@ class Subcuenta extends ModelClass
         }
 
         $this->codsubcuenta = empty($this->idsubcuenta) ? $this->transformCodsubcuenta($this->codsubcuenta) : $this->codsubcuenta;
-        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
-            Tools::log()->warning('invalid-column-lenght', [
-                '%column%' => 'descripcion',
-                '%min%' => '1',
-                '%max%' => '255'
-            ]);
+        if (strlen($this->descripcion ?? '') < 1) {
+            Tools::log()->warning('field-required', ['%field%' => 'descripcion']);
             return false;
         }
 
@@ -353,7 +347,7 @@ class Subcuenta extends ModelClass
         $subaccountCode = str_replace('.', '', $this->codsubcuenta);
 
         // buscar todas las cuentas para este ejercicio
-        $where = [new DataBaseWhere('codejercicio', $this->codejercicio)];
+        $where = [Where::eq('codejercicio', $this->codejercicio)];
         $accounts = $account->all($where, [], 0, 0);
 
         // encontrar la cuenta con el código más largo que sea prefijo del código de subcuenta

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,16 +19,16 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
- * Controller to list the items in the FacturaProveedor model
+ * Controlador para listar los elementos del modelo FacturaProveedor
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -76,9 +76,9 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
             ['label' => '------', 'where' => []],
-            ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
-            ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
-            ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
+            ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagada', true)]],
+            ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagada', false)]],
+            ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencida', true)]],
         ]);
         $this->addFilterCheckbox($viewName, 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
 
@@ -93,7 +93,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addButtonGenerateAccountingInvoices($viewName, null, 'invoice-actions');
 
         if ($this->user->admin) {
-            $this->addButton($viewName, [
+            $this->tab($viewName)->addButton([
                 'action' => 'renumber-invoices',
                 'icon' => 'fa-solid fa-sort-numeric-down',
                 'label' => 'renumber',
@@ -115,7 +115,7 @@ class ListFacturaProveedor extends ListBusinessDocument
             ->setSettings('btnNew', false);
 
         // filtros
-        if (count(Empresas::all()) > 1) {
+        if (Empresas::count() > 1) {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
         }
 
@@ -133,9 +133,9 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
             ['label' => '------', 'where' => []],
-            ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
-            ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
-            ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
+            ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagado', true)]],
+            ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagado', false)]],
+            ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencido', true)]],
         ]);
 
         $currencies = Divisas::codeModel();
@@ -163,7 +163,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addFilterSelectWhere($viewName, 'idfacturarect', [
             [
                 'label' => Tools::trans('rectified-invoices'),
-                'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
+                'where' => [Where::isNotNull('idfacturarect')]
             ]
         ]);
     }

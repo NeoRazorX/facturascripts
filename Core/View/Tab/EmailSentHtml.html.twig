@@ -13,20 +13,6 @@
 </div>
 
 <script>
-    function limpiarJS(html) {
-        // Eliminar cualquier script incrustado
-        html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-
-        // Eliminar cualquier atributo de evento en línea (onclick, onload, etc.)
-        // eliminamos con comillas simples
-        html = html.replace(/on\w+='[^']*'/gi, '');
-        // eliminamos con comillas dobles
-        html = html.replace(/on\w+="[^"]*"/gi, '');
-        // eliminamos sin comillas
-        html = html.replace(/on\w+=[^"'\s]*/gi, '');
-        return html;
-    }
-
     let formData = new FormData();
     formData.append('action', 'getHtml');
     formData.append('code', '{{ model.primaryColumnValue() }}');
@@ -43,27 +29,18 @@
         if (data.getHtml) {
             $('#email-html').html('');
 
-            // creamos un div
             let div = document.createElement('div');
             div.className = 'message-content';
             $('#email-html').prepend(div);
 
-            // obtenemos el div con la clase message-content
-            let content = document.querySelector('#email-html div.message-content');
+            let frame = document.createElement('iframe');
+            frame.setAttribute('sandbox', '');
+            frame.setAttribute('referrerpolicy', 'no-referrer');
+            frame.className = 'w-100 border-0';
+            frame.style.minHeight = '70vh';
+            frame.srcdoc = data.html;
 
-            // obtenemos el shadow del div
-            let shadow = content.attachShadow({mode: "open"});
-
-            // creamos un elemento html
-            let html = document.createElement('html');
-            html.innerHTML = limpiarJS(data.html);
-
-            // añadimos el html al shadow
-            shadow.appendChild(html);
-
-            // al hacer clic en cualquier enlace dentro del email
-            // se debe abrir en una nueva pestaña
-            $(shadow).find('a').attr('target', '_blank');
+            div.appendChild(frame);
         }
     }).catch(function (error) {
         alert('error getHtml');

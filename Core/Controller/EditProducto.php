@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\Atributo;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
- * Controller to edit a single item from the EditProducto model
+ * Controlador para editar un único elemento del modelo Producto
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -88,15 +88,15 @@ class EditProducto extends EditController
             ->addOrderBy(['servido'], 'quantity-served')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['pvptotal'], 'amount')
-            ->addOrderBy(['idlinea'], 'code', 2);
-
-        // ocultamos la columna product
-        $this->views[$viewName]->disableColumn('product');
-
-        // desactivamos los botones de nuevo, eliminar y checkbox
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'checkBoxes', false);
+            ->addOrderBy(['idlinea'], 'code', 2)
+            ->addFilterSelect('referencia', 'reference', 'referencia', [])
+            ->addFilterNumber('cantidad-gt', 'quantity', 'cantidad', '>=')
+            ->addFilterNumber('cantidad-lt', 'quantity', 'cantidad', '<=')
+            // ocultamos la columna product y desactivamos los botones de nuevo, eliminar y checkbox
+            ->disableColumn('product')
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false)
+            ->setSettings('checkBoxes', false);
     }
 
     protected function createViewsPedidosProveedores(string $viewName = 'ListLineaPedidoProveedor'): void
@@ -108,15 +108,15 @@ class EditProducto extends EditController
             ->addOrderBy(['servido'], 'quantity-served')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['pvptotal'], 'amount')
-            ->addOrderBy(['idlinea'], 'code', 2);
-
-        // ocultamos la columna product
-        $this->views[$viewName]->disableColumn('product');
-
-        // desactivamos los botones de nuevo, eliminar y checkbox
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'checkBoxes', false);
+            ->addOrderBy(['idlinea'], 'code', 2)
+            ->addFilterSelect('referencia', 'reference', 'referencia', [])
+            ->addFilterNumber('cantidad-gt', 'quantity', 'cantidad', '>=')
+            ->addFilterNumber('cantidad-lt', 'quantity', 'cantidad', '<=')
+            // ocultamos la columna product y desactivamos los botones de nuevo, eliminar y checkbox
+            ->disableColumn('product')
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false)
+            ->setSettings('checkBoxes', false);
     }
 
     protected function createViewsStock(string $viewName = 'EditStock'): void
@@ -124,8 +124,8 @@ class EditProducto extends EditController
         $this->addEditListView($viewName, 'Stock', 'stock', 'fa-solid fa-dolly');
 
         // si solamente hay un almacén, ocultamos la columna
-        if (count(Almacenes::all()) <= 1) {
-            $this->views[$viewName]->disableColumn('warehouse');
+        if (Almacenes::count() <= 1) {
+            $this->tab($viewName)->disableColumn('warehouse');
         }
     }
 
@@ -138,19 +138,20 @@ class EditProducto extends EditController
     {
         $this->addEditListView($viewName, 'Variante', 'variants', 'fa-solid fa-project-diagram');
 
+        $view = $this->tab($viewName);
         $attribute = new Atributo();
         $attCount = $attribute->count();
         if ($attCount < 4) {
-            $this->views[$viewName]->disableColumn('attribute-value-4');
+            $view->disableColumn('attribute-value-4');
         }
         if ($attCount < 3) {
-            $this->views[$viewName]->disableColumn('attribute-value-3');
+            $view->disableColumn('attribute-value-3');
         }
         if ($attCount < 2) {
-            $this->views[$viewName]->disableColumn('attribute-value-2');
+            $view->disableColumn('attribute-value-2');
         }
         if ($attCount < 1) {
-            $this->views[$viewName]->disableColumn('attribute-value-1');
+            $view->disableColumn('attribute-value-1');
         }
     }
 
@@ -198,7 +199,7 @@ class EditProducto extends EditController
         }
 
         if ($this->active === 'EditProducto') {
-            $this->views['EditProducto']->disableColumn('reference', false, 'false');
+            $this->tab('EditProducto')->disableColumn('reference', false, 'false');
         }
 
         return false;
@@ -208,7 +209,7 @@ class EditProducto extends EditController
     {
         $columnsName = ['attribute-value-1', 'attribute-value-2', 'attribute-value-3', 'attribute-value-4'];
         foreach ($columnsName as $key => $colName) {
-            $column = $this->views[$viewName]->columnForName($colName);
+            $column = $this->tab($viewName)->columnForName($colName);
             if (empty($column) || $column->widget->getType() !== 'select') {
                 continue;
             }
@@ -235,17 +236,31 @@ class EditProducto extends EditController
         }
     }
 
+    protected function loadReferenceFilter(BaseView $view, $idproducto): void
+    {
+        if (!isset($view->filters['referencia'])) {
+            return;
+        }
+
+        $values = [['code' => '', 'description' => '------']];
+        $where = [Where::eq('idproducto', $idproducto)];
+        foreach ($this->codeModel->all('variantes', 'referencia', 'referencia', false, $where) as $code) {
+            $values[] = ['code' => $code->code, 'description' => $code->description];
+        }
+        $view->filters['referencia']->values = $values;
+    }
+
     protected function loadCustomReferenceWidget(string $viewName): void
     {
         $references = [];
-        $id = $this->getViewModelValue('EditProducto', 'idproducto');
+        $id = $this->tabModelValue('EditProducto', 'idproducto');
         $where = [Where::eq('idproducto', $id)];
         $values = $this->codeModel->all('variantes', 'referencia', 'referencia', false, $where);
         foreach ($values as $code) {
             $references[] = ['value' => $code->code, 'title' => $code->description];
         }
 
-        $column = $this->views[$viewName]->columnForName('reference');
+        $column = $this->tab($viewName)->columnForName('reference');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArray($references, false);
         }
@@ -259,7 +274,7 @@ class EditProducto extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $id = $this->getViewModelValue('EditProducto', 'idproducto');
+        $id = $this->tabModelValue('EditProducto', 'idproducto');
         $where = [Where::eq('idproducto', $id)];
 
         switch ($viewName) {
@@ -267,7 +282,7 @@ class EditProducto extends EditController
                 $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
                 break;
 
-            case $this->getMainViewName():
+            case $this->mainTabName():
                 parent::loadData($viewName, $view);
                 $this->loadTypes($viewName);
                 $this->loadExceptionVat($viewName);
@@ -280,7 +295,7 @@ class EditProducto extends EditController
                 $this->loadCustomReferenceWidget('EditProductoProveedor');
                 $this->loadCustomReferenceWidget('EditStock');
                 if (false === empty($view->model->primaryColumnValue())) {
-                    $this->addButton($viewName, [
+                    $view->addButton([
                         'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
                         'icon' => 'fa-solid fa-cut',
                         'label' => 'copy',
@@ -308,12 +323,14 @@ class EditProducto extends EditController
                 break;
 
             case 'ListLineaPedidoCliente':
+                $this->loadReferenceFilter($view, $id);
                 $where[] = Where::eq('actualizastock', -2);
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
                 break;
 
             case 'ListLineaPedidoProveedor':
+                $this->loadReferenceFilter($view, $id);
                 $where[] = Where::eq('actualizastock', 2);
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
@@ -323,7 +340,7 @@ class EditProducto extends EditController
 
     protected function loadTypes(string $viewName): void
     {
-        $column = $this->views[$viewName]->columnForName('type');
+        $column = $this->tab($viewName)->columnForName('type');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(ProductType::all(), true, true);
         }
@@ -331,7 +348,7 @@ class EditProducto extends EditController
 
     protected function loadExceptionVat(string $viewName): void
     {
-        $column = $this->views[$viewName]->columnForName('vat-exception');
+        $column = $this->tab($viewName)->columnForName('vat-exception');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(TaxExceptions::all(), true, true);
         }

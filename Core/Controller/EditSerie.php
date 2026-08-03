@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,14 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the Serie model
+ * Controlador para editar un único elemento del modelo Serie
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -50,11 +50,10 @@ class EditSerie extends EditController
 
     protected function createFormatView(string $viewName = 'ListFormatoDocumento'): void
     {
-        $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fa-solid fa-print');
-        $this->views[$viewName]->addOrderBy(['tipodoc'], 'doc-type', 2);
-
-        // desactivamos la columna serie
-        $this->views[$viewName]->disableColumn('serie');
+        $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fa-solid fa-print')
+            ->addOrderBy(['tipodoc'], 'doc-type', 2)
+            // desactivamos la columna serie
+            ->disableColumn('serie');
     }
 
     protected function createSequenceView(string $viewName = 'ListSecuenciaDocumento'): void
@@ -105,8 +104,8 @@ class EditSerie extends EditController
         switch ($viewName) {
             case 'ListFormatoDocumento':
             case 'ListSecuenciaDocumento':
-                $codserie = $this->getViewModelValue($this->getMainViewName(), 'codserie');
-                $where = [new DataBaseWhere('codserie', $codserie)];
+                $codserie = $this->mainTabModelValue('codserie');
+                $where = [Where::eq('codserie', $codserie)];
                 $view->loadData('', $where);
                 break;
 

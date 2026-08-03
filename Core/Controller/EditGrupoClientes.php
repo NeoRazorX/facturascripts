@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,17 +19,17 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Cliente;
 
 /**
- * Controller to edit a single item from the GrupoClientes model
+ * Controlador para editar un único elemento del modelo GrupoClientes
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -92,30 +92,28 @@ class EditGrupoClientes extends EditController
      */
     protected function createViewCommon(string $viewName)
     {
-        $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
-        $this->views[$viewName]->addOrderBy(['email'], 'email');
-        $this->views[$viewName]->addOrderBy(['fechaalta'], 'creation-date');
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
-        $this->views[$viewName]->addOrderBy(['riesgoalcanzado'], 'current-risk');
-        $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
-
-        // settings
-        $this->views[$viewName]->disableColumn('group');
-        $this->views[$viewName]->settings['btnNew'] = false;
-        $this->views[$viewName]->settings['btnDelete'] = false;
-
-        // filters
-        $i18n = Tools::lang();
         $values = [
-            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => $i18n->trans('all'), 'where' => []]
+            ['label' => Tools::trans('only-active'), 'where' => [Where::eq('debaja', false)]],
+            ['label' => Tools::trans('only-suspended'), 'where' => [Where::eq('debaja', true)]],
+            ['label' => Tools::trans('all'), 'where' => []]
         ];
-        $this->views[$viewName]->addFilterSelectWhere('status', $values);
 
-        $this->views[$viewName]->addFilterSelect('codserie', 'series', 'codserie', Series::codeModel());
-        $this->views[$viewName]->addFilterSelect('codretencion', 'retentions', 'codretencion', Retenciones::codeModel());
-        $this->views[$viewName]->addFilterSelect('codpago', 'payment-methods', 'codpago', FormasPago::codeModel());
+        $this->listView($viewName)
+            ->addOrderBy(['codcliente'], 'code')
+            ->addOrderBy(['email'], 'email')
+            ->addOrderBy(['fechaalta'], 'creation-date')
+            ->addOrderBy(['nombre'], 'name', 1)
+            ->addOrderBy(['riesgoalcanzado'], 'current-risk')
+            ->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'])
+            // filtros
+            ->addFilterSelectWhere('status', $values)
+            ->addFilterSelect('codserie', 'series', 'codserie', Series::codeModel())
+            ->addFilterSelect('codretencion', 'retentions', 'codretencion', Retenciones::codeModel())
+            ->addFilterSelect('codpago', 'payment-methods', 'codpago', FormasPago::codeModel())
+            // ocultamos la columna grupo y desactivamos los botones de nuevo y eliminar
+            ->disableColumn('group')
+            ->setSettings('btnNew', false)
+            ->setSettings('btnDelete', false);
     }
 
     /**
@@ -127,7 +125,7 @@ class EditGrupoClientes extends EditController
         $this->createViewCommon($viewName);
 
         // add action button
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'remove-customer',
             'color' => 'danger',
             'confirm' => true,
@@ -145,7 +143,7 @@ class EditGrupoClientes extends EditController
         $this->createViewCommon($viewName);
 
         // add action button
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'add-customer',
             'color' => 'success',
             'icon' => 'fa-solid fa-folder-plus',
@@ -181,15 +179,15 @@ class EditGrupoClientes extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
+        $codgrupo = $this->tabModelValue('EditGrupoClientes', 'codgrupo');
         switch ($viewName) {
             case 'ListCliente':
-                $where = [new DataBaseWhere('codgrupo', $codgrupo)];
+                $where = [Where::eq('codgrupo', $codgrupo)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListCliente-new':
-                $where = [new DataBaseWhere('codgrupo', null, 'IS')];
+                $where = [Where::isNull('codgrupo')];
                 $view->loadData('', $where);
                 break;
 

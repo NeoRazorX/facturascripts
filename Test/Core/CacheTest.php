@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -107,6 +107,35 @@ final class CacheTest extends TestCase
         }
     }
 
+    public function testDeleteMultiWithContainsWorks(): void
+    {
+        Cache::clear();
+
+        // claves con el formato de los JoinModel: prefijo + tablas + sufijo
+        Cache::set('join-model-stocks-variantes-productos-abc123-count', 100);
+        Cache::set('join-model-variantes-productos-impuestos-def456-count', 200);
+        Cache::set('join-model-facturascli-clientes-ghi789-count', 300);
+        Cache::set('other-prefix-stocks-jkl012-count', 400);
+
+        // borramos solo las entradas del prefijo que contengan la tabla stocks
+        Cache::deleteMulti('join-model-', '-stocks-');
+
+        $this->assertNull(Cache::get('join-model-stocks-variantes-productos-abc123-count'), 'stocks-entry-should-be-deleted');
+        $this->assertEquals(200, Cache::get('join-model-variantes-productos-impuestos-def456-count'), 'other-tables-entry-should-remain');
+        $this->assertEquals(300, Cache::get('join-model-facturascli-clientes-ghi789-count'), 'other-tables-entry-should-remain');
+        $this->assertEquals(400, Cache::get('other-prefix-stocks-jkl012-count'), 'entry-with-other-prefix-should-remain');
+
+        // el delimitador evita coincidencias parciales de nombres de tabla
+        Cache::deleteMulti('join-model-', '-producto-');
+        $this->assertEquals(200, Cache::get('join-model-variantes-productos-impuestos-def456-count'), 'productos-should-not-match-producto');
+
+        // sin subcadena, borra todo el prefijo como antes
+        Cache::deleteMulti('join-model-');
+        $this->assertNull(Cache::get('join-model-variantes-productos-impuestos-def456-count'), 'prefix-entry-should-be-deleted');
+        $this->assertNull(Cache::get('join-model-facturascli-clientes-ghi789-count'), 'prefix-entry-should-be-deleted');
+        $this->assertEquals(400, Cache::get('other-prefix-stocks-jkl012-count'), 'entry-with-other-prefix-should-remain');
+    }
+
     public function testClearWorks(): void
     {
         Cache::clear();
@@ -156,6 +185,45 @@ final class CacheTest extends TestCase
 
         $this->assertEquals(Cache::get($key), $cacheValue, 'cache-value-not-found');
         $this->assertNotEquals(Cache::get($key), $closureValue, 'cache-value-not-found');
+    }
+
+    public function testGetReturnsLegitimateCachedFalse(): void
+    {
+        Cache::clear();
+
+        $key = 'test-false-key';
+        Cache::set($key, false);
+
+        $this->assertFalse(Cache::get($key), 'cached-false-should-be-returned');
+        $this->assertTrue(Cache::has($key), 'cached-false-should-exist');
+
+        // remember no debe recalcular cuando hay un false legítimo cacheado
+        $cacheValue = Cache::remember($key, function () {
+            return 'should-not-be-called';
+        });
+        $this->assertFalse($cacheValue, 'remember-should-return-cached-false');
+    }
+
+    public function testGetReturnsDefaultWhenCacheIsCorrupted(): void
+    {
+        Cache::clear();
+
+        $key = 'test-corrupted-key';
+        Cache::set($key, ['a', 'b', 'c']);
+        $this->assertEquals(['a', 'b', 'c'], Cache::get($key), 'cache-value-not-found');
+
+        // corrompemos el fichero de caché con datos que unserialize() no puede leer
+        $fileName = FS_FOLDER . Cache::FILE_PATH . '/' . $key . '.cache';
+        file_put_contents($fileName, 'esto-no-es-serializable');
+
+        // un fichero corrupto debe tratarse como ausencia de valor, no devolver false
+        $this->assertNull(Cache::get($key), 'corrupted-cache-should-return-default');
+
+        // remember debe recalcular en lugar de propagar el false espurio
+        $cacheValue = Cache::remember($key, function () {
+            return ['x', 'y'];
+        });
+        $this->assertEquals(['x', 'y'], $cacheValue, 'remember-should-recompute-on-corrupted-cache');
     }
 
     public function testWithMemoryReturnsInstance(): void
@@ -261,5 +329,22 @@ final class CacheTest extends TestCase
             $this->assertNull($memoryCache->get($key), 'memory-value-should-be-deleted');
             $this->assertNull(Cache::get($key), 'file-value-should-be-deleted');
         }
+    }
+
+    public function testWithMemoryDeleteMultiWithContainsWorks(): void
+    {
+        Cache::clear();
+        CacheWithMemory::clear();
+
+        $memoryCache = Cache::withMemory();
+        $memoryCache->set('join-model-stocks-variantes-abc123-count', 100);
+        $memoryCache->set('join-model-variantes-productos-def456-count', 200);
+
+        CacheWithMemory::deleteMulti('join-model-', '-stocks-');
+
+        $this->assertNull($memoryCache->get('join-model-stocks-variantes-abc123-count'), 'memory-stocks-entry-should-be-deleted');
+        $this->assertNull(Cache::get('join-model-stocks-variantes-abc123-count'), 'file-stocks-entry-should-be-deleted');
+        $this->assertEquals(200, $memoryCache->get('join-model-variantes-productos-def456-count'), 'memory-other-entry-should-remain');
+        $this->assertEquals(200, Cache::get('join-model-variantes-productos-def456-count'), 'file-other-entry-should-remain');
     }
 }

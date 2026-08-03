@@ -23,72 +23,49 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of BaseWidget
+ * Clase base para los widgets de formularios y tablas.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class BaseWidget extends VisualItem
 {
-    /**
-     * @var bool
-     */
+    /** @var bool Indica si el navegador puede autocompletar el campo. */
     public $autocomplete;
 
-    /**
-     * @var string
-     */
+    /** @var string Nombre del campo del modelo asociado al widget. */
     public $fieldname;
 
+    /** @var string Campo alternativo usado para generar enlaces. */
     public $fieldclick;
 
-    /**
-     * @var string
-     */
+    /** @var string Clase CSS del icono mostrado junto al widget. */
     public $icon;
 
-    /**
-     * @var string
-     */
+    /** @var string Controlador o URL usado al hacer clic en el valor. */
     public $onclick;
 
-    /**
-     * @var array
-     */
+    /** @var array Opciones configuradas para el widget. */
     public $options = [];
 
-    /**
-     * @var string
-     */
+    /** @var string Modo de solo lectura del widget. */
     public $readonly;
 
-    /**
-     * @var bool
-     */
+    /** @var bool Indica si el campo es obligatorio. */
     public $required;
 
-    /**
-     * @var int
-     */
+    /** @var int Orden de tabulación del campo. */
     public $tabindex;
 
-    /**
-     * @var string
-     */
+    /** @var string Tipo del widget. */
     private $type;
 
-    /**
-     * @var mixed
-     */
+    /** @var mixed Valor actual del widget. */
     protected $value;
 
-    /**
-     * @var mixed
-     */
+    /** @var mixed Valor alternativo usado en el enlace del widget. */
     protected $valueOnClick = null;
 
-    /**
-     * @param array $data
-     */
+    /** @param array $data Configuración del widget. */
     public function __construct($data)
     {
         parent::__construct($data);
@@ -106,12 +83,12 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @param object $model
-     * @param string $title
-     * @param string $description
-     * @param string $titleurl
+     * @param object $model Modelo que contiene el valor del campo.
+     * @param string $title Clave de traducción del título.
+     * @param string $description Clave de traducción de la descripción.
+     * @param string $titleurl URL opcional para enlazar el título.
      *
-     * @return string
+     * @return string HTML del widget en modo edición.
      */
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
@@ -138,9 +115,9 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * Get the widget type
+     * Devuelve el tipo de widget.
      *
-     * @return string
+     * @return string Tipo del widget.
      */
     public function getType()
     {
@@ -148,7 +125,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @return array
+     * @return array Formato del widget para vistas en cuadrícula.
      */
     public function gridFormat()
     {
@@ -156,9 +133,9 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @param object $model
+     * @param object $model Modelo que contiene el valor del campo.
      *
-     * @return string
+     * @return string Campo oculto con el valor actual.
      */
     public function inputHidden($model)
     {
@@ -167,9 +144,9 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @param object $model
+     * @param object $model Modelo que contiene el valor del campo.
      *
-     * @return string
+     * @return string Representación en texto plano del valor.
      */
     public function plainText($model)
     {
@@ -178,8 +155,8 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @param object $model
-     * @param Request $request
+     * @param object $model Modelo donde se guarda el valor enviado.
+     * @param Request $request Petición con los datos del formulario.
      */
     public function processFormData(&$model, $request)
     {
@@ -187,9 +164,9 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * Set custom fixed value to widget
+     * Asigna un valor fijo personalizado al widget.
      *
-     * @param mixed $value
+     * @param mixed $value Valor personalizado.
      */
     public function setCustomValue($value)
     {
@@ -197,7 +174,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @return bool
+     * @return bool Indica si el widget muestra totales en tablas.
      */
     public function showTableTotals(): bool
     {
@@ -205,10 +182,10 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @param object $model
-     * @param string $display
+     * @param object $model Modelo que contiene el valor del campo.
+     * @param string $display Alineación del contenido.
      *
-     * @return string
+     * @return string HTML de la celda de tabla.
      */
     public function tableCell($model, $display = 'left')
     {
@@ -218,7 +195,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * Adds assets to the asset manager.
+     * Añade los recursos necesarios al gestor de assets.
      */
     protected function assets()
     {
@@ -226,10 +203,22 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @param string $type
-     * @param string $extraClass
+     * Normaliza entidades HTML existentes y escapa el valor para insertarlo en contexto HTML.
      *
-     * @return string
+     * @param mixed $value Valor a escapar.
+     * @return string Valor escapado.
+     */
+    protected function escapeHtml($value): string
+    {
+        $decoded = html_entity_decode((string)$value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return htmlspecialchars($decoded, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    /**
+     * @param string $type Tipo de input HTML.
+     * @param string $extraClass Clases CSS adicionales.
+     *
+     * @return string HTML del input.
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
@@ -239,7 +228,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @return string
+     * @return string Parámetros HTML adicionales del input.
      */
     protected function inputHtmlExtraParams()
     {
@@ -252,7 +241,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @param array $children
+     * @param array $children Nodos hijos de configuración del widget.
      */
     protected function loadOptions($children): void
     {
@@ -265,10 +254,10 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @param string $inside
-     * @param string $titleurl
+     * @param string $inside Contenido HTML del enlace.
+     * @param string $titleurl URL alternativa para el título.
      *
-     * @return string
+     * @return string Contenido envuelto en enlace cuando corresponde.
      */
     protected function onclickHtml($inside, $titleurl = '')
     {
@@ -283,7 +272,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @return bool
+     * @return bool Indica si el widget está en modo solo lectura.
      */
     protected function readonly(): bool
     {
@@ -295,7 +284,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @param object $model
+     * @param object $model Modelo que contiene el valor del campo.
      */
     protected function setValue($model)
     {
@@ -306,7 +295,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @return string
+     * @return string Valor mostrado por el widget.
      */
     protected function show()
     {
@@ -314,10 +303,10 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * @param string $initialClass
-     * @param string $alternativeClass
+     * @param string $initialClass Clase CSS inicial.
+     * @param string $alternativeClass Clase CSS alternativa.
      *
-     * @return string
+     * @return string Clases CSS de la celda.
      */
     protected function tableCellClass($initialClass = '', $alternativeClass = '')
     {

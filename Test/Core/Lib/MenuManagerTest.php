@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\MenuManager;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Session;
+use FacturaScripts\Dinamic\Lib\MenuManager as DinMenuManager;
 use FacturaScripts\Dinamic\Model\Page;
 use PHPUnit\Framework\TestCase;
 
@@ -35,8 +36,8 @@ final class MenuManagerTest extends TestCase
 {
     public function testInit(): void
     {
-        $menuManager = MenuManager::init();
-        $this->assertInstanceOf(MenuManager::class, $menuManager);
+        $menuManager = DinMenuManager::init();
+        $this->assertInstanceOf(DinMenuManager::class, $menuManager);
     }
 
     public function testGetMenuWithoutUser(): void

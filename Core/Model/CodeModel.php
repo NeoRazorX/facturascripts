@@ -21,11 +21,14 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
- * Auxiliary model to load a list of codes and their descriptions
+ * Modelo auxiliar para cargar una lista de códigos y sus descripciones.
+ * Se utiliza para alimentar widgets de tipo select y otros componentes
+ * que necesiten pares código/descripción a partir de una tabla o modelo.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>
@@ -36,16 +39,16 @@ class CodeModel
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const SEARCH_LIMIT = 50;
 
-    /** @var DataBase */
+    /** @var DataBase Conexión compartida con la base de datos. */
     protected static $dataBase;
 
-    /** @var int */
+    /** @var int Número máximo de resultados que se pueden obtener. */
     protected static $limit;
 
-    /** @var string */
+    /** @var string Código identificativo del elemento. */
     public $code;
 
-    /** @var string */
+    /** @var string Descripción asociada al código. */
     public $description;
 
     public function __construct(array $data = [])
@@ -60,7 +63,7 @@ class CodeModel
     }
 
     /**
-     * Load a CodeModel list (code and description) for the indicated table.
+     * Carga una lista CodeModel (código y descripción) para la tabla indicada.
      *
      * @param string $tableName
      * @param string $fieldCode
@@ -72,13 +75,7 @@ class CodeModel
      */
     public static function all(string $tableName, string $fieldCode, string $fieldDescription, bool $addEmpty = true, array $where = []): array
     {
-        // validar nombre de tabla para prevenir SQL injection
-        if (false === self::isValidTableName($tableName)) {
-            Tools::log()->error('invalid-table-name: ' . $tableName);
-            return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
-        }
-
-        // validar nombres de campos para prevenir SQL injection
+        // validamos los nombres de campos para evitar SQL injection
         if (false === self::isValidFieldName($fieldCode)) {
             Tools::log()->error('invalid-field-name: ' . $fieldCode);
             return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
@@ -87,33 +84,46 @@ class CodeModel
             return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
         }
 
-        // check cache
-        $cacheKey = $addEmpty ?
-            'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription . '-empty' :
-            'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription;
-        $result = Cache::get($cacheKey);
-        if (empty($where) && is_array($result)) {
-            return $result;
-        }
-
-        // initialize
+        // inicializamos el resultado
         $result = [];
         if ($addEmpty) {
             $result[] = new static(['code' => null, 'description' => '------']);
         }
 
-        // is a table or a model?
+        // comprobamos si se trata de un modelo (admite Join\Nombre)
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
             $model = new $modelClass();
-            if ($model->modelClassName() === $tableName) {
-                return method_exists($model, 'codeModelAll') ?
-                    array_merge($result, $model->codeModelAll($fieldCode)) :
-                    array_merge($result, self::codeModelAll($model, $fieldCode));
+            if (method_exists($model, 'codeModelAll')) {
+                return array_merge($result, $model->codeModelAll($fieldCode));
+            }
+            if (
+                method_exists($model, 'modelClassName')
+                && $model->modelClassName() === self::modelBaseName($tableName)
+            ) {
+                return array_merge($result, self::codeModelAll($model, $fieldCode));
+            }
+            if ($model instanceof JoinModel) {
+                return array_merge($result, self::joinModelAll($model, $fieldCode, $fieldDescription, $where));
             }
         }
 
-        // check table
+        // validamos el nombre de tabla para evitar SQL injection
+        if (false === self::isValidTableName($tableName)) {
+            Tools::log()->error('invalid-table-name: ' . $tableName);
+            return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
+        }
+
+        // comprobamos la caché
+        $cacheKey = $addEmpty ?
+            'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription . '-empty' :
+            'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription;
+        $cached = Cache::get($cacheKey);
+        if (empty($where) && is_array($cached)) {
+            return $cached;
+        }
+
+        // comprobamos que la tabla existe
         if (!self::db()->tableExists($tableName)) {
             Tools::log()->error('table-not-found', ['%tableName%' => $tableName]);
             return $result;
@@ -125,7 +135,7 @@ class CodeModel
             $result[] = new static($row);
         }
 
-        // save cache
+        // guardamos en caché
         if (empty($where)) {
             Cache::set($cacheKey, $result);
         }
@@ -134,7 +144,7 @@ class CodeModel
     }
 
     /**
-     * Convert an associative array (code and value) into a CodeModel array.
+     * Convierte un array asociativo (código y valor) en un array de CodeModel.
      *
      * @param array $data
      * @param bool $addEmpty
@@ -156,30 +166,8 @@ class CodeModel
         return $result;
     }
 
-    private static function codeModelAll(mixed $model, string $fieldCode): array
-    {
-        $results = [];
-        $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
-
-        $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $model->primaryDescriptionColumn() . ' AS description '
-            . 'FROM ' . $model::tableName() . ' ORDER BY 2 ASC';
-        foreach (self::db()->selectLimit($sql, self::getlimit()) as $d) {
-            $results[] = new static($d);
-        }
-
-        return $results;
-    }
-
-    private static function codeModelSearch(mixed $model, string $query, string $fieldCode, array $where): array
-    {
-        $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
-        $fields = $field . '|' . $model->primaryDescriptionColumn();
-        $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
-        return self::all($model::tableName(), $field, $model->primaryDescriptionColumn(), false, $where);
-    }
-
     /**
-     * Returns a codemodel with the selected data.
+     * Devuelve un CodeModel con los datos seleccionados.
      *
      * @param string $tableName
      * @param string $fieldCode
@@ -188,9 +176,18 @@ class CodeModel
      *
      * @return static
      */
-    public function get(string $tableName, string $fieldCode, $code, $fieldDescription)
+    public function get(string $tableName, string $fieldCode, $code, string $fieldDescription)
     {
-        // validar nombres de campos para prevenir SQL injection
+        if (empty($tableName)) {
+            return new static();
+        }
+
+        // sin código no hay nada que buscar (WHERE campo = NULL nunca casa)
+        if ($code === null || $code === '') {
+            return new static();
+        }
+
+        // validamos los nombres de campos para evitar SQL injection
         if (false === self::isValidFieldName($fieldCode)) {
             Tools::log()->error('invalid-field-name: ' . $fieldCode);
             return new static();
@@ -199,21 +196,63 @@ class CodeModel
             return new static();
         }
 
-        // is a table or a model?
+        // comprobamos si se trata de un modelo (admite Join\Nombre)
         $modelClass = self::MODEL_NAMESPACE . $tableName;
-        if ($tableName && class_exists($modelClass)) {
+        if (class_exists($modelClass)) {
             $model = new $modelClass();
-            if ($model->loadWhereEq($fieldCode, $code)) {
-                return new static(['code' => $model->{$fieldCode}, 'description' => $model->primaryDescription()]);
-            }
+            if (
+                method_exists($model, 'modelClassName')
+                && $model->modelClassName() === self::modelBaseName($tableName)
+            ) {
+                $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
 
+                // cacheamos con clave prefijada por la tabla real del modelo, para
+                // que clearCache() (deleteMulti 'table-<tabla>-') la purgue al cambiar
+                $cacheKey = 'table-' . $model::tableName() . '-codemodel-' . md5($field . '|' . $code);
+                $data = Cache::remember($cacheKey, function () use ($model, $field, $code) {
+                    return $model->loadWhereEq($field, $code) ?
+                        ['code' => $model->{$field}, 'description' => $model->primaryDescription()] :
+                        [];
+                });
+
+                return empty($data) ? new static() : new static($data);
+            }
+            if ($model instanceof JoinModel) {
+                if (empty($fieldCode)) {
+                    return new static();
+                }
+                if ($model->loadWhereEq($fieldCode, $code)) {
+                    $codeAlias = self::stripTablePrefix($fieldCode);
+                    $descAlias = self::stripTablePrefix($fieldDescription);
+                    return new static([
+                        'code' => $model->{$codeAlias},
+                        'description' => empty($descAlias) ? (string)$model->{$codeAlias} : (string)$model->{$descAlias},
+                    ]);
+                }
+                return new static();
+            }
+        }
+
+        // validamos el nombre de tabla para evitar SQL injection
+        if (false === self::isValidTableName($tableName)) {
+            Tools::log()->error('invalid-table-name: ' . $tableName);
             return new static();
         }
 
-        if ($tableName && self::db()->tableExists($tableName)) {
-            $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
-                . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::db()->var2str($code);
-            $data = self::db()->selectLimit($sql, 1);
+        // sin nombre de campo no se puede construir el WHERE
+        if (empty($fieldCode)) {
+            return new static();
+        }
+
+        if (self::db()->tableExists($tableName)) {
+            // cacheamos el resultado con clave prefijada por tabla, de modo que
+            // ModelClass::clearCache() la purgue al cambiar cualquier registro de la tabla
+            $cacheKey = 'table-' . $tableName . '-codemodel-' . md5($fieldCode . '|' . $fieldDescription . '|' . $code);
+            $data = Cache::remember($cacheKey, function () use ($tableName, $fieldCode, $fieldDescription, $code) {
+                $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
+                    . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::db()->var2str($code);
+                return self::db()->selectLimit($sql, 1);
+            });
             return empty($data) ? new static() : new static($data[0]);
         }
 
@@ -221,7 +260,7 @@ class CodeModel
     }
 
     /**
-     * Returns a description with the selected data.
+     * Devuelve una descripción con los datos seleccionados.
      *
      * @param string $tableName
      * @param string $fieldCode
@@ -242,7 +281,7 @@ class CodeModel
     }
 
     /**
-     * Load a CodeModel list (code and description) for the indicated table and search.
+     * Carga una lista CodeModel (código y descripción) para la tabla indicada y la búsqueda.
      *
      * @param string $tableName
      * @param string $fieldCode
@@ -254,19 +293,30 @@ class CodeModel
      */
     public static function search(string $tableName, string $fieldCode, string $fieldDescription, string $query, array $where = []): array
     {
-        // validar nombre de tabla para prevenir SQL injection
-        if (false === self::isValidTableName($tableName)) {
-            Tools::log()->error('invalid-table-name: ' . $tableName);
-            return [];
-        }
-
-        // is a table or a model?
+        // comprobamos si se trata de un modelo (admite Join\Nombre)
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
             $model = new $modelClass();
-            return method_exists($model, 'codeModelSearch') ?
-                $model->codeModelSearch($query, $fieldCode, $where) :
-                self::codeModelSearch($model, $query, $fieldCode, $where);
+            if (method_exists($model, 'codeModelSearch')) {
+                return $model->codeModelSearch($query, $fieldCode, $where);
+            }
+            if (
+                method_exists($model, 'modelClassName')
+                && $model->modelClassName() === self::modelBaseName($tableName)
+            ) {
+                return self::codeModelSearch($model, $query, $fieldCode, $where);
+            }
+            if ($model instanceof JoinModel) {
+                $fields = $fieldCode . '|' . $fieldDescription;
+                $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
+                return self::joinModelAll($model, $fieldCode, $fieldDescription, $where);
+            }
+        }
+
+        // validamos el nombre de tabla para evitar SQL injection
+        if (false === self::isValidTableName($tableName)) {
+            Tools::log()->error('invalid-table-name: ' . $tableName);
+            return [];
         }
 
         $fields = $fieldCode . '|' . $fieldDescription;
@@ -279,6 +329,59 @@ class CodeModel
         self::$limit = $newLimit;
     }
 
+    private static function codeModelAll(mixed $model, string $fieldCode): array
+    {
+        $results = [];
+        $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
+
+        $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $model->primaryDescriptionColumn() . ' AS description '
+            . 'FROM ' . $model::tableName() . ' ORDER BY 2 ASC';
+        foreach (self::db()->selectLimit($sql, self::getlimit()) as $d) {
+            $results[] = new static($d);
+        }
+
+        return $results;
+    }
+
+    private static function joinModelAll(JoinModel $model, string $fieldCode, string $fieldDescription, array $where): array
+    {
+        $results = [];
+        $class = get_class($model);
+        $codeAlias = self::stripTablePrefix($fieldCode);
+        $descAlias = self::stripTablePrefix($fieldDescription);
+        foreach ($class::all($where, [], 0, self::getLimit()) as $row) {
+            $results[] = new static([
+                'code' => $row->{$codeAlias},
+                'description' => empty($descAlias) ? (string)$row->{$codeAlias} : (string)$row->{$descAlias},
+            ]);
+        }
+        return $results;
+    }
+
+    private static function stripTablePrefix(string $field): string
+    {
+        $dot = strrpos($field, '.');
+        return $dot === false ? $field : substr($field, $dot + 1);
+    }
+
+    private static function codeModelSearch(mixed $model, string $query, string $fieldCode, array $where): array
+    {
+        $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
+        $fields = $field . '|' . $model->primaryDescriptionColumn();
+        $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
+        return self::all($model::tableName(), $field, $model->primaryDescriptionColumn(), false, $where);
+    }
+
+    protected static function db(): DataBase
+    {
+        if (self::$dataBase === null) {
+            self::$dataBase = new DataBase();
+            self::$dataBase->connect();
+        }
+
+        return self::$dataBase;
+    }
+
     /**
      * Valida que un nombre de campo sea seguro para usar en consultas SQL.
      * Solo permite letras, números, guiones bajos y puntos (para campos con alias de tabla).
@@ -286,33 +389,33 @@ class CodeModel
      */
     protected static function isValidFieldName(string $fieldName): bool
     {
-        // permite campos vacíos (valores por defecto)
+        // permitimos campos vacíos (valores por defecto)
         if ($fieldName === '') {
             return true;
         }
 
-        // Identificador: campo o tabla.campo (sin espacios, sin comillas)
+        // identificador: campo o tabla.campo (sin espacios, sin comillas)
         $fieldName = trim($fieldName);
         $ident = '[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?';
 
-        // Campo directo
+        // campo directo
         if (preg_match('/^' . $ident . '$/', $fieldName)) {
             return true;
         }
 
-        // lower(field) / upper(field)
+        // lower(campo) / upper(campo)
         if (preg_match('/^(lower|upper)\((' . $ident . ')\)$/i', $fieldName)) {
             return true;
         }
 
-        // substring(field, start, len) con números
+        // substring(campo, inicio, longitud) con números
         if (preg_match('/^substring\((' . $ident . '),\s*(\d+)\s*,\s*(\d+)\s*\)$/i', $fieldName, $m)) {
             $start = (int)$m[2];
             $len = (int)$m[3];
             return $start >= 1 && $len >= 1 && $len <= 1000;
         }
 
-        // concat(arg1, arg2, ...) donde arg es un identificador o literal simple '...'(sin comillas internas o escapadas)
+        // concat(arg1, arg2, ...) con identificadores o literales entre comillas simples
         $arg = "(?:$ident|'[^']*')";
         if (preg_match('/^concat\(\s*' . $arg . '(?:\s*,\s*' . $arg . ')+\s*\)$/i', $fieldName)) {
             return true;
@@ -330,13 +433,13 @@ class CodeModel
         return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $tableName) === 1;
     }
 
-    protected static function db(): DataBase
+    /**
+     * Devuelve el basename de un modelo (ej: "Join\PartidaAsiento" -> "PartidaAsiento")
+     * para comparar contra modelClassName().
+     */
+    protected static function modelBaseName(string $tableName): string
     {
-        if (self::$dataBase === null) {
-            self::$dataBase = new DataBase();
-            self::$dataBase->connect();
-        }
-
-        return self::$dataBase;
+        $parts = explode('\\', $tableName);
+        return end($parts);
     }
 }

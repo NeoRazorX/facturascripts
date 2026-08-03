@@ -156,6 +156,14 @@ final class PedidoProveedorTest extends TestCase
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-supplier-1');
+        $address = $subject->getDefaultAddress();
+        $address->apartado = '12345';
+        $address->ciudad = 'Test-ciudad';
+        $address->codpais = 'PRT';
+        $address->codpostal = '12345';
+        $address->direccion = 'Test-direccion';
+        $address->provincia = 'Test-provincia';
+        $this->assertTrue($address->save(), 'can-not-save-supplier-address-1');
 
         // creamos un pedido y le asignamos el proveedor
         $doc = new PedidoProveedor();
@@ -165,6 +173,12 @@ final class PedidoProveedorTest extends TestCase
         $this->assertEquals($subject->cifnif, $doc->cifnif, 'pedido-proveedor-bad-cifnif-1');
         $this->assertEquals($subject->codproveedor, $doc->codproveedor, 'pedido-proveedor-bad-codproveedor-1');
         $this->assertEquals($subject->razonsocial, $doc->nombre, 'pedido-proveedor-bad-nombre-1');
+        $this->assertEquals($address->apartado, $doc->apartado, 'pedido-proveedor-bad-apartado-1');
+        $this->assertEquals($address->ciudad, $doc->ciudad, 'pedido-proveedor-bad-ciudad-1');
+        $this->assertEquals($address->codpais, $doc->codpais, 'pedido-proveedor-bad-codpais-1');
+        $this->assertEquals($address->codpostal, $doc->codpostal, 'pedido-proveedor-bad-codpostal-1');
+        $this->assertEquals($address->direccion, $doc->direccion, 'pedido-proveedor-bad-direccion-1');
+        $this->assertEquals($address->provincia, $doc->provincia, 'pedido-proveedor-bad-provincia-1');
 
         // eliminamos
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
@@ -326,11 +340,17 @@ final class PedidoProveedorTest extends TestCase
     {
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
+            'apartado' => [10, 11],
             'cifnif' => [30, 31],
+            'ciudad' => [100, 101],
             'codigo' => [20, 21],
+            'codpais' => [20, 21],
+            'codpostal' => [10, 11],
+            'direccion' => [200, 201],
             'nombre' => [100, 101],
             'numproveedor' => [50, 51],
             'operacion' => [20, 21],
+            'provincia' => [100, 101],
         ];
 
         // creamos un proveedor

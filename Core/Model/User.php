@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
@@ -50,64 +49,64 @@ class User extends ModelClass
     const DEFAULT_LEVEL = 2;
     const UPDATE_ACTIVITY_PERIOD = 3600;
 
-    /** @var bool */
+    /** @var bool Indica si el usuario tiene permisos de administrador. */
     public $admin;
 
-    /** @var string */
+    /** @var string Código del agente comercial asociado al usuario. */
     public $codagente;
 
-    /** @var string */
+    /** @var string|null Código del almacén predeterminado del usuario. */
     public $codalmacen;
 
-    /** @var string */
+    /** @var string Código de la serie predeterminada del usuario. */
     public $codserie;
 
-    /** @var string */
+    /** @var string Fecha de creación de la cuenta de usuario. */
     public $creationdate;
 
-    /** @var string */
+    /** @var string Dirección de correo electrónico del usuario. */
     public $email;
 
-    /** @var bool */
+    /** @var bool Indica si la cuenta de usuario está activa. */
     public $enabled;
 
-    /** @var string */
+    /** @var string Página de inicio predeterminada del usuario. */
     public $homepage;
 
-    /** @var string */
+    /** @var string Código del idioma seleccionado por el usuario. */
     public $langcode;
 
-    /** @var string */
+    /** @var string Fecha y hora de la última actividad del usuario. */
     public $lastactivity;
 
-    /** @var string */
+    /** @var string Navegador utilizado en la última actividad del usuario. */
     public $lastbrowser;
 
-    /** @var string */
+    /** @var string Dirección IP de la última actividad del usuario. */
     public $lastip;
 
-    /** @var integer */
+    /** @var integer Nivel de permisos del usuario. */
     public $level;
 
-    /** @var string */
+    /** @var string Clave para mantener la sesión iniciada. */
     public $logkey;
 
-    /** @var string */
+    /** @var string Nombre de usuario utilizado para iniciar sesión. */
     public $nick;
 
-    /** @var string */
+    /** @var string Nueva contraseña introducida por el usuario. */
     public $newPassword;
 
-    /** @var string */
+    /** @var string Confirmación de la nueva contraseña. */
     public $newPassword2;
 
-    /** @var string */
+    /** @var string Contraseña cifrada del usuario. */
     public $password;
 
-    /** @var bool */
+    /** @var bool Indica si el usuario tiene activada la autenticación en dos pasos. */
     public $two_factor_enabled;
 
-    /** @var string */
+    /** @var string Clave secreta para la autenticación en dos pasos. */
     public $two_factor_secret_key;
 
     public function addRole(?string $code): bool
@@ -160,6 +159,12 @@ class User extends ModelClass
      */
     public function can(string $pageName, string $permission = 'access'): bool
     {
+        // si el usuario no existe (nick vacío), no puede acceder a nada
+        if (empty($this->nick)) {
+            Tools::log()->warning('no-user-specified');
+            return false;
+        }
+
         // si está desactivado, no puede acceder a nada
         if (false === $this->enabled) {
             return false;
@@ -186,10 +191,10 @@ class User extends ModelClass
     {
         parent::clear();
         $this->admin = false;
-        $this->codalmacen = Tools::settings('default', 'codalmacen');
+        $this->codalmacen = null;
         $this->creationdate = Tools::date();
         $this->enabled = true;
-        $this->idempresa = Tools::settings('default', 'idempresa', 1);
+        $this->idempresa = null;
         $this->langcode = Tools::config('lang');
         $this->level = self::DEFAULT_LEVEL;
         $this->two_factor_enabled = false;
@@ -248,7 +253,10 @@ class User extends ModelClass
      */
     public function getApiFieldsToHide(): array
     {
-        return ['password', 'logkey', 'two_factor_secret_key'];
+        return array_unique(array_merge(
+            ['password', 'logkey', 'two_factor_secret_key'],
+            parent::getApiFieldsToHide()
+        ));
     }
 
     /**
@@ -260,8 +268,7 @@ class User extends ModelClass
     {
         $roles = [];
 
-        $where = [new DataBaseWhere('nick', $this->nick)];
-        foreach (DinRoleUser::all($where, [], 0, 0) as $role) {
+        foreach (DinRoleUser::allWhereEq('nick', $this->nick) as $role) {
             $roles[] = $role->getRole();
         }
 
@@ -305,6 +312,36 @@ class User extends ModelClass
             . "',TRUE,TRUE,'1','1','" . $lang . "','Wizard','99');";
     }
 
+    /**
+     * Devuelve un nombre de pagina seguro para redirigir tras login.
+     * Si la homepage del usuario no es un nombre de controlador valido o no existe en la tabla pages,
+     * se devuelve la homepage por defecto de la instalacion (o 'Dashboard' como ultimo recurso).
+     * Nunca devuelve una URL absoluta ni un path arbitrario, para evitar open-redirect.
+     */
+    public function homepageUrl(): string
+    {
+        $default = Tools::settings('default', 'homepage', 'Dashboard');
+        if (!self::isSafePageName($default)) {
+            $default = 'Dashboard';
+        }
+
+        if (!self::isSafePageName($this->homepage ?? '')) {
+            return $default;
+        }
+
+        $page = new DinPage();
+        if (false === $page->load($this->homepage)) {
+            return $default;
+        }
+
+        return $this->homepage;
+    }
+
+    private static function isSafePageName(string $name): bool
+    {
+        return $name !== '' && 1 === preg_match('/^[A-Za-z][A-Za-z0-9_]{0,49}$/', $name);
+    }
+
     public function newLogkey(string $ipAddress, string $browser = ''): string
     {
         $this->updateActivity($ipAddress, $browser);
@@ -338,7 +375,7 @@ class User extends ModelClass
     public function setPassword($value): bool
     {
         // si la contraseña tiene menos de 8 caracteres, o no tiene números o no tiene letras, devolvemos false
-        if (strlen($value) < 8 || !preg_match('/[0-9]/', $value) || !preg_match('/[a-zA-Z]/', $value)) {
+        if (mb_strlen($value) < 8 || !preg_match('/[0-9]/', $value) || !preg_match('/[a-zA-Z]/', $value)) {
             return false;
         }
 
@@ -370,6 +407,15 @@ class User extends ModelClass
             return false;
         }
 
+        // homepage es FK a pages.name: siempre un nombre de controlador alfanumerico.
+        // Rechazamos cualquier otra cosa para evitar open-redirect al usarlo como Location tras login.
+        if (!empty($this->homepage) && false === self::isSafePageName($this->homepage)) {
+            Tools::log()->warning('invalid-alphanumeric-code', [
+                '%value%' => $this->homepage, '%column%' => 'homepage', '%min%' => '1', '%max%' => '50',
+            ]);
+            return false;
+        }
+
         if (empty($this->creationdate)) {
             $this->creationdate = Tools::date();
         }
@@ -381,8 +427,8 @@ class User extends ModelClass
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
         $this->lastbrowser = mb_substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200, 'UTF-8');
 
-        // escapamos el html de lastip y comprobamos que no excede los 40 caracteres
-        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 40);
+        // escapamos el html de lastip y comprobamos que no excede los 45 caracteres
+        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 45);
 
         if ($this->admin) {
             $this->level = 99;
@@ -482,16 +528,19 @@ class User extends ModelClass
 
     protected function testWarehouse(): bool
     {
-        if (empty($this->codalmacen)) {
-            $this->codalmacen = Tools::settings('default', 'codalmacen');
-            $this->idempresa = Tools::settings('default', 'idempresa');
+        // empresa y almacén son opcionales: si falta alguno, se dejan vacíos y los
+        // documentos usarán los valores por defecto del panel de control
+        if (empty($this->codalmacen) || empty($this->idempresa)) {
+            $this->codalmacen = null;
+            $this->idempresa = null;
             return true;
         }
 
+        // si se indica almacén, debe existir y pertenecer a la empresa indicada
         $warehouse = new Almacen();
         if (false === $warehouse->load($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
-            $this->codalmacen = Tools::settings('default', 'codalmacen');
-            $this->idempresa = Tools::settings('default', 'idempresa');
+            $this->codalmacen = null;
+            $this->idempresa = null;
         }
 
         return true;

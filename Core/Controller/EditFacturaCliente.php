@@ -5,9 +5,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\AjaxForms\SalesController;
 use FacturaScripts\Dinamic\Lib\Calculator;
@@ -16,7 +16,7 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 
 /**
- * Description of EditFacturaCliente
+ * Controlador para editar un único elemento del modelo FacturaCliente
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -64,7 +64,7 @@ class EditFacturaCliente extends SalesController
             ->addOrderBy(['fecha'], 'date', 1);
 
         // buttons
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'generate-accounting',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entry'
@@ -95,14 +95,14 @@ class EditFacturaCliente extends SalesController
             ->addOrderBy(['importe'], 'amount');
 
         // buttons
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'generate-receipts',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-receipts'
         ]);
 
-        $this->addButton($viewName, [
+        $this->tab($viewName)->addButton([
             'action' => 'paid',
             'color' => 'outline-success',
             'confirm' => 'true',
@@ -111,8 +111,9 @@ class EditFacturaCliente extends SalesController
         ]);
 
         // disable columns
-        $this->views[$viewName]->disableColumn('customer');
-        $this->views[$viewName]->disableColumn('invoice');
+        $this->tab($viewName)
+            ->disableColumn('customer')
+            ->disableColumn('invoice');
 
         // settings
         $this->setSettings($viewName, 'modalInsert', 'generate-receipts');
@@ -255,11 +256,9 @@ class EditFacturaCliente extends SalesController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
-
         switch ($viewName) {
             case self::VIEW_RECEIPTS:
-                $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
+                $where = [Where::eq('idfactura', $this->mainTabModelValue('idfactura'))];
                 $view->loadData('', $where);
                 if (empty($view->query)) {
                     $this->checkReceiptsTotal($view->cursor);
@@ -267,16 +266,16 @@ class EditFacturaCliente extends SalesController
                 break;
 
             case self::VIEW_ACCOUNTS:
-                $where = [new DataBaseWhere('idasiento', $this->getViewModelValue($mvn, 'idasiento'))];
+                $where = [Where::eq('idasiento', $this->mainTabModelValue('idasiento'))];
                 $view->loadData('', $where);
                 break;
 
             case 'refunds':
-                if ($this->getViewModelValue($mvn, 'idfacturarect')) {
+                if ($this->mainTabModelValue('idfacturarect')) {
                     $this->setSettings($viewName, 'active', false);
                     break;
                 }
-                $where = [new DataBaseWhere('idfacturarect', $this->getViewModelValue($mvn, 'idfactura'))];
+                $where = [Where::eq('idfacturarect', $this->mainTabModelValue('idfactura'))];
                 $view->loadData('', $where);
                 break;
 
@@ -412,7 +411,7 @@ class EditFacturaCliente extends SalesController
         }
 
         $codes = $this->request->request->getArray('codes');
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
         if (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;

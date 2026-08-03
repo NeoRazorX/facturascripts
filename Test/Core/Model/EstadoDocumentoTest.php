@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\EstadoDocumento;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -69,7 +69,7 @@ final class EstadoDocumentoTest extends TestCase
     {
         // get the initial default count
         $status = new EstadoDocumento();
-        $where = [new DataBaseWhere('predeterminado', true)];
+        $where = [Where::eq('predeterminado', true)];
         $defaultsCount = $status->count($where);
 
         // create a new default status
@@ -82,8 +82,8 @@ final class EstadoDocumentoTest extends TestCase
 
         // find the default on the database
         $where2 = [
-            new DataBaseWhere('predeterminado', true),
-            new DataBaseWhere('tipodoc', $type)
+            Where::eq('predeterminado', true),
+            Where::eq('tipodoc', $type)
         ];
         $this->assertEquals(1, $status->count($where2), 'estado-documento-more-than-one-default');
         foreach ($status->all($where2) as $sta) {
@@ -152,6 +152,104 @@ final class EstadoDocumentoTest extends TestCase
         $status->generadoc = 'PedidoProveedor';
         $status->tipodoc = 'FacturaProveedor';
         $this->assertFalse($status->save(), 'invalid-estado-documento-for-purchase-invoice-can-save');
+    }
+
+    public function testCanNotUpdateStockWithGeneration(): void
+    {
+        // un estado que genera otro documento no debe poder actualizar stock
+        $status = new EstadoDocumento();
+        $status->actualizastock = 1;
+        $status->generadoc = 'PedidoProveedor';
+        $status->nombre = 'Generate';
+        $status->tipodoc = 'PresupuestoCliente';
+        $this->assertFalse($status->save(), 'estado-documento-with-generadoc-cant-update-stock');
+
+        // también debe bloquear valores negativos (resta de stock)
+        $status->actualizastock = -1;
+        $this->assertFalse($status->save(), 'estado-documento-with-generadoc-cant-update-stock-negative');
+
+        // sin actualizar stock sí se puede guardar
+        $status->actualizastock = 0;
+        $this->assertTrue($status->save(), 'estado-documento-cant-save');
+
+        // delete
+        $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
+    }
+
+    public function testCanNotAddGeneradocToStatusWithStockUpdate(): void
+    {
+        // estado válido sin generadoc que sí actualiza stock
+        $status = new EstadoDocumento();
+        $status->actualizastock = 1;
+        $status->nombre = 'Stock update';
+        $status->tipodoc = 'PresupuestoCliente';
+        $this->assertTrue($status->save(), 'estado-documento-cant-save');
+
+        // al añadirle generadoc debe fallar el update
+        $status->generadoc = 'PedidoProveedor';
+        $this->assertFalse($status->save(), 'estado-documento-with-generadoc-cant-update-stock');
+
+        // recargamos y comprobamos que en BD sigue sin generadoc
+        $reloaded = new EstadoDocumento();
+        $this->assertTrue($reloaded->load($status->idestado), 'estado-documento-cant-reload');
+        $this->assertEmpty($reloaded->generadoc, 'estado-documento-generadoc-was-persisted');
+        $this->assertEquals(1, $reloaded->actualizastock, 'estado-documento-actualizastock-changed');
+
+        // delete
+        $this->assertTrue($reloaded->delete(), 'estado-documento-cant-delete');
+    }
+
+    public function testEmptyFieldsNotAllowed(): void
+    {
+        // sin nombre ni tipodoc no debe guardar
+        $status = new EstadoDocumento();
+        $this->assertFalse($status->save(), 'estado-documento-empty-can-save');
+
+        // solo con nombre tampoco
+        $status->nombre = 'Test';
+        $this->assertFalse($status->save(), 'estado-documento-without-tipodoc-can-save');
+
+        // solo con tipodoc tampoco
+        $status->clear();
+        $status->tipodoc = 'PresupuestoProveedor';
+        $this->assertFalse($status->save(), 'estado-documento-without-nombre-can-save');
+    }
+
+    public function testInactiveStatusIsNotDefault(): void
+    {
+        // un estado inactivo no puede ser predeterminado
+        $status = new EstadoDocumento();
+        $status->activo = false;
+        $status->nombre = 'Inactive';
+        $status->predeterminado = true;
+        $status->tipodoc = 'PresupuestoProveedor';
+        $this->assertTrue($status->save(), 'estado-documento-cant-save');
+        $this->assertFalse($status->predeterminado, 'estado-documento-inactive-is-default');
+
+        // delete
+        $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
+    }
+
+    public function testIcon(): void
+    {
+        // icono personalizado tiene prioridad
+        $status = new EstadoDocumento();
+        $status->icon = 'fa-solid fa-star';
+        $this->assertEquals('fa-solid fa-star', $status->icon());
+
+        // con generadoc y sin icono, check
+        $status->icon = '';
+        $status->generadoc = 'PedidoProveedor';
+        $this->assertEquals('fa-solid fa-check', $status->icon());
+
+        // editable sin icono ni generadoc, pen
+        $status->generadoc = '';
+        $status->editable = true;
+        $this->assertEquals('fa-solid fa-pen', $status->icon());
+
+        // no editable sin icono ni generadoc, lock
+        $status->editable = false;
+        $this->assertEquals('fa-solid fa-lock', $status->icon());
     }
 
     /**

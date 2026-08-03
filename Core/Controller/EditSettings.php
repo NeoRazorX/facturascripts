@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Series;
@@ -27,11 +26,12 @@ use FacturaScripts\Core\Lib\ExtendedController\EditView;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
- * Controller to edit main settings
+ * Controlador para editar la configuración general de la aplicación.
  *
  * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
@@ -52,7 +52,7 @@ class EditSettings extends PanelController
     protected function checkPaymentMethod(): bool
     {
         $idempresa = Tools::settings('default', 'idempresa');
-        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $where = [Where::eq('idempresa', $idempresa)];
         $values = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
         foreach ($values as $value) {
             if ($value->code == Tools::settings('default', 'codpago')) {
@@ -77,7 +77,7 @@ class EditSettings extends PanelController
     protected function checkWarehouse(): bool
     {
         $idempresa = Tools::settings('default', 'idempresa');
-        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $where = [Where::eq('idempresa', $idempresa)];
         $values = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
         foreach ($values as $value) {
             if ($value->code == Tools::settings('default', 'codalmacen')) {
@@ -163,7 +163,9 @@ class EditSettings extends PanelController
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['creationdate', 'id'], 'date', 2)
             ->addOrderBy(['lastactivity', 'id'], 'last-activity')
-            ->addSearchFields(['description', 'apikey', 'nick']);
+            ->addSearchFields(['description', 'apikey', 'nick'])
+            ->addFilterCheckbox('enabled', 'enabled', 'enabled')
+            ->addFilterCheckbox('fullaccess', 'full-access', 'fullaccess');
     }
 
     protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal'): void
@@ -199,10 +201,11 @@ class EditSettings extends PanelController
         $this->addEditView($name, $model, $title, $icon);
 
         // change icon
-        $groups = $this->views[$name]->getColumns();
+        $view = $this->tab($name);
+        $groups = $view->getColumns();
         foreach ($groups as $group) {
             if (!empty($group->icon)) {
-                $this->views[$name]->icon = $group->icon;
+                $view->icon = $group->icon;
                 break;
             }
         }
@@ -332,10 +335,10 @@ class EditSettings extends PanelController
 
     protected function loadLogoImageValues($viewName): void
     {
-        $columnLogo = $this->views[$viewName]->columnForName('login-image');
+        $columnLogo = $this->tab($viewName)->columnForName('login-image');
         if ($columnLogo && $columnLogo->widget->getType() === 'select') {
             $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
-                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
+                Where::in('mimetype', 'image/gif,image/jpeg,image/png')
             ]);
             $columnLogo->widget->setValuesFromCodeModel($images);
         }
@@ -344,10 +347,10 @@ class EditSettings extends PanelController
     protected function loadPaymentMethodValues(string $viewName): void
     {
         $idempresa = Tools::settings('default', 'idempresa');
-        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $where = [Where::eq('idempresa', $idempresa)];
         $methods = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
 
-        $columnPayment = $this->views[$viewName]->columnForName('payment-method');
+        $columnPayment = $this->tab($viewName)->columnForName('payment-method');
         if ($columnPayment && $columnPayment->widget->getType() === 'select') {
             $columnPayment->widget->setValuesFromCodeModel($methods);
         }
@@ -355,7 +358,7 @@ class EditSettings extends PanelController
 
     protected function loadRegimeValues(string $viewName): void
     {
-        $columnVATRegime = $this->views[$viewName]->columnForName('vat-regime');
+        $columnVATRegime = $this->tab($viewName)->columnForName('vat-regime');
         if ($columnVATRegime && $columnVATRegime->widget->getType() === 'select') {
             $columnVATRegime->widget->setValuesFromArrayKeys(RegimenIVA::all(), true, true);
         }
@@ -363,11 +366,11 @@ class EditSettings extends PanelController
 
     protected function loadSerie(string $viewName): void
     {
-        $columnSerie = $this->views[$viewName]->columnForName('serie');
+        $columnSerie = $this->tab($viewName)->columnForName('serie');
         if ($columnSerie && $columnSerie->widget->getType() === 'select') {
             $series = $this->codeModel->all('series', 'codserie', 'descripcion', false, [
-                new DataBaseWhere('tipo', 'R', '!='),
-                new DataBaseWhere('tipo', null, '=', 'OR')
+                Where::notEq('tipo', 'R'),
+                Where::orEq('tipo', null)
             ]);
             $columnSerie->widget->setValuesFromCodeModel($series);
         }
@@ -375,10 +378,10 @@ class EditSettings extends PanelController
 
     protected function loadSerieRectifying(string $viewName): void
     {
-        $columnSerie = $this->views[$viewName]->columnForName('rectifying-serie');
+        $columnSerie = $this->tab($viewName)->columnForName('rectifying-serie');
         if ($columnSerie && $columnSerie->widget->getType() === 'select') {
             $series = $this->codeModel->all('series', 'codserie', 'descripcion', false, [
-                new DataBaseWhere('tipo', 'R')
+                Where::eq('tipo', 'R')
             ]);
             $columnSerie->widget->setValuesFromCodeModel($series);
         }
@@ -387,10 +390,10 @@ class EditSettings extends PanelController
     protected function loadWarehouseValues(string $viewName): void
     {
         $idempresa = Tools::settings('default', 'idempresa');
-        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $where = [Where::eq('idempresa', $idempresa)];
         $almacenes = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
 
-        $columnWarehouse = $this->views[$viewName]->columnForName('warehouse');
+        $columnWarehouse = $this->tab($viewName)->columnForName('warehouse');
         if ($columnWarehouse && $columnWarehouse->widget->getType() === 'select') {
             $columnWarehouse->widget->setValuesFromCodeModel($almacenes);
         }

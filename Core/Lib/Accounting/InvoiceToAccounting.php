@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
@@ -38,8 +38,8 @@ use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Class for the generation of accounting entries of a sale/purchase document
- * and the settlement of your receipts.
+ * Clase para la generación de asientos contables a partir de un documento
+ * de venta/compra y la liquidación de sus recibos.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -58,14 +58,16 @@ class InvoiceToAccounting extends AccountingClass
     protected $document;
 
     /**
-     * Document Subtotals Lines array
+     * Subtotales del documento calculados con Calculator::getSubtotals.
+     * Claves: 'iva' (array por tipo de IVA con neto/iva/recargo/totaliva/totalrecargo/codimpuesto),
+     * 'irpf' (porcentaje) y 'totalirpf' (importe).
      *
      * @var array
      */
     protected $subtotals;
 
     /**
-     * Method to launch the accounting process
+     * Método para lanzar el proceso de contabilización
      *
      * @param FacturaCliente|FacturaProveedor $model
      */
@@ -88,7 +90,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the customer line to the accounting entry
+     * Añade la línea del cliente al asiento y guarda su subcuenta como contrapartida
+     * para las siguientes líneas (IVA, IRPF, mercancía).
      *
      * @param Asiento $entry
      *
@@ -98,14 +101,17 @@ class InvoiceToAccounting extends AccountingClass
     {
         $customer = new Cliente();
         if (false === $customer->load($this->document->codcliente)) {
-            Tools::log()->warning('customer-not-found');
+            Tools::log()->warning('customer-not-found', ['%customer%' => $this->document->codcliente]);
             $this->counterpart = null;
             return false;
         }
 
         $subAccount = $this->getCustomerAccount($customer);
         if (false === $subAccount->exists()) {
-            Tools::log()->warning('customer-account-not-found');
+            Tools::log()->warning('customer-account-not-found', [
+                '%customer%' => $this->document->codcliente,
+                '%exercise%' => $this->exercise->codejercicio
+            ]);
             $this->counterpart = null;
             return false;
         }
@@ -115,8 +121,9 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the goods purchase line to the accounting entry.
-     * Make one line for each product/family purchase subaccount.
+     * Añade la línea de compra de mercancías al asiento, una por cada subcuenta de
+     * producto/familia. En facturas rectificativas usa la cuenta especial DEVCOM si
+     * está configurada; en caso contrario cae a COMPRA.
      *
      * @param Asiento $entry
      *
@@ -125,8 +132,15 @@ class InvoiceToAccounting extends AccountingClass
     protected function addGoodsPurchaseLine(Asiento $entry): bool
     {
         $rectifAccount = $this->getSpecialSubAccount('DEVCOM');
-        $purchaseAccount = $this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
-            $this->getSpecialSubAccount('COMPRA');
+        $useRectif = $this->document->idfacturarect && $rectifAccount->exists();
+        $purchaseAccount = $useRectif ? $rectifAccount : $this->getSpecialSubAccount('COMPRA');
+        if (false === $purchaseAccount->exists()) {
+            Tools::log()->warning('special-account-subaccount-not-found', [
+                '%account%' => $useRectif ? 'DEVCOM' : 'COMPRA',
+                '%exercise%' => $this->exercise->codejercicio
+            ]);
+            return false;
+        }
 
         $tool = new PurchasesDocLineAccount();
         $totals = $tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta ?? '');
@@ -141,8 +155,9 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the goods sales line to the accounting entry.
-     * Make one line for each product/family sale subaccount.
+     * Añade la línea de venta de mercancías al asiento, una por cada subcuenta de
+     * producto/familia. En facturas rectificativas usa la cuenta especial DEVVEN si
+     * está configurada; en caso contrario cae a VENTAS.
      *
      * @param Asiento $entry
      *
@@ -151,8 +166,15 @@ class InvoiceToAccounting extends AccountingClass
     protected function addGoodsSalesLine(Asiento $entry): bool
     {
         $rectifAccount = $this->getSpecialSubAccount('DEVVEN');
-        $salesAccount = $this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
-            $this->getSpecialSubAccount('VENTAS');
+        $useRectif = $this->document->idfacturarect && $rectifAccount->exists();
+        $salesAccount = $useRectif ? $rectifAccount : $this->getSpecialSubAccount('VENTAS');
+        if (false === $salesAccount->exists()) {
+            Tools::log()->warning('special-account-subaccount-not-found', [
+                '%account%' => $useRectif ? 'DEVVEN' : 'VENTAS',
+                '%exercise%' => $this->exercise->codejercicio
+            ]);
+            return false;
+        }
 
         $tool = new SalesDocLineAccount();
         $totals = $tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta ?? '');
@@ -185,7 +207,10 @@ class InvoiceToAccounting extends AccountingClass
 
         $account = $this->getIRPFPurchaseAccount($retention);
         if (false === $account->exists()) {
-            Tools::log()->warning('irpfpr-subaccount-not-found');
+            Tools::log()->warning('irpfpr-subaccount-not-found', [
+                '%subaccount%' => $retention->codsubcuentaacr,
+                '%exercise%' => $this->exercise->codejercicio
+            ]);
             return false;
         }
 
@@ -214,7 +239,7 @@ class InvoiceToAccounting extends AccountingClass
 
         $subAccount = $this->getSpecialSubAccount('SUPLI');
         if (false === $subAccount->exists()) {
-            Tools::log()->warning('supplied-subaccount-not-found');
+            Tools::log()->warning('supplied-subaccount-not-found', ['%exercise%' => $this->exercise->codejercicio]);
             return false;
         }
 
@@ -222,7 +247,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the purchase line to the accounting entry
+     * Añade la línea de impuestos de compras al asiento contable
      *
      * @param Asiento $entry
      *
@@ -237,23 +262,29 @@ class InvoiceToAccounting extends AccountingClass
         ]);
 
         foreach ($this->subtotals['iva'] as $value) {
-            // buscamos el impuesto
             $tax = Impuestos::get($value['codimpuesto']);
 
             // si es intracomunitaria o ISP, añadimos autorepercusión con cuentas intra
             if ($isIntra) {
                 $subAccountSup = $tax->getInputIntraTaxAccount($this->exercise->codejercicio);
                 if (false === $subAccountSup->exists()) {
-                    Tools::log()->warning('ivasop-account-not-found');
+                    Tools::log()->warning('ivasop-account-not-found', [
+                        '%tax%' => $tax->codimpuesto,
+                        '%exercise%' => $this->exercise->codejercicio
+                    ]);
                     return false;
                 }
                 $subAccountImp = $tax->getOutputIntraTaxAccount($this->exercise->codejercicio);
                 if (false === $subAccountImp->exists()) {
-                    Tools::log()->warning('ivarep-account-not-found');
+                    Tools::log()->warning('ivarep-account-not-found', [
+                        '%tax%' => $tax->codimpuesto,
+                        '%exercise%' => $this->exercise->codejercicio
+                    ]);
                     return false;
                 }
 
-                // calculamos el importe del IVA
+                // recalculamos el IVA: en autorepercusión la base no lleva IVA repercutido en el documento,
+                // así que aquí lo derivamos del neto y forzamos el recargo a 0
                 $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
                 $value['totalrecargo'] = 0.0;
                 $done = $this->addTaxLine($entry, $subAccountSup, $this->counterpart, true, $value) &&
@@ -266,12 +297,18 @@ class InvoiceToAccounting extends AccountingClass
 
             $subAccountSup = $tax->getInputTaxAccount($this->exercise->codejercicio);
             if (false === $subAccountSup->exists()) {
-                Tools::log()->warning('ivasop-account-not-found');
+                Tools::log()->warning('ivasop-account-not-found', [
+                    '%tax%' => $tax->codimpuesto,
+                    '%exercise%' => $this->exercise->codejercicio
+                ]);
                 return false;
             }
             $subAccountSupSurcharge = $tax->getInputSurchargeAccount($this->exercise->codejercicio);
             if (false === $subAccountSupSurcharge->exists()) {
-                Tools::log()->warning('ivasopre-account-not-found');
+                Tools::log()->warning('ivasopre-account-not-found', [
+                    '%tax%' => $tax->codimpuesto,
+                    '%exercise%' => $this->exercise->codejercicio
+                ]);
                 return false;
             }
 
@@ -305,7 +342,10 @@ class InvoiceToAccounting extends AccountingClass
 
         $account = $this->getIRPFSalesAccount($retention);
         if (false === $account->exists()) {
-            Tools::log()->warning('irpf-subaccount-not-found');
+            Tools::log()->warning('irpf-subaccount-not-found', [
+                '%subaccount%' => $retention->codsubcuentaret,
+                '%exercise%' => $this->exercise->codejercicio
+            ]);
             return false;
         }
 
@@ -315,7 +355,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the supplied line to the accounting entry
+     * Añade la línea de suplidos de ventas al asiento contable
      *
      * @param Asiento $entry
      *
@@ -329,7 +369,7 @@ class InvoiceToAccounting extends AccountingClass
 
         $subAccount = $this->getSpecialSubAccount('SUPLI');
         if (false === $subAccount->exists()) {
-            Tools::log()->warning('supplied-subaccount-not-found');
+            Tools::log()->warning('supplied-subaccount-not-found', ['%exercise%' => $this->exercise->codejercicio]);
             return false;
         }
 
@@ -337,7 +377,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the sales line to the accounting entry
+     * Añade la línea de impuestos de ventas al asiento contable
      *
      * @param Asiento $entry
      *
@@ -357,12 +397,18 @@ class InvoiceToAccounting extends AccountingClass
             if ($isIntra) {
                 $subAccOut = $tax->getOutputIntraTaxAccount($this->exercise->codejercicio);
                 if (false === $subAccOut->exists()) {
-                    Tools::log()->warning('ivarep-subaccount-not-found');
+                    Tools::log()->warning('ivarep-subaccount-not-found', [
+                        '%tax%' => $tax->codimpuesto,
+                        '%exercise%' => $this->exercise->codejercicio
+                    ]);
                     return false;
                 }
                 $subAccIn = $tax->getInputIntraTaxAccount($this->exercise->codejercicio);
                 if (false === $subAccIn->exists()) {
-                    Tools::log()->warning('ivasop-subaccount-not-found');
+                    Tools::log()->warning('ivasop-subaccount-not-found', [
+                        '%tax%' => $tax->codimpuesto,
+                        '%exercise%' => $this->exercise->codejercicio
+                    ]);
                     return false;
                 }
 
@@ -378,16 +424,21 @@ class InvoiceToAccounting extends AccountingClass
 
             $subAccOut = $tax->getOutputTaxAccount($this->exercise->codejercicio);
             if (false === $subAccOut->exists()) {
-                Tools::log()->warning('ivarep-subaccount-not-found');
+                Tools::log()->warning('ivarep-subaccount-not-found', [
+                    '%tax%' => $tax->codimpuesto,
+                    '%exercise%' => $this->exercise->codejercicio
+                ]);
                 return false;
             }
             $subAccOutSurcharge = $tax->getOutputSurchargeAccount($this->exercise->codejercicio);
             if (false === $subAccOutSurcharge->exists()) {
-                Tools::log()->warning('ivarepre-subaccount-not-found');
+                Tools::log()->warning('ivarepre-subaccount-not-found', [
+                    '%tax%' => $tax->codimpuesto,
+                    '%exercise%' => $this->exercise->codejercicio
+                ]);
                 return false;
             }
 
-            // add tax lines
             $done = $this->addTaxLine($entry, $subAccOut, $this->counterpart, false, $value) &&
                 $this->addSurchargeLine($entry, $subAccOutSurcharge, $this->counterpart, false, $value);
             if (false === $done) {
@@ -398,6 +449,9 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Añade la línea del proveedor al asiento y guarda su subcuenta como contrapartida
+     * para las siguientes líneas (IVA, IRPF, mercancía).
+     *
      * @param Asiento $entry
      *
      * @return bool
@@ -406,14 +460,17 @@ class InvoiceToAccounting extends AccountingClass
     {
         $supplier = new Proveedor();
         if (false === $supplier->load($this->document->codproveedor)) {
-            Tools::log()->warning('supplier-not-found');
+            Tools::log()->warning('supplier-not-found', ['%supplier%' => $this->document->codproveedor]);
             $this->counterpart = null;
             return false;
         }
 
         $subAccount = $this->getSupplierAccount($supplier);
         if (false === $subAccount->exists()) {
-            Tools::log()->warning('supplier-account-not-found');
+            Tools::log()->warning('supplier-account-not-found', [
+                '%supplier%' => $this->document->codproveedor,
+                '%exercise%' => $this->exercise->codejercicio
+            ]);
             $this->counterpart = null;
             return false;
         }
@@ -423,7 +480,9 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Perform the initial checks to continue with the accounting process
+     * Comprobaciones previas a la contabilización: el documento no está ya contabilizado,
+     * tiene total, el ejercicio existe y está abierto, tiene plan contable, los subtotales
+     * se calculan correctamente y hay cuentas dadas de alta en ese ejercicio.
      *
      * @return bool
      */
@@ -450,11 +509,11 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         if (false === $this->loadSubtotals()) {
-            Tools::log()->warning('invoice-subtotals-error');
+            Tools::log()->warning('invoice-subtotals-error', ['%document%' => $this->document->codigo]);
             return false;
         }
 
-        $where = [new DataBaseWhere('codejercicio', $this->document->codejercicio)];
+        $where = [Where::eq('codejercicio', $this->document->codejercicio)];
         if (0 === Cuenta::count($where)) {
             Tools::log()->warning('accounting-data-missing', ['%exerciseName%' => $this->document->codejercicio]);
             return false;
@@ -470,7 +529,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Generate the accounting entry for a purchase document.
+     * Genera el asiento contable para un documento de compra.
      */
     protected function purchaseAccountingEntry(): void
     {
@@ -481,7 +540,7 @@ class InvoiceToAccounting extends AccountingClass
         $entry = new Asiento();
         $this->setAccountingData($entry, $concept);
         if (false === $entry->save()) {
-            Tools::log()->warning('accounting-entry-error');
+            Tools::log()->warning('accounting-entry-error', ['%document%' => $this->document->codigo]);
             return;
         }
 
@@ -539,7 +598,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Generate the accounting entry for a sales document.
+     * Genera el asiento contable para un documento de venta.
      */
     protected function salesAccountingEntry(): void
     {
@@ -550,7 +609,7 @@ class InvoiceToAccounting extends AccountingClass
         $entry = new Asiento();
         $this->setAccountingData($entry, $concept);
         if (false === $entry->save()) {
-            Tools::log()->warning('accounting-entry-error');
+            Tools::log()->warning('accounting-entry-error', ['%document%' => $this->document->codigo]);
             return;
         }
 
@@ -608,7 +667,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Assign the document data to the accounting entry
+     * Asigna al asiento los datos básicos del documento (ejercicio, concepto, fecha,
+     * empresa, importe) y copia el diario y el canal analítico desde la Serie.
      *
      * @param Asiento $entry
      * @param string $concept
@@ -622,7 +682,6 @@ class InvoiceToAccounting extends AccountingClass
         $entry->idempresa = $this->document->idempresa;
         $entry->importe = $this->document->total;
 
-        // Assign analytical data defined in Serie model
         $serie = new Serie();
         $serie->load($this->document->codserie);
 

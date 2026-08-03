@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014       Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Template\ModelTrait;
@@ -36,18 +35,10 @@ class PresupuestoCliente extends SalesDocument
 {
     use ModelTrait;
 
-    /**
-     * Date on which the validity of the estimation ends.
-     *
-     * @var string
-     */
+    /** @var string Fecha hasta la que se mantiene la validez del presupuesto. */
     public $finoferta;
 
-    /**
-     * Primary key.
-     *
-     * @var integer
-     */
+    /** @var integer Identificador único del presupuesto de cliente. */
     public $idpresupuesto;
 
     public function clear(): void
@@ -68,9 +59,8 @@ class PresupuestoCliente extends SalesDocument
      */
     public function getLines(): array
     {
-        $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
         $orderBy = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-        return LineaPresupuesto::all($where, $orderBy, 0, 0);
+        return LineaPresupuesto::allWhereEq('idpresupuesto', $this->idpresupuesto, $orderBy);
     }
 
     /**

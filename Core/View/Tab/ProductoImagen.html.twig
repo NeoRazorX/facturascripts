@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,7 +49,7 @@
                             <div class="col">
                                 {{ trans('images') }}
                                 <input type="file" name="newfiles[]" class="form-control" multiple=""
-                                       accept="image/png, image/jpeg, image/gif" required/>
+                                       accept="image/gif, image/jpeg, image/png" required/>
                                 <p class="text-muted mb-2">
                                     {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
                                 </p>

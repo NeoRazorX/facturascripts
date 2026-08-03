@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,9 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
+/**
+ * Controlador para editar un único elemento del modelo PuntoInteresCiudad
+ */
 class EditPuntoInteresCiudad extends EditController
 {
     public function getModelClassName(): string

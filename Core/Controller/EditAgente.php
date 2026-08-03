@@ -19,16 +19,16 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Lib\ExtendedController\ListView;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
- * Controller to edit a single item from the Agente model
+ * Controlador para editar un único elemento del modelo Agente
  *
  * @author Carlos Garcia Gomez            <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal  <yopli2000@gmail.com>
@@ -44,8 +44,8 @@ class EditAgente extends ComercialContactController
     public function calcAgentInvoicePending(): string
     {
         $where = [
-            new DataBaseWhere('codagente', $this->getViewModelValue($this->getMainViewName(), 'codagente')),
-            new DataBaseWhere('pagada', false)
+            Where::eq('codagente', $this->mainTabModelValue('codagente')),
+            Where::eq('pagada', false)
         ];
 
         $totalModel = TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
@@ -157,11 +157,10 @@ class EditAgente extends ComercialContactController
         if ($return && $this->active == 'EditContacto') {
             // update agent data when contact data is updated
             $agente = new Agente();
-            $where = [new DataBaseWhere('idcontacto', $this->views[$this->active]->model->idcontacto)];
-            if ($agente->load('', $where)) {
-                $agente->email = $this->views[$this->active]->model->email;
-                $agente->telefono1 = $this->views[$this->active]->model->telefono1;
-                $agente->telefono2 = $this->views[$this->active]->model->telefono2;
+            if ($agente->loadWhereEq('idcontacto', $this->activeTab()->model->idcontacto)) {
+                $agente->email = $this->activeTab()->model->email;
+                $agente->telefono1 = $this->activeTab()->model->telefono1;
+                $agente->telefono2 = $this->activeTab()->model->telefono2;
                 $agente->save();
             }
         }
@@ -177,16 +176,16 @@ class EditAgente extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'EditContacto':
-                $idcontacto = $this->getViewModelValue($mvn, 'idcontacto');
+                $idcontacto = $this->mainTabModelValue('idcontacto');
                 if (empty($idcontacto)) {
                     $view->setSettings('active', false);
                     break;
                 }
-                $where = [new DataBaseWhere('idcontacto', $idcontacto)];
+                $where = [Where::eq('idcontacto', $idcontacto)];
                 $view->loadData('', $where);
                 $this->loadLanguageValues($viewName);
                 break;
@@ -196,24 +195,24 @@ class EditAgente extends ComercialContactController
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
-                $codagente = $this->getViewModelValue($mvn, 'codagente');
-                $where = [new DataBaseWhere('codagente', $codagente)];
+                $codagente = $this->mainTabModelValue('codagente');
+                $where = [Where::eq('codagente', $codagente)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListEmailSent':
-                $email = $this->getViewModelValue($mvn, 'email');
+                $email = $this->mainTabModelValue('email');
                 if (empty($email)) {
                     $view->setSettings('active', false);
                     break;
                 }
 
-                $where = [new DataBaseWhere('addressee', $email)];
+                $where = [Where::eq('addressee', $email)];
                 $view->loadData('', $where);
 
                 // añadimos un botón para enviar un nuevo email
                 $view->addButton([
-                    'action' => 'SendMail?email=' . $email,
+                    'action' => 'SendMail?email-to=' . $email,
                     'color' => 'success',
                     'icon' => 'fa-solid fa-envelope',
                     'label' => 'send',
@@ -235,7 +234,7 @@ class EditAgente extends ComercialContactController
      */
     protected function loadLanguageValues(string $viewName): void
     {
-        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        $columnLangCode = $this->tab($viewName)->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
             foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
@@ -248,6 +247,5 @@ class EditAgente extends ComercialContactController
 
     protected function setCustomWidgetValues(string $viewName): void
     {
-        ;
     }
 }

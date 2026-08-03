@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
@@ -32,7 +32,9 @@ use ParseCsv\Csv;
 use SimpleXMLElement;
 
 /**
- * Description of AccountingPlanImport
+ * Importa un plan contable (cuentas y subcuentas) en un ejercicio desde un fichero
+ * CSV o XML, dentro de una transacción. Actualiza primero la tabla de cuentas
+ * especiales y, si algo falla, revierte todos los cambios.
  *
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @author       Raul Jimenez             <comercial@nazcanetworks.com>
@@ -46,28 +48,47 @@ class AccountingPlanImport
     protected $dataBase;
 
     /**
-     * Exercise related to the accounting plan.
+     * Códigos de subcuenta ya convertidos en esta importación, para detectar colisiones.
+     *
+     * @var array
+     */
+    protected $convertedCodes = [];
+
+    /**
+     * Ejercicio sobre el que se importa el plan contable.
      *
      * @var Ejercicio
      */
     protected $exercise;
+
+    /**
+     * Longitud a la que convertir las subcuentas importadas. 0 para usar la del fichero.
+     *
+     * @var int
+     */
+    protected $subaccountLength = 0;
 
     public function __construct()
     {
         $this->dataBase = new DataBase();
         $this->exercise = new Ejercicio();
 
-        // force table checks before any transaction
+        // forzamos la comprobación/creación de tablas antes de abrir la transacción,
+        // porque dentro de la transacción los CREATE TABLE no se pueden hacer
         new Cuenta();
         new CuentaEspecial();
         new Subcuenta();
     }
 
     /**
-     * Import data from CSV file.
+     * Importa el plan contable desde un fichero CSV en el ejercicio indicado.
+     * Todo el proceso se ejecuta en una transacción: si algo falla, se revierte.
      */
-    public function importCSV(string $filePath, string $codejercicio): bool
+    public function importCSV(string $filePath, string $codejercicio, int $subaccountLength = 0): bool
     {
+        $this->subaccountLength = $subaccountLength;
+        $this->convertedCodes = [];
+
         if (false === $this->exercise->load($codejercicio)) {
             Tools::log()->error('exercise-not-found');
             return false;
@@ -97,10 +118,15 @@ class AccountingPlanImport
     }
 
     /**
-     * Import data from XML file.
+     * Importa el plan contable desde un fichero XML en el ejercicio indicado,
+     * procesando en orden grupos, epígrafes, cuentas y subcuentas dentro de una
+     * transacción. Si algo falla, se revierte todo.
      */
-    public function importXML(string $filePath, string $codejercicio): bool
+    public function importXML(string $filePath, string $codejercicio, int $subaccountLength = 0): bool
     {
+        $this->subaccountLength = $subaccountLength;
+        $this->convertedCodes = [];
+
         if (false === $this->exercise->load($codejercicio)) {
             Tools::log()->error('exercise-not-found');
             return false;
@@ -113,6 +139,19 @@ class AccountingPlanImport
 
         try {
             $this->dataBase->beginTransaction();
+
+            // la longitud final de las subcuentas debe coincidir con la del ejercicio
+            $lengths = [];
+            foreach ($data->subcuenta as $xmlSubaccount) {
+                $lengths[] = strlen((string)$xmlSubaccount->codsubcuenta);
+            }
+            $target = $this->subaccountLength > 0 || empty($lengths) ?
+                $this->subaccountLength :
+                (int)max($lengths);
+            if ($target > 0 && false === $this->checkSubaccountLength($target)) {
+                $this->dataBase->rollback();
+                return false;
+            }
 
             $this->updateSpecialAccounts();
             if (false === $this->importEpigrafeGroup($data->grupo_epigrafes)) {
@@ -142,15 +181,84 @@ class AccountingPlanImport
     }
 
     /**
-     * Insert/update and account in accounting plan.
+     * Comprueba que la longitud de las subcuentas del plan coincide con la del
+     * ejercicio. Si no coincide y el ejercicio está vacío, alinea la longitud
+     * del ejercicio avisando al usuario; si ya tiene subcuentas, devuelve false.
+     */
+    protected function checkSubaccountLength(int $length): bool
+    {
+        if ($length == $this->exercise->longsubcuenta) {
+            return true;
+        }
+
+        // si el ejercicio ya tiene subcuentas, no se puede cambiar la longitud
+        $where = [Where::eq('codejercicio', $this->exercise->codejercicio)];
+        if (Subcuenta::count($where) > 0) {
+            Tools::log()->error('accounting-plan-different-subaccount-length', [
+                '%length%' => $length,
+                '%exerciseLength%' => $this->exercise->longsubcuenta,
+            ]);
+            return false;
+        }
+
+        // como el ejercicio está vacío, alineamos su longitud con la del plan, avisando
+        $this->exercise->longsubcuenta = $length;
+        if (false === $this->exercise->save()) {
+            return false;
+        }
+
+        Tools::log()->warning('exercise-subaccount-length-changed', [
+            '%code%' => $this->exercise->codejercicio,
+            '%length%' => $length,
+        ]);
+        return true;
+    }
+
+    /**
+     * Convierte un código de subcuenta a la longitud indicada, quitando o añadiendo
+     * ceros en la mayor secuencia de ceros del código. Si el código no tiene ceros,
+     * se insertan tras el código de la cuenta padre. Devuelve cadena vacía si el
+     * código no cabe en la longitud pedida.
+     */
+    protected function convertSubaccountCode(string $code, string $parentCode, int $length): string
+    {
+        if (strlen($code) === $length) {
+            return $code;
+        }
+
+        // localizamos la mayor secuencia de ceros después del código padre,
+        // que es donde quitamos o añadimos ceros
+        $suffix = substr($code, strlen($parentCode));
+        preg_match_all('/0+/', $suffix, $matches, PREG_OFFSET_CAPTURE);
+        $pos = 0;
+        $len = 0;
+        foreach ($matches[0] as $match) {
+            if (strlen($match[0]) > $len) {
+                $len = strlen($match[0]);
+                $pos = $match[1];
+            }
+        }
+
+        $left = $parentCode . substr($suffix, 0, $pos);
+        $right = substr($suffix, $pos + $len);
+        $count = $length - strlen($left) - strlen($right);
+        if ($count < 0) {
+            return '';
+        }
+
+        return $left . str_repeat('0', $count) . $right;
+    }
+
+    /**
+     * Crea una cuenta en el ejercicio si no existe. Si ya existe con ese código,
+     * la deja como está (no actualiza descripción ni cuenta especial).
      */
     protected function createAccount(string $code, string $definition, ?string $parentCode = '', ?string $codcuentaesp = ''): bool
     {
-        // the account exists?
         $account = new Cuenta();
         $where = [
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-            new DataBaseWhere('codcuenta', $code)
+            Where::eq('codejercicio', $this->exercise->codejercicio),
+            Where::eq('codcuenta', $code)
         ];
         if ($account->loadWhere($where)) {
             return true;
@@ -165,38 +273,43 @@ class AccountingPlanImport
     }
 
     /**
-     * Insert or update an account in accounting Plan.
+     * Crea una subcuenta en el ejercicio si no existe. Si ya existe con ese
+     * código, la deja como está.
      */
     protected function createSubaccount(string $code, string $description, string $parentCode, ?string $codcuentaesp = ''): bool
     {
-        // the subaccount exists?
+        // convertimos el código a la longitud de subcuenta del ejercicio,
+        // comprobando que no colisione con otro ya convertido en esta importación
+        $newCode = $this->convertSubaccountCode($code, $parentCode, (int)$this->exercise->longsubcuenta);
+        if ('' === $newCode || isset($this->convertedCodes[$newCode])) {
+            Tools::log()->error('cant-convert-subaccount-code', [
+                '%code%' => $code,
+                '%length%' => $this->exercise->longsubcuenta,
+            ]);
+            return false;
+        }
+        $this->convertedCodes[$newCode] = true;
+
         $subaccount = new Subcuenta();
         $where = [
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-            new DataBaseWhere('codsubcuenta', $code)
+            Where::eq('codejercicio', $this->exercise->codejercicio),
+            Where::eq('codsubcuenta', $newCode)
         ];
         if ($subaccount->loadWhere($where)) {
             return true;
         }
 
-        // update exercise configuration
-        if ($this->exercise->longsubcuenta != strlen($code)) {
-            $this->exercise->longsubcuenta = strlen($code);
-            if (false === $this->exercise->save()) {
-                return false;
-            }
-        }
-
         $subaccount->codcuenta = $parentCode;
         $subaccount->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
         $subaccount->codejercicio = $this->exercise->codejercicio;
-        $subaccount->codsubcuenta = $code;
+        $subaccount->codsubcuenta = $newCode;
         $subaccount->descripcion = $description;
         return $subaccount->save();
     }
 
     /**
-     * returns an array width the content of xml file
+     * Devuelve el contenido del XML como SimpleXMLElement, o un array vacío si el
+     * fichero no existe.
      *
      * @param string $filePath
      *
@@ -212,7 +325,7 @@ class AccountingPlanImport
     }
 
     /**
-     * insert Cuenta of accounting plan
+     * Importa las cuentas del XML (nodo <cuenta>) creándolas bajo su epígrafe.
      */
     protected function importCuenta(SimpleXMLElement $data): bool
     {
@@ -226,7 +339,7 @@ class AccountingPlanImport
     }
 
     /**
-     * insert Epigrafe of accounting plan
+     * Importa los epígrafes del XML (nodo <epigrafes>) creándolos bajo su grupo.
      */
     protected function importEpigrafe(SimpleXMLElement $data): bool
     {
@@ -240,7 +353,7 @@ class AccountingPlanImport
     }
 
     /**
-     * Insert Groups of accounting plan
+     * Importa los grupos del XML (nodo <grupo_epigrafes>) como cuentas raíz.
      */
     protected function importEpigrafeGroup(SimpleXMLElement $data): bool
     {
@@ -254,7 +367,7 @@ class AccountingPlanImport
     }
 
     /**
-     * Import subaccounts of accounting plan
+     * Importa las subcuentas del XML (nodo <subcuenta>) bajo su cuenta padre.
      */
     protected function importSubcuenta(SimpleXMLElement $data): bool
     {
@@ -268,7 +381,10 @@ class AccountingPlanImport
     }
 
     /**
-     * Load accounting plan from CSV File and imports in accounting plan.
+     * Lee el CSV (código, descripción, cuenta especial) y, deduciendo los niveles
+     * de la jerarquía por la longitud de los códigos, crea cuentas para la longitud
+     * mínima e intermedia, y subcuentas para la longitud máxima. El padre de cada
+     * código se localiza buscando otro código que sea prefijo suyo.
      */
     protected function processCsvData(string $filePath): bool
     {
@@ -305,6 +421,24 @@ class AccountingPlanImport
 
         $minLength = min($lengths);
         $maxLength = max($lengths);
+        $target = $this->subaccountLength > 0 ? $this->subaccountLength : $maxLength;
+
+        // la longitud final de las subcuentas debe ser mayor que la de cualquier cuenta
+        $maxAccountLength = $lengths[count($lengths) - 2];
+        if ($target <= $maxAccountLength) {
+            foreach (array_keys($accountPlan) as $key) {
+                if (strlen((string)$key) == $maxAccountLength) {
+                    Tools::log()->error('account-code-bigger-than-subaccounts', ['%code%' => $key]);
+                    break;
+                }
+            }
+            return false;
+        }
+
+        // la longitud final de las subcuentas debe coincidir con la del ejercicio
+        if (false === $this->checkSubaccountLength($target)) {
+            return false;
+        }
         $keys = array_keys($accountPlan);
         ksort($accountPlan);
 
@@ -334,7 +468,8 @@ class AccountingPlanImport
     }
 
     /**
-     * Search the parent of account in accounting Plan.
+     * Devuelve el código padre del código indicado: el código más largo de la lista
+     * que sea prefijo del actual (sin incluirlo a sí mismo).
      */
     protected function searchParent(array &$accountCodes, string $account): string
     {
@@ -352,9 +487,11 @@ class AccountingPlanImport
     }
 
     /**
-     * Update special accounts from data file.
+     * Actualiza la tabla de cuentas especiales desde el CSV de datos por defecto
+     * (Core/Data) antes de importar el plan, para que los códigos de cuenta
+     * especial referenciados estén disponibles.
      */
-    protected function updateSpecialAccounts()
+    protected function updateSpecialAccounts(): void
     {
         $sql = CSVImport::updateTableSQL(CuentaEspecial::tableName());
         if (!empty($sql) && $this->dataBase->tableExists(CuentaEspecial::tableName())) {

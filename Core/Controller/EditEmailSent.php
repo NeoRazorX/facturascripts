@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,14 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
- * Controller to edit a single register of EmailSent
+ * Controlador para editar un único elemento del modelo EmailSent
  *
  * @author Raul                     <raljopa@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
@@ -54,9 +54,8 @@ class EditEmailSent extends EditController
     protected function contactAction(): void
     {
         $contact = new Contacto();
-        $email = $this->getViewModelValue($this->getMainViewName(), 'addressee');
-        $where = [new DataBaseWhere('email', $email)];
-        if ($contact->loadWhere($where)) {
+        $email = $this->mainTabModelValue('addressee');
+        if ($contact->loadWhereEq('email', $email)) {
             $this->redirect($contact->url());
             return;
         }
@@ -76,8 +75,8 @@ class EditEmailSent extends EditController
         $this->createViewAttachments();
 
         // buttons
-        $mainView = $this->getMainViewName();
-        $this->addButton($mainView, [
+        $mainView = $this->mainTabName();
+        $this->tab($mainView)->addButton([
             'action' => 'contact',
             'color' => 'info',
             'icon' => 'fa-solid fa-address-book',
@@ -162,11 +161,11 @@ class EditEmailSent extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mvn = $this->getMainViewName();
+        $mvn = $this->mainTabName();
 
         switch ($viewName) {
             case 'EmailSentAttachment':
-                $attachments = $this->views[$mvn]->model->getAttachments();
+                $attachments = $this->tab($mvn)->model->getAttachments();
 
                 // si no hay adjuntos ocultamos la pestaña
                 if (empty($attachments)) {
@@ -179,11 +178,11 @@ class EditEmailSent extends EditController
                 break;
 
             case 'ListEmailSent':
-                $addressee = $this->getViewModelValue($mvn, 'addressee');
-                $id = $this->getViewModelValue($mvn, 'id');
+                $addressee = $this->mainTabModelValue('addressee');
+                $id = $this->mainTabModelValue('id');
                 $where = [
-                    new DataBaseWhere('addressee', $addressee),
-                    new DataBaseWhere('id', $id, '!=')
+                    Where::eq('addressee', $addressee),
+                    Where::notEq('id', $id)
                 ];
                 $view->loadData('', $where);
                 break;

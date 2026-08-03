@@ -27,8 +27,8 @@
                         </div>
                     </th>
                     <th class="text-center">{{ trans('allow-get-data') }}</th>
-                    <th class="text-center">{{ trans('allow-put-data') }}</th>
                     <th class="text-center">{{ trans('allow-post-data') }}</th>
+                    <th class="text-center">{{ trans('allow-put-data') }}</th>
                     <th class="text-center">{{ trans('allow-delete-data') }}</th>
                 </tr>
                 </thead>
@@ -43,15 +43,15 @@
                                    type="checkbox"/>
                         </div>
                     </td>
-                    <td>
-                        <div class="form-check d-flex justify-content-center">
-                            <input class="all-permission form-check-input" id="checkbox-all-allowput" value="allowput"
-                                   type="checkbox"/>
-                        </div>
-                    </td>
                     <td class="text-center">
                         <div class="form-check d-flex justify-content-center">
                             <input class="all-permission form-check-input" id="checkbox-all-allowpost" value="allowpost"
+                                   type="checkbox"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-check d-flex justify-content-center">
+                            <input class="all-permission form-check-input" id="checkbox-all-allowput" value="allowput"
                                    type="checkbox"/>
                         </div>
                     </td>
@@ -78,22 +78,22 @@
                         </td>
                         <td>
                             <div class="form-check d-flex justify-content-center">
-                                {% if rule.allowput %}
-                                    <input type="checkbox" name="allowput[]" value="{{ resource }}"
+                                {% if rule.allowpost %}
+                                    <input type="checkbox" name="allowpost[]" value="{{ resource }}"
                                            class="form-check-input" checked/>
                                 {% else %}
-                                    <input type="checkbox" name="allowput[]" value="{{ resource }}"
+                                    <input type="checkbox" name="allowpost[]" value="{{ resource }}"
                                            class="form-check-input"/>
                                 {% endif %}
                             </div>
                         </td>
                         <td>
                             <div class="form-check d-flex justify-content-center">
-                                {% if rule.allowpost %}
-                                    <input type="checkbox" name="allowpost[]" value="{{ resource }}"
+                                {% if rule.allowput %}
+                                    <input type="checkbox" name="allowput[]" value="{{ resource }}"
                                            class="form-check-input" checked/>
                                 {% else %}
-                                    <input type="checkbox" name="allowpost[]" value="{{ resource }}"
+                                    <input type="checkbox" name="allowput[]" value="{{ resource }}"
                                            class="form-check-input"/>
                                 {% endif %}
                             </div>

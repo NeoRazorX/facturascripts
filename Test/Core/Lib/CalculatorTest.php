@@ -290,12 +290,14 @@ final class CalculatorTest extends TestCase
         $this->assertTrue(Calculator::calculate($doc, $lines, false));
 
         // comprobamos el documento
+        // el proveedor tiene régimen RE, por lo que se aplica el recargo aunque la empresa no lo tenga
+        // (caso de empresas con varias actividades donde solo una usa RE)
         $this->assertEquals(200.0, $doc->neto, 'bad-neto');
         $this->assertEquals(200.0, $doc->netosindto, 'bad-netosindto');
-        $this->assertEquals(242.0, $doc->total, 'bad-total');
+        $this->assertEquals(252.4, $doc->total, 'bad-total');
         $this->assertEquals(42.0, $doc->totaliva, 'bad-totaliva');
         $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
-        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(10.4, $doc->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos

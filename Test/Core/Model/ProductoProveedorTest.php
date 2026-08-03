@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\Calculator;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -152,8 +152,8 @@ final class ProductoProveedorTest extends TestCase
 
         $model = new ProductoProveedor();
         $productosProveedor = $model->all([
-            new DataBaseWhere('referencia', $product->referencia),
-            new DataBaseWhere('codproveedor', $subject->codproveedor),
+            Where::eq('referencia', $product->referencia),
+            Where::eq('codproveedor', $subject->codproveedor),
         ]);
 
         $this->assertCount(1, $productosProveedor);
@@ -177,6 +177,96 @@ final class ProductoProveedorTest extends TestCase
         $this->assertTrue($subject->delete());
         $this->assertTrue($productoProveedor->delete());
         $this->assertTrue($product->delete());
+    }
+
+    /**
+     * Comprobamos que si un Albarán tiene una fecha futura (por error del usuario),
+     * el ProductoProveedor no guarda una fecha de actualización en el futuro.
+     * De lo contrario, una compra posterior con fecha correcta quedaría bloqueada
+     * por el guard `actualizado <= fecha` del PurchaseDocumentWorker y el precio
+     * de coste no se actualizaría hasta llegar a esa fecha futura.
+     */
+    public function testItDoesNotStoreFutureDateFromAlbaran(): void
+    {
+        Tools::settingsSet('default', 'updatesupplierprices', true);
+
+        // creamos un proveedor
+        $subject = $this->getRandomSupplier();
+        $this->assertTrue($subject->save());
+
+        // creamos un producto
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save());
+
+        // creamos un albarán con fecha del año que viene (error del usuario)
+        $futureDate = Tools::dateOperation(Tools::date(), '+1 year');
+        $doc = new AlbaranProveedor();
+        $doc->setSubject($subject);
+        $doc->fecha = $futureDate;
+        $this->assertTrue($doc->save());
+
+        // añadimos el producto con un precio alto
+        $line = $doc->getNewProductLine($product->referencia);
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save());
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+
+        // procesamos la cola de trabajos
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+
+        // el ProductoProveedor no debe tener una fecha de actualización futura
+        $productoProveedor = new ProductoProveedor();
+        $this->assertTrue($productoProveedor->loadWhere([
+            Where::eq('referencia', $product->referencia),
+            Where::eq('codproveedor', $subject->codproveedor),
+        ]));
+        $this->assertEquals(100, $productoProveedor->precio);
+        $this->assertLessThanOrEqual(
+            strtotime(Tools::dateTime()),
+            strtotime($productoProveedor->actualizado),
+            'La fecha de actualización del ProductoProveedor no puede estar en el futuro'
+        );
+
+        // una compra posterior con fecha correcta (hoy) y menor precio debe actualizar el precio
+        $doc2 = new AlbaranProveedor();
+        $doc2->setSubject($subject);
+        $this->assertTrue($doc2->save());
+        $line2 = $doc2->getNewProductLine($product->referencia);
+        $line2->pvpunitario = 50;
+        $this->assertTrue($line2->save());
+        $lines2 = [$line2];
+        $this->assertTrue(Calculator::calculate($doc2, $lines2, true));
+
+        // procesamos la cola de trabajos
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+
+        // el precio debe haberse actualizado al de la última compra, no quedar bloqueado
+        $this->assertTrue($productoProveedor->loadWhere([
+            Where::eq('referencia', $product->referencia),
+            Where::eq('codproveedor', $subject->codproveedor),
+        ]));
+        $this->assertEquals(
+            50,
+            $productoProveedor->precio,
+            'La compra posterior debería actualizar el precio pese a la fecha futura previa'
+        );
+
+        // eliminamos
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($doc2->delete());
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
+        $this->assertTrue($product->delete());
+        $this->assertTrue(ProductoProveedor::deleteWhere([]));
     }
 
     /**
@@ -252,8 +342,8 @@ final class ProductoProveedorTest extends TestCase
 
         // buscamos el producto del proveedor
         $productosProveedor = ProductoProveedor::all([
-            new DataBaseWhere('referencia', $product->referencia),
-            new DataBaseWhere('codproveedor', $subject->codproveedor),
+            Where::eq('referencia', $product->referencia),
+            Where::eq('codproveedor', $subject->codproveedor),
         ]);
 
         // comprobamos que se han creado dos productos proveedor
@@ -457,6 +547,47 @@ final class ProductoProveedorTest extends TestCase
         $this->assertTrue($result);
 
         $this->assertTrue($productoProveedor->delete());
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
+    }
+
+    /**
+     * Comprobamos que test() no permite guardar una fecha de actualización
+     * en el futuro, ya que bloquearía futuras actualizaciones del precio de coste.
+     */
+    public function testItClampsFutureActualizado(): void
+    {
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save());
+
+        $productoProveedor = new ProductoProveedor();
+        $productoProveedor->referencia = 'test';
+        $productoProveedor->codproveedor = $proveedor->codproveedor;
+
+        // asignamos una fecha del año que viene (error)
+        $productoProveedor->actualizado = Tools::dateTime(Tools::dateOperation(Tools::date(), '+1 year'));
+
+        $this->assertTrue($productoProveedor->test());
+
+        // la fecha no puede quedar en el futuro
+        $this->assertLessThanOrEqual(
+            strtotime(Tools::dateTime()),
+            strtotime($productoProveedor->actualizado),
+            'La fecha de actualización no puede quedar en el futuro'
+        );
+
+        // una fecha pasada válida no debe alterarse
+        $pastDate = Tools::dateTime(Tools::dateOperation(Tools::date(), '-1 year'));
+        $productoProveedor->actualizado = $pastDate;
+        $this->assertTrue($productoProveedor->test());
+        $this->assertEquals($pastDate, $productoProveedor->actualizado);
+
+        // un valor vacío se rellena con la fecha actual
+        $productoProveedor->actualizado = null;
+        $this->assertTrue($productoProveedor->test());
+        $this->assertNotNull($productoProveedor->actualizado);
+
+        // eliminamos
         $this->assertTrue($proveedor->getDefaultAddress()->delete());
         $this->assertTrue($proveedor->delete());
     }

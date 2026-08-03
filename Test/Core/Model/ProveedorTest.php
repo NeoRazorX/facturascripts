@@ -166,32 +166,29 @@ final class ProveedorTest extends TestCase
         $proveedor->cifnif = '';
         $this->assertTrue($proveedor->save());
 
-        $check1 = $proveedor->checkVies();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
-        }
-        $this->assertFalse($check1);
+        // simulamos respuesta de VIES en lugar de pegarle al servicio real.
+        try {
+            // sin cifnif (o error de VIES) -> false
+            Vies::simulateViesResponse(Vies::RESULT_ERROR);
+            $this->assertFalse($proveedor->checkVies());
 
-        // asignamos dirección de Italia
-        $address = $proveedor->getDefaultAddress();
-        $address->codpais = 'ITA';
-        $this->assertTrue($address->save());
+            // asignamos dirección de Italia
+            $address = $proveedor->getDefaultAddress();
+            $address->codpais = 'ITA';
+            $this->assertTrue($address->save());
 
-        // asignamos un cif/nif incorrecto
-        $proveedor->cifnif = '12345678A';
-        $check2 = $proveedor->checkVies();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
-        }
-        $this->assertFalse($check2);
+            // cifnif inválido -> false
+            $proveedor->cifnif = '12345678A';
+            Vies::simulateViesResponse(Vies::RESULT_INVALID);
+            $this->assertFalse($proveedor->checkVies());
 
-        // asignamos un cif/nif correcto
-        $proveedor->cifnif = '02839750995';
-        $check3 = $proveedor->checkVies();
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+            // cifnif válido -> true
+            $proveedor->cifnif = '02839750995';
+            Vies::simulateViesResponse(Vies::RESULT_VALID);
+            $this->assertTrue($proveedor->checkVies());
+        } finally {
+            Vies::simulateViesResponse(null);
         }
-        $this->assertTrue($check3);
 
         // eliminamos
         $this->assertTrue($address->delete());

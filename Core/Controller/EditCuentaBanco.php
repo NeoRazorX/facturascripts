@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
- * Controller to edit a single item from the CuentaBanco model
+ * Controlador para editar un único elemento del modelo CuentaBanco
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -67,7 +67,7 @@ class EditCuentaBanco extends EditController
 
         // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->mainTab()->disableColumn('company');
         }
 
         $this->createSubAccountingView();
@@ -139,12 +139,15 @@ class EditCuentaBanco extends EditController
         switch ($viewName) {
             case 'ListSubcuenta':
                 $codejercicios = $this->getExerciseOfCompany();
-                $codsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'codsubcuenta');
+                $codsubcuenta = $this->mainTabModelValue('codsubcuenta');
+                if (empty($codejercicios) || empty($codsubcuenta)) {
+                    break;
+                }
                 $where = [
                     Where::in('codejercicio', $codejercicios),
                     Where::eq('codsubcuenta', $codsubcuenta),
                 ];
-                $codsubcuenta2 = $this->getViewModelValue($this->getMainViewName(), 'codsubcuentagasto');
+                $codsubcuenta2 = $this->mainTabModelValue('codsubcuentagasto');
                 if ($codsubcuenta2 && $codsubcuenta2 != $codsubcuenta) {
                     $where[] = Where::orEq('codsubcuenta', $codsubcuenta2);
                 }
@@ -179,7 +182,7 @@ class EditCuentaBanco extends EditController
     {
         $result = [];
         $where = [
-            Where::eq('idempresa', $this->getViewModelValue($this->getMainViewName(), 'idempresa'))
+            Where::eq('idempresa', $this->mainTabModelValue('idempresa'))
         ];
         foreach ($this->codeModel->all('ejercicios', 'codejercicio', 'codejercicio', false, $where) as $row) {
             $result[] = $row->code;

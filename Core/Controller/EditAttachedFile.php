@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the AttachedFile model
+ * Controlador para editar un único elemento del modelo AttachedFile
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
@@ -60,12 +60,11 @@ class EditAttachedFile extends EditController
 
     protected function createViewsRelations(string $viewName = 'ListAttachedFileRelation')
     {
-        $this->addListView($viewName, 'AttachedFileRelation', 'related', 'fa-solid fa-copy');
-        $this->views[$viewName]->addSearchFields(['observations']);
-        $this->views[$viewName]->addOrderBy(['creationdate'], 'date', 2);
-
-        // disable button
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'AttachedFileRelation', 'related', 'fa-solid fa-copy')
+            ->addSearchFields(['observations'])
+            ->addOrderBy(['creationdate'], 'date', 2)
+            // desactivamos el botón de crear
+            ->setSettings('btnNew', false);
     }
 
     /**
@@ -76,7 +75,7 @@ class EditAttachedFile extends EditController
     {
         switch ($viewName) {
             case 'ListAttachedFileRelation':
-                $where = [new DataBaseWhere('idfile', $this->getModel()->primaryColumnValue())];
+                $where = [Where::eq('idfile', $this->getModel()->primaryColumnValue())];
                 $view->loadData('', $where);
                 break;
 

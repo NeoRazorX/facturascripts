@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\ListFilter;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Core\Where;
 
 /**
  * Description of SelectFilter
@@ -45,7 +45,7 @@ class SelectFilter extends BaseFilter
     public function getDataBaseWhere(array &$where): bool
     {
         if ('' !== $this->value && null !== $this->value) {
-            $where[] = new DataBaseWhere($this->field, $this->value);
+            $where[] = Where::eq($this->field, $this->value);
             return true;
         }
 

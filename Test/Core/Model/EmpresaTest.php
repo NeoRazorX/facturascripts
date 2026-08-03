@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Tools;
@@ -63,8 +62,7 @@ final class EmpresaTest extends TestCase
 
         // comprobamos que se ha creado un almacén asociado
         $warehouse = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $company->idempresa)];
-        $this->assertTrue($warehouse->loadFromCode('', $where), 'warehouse-not-found');
+        $this->assertTrue($warehouse->loadWhereEq('idempresa', $company->idempresa), 'warehouse-not-found');
 
         // eliminamos
         $this->assertTrue($company->delete(), 'can-not-delete-company');

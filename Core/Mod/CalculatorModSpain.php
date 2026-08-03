@@ -148,7 +148,10 @@ class CalculatorModSpain extends CalculatorModClass
             $companyRegimen = $doc->getCompany()->regimeniva;
 
             $applyRecargo = ($doc instanceof SalesDocument && $docRegimen === RegimenIVA::TAX_SYSTEM_SURCHARGE)
-                || ($doc instanceof PurchaseDocument && $companyRegimen === RegimenIVA::TAX_SYSTEM_SURCHARGE);
+                || ($doc instanceof PurchaseDocument && (
+                    $companyRegimen === RegimenIVA::TAX_SYSTEM_SURCHARGE
+                    || $docRegimen === RegimenIVA::TAX_SYSTEM_SURCHARGE
+                ));
             if (false === $applyRecargo) {
                 $line->recargo = 0.0;
             }
@@ -202,9 +205,14 @@ class CalculatorModSpain extends CalculatorModClass
 
             // Recargo de equivalencia:
             // - Ventas: aplica si el CLIENTE tiene régimen RE
-            // - Compras: aplica si la EMPRESA tiene régimen RE
+            // - Compras: aplica si la EMPRESA tiene régimen RE, o si el PROVEEDOR lo tiene
+            //   (caso de empresas con varias actividades donde solo una usa RE: se marca
+            //   el régimen en el proveedor concreto).
             $applyRecargo = ($doc instanceof SalesDocument && $docRegimen === RegimenIVA::TAX_SYSTEM_SURCHARGE)
-                || ($doc instanceof PurchaseDocument && $companyRegimen === RegimenIVA::TAX_SYSTEM_SURCHARGE);
+                || ($doc instanceof PurchaseDocument && (
+                    $companyRegimen === RegimenIVA::TAX_SYSTEM_SURCHARGE
+                    || $docRegimen === RegimenIVA::TAX_SYSTEM_SURCHARGE
+                ));
             if (false === $applyRecargo) {
                 $line->recargo = 0.0;
             }

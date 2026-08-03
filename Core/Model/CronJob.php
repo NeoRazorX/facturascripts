@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use Closure;
 use Error;
+use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -37,57 +38,69 @@ class CronJob extends ModelClass
 {
     use ModelTrait;
 
-    /** @var string */
+    /** @var int */
+    const STALE_HOURS = 6;
+
+    /** @var string Fecha y hora de la última ejecución del trabajo. */
     public $date;
 
-    /** @var int */
+    /** @var int Número de ejecuciones completadas durante el día actual. */
     public $daily_exec;
 
-    /** @var bool */
+    /** @var bool Indica si la ejecución del trabajo ha finalizado. */
     public $done;
 
-    /** @var float */
+    /** @var float Duración en segundos de la última ejecución. */
     public $duration;
 
-    /** @var bool */
+    /** @var bool Indica si el trabajo programado está habilitado. */
     public $enabled;
 
-    /** @var bool */
+    /** @var bool Indica si la última ejecución terminó con un error. */
     public $failed;
 
-    /** @var int */
+    /** @var int Número acumulado de ejecuciones fallidas. */
     public $fails;
 
-    /** @var int */
+    /** @var int Identificador único del trabajo programado. */
     public $id;
 
-    /** @var string */
+    /** @var string Nombre identificativo del trabajo programado. */
     public $jobname;
 
-    /** @var float */
+    /** @var float Duración en segundos de la ejecución anterior a la última. */
     public $last_duration;
 
-    /** @var string|null */
+    /** @var int Tiempo máximo permitido para el conjunto del cron, en segundos. */
+    private static $max_execution_time = 0;
+
+    /** @var bool Indica si el exceso de tiempo máximo ya se registró en el log. */
+    private static $max_execution_time_logged = false;
+
+    /** @var string|null Fecha y hora simuladas utilizadas durante los tests. */
     private $mock_date_time;
 
-    /** @var float|null */
+    /** @var float|null Marca de tiempo simulada utilizada durante los tests. */
     private $mock_microtime;
 
-    /** @var bool */
+    /** @var bool Indica si se ha detectado otra ejecución incompatible en curso. */
     private $overlapping = false;
 
-    /** @var string */
+    /** @var string Nombre del plugin propietario del trabajo programado. */
     public $pluginname;
 
-    /** @var bool */
+    /** @var bool Indica si el trabajo debe ejecutarse según su programación. */
     private $ready = false;
 
-    /** @var int */
+    /** @var int Número de ejecuciones simultáneas actualmente en curso. */
     public $running;
 
-    /** @var float */
+    /** @var float Marca de tiempo utilizada para medir el inicio de la ejecución. */
     private $start;
 
+    /**
+     * Restablece los valores por defecto de todas las propiedades del modelo.
+     */
     public function clear(): void
     {
         parent::clear();
@@ -101,12 +114,33 @@ class CronJob extends ModelClass
         $this->running = 0;
     }
 
+    /**
+     * Elimina el límite de tiempo máximo de ejecución del cron.
+     */
+    public static function clearMaxExecutionTime(): void
+    {
+        self::$max_execution_time = 0;
+        self::$max_execution_time_logged = false;
+    }
+
+    /**
+     * Elimina la fecha y el tiempo simulados que se usan en los tests,
+     * volviendo al tiempo real.
+     */
     public function clearMocks(): void
     {
         $this->mock_date_time = null;
         $this->mock_microtime = null;
     }
 
+    /**
+     * Marca el job como listo si ha pasado el periodo indicado desde su última ejecución.
+     * Ejemplo: $job->every('6 hours')->run(...);
+     *
+     * @param string $period Periodo en formato strtotime: '1 hour', '30 minutes', '2 days', etc.
+     *
+     * @return static
+     */
     public function every(string $period): self
     {
         if (false === $this->enabled) {
@@ -129,78 +163,271 @@ class CronJob extends ModelClass
         return $this;
     }
 
+    /**
+     * Marca el job como listo el día indicado de cada mes a partir de la hora señalada.
+     *
+     * @param int $day Día del mes (1 a 31).
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everyDay(int $day, int $hour, bool $strict = false): self
     {
         $date = date('Y-m-' . $day, $this->getCurrentTimestamp());
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '1 month');
     }
 
+    /**
+     * Marca el job como listo cada día a partir de la hora indicada.
+     *
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everyDayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', $this->getCurrentTimestamp());
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '1 day');
     }
 
+    /**
+     * Marca el job como listo cada viernes a partir de la hora indicada.
+     *
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everyFridayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('friday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
+    /**
+     * Marca el job como listo el último día de cada mes a partir de la hora indicada.
+     *
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everyLastDayOfMonthAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('last day of this month', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+
+        // si todavía no toca la de este mes, usamos el último día del mes anterior,
+        // porque restar un mes a una fecha de fin de mes da fechas incorrectas
+        if (false === $strict && $this->getCurrentTimestamp() < strtotime($date . ' +' . $hour . ' hours')) {
+            $date = date('Y-m-d', strtotime('last day of last month', $this->getCurrentTimestamp()));
+        }
+
+        return $this->everyDayAux($date, $hour, $strict, '1 month');
     }
 
+    /**
+     * Marca el job como listo cada lunes a partir de la hora indicada.
+     *
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everyMondayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('monday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
+    /**
+     * Marca el job como listo cada sábado a partir de la hora indicada.
+     *
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everySaturdayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('saturday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
+    /**
+     * Marca el job como listo cada domingo a partir de la hora indicada.
+     *
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everySundayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('sunday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
+    /**
+     * Marca el job como listo cada jueves a partir de la hora indicada.
+     *
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everyThursdayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('thursday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
+    /**
+     * Marca el job como listo cada martes a partir de la hora indicada.
+     *
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everyTuesdayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('tuesday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
+    /**
+     * Marca el job como listo cada miércoles a partir de la hora indicada.
+     *
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everyWednesdayAt(int $hour, bool $strict = false): self
     {
         $date = date('Y-m-d', strtotime('wednesday', $this->getCurrentTimestamp()));
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
 
+    /**
+     * Marca el job como listo una vez al año, el día y mes indicados, a partir de la hora señalada.
+     *
+     * @param int $month Mes del año (1 a 12).
+     * @param int $day Día del mes (1 a 31).
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo se ejecuta dentro de la hora programada.
+     *                     Si es false, recupera ejecuciones perdidas (estilo anacron).
+     *
+     * @return static
+     */
     public function everyYearAt(int $month, int $day, int $hour, bool $strict = false): self
     {
         $currentYear = date('Y', $this->getCurrentTimestamp());
         $date = sprintf('%s-%02d-%02d', $currentYear, $month, $day);
-        return $this->everyDayAux($date, $hour, $strict);
+        return $this->everyDayAux($date, $hour, $strict, '1 year');
     }
 
+    /**
+     * Devuelve el tiempo máximo de ejecución del cron en segundos, 0 si no hay límite.
+     *
+     * @return int
+     */
+    public static function getMaxExecutionTime(): int
+    {
+        return self::$max_execution_time;
+    }
+
+    /**
+     * Devuelve true si se ha superado el tiempo máximo de ejecución del cron,
+     * en cuyo caso los jobs pendientes se rechazan hasta la siguiente ejecución.
+     *
+     * @return bool
+     */
+    public static function isMaxExecutionTimeReached(): bool
+    {
+        if (self::$max_execution_time <= 0) {
+            return false;
+        }
+
+        if (Kernel::getExecutionTime() <= self::$max_execution_time) {
+            return false;
+        }
+
+        // lo registramos en el log solamente una vez
+        if (false === self::$max_execution_time_logged) {
+            self::$max_execution_time_logged = true;
+            Tools::log('cron')->notice('cron-max-execution-time-reached', [
+                '%seconds%' => self::$max_execution_time,
+            ]);
+        }
+
+        return true;
+    }
+
+    /**
+     * Devuelve true si el job debe ejecutarse: le toca según su programación (every*),
+     * no hay solapamiento (withoutOverlapping) y no se ha superado el tiempo
+     * máximo de ejecución del cron.
+     *
+     * @return bool
+     */
     public function isReady(): bool
     {
+        if (self::isMaxExecutionTimeReached()) {
+            return false;
+        }
+
         return $this->ready && false === $this->overlapping;
     }
 
+    /**
+     * Si el job lleva más de STALE_HOURS horas en ejecución, se considera un
+     * proceso zombie (murió sin liberar el contador) y se libera.
+     *
+     * @return bool True si el job estaba zombie y se ha liberado.
+     */
+    public function releaseIfStale(): bool
+    {
+        if ($this->running <= 0) {
+            return false;
+        }
+
+        if (strtotime($this->date) >= $this->getCurrentTimestamp() - (self::STALE_HOURS * 3600)) {
+            return false;
+        }
+
+        Tools::log('cron')->warning('cron-stale-job-released', [
+            '%jobName%' => $this->jobname,
+        ]);
+
+        $this->running = 0;
+        $this->done = true;
+        $this->failed = true;
+        $this->fails++;
+        return $this->save();
+    }
+
+    /**
+     * Ejecuta la función si el job está listo (isReady), guardando fecha, duración
+     * y resultado. Captura cualquier excepción o error, lo registra en el log y
+     * marca el job como fallido.
+     *
+     * @param Closure $function Función a ejecutar.
+     *
+     * @return bool True si se ha ejecutado sin errores.
+     */
     public function run(Closure $function): bool
     {
         if (false === $this->isReady()) {
@@ -270,6 +497,28 @@ class CronJob extends ModelClass
         return true;
     }
 
+    /**
+     * Define el tiempo máximo de ejecución del cron en su conjunto. Una vez superado,
+     * los jobs pendientes se rechazan y se ejecutarán en las siguientes pasadas del cron.
+     * No interrumpe el job en ejecución. Se puede llamar desde el Init de un plugin.
+     *
+     * @param int $seconds Límite en segundos. Si varios plugins definen límites
+     *                     distintos, se aplica el más restrictivo.
+     */
+    public static function setMaxExecutionTime(int $seconds): void
+    {
+        // si varios plugins definen límites distintos, gana el más restrictivo
+        if ($seconds > 0 && (self::$max_execution_time === 0 || $seconds < self::$max_execution_time)) {
+            self::$max_execution_time = $seconds;
+        }
+    }
+
+    /**
+     * Establece una fecha y hora simuladas para los tests.
+     *
+     * @param string|null $dateTime Fecha y hora simuladas, null para volver al tiempo real.
+     * @param bool $update_microtime Si es true, también simula el microtime con esa fecha.
+     */
     public function setMockDateTime(?string $dateTime, bool $update_microtime = true): void
     {
         $this->mock_date_time = $dateTime;
@@ -279,20 +528,38 @@ class CronJob extends ModelClass
         }
     }
 
+    /**
+     * Establece un microtime simulado para los tests.
+     *
+     * @param float|null $microtime Timestamp con decimales, null para volver al tiempo real.
+     */
     public function setMockMicrotime(?float $microtime): void
     {
         $this->mock_microtime = $microtime;
     }
 
+    /**
+     * Devuelve el nombre de la tabla en la base de datos.
+     *
+     * @return string
+     */
     public static function tableName(): string
     {
         return 'cronjobs';
     }
 
+    /**
+     * Valida y sanea los datos del modelo antes de guardar.
+     *
+     * @return bool
+     */
     public function test(): bool
     {
         $this->jobname = Tools::noHtml($this->jobname);
-        $this->pluginname = Tools::noHtml($this->pluginname);
+
+        // normalizamos el nombre del plugin a null si está vacío, ya que el cron
+        // busca los jobs del core con pluginname IS NULL
+        $this->pluginname = empty($this->pluginname) ? null : Tools::noHtml($this->pluginname);
 
         if (empty($this->date)) {
             $this->date = $this->getCurrentDateTime();
@@ -307,11 +574,28 @@ class CronJob extends ModelClass
         return parent::test();
     }
 
+    /**
+     * Devuelve la url del registro o de su listado.
+     *
+     * @param string $type Tipo de url: 'auto', 'edit', 'list' o 'new'.
+     * @param string $list Controlador del listado.
+     *
+     * @return string
+     */
     public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List'): string
     {
         return parent::url($type, $list);
     }
 
+    /**
+     * Impide que el job se ejecute mientras haya otros jobs en ejecución.
+     * Ejemplo: $job->everyDayAt(2)->withoutOverlapping()->run(...);
+     *
+     * @param string ...$jobs Nombres de los jobs con los que no debe solaparse.
+     *                        Si no se indica ninguno, se comprueban todos los demás.
+     *
+     * @return static
+     */
     public function withoutOverlapping(...$jobs): self
     {
         // comprobamos la lista de trabajos en ejecución
@@ -329,7 +613,19 @@ class CronJob extends ModelClass
         return $this;
     }
 
-    private function everyDayAux(string $date, int $hour, bool $strict): self
+    /**
+     * Lógica común de los métodos every*: calcula si el job está listo comparando
+     * su última ejecución con la fecha y hora programadas.
+     *
+     * @param string $date Fecha programada (Y-m-d).
+     * @param int $hour Hora del día (0 a 23).
+     * @param bool $strict Si es true, solo dentro de la hora programada; si es false,
+     *                     recupera ejecuciones perdidas (estilo anacron).
+     * @param string $period Periodicidad en formato strtotime: '1 day', '7 days', '1 month', etc.
+     *
+     * @return static
+     */
+    private function everyDayAux(string $date, int $hour, bool $strict, string $period = '1 day'): self
     {
         if (false === $this->enabled) {
             $this->ready = false;
@@ -338,27 +634,33 @@ class CronJob extends ModelClass
 
         $last = strtotime($this->date ?? '-99 years');
         $start = strtotime($date . ' +' . $hour . ' hours');
-        $end = $strict ?
-            strtotime($date . ' +' . $hour . ' hours +59 minutes') :
-            strtotime($date . ' +23 hours +59 minutes');
         $this->start = $this->getCurrentMicrotime();
 
-        // si se ha ejecutado antes, comprobamos que no sea pasada la fecha de inicio
-        if (!empty($this->date) && $last >= $start) {
-            $this->ready = false;
+        // en modo estricto solamente se ejecuta dentro de la hora programada
+        if ($strict) {
+            $end = strtotime($date . ' +' . $hour . ' hours +59 minutes');
+            $this->ready = $last < $start && $this->start >= $start && $this->start <= $end;
             return $this;
         }
 
-        // comprobamos que la fecha de inicio esté dentro del rango
-        if ($this->start >= $start && $this->start <= $end) {
-            $this->ready = true;
-            return $this;
+        // si todavía no ha llegado la hora programada, comprobamos la ocurrencia anterior,
+        // para así recuperar ejecuciones perdidas (estilo anacron)
+        if ($this->start < $start) {
+            $start = strtotime($date . ' +' . $hour . ' hours -' . $period);
         }
 
-        $this->ready = false;
+        // se ejecuta si no se ha ejecutado desde la última hora programada
+        $this->ready = $last < $start && $this->start >= $start;
         return $this;
     }
 
+    /**
+     * Devuelve la fecha y hora actuales, o las simuladas si se han establecido para los tests.
+     *
+     * @param string|null $date Fecha a formatear; null para la actual.
+     *
+     * @return string
+     */
     protected function getCurrentDateTime(?string $date = null): string
     {
         if ($this->mock_date_time !== null && $date === null) {
@@ -368,6 +670,11 @@ class CronJob extends ModelClass
         return Tools::dateTime($date);
     }
 
+    /**
+     * Devuelve el microtime actual, o el simulado si se ha establecido para los tests.
+     *
+     * @return float
+     */
     protected function getCurrentMicrotime(): float
     {
         if ($this->mock_microtime !== null) {
@@ -377,6 +684,11 @@ class CronJob extends ModelClass
         return microtime(true);
     }
 
+    /**
+     * Devuelve el timestamp actual, o el simulado si se ha establecido para los tests.
+     *
+     * @return int
+     */
     protected function getCurrentTimestamp(): int
     {
         if ($this->mock_microtime !== null) {

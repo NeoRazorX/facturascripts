@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -79,7 +79,10 @@ abstract class AccountingClass extends AccountingAccounts
         foreach ($totals as $code => $total) {
             $subaccount = $this->getSubAccount($code);
             if (empty($subaccount->codsubcuenta)) {
-                Tools::log()->warning($accountError);
+                Tools::log()->warning($accountError, [
+                    '%subaccount%' => $code,
+                    '%exercise%' => $this->exercise->codejercicio
+                ]);
                 return false;
             }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,13 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
- * Controller to edit a single item from the ApiKey model.
+ * Controlador para editar un único elemento del modelo ApiKey
  *
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
@@ -45,8 +44,7 @@ class EditApiKey extends EditController
             ];
         }
 
-        $where = [new DataBaseWhere('idapikey', $this->request->query('code'))];
-        foreach (ApiAccess::all($where) as $access) {
+        foreach (ApiAccess::allWhereEq('idapikey', $this->request->query('code')) as $access) {
             $rules[$access->resource]['allowget'] = $access->allowget;
             $rules[$access->resource]['allowpost'] = $access->allowpost;
             $rules[$access->resource]['allowput'] = $access->allowput;
@@ -102,8 +100,7 @@ class EditApiKey extends EditController
         $allowDelete = $this->request->request->getArray('allowdelete', false);
 
         // update current access rules
-        $where = [new DataBaseWhere('idapikey', $this->request->query('code'))];
-        $rules = ApiAccess::all($where);
+        $rules = ApiAccess::allWhereEq('idapikey', $this->request->query('code'));
         foreach ($rules as $access) {
             $access->allowget = in_array($access->resource, $allowGet);
             $access->allowput = in_array($access->resource, $allowPut);
@@ -197,7 +194,7 @@ class EditApiKey extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
         switch ($viewName) {
             case $mainViewName:
                 parent::loadData($viewName, $view);

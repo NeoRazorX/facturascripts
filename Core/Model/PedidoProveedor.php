@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Template\ModelTrait;
@@ -35,11 +34,7 @@ class PedidoProveedor extends PurchaseDocument
 {
     use ModelTrait;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int Identificador único del pedido de proveedor. */
     public $idpedido;
 
     /**
@@ -49,9 +44,8 @@ class PedidoProveedor extends PurchaseDocument
      */
     public function getLines(): array
     {
-        $where = [new DataBaseWhere('idpedido', $this->idpedido)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-        return LineaPedido::all($where, $order, 0, 0);
+        return LineaPedido::allWhereEq('idpedido', $this->idpedido, $order);
     }
 
     /**

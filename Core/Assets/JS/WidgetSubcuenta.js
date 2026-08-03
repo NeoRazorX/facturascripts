@@ -17,7 +17,7 @@
  */
 
 function widgetSubaccountDraw(id, results) {
-    let html = '';
+    const rows = [];
 
     results.forEach(function (element) {
         const saldoValue = parseFloat(element.saldo || 0);
@@ -26,23 +26,49 @@ function widgetSubaccountDraw(id, results) {
             maximumFractionDigits: 2
         });
         const saldoClass = saldoValue < 0 ? ' text-danger' : '';
-        html += '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' + id + '\', \'' + element.codsubcuenta + '\');">'
-            + '<td class="text-center">'
-            + '<a href="' + element.url + '" target="_blank" onclick="event.stopPropagation();">'
-            + '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
-            + '</a>'
-            + '</td>'
-            + '<td><b>' + element.codsubcuenta + '</b></td>'
-            + '<td>' + element.descripcion + '</td>'
-            + '<td class="text-end' + saldoClass + '">' + saldo + '</td>'
-            + '</tr>';
+        const codsubcuenta = widgetSubaccountDecodeHtml(element.codsubcuenta);
+        const descripcion = widgetSubaccountDecodeHtml(element.descripcion || '');
+        const $row = $('<tr/>', {
+            class: 'clickableRow widget-subaccount-option'
+        }).data('widget-subaccount-id', id)
+            .data('widget-subaccount-value', codsubcuenta);
+
+        const $link = $('<a/>', {
+            class: 'widget-subaccount-link',
+            href: element.url || '#',
+            target: '_blank'
+        }).append($('<i/>', {
+            class: 'fa-solid fa-external-link-alt fa-fw'
+        }));
+
+        $row.append($('<td/>', {
+            class: 'text-center'
+        }).append($link));
+
+        $row.append($('<td/>').append($('<b/>').text(codsubcuenta)));
+        $row.append($('<td/>').text(descripcion));
+        $row.append($('<td/>', {
+            class: 'text-end' + saldoClass
+        }).text(saldo));
+
+        rows.push($row[0]);
     });
 
-    $("#list_" + id).html(html);
+    $("#list_" + id).empty().append(rows);
+}
+
+function widgetSubaccountDecodeHtml(value) {
+    if (value === null || value === undefined) {
+        return '';
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = String(value);
+    return textarea.value;
 }
 
 function widgetSubaccountSearch(id) {
-    $("#list_" + id).html('');
+    $("#list_" + id).empty();
     const input = $("#" + id);
     const data = {
         action: 'widget-subcuenta-search',
@@ -86,3 +112,15 @@ function widgetSubaccountSelect(id, value) {
     $("#modal_" + id).modal("hide");
     $("#modal_span_" + id).text(value);
 }
+
+$(document).on('click', '.widget-subaccount-option', function () {
+    const value = $(this).data('widget-subaccount-value');
+    widgetSubaccountSelect(
+        $(this).data('widget-subaccount-id'),
+        (value === null || value === undefined) ? '' : String(value)
+    );
+});
+
+$(document).on('click', '.widget-subaccount-link', function (event) {
+    event.stopPropagation();
+});

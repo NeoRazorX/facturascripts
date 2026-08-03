@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
@@ -85,9 +85,9 @@ class AccountingModalHTML
         if (empty($model->codejercicio)) {
             $model->setDate($model->fecha);
         }
-        $where = [new DataBaseWhere('codejercicio', $model->codejercicio)];
+        $where = [Where::eq('codejercicio', $model->codejercicio)];
         if (self::$query) {
-            $where[] = new DataBaseWhere('descripcion|codsubcuenta', self::$query, 'XLIKE');
+            $where[] = Where::xlike('descripcion|codsubcuenta', self::$query);
         }
 
         switch (self::$orden) {
@@ -130,10 +130,8 @@ class AccountingModalHTML
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . Tools::trans('search')
             . '" onkeyup="return findSubaccountSearch(\'find-subaccount\', \'0\', this);"/>'
-            . '<div class="input-group-apend">'
-            . '<button class="btn btn-primary" type="button" onclick="return accEntryFormAction(\'find-subaccount\', \'0\');"'
+            . '<button class="btn btn-secondary" type="button" onclick="return accEntryFormAction(\'find-subaccount\', \'0\');"'
             . ' data-loading-text="<span class=\'spinner-border spinner-border-sm\' role=\'status\' aria-hidden=\'true\'></span>"><i class="fa-solid fa-search"></i></button>'
-            . '</div>'
             . '</div>'
             . '</div>'
             . static::orden()

@@ -483,6 +483,41 @@ final class CalculatorModSpainTest extends TestCase
         $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
     }
 
+    public function testSupplierRePurchase(): void
+    {
+        // creamos un proveedor con régimen de recargo de equivalencia
+        // (empresa con varias actividades donde solo una usa RE)
+        $subject = $this->getRandomSupplier();
+        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
+        $this->assertTrue($subject->save(), 'can-not-create-re-supplier');
+
+        $doc = new PresupuestoProveedor();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-re-supplier');
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 2;
+        $line1->pvpunitario = 100;
+        $line1->iva = 21;
+        $line1->recargo = 5.2;
+
+        $lines = [$line1];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // comprobamos el documento: el recargo se aplica porque el proveedor tiene RE
+        $this->assertEquals(200.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(200.0, $doc->netosindto, 'bad-netosindto');
+        $this->assertEquals(252.4, $doc->total, 'bad-total');
+        $this->assertEquals(42.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(10.4, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+
+        // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
+    }
+
     public function testGetSubtotalsPurchaseIntraCommunityWithoutPreviousCalculate(): void
     {
         $doc = new PresupuestoProveedor();

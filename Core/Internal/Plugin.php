@@ -203,20 +203,37 @@ final class Plugin
 
     public function hasUpdate(): bool
     {
+        $coreVersion = Kernel::version();
+
         // obtenemos los builds disponibles para este plugin
         foreach (Forja::getBuildsByName($this->name) as $build) {
+            // si la versión no es más reciente que la instalada, continuamos
+            if ($build['version'] <= $this->version) {
+                continue;
+            }
+
+            // si la build requiere un core más reciente, continuamos
+            if ($build['mincore'] > $coreVersion) {
+                continue;
+            }
+
+            // si la build es demasiado antigua para el core actual, continuamos
+            if ($build['maxcore'] > 0 && $build['maxcore'] < $coreVersion) {
+                continue;
+            }
+
             // comprobamos si hay una versión estable más reciente
-            if ($build['stable'] && $build['version'] > $this->version) {
+            if ($build['stable']) {
                 return true;
             }
 
             // si no están habilitadas las actualizaciones beta, continuamos
-            if (false === Tools::settings('default', 'enableupdatesbeta', false)) {
+            if (false === (bool)Tools::settings('default', 'enableupdatesbeta', 0)) {
                 continue;
             }
 
             // comprobamos si hay una versión beta más reciente
-            if ($build['beta'] && $build['version'] > $this->version) {
+            if ($build['beta']) {
                 return true;
             }
         }

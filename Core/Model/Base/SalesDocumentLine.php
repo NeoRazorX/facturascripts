@@ -27,28 +27,28 @@ namespace FacturaScripts\Core\Model\Base;
 abstract class SalesDocumentLine extends BusinessDocumentLine
 {
     /**
-     * Importe del coste de la línea.
+     * Coste unitario del producto asociado a la línea.
      *
      * @var float
      */
     public $coste;
 
     /**
-     * False -> no se muestra la columna de cantidad al imprimir.
+     * Indica si se debe mostrar la columna de cantidad al imprimir.
      *
      * @var bool
      */
     public $mostrar_cantidad;
 
     /**
-     * False -> no se muestran las columnas de precio, descuento, impuesto y total al imprimir.
+     * Indica si se deben mostrar las columnas de precio, descuento, impuesto y total al imprimir.
      *
      * @var bool
      */
     public $mostrar_precio;
 
     /**
-     * Salto de página en el pdf si es TRUE.
+     * Indica si se debe insertar un salto de página al imprimir en PDF.
      *
      * @var bool
      */

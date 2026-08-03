@@ -3,6 +3,7 @@
         "coddivisa": "UYU",
         "codimpuesto": "IVA_BASICO",
         "codserie": "A",
+        "codserierec": "R",
         "codpago": "CONT",
         "tipoidfiscal": "RUT",
         "updatesupplierprices": true,

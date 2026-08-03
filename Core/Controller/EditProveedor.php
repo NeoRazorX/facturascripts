@@ -19,17 +19,18 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
 use FacturaScripts\Core\Lib\TaxExceptions;
+use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
- * Controller to edit a single item from the Proveedor model
+ * Controlador para editar un único elemento del modelo Proveedor
  *
  * @author       Nazca Networks             <comercial@nazcanetworks.com>
  * @author       Fco. Antonio Moreno Pérez  <famphuelva@gmail.com>
@@ -45,15 +46,15 @@ class EditProveedor extends ComercialContactController
      */
     public function getDeliveryNotesRisk(): string
     {
-        $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $code = $this->tabModelValue('EditProveedor', 'codproveedor');
         $total = SupplierRiskTools::getDeliveryNotesRisk($code);
         return Tools::money($total);
     }
 
     public function getImageUrl(): string
     {
-        $mvn = $this->getMainViewName();
-        return $this->views[$mvn]->model->gravatar();
+        $mvn = $this->mainTabName();
+        return $this->tab($mvn)->model->gravatar();
     }
 
     /**
@@ -63,7 +64,7 @@ class EditProveedor extends ComercialContactController
      */
     public function getInvoicesRisk(): string
     {
-        $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $code = $this->tabModelValue('EditProveedor', 'codproveedor');
         $total = SupplierRiskTools::getInvoicesRisk($code);
         return Tools::money($total);
     }
@@ -100,7 +101,14 @@ class EditProveedor extends ComercialContactController
     protected function createInvoiceView(string $viewName): void
     {
         $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices')
-            ->setSettings('btnPrint', true);
+            ->setSettings('btnPrint', true)
+            ->addFilterSelectWhere('status', [
+                ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+                ['label' => '------', 'where' => []],
+                ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagada', true)]],
+                ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagada', false)]],
+                ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencida', true)]],
+            ]);
 
         // agrupamos las acciones de facturas en un dropdown
         $this->tab($viewName)->addButtonGroup([
@@ -133,6 +141,11 @@ class EditProveedor extends ComercialContactController
     {
         parent::createViews();
 
+        // avisa si el cifnif ya lo usa otro proveedor
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/TooltipWarning.css');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/CheckDuplicatedCifnif.js');
+
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fa-solid fa-piggy-bank');
 
@@ -159,14 +172,21 @@ class EditProveedor extends ComercialContactController
             $this->createDocumentView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
         }
         if ($this->user->can('EditReciboProveedor')) {
-            $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor');
+            $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor')
+                ->addFilterSelectWhere('status', [
+                    ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+                    ['label' => '------', 'where' => []],
+                    ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagado', true)]],
+                    ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagado', false)]],
+                    ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencido', true)]],
+                ]);
         }
     }
 
     protected function editAction(): bool
     {
         $return = parent::editAction();
-        if ($return && $this->active === $this->getMainViewName()) {
+        if ($return && $this->active === $this->mainTabName()) {
             $this->checkSubaccountLength($this->getModel()->codsubcuenta);
         }
 
@@ -185,7 +205,7 @@ class EditProveedor extends ComercialContactController
             return true;
         }
 
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
         if (strpos($return_url, '?') === false) {
             $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->id());
         } else {
@@ -203,9 +223,9 @@ class EditProveedor extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
-        $codproveedor = $this->getViewModelValue($mainViewName, 'codproveedor');
-        $where = [new DataBaseWhere('codproveedor', $codproveedor)];
+        $mainViewName = $this->mainTabName();
+        $codproveedor = $this->mainTabModelValue('codproveedor');
+        $where = [Where::eq('codproveedor', $codproveedor)];
 
         switch ($viewName) {
             case 'EditCuentaBancoProveedor':
@@ -231,7 +251,7 @@ class EditProveedor extends ComercialContactController
 
             case 'ListLineaFacturaProveedor':
                 $inSQL = 'SELECT idfactura FROM facturasprov WHERE codproveedor = ' . $this->dataBase->var2str($codproveedor);
-                $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
+                $where = [Where::in('idfactura', $inSQL)];
                 $view->loadData('', $where);
                 break;
 
@@ -253,7 +273,7 @@ class EditProveedor extends ComercialContactController
      */
     protected function loadLanguageValues(string $viewName): void
     {
-        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        $columnLangCode = $this->tab($viewName)->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
             foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
@@ -266,7 +286,7 @@ class EditProveedor extends ComercialContactController
 
     protected function loadExceptionVat(string $viewName): void
     {
-        $column = $this->views[$viewName]->columnForName('vat-exception');
+        $column = $this->tab($viewName)->columnForName('vat-exception');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(TaxExceptions::all(), true, true);
         }
@@ -274,7 +294,7 @@ class EditProveedor extends ComercialContactController
 
     protected function loadOperationValues(string $viewName): void
     {
-        $column = $this->views[$viewName]->columnForName('operation');
+        $column = $this->tab($viewName)->columnForName('operation');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(InvoiceOperation::allForPurchases(), true, true);
         }
@@ -282,25 +302,27 @@ class EditProveedor extends ComercialContactController
 
     protected function setCustomWidgetValues(string $viewName): void
     {
+        $view = $this->tab($viewName);
+
         // Load values option to VAT Type select input
-        $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
+        $columnVATType = $view->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
             $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all(), true);
         }
 
         // Model exists?
-        if (false === $this->views[$viewName]->model->exists()) {
-            $this->views[$viewName]->disableColumn('contact');
+        if (false === $view->model->exists()) {
+            $view->disableColumn('contact');
             return;
         }
 
         // Search for supplier contacts
-        $codproveedor = $this->getViewModelValue($viewName, 'codproveedor');
-        $where = [new DataBaseWhere('codproveedor', $codproveedor)];
+        $codproveedor = $this->tabModelValue($viewName, 'codproveedor');
+        $where = [Where::eq('codproveedor', $codproveedor)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
         // Load values option to default contact
-        $columnBilling = $this->views[$viewName]->columnForName('contact');
+        $columnBilling = $view->columnForName('contact');
         if ($columnBilling && $columnBilling->widget->getType() === 'select') {
             $columnBilling->widget->setValuesFromCodeModel($contacts);
         }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,9 @@ use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Controlador para servir archivos de MyFiles, aplicando tokens salvo en la carpeta pública.
+ */
 class Myfiles implements ControllerInterface
 {
     /** @var string */
@@ -35,12 +38,13 @@ class Myfiles implements ControllerInterface
             return;
         }
 
-        // url starts with /MyFiles/ ?
+        // ¿La url empieza por /MyFiles/?
         if (strpos($url, '/MyFiles/') !== 0) {
             return;
         }
 
-        $this->filePath = Tools::folder() . urldecode($url);
+        $decodedUrl = urldecode($url);
+        $this->filePath = Tools::folder() . $decodedUrl;
 
         if (false === is_file($this->filePath)) {
             throw new KernelException(
@@ -49,17 +53,23 @@ class Myfiles implements ControllerInterface
             );
         }
 
+        $realPath = realpath($this->filePath);
+        if (false === $realPath || false === $this->isPathInsideFolder($realPath, Tools::folder('MyFiles'))) {
+            throw new KernelException('UnsafeFolder', $url);
+        }
+
+        $this->filePath = $realPath;
         if (false === $this->isFileSafe($this->filePath)) {
             throw new KernelException('UnsafeFile', $url);
         }
 
-        // if the folder is MyFiles/Public, then we don't need to check the token
-        if (strpos($url, '/MyFiles/Public/') === 0) {
+        // si la carpeta es MyFiles/Public, no hace falta comprobar el token
+        if ($this->isPathInsideFolder($this->filePath, Tools::folder('MyFiles', 'Public'))) {
             return;
         }
 
-        // get the myft parameter
-        $fixedFilePath = substr(urldecode($url), 1);
+        // obtenemos el parámetro myft
+        $fixedFilePath = substr($decodedUrl, 1);
         $token = filter_input(INPUT_GET, 'myft');
         if (empty($token) || false === MyFilesToken::validate($fixedFilePath, $token)) {
             throw new KernelException('MyfilesTokenError', $fixedFilePath);
@@ -93,12 +103,12 @@ class Myfiles implements ControllerInterface
         header('Content-Type: ' . $this->getMime($this->filePath));
         header('Cache-Control: public, max-age=31536000, immutable');
 
-        // disable the buffer if enabled
+        // desactivamos el buffer si está activo
         if (ob_get_contents()) {
             ob_end_flush();
         }
 
-        // force to download svg, xml and html files to prevent XSS attacks
+        // forzamos la descarga de archivos svg, xml y html para evitar ataques XSS
         if ($this->shouldForceDownload($this->filePath)) {
             header('Content-Disposition: attachment; filename="' . basename($this->filePath) . '"');
         }
@@ -147,5 +157,15 @@ class Myfiles implements ControllerInterface
         }
 
         return false;
+    }
+
+    private function isPathInsideFolder(string $filePath, string $folder): bool
+    {
+        $realFolder = realpath($folder);
+        if (false === $realFolder) {
+            return false;
+        }
+
+        return 0 === strpos($filePath, rtrim($realFolder, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
     }
 }

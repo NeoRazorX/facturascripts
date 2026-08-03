@@ -28,7 +28,7 @@ use FacturaScripts\Core\Tools;
 class TwoFactorManager
 {
     private const QR_CODE_SIZE = 400;
-    private const VERIFICATION_WINDOW = 8;
+    private const VERIFICATION_WINDOW = 1;
 
     private static $google2fa;
 

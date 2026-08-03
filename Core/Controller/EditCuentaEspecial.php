@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the CuentaEspecial model
+ * Controlador para editar un único elemento del modelo CuentaEspecial
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -47,34 +47,28 @@ class EditCuentaEspecial extends EditController
 
     protected function createAccountsView(string $viewName = 'ListCuenta')
     {
-        $this->addListView($viewName, 'Cuenta', 'accounts', 'fa-solid fa-book');
-        $this->views[$viewName]->addOrderBy(['codejercicio', 'codcuenta'], 'exercise', 2);
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addSearchFields(['codcuenta', 'descripcion']);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('special-account');
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'checkBoxes', false);
+        $this->addListView($viewName, 'Cuenta', 'accounts', 'fa-solid fa-book')
+            ->addOrderBy(['codejercicio', 'codcuenta'], 'exercise', 2)
+            ->addOrderBy(['descripcion'], 'description')
+            ->addSearchFields(['codcuenta', 'descripcion'])
+            // desactivamos columnas y botones
+            ->disableColumn('special-account')
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false)
+            ->setSettings('checkBoxes', false);
     }
 
     protected function createSubaccountsView(string $viewName = 'ListSubcuenta')
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-th-list');
-        $this->views[$viewName]->addOrderBy(['codejercicio', 'codsubcuenta'], 'exercise', 2);
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('special-account');
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'checkBoxes', false);
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-th-list')
+            ->addOrderBy(['codejercicio', 'codsubcuenta'], 'exercise', 2)
+            ->addOrderBy(['descripcion'], 'description')
+            ->addSearchFields(['codsubcuenta', 'descripcion'])
+            // desactivamos columnas y botones
+            ->disableColumn('special-account')
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false)
+            ->setSettings('checkBoxes', false);
     }
 
     /**
@@ -85,7 +79,7 @@ class EditCuentaEspecial extends EditController
         parent::createViews();
 
         // disable buttons
-        $mainViewName = $this->getMainViewName();
+        $mainViewName = $this->mainTabName();
         $this->setSettings($mainViewName, 'btnDelete', false);
         $this->setSettings($mainViewName, 'btnNew', false);
 
@@ -103,8 +97,8 @@ class EditCuentaEspecial extends EditController
         switch ($viewName) {
             case 'ListCuenta':
             case 'ListSubcuenta':
-                $codcuentaesp = $this->getViewModelValue('EditCuentaEspecial', 'codcuentaesp');
-                $where = [new DataBaseWhere('codcuentaesp', $codcuentaesp)];
+                $codcuentaesp = $this->tabModelValue('EditCuentaEspecial', 'codcuentaesp');
+                $where = [Where::eq('codcuentaesp', $codcuentaesp)];
                 $view->loadData('', $where);
                 break;
 

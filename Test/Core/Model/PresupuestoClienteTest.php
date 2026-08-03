@@ -85,6 +85,47 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
     }
 
+    public function testSetAuthorWithoutCompanyUsesDefaults(): void
+    {
+        // un usuario sin empresa ni almacén asignados
+        $user = $this->getRandomUser();
+        $this->assertNull($user->idempresa, 'user-company-not-null');
+        $this->assertNull($user->codalmacen, 'user-warehouse-not-null');
+
+        // al asignarlo a un documento, este toma la empresa y el almacén por defecto
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
+
+        $this->assertEquals(Tools::settings('default', 'idempresa'), $doc->idempresa, 'presupuesto-bad-default-company');
+        $this->assertEquals(Tools::settings('default', 'codalmacen'), $doc->codalmacen, 'presupuesto-bad-default-warehouse');
+    }
+
+    public function testSetAuthorWithCompanyKeepsUserValues(): void
+    {
+        // creamos una empresa (al guardarla se crea su almacén asociado)
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save(), 'can-not-create-company');
+        $warehouse = $company->getWarehouses()[0];
+
+        // un usuario con esa empresa y almacén
+        $user = $this->getRandomUser();
+        $user->idempresa = $company->idempresa;
+        $user->codalmacen = $warehouse->codalmacen;
+
+        // que deben diferir de los valores por defecto
+        $this->assertNotEquals(Tools::settings('default', 'idempresa'), $user->idempresa);
+        $this->assertNotEquals(Tools::settings('default', 'codalmacen'), $user->codalmacen);
+
+        // al asignarlo a un documento, prevalecen los valores del usuario
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
+        $this->assertEquals($user->idempresa, $doc->idempresa, 'presupuesto-bad-user-company');
+        $this->assertEquals($user->codalmacen, $doc->codalmacen, 'presupuesto-bad-user-warehouse');
+
+        // eliminamos
+        $this->assertTrue($company->delete(), 'can-not-delete-company');
+    }
+
     public function testCreateEmpty(): void
     {
         // creamos un cliente

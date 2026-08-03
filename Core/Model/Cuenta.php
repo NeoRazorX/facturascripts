@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
@@ -39,34 +39,34 @@ class Cuenta extends ModelClass
     use ModelTrait;
     use ExerciseRelationTrait;
 
-    /** @var string */
+    /** @var string Código identificativo de la cuenta contable. */
     public $codcuenta;
 
-    /** @var string */
+    /** @var string Código de la cuenta especial asociada. */
     public $codcuentaesp;
 
-    /** @var float */
+    /** @var float Importe acumulado en el debe de la cuenta. */
     public $debe;
 
-    /** @var string */
+    /** @var string Descripción de la cuenta contable. */
     public $descripcion;
 
-    /** @var bool */
+    /** @var bool Indica si se omiten las comprobaciones adicionales del modelo. */
     private $disable_additional_test = false;
 
-    /** @var float */
+    /** @var float Importe acumulado en el haber de la cuenta. */
     public $haber;
 
-    /** @var int */
+    /** @var int Identificador único de la cuenta contable. */
     public $idcuenta;
 
-    /** @var string */
+    /** @var string Código de la cuenta contable superior. */
     public $parent_codcuenta;
 
-    /** @var int */
+    /** @var int Identificador de la cuenta contable superior. */
     public $parent_idcuenta;
 
-    /** @var float */
+    /** @var float Saldo acumulado de la cuenta contable. */
     public $saldo;
 
     public function clear(): void
@@ -112,8 +112,7 @@ class Cuenta extends ModelClass
      */
     public function getChildren(): array
     {
-        $where = [new DataBaseWhere('parent_idcuenta', $this->idcuenta)];
-        return $this->all($where, ['codcuenta' => 'ASC'], 0, 0);
+        return $this->allWhereEq('parent_idcuenta', $this->idcuenta, ['codcuenta' => 'ASC']);
     }
 
     public function getFreeSubjectAccountCode($subject): string
@@ -135,8 +134,8 @@ class Cuenta extends ModelClass
         // añadimos también los 100 siguientes números al total de subcuentas
         $subcuenta = new Subcuenta();
         $whereTotal = [
-            new DataBaseWhere('codcuenta', $this->codcuenta),
-            new DataBaseWhere('codejercicio', $this->codejercicio)
+            Where::eq('codcuenta', $this->codcuenta),
+            Where::eq('codejercicio', $this->codejercicio)
         ];
         $total = $subcuenta->count($whereTotal);
         if ($total > 99) {
@@ -151,7 +150,7 @@ class Cuenta extends ModelClass
             }
 
             // comprobamos que esta subcuenta no esté en uso en otro cliente o proveedor
-            $where = [new DataBaseWhere('codsubcuenta', $newCode)];
+            $where = [Where::eq('codsubcuenta', $newCode)];
             $count = $subject->count($where);
             if ($count > 0) {
                 continue;
@@ -159,8 +158,8 @@ class Cuenta extends ModelClass
 
             // si la subcuenta no existe, la elegimos
             $where = [
-                new DataBaseWhere('codejercicio', $this->codejercicio),
-                new DataBaseWhere('codsubcuenta', $newCode)
+                Where::eq('codejercicio', $this->codejercicio),
+                Where::eq('codsubcuenta', $newCode)
             ];
             if (false === $subcuenta->loadWhere($where)) {
                 return $newCode;
@@ -193,8 +192,8 @@ class Cuenta extends ModelClass
         }
 
         $where = [
-            new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codcuenta', $this->parent_codcuenta)
+            Where::eq('codejercicio', $this->codejercicio),
+            Where::eq('codcuenta', $this->parent_codcuenta)
         ];
         $parent->loadWhere($where);
         return $parent;
@@ -207,8 +206,7 @@ class Cuenta extends ModelClass
      */
     public function getSubcuentas(): array
     {
-        $where = [new DataBaseWhere('idcuenta', $this->idcuenta)];
-        return DinSubcuenta::all($where, ['codsubcuenta' => 'ASC'], 0, 0);
+        return DinSubcuenta::allWhereEq('idcuenta', $this->idcuenta, ['codsubcuenta' => 'ASC']);
     }
 
     public function install(): string
@@ -255,12 +253,8 @@ class Cuenta extends ModelClass
             return false;
         }
 
-        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
-            Tools::log()->warning('invalid-column-lenght', [
-                '%column%' => 'descripcion',
-                '%min%' => '1',
-                '%max%' => '255'
-            ]);
+        if (strlen($this->descripcion ?? '') < 1) {
+            Tools::log()->warning('field-required', ['%field%' => 'descripcion']);
             return false;
         }
 

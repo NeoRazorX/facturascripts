@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Where;
 
 /**
- * Controller to edit a single item from the EstadoDocumento model
+ * Controlador para editar un único elemento del modelo EstadoDocumento
  *
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
@@ -47,11 +47,10 @@ class EditEstadoDocumento extends EditController
 
     protected function createOtherStatusView($viewName = 'ListEstadoDocumento')
     {
-        $this->addListView($viewName, 'EstadoDocumento', 'document-states');
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'EstadoDocumento', 'document-states')
+            // desactivamos los botones de crear y eliminar
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false);
     }
 
     /**
@@ -73,11 +72,11 @@ class EditEstadoDocumento extends EditController
     {
         switch ($viewName) {
             case 'ListEstadoDocumento':
-                $idestado = $this->getViewModelValue($this->getMainViewName(), 'idestado');
-                $tipoDoc = $this->getViewModelValue($this->getMainViewName(), 'tipodoc');
+                $idestado = $this->mainTabModelValue('idestado');
+                $tipoDoc = $this->mainTabModelValue('tipodoc');
                 $where = [
-                    new DataBaseWhere('tipodoc', $tipoDoc),
-                    new DataBaseWhere('idestado', $idestado, '!='),
+                    Where::eq('tipodoc', $tipoDoc),
+                    Where::notEq('idestado', $idestado),
                 ];
                 $view->loadData('', $where, ['idestado' => 'ASC']);
                 break;

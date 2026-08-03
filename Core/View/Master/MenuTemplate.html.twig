@@ -68,6 +68,10 @@
     {% for js in assetManager.get('js') %}
         <script src="{{ js }}"></script>
     {% endfor %}
+    {# Adds custom JS module assets #}
+    {% for mjs in assetManager.get('mjs') %}
+        <script type="module" src="{{ mjs }}"></script>
+    {% endfor %}
     {% for includeView in getIncludeViews('MenuTemplate', 'JsHeadAfter') %}
         {% include includeView['path'] %}
     {% endfor %}

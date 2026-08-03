@@ -20,11 +20,11 @@
 namespace FacturaScripts\Core\Lib\API;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * APIModel is the class for any API Model Resource in Dinamic/Model folder.
@@ -226,10 +226,13 @@ class APIModel extends APIResourceClass
      * @param array $operation
      * @param string $defaultOperation
      *
-     * @return DataBaseWhere[]
+     * @return Where[]
      */
-    private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
+    private function getWhereValues($filter, $operation, $defaultOperation = 'AND', array &$badFields = []): array
     {
+        $allowedFields = array_keys($this->model->getModelFields());
+        $hidden = $this->model->getApiFieldsToHide();
+
         $where = [];
         foreach ($filter as $key => $value) {
             $field = $key;
@@ -291,7 +294,20 @@ class APIModel extends APIResourceClass
                 $operation[$key] = $defaultOperation;
             }
 
-            $where[] = new DataBaseWhere($field, $value, $operator, $operation[$key]);
+            // solo aceptamos identificadores simples (columna o tabla.columna)
+            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                $badFields[] = $field;
+                continue;
+            }
+
+            // la columna debe existir en el modelo y no estar oculta
+            $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
+            if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
+                $badFields[] = $field;
+                continue;
+            }
+
+            $where[] = new Where($field, $value, $operator, $operation[$key]);
         }
 
         return $where;
@@ -308,7 +324,13 @@ class APIModel extends APIResourceClass
         // obtenemos los registros
         $data = [];
         $hidden = $this->model->getApiFieldsToHide();
-        $where = $this->getWhereValues($filter, $operation);
+        $badFields = [];
+        $order = $this->filterOrder($order, $hidden, $badFields);
+        $where = $this->getWhereValues($filter, $operation, 'AND', $badFields);
+        if (!empty($badFields)) {
+            $this->setError('api: fields not allowed: ' . implode(', ', array_unique($badFields)));
+            return false;
+        }
         foreach ($this->model->all($where, $order, $offset, $limit) as $item) {
             $data[] = $this->filterHidden($item->toArray(true), $hidden);
         }
@@ -363,11 +385,60 @@ class APIModel extends APIResourceClass
         return false;
     }
 
+    private function filterOrder(array $order, array $hidden, array &$badFields = []): array
+    {
+        $allowedFields = array_keys($this->model->getModelFields());
+        $result = [];
+        foreach ($order as $key => $value) {
+            // admitimos prefijos integer:, lower:, upper:
+            $field = $key;
+            foreach (['integer:', 'lower:', 'upper:'] as $prefix) {
+                if (str_starts_with($field, $prefix)) {
+                    $field = substr($field, strlen($prefix));
+                    break;
+                }
+            }
+
+            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                $badFields[] = $key;
+                continue;
+            }
+
+            $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
+            if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
+                $badFields[] = $key;
+                continue;
+            }
+
+            $result[$key] = $value;
+        }
+        return $result;
+    }
+
     private function filterHidden(array $data, array $hidden): array
     {
         foreach ($hidden as $field) {
-            unset($data[$field]);
+            // sin punto, es una columna: la eliminamos
+            $pos = strpos($field, '.');
+            if ($pos === false) {
+                unset($data[$field]);
+                continue;
+            }
+
+            // con punto, es una clave dentro de una columna json: columna.clave
+            $column = substr($field, 0, $pos);
+            $key = substr($field, $pos + 1);
+            if (!isset($data[$column]) || !is_string($data[$column])) {
+                continue;
+            }
+
+            $json = json_decode($data[$column], true);
+            if (is_array($json) && array_key_exists($key, $json)) {
+                unset($json[$key]);
+                $data[$column] = json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            }
         }
+
         return $data;
     }
 }

@@ -23,7 +23,6 @@ use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
@@ -38,6 +37,8 @@ use FacturaScripts\Dinamic\Model\User;
  */
 abstract class BaseController extends Controller
 {
+    use OwnerDataTrait;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
@@ -110,7 +111,7 @@ abstract class BaseController extends Controller
      * @param array $btnArray
      * @return BaseView
      *
-     * @deprecated since 2026. Use $this->tab($viewName)->addButton($btnArray) instead.
+     * @deprecated since 2026.5. Use $this->tab($viewName)->addButton($btnArray) instead.
      */
     public function addButton(string $viewName, array $btnArray): BaseView
     {
@@ -151,8 +152,20 @@ abstract class BaseController extends Controller
      * Returns the name assigned to the main view
      *
      * @return string
+     *
+     * @deprecated since 2026.5. Use $this->mainTabName() instead.
      */
     public function getMainViewName(): string
+    {
+        return $this->mainTabName();
+    }
+
+    /**
+     * Returns the name assigned to the main view
+     *
+     * @return string
+     */
+    public function mainTabName(): string
     {
         foreach (array_keys($this->views) as $key) {
             return $key;
@@ -179,8 +192,38 @@ abstract class BaseController extends Controller
      * @param string $viewName
      * @param string $fieldName
      * @return mixed
+     *
+     * @deprecated since 2026.5. Use $this->tabModelValue($viewName, $fieldName) instead.
      */
     public function getViewModelValue(string $viewName, string $fieldName)
+    {
+        return $this->tabModelValue($viewName, $fieldName);
+    }
+
+    public function mainTab(): BaseView
+    {
+        return $this->tab($this->mainTabName());
+    }
+
+    /**
+     * Return the value for a field in the model of the main view.
+     *
+     * @param string $fieldName
+     * @return mixed
+     */
+    public function mainTabModelValue(string $fieldName)
+    {
+        return $this->tabModelValue($this->mainTabName(), $fieldName);
+    }
+
+    /**
+     * Return the value for a field in the model of the view.
+     *
+     * @param string $viewName
+     * @param string $fieldName
+     * @return mixed
+     */
+    public function tabModelValue(string $viewName, string $fieldName)
     {
         return $this->tab($viewName)->model->{$fieldName} ?? null;
     }
@@ -230,6 +273,11 @@ abstract class BaseController extends Controller
         return $this->tab($viewName)->setSettings($property, $value);
     }
 
+    public function activeTab(): BaseView
+    {
+        return $this->tab($this->active);
+    }
+
     public function tab(string $viewName): BaseView
     {
         if (isset($this->views[$viewName])) {
@@ -249,6 +297,10 @@ abstract class BaseController extends Controller
     {
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'strict', 'term']);
         if ($data['source'] == '') {
+            // sin source necesitamos el nombre de la vista y el campo para localizar el widget
+            if (empty($data['formname']) || empty($data['field']) || false === isset($this->views[$data['formname']])) {
+                return [];
+            }
             return $this->getAutocompleteValues($data['formname'], $data['field']);
         }
 
@@ -275,40 +327,6 @@ abstract class BaseController extends Controller
         }
 
         return $results;
-    }
-
-    /**
-     * Returns true if the active user has permission to view the information
-     * of the active record in the informed model.
-     *
-     * @param ModelClass $model
-     *
-     * @return bool
-     */
-    protected function checkOwnerData($model): bool
-    {
-        if (false === $this->permissions->onlyOwnerData || empty($model->primaryColumnValue())) {
-            return true;
-        }
-
-        // si el modelo tiene nick, comprobamos nick
-        if (property_exists($model, 'nick')) {
-            if (null === $model->nick || $model->nick === $this->user->nick) {
-                return true;
-            }
-            if (property_exists($model, 'codagente') && $this->user->codagente) {
-                return $model->codagente === $this->user->codagente;
-            }
-            return false;
-        }
-
-        // si el modelo tiene agente, comprobamos agente
-        if (property_exists($model, 'codagente')) {
-            return $model->codagente === $this->user->codagente;
-        }
-
-        // si no hay nada en que apoyarse, permitimos
-        return true;
     }
 
     /**
@@ -347,14 +365,14 @@ abstract class BaseController extends Controller
     protected function deleteAction()
     {
         // check user permissions
-        if (false === $this->permissions->allowDelete || false === $this->views[$this->active]->settings['btnDelete']) {
+        if (false === $this->permissions->allowDelete || false === $this->activeTab()->settings['btnDelete']) {
             Tools::log()->warning('not-allowed-delete');
             return false;
         } elseif (false === $this->validateFormToken()) {
             return false;
         }
 
-        $model = $this->views[$this->active]->model;
+        $model = $this->activeTab()->model;
         $codes = $this->request->request->getArray('codes');
         $code = $this->request->input('code');
         if (empty($codes) && empty($code)) {
@@ -368,7 +386,7 @@ abstract class BaseController extends Controller
             // deleting multiples rows
             $numDeletes = 0;
             foreach ($codes as $cod) {
-                if ($model->loadFromCode($cod) && $model->delete()) {
+                if ($model->loadFromCode($cod) && $this->checkOwnerData($model) && $model->delete()) {
                     ++$numDeletes;
                     continue;
                 }
@@ -384,7 +402,7 @@ abstract class BaseController extends Controller
                 Tools::log()->notice('record-deleted-correctly');
                 return true;
             }
-        } elseif ($model->loadFromCode($code) && $model->delete()) {
+        } elseif ($model->loadFromCode($code) && $this->checkOwnerData($model) && $model->delete()) {
             // deleting a single row
             Tools::log()->notice('record-deleted-correctly');
             $model->clear();
@@ -399,7 +417,7 @@ abstract class BaseController extends Controller
     protected function exportAction()
     {
         if (
-            false === $this->views[$this->active]->settings['btnPrint'] ||
+            false === $this->activeTab()->settings['btnPrint'] ||
             false === $this->permissions->allowExport
         ) {
             Tools::log()->warning('no-print-permission');

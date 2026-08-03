@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Lib\Email\NewMail;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Export\PDFExport as ParentClass;
 
@@ -83,7 +83,7 @@ class MAILExport extends ParentClass
      */
     public function show(Response &$response)
     {
-        $fileName = $this->getFileName() . '_mail_' . time() . '.pdf';
+        $fileName = $this->getFileName() . '_mail_' . time() . '_' . Tools::randomString(10) . '.pdf';
         $filePath = FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName;
         if (
             false === Tools::folderCheckOrCreate(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH) ||

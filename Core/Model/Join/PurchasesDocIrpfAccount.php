@@ -26,7 +26,10 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Familia;
 
 /**
- * Auxiliary model to get sub-accounts of purchases document IRPF
+ * Modelo auxiliar para obtener las subcuentas de IRPF de los documentos de compra.
+ * Agrupa las líneas de la factura de proveedor (excluyendo suplidos) por la subcuenta
+ * de IRPF del producto y por familia, para poder repartir la retención entre las
+ * subcuentas correspondientes al generar el asiento contable.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -38,7 +41,14 @@ use FacturaScripts\Dinamic\Model\Familia;
 class PurchasesDocIrpfAccount extends JoinModel
 {
     /**
-     * Get totals for subaccount of IRPF purchase document
+     * Obtiene los totales de retención de IRPF del documento de compra, agrupados
+     * por subcuenta. Para cada grupo de líneas toma la subcuenta de IRPF del producto,
+     * si no la de la familia, y en último caso la subcuenta por defecto indicada.
+     *
+     * @param FacturaProveedor $document
+     * @param string $defaultSubacode subcuenta a usar cuando ni el producto ni la familia definen una
+     * @param float $percentage porcentaje de IRPF a aplicar sobre la base de cada grupo
+     * @return array totales indexados por código de subcuenta
      */
     public function getTotalsForDocument($document, string $defaultSubacode, float $percentage): array
     {
@@ -64,16 +74,21 @@ class PurchasesDocIrpfAccount extends JoinModel
         return $this->checkTotals($totals, $document, $defaultSubacode);
     }
 
+    /**
+     * Redondea los totales y comprueba que su suma coincide con el total de IRPF
+     * del documento. Si por los redondeos hay algún céntimo de diferencia,
+     * lo añade a la subcuenta por defecto para que el asiento cuadre.
+     */
     protected function checkTotals(array &$totals, $document, string $defaultSubacode): array
     {
-        // round and add the totals
+        // redondeamos y sumamos los totales
         $sum = 0.0;
         foreach ($totals as $key => $value) {
             $totals[$key] = round($value, FS_NF0);
             $sum += $totals[$key];
         }
 
-        // fix occasional penny mismatch
+        // corregimos el posible descuadre de céntimos
         if (!Tools::floatCmp($document->totalirpf, $sum, FS_NF0, true)) {
             $diff = round($document->totalirpf - $sum, FS_NF0);
             $totals[$defaultSubacode] = isset($totals[$defaultSubacode]) ? $totals[$defaultSubacode] + $diff : $diff;

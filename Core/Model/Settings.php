@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,18 +33,10 @@ class Settings extends ModelClass
 {
     use ModelTrait;
 
-    /**
-     * Identifier of the group of values.
-     *
-     * @var string
-     */
+    /** @var string Nombre identificativo del grupo de configuración. */
     public $name;
 
-    /**
-     * Set of configuration values
-     *
-     * @var string
-     */
+    /** @var string Conjunto de valores de configuración codificado en formato JSON. */
     protected $properties;
 
     public function __get(string $key)
@@ -87,6 +79,17 @@ class Settings extends ModelClass
     {
         parent::clearCache();
         Tools::settingsClear();
+    }
+
+    /**
+     * Oculta claves dentro del json de la columna properties con la
+     * notación properties.clave. La clave se oculta en todos los grupos.
+     *
+     * @return string[]
+     */
+    public function getApiFieldsToHide(): array
+    {
+        return array_unique(array_merge(['properties.password'], parent::getApiFieldsToHide()));
     }
 
     public function getProperties(): array
