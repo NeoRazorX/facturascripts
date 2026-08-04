@@ -157,8 +157,9 @@ trait DocFilesTrait
             return true;
         }
 
+        $modelId = $fileRelation->modelid ?? $fileRelation->modelcode;
         if (
-            $fileRelation->modelcode != $this->request->query('code') ||
+            $modelId != $this->request->query('code') ||
             $fileRelation->model !== $this->getModelClassName()
         ) {
             Tools::log()->warning('not-allowed-modify');
@@ -189,6 +190,33 @@ trait DocFilesTrait
             new DataBaseWhere('modelid|modelcode', $modelid) :
             new DataBaseWhere('modelcode', $modelid);
         $view->loadData('', $where, ['orden' => 'ASC', 'creationdate' => 'DESC']);
+    }
+
+    private function sortFilesAction(): bool
+    {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $idsOrdenadas = $this->request->request->getArray('orden');
+        if (false === empty($idsOrdenadas)) {
+            $orden = 1;
+            foreach ($idsOrdenadas as $id_archivo) {
+                $archivo = new AttachedFileRelation();
+                $archivo->load($id_archivo);
+                $archivo->orden = $orden;
+                if ($archivo->save()) {
+                    $orden++;
+                }
+            }
+        }
+
+        $this->setTemplate(false);
+
+        $this->response->json(['status' => 'ok']);
+
+        return false;
     }
 
     private function unlinkFileAction(): bool
@@ -248,32 +276,5 @@ trait DocFilesTrait
         }
 
         return true;
-    }
-
-    private function sortFilesAction(): bool
-    {
-        if (false === $this->permissions->allowUpdate) {
-            Tools::log()->warning('not-allowed-modify');
-            return true;
-        }
-
-        $idsOrdenadas = $this->request->request->getArray('orden');
-        if (false === empty($idsOrdenadas)) {
-            $orden = 1;
-            foreach ($idsOrdenadas as $id_archivo) {
-                $archivo = new AttachedFileRelation();
-                $archivo->load($id_archivo);
-                $archivo->orden = $orden;
-                if ($archivo->save()) {
-                    $orden++;
-                }
-            }
-        }
-
-        $this->setTemplate(false);
-
-        $this->response->json(['status' => 'ok']);
-
-        return false;
     }
 }

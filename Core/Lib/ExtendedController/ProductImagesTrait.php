@@ -95,6 +95,56 @@ trait ProductImagesTrait
     }
 
     /**
+     * Create the record in the AttachedFile model
+     * and returns its identifier.
+     *
+     * @param string $path
+     * @return int
+     */
+    protected function createAttachedFile(string $path): int
+    {
+        $newFile = new AttachedFile();
+        $newFile->path = $path;
+        $newFile->save();
+        return $newFile->idfile;
+    }
+
+    /**
+     * Create the record in the AttachedFileRelation model.
+     *
+     * @param int $idproduct
+     * @param int $idfile
+     */
+    protected function createFileRelation(int $idproduct, int $idfile): void
+    {
+        $fileRelation = new AttachedFileRelation();
+        $fileRelation->idfile = $idfile;
+        $fileRelation->model = 'Producto';
+        $fileRelation->modelid = $idproduct;
+        $fileRelation->modelcode = (string)$idproduct;
+        $fileRelation->nick = $this->user->nick;
+        $fileRelation->save();
+    }
+
+    /**
+     * Create the record in the ProductoImagen model
+     * and returns its idproducto.
+     *
+     * @param int $idfile
+     * @return ?int
+     */
+    protected function createProductImage(int $idfile): ?int
+    {
+        $productImage = new ProductoImagen();
+        $productImage->idproducto = $this->request->input('idproducto');
+        $productImage->idfile = $idfile;
+
+        $reference = $this->request->input('referencia', '');
+        $productImage->referencia = empty($reference) ? null : $reference;
+        return $productImage->save() ? $productImage->idproducto : null;
+    }
+
+    /**
      * Add view for product images.
      *
      * @param string $viewName
@@ -134,54 +184,5 @@ trait ProductImagesTrait
         $this->dataBase->rollback();
         Tools::log()->error('record-delete-error');
         return true;
-    }
-
-    /**
-     * Create the record in the AttachedFile model
-     * and returns its identifier.
-     *
-     * @param string $path
-     * @return int
-     */
-    protected function createAttachedFile(string $path): int
-    {
-        $newFile = new AttachedFile();
-        $newFile->path = $path;
-        $newFile->save();
-        return $newFile->idfile;
-    }
-
-    /**
-     * Create the record in the ProductoImagen model
-     * and returns its idproducto.
-     *
-     * @param int $idfile
-     * @return ?int
-     */
-    protected function createProductImage(int $idfile): ?int
-    {
-        $productImage = new ProductoImagen();
-        $productImage->idproducto = $this->request->input('idproducto');
-        $productImage->idfile = $idfile;
-
-        $reference = $this->request->input('referencia', '');
-        $productImage->referencia = empty($reference) ? null : $reference;
-        return $productImage->save() ? $productImage->idproducto : null;
-    }
-
-    /**
-     * Create the record in the AttachedFileRelation model.
-     *
-     * @param int $idproduct
-     * @param int $idfile
-     */
-    protected function createFileRelation(int $idproduct, int $idfile): void
-    {
-        $fileRelation = new AttachedFileRelation();
-        $fileRelation->idfile = $idfile;
-        $fileRelation->model = 'Producto';
-        $fileRelation->modelid = $idproduct;
-        $fileRelation->nick = $this->user->nick;
-        $fileRelation->save();
     }
 }
