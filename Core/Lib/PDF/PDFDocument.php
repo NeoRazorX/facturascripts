@@ -53,12 +53,12 @@ abstract class PDFDocument extends PDFCore
 
     const INVOICE_TOTALS_Y = 200;
 
-    private const COLOR_ACCENT = [0.08, 0.39, 0.70];
-    private const COLOR_HEADER = [0.88, 0.94, 0.98];
-    private const COLOR_ROW = [0.97, 0.99, 1.00];
-    private const COLOR_TEXT = [0.14, 0.18, 0.23];
-    private const COLOR_LINE = [0.78, 0.86, 0.93];
-    private const COLOR_TOTAL = [0.84, 0.92, 0.98];
+    private const COLOR_ACCENT = [0.15, 0.15, 0.15];
+    private const COLOR_HEADER = [0.95, 0.95, 0.95];
+    private const COLOR_ROW = [0.98, 0.98, 0.98];
+    private const COLOR_TEXT = [0.10, 0.10, 0.10];
+    private const COLOR_LINE = [0.75, 0.75, 0.75];
+    private const COLOR_TOTAL = [0.88, 0.88, 0.88];
 
     /** @var FormatoDocumento */
     protected $format;
