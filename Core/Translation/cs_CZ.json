@@ -606,7 +606,7 @@
     "duplicate-customer-name-or-cif": "Existuje zákazník se stejným jménem nebo CIF\/NIF",
     "duplicate-record": "Registro duplicado",
     "duplicated-cifnif": "CIF\/NIF %cifnif% je již používán: %records%",
-    "duplicated-cifnif-customer": "Zákazník s CIF\/NIF %cifnif% již existuje: %customers%. Chcete ho přesto vytvořit?",
+    "duplicated-cifnif-customer": "Zákazník s CIF\\\/NIF %cifnif% již existuje: %customers%. Chcete ho přesto vytvořit?",
     "duplicated-cifnif-supplier": "Již existuje dodavatel s CIF\/NIF %cifnif%: %suppliers%. Chcete ho přesto vytvořit?",
     "duplicated-numsupplier": "Číslo dodavatele %numsupplier% je již používáno: %documents%",
     "duplicated-reference": "Duplicitní reference '%reference%'",

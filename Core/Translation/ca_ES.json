@@ -627,7 +627,7 @@
     "email-notification-not-exists": "Notificació de email %name% no trobada",
     "email-replies": "Resposta d'emails",
     "email-replies-to": "Les respostes a aquest email aniran a %email%",
-    "email-sent": "Envio per Mail",
+    "email-sent": "Enviat per email",
     "email-sent-to": "Email enviat a %email%",
     "email-signature": "Signatura de l'email",
     "email-to": "Email per",

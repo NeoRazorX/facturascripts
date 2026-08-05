@@ -607,7 +607,7 @@
     "duplicate-record": "Erregistro bikoiztua",
     "duplicated-cifnif": "%cifnif% CIF\/NIFa dagoeneko erabiltzen ari da: %records%",
     "duplicated-cifnif-customer": "Badago jada CIF\/NIF %cifnif% duen bezero bat: %customers%. Hala ere sortu nahi duzu?",
-    "duplicated-cifnif-supplier": "Badago jada CIF\\NIF %cifnif% duen hornitzaile bat: %suppliers%. Hala ere sortu nahi duzu?",
+    "duplicated-cifnif-supplier": "Badago jada CIF\/NIF %cifnif% duen hornitzaile bat: %suppliers%. Hala ere sortu nahi duzu?",
     "duplicated-numsupplier": "%numsupplier% hornitzaile-zenbakia dagoeneko erabiltzen ari da: %documents%",
     "duplicated-reference": "Erreferentzia '%reference%' bikoiztua",
     "duplicated-request": "Bikoiztutako eskaera",
