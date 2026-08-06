@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\AttachedFileRelation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Tools;
@@ -118,7 +117,7 @@ trait DocFilesTrait
             return true;
         }
 
-        $modelId = $fileRelation->modelid ?? $fileRelation->modelcode;
+        $modelId = empty($fileRelation->modelcode) ? $fileRelation->modelid : $fileRelation->modelcode;
         if (
             $modelId != $this->request->query('code') ||
             $fileRelation->model !== $this->getModelClassName()
@@ -157,8 +156,9 @@ trait DocFilesTrait
             return true;
         }
 
+        $modelId = empty($fileRelation->modelcode) ? $fileRelation->modelid : $fileRelation->modelcode;
         if (
-            $fileRelation->modelcode != $this->request->query('code') ||
+            $modelId != $this->request->query('code') ||
             $fileRelation->model !== $this->getModelClassName()
         ) {
             Tools::log()->warning('not-allowed-modify');
@@ -184,10 +184,10 @@ trait DocFilesTrait
      */
     private function loadDataDocFiles($view, $model, $modelid): void
     {
-        $where = [new DataBaseWhere('model', $model)];
+        $where = [Where::eq('model', $model)];
         $where[] = is_numeric($modelid) ?
-            new DataBaseWhere('modelid|modelcode', $modelid) :
-            new DataBaseWhere('modelcode', $modelid);
+            Where::eq('modelid|modelcode', $modelid) :
+            Where::eq('modelcode', $modelid);
         $view->loadData('', $where, ['orden' => 'ASC', 'creationdate' => 'DESC']);
     }
 
