@@ -21,12 +21,17 @@ namespace FacturaScripts\Core\Contract;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Template\CalculatorModClass;
 
 /**
- * Define los puntos de extensión del cálculo de documentos comerciales para mods antiguos.
+ * Contrato heredado para los mods de cálculo de documentos comerciales.
+ *
+ * Para migrar, extienda CalculatorModClass y devuelva done(), stopMods() o stopAll() según deba continuar,
+ * detener los demás mods de la fase actual o cancelar completamente el cálculo.
  * Un resultado false detiene los mods restantes de la fase actual, pero no cancela todo el cálculo.
  *
- * @deprecated Utilice CalculatorModClass en su lugar.
+ * @deprecated since version 2026. Extienda CalculatorModClass en su lugar.
+ * @see CalculatorModClass
  */
 interface CalculatorModInterface
 {
