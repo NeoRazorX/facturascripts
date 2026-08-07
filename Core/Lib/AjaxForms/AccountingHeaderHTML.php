@@ -77,7 +77,7 @@ class AccountingHeaderHTML
 
     public static function render(Asiento $model): string
     {
-        return '<div class="container-fluid">'
+        $html = '<div class="container-fluid">'
             . '<div class="row g-2">'
             . static::renderField($model, 'idempresa')
             . static::renderField($model, 'fecha')
@@ -87,7 +87,12 @@ class AccountingHeaderHTML
             . static::renderField($model, 'canal')
             . static::renderField($model, 'operacion')
             . static::renderNewFields($model)
-            . '</div></div><br/>';
+            . '</div>';
+
+        $btnFields = static::renderNewBtnFields($model);
+        return $html
+            . (empty($btnFields) ? '' : '<div class="row g-2 align-items-end">' . $btnFields . '</div>')
+            . '</div><br/>';
     }
 
     protected static function canal(Asiento $model): string
@@ -268,6 +273,32 @@ class AccountingHeaderHTML
         }
 
         return null;
+    }
+
+    private static function renderNewBtnFields(Asiento $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newBtnFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
     }
 
     private static function renderNewFields(Asiento $model): string

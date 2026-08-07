@@ -23,17 +23,44 @@ use FacturaScripts\Dinamic\Model\Asiento;
 
 interface AccountingModInterface
 {
+    /**
+     * Ejecuta la fase posterior del mod, una vez procesados los campos estándar cuando corresponda.
+     *
+     * @param array $formData Datos recibidos desde el formulario.
+     */
     public function apply(Asiento &$model, array $formData): void;
 
+    /**
+     * Ejecuta la fase previa del mod antes de procesar los campos estándar del formulario.
+     *
+     * @param array $formData Datos recibidos desde el formulario.
+     */
     public function applyBefore(Asiento &$model, array $formData): void;
 
+    /**
+     * Registra los recursos CSS y JavaScript que necesita el mod.
+     */
     public function assets(): void;
 
+    /**
+     * Devuelve los identificadores de los botones adicionales de la cabecera o el pie.
+     * Cada identificador se enviará posteriormente a renderField().
+     *
+     * @return string[]
+     */
     public function newBtnFields(): array;
 
+    /**
+     * Devuelve los identificadores de los campos adicionales de la cabecera o el pie.
+     * Cada identificador se enviará posteriormente a renderField().
+     *
+     * @return string[]
+     */
     public function newFields(): array;
 
-    public function newModalFields(): array;
-
+    /**
+     * Renderiza un campo estándar o adicional del formulario.
+     * Devuelve null cuando el mod no gestiona el campo para permitir que otro mod lo renderice.
+     */
     public function renderField(Asiento $model, string $field): ?string;
 }

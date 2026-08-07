@@ -24,15 +24,47 @@ use FacturaScripts\Core\Model\Partida;
 
 interface AccountingLineModInterface
 {
+    /**
+     * Aplica el mod después de procesar las partidas recibidas desde el formulario.
+     * Puede modificar el asiento y sus partidas; los totales se recalculan después de ejecutar todos los mods.
+     *
+     * @param Partida[] $lines
+     * @param array $formData Datos recibidos desde el formulario.
+     */
     public function apply(Asiento &$model, array &$lines, array $formData): void;
 
+    /**
+     * Aplica los datos adicionales del mod a una partida recibida desde el formulario.
+     * El identificador corresponde al ID de la partida o al identificador temporal de una partida nueva.
+     *
+     * @param array $formData Datos recibidos desde el formulario.
+     */
     public function applyToLine(array $formData, Partida &$line, string $id): void;
 
+    /**
+     * Registra los recursos CSS y JavaScript que necesita el mod.
+     */
     public function assets(): void;
 
+    /**
+     * Devuelve los identificadores de las columnas adicionales de cada partida.
+     * Cada identificador se enviará posteriormente a renderField().
+     *
+     * @return string[]
+     */
     public function newFields(): array;
 
+    /**
+     * Devuelve los identificadores de los campos adicionales del modal de cada partida.
+     * Cada identificador se enviará posteriormente a renderField().
+     *
+     * @return string[]
+     */
     public function newModalFields(): array;
 
+    /**
+     * Renderiza un campo estándar o adicional de una partida.
+     * Devuelve null cuando el mod no gestiona el campo para permitir que otro mod lo renderice.
+     */
     public function renderField(string $idlinea, Partida $line, Asiento $model, string $field): ?string;
 }
