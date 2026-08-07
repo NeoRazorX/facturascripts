@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,6 +29,7 @@ class OperacionIVA
     const ES_OPERATION_01 = 'ES_01'; // valor añadido
     const ES_OPERATION_02 = 'ES_02'; // Ceuta y Melilla
     const ES_OPERATION_03 = 'ES_03'; // IGIC
+    const ES_OPERATION_04 = 'ES_04'; // IPSI
     const ES_OPERATION_99 = 'ES_99'; // otro
 
     /** @var array */
@@ -46,6 +47,7 @@ class OperacionIVA
             self::ES_OPERATION_01 => 'es-operation-tax-added-value',
             self::ES_OPERATION_02 => 'es-operation-tax-ceuta-melilla',
             self::ES_OPERATION_03 => 'es-operation-tax-igic',
+            self::ES_OPERATION_04 => 'es-operation-tax-ipsi',
             self::ES_OPERATION_99 => 'es-operation-tax-other',
         ];
 
