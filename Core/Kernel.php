@@ -216,28 +216,6 @@ final class Kernel
         self::$routes = [];
         self::loadDefaultRoutes();
 
-        // cargamos la página por defecto
-        $homePage = Tools::settings('default', 'homepage', 'Root');
-
-        // recorremos toda la lista de archivos de la carpeta Dinamic/Controller
-        $dir = Tools::folder('Dinamic', 'Controller');
-        foreach (Tools::folderScan($dir) as $file) {
-            // si no es un archivo php, lo ignoramos
-            if ('.php' !== substr($file, -4)) {
-                continue;
-            }
-
-            // añadimos la ruta
-            $route = substr($file, 0, -4);
-            $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . $route;
-            self::addRoute('/' . $route, $controller);
-
-            // si la ruta coincide con homepage, la añadimos como raíz
-            if ($route === $homePage) {
-                self::addRoute('/', $controller);
-            }
-        }
-
         // ejecutamos los callbacks para añadir rutas
         foreach (self::$routesCallbacks as $callback) {
             $callback(self::$routes);
@@ -368,20 +346,66 @@ final class Kernel
      */
     private static function checkControllerClass(string $controller): array
     {
-        $class = explode('\\', $controller);
+        $normalizedController = trim(str_replace('/', '\\', $controller), '\\');
+        $class = explode('\\', $normalizedController);
         $name = end($class);
 
-        // si la clase no tiene namespace, lo añadimos
+        $candidates = [];
         if (count($class) === 1) {
-            $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . $controller;
+            $candidates[] = '\\FacturaScripts\\Dinamic\\Controller\\' . $normalizedController;
+            $candidates[] = '\\FacturaScripts\\Core\\Controller\\' . $normalizedController;
+        } else {
+            $candidates[] = '\\' . $normalizedController;
         }
 
-        // si el controlador no existe, lo buscamos en la carpeta Core
-        if (!class_exists($controller)) {
-            $controller = '\\FacturaScripts\\Core\\Controller\\' . end($class);
+        foreach ($candidates as $candidate) {
+            if (class_exists($candidate)) {
+                return [$candidate, $name];
+            }
         }
 
-        return [$controller, $name];
+        $searchRoots = [
+            ['dir' => Tools::folder('Dinamic', 'Controller'), 'prefix' => '\\FacturaScripts\\Dinamic\\Controller'],
+            ['dir' => Tools::folder('Core', 'Controller'), 'prefix' => '\\FacturaScripts\\Core\\Controller'],
+        ];
+
+        foreach ($searchRoots as $searchRoot) {
+            if (!is_dir($searchRoot['dir'])) {
+                continue;
+            }
+
+            foreach (Tools::folderScan($searchRoot['dir'], true) as $file) {
+                if (substr($file, -4) !== '.php') {
+                    continue;
+                }
+
+                if (basename($file, '.php') !== $name) {
+                    continue;
+                }
+
+                $relativePath = substr($file, 0, -4);
+                $resolvedController = $searchRoot['prefix'] . '\\' . str_replace('/', '\\', $relativePath);
+                $absolutePath = Tools::folder($searchRoot['dir'], $file);
+
+                if (!class_exists($resolvedController)) {
+                    require $absolutePath;
+                }
+
+                if (class_exists($resolvedController)) {
+                    return [$resolvedController, $name];
+                }
+            }
+        }
+
+        $fallbackController = count($class) === 1
+            ? '\\FacturaScripts\\Dinamic\\Controller\\' . $normalizedController
+            : '\\' . $normalizedController;
+
+        if (!class_exists($fallbackController)) {
+            $fallbackController = '\\FacturaScripts\\Core\\Controller\\' . $name;
+        }
+
+        return [$fallbackController, $name];
     }
 
     /**
@@ -550,6 +574,26 @@ final class Kernel
             }
 
             self::addRoute($route, '\\FacturaScripts\\Core\\Controller\\' . $controller, $position);
+        }
+
+        $homePage = Tools::settings('default', 'homepage', 'Root');
+        $dir = Tools::folder('Dinamic', 'Controller');
+        if (is_dir($dir)) {
+            foreach (Tools::folderScan($dir, true) as $file) {
+                if (substr($file, -4) !== '.php') {
+                    continue;
+                }
+
+                $relativePath = substr($file, 0, -4);
+                $route = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
+                $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . str_replace('/', '\\', $relativePath);
+
+                self::addRoute($route, $controller);
+
+                if ($relativePath === $homePage) {
+                    self::addRoute('/', $controller);
+                }
+            }
         }
     }
 

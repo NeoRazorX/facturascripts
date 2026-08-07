@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -20,6 +21,7 @@
 namespace FacturaScripts\Core\Internal;
 
 use Exception;
+use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Page;
@@ -37,40 +39,8 @@ final class PluginsDeploy
 
     public static function initControllers(): void
     {
-        $files = Tools::folderScan(Tools::folder('Dinamic', 'Controller'), false);
-        foreach ($files as $fileName) {
-            if (substr($fileName, -4) !== '.php') {
-                continue;
-            }
-
-            // excluimos Installer y los que comienzan por Api
-            $controllerName = basename($fileName, '.php');
-            if ($controllerName === 'Installer' || str_starts_with($controllerName, 'Api')) {
-                continue;
-            }
-
-            // validamos el nombre del controlador para evitar el path traversal
-            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $controllerName)) {
-                Tools::log()->warning('Invalid controller name: ' . $controllerName);
-                continue;
-            }
-
-            $controllerNamespace = '\\FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
-            Tools::log()->debug('Loading controller: ' . $controllerName);
-
-            if (!class_exists($controllerNamespace)) {
-                // forzamos la carga del archivo porque en este punto el autoloader no lo encontrará
-                require Tools::folder('Dinamic', 'Controller', $controllerName . '.php');
-            }
-
-            try {
-                $controller = new $controllerNamespace($controllerName);
-                self::loadPage($controller->getPageData());
-            } catch (Exception $exc) {
-                Tools::log()->critical('cant-load-controller', ['%controllerName%' => $controllerName]);
-                Tools::log()->critical($exc->getMessage());
-            }
-        }
+        // comprobamos los controladores del núcleo y de los plugins
+        self::initControllersCheck(Tools::folder('Dinamic', 'Controller'), true);
 
         self::removeOldPages();
 
@@ -177,6 +147,67 @@ final class PluginsDeploy
         }
 
         return $isAbstract ? 'abstract class' : 'class';
+    }
+
+    private static function initControllersCheck(string $path, bool $isRoot = false): void
+    {
+        if (!is_dir($path) && !is_file($path)) {
+            return;
+        }
+
+        if (is_dir($path)) {
+            $relativePath = str_replace(Tools::folder('Dinamic', 'Controller') . DIRECTORY_SEPARATOR, '', $path);
+            $segments = array_values(array_filter(explode(DIRECTORY_SEPARATOR, $relativePath), 'strlen'));
+            $firstSegment = $segments[0] ?? '';
+
+            if (!$isRoot && !empty($firstSegment) && !Plugins::isEnabled($firstSegment)) {
+                return;
+            }
+
+            foreach (Tools::folderScan($path, false) as $childName) {
+                self::initControllersCheck($path . DIRECTORY_SEPARATOR . $childName);
+            }
+
+            return;
+        }
+
+        if (substr($path, -4) !== '.php') {
+            return;
+        }
+
+        $controllerFileName = basename($path);
+
+        // excluimos Installer y los que comienzan por Api
+        $controllerName = basename($controllerFileName, '.php');
+        if ($controllerName === 'Installer' || str_starts_with($controllerName, 'Api')) {
+            return;
+        }
+
+        // validamos el nombre del controlador para evitar el path traversal
+        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $controllerName)) {
+            Tools::log()->warning('Invalid controller name: ' . $controllerName);
+            return;
+        }
+
+        $relativePath = str_replace(Tools::folder('Dinamic', 'Controller') . DIRECTORY_SEPARATOR, '', $path);
+        $relativePath = str_replace('.php', '', $relativePath);
+        $relativePath = str_replace(DIRECTORY_SEPARATOR, '\\', $relativePath);
+
+        $controllerNamespace = '\\FacturaScripts\\Dinamic\\Controller\\' . $relativePath;
+        Tools::log()->debug('Loading controller: ' . $controllerName);
+
+        if (!class_exists($controllerNamespace)) {
+            // forzamos la carga del archivo porque en este punto el autoloader no lo encontrará
+            require $path;
+        }
+
+        try {
+            $controller = new $controllerNamespace($controllerName);
+            self::loadPage($controller->getPageData());
+        } catch (Exception $exc) {
+            Tools::log()->critical('cant-load-controller', ['%controllerName%' => $controllerName]);
+            Tools::log()->critical($exc->getMessage());
+        }
     }
 
     private static function linkFile(string $fileName, string $folder, string $filePath): void
