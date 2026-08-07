@@ -22,6 +22,9 @@ namespace FacturaScripts\Core\Contract;
 use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\Partida;
 
+/**
+ * Define los puntos de extensión de las partidas del formulario de asientos.
+ */
 interface AccountingLineModInterface
 {
     /**

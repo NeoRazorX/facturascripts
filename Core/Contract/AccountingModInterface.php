@@ -21,6 +21,9 @@ namespace FacturaScripts\Core\Contract;
 
 use FacturaScripts\Dinamic\Model\Asiento;
 
+/**
+ * Define los puntos de extensión de la cabecera y el pie del formulario de asientos.
+ */
 interface AccountingModInterface
 {
     /**
