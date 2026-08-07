@@ -287,7 +287,7 @@ class WidgetSelect extends BaseWidget
         AssetManager::addCss($route . '/node_modules/select2/dist/css/select2.min.css?v=5');
         AssetManager::addCss($route . '/node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css?v=5');
         AssetManager::addJs($route . '/node_modules/select2/dist/js/select2.min.js?v=5', 2);
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js?v=5');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js?v=6');
     }
 
     /**

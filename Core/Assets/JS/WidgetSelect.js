@@ -58,6 +58,15 @@ $(document).ready(function () {
     $('select.select2').select2({
         width: 'style',
         theme: 'bootstrap-5'
+    }).closest('form').on('reset', function () {
+        // select2 no restaura su UI con el reset nativo, https://github.com/select2/select2/issues/363
+        // el evento reset se dispara antes de que el navegador restaure el formulario,
+        // así que restauramos los option a mano y avisamos solo a select2 (namespace)
+        const select2 = $(this).find('select.select2');
+        select2.find('option').prop('selected', function () {
+            return this.defaultSelected;
+        });
+        select2.trigger('change.select2');
     });
 
     $('.parentSelect').each(function () {
