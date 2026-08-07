@@ -105,6 +105,9 @@ class AccountingLineHTML
         foreach (self::$mods as $mod) {
             $mod->apply($model, $lines, $formData);
         }
+
+        // Recalculate after mods in case they have altered the lines
+        static::calculateUnbalance($model, $lines);
     }
 
     public static function assets(): void
