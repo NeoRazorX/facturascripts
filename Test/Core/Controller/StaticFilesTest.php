@@ -24,6 +24,7 @@ use FacturaScripts\Core\Controller\Myfiles;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 final class StaticFilesTest extends TestCase
 {
@@ -102,6 +103,24 @@ final class StaticFilesTest extends TestCase
 
         $this->expectNotToPerformAssertions();
         new Myfiles('Myfiles', '/MyFiles/Public/' . self::$testFolder . '/public.pdf');
+    }
+
+    public function testMyfilesControllerForcesDownloadOfCsvFiles(): void
+    {
+        $this->createFile('MyFiles', 'Public', self::$testFolder, 'data.csv');
+        $this->createFile('MyFiles', 'Public', self::$testFolder, 'DATA2.CSV');
+        $this->createFile('MyFiles', 'Public', self::$testFolder, 'image.svg');
+        $this->createFile('MyFiles', 'Public', self::$testFolder, 'notes.txt');
+
+        $method = new ReflectionMethod(Myfiles::class, 'shouldForceDownload');
+        $method->setAccessible(true);
+
+        $controller = new Myfiles('Myfiles');
+        $folder = Tools::folder('MyFiles', 'Public', self::$testFolder);
+        $this->assertTrue($method->invoke($controller, $folder . DIRECTORY_SEPARATOR . 'data.csv'));
+        $this->assertTrue($method->invoke($controller, $folder . DIRECTORY_SEPARATOR . 'DATA2.CSV'));
+        $this->assertTrue($method->invoke($controller, $folder . DIRECTORY_SEPARATOR . 'image.svg'));
+        $this->assertFalse($method->invoke($controller, $folder . DIRECTORY_SEPARATOR . 'notes.txt'));
     }
 
     private function createFile(string ...$path): void
