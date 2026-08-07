@@ -57,6 +57,31 @@ final class StaticFilesTest extends TestCase
         new Files('Files', '/Plugins/' . self::$testFolder . '/Assets/style.css');
     }
 
+    public function testFilesControllerAcceptsSymlinkedPluginFile(): void
+    {
+        $suffix = (string)getmypid();
+        $externalFolder = sys_get_temp_dir() . DIRECTORY_SEPARATOR . self::$testFolder . $suffix;
+        $linkName = self::$testFolder . 'Symlink' . $suffix;
+        $linkPath = Tools::folder('Plugins', $linkName);
+
+        Tools::folderCheckOrCreate(Tools::folder('Plugins'));
+        Tools::folderCheckOrCreate($externalFolder . DIRECTORY_SEPARATOR . 'Assets');
+        file_put_contents($externalFolder . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'style.css', 'test');
+
+        if (false === @symlink($externalFolder, $linkPath)) {
+            Tools::folderDelete($externalFolder);
+            $this->markTestSkipped('No se pueden crear enlaces simbólicos en este sistema.');
+        }
+
+        try {
+            $controller = new Files('Files', '/Plugins/' . $linkName . '/Assets/style.css');
+            $this->assertInstanceOf(Files::class, $controller);
+        } finally {
+            Tools::folderDelete($linkPath);
+            Tools::folderDelete($externalFolder);
+        }
+    }
+
     public function testMyfilesControllerRejectsPublicTraversal(): void
     {
         $this->createFile('MyFiles', 'Public', self::$testFolder, 'public.pdf');

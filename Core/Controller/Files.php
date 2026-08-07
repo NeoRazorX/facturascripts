@@ -43,7 +43,7 @@ class Files implements ControllerInterface
             return;
         }
 
-        $this->filePath = Tools::folder() . $url;
+        $this->filePath = Tools::folder() . str_replace('/', DIRECTORY_SEPARATOR, $url);
 
         if (false !== strpos($url, '..')) {
             throw new KernelException('UnsafeFolder', $url);
