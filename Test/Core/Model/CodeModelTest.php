@@ -450,6 +450,25 @@ final class CodeModelTest extends TestCase
         $this->assertEquals('', $result->description);
     }
 
+    public function testSearchWithInvalidFieldNames(): void
+    {
+        $result = CodeModel::search(
+            'Join\\PartidaAsiento',
+            '(SELECT(SLEEP(5)))',
+            'concepto',
+            'x'
+        );
+        $this->assertSame([], $result);
+
+        $result = CodeModel::search(
+            'Join\\PartidaAsiento',
+            'idpartida',
+            '(SELECT(SLEEP(5)))',
+            'x'
+        );
+        $this->assertSame([], $result);
+    }
+
     public function testAllWithJoinModelName(): void
     {
         // Pasar 'Join\StockProducto' debe entrar en el branch de modelo y, al
