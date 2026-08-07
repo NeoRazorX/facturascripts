@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
+use FacturaScripts\Core\Contract\AccountingModInterface;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 
@@ -30,8 +31,29 @@ use FacturaScripts\Dinamic\Model\Asiento;
  */
 class AccountingFooterHTML
 {
+    /** @var AccountingModInterface[] */
+    private static $mods = [];
+
+    public static function addMod(AccountingModInterface $mod): void
+    {
+        self::$mods[] = $mod;
+    }
+
     public static function apply(Asiento &$model, array $formData): void
     {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->applyBefore($model, $formData);
+            $mod->apply($model, $formData);
+        }
+    }
+
+    public static function assets(): void
+    {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->assets();
+        }
     }
 
     public static function render(Asiento $model): string
@@ -42,10 +64,12 @@ class AccountingFooterHTML
             . static::moveBtn($model)
             . static::importe($model)
             . static::descuadre($model)
+            . static::renderNewFields($model)
             . '</div>'
             . '<div class="row g-2 mt-3">'
             . static::deleteBtn($model)
             . '<div class="col-sm"></div>'
+            . static::renderNewBtnFields($model)
             . static::saveBtn($model)
             . '</div>'
             . '</div>';
@@ -123,6 +147,19 @@ class AccountingFooterHTML
             . '</div></div>';
     }
 
+    protected static function moveBtn(Asiento $model): string
+    {
+        if (false === $model->editable) {
+            return '';
+        }
+
+        return '<div class="col-sm-auto">'
+            . '<button type="button" class="btn btn-light mb-2" id="sortableBtn">'
+            . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . Tools::trans('move-lines')
+            . '</button>'
+            . '</div>';
+    }
+
     protected static function newSubaccount(Asiento $model): string
     {
         if (false === $model->editable) {
@@ -142,6 +179,58 @@ class AccountingFooterHTML
             . '</div>';
     }
 
+    private static function renderNewBtnFields(Asiento $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newBtnFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
+    }
+
+    private static function renderNewFields(Asiento $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
+    }
+
     protected static function saveBtn(Asiento $model): string
     {
         if (false === $model->editable) {
@@ -154,19 +243,6 @@ class AccountingFooterHTML
         return '<div class="col-sm-auto">'
             . '<button type="button" class="btn w-100 btn-primary btn-spin-action mb-2" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
             . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::trans('save') . '</button>'
-            . '</div>';
-    }
-
-    protected static function moveBtn(Asiento $model): string
-    {
-        if (false === $model->editable) {
-            return '';
-        }
-
-        return '<div class="col-sm-auto">'
-            . '<button type="button" class="btn btn-light mb-2" id="sortableBtn">'
-            . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . Tools::trans('move-lines')
-            . '</button>'
             . '</div>';
     }
 }
