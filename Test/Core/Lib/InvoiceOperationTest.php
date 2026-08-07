@@ -112,12 +112,12 @@ final class InvoiceOperationTest extends TestCase
         InvoiceOperation::add(InvoiceOperation::EXPORT, 'operation-export');
     }
 
-    public function testAddKeyIsTruncatedTo20Chars(): void
+    public function testAddKeyIsTruncatedToMaxLength(): void
     {
         $longKey = 'this-key-is-way-too-long-for-the-limit';
         InvoiceOperation::add($longKey, 'long-label');
 
-        $truncated = substr($longKey, 0, 20);
+        $truncated = substr($longKey, 0, InvoiceOperation::MAX_KEY_LENGTH);
         $this->assertArrayHasKey($truncated, InvoiceOperation::all());
 
         // limpiamos
