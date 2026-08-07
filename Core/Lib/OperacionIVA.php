@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * This class centralizes all operations related to taxes.
+ * Esta clase centraliza todas las operaciones relacionadas con los impuestos.
  *
  * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
@@ -35,12 +35,21 @@ class OperacionIVA
     /** @var array */
     private static $values = [];
 
+    /**
+     * Añade una operación de IVA personalizada al listado.
+     *
+     * @param string $key Código identificador de la operación.
+     * @param string $value Clave de traducción de la operación.
+     */
     public static function add(string $key, string $value): void
     {
         $fixedKey = substr($key, 0, 20);
         self::$values[$fixedKey] = $value;
     }
 
+    /**
+     * Devuelve todas las operaciones de IVA disponibles.
+     */
     public static function all(): array
     {
         $defaultValues = [
@@ -54,6 +63,9 @@ class OperacionIVA
         return array_merge($defaultValues, self::$values);
     }
 
+    /**
+     * Devuelve el código de la operación de IVA predeterminada.
+     */
     public static function default(): string
     {
         return self::ES_OPERATION_01;
