@@ -469,6 +469,8 @@ class WidgetSelect extends BaseWidget
     /**
      * Compares two values for equality, normalizing booleans to strings
      * and using strict string comparison to avoid type juggling issues.
+     * On multiple selects $value2 is the comma-separated string stored in
+     * the model field, so $value1 is matched against each of its parts.
      *
      * @param mixed $value1
      * @param mixed $value2
@@ -482,6 +484,10 @@ class WidgetSelect extends BaseWidget
         }
         if (is_bool($value2)) {
             $value2 = $value2 ? '1' : '0';
+        }
+
+        if ($this->multiple && is_string($value2)) {
+            return in_array((string)$value1, explode(',', $value2), true);
         }
 
         // use string comparison to avoid type juggling (e.g., "01" != "1")
