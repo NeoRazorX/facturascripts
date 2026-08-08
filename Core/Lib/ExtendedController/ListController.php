@@ -81,6 +81,17 @@ abstract class ListController extends BaseController
             $this->pipeFalse('loadData', $viewName, $view);
         }
 
+        // Save the navigation snapshot of every view, except on actions without page render.
+        // The active view is extended with one page before and one after; the others only keep
+        // their loaded cursor, because their tabs are rendered on the same page.
+        if (false === in_array($action, ['export', 'megasearch'])) {
+            foreach ($this->views as $viewName => $view) {
+                if ($view instanceof ListView) {
+                    $view->saveNavigation($viewName === $this->active);
+                }
+            }
+        }
+
         // Execute actions after loading data
         $this->execAfterAction($action);
         $this->pipeFalse('execAfterAction', $action);
