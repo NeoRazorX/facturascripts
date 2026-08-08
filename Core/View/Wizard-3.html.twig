@@ -48,7 +48,14 @@
                 <p>{{ trans('wizard-p') }}</p>
                 <hr/>
                 <div class="text-center pt-5 pb-5 mt-5 mb-5">
-                    <i class="fa-solid fa-circle-notch fa-5x fa-spin"></i>
+                    <div class="progress mb-3" style="height: 2rem;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                             style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
+                             aria-valuemax="{{ fsc.total }}">
+                            0 / {{ fsc.total }}
+                        </div>
+                    </div>
+                    <p id="progress-text" class="h4">{{ trans('loading-models') }}...</p>
                 </div>
             </div>
         </div>
@@ -63,6 +70,40 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
-    <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            const progressBar = document.querySelector('.progress-bar');
+            const progressText = document.querySelector('#progress-text');
+
+            function loadModels(offset) {
+                $.ajax({
+                    url: '{{ fsc.url() }}?action=step3_ajax',
+                    method: 'POST',
+                    data: {
+                        offset: offset
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status === 'loading') {
+                            const percentage = (response.offset / response.total) * 100;
+                            progressBar.style.width = percentage + '%';
+                            progressBar.setAttribute('aria-valuenow', response.offset);
+                            progressBar.textContent = response.offset + ' / ' + response.total;
+                            progressText.textContent = '{{ trans("loading-models") }}...';
+                            loadModels(response.offset);
+                        } else if (response.status === 'done') {
+                            progressBar.style.width = '100%';
+                            progressBar.textContent = '{{ trans("completed") }}';
+                            progressText.textContent = '{{ trans("loading-plugins") }}...';
+                            setTimeout(function () {
+                                window.location.href = response.url;
+                            }, 1000);
+                        }
+                    }
+                });
+            }
+
+            loadModels(0);
+        });
+    </script>
 {% endblock %}
