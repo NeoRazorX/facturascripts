@@ -31,6 +31,14 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
 use JetBrains\PhpStorm\Deprecated;
 
+/**
+ * Clase base de la que heredan todos los modelos. Se encarga de la conexión
+ * con la base de datos, de la comprobación y creación de la tabla, y ofrece
+ * los métodos para cargar, guardar, actualizar y eliminar registros,
+ * así como el control de cambios, la caché y las relaciones entre modelos.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 abstract class ModelClass
 {
     /**
@@ -41,21 +49,21 @@ abstract class ModelClass
     private static $api_fields_to_hide = [];
 
     /**
-     * The model's attributes.
+     * Los atributos del modelo.
      *
      * @var array
      */
     protected $attributes = [];
 
     /**
-     * It provides direct access to the database.
+     * Proporciona acceso directo a la base de datos.
      *
      * @var DataBase
      */
     protected static $dataBase;
 
     /**
-     * The model's original attributes.
+     * Los atributos originales del modelo.
      *
      * @var array
      */
@@ -204,10 +212,10 @@ abstract class ModelClass
             return false;
         }
 
-        // Update the attributes with the new id
+        // actualizamos el atributo con el nuevo id
         $this->{$this->primaryColumn()} = $new_id;
 
-        // sync original
+        // sincronizamos el original
         $this->original[$this->primaryColumn()] = $this->id();
         $this->clearCache();
 
@@ -219,7 +227,7 @@ abstract class ModelClass
      *
      * @param mixed $new_id
      * @return bool
-     * @deprecated replace with changeId()
+     * @deprecated reemplazar por changeId()
      */
     public function changePrimaryColumnValue($new_id): bool
     {
@@ -323,7 +331,7 @@ abstract class ModelClass
      *
      * @param mixed $code
      * @return static|false
-     * @deprecated Use find() instead
+     * @deprecated Usar find() en su lugar
      */
     public function get($code)
     {
@@ -399,7 +407,7 @@ abstract class ModelClass
     /**
      * @param string $field
      * @return bool
-     * @deprecated replace with isDirty()
+     * @deprecated reemplazar por isDirty()
      */
     public function hasChanged(string $field): bool
     {
@@ -540,7 +548,7 @@ abstract class ModelClass
                 continue;
             }
 
-            // We check if it is a varchar (with established length) or another type of data
+            // comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
             $field = $fields[$key];
             $type = !str_contains($field['type'], '(') ?
                 $field['type'] :
@@ -634,22 +642,22 @@ abstract class ModelClass
      */
     public function newCode(string $field = '', array $where = [])
     {
-        // if not field value take PK Field
+        // si no se indica campo, usamos la clave primaria
         if (empty($field)) {
             $field = static::primaryColumn();
         }
 
-        // get fields list
+        // obtenemos la lista de campos
         $model_fields = $this->getModelFields();
 
-        // Set Cast to Integer if field it's not
+        // convertimos el campo a entero si no lo es
         if (false === in_array($model_fields[$field]['type'], ['integer', 'int', 'serial'])) {
-            // Set Where to Integers values only
+            // limitamos el where a valores enteros
             $where[] = Where::regexp($field, '^-?[0-9]+$');
             $field = self::$dataBase->getEngine()->getSQL()->sql2Int($field);
         }
 
-        // Search for new code value
+        // buscamos el nuevo valor del código
         $sqlWhere = Where::multiSqlLegacy($where);
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . static::tableName() . $sqlWhere . ';';
         $data = self::$dataBase->select($sql);
@@ -670,10 +678,10 @@ abstract class ModelClass
      * Devuelve el valor de la clave primaria del modelo.
      *
      * @return mixed
-     * @deprecated Use id() instead
+     * @deprecated Usar id() en su lugar
      */
     #[Deprecated(
-        reason: 'Use id() instead',
+        reason: 'Usar id() en su lugar',
         replacement: '%class%->id()',
     )]
     public function primaryColumnValue()
@@ -772,7 +780,7 @@ abstract class ModelClass
         $this->original = [];
 
         if (null === $this->id()) {
-            // If the model has no ID, we do not sync original values
+            // si el modelo no tiene ID, no sincronizamos los valores originales
             return;
         }
 
@@ -873,7 +881,7 @@ abstract class ModelClass
             return false;
         }
 
-        // Update the attributes with the new values
+        // actualizamos los atributos con los nuevos valores
         foreach ($values as $key => $value) {
             $this->{$key} = $value;
         }
@@ -918,7 +926,7 @@ abstract class ModelClass
                 return 'Edit' . $model;
         }
 
-        // default
+        // por defecto
         return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
     }
 
@@ -935,13 +943,13 @@ abstract class ModelClass
             return null;
         }
 
-        // Extract class name if full class path is provided
+        // extraemos el nombre de la clase si se proporciona la ruta completa
         if (strpos($modelName, '\\') !== false) {
             $parts = explode('\\', $modelName);
             $modelName = end($parts);
         }
 
-        // Cache key for this relationship
+        // clave de caché para esta relación
         $key = $this->{$foreignKey};
         $cacheKey = 'model-' . $modelName . '-' . $key;
 
@@ -1033,7 +1041,7 @@ abstract class ModelClass
      */
     protected function hasMany(string $modelName, string $foreignKey, array $where = [], array $order = [], bool $cached = false): array
     {
-        // Extract class name if full class path is provided
+        // extraemos el nombre de la clase si se proporciona la ruta completa
         if (strpos($modelName, '\\') !== false) {
             $parts = explode('\\', $modelName);
             $modelName = end($parts);
@@ -1107,7 +1115,7 @@ abstract class ModelClass
         }
 
         $data = $this->toArray();
-        // Remove primary key if it is not set, to allow the database to generate it
+        // quitamos la clave primaria si no tiene valor, para que la base de datos la genere
         if (null === $this->id()) {
             unset($data[static::primaryColumn()]);
         }
@@ -1117,7 +1125,7 @@ abstract class ModelClass
             return false;
         }
 
-        // Update the attributes with the new id
+        // actualizamos el atributo con el nuevo id
         if (null === $this->id()) {
             $this->{$this->primaryColumn()} = static::$dataBase->lastval();
         } else {
