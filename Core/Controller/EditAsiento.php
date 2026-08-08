@@ -367,6 +367,8 @@ class EditAsiento extends PanelController
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return $this->sendJsonError();
+        } elseif (false === $this->validateFormToken()) {
+            return $this->sendJsonError();
         }
 
         $this->dataBase->beginTransaction();
@@ -401,7 +403,11 @@ class EditAsiento extends PanelController
 
     protected function sendJsonError(): bool
     {
-        $this->response->json(['ok' => false, 'messages' => Tools::log()::read('master', $this->logLevels)]);
+        $this->response->json([
+            'ok' => false,
+            'messages' => Tools::log()::read('master', $this->logLevels),
+            'multireqtoken' => $this->multiRequestProtection->newToken()
+        ]);
         return false;
     }
 
