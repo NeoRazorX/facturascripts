@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Core\Lib\Accounting\AccountingCreation;
 use FacturaScripts\Core\Model\Cuenta;
@@ -62,6 +63,20 @@ final class AccountingCreationTest extends TestCase
         $this->assertTrue($accounts->exercise->exists());
         $customersAccount = $accounts->getSpecialAccount(AccountingAccounts::SPECIAL_CUSTOMER_ACCOUNT);
         $this->assertTrue($customersAccount->exists(), 'cant-get-customer-account');
+
+        // si al guardar el cliente se creó una subcuenta automáticamente, la registramos
+        // para limpiarla al final y reseteamos codsubcuenta para que el bucle pueda generar nuevas
+        if (!empty($customer->codsubcuenta)) {
+            $autoSubaccount = new Subcuenta();
+            $where = [
+                Where::eq('codsubcuenta', $customer->codsubcuenta),
+                Where::eq('codejercicio', $accounts->exercise->codejercicio),
+            ];
+            if ($autoSubaccount->loadWhere($where)) {
+                self::$subaccounts[] = $autoSubaccount;
+            }
+            $customer->codsubcuenta = null;
+        }
 
         // obtenemos una nueva subcuenta para el cliente, 1001 veces (solo España),
         // para comprobar si en todos los casos se crea una nueva
