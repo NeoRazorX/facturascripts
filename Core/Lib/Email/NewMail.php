@@ -796,6 +796,13 @@ class NewMail
                 continue;
             }
 
+            // el adjunto puede estar en la carpeta temporal con un nombre de disco
+            // distinto al visible, para evitar colisiones entre subidas simultáneas
+            if (str_starts_with($attach[0], FS_FOLDER . '/' . static::ATTACHMENTS_TMP_PATH) && file_exists($attach[0])) {
+                rename($attach[0], $newPath);
+                continue;
+            }
+
             // si el adjunto está fuera de la carpeta temporal, lo copiamos
             $currentPath = FS_FOLDER . '/MyFiles/' . $attach[0];
             if (file_exists($currentPath)) {

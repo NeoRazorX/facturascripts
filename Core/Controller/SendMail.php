@@ -436,11 +436,16 @@ class SendMail extends Controller
         $this->newMail->addAttachment(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName, $fileName);
 
         foreach ($this->request->files->getArray('uploads') as $file) {
-            // guardamos el adjunto en una carpeta temporal
-            if ($file->move(NewMail::ATTACHMENTS_TMP_PATH, $file->getClientOriginalName())) {
-                // añadimos el adjunto al email
-                $filePath = FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $file->getClientOriginalName();
-                $this->newMail->addAttachment($filePath, $file->getClientOriginalName());
+            // guardamos el adjunto en una carpeta temporal; el nombre lo pone el navegador,
+            // por lo que dos subidas simultáneas con el mismo nombre se pisarían el archivo;
+            // en disco usamos un nombre único, pero el email conserva el nombre original
+            $originalName = $file->getClientOriginalName();
+            $parts = pathinfo($originalName);
+            $diskName = $parts['filename'] . '_' . uniqid()
+                . (empty($parts['extension']) ? '' : '.' . $parts['extension']);
+            if ($file->move(NewMail::ATTACHMENTS_TMP_PATH, $diskName)) {
+                $filePath = FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $diskName;
+                $this->newMail->addAttachment($filePath, $originalName);
             }
         }
 
