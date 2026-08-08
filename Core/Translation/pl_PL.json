@@ -686,6 +686,7 @@
     "es-operation-tax-added-value": "Operacja podlega VAT",
     "es-operation-tax-ceuta-melilla": "Operacja podlega IPSI (Ceuta i Melilla)",
     "es-operation-tax-igic": "Operacja objęta IGIC (Wyspy Kanaryjskie)",
+    "es-operation-tax-ipsi": "Operacja objęta IPSI",
     "es-operation-tax-other": "Operacja niepodlegająca powyższym podatkom",
     "es-tax-exception-14": "Hiszpania: Nie podlega – art. 14 LIVA (reżimy celne, składy, wolne obszary celne, operacje tranzytowe)",
     "es-tax-exception-20": "Hiszpania: Zwolnienie z art. 20 LIVA – Zwolnienia wewnętrzne (zdrowie, edukacja, ubezpieczenia, bankowość...)",

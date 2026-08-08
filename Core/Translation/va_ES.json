@@ -686,6 +686,7 @@
     "es-operation-tax-added-value": "Operació subjecta a l'IVA",
     "es-operation-tax-ceuta-melilla": "Operació subjecta a l'IPSI (Ceuta i Melilla)",
     "es-operation-tax-igic": "Operació subjecta a l'IGIC (Canàries)",
+    "es-operation-tax-ipsi": "Operació subjecta a l'IPSI",
     "es-operation-tax-other": "Operació no subjecta als impostos anteriors",
     "es-tax-exception-14": "Espanya: No subjecta – Art. 14 LIVA (règims duaners, dipòsits, zones franques, operacions en trànsit)",
     "es-tax-exception-20": "Espanya: Exempta Art. 20 LIVA – Exempcions interiors (sanitat, ensenyament, assegurances, banca…)",

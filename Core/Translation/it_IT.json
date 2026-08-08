@@ -686,6 +686,7 @@
     "es-operation-tax-added-value": "Operazione soggetta all'IVA",
     "es-operation-tax-ceuta-melilla": "Operazione soggetta all'IPSI (Ceuta e Melilla)",
     "es-operation-tax-igic": "Operazione soggetta all'IGIC (Canarie)",
+    "es-operation-tax-ipsi": "Operazione soggetta all'IPSI",
     "es-operation-tax-other": "Operazione non soggetta alle imposte sopra indicate",
     "es-tax-exception-14": "Spagna: Non soggetta – Art. 14 LIVA (regimi doganali, depositi, zone franche, operazioni in transito)",
     "es-tax-exception-20": "Spagna: esenzione art. 20 LIVA – Esenzioni interne (sanità, istruzione, assicurazioni, banche...)",

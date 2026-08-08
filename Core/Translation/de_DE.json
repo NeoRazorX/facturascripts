@@ -686,6 +686,7 @@
     "es-operation-tax-added-value": "Umsatzsteuerpflichtige Leistung",
     "es-operation-tax-ceuta-melilla": "Vorgang unterliegt dem IPSI (Ceuta und Melilla)",
     "es-operation-tax-igic": "Vorgang unterliegt dem IGIC (Kanarische Inseln)",
+    "es-operation-tax-ipsi": "Vorgang unterliegt dem IPSI",
     "es-operation-tax-other": "Vorgang nicht den oben genannten Steuern unterliegend",
     "es-tax-exception-14": "Spanien: Nicht steuerpflichtig – Art. 14 LIVA (Zollregime, Lager, Freizonen, Transitvorgänge)",
     "es-tax-exception-20": "Spanien: Befreit – Art. 20 LIVA (Inlandsbefreiungen: Gesundheitswesen, Bildung, Versicherungen, Banken…)",
