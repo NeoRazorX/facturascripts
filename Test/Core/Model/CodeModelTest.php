@@ -594,9 +594,6 @@ final class CodeModelTest extends TestCase
     {
         // Verifica que el helper protegido modelBaseName devuelve el último segmento
         $method = new \ReflectionMethod(CodeModel::class, 'modelBaseName');
-        if (PHP_VERSION_ID < 80100) {
-            $method->setAccessible(true);
-        }
         $this->assertEquals('PartidaAsiento', $method->invoke(null, 'Join\\PartidaAsiento'));
         $this->assertEquals('Variante', $method->invoke(null, 'Variante'));
         $this->assertEquals('C', $method->invoke(null, 'A\\B\\C'));

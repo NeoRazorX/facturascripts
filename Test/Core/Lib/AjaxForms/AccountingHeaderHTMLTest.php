@@ -81,7 +81,6 @@ final class AccountingHeaderHTMLTest extends TestCase
     private function resetMods(): void
     {
         $property = new ReflectionProperty(AccountingHeaderHTML::class, 'mods');
-        $property->setAccessible(true);
         $property->setValue(null, []);
     }
 }

@@ -113,7 +113,6 @@ final class StaticFilesTest extends TestCase
         $this->createFile('MyFiles', 'Public', self::$testFolder, 'notes.txt');
 
         $method = new ReflectionMethod(Myfiles::class, 'shouldForceDownload');
-        $method->setAccessible(true);
 
         $controller = new Myfiles('Myfiles');
         $folder = Tools::folder('MyFiles', 'Public', self::$testFolder);

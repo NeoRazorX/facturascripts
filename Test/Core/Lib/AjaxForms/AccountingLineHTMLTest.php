@@ -99,7 +99,6 @@ final class AccountingLineHTMLTest extends TestCase
     private function resetMods(): void
     {
         $property = new ReflectionProperty(AccountingLineHTML::class, 'mods');
-        $property->setAccessible(true);
         $property->setValue(null, []);
     }
 }
