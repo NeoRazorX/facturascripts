@@ -41,6 +41,13 @@ trait ExtensionsTrait
     protected static $extensionCache = [];
 
     /**
+     * Cache to avoid repeated warnings for duplicated extensions.
+     *
+     * @var array
+     */
+    protected static array $avisoExtensionCache = [];
+
+    /**
      * Executes the first matched extension.
      *
      * @param string $name
@@ -59,6 +66,7 @@ trait ExtensionsTrait
 
         // Execute first extension found (respecting priority)
         if (!empty(static::$extensionCache[$name])) {
+            $this->avisarExtensionDuplicada($name);
             return call_user_func_array(static::$extensionCache[$name][0]->bindTo($this, static::class), $arguments);
         }
 
@@ -95,6 +103,7 @@ trait ExtensionsTrait
 
         // Clear cache when adding new extensions
         static::$extensionCache = [];
+        static::$avisoExtensionCache = [];
     }
 
     /**
@@ -104,6 +113,7 @@ trait ExtensionsTrait
     {
         static::$extensions = [];
         static::$extensionCache = [];
+        static::$avisoExtensionCache = [];
     }
 
     /**
@@ -194,6 +204,7 @@ trait ExtensionsTrait
         // Clear cache when removing extensions
         if ($removed) {
             unset(static::$extensionCache[$name]);
+            unset(static::$avisoExtensionCache[static::class . '::' . $name]);
         }
 
         return $removed;
@@ -218,5 +229,27 @@ trait ExtensionsTrait
 
         // Store sorted functions in cache
         static::$extensionCache[$name] = array_column($extensions, 'function');
+    }
+
+    /**
+     * Comprobamos que no existe la misma funcion en otra extensión de otro plugin
+     *
+     * @param string $name
+     *
+     * @return void
+     */
+    private function avisarExtensionDuplicada(string $name): void
+    {
+        if (count(static::$extensionCache[$name]) < 2) {
+            return;
+        }
+
+        $clave = static::class . '::' . $name;
+        if (isset(static::$avisoExtensionCache[$clave])) {
+            return;
+        }
+
+        static::$avisoExtensionCache[$clave] = true;
+        throw new \RuntimeException('Método de extensión duplicado ' . $clave . '. Este método existe en otro plugin y solo ejecutará el primero.');
     }
 }
