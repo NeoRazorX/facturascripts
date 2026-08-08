@@ -397,11 +397,25 @@ abstract class PDFDocument extends PDFCore
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'width' => $this->tableWidth
         ];
+        // Mantiene impuestos y totales anclados en la parte inferior cuando no hay texto final largo.
+        $compactFooter = strlen($this->format->texto ?? '') < 400;
         if (count($taxRows) > 1) {
             $this->removeEmptyCols($taxRows, $taxHeaders, Tools::number(0));
+            if ($compactFooter) {
+                // Reserva altura para la tabla de impuestos y el espacio previo a la tabla de totales.
+                $taxRowsHeight = (count($taxRows) + 1) * (self::FONT_SIZE + 7) + self::FONT_SIZE;
+                if ($this->pdf->y > static::INVOICE_TOTALS_Y + $taxRowsHeight) {
+                    $this->pdf->y = static::INVOICE_TOTALS_Y + $taxRowsHeight;
+                }
+            }
             $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
-            $this->pdf->ezText("\n");
-        } elseif ($this->pdf->ezPageCount < 2 && strlen($this->format->texto ?? '') < 400 && $this->pdf->y > static::INVOICE_TOTALS_Y) {
+            if ($compactFooter) {
+                // Separación visual entre la tabla de impuestos y la de totales.
+                $this->pdf->y -= self::FONT_SIZE;
+            } else {
+                $this->pdf->ezText("\n");
+            }
+        } elseif ($compactFooter && $this->pdf->y > static::INVOICE_TOTALS_Y) {
             $this->pdf->y = static::INVOICE_TOTALS_Y;
         }
 
