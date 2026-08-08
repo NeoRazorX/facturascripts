@@ -373,7 +373,7 @@ class Calculator
         // recorremos las líneas del documento
         foreach ($lines as $line) {
             // ¿La serie es sin impuestos o el régimen exento?
-            if ($noTax || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
+            if ($noTax || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT || !empty($taxException)) {
                 $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->excepcioniva = $taxException;
                 $line->iva = $line->recargo = 0.0;
