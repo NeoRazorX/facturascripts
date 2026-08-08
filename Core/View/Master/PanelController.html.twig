@@ -123,6 +123,17 @@
                                 {% endif %}
                             </a>
                         {% endfor %}
+                        {# -- Component block tabs -- #}
+                        {% for blockName, block in fsc.componentBlocks() %}
+                            {% if block.settings.active %}
+                                {% set active = (blockName == fsc.active) ? ' active' : '' %}
+                                <a class="nav-link{{ active }} text-nowrap" id="{{ blockName }}-tab" data-bs-toggle="pill"
+                                   href="#{{ blockName }}" role="tab" aria-controls="{{ blockName }}" aria-expanded="true">
+                                    <i class="{{ block.icon() }} fa-fw me-1 d-none d-lg-inline-block" aria-hidden="true"></i>
+                                    <span class="d-inline d-lg-inline">{{ block.title() }}</span>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
             {% endif %}
@@ -138,6 +149,16 @@
                             {% do fsc.setCurrentView(viewName) %}
                             {{ include(view.template) }}
                         </div>
+                    {% endfor %}
+                    {# -- Component block content -- #}
+                    {% for blockName, block in fsc.componentBlocks() %}
+                        {% if block.settings.active %}
+                            {% set active = (blockName == fsc.active) ? ' show active' : '' %}
+                            <div class="tab-pane fade{{ active }}" id="{{ blockName }}" role="tabpanel"
+                                 aria-labelledby="{{ blockName }}-tab">
+                                {{ include('Component/block.html.twig', {'block': block, 'blockName': blockName}) }}
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
