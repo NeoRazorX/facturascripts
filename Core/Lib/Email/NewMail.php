@@ -145,14 +145,6 @@ class NewMail
     }
 
     /**
-     * @deprecated since version 2023.09
-     */
-    public function addAddress(string $email, string $name = ''): NewMail
-    {
-        return $this->to($email, $name);
-    }
-
-    /**
      * Añade un adjunto al correo.
      *
      * @throws Exception
@@ -162,14 +154,6 @@ class NewMail
         $this->mail->addAttachment($path, $name);
 
         return $this;
-    }
-
-    /**
-     * @deprecated since version 2023.09
-     */
-    public function addBCC(string $email, string $name = ''): NewMail
-    {
-        return $this->bcc($email, $name);
     }
 
     /**
@@ -183,14 +167,6 @@ class NewMail
         if (false === isset(self::$blockHandlers[$tag]) && class_exists($className)) {
             self::$blockHandlers[$tag] = $className;
         }
-    }
-
-    /**
-     * @deprecated since version 2023.09
-     */
-    public function addCC(string $email, string $name = ''): NewMail
-    {
-        return $this->cc($email, $name);
     }
 
     /**
@@ -222,14 +198,6 @@ class NewMail
         }
 
         self::$mailer[$key] = $name;
-    }
-
-    /**
-     * @deprecated since version 2023.09
-     */
-    public function addReplyTo(string $address, string $name = ''): NewMail
-    {
-        return $this->replyTo($address, $name);
     }
 
     public function bcc(string $email, string $name = ''): NewMail
