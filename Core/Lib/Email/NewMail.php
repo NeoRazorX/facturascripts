@@ -56,6 +56,9 @@ class NewMail
     /** @var string */
     public $fromNick;
 
+    /** @var string|null */
+    protected $notification;
+
     /** @var string */
     public $signature;
 
@@ -364,6 +367,16 @@ class NewMail
         return $addresses;
     }
 
+    /**
+     * Asigna la notificación que ha originado el correo.
+     */
+    public function notification(?string $name): NewMail
+    {
+        $this->notification = $name;
+
+        return $this;
+    }
+
     public function replyTo(string $address, string $name = ''): NewMail
     {
         $this->mail->addReplyTo($address, $name);
@@ -494,6 +507,7 @@ class NewMail
 
         $this->title = MailNotifier::getText($notification->subject, $params);
         $this->text = MailNotifier::getText($notification->body, $params);
+        $this->notification($notificationName);
 
         return $this->send();
     }
@@ -771,6 +785,7 @@ class NewMail
             $emailSent->email_from = $this->fromEmail;
             $emailSent->html = $this->html;
             $emailSent->nick = $this->fromNick;
+            $emailSent->notification = $this->notification;
             $emailSent->subject = $this->title;
             $emailSent->uuid = $uuid;
             $emailSent->verificode = $this->verificode;

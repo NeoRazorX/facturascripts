@@ -46,6 +46,10 @@
         <default>false</default>
     </column>
     <column>
+        <name>notification</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
         <name>subject</name>
         <type>character varying(300)</type>
     </column>
@@ -65,4 +69,8 @@
         <name>emails_sent_user</name>
         <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
+    <index>
+        <name>emails_sent_notification</name>
+        <columns>notification</columns>
+    </index>
 </table>
