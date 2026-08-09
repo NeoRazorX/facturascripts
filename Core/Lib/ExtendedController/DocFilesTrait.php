@@ -66,7 +66,7 @@ trait DocFilesTrait
             }
 
             $newFile = new AttachedFile();
-            $newFile->path = $uploadFile->getClientOriginalName();
+            $newFile->path = $destinyName;
             if (false === $newFile->save()) {
                 Tools::log()->error('fail');
                 return true;
