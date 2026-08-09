@@ -25,7 +25,6 @@ use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Model\AttachedFile;
-use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
 use PHPMailer\PHPMailer\Exception;
@@ -477,39 +476,6 @@ class NewMail
 
         Tools::log()->error('error', ['%error%' => $this->mail->ErrorInfo]);
         return false;
-    }
-
-    /**
-     * @throws Exception
-     * @throws SyntaxError
-     * @throws RuntimeError
-     * @throws LoaderError
-     * @deprecated since version 2023.09
-     */
-    public function sendNotification(string $notificationName, array $params): bool
-    {
-        // ¿La notificación existe?
-        $notification = new EmailNotification();
-        if (false === $notification->load($notificationName)) {
-            Tools::log()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
-            return false;
-        }
-
-        // ¿Está desactivada?
-        if (false === $notification->enabled) {
-            Tools::log()->warning('email-notification-disabled', ['%name%' => $notificationName]);
-            return false;
-        }
-
-        if (!isset($params['verificode'])) {
-            $params['verificode'] = $this->verificode;
-        }
-
-        $this->title = MailNotifier::getText($notification->subject, $params);
-        $this->text = MailNotifier::getText($notification->body, $params);
-        $this->notification($notificationName);
-
-        return $this->send();
     }
 
     public function setMailbox(string $emailFrom): NewMail
