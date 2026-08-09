@@ -211,9 +211,11 @@ final class PluginsDeploy
                 continue;
             } elseif ($folder === 'Controller' && strpos($fileName, DIRECTORY_SEPARATOR) !== false) {
                 $parts = explode(DIRECTORY_SEPARATOR, $fileName);
-                if (count($parts) === 2 && $extension === 'php' && is_file($filePath) &&
+                if (
+                    count($parts) === 2 && $extension === 'php' && is_file($filePath) &&
                     in_array($parts[0], self::$enabledPlugins, true) &&
-                    !isset(self::$fileList[$folder][$parts[1]])) {
+                    !isset(self::$fileList[$folder][$parts[1]])
+                ) {
                     self::linkPHPFile($fileName, $folder, $place, $pluginName, $parts[1]);
                 }
                 continue;
