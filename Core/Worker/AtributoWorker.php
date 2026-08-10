@@ -30,9 +30,10 @@ class AtributoWorker extends WorkerClass
 {
     public function run(WorkEvent $event): bool
     {
-        // cargamos el atributo
+        // cargamos el atributo. Usamos el valor del evento, que siempre es la clave
+        // primaria, porque update() solo manda en los params los campos modificados
         $atributo = new Atributo();
-        if (false === $atributo->load($event->param('codatributo'))) {
+        if (false === $atributo->load($event->value ?? $event->param('codatributo'))) {
             return $this->done();
         }
 
