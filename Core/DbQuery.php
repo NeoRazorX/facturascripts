@@ -27,7 +27,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * Query builder fluido para construir y ejecutar consultas SQL contra la base de datos.
  *
  * Ofrece una API encadenable al estilo de Laravel/Eloquent: se parte de `DbQuery::table('tabla')`
- * y se van añadiendo cláusulas (`select`, `where*`, `orderBy`, `groupBy`, `limit`, ...) hasta
+ * y se van añadiendo cláusulas (`select`, `join`, `where*`, `orderBy`, `groupBy`, `limit`, ...) hasta
  * ejecutar la consulta con un método terminal (`get`, `first`, `count`, `sum`, `delete`,
  * `insert`, `update`, etc.). Internamente comparte una conexión perezosa singleton (`self::db()`).
  *
@@ -63,6 +63,9 @@ final class DbQuery
 
     /** @var array Lista de fragmentos `campo ASC|DESC` ya construidos para el ORDER BY. */
     public $orderBy = [];
+
+    /** @var array Lista de uniones estructuradas pendientes de añadir a la consulta. */
+    private $joins = [];
 
     /** @var string Nombre de la tabla destino, sin escapar. */
     private $table;
@@ -293,6 +296,32 @@ final class DbQuery
         return null;
     }
 
+    /** Añade un INNER JOIN al SELECT entre dos columnas completamente cualificadas. */
+    public function join(string $table, string $leftColumn, string $rightColumn): self
+    {
+        $this->joins[] = [
+            'type' => 'INNER',
+            'table' => $table,
+            'left' => $leftColumn,
+            'right' => $rightColumn,
+        ];
+
+        return $this;
+    }
+
+    /** Añade un LEFT JOIN al SELECT entre dos columnas completamente cualificadas. */
+    public function leftJoin(string $table, string $leftColumn, string $rightColumn): self
+    {
+        $this->joins[] = [
+            'type' => 'LEFT',
+            'table' => $table,
+            'left' => $leftColumn,
+            'right' => $rightColumn,
+        ];
+
+        return $this;
+    }
+
     /** Establece el LIMIT de la consulta; 0 significa sin límite. */
     public function limit(int $limit): self
     {
@@ -481,6 +510,12 @@ final class DbQuery
     public function sql(): string
     {
         $sql = 'SELECT ' . $this->fields . ' FROM ' . self::db()->escapeColumn($this->table);
+
+        foreach ($this->joins as $join) {
+            $sql .= ' ' . $join['type'] . ' JOIN ' . self::db()->escapeColumn($join['table'])
+                . ' ON ' . self::db()->escapeColumn($join['left'])
+                . ' = ' . self::db()->escapeColumn($join['right']);
+        }
 
         if (!empty($this->where)) {
             $sql .= Where::multiSqlLegacy($this->where);
