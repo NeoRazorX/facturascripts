@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Model\AlbaranCliente;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -42,6 +43,9 @@ final class ApiCreateDocumentTest extends TestCase
         // el esquema exista al empezar, incluso en una base de datos recién creada.
         self::loadCoreModels();
 
+        // Al crear el esquema se cargan los ajustes base de España. Restauramos
+        // el país indicado en config.php antes de aplicar sus ajustes por defecto.
+        Tools::settingsSet('default', 'codpais', Tools::config('initial_codpais', 'ESP'));
         self::setDefaultSettings();
         self::installAccountingPlan();
         self::removeTaxRegularization();
