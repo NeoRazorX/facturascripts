@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,6 +62,9 @@ class EmailSent extends ModelClass
 
     /** @var bool Indica si el destinatario ha abierto o verificado el correo. */
     public $opened;
+
+    /** @var string|null Nombre de la notificación que originó el correo. */
+    public $notification;
 
     /** @var string Asunto del correo enviado. */
     public $subject;
@@ -152,6 +155,7 @@ class EmailSent extends ModelClass
         $this->body = mb_strlen($body ?? '', 'UTF-8') > 5000 ? mb_substr($body, 0, 4997, 'UTF-8') . '...' : $body;
 
         $this->html = Tools::noHtml($this->html);
+        $this->notification = Tools::noHtml($this->notification);
         $this->subject = Tools::noHtml($this->subject);
 
         return parent::test();

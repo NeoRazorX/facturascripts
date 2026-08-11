@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,8 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Atributo;
 use FacturaScripts\Core\Model\AtributoValor;
+use FacturaScripts\Core\Model\WorkEvent;
+use FacturaScripts\Core\Worker\AtributoWorker;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -113,6 +115,65 @@ final class AtributoTest extends TestCase
         $attributeValue = new AtributoValor();
         $attributeValue->valor = 'Value 1';
         $this->assertFalse($attributeValue->save(), 'value-can-save-without-attribute');
+    }
+
+    public function testRenameUpdatesValueDescriptions(): void
+    {
+        // creamos el atributo
+        $attribute = $this->getTestAttribute();
+        $this->assertTrue($attribute->save(), 'attribute-cant-save');
+
+        // añadimos 2 valores
+        $value1 = $attribute->getNewValue('Value 1');
+        $this->assertTrue($value1->save(), 'attribute-value-cant-save');
+
+        $value2 = $attribute->getNewValue('Value 2');
+        $this->assertTrue($value2->save(), 'attribute-value-cant-save');
+
+        // la descripción combina el nombre del atributo con el valor
+        $this->assertEquals('Test Attribute Value 1', $value1->descripcion, 'bad-attribute-value-description');
+        $this->assertEquals('Test Attribute Value 2', $value2->descripcion, 'bad-attribute-value-description');
+
+        // renombramos el atributo
+        $attribute->nombre = 'Renamed Attribute';
+        $this->assertTrue($attribute->save(), 'attribute-cant-save');
+
+        // como la descripción está desnormalizada, en la base de datos sigue la anterior
+        $stored = new AtributoValor();
+        $this->assertTrue($stored->load($value1->id), 'attribute-value-not-found');
+        $this->assertEquals('Test Attribute Value 1', $stored->descripcion, 'attribute-value-description-changed');
+
+        // ejecutamos el worker que las regenera
+        $event = new WorkEvent();
+        $event->name = 'Model.Atributo.Update';
+        $event->value = $attribute->codatributo;
+        $event->setParams($attribute->toArray());
+
+        $worker = new AtributoWorker();
+        $this->assertTrue($worker->run($event), 'atributo-worker-fail');
+
+        // ahora las descripciones están actualizadas
+        $this->assertTrue($stored->load($value1->id), 'attribute-value-not-found');
+        $this->assertEquals('Renamed Attribute Value 1', $stored->descripcion, 'attribute-value-description-not-updated');
+
+        $this->assertTrue($stored->load($value2->id), 'attribute-value-not-found');
+        $this->assertEquals('Renamed Attribute Value 2', $stored->descripcion, 'attribute-value-description-not-updated');
+
+        // renombramos con update(), que solo manda en los params los campos modificados
+        $this->assertTrue($attribute->update(['nombre' => 'Updated Attribute']), 'attribute-cant-update');
+
+        $event2 = new WorkEvent();
+        $event2->name = 'Model.Atributo.Update';
+        $event2->value = $attribute->codatributo;
+        $event2->setParams(['nombre' => 'Updated Attribute']);
+
+        $this->assertTrue($worker->run($event2), 'atributo-worker-fail');
+
+        $this->assertTrue($stored->load($value1->id), 'attribute-value-not-found');
+        $this->assertEquals('Updated Attribute Value 1', $stored->descripcion, 'attribute-value-description-not-updated');
+
+        // eliminamos
+        $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
     }
 
     private function getTestAttribute(): Atributo

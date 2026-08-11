@@ -25,7 +25,6 @@ use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Model\AttachedFile;
-use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
 use PHPMailer\PHPMailer\Exception;
@@ -55,6 +54,9 @@ class NewMail
 
     /** @var string */
     public $fromNick;
+
+    /** @var string|null */
+    protected $notification;
 
     /** @var string */
     public $signature;
@@ -143,14 +145,6 @@ class NewMail
     }
 
     /**
-     * @deprecated since version 2023.09
-     */
-    public function addAddress(string $email, string $name = ''): NewMail
-    {
-        return $this->to($email, $name);
-    }
-
-    /**
      * Añade un adjunto al correo.
      *
      * @throws Exception
@@ -160,14 +154,6 @@ class NewMail
         $this->mail->addAttachment($path, $name);
 
         return $this;
-    }
-
-    /**
-     * @deprecated since version 2023.09
-     */
-    public function addBCC(string $email, string $name = ''): NewMail
-    {
-        return $this->bcc($email, $name);
     }
 
     /**
@@ -181,14 +167,6 @@ class NewMail
         if (false === isset(self::$blockHandlers[$tag]) && class_exists($className)) {
             self::$blockHandlers[$tag] = $className;
         }
-    }
-
-    /**
-     * @deprecated since version 2023.09
-     */
-    public function addCC(string $email, string $name = ''): NewMail
-    {
-        return $this->cc($email, $name);
     }
 
     /**
@@ -220,14 +198,6 @@ class NewMail
         }
 
         self::$mailer[$key] = $name;
-    }
-
-    /**
-     * @deprecated since version 2023.09
-     */
-    public function addReplyTo(string $address, string $name = ''): NewMail
-    {
-        return $this->replyTo($address, $name);
     }
 
     public function bcc(string $email, string $name = ''): NewMail
@@ -364,6 +334,16 @@ class NewMail
         return $addresses;
     }
 
+    /**
+     * Asigna la notificación que ha originado el correo.
+     */
+    public function notification(?string $name): NewMail
+    {
+        $this->notification = $name;
+
+        return $this;
+    }
+
     public function replyTo(string $address, string $name = ''): NewMail
     {
         $this->mail->addReplyTo($address, $name);
@@ -464,38 +444,6 @@ class NewMail
 
         Tools::log()->error('error', ['%error%' => $this->mail->ErrorInfo]);
         return false;
-    }
-
-    /**
-     * @throws Exception
-     * @throws SyntaxError
-     * @throws RuntimeError
-     * @throws LoaderError
-     * @deprecated since version 2023.09
-     */
-    public function sendNotification(string $notificationName, array $params): bool
-    {
-        // ¿La notificación existe?
-        $notification = new EmailNotification();
-        if (false === $notification->load($notificationName)) {
-            Tools::log()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
-            return false;
-        }
-
-        // ¿Está desactivada?
-        if (false === $notification->enabled) {
-            Tools::log()->warning('email-notification-disabled', ['%name%' => $notificationName]);
-            return false;
-        }
-
-        if (!isset($params['verificode'])) {
-            $params['verificode'] = $this->verificode;
-        }
-
-        $this->title = MailNotifier::getText($notification->subject, $params);
-        $this->text = MailNotifier::getText($notification->body, $params);
-
-        return $this->send();
     }
 
     public function setMailbox(string $emailFrom): NewMail
@@ -771,6 +719,7 @@ class NewMail
             $emailSent->email_from = $this->fromEmail;
             $emailSent->html = $this->html;
             $emailSent->nick = $this->fromNick;
+            $emailSent->notification = $this->notification;
             $emailSent->subject = $this->title;
             $emailSent->uuid = $uuid;
             $emailSent->verificode = $this->verificode;
@@ -793,6 +742,13 @@ class NewMail
             $tmpPath = FS_FOLDER . '/' . static::ATTACHMENTS_TMP_PATH . $attach[1];
             if (file_exists($tmpPath)) {
                 rename($tmpPath, $newPath);
+                continue;
+            }
+
+            // el adjunto puede estar en la carpeta temporal con un nombre de disco
+            // distinto al visible, para evitar colisiones entre subidas simultáneas
+            if (str_starts_with($attach[0], FS_FOLDER . '/' . static::ATTACHMENTS_TMP_PATH) && file_exists($attach[0])) {
+                rename($attach[0], $newPath);
                 continue;
             }
 

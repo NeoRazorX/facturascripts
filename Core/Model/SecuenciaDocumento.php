@@ -33,6 +33,9 @@ class SecuenciaDocumento extends ModelClass
 {
     use ModelTrait;
 
+    /** @var array Tipos de documento en los que la fecha debe seguir el orden de la numeración. */
+    const DATE_ORDERED_TYPES = ['FacturaCliente', 'FacturaProveedor'];
+
     /** @var string Código del ejercicio al que pertenece la secuencia. */
     public $codejercicio;
 
@@ -51,6 +54,9 @@ class SecuenciaDocumento extends ModelClass
     /** @var int Longitud utilizada al rellenar con ceros el número. */
     public $longnumero;
 
+    /** @var bool Indica si se mantiene la fecha del documento al rellenar un hueco. */
+    public $mantenerfecha;
+
     /** @var int Siguiente número disponible de la secuencia. */
     public $numero;
 
@@ -66,12 +72,22 @@ class SecuenciaDocumento extends ModelClass
     /** @var bool Indica si se pueden reutilizar huecos existentes en la numeración. */
     public $usarhuecos;
 
+    /**
+     * Indica si esta secuencia admite mantener la fecha del documento al rellenar un hueco.
+     * Se excluyen las facturas, donde la fecha debe respetar el orden de la numeración.
+     */
+    public function canKeepDate(): bool
+    {
+        return false === in_array($this->tipodoc, static::DATE_ORDERED_TYPES, true);
+    }
+
     public function clear(): void
     {
         parent::clear();
         $this->idempresa = Tools::settings('default', 'idempresa');
         $this->inicio = 1;
         $this->longnumero = 6;
+        $this->mantenerfecha = false;
         $this->numero = 1;
         $this->patron = '{EJE}{SERIE}{0NUM}';
         $this->usarhuecos = false;
@@ -121,6 +137,11 @@ class SecuenciaDocumento extends ModelClass
         if ($this->longnumero < 1 || $this->longnumero > 10) {
             Tools::log()->warning('longnumero-must-be-between-1-and-10');
             return false;
+        }
+
+        // en facturas la fecha debe seguir el orden de la numeración, no permitimos mantenerla
+        if ($this->mantenerfecha && false === $this->canKeepDate()) {
+            $this->mantenerfecha = false;
         }
 
         // si usar huecos es false, tipodoc es FacturaCliente y el país predeterminado es España, mostramos aviso

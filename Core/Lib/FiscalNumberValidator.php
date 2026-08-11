@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -145,6 +145,30 @@ class FiscalNumberValidator
         $mod = intval(intval($number) % 23);
         $letter = mb_substr('TRWAGMYFPDXBNJZSQVHLCKE', $mod, 1);
         return mb_substr($dni, -1) === $letter;
+    }
+
+    /**
+     * Normalizes a fiscal number by converting it to uppercase and removing
+     * every non-alphanumeric character. If a pattern is provided, the
+     * normalized value must match it or the default value is returned.
+     *
+     * @param ?string $number
+     * @param string $pattern
+     * @param string $default
+     * @return string
+     */
+    public static function normalize(?string $number, string $pattern = '', string $default = ''): string
+    {
+        $normalized = strtoupper((string)preg_replace('/[^A-Z0-9]/i', '', $number ?? ''));
+        if ($normalized === '') {
+            return $default;
+        }
+
+        if ($pattern !== '' && preg_match($pattern, $normalized) !== 1) {
+            return $default;
+        }
+
+        return $normalized;
     }
 
     /**

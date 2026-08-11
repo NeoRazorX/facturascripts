@@ -331,6 +331,12 @@ class APIModel extends APIResourceClass
             $this->setError('api: fields not allowed: ' . implode(', ', array_unique($badFields)));
             return false;
         }
+
+        // sin orden, el limit/offset no es estable: ordenamos por la clave primaria
+        if (empty($order)) {
+            $order = [$this->model->primaryColumn() => 'ASC'];
+        }
+
         foreach ($this->model->all($where, $order, $offset, $limit) as $item) {
             $data[] = $this->filterHidden($item->toArray(true), $hidden);
         }

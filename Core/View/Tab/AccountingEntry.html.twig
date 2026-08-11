@@ -124,6 +124,9 @@
             animateSpinner('remove', false);
             return Promise.reject(response);
         }).then(function (data) {
+            if (typeof data.multireqtoken === 'string' && data.multireqtoken !== '') {
+                document.forms['accEntryForm']['multireqtoken'].value = data.multireqtoken;
+            }
             if (Array.isArray(data.messages)) {
                 data.messages.forEach(item => alert(item.message));
             }

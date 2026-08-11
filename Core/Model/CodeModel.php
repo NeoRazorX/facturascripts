@@ -293,6 +293,15 @@ class CodeModel
      */
     public static function search(string $tableName, string $fieldCode, string $fieldDescription, string $query, array $where = []): array
     {
+        // validamos los nombres de campos para evitar SQL injection
+        if (false === self::isValidFieldName($fieldCode)) {
+            Tools::log()->error('invalid-field-name: ' . $fieldCode);
+            return [];
+        } elseif (false === self::isValidFieldName($fieldDescription)) {
+            Tools::log()->error('invalid-field-description: ' . $fieldDescription);
+            return [];
+        }
+
         // comprobamos si se trata de un modelo (admite Join\Nombre)
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {

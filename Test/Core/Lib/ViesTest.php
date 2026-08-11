@@ -129,10 +129,7 @@ final class ViesTest extends TestCase
         return [
             'sin prefijo'                  => ['75897326V', '75897326V', 'ES'],
             'con prefijo ES'               => ['75897326V', 'ES75897326V', 'ES'],
-            'con guiones'                  => ['75897326V', 'ES-75897326-V', 'ES'],
-            'con puntos y espacios'        => ['75897326V', ' ES 758.97326 V ', 'ES'],
-            'minúsculas con prefijo'       => ['75897326V', 'es75897326v', 'ES'],
-            'caracteres mixtos'            => ['75897326V', 'es_758/97326\\v', 'ES'],
+            'normaliza antes del prefijo'  => ['75897326V', '(es) +758:97326-V', 'ES'],
             'codiso distinto, no se quita' => ['ES75897326V', 'ES75897326V', 'FR'],
             'cadena vacía'                 => ['', '', 'ES'],
             'sólo prefijo'                 => ['', 'ES', 'ES'],

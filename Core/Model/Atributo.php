@@ -64,15 +64,6 @@ class Atributo extends ModelClass
 
     /**
      * @return AtributoValor[]
-     * @deprecated replace with getValues()
-     */
-    public function getValores(): array
-    {
-        return $this->getValues();
-    }
-
-    /**
-     * @return AtributoValor[]
      */
     public function getValues(): array
     {

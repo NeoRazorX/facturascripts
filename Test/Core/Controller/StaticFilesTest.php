@@ -24,6 +24,7 @@ use FacturaScripts\Core\Controller\Myfiles;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 final class StaticFilesTest extends TestCase
 {
@@ -57,6 +58,31 @@ final class StaticFilesTest extends TestCase
         new Files('Files', '/Plugins/' . self::$testFolder . '/Assets/style.css');
     }
 
+    public function testFilesControllerAcceptsSymlinkedPluginFile(): void
+    {
+        $suffix = (string)getmypid();
+        $externalFolder = sys_get_temp_dir() . DIRECTORY_SEPARATOR . self::$testFolder . $suffix;
+        $linkName = self::$testFolder . 'Symlink' . $suffix;
+        $linkPath = Tools::folder('Plugins', $linkName);
+
+        Tools::folderCheckOrCreate(Tools::folder('Plugins'));
+        Tools::folderCheckOrCreate($externalFolder . DIRECTORY_SEPARATOR . 'Assets');
+        file_put_contents($externalFolder . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'style.css', 'test');
+
+        if (false === @symlink($externalFolder, $linkPath)) {
+            Tools::folderDelete($externalFolder);
+            $this->markTestSkipped('No se pueden crear enlaces simbólicos en este sistema.');
+        }
+
+        try {
+            $controller = new Files('Files', '/Plugins/' . $linkName . '/Assets/style.css');
+            $this->assertInstanceOf(Files::class, $controller);
+        } finally {
+            Tools::folderDelete($linkPath);
+            Tools::folderDelete($externalFolder);
+        }
+    }
+
     public function testMyfilesControllerRejectsPublicTraversal(): void
     {
         $this->createFile('MyFiles', 'Public', self::$testFolder, 'public.pdf');
@@ -77,6 +103,23 @@ final class StaticFilesTest extends TestCase
 
         $this->expectNotToPerformAssertions();
         new Myfiles('Myfiles', '/MyFiles/Public/' . self::$testFolder . '/public.pdf');
+    }
+
+    public function testMyfilesControllerForcesDownloadOfCsvFiles(): void
+    {
+        $this->createFile('MyFiles', 'Public', self::$testFolder, 'data.csv');
+        $this->createFile('MyFiles', 'Public', self::$testFolder, 'DATA2.CSV');
+        $this->createFile('MyFiles', 'Public', self::$testFolder, 'image.svg');
+        $this->createFile('MyFiles', 'Public', self::$testFolder, 'notes.txt');
+
+        $method = new ReflectionMethod(Myfiles::class, 'shouldForceDownload');
+
+        $controller = new Myfiles('Myfiles');
+        $folder = Tools::folder('MyFiles', 'Public', self::$testFolder);
+        $this->assertTrue($method->invoke($controller, $folder . DIRECTORY_SEPARATOR . 'data.csv'));
+        $this->assertTrue($method->invoke($controller, $folder . DIRECTORY_SEPARATOR . 'DATA2.CSV'));
+        $this->assertTrue($method->invoke($controller, $folder . DIRECTORY_SEPARATOR . 'image.svg'));
+        $this->assertFalse($method->invoke($controller, $folder . DIRECTORY_SEPARATOR . 'notes.txt'));
     }
 
     private function createFile(string ...$path): void
