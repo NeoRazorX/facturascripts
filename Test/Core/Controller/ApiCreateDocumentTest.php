@@ -37,6 +37,11 @@ final class ApiCreateDocumentTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
+        // los controladores crean el documento dentro de una transacción, y dentro
+        // no se pueden crear tablas. Instanciamos todos los modelos antes para que
+        // el esquema exista al empezar, incluso en una base de datos recién creada.
+        self::loadCoreModels();
+
         self::setDefaultSettings();
         self::installAccountingPlan();
         self::removeTaxRegularization();
