@@ -44,6 +44,22 @@ trait ApiBusinessDocumentTrait
         $line->dtopor = (float)($data['dtopor'] ?? $line->dtopor);
         $line->dtopor2 = (float)($data['dtopor2'] ?? $line->dtopor2);
 
+        // el IRPF solo se sobrescribe si viene en los datos, para no perder
+        // el porcentaje heredado de la cabecera (retención del cliente o
+        // proveedor) ni el de una línea que ya existe.
+        if (isset($data['irpf'])) {
+            $line->irpf = (float)$data['irpf'];
+        }
+
+        if (isset($data['orden'])) {
+            $line->orden = (int)$data['orden'];
+        }
+
+        // coste solo existe en las líneas de venta.
+        if (isset($data['coste']) && property_exists($line, 'coste')) {
+            $line->coste = (float)$data['coste'];
+        }
+
         if (isset($data['excepcioniva'])) {
             $line->excepcioniva = $data['excepcioniva'] === 'null' ? null : $data['excepcioniva'];
         }
