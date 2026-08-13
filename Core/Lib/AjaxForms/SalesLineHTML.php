@@ -187,7 +187,7 @@ class SalesLineHTML
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
         $line->excepcioniva = $formData['excepcioniva_' . $id] ?? null;
-        $line->irpf = (float)($formData['irpf_' . $id] ?? '0');
+        $line->setRetention($formData['irpf_' . $id] ?? null);
         $line->mostrar_cantidad = (bool)($formData['mostrar_cantidad_' . $id] ?? '0');
         $line->mostrar_precio = (bool)($formData['mostrar_precio_' . $id] ?? '0');
         $line->salto_pagina = (bool)($formData['salto_pagina_' . $id] ?? '0');
