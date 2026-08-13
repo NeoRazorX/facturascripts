@@ -28,6 +28,29 @@ use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 trait ApiBusinessDocumentTrait
 {
     /**
+     * Decodifica y valida la lista de líneas recibida por la API.
+     *
+     * @param mixed $data
+     *
+     * @return array|null
+     */
+    protected function decodeLines($data): ?array
+    {
+        $lines = is_string($data) ? json_decode($data, true) : $data;
+        if (false === is_array($lines) || false === array_is_list($lines)) {
+            return null;
+        }
+
+        foreach ($lines as $line) {
+            if (false === is_array($line)) {
+                return null;
+            }
+        }
+
+        return $lines;
+    }
+
+    /**
      * Asigna a la línea los campos recibidos en el array de datos.
      * Si un campo no viene en los datos se conserva el valor actual de la línea,
      * salvo la cantidad, que en una línea nueva ($isNew) toma 1 por defecto.

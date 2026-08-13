@@ -275,6 +275,28 @@ final class ApiCreateDocumentTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
 
+    public function testInvalidLineStructuresAreRejected(): void
+    {
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        $invalidLines = [
+            json_encode(['descripcion' => 'Servicios de consultoría']),
+            json_encode(['Servicios de consultoría']),
+        ];
+        foreach ($invalidLines as $lineas) {
+            $result = $this->callCreate('crearAlbaranCliente', [
+                'codcliente' => $subject->codcliente,
+                'lineas' => $lineas,
+            ]);
+            $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'invalid-lines-bad-code');
+            $this->assertEquals('Invalid lines', $result['body']['message'] ?? '', 'invalid-lines-bad-message');
+        }
+
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
     /**
      * Ejecuta el controlador ApiCreateDocument simulando una petición, evitando
      * la validación de token (que pertenece a ApiController) y capturando la

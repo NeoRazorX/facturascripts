@@ -347,8 +347,8 @@ class ApiEditDocument extends ApiController
             return false;
         }
 
-        $lineas = json_decode($this->request->input('lineas'), true);
-        if (false === is_array($lineas)) {
+        $lineas = $this->decodeLines($this->request->input('lineas'));
+        if (null === $lineas) {
             $this->response
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
                 ->json([

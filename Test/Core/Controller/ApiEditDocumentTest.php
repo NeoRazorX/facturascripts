@@ -306,6 +306,26 @@ final class ApiEditDocumentTest extends TestCase
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $result['code'], 'edit-bad-method-code');
     }
 
+    public function testInvalidLineStructuresAreRejected(): void
+    {
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        $doc = new AlbaranCliente();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-set-subject');
+        $this->assertTrue($doc->save(), 'can-not-create-albaran');
+
+        $result = $this->callEdit('editarAlbaranCliente', $doc->idalbaran, [
+            'lineas' => json_encode(['descripcion' => 'Servicios de consultoría']),
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'invalid-lines-bad-code');
+        $this->assertEquals('Invalid lines', $result['body']['message'] ?? '', 'invalid-lines-bad-message');
+
+        $this->assertTrue($doc->delete(), 'can-not-delete-albaran');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
     public function testNonEditableDocument(): void
     {
         // creamos un cliente
