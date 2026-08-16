@@ -360,9 +360,8 @@ class ApiCreateDocument extends ApiController
             return false;
         }
 
-        $lineData = $this->request->input('lineas');
-        $lineas = json_decode($lineData, true);
-        if (!is_array($lineas)) {
+        $lineas = $this->decodeLines($this->request->input('lineas'));
+        if (null === $lineas) {
             $this->response
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
                 ->json([

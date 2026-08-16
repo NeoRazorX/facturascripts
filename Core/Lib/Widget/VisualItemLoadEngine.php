@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,8 +31,22 @@ use SimpleXMLElement;
  */
 class VisualItemLoadEngine
 {
+    /**
+     * Atributos de columna que el usuario puede personalizar
+     *
+     * @var array
+     */
+    private static array $customizableColumnKeys = ['display', 'level', 'numcolumns', 'order', 'title'];
+
+    /**
+     * Atributos del widget que el usuario puede personalizar
+     *
+     * @var array
+     */
+    private static array $customizableWidgetKeys = ['decimal', 'readonly'];
+
     /** @var string */
-    private static $namespace = '\\FacturaScripts\\Dinamic\\Lib\\Widget\\';
+    private static string $namespace = '\\FacturaScripts\\Dinamic\\Lib\\Widget\\';
 
     public static function getNamespace(): string
     {
@@ -122,6 +136,84 @@ class VisualItemLoadEngine
         if (!isset($rows['actions']) && class_exists($className)) {
             $rowItem = new $className([]);
             $rows['actions'] = $rowItem;
+        }
+    }
+
+    /**
+     * Sobrescribe los atributos personalizados por el usuario.
+     * Las columnas que ya no existen en el XML se ignoran (no se añaden).
+     *
+     * @param PageOption $base   Estructura cargada desde el XML (se modifica).
+     * @param PageOption $custom Personalización guardada en base de datos.
+     */
+    public static function mergeCustomization(PageOption $base, PageOption $custom): void
+    {
+        $overrides = [];
+        foreach ($custom->columns as $group) {
+            if (($group['tag'] ?? '') === 'column') {
+                $overrides[$group['name']] = $group;
+                continue;
+            }
+            foreach ($group['children'] ?? [] as $col) {
+                if (($col['tag'] ?? '') === 'column' && isset($col['name'])) {
+                    $overrides[$col['name']] = $col;
+                }
+            }
+        }
+
+        if (empty($overrides)) {
+            return;
+        }
+
+        // aplicamos los overrides recorriendo la estructura del XML.
+        // ojo: el foreach por referencia debe iterar sobre una variable real, no
+        // sobre una expresión temporal (p.ej. "$group['children'] ?? []"), o las
+        // modificaciones se pierden y no afectarían a las columnas dentro de grupos
+        foreach ($base->columns as &$group) {
+            if (($group['tag'] ?? '') === 'column') {
+                static::applyColumnOverride($group, $overrides);
+                continue;
+            }
+            if (false === isset($group['children'])) {
+                continue;
+            }
+            foreach ($group['children'] as &$col) {
+                if (($col['tag'] ?? '') === 'column') {
+                    static::applyColumnOverride($col, $overrides);
+                }
+            }
+            unset($col);
+        }
+        unset($group);
+    }
+
+    /**
+     * Aplica sobre una columna del XML los atributos personalizados guardados
+     *
+     * @param array $column    Columna de la estructura del XML (se modifica).
+     * @param array $overrides Mapa nombre de columna -> definición guardada.
+     */
+    private static function applyColumnOverride(array &$column, array $overrides): void
+    {
+        $name = $column['name'] ?? null;
+        if (null === $name || false === isset($overrides[$name])) {
+            return;
+        }
+
+        $saved = $overrides[$name];
+        foreach (self::$customizableColumnKeys as $key) {
+            if (isset($saved[$key])) {
+                $column[$key] = $saved[$key];
+            }
+        }
+
+        if (false === isset($column['children'][0])) {
+            return;
+        }
+        foreach (self::$customizableWidgetKeys as $key) {
+            if (isset($saved['children'][0][$key])) {
+                $column['children'][0][$key] = $saved['children'][0][$key];
+            }
         }
     }
 
