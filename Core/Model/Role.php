@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025  Carlos García Gómez    <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026  Carlos García Gómez    <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson             <joenilson at gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Internal\CacheWithMemory;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -59,6 +60,21 @@ class Role extends ModelClass
         $roleUser->nick = $nick;
 
         return $roleUser->save();
+    }
+
+    /**
+     * Además de la caché del modelo, limpia la caché de los permisos y de los usuarios
+     * del rol, porque al eliminar un rol la base de datos elimina en cascada sus filas
+     * de roles_access y roles_users, sin pasar por esos modelos.
+     */
+    public function clearCache(): void
+    {
+        parent::clearCache();
+
+        CacheWithMemory::deleteMulti('model-RoleAccess-');
+        CacheWithMemory::deleteMulti('table-' . RoleAccess::tableName() . '-');
+        CacheWithMemory::deleteMulti('model-RoleUser-');
+        CacheWithMemory::deleteMulti('table-' . RoleUser::tableName() . '-');
     }
 
     public function getAccesses(): array
