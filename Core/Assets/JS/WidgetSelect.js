@@ -167,6 +167,14 @@ $(document).ready(function () {
             options.dataAdapter = widgetSelectGetSharedAdapter();
         }
 
+        // dentro de un modal el desplegable debe crearse en el propio modal,
+        // si se crea en el body la trampa de foco de bootstrap le quita el foco
+        // al buscador y no se puede escribir en él
+        let modal = $(this).closest('.modal');
+        if (modal.length > 0) {
+            options.dropdownParent = modal;
+        }
+
         $(this).select2(options);
     }).closest('form').on('reset', function () {
         // select2 no restaura su UI con el reset nativo, https://github.com/select2/select2/issues/363

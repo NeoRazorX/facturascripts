@@ -34,12 +34,30 @@ use FacturaScripts\Core\Where;
  */
 class APIModel extends APIResourceClass
 {
+    /** @var string[] */
+    private static $excluded_models = ['CodeModel', 'TotalModel'];
+
     /**
      * ModelClass object.
      *
      * @var ModelClass $model
      */
     private $model;
+
+    /**
+     * Excludes a model from the API resources map.
+     *
+     * Plugins can call this method from Init::init(), using the class name
+     * without namespace.
+     *
+     * @param string $modelName
+     */
+    public static function excludeModel(string $modelName): void
+    {
+        if (false === in_array($modelName, self::$excluded_models, true)) {
+            self::$excluded_models[] = $modelName;
+        }
+    }
 
     /**
      * Process the GET request. Overwrite this function to implement is functionality.
@@ -198,16 +216,12 @@ class APIModel extends APIResourceClass
      */
     private function getResourcesFromFolder($folder): array
     {
-        // Modelos que no deben exponerse en la API
-        $excludedModels = ['CodeModel', 'TotalModel'];
-
         $resources = [];
         foreach (scandir(FS_FOLDER . '/Dinamic/' . $folder, SCANDIR_SORT_ASCENDING) as $fName) {
             if (substr($fName, -4) === '.php') {
                 $modelName = substr($fName, 0, -4);
 
-                // Excluir modelos auxiliares
-                if (in_array($modelName, $excludedModels, true)) {
+                if (in_array($modelName, self::$excluded_models, true)) {
                     continue;
                 }
 
