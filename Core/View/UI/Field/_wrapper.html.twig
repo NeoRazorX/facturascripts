@@ -1,0 +1,31 @@
+{# Wrapper común de los campos: identidad de fragmento + label + input + errores + ayuda.
+   Las plantillas concretas extienden esta y definen el bloque 'input'. #}
+<div id="{{ c.domId() }}" data-ui-path="{{ c.path() }}" class="{{ c.colClass() }}">
+    <div class="mb-3">
+        <label class="mb-0" for="{{ c.inputId() }}">
+            {% if c.getLabelUrl() %}
+                <a href="{{ c.getLabelUrl() }}">{{ c.labelText() }}</a>
+            {% else %}
+                {{ c.labelText() }}
+            {% endif %}
+            {% if c.isRequired() %}<sup class="text-danger">*</sup>{% endif %}
+        </label>
+        {% if c.getIcon() %}
+            <div class="input-group">
+                <span class="input-group-text"><i class="{{ c.getIcon() }} fa-fw"></i></span>
+                {{ block('input') }}
+                {% for error in c.errors() %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ block('input') }}
+            {% for error in c.errors() %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+        {% if c.descriptionText() %}
+            <small class="form-text text-muted">{{ c.descriptionText() }}</small>
+        {% endif %}
+    </div>
+</div>

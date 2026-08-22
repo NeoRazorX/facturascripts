@@ -1,0 +1,22 @@
+{% extends 'UI/Field/_wrapper.html.twig' %}
+
+{% block input %}
+    <select name="{{ c.inputName() }}" id="{{ c.inputId() }}" class="{{ c.inputCssClass('form-select') }}"
+            data-ui-behavior="{{ c.isRemote() ? 'select2-query' : 'select2' }}"
+            {%- if c.isRemote() %} data-ui-query-target="{{ c.path() }}"{% endif %}
+            {%- if c.isAllowCustom is defined and c.isAllowCustom() %} data-ui-tags="1"{% endif %}
+            {%- if c.parentInputName() %} data-ui-parent-name="{{ c.parentInputName() }}"{% endif %}
+            {%- if c.dependentTargets() %} data-ui-on="change" data-ui-event="{{ c.form().eventId('_refresh') }}" data-ui-targets="{{ c.dependentTargets() }}"{% endif %}
+            {%- if c.getPlaceholder() %} data-ui-placeholder="{{ c.getPlaceholder() }}"{% endif %}
+            {%- if c.isRequired() %} required{% endif %}
+            {%- if c.isReadOnly() %} disabled{% endif %}
+            {%- if c.getTabIndex() >= 0 %} tabindex="{{ c.getTabIndex() }}"{% endif %}>
+        {% for opt in c.values() %}
+            <option value="{{ opt.value }}"{{ c.isSelected(opt.value) ? ' selected' : '' }}>{{ opt.title }}</option>
+        {% endfor %}
+    </select>
+    {% if c.isReadOnly() %}
+        {# el select disabled no viaja en el POST; el hidden preserva el valor #}
+        <input type="hidden" name="{{ c.inputName() }}" value="{{ c.valueAttr() }}"/>
+    {% endif %}
+{% endblock %}
