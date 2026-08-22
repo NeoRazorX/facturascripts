@@ -16,6 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+function widgetAutocompleteMsg(key) {
+    return (typeof i18n !== 'undefined' && i18n[key]) ? i18n[key] : key;
+}
+
 function widgetAutocompleteGetData(formId, formData, term) {
     var rawForm = $("form[id=" + formId + "]").serializeArray();
     $.each(rawForm, function (i, input) {
@@ -45,23 +49,42 @@ $(document).ready(function () {
                     data: widgetAutocompleteGetData(formId, data, request.term),
                     dataType: "json",
                     success: function (results) {
-                        var values = [];
-                        results.forEach(function (element) {
-                            if (element.key === null || element.key === element.value) {
-                                values.push(element);
-                            } else {
-                                values.push({key: element.key, value: element.key + " | " + element.value});
+                        try {
+                            if (!Array.isArray(results)) {
+                                throw new Error('response is not an array');
                             }
-                        });
-                        response(values);
+                            var values = [];
+                            results.forEach(function (element) {
+                                if (!element || element.key === undefined || element.value === undefined || element.value === null) {
+                                    console.warn('widget-autocomplete: invalid element ignored', element);
+                                    return;
+                                }
+                                if (element.key === null || element.key === element.value) {
+                                    values.push(element);
+                                } else {
+                                    values.push({key: element.key, value: element.key + " | " + element.value});
+                                }
+                            });
+                            response(values);
+                        } catch (e) {
+                            console.error('widget-autocomplete: invalid JSON response', e);
+                            alert(widgetAutocompleteMsg('autocomplete-error-invalid-response'));
+                            response([]);
+                        }
                     },
                     error: function (msg, textStatus, errorThrown) {
-                        console.log('widget-autocomplete AJAX ERROR');
-                        console.log('status:', msg.status);
-                        console.log('textStatus:', textStatus);
-                        console.log('errorThrown:', errorThrown);
-                        console.log('responseText:', msg.responseText);
-                        alert(msg.status + " " + msg.responseText);
+                        console.error('widget-autocomplete AJAX error | status:', msg.status, '| textStatus:', textStatus, '| errorThrown:', errorThrown);
+                        console.error('widget-autocomplete responseText:', msg.responseText);
+                        if (msg.status === 0) {
+                            alert(widgetAutocompleteMsg('autocomplete-error-network'));
+                        } else if (msg.status === 400) {
+                            alert(widgetAutocompleteMsg('autocomplete-error-bad-request'));
+                        } else if (msg.status >= 500) {
+                            alert(widgetAutocompleteMsg('autocomplete-error-server'));
+                        } else {
+                            alert(widgetAutocompleteMsg('autocomplete-error-generic'));
+                        }
+                        response([]);
                     }
                 });
             },
