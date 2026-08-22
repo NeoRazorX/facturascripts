@@ -164,6 +164,9 @@
         <column name="date" display="right" order="470">
             <widget type="date" fieldname="fecha"/>
         </column>
+        <column name="expiration" display="right" order="480">  
+            <widget type="date" fieldname="vencimiento"/>  
+        </column>
     </columns>
     <rows>
         <row type="status">
