@@ -42,6 +42,9 @@ class BusinessDocumentGenerator
     /** @var array */
     protected $lastDocs = [];
 
+    /** @var string|null */
+    private static $newDocDate = null;
+
     /** @var bool */
     private static $sameDate = false;
 
@@ -84,7 +87,10 @@ class BusinessDocumentGenerator
         // assign the user
         $newDoc->nick = Session::user()->nick;
 
-        if (self::$sameDate) {
+        if (self::$newDocDate) {
+            $newDoc->fecha = self::$newDocDate;
+            self::$newDocDate = null;
+        } elseif (self::$sameDate) {
             $newDoc->fecha = $prototype->fecha;
             $newDoc->hora = $prototype->hora;
         }
@@ -120,6 +126,11 @@ class BusinessDocumentGenerator
     public function getLastDocs(): array
     {
         return $this->lastDocs;
+    }
+
+    public static function setNewDocDate(?string $date): void
+    {
+        self::$newDocDate = $date;
     }
 
     public static function setSameDate(bool $value)
