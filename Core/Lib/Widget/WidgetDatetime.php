@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of WidgetDatetime
@@ -28,9 +30,15 @@ use FacturaScripts\Core\Request;
  */
 class WidgetDatetime extends BaseWidget
 {
+    protected function assets(): void
+    {
+        $route = Tools::config('route');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetDatetime.js?v=1');
+    }
+
     protected function inputHtml($type = 'datetime-local', $extraClass = '')
     {
-        $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
+        $class = $this->combineClasses($this->css('form-control'), 'widget-datetime', $this->class, $extraClass);
         $value = empty($this->value) ? '' : date('Y-m-d H:i:s', strtotime($this->value));
         return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
