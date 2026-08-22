@@ -295,9 +295,9 @@ class SalesLineHTML
         // buscamos el código de barras en las variantes
         $whereBarcode = [Where::eq('codbarras', $formData['fastli'])];
         foreach (Variante::all($whereBarcode, [], 0, 5) as $variante) {
-            // comprobamos que el producto se pueda vender
+            // comprobamos que la variante no esté bloqueada y que el producto se pueda vender
             $product = $variante->getProducto();
-            if (!$product->bloqueado && $product->sevende) {
+            if (false === $variante->bloqueada && !$product->bloqueado && $product->sevende) {
                 return $model->getNewProductLine($variante->referencia);
             }
         }

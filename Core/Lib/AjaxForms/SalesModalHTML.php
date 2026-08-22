@@ -241,7 +241,7 @@ class SalesModalHTML
             . ' FROM variantes v'
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
             . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
-            . ' WHERE p.sevende = true AND p.bloqueado = false';
+            . ' WHERE p.sevende = true AND p.bloqueado = false AND v.bloqueada = false';
 
         if (self::$codfabricante) {
             $sql .= ' AND p.codfabricante = ' . $dataBase->var2str(self::$codfabricante);
