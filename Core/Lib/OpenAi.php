@@ -33,6 +33,7 @@ class OpenAi
     const CHAT_URL = 'https://api.openai.com/v1/chat/completions';
     const FILES_URL = 'https://api.openai.com/v1/files';
     const IMAGES_URL = 'https://api.openai.com/v1/images/generations';
+    const IMAGE_TIMEOUT = 180;
     const THREADS_URL = 'https://api.openai.com/v1/threads';
     const VECTOR_URL = 'https://api.openai.com/v1/vector_stores';
 
@@ -341,34 +342,31 @@ class OpenAi
     /**
      * Genera una imagen a partir del prompt, la guarda en MyFiles y devuelve su ruta.
      */
-    public function image(string $prompt, int $width = 1024, int $height = 1024, int $count = 1, string $model = 'gpt-image-2-mini', array $options = []): string
+    public function image(string $prompt, int $width = 1024, int $height = 1024, int $count = 1, string $model = 'gpt-image-2', array $options = []): string
     {
-        $resize = false;
-        $data = [
-            'model' => $model,
-            'prompt' => $prompt,
-            'n' => $count,
-            'size' => $this->getImageSize($resize, $width, $height)
-        ];
+        $format = strtolower($options['output_format'] ?? 'png');
+        if (!in_array($format, ['jpeg', 'png', 'webp'], true)) {
+            Tools::log()->error('image generation error: unsupported output format ' . $format);
+            return '';
+        }
 
-        // Añadir parámetros opcionales
-        if (isset($options['output_format'])) {
-            $data['output_format'] = $options['output_format'];
+        // Este método devuelve una sola ruta, por lo que solamente puede procesar una imagen.
+        if ($count !== 1) {
+            Tools::log()->warning('image generation warning: count ignored because image() returns a single path');
         }
-        if (isset($options['output_compression'])) {
-            $data['output_compression'] = $options['output_compression'];
+
+        // Http no procesa respuestas SSE. Mantenemos la opción por compatibilidad, pero usamos una respuesta JSON normal.
+        if (!empty($options['stream'])) {
+            Tools::log()->warning('image generation warning: stream ignored because image() returns a file path');
         }
-        if (isset($options['stream'])) {
-            $data['stream'] = $options['stream'];
-        }
-        if (isset($options['content_moderation'])) {
-            $data['content_moderation'] = $options['content_moderation'];
-        }
+
+        $resize = false;
+        $data = $this->getImageRequestData($prompt, $width, $height, $model, $options, $resize);
 
         $response = Http::post(self::IMAGES_URL, json_encode($data))
             ->setHeader('Content-Type', 'application/json')
             ->setBearerToken($this->api_key)
-            ->setTimeOut($this->timeout);
+            ->setTimeOut(max($this->timeout, self::IMAGE_TIMEOUT));
 
         if ($response->failed()) {
             Tools::log()->error('image generation error: ' . $response->status() . ' ' . $response->errorMessage(), [
@@ -382,12 +380,12 @@ class OpenAi
         $json = $response->json();
 
         // Determinar la extensión del archivo según el formato de salida
-        $format = $options['output_format'] ?? 'png';
         $file_name = 'image_' . uniqid() . '.' . $format;
-        $file_path = 'MyFiles/' . $file_name;
+        $relative_path = 'MyFiles/' . $file_name;
+        $file_path = Tools::folder('MyFiles', $file_name);
 
         // gpt-image devuelve la imagen en base64
-        if (false === isset($json['data'][0]['b64_json'])) {
+        if (!is_array($json) || false === isset($json['data'][0]['b64_json'])) {
             Tools::log()->error('image generation error: no image base64', [
                 'response' => $json,
                 'model' => $model
@@ -395,7 +393,12 @@ class OpenAi
             return '';
         }
 
-        $image = base64_decode($json['data'][0]['b64_json']);
+        $image = base64_decode($json['data'][0]['b64_json'], true);
+        if ($image === false || $image === '') {
+            Tools::log()->error('image generation error: invalid image base64');
+            return '';
+        }
+
         if (file_put_contents($file_path, $image) === false) {
             Tools::log()->error('image generation error: saving image from base64');
             return '';
@@ -410,7 +413,7 @@ class OpenAi
             }
         }
 
-        return $file_path;
+        return $relative_path;
     }
 
     /**
@@ -692,10 +695,42 @@ class OpenAi
     }
 
     /**
-     * Devuelve un tamaño de imagen válido para el modelo; si no lo es, marca $resize para redimensionar después.
+     * Construye los parámetros compatibles con una respuesta de imagen no streaming.
      */
-    private function getImageSize(bool &$resize, int $width, int $height): string
+    private function getImageRequestData(string $prompt, int $width, int $height, string $model, array $options, bool &$resize): array
     {
+        $data = [
+            'model' => $model,
+            'prompt' => $prompt,
+            'n' => 1,
+            'size' => $this->getImageSize($resize, $width, $height, $model)
+        ];
+
+        if (isset($options['output_format'])) {
+            $data['output_format'] = strtolower($options['output_format']);
+        }
+        if (isset($options['output_compression'])) {
+            $data['output_compression'] = $options['output_compression'];
+        }
+
+        // content_moderation se conserva como alias de compatibilidad.
+        $moderation = $options['moderation'] ?? $options['content_moderation'] ?? null;
+        if ($moderation !== null) {
+            $data['moderation'] = $moderation;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Devuelve un tamaño válido para el modelo; si no lo es, marca $resize para redimensionar después.
+     */
+    private function getImageSize(bool &$resize, int $width, int $height, string $model): string
+    {
+        if (strpos($model, 'gpt-image-2') === 0 && $this->isValidGptImage2Size($width, $height)) {
+            return $width . 'x' . $height;
+        }
+
         // Tamaños soportados por GPT Image: 1024x1024, 1536x1024, 1024x1536
         $validSizes = [
             '1024x1024',
@@ -724,6 +759,28 @@ class OpenAi
     }
 
     /**
+     * Comprueba las restricciones de tamaño de GPT Image 2.
+     */
+    private function isValidGptImage2Size(int $width, int $height): bool
+    {
+        if ($width <= 0 || $height <= 0 || $width > 3840 || $height > 3840) {
+            return false;
+        }
+
+        if ($width % 16 !== 0 || $height % 16 !== 0) {
+            return false;
+        }
+
+        $shortEdge = min($width, $height);
+        $longEdge = max($width, $height);
+        $pixels = $width * $height;
+
+        return $longEdge / $shortEdge <= 3
+            && $pixels >= 655360
+            && $pixels <= 8294400;
+    }
+
+    /**
      * Redimensiona la imagen al tamaño indicado y devuelve la ruta del nuevo archivo.
      */
     private function imageResize(string $filePath, int $width, int $height): string
@@ -735,9 +792,9 @@ class OpenAi
 
             $thumb = imagecreatetruecolor($width, $height);
 
-            // Preservar transparencia para PNG
+            // Preservar transparencia para PNG y WebP
             $ext = pathinfo($filePath, PATHINFO_EXTENSION);
-            if ($ext === 'png') {
+            if (in_array($ext, ['png', 'webp'], true)) {
                 imagealphablending($thumb, false);
                 imagesavealpha($thumb, true);
                 $transparent = imagecolorallocatealpha($thumb, 0, 0, 0, 127);
@@ -746,26 +803,36 @@ class OpenAi
 
             imagecopyresampled($thumb, $image, 0, 0, 0, 0, $width, $height, $imageWidth, $imageHeight);
             $thumbName = pathinfo($filePath, PATHINFO_FILENAME) . '_' . $width . 'x' . $height . '.' . $ext;
-            $thumbFile = 'MyFiles/' . $thumbName;
+            $thumbFile = Tools::folder('MyFiles', $thumbName);
+            $saved = false;
             switch ($ext) {
                 case 'jpg':
                 case 'jpeg':
-                    imagejpeg($thumb, $thumbFile);
+                    $saved = imagejpeg($thumb, $thumbFile);
                     break;
 
                 case 'png':
-                    imagepng($thumb, $thumbFile);
+                    $saved = imagepng($thumb, $thumbFile);
                     break;
 
                 case 'gif':
-                    imagegif($thumb, $thumbFile);
+                    $saved = imagegif($thumb, $thumbFile);
                     break;
+
+                case 'webp':
+                    $saved = function_exists('imagewebp') && imagewebp($thumb, $thumbFile);
+                    break;
+            }
+
+            if ($saved === false) {
+                Tools::log('openai-image')->error('image resize error: unsupported output format ' . $ext);
+                return '';
             }
         } catch (Throwable $th) {
             Tools::log('openai-image')->error('image resize error: ' . $th->getMessage());
             return '';
         }
 
-        return $thumbFile;
+        return 'MyFiles/' . $thumbName;
     }
 }
