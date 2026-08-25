@@ -78,7 +78,6 @@ trait ExtensionsTrait
                 continue;
             }
 
-            $method->setAccessible(true);
             $result = $method->invoke($extension);
 
             // Validate that the method returns a closure

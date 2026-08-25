@@ -452,7 +452,14 @@ abstract class BusinessDocument extends NewModelClass
 
         // comprobamos el número
         if ((int)$this->numero < 1) {
-            Tools::log()->error('invalid-number', ['%number%' => $this->numero]);
+            Tools::log()->error('invalid-number', [
+                '%number%' => $this->numero === null || $this->numero === '' ? Tools::trans('empty') : $this->numero,
+                'codejercicio' => $this->codejercicio,
+                'field' => 'numero',
+                'model-class' => $this->modelClassName(),
+                'model-code' => $this->id(),
+                'value' => $this->numero,
+            ]);
             return false;
         }
 

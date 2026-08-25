@@ -45,6 +45,7 @@ class EditAsiento extends PanelController
     use LogAuditTrait;
 
     const MAIN_VIEW_NAME = 'main';
+
     const MAIN_VIEW_TEMPLATE = 'Tab/AccountingEntry';
 
     /** @var array */
@@ -159,6 +160,11 @@ class EditAsiento extends PanelController
         AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
         AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
+
+        // cargamos los assets de los mods
+        AccountingHeaderHTML::assets();
+        AccountingLineHTML::assets();
+        AccountingFooterHTML::assets();
     }
 
     /**
@@ -361,6 +367,8 @@ class EditAsiento extends PanelController
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return $this->sendJsonError();
+        } elseif (false === $this->validateFormToken()) {
+            return $this->sendJsonError();
         }
 
         $this->dataBase->beginTransaction();
@@ -395,7 +403,11 @@ class EditAsiento extends PanelController
 
     protected function sendJsonError(): bool
     {
-        $this->response->json(['ok' => false, 'messages' => Tools::log()::read('master', $this->logLevels)]);
+        $this->response->json([
+            'ok' => false,
+            'messages' => Tools::log()::read('master', $this->logLevels),
+            'multireqtoken' => $this->multiRequestProtection->newToken()
+        ]);
         return false;
     }
 

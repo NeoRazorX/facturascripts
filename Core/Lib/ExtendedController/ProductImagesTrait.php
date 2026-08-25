@@ -181,6 +181,7 @@ trait ProductImagesTrait
         $fileRelation->idfile = $idfile;
         $fileRelation->model = 'Producto';
         $fileRelation->modelid = $idproduct;
+        $fileRelation->modelcode = (string)$idproduct;
         $fileRelation->nick = $this->user->nick;
         $fileRelation->save();
     }

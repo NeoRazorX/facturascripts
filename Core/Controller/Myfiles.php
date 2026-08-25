@@ -108,7 +108,7 @@ class Myfiles implements ControllerInterface
             ob_end_flush();
         }
 
-        // forzamos la descarga de archivos svg, xml y html para evitar ataques XSS
+        // forzamos la descarga de archivos svg, xml y html para evitar ataques XSS, y de csv para evitar que se muestren como texto
         if ($this->shouldForceDownload($this->filePath)) {
             header('Content-Disposition: attachment; filename="' . basename($this->filePath) . '"');
         }
@@ -143,6 +143,11 @@ class Myfiles implements ControllerInterface
             $extension = strtolower($info['extension']);
             $dangerousExtensions = ['svg', 'xml', 'xsig', 'html', 'htm', 'xhtml'];
             if (in_array($extension, $dangerousExtensions, true)) {
+                return true;
+            }
+
+            // forzamos la descarga de csv para que el navegador no lo muestre como texto plano
+            if ($extension === 'csv') {
                 return true;
             }
         }

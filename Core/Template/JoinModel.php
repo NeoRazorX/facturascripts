@@ -287,12 +287,7 @@ abstract class JoinModel
     /** Devuelve el valor de la clave primaria del modelo master. */
     public function id()
     {
-        if (isset($this->masterModel)) {
-            $primaryColumn = $this->masterModel->primaryColumn();
-            return $this->{$primaryColumn};
-        }
-
-        return null;
+        return $this->primaryColumnValue();
     }
 
     /**
@@ -405,17 +400,20 @@ abstract class JoinModel
 
     /**
      * Devuelve el valor de la clave primaria del modelo principal.
+     * Contiene la implementación real y se mantiene como punto de extensión
+     * por compatibilidad con plugins que lo sobreescriben.
      *
      * @return mixed
      * @deprecated Usar id() en su lugar.
      */
-    #[Deprecated(
-        reason: 'Use id() instead',
-        replacement: '%class%->id()',
-    )]
     public function primaryColumnValue()
     {
-        return $this->id();
+        if (isset($this->masterModel)) {
+            $primaryColumn = $this->masterModel->primaryColumn();
+            return $this->{$primaryColumn};
+        }
+
+        return null;
     }
 
     /**

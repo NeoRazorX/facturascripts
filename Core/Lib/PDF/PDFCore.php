@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\PDF;
 
 use Cezpdf;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\Export\ExportBase;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
@@ -210,7 +210,7 @@ abstract class PDFCore extends ExportBase
         return str_replace(
             ['€', '₡', '₲', '£', '&nbsp;'],
             ['EUR', 'SVC', 'PYG', 'GBP', ' '],
-            Utils::fixHtml($value)
+            Tools::fixHtml($value)
         );
     }
 

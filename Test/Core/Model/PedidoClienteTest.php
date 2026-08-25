@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoCliente;
@@ -325,7 +326,7 @@ final class PedidoClienteTest extends TestCase
             'codpostal' => [10, 11],
             'direccion' => [200, 201],
             'nombrecliente' => [100, 101],
-            'operacion' => [20, 21],
+            'operacion' => [InvoiceOperation::MAX_KEY_LENGTH, InvoiceOperation::MAX_KEY_LENGTH + 1],
             'provincia' => [100, 101],
         ];
 

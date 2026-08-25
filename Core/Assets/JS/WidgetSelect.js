@@ -1,4 +1,104 @@
 let waitSelectCounter = 0;
+const widgetSelectSharedLists = {};
+let widgetSelectSharedAdapter = null;
+
+function widgetSelectGetOptionData(element) {
+    if (element.tagName.toLowerCase() === 'optgroup') {
+        let children = [];
+        $(element).children('option').each(function () {
+            children.push(widgetSelectGetOptionData(this));
+        });
+
+        return {
+            text: element.label,
+            disabled: element.disabled,
+            children: children
+        };
+    }
+
+    return {
+        id: $(element).val(),
+        text: $(element).text(),
+        disabled: element.disabled,
+        title: element.title
+    };
+}
+
+function widgetSelectLoadSharedLists() {
+    $('select.select2[data-shared-source="true"]').each(function () {
+        let list = [];
+        $(this).children('option, optgroup').each(function () {
+            list.push(widgetSelectGetOptionData(this));
+        });
+
+        widgetSelectSharedLists[$(this).attr('data-shared-list')] = list;
+    });
+}
+
+function widgetSelectListContains(list, id) {
+    for (let index = 0; index < list.length; index++) {
+        if (list[index].children && widgetSelectListContains(list[index].children, id)) {
+            return true;
+        }
+        if (list[index].id != null && list[index].id.toString() === id.toString()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function widgetSelectGetSharedAdapter() {
+    if (widgetSelectSharedAdapter !== null) {
+        return widgetSelectSharedAdapter;
+    }
+
+    const amd = $.fn.select2.amd;
+    const SelectAdapter = amd.require('select2/data/select');
+    const Utils = amd.require('select2/utils');
+
+    function SharedAdapter($element, options) {
+        this.sharedData = (widgetSelectSharedLists[$element.attr('data-shared-list')] || []).slice();
+        let adapter = this;
+        $element.find('option').each(function () {
+            let item = widgetSelectGetOptionData(this);
+            if (false === widgetSelectListContains(adapter.sharedData, item.id)) {
+                adapter.sharedData.push(item);
+            }
+        });
+        SharedAdapter.__super__.constructor.call(this, $element, options);
+    }
+
+    Utils.Extend(SharedAdapter, SelectAdapter);
+
+    SharedAdapter.prototype.query = function (params, callback) {
+        let results = [];
+        for (let index = 0; index < this.sharedData.length; index++) {
+            let item = this._normalizeItem(this.sharedData[index]);
+            let match = this.matches(params, item);
+            if (match !== null) {
+                results.push(match);
+            }
+        }
+
+        callback({results: results});
+    };
+
+    SharedAdapter.prototype.select = function (data) {
+        let option = this.$element.find('option').filter(function () {
+            return $(this).val() == data.id;
+        });
+
+        if (option.length === 0) {
+            this.addOptions(this.option(data));
+        }
+
+        SharedAdapter.__super__.select.call(this, data);
+    };
+
+    widgetSelectSharedAdapter = SharedAdapter;
+    return widgetSelectSharedAdapter;
+}
 
 function getValueTypeParent(parent) {
     if (parent.is('select')) {
@@ -55,9 +155,36 @@ function widgetSelectGetData(select, parent) {
 }
 
 $(document).ready(function () {
-    $('select.select2').select2({
-        width: 'style',
-        theme: 'bootstrap-5'
+    widgetSelectLoadSharedLists();
+
+    $('select.select2').each(function () {
+        let options = {
+            width: 'style',
+            theme: 'bootstrap-5'
+        };
+        let sharedList = $(this).attr('data-shared-list');
+        if (widgetSelectSharedLists[sharedList] !== undefined) {
+            options.dataAdapter = widgetSelectGetSharedAdapter();
+        }
+
+        // dentro de un modal el desplegable debe crearse en el propio modal,
+        // si se crea en el body la trampa de foco de bootstrap le quita el foco
+        // al buscador y no se puede escribir en él
+        let modal = $(this).closest('.modal');
+        if (modal.length > 0) {
+            options.dropdownParent = modal;
+        }
+
+        $(this).select2(options);
+    }).closest('form').on('reset', function () {
+        // select2 no restaura su UI con el reset nativo, https://github.com/select2/select2/issues/363
+        // el evento reset se dispara antes de que el navegador restaure el formulario,
+        // así que restauramos los option a mano y avisamos solo a select2 (namespace)
+        const select2 = $(this).find('select.select2');
+        select2.find('option').prop('selected', function () {
+            return this.defaultSelected;
+        });
+        select2.trigger('change.select2');
     });
 
     $('.parentSelect').each(function () {

@@ -25,17 +25,22 @@
             <div class="row">
                 <div class="col">
                     <h1 class="h4">
-                        {% if fsc.getPageData().name == fsc.user.homepage %}
-                            <a class="btn btn-sm btn-secondary align-bottom active"
-                               href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ trans('marked-as-homepage') }}">
-                                <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+                        <span class="btn-group align-bottom">
+                            <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}" title="{{ trans('refresh') }}">
+                                <i class="fa-solid fa-redo" aria-hidden="true"></i>
                             </a>
-                        {% else %}
-                            <a class="btn btn-sm btn-secondary align-bottom" href="{{ fsc.url() }}?defaultPage=TRUE"
-                               title="{{ trans('mark-as-homepage') }}">
-                                <i class="fa-regular fa-bookmark" aria-hidden="true"></i>
-                            </a>
-                        {% endif %}
+                            {% if fsc.getPageData().name == fsc.user.homepage %}
+                                <a class="btn btn-sm btn-secondary active"
+                                   href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ trans('marked-as-homepage') }}">
+                                    <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+                                </a>
+                            {% else %}
+                                <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
+                                   title="{{ trans('mark-as-homepage') }}">
+                                    <i class="fa-regular fa-bookmark" aria-hidden="true"></i>
+                                </a>
+                            {% endif %}
+                        </span>
                         <span class="ms-2">{{ fsc.title }}</span>
                     </h1>
                 </div>
@@ -98,9 +103,7 @@
                     {{ _self.sectionRecent(fsc) }}
                 </div>
             {% endif %}
-            {% if fsc.isOnboarding == false %}
-                {{ _self.sectionNews(fsc) }}
-            {% endif %}
+            {{ _self.sectionNews(fsc) }}
         {% endblock %}
         {% for includeView in getIncludeViews('Dashboard', 'sectionsAfter') %}
             {% include includeView['path'] %}
@@ -315,17 +318,18 @@
 
 {% macro sectionNews(fsc) %}
     {% for news in fsc.news %}
+        {% set newsUrl = news.url ~ ('?' in news.url ? '&' : '?') ~ 'utm_source=Dashboard' %}
         <div class="row">
             <div class="col">
                 <div class="card shadow mb-3">
                     <div class="card-header">
                         <span class="float-end">{{ news.fecha }}</span>
-                        <a href="{{ news.url }}" target="_blank">{{ news.title | raw }}</a>
+                        <a href="{{ newsUrl }}" target="_blank">{{ news.title | raw }}</a>
                     </div>
                     <div class="card-body p-3">
                         <div class="row align-items-center">
                             <div class="col-auto">
-                                <a href="{{ news.url }}" target="_blank" class="btn btn-outline-secondary">
+                                <a href="{{ newsUrl }}" target="_blank" class="btn btn-outline-secondary">
                                     <i class="fa-regular fa-newspaper fa-3x"></i>
                                 </a>
                             </div>

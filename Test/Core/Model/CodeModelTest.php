@@ -450,6 +450,25 @@ final class CodeModelTest extends TestCase
         $this->assertEquals('', $result->description);
     }
 
+    public function testSearchWithInvalidFieldNames(): void
+    {
+        $result = CodeModel::search(
+            'Join\\PartidaAsiento',
+            '(SELECT(SLEEP(5)))',
+            'concepto',
+            'x'
+        );
+        $this->assertSame([], $result);
+
+        $result = CodeModel::search(
+            'Join\\PartidaAsiento',
+            'idpartida',
+            '(SELECT(SLEEP(5)))',
+            'x'
+        );
+        $this->assertSame([], $result);
+    }
+
     public function testAllWithJoinModelName(): void
     {
         // Pasar 'Join\StockProducto' debe entrar en el branch de modelo y, al
@@ -575,9 +594,6 @@ final class CodeModelTest extends TestCase
     {
         // Verifica que el helper protegido modelBaseName devuelve el último segmento
         $method = new \ReflectionMethod(CodeModel::class, 'modelBaseName');
-        if (PHP_VERSION_ID < 80100) {
-            $method->setAccessible(true);
-        }
         $this->assertEquals('PartidaAsiento', $method->invoke(null, 'Join\\PartidaAsiento'));
         $this->assertEquals('Variante', $method->invoke(null, 'Variante'));
         $this->assertEquals('C', $method->invoke(null, 'A\\B\\C'));

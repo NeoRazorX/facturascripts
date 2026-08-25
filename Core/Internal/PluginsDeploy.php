@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -203,6 +203,23 @@ final class PluginsDeploy
 
             $fileInfo = pathinfo($fileName);
             $filePath = Tools::folder($path, $fileName);
+            $extension = $fileInfo['extension'] ?? '';
+
+            // dentro de Controller no se despliegan subcarpetas: sus archivos php (un solo nivel)
+            // se aplanan en Dinamic/Controller solo si la carpeta corresponde a un plugin activado
+            if ($folder === 'Controller' && is_dir($filePath)) {
+                continue;
+            } elseif ($folder === 'Controller' && strpos($fileName, DIRECTORY_SEPARATOR) !== false) {
+                $parts = explode(DIRECTORY_SEPARATOR, $fileName);
+                if (
+                    count($parts) === 2 && $extension === 'php' && is_file($filePath) &&
+                    in_array($parts[0], self::$enabledPlugins, true) &&
+                    !isset(self::$fileList[$folder][$parts[1]])
+                ) {
+                    self::linkPHPFile($fileName, $folder, $place, $pluginName, $parts[1]);
+                }
+                continue;
+            }
 
             if (is_dir($filePath)) {
                 Tools::folderCheckOrCreate(Tools::folder('Dinamic', $folder, $fileName));
@@ -211,7 +228,6 @@ final class PluginsDeploy
                 continue;
             }
 
-            $extension = $fileInfo['extension'] ?? '';
             switch ($extension) {
                 case 'php':
                     self::linkPHPFile($fileName, $folder, $place, $pluginName);
@@ -227,8 +243,14 @@ final class PluginsDeploy
         }
     }
 
-    private static function linkPHPFile(string $fileName, string $folder, string $place, string $pluginName): void
+    private static function linkPHPFile(string $fileName, string $folder, string $place, string $pluginName, string $newFileName = ''): void
     {
+        // $newFileName permite desplegar el archivo con otra ruta, por ejemplo para
+        // aplanar Controller/PluginX/Foo.php en Dinamic/Controller/Foo.php
+        if ('' === $newFileName) {
+            $newFileName = $fileName;
+        }
+
         $auxNamespace = empty($pluginName) ? $place : 'Plugins\\' . $pluginName;
         $namespace = 'FacturaScripts\\' . $auxNamespace . '\\' . $folder;
         $newNamespace = "FacturaScripts\Dinamic\\" . $folder;
@@ -236,7 +258,11 @@ final class PluginsDeploy
         $paths = explode(DIRECTORY_SEPARATOR, $fileName);
         for ($key = 0; $key < count($paths) - 1; ++$key) {
             $namespace .= '\\' . $paths[$key];
-            $newNamespace .= '\\' . $paths[$key];
+        }
+
+        $newPaths = explode(DIRECTORY_SEPARATOR, $newFileName);
+        for ($key = 0; $key < count($newPaths) - 1; ++$key) {
+            $newNamespace .= '\\' . $newPaths[$key];
         }
 
         $classType = self::getClassType($fileName, $folder, $place, $pluginName);
@@ -255,12 +281,12 @@ final class PluginsDeploy
 
         $txt .= self::extensionSupport($newNamespace) ? "\n{\n\tuse \FacturaScripts\Core\Template\ExtensionsTrait;\n}\n" : "\n{\n}\n";
 
-        $destinationPath = Tools::folder('Dinamic', $folder, $fileName);
+        $destinationPath = Tools::folder('Dinamic', $folder, $newFileName);
         if (file_put_contents($destinationPath, $txt) === false) {
             throw new Exception('Unable to write file: ' . $destinationPath);
         }
 
-        self::$fileList[$folder][$fileName] = $fileName;
+        self::$fileList[$folder][$newFileName] = $newFileName;
     }
 
     private static function linkXMLFile(string $fileName, string $folder, string $originPath): void

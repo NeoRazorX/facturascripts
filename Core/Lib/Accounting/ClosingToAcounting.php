@@ -102,7 +102,9 @@ class ClosingToAcounting
 
         try {
             $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
-            $exercise->save();
+            if (false === $exercise->save()) {
+                return false;
+            }
 
             if ($opening && !$this->deleteOpening()) {
                 return false;
@@ -153,7 +155,9 @@ class ClosingToAcounting
 
             if ($success) {
                 $this->exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
-                $this->exercise->save();
+                if (false === $this->exercise->save()) {
+                    return false;
+                }
                 self::$dataBase->commit();
             }
         } finally {

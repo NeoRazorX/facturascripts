@@ -231,10 +231,99 @@ final class ApiEditDocumentTest extends TestCase
         $this->assertTrue($product->delete(), 'can-not-delete-product');
     }
 
+    public function testLineIrpfIsApplied(): void
+    {
+        // creamos un cliente sin retención, para que la cabecera no aporte IRPF
+        $subject = $this->getRandomCustomer();
+        $subject->codretencion = null;
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        // creamos un albarán con una línea libre sin IRPF
+        $doc = new AlbaranCliente();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-set-subject');
+        $this->assertTrue($doc->save(), 'can-not-create-albaran');
+
+        $line = $doc->getNewLine();
+        $line->descripcion = 'línea libre';
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate');
+
+        $doc->reload();
+        $this->assertEquals(0, $doc->totalirpf, 'bad-initial-totalirpf');
+
+        // EDICIÓN 1: añadimos IRPF a la línea existente y creamos otra con IRPF distinto
+        $idlinea = $lines[0]->idlinea;
+        $payload = [
+            'lineas' => json_encode([
+                ['idlinea' => $idlinea, 'descripcion' => 'línea libre', 'cantidad' => 1, 'pvpunitario' => 100, 'irpf' => 15],
+                ['descripcion' => 'línea nueva', 'cantidad' => 1, 'pvpunitario' => 100, 'irpf' => 7],
+            ]),
+        ];
+        $result = $this->callEdit('editarAlbaranCliente', $doc->idalbaran, $payload);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'edit-irpf-bad-code');
+
+        // ambas líneas guardan su propio porcentaje
+        $updated = [];
+        foreach ($doc->getLines() as $docLine) {
+            $updated[$docLine->descripcion] = $docLine->irpf;
+        }
+        $this->assertEquals(15, $updated['línea libre'] ?? null, 'existing-line-irpf-not-applied');
+        $this->assertEquals(7, $updated['línea nueva'] ?? null, 'new-line-irpf-not-applied');
+
+        // el documento acumula el IRPF de ambas: 100 * 15% + 100 * 7%
+        $doc->reload();
+        $this->assertEquals(15, $doc->irpf, 'bad-doc-irpf');
+        $this->assertEquals(22, $doc->totalirpf, 'bad-totalirpf');
+
+        // EDICIÓN 2: si no enviamos irpf, la línea existente conserva el suyo
+        $payload = [
+            'lineas' => json_encode([
+                ['idlinea' => $idlinea, 'descripcion' => 'línea libre', 'cantidad' => 2, 'pvpunitario' => 100],
+            ]),
+        ];
+        $result = $this->callEdit('editarAlbaranCliente', $doc->idalbaran, $payload);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'edit-keep-irpf-bad-code');
+
+        $remaining = $doc->getLines();
+        $this->assertCount(1, $remaining, 'bad-line-count');
+        $this->assertEquals(15, $remaining[0]->irpf, 'line-irpf-not-preserved');
+
+        // 200 * 15%
+        $doc->reload();
+        $this->assertEquals(30, $doc->totalirpf, 'bad-totalirpf-after-keep');
+
+        // limpiamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-albaran');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
     public function testMethodNotAllowed(): void
     {
         $result = $this->callEdit('editarFacturaCliente', 1, ['lineas' => '[]'], 'POST');
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $result['code'], 'edit-bad-method-code');
+    }
+
+    public function testInvalidLineStructuresAreRejected(): void
+    {
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        $doc = new AlbaranCliente();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-set-subject');
+        $this->assertTrue($doc->save(), 'can-not-create-albaran');
+
+        $result = $this->callEdit('editarAlbaranCliente', $doc->idalbaran, [
+            'lineas' => json_encode(['descripcion' => 'Servicios de consultoría']),
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'invalid-lines-bad-code');
+        $this->assertEquals('Invalid lines', $result['body']['message'] ?? '', 'invalid-lines-bad-message');
+
+        $this->assertTrue($doc->delete(), 'can-not-delete-albaran');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
 
     public function testNonEditableDocument(): void

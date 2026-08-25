@@ -28,6 +28,7 @@ use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 
 final class APIModelTest extends TestCase
 {
@@ -110,6 +111,27 @@ final class APIModelTest extends TestCase
         $this->assertSame([], (new Divisa())->getApiFieldsToHide());
         $this->assertSame(['password', 'logkey', 'two_factor_secret_key'], (new User())->getApiFieldsToHide());
         $this->assertSame(['apikey'], (new ApiKey())->getApiFieldsToHide());
+    }
+
+    public function testExcludeModel(): void
+    {
+        $request = new Request();
+        $response = new Response();
+        $api = new APIModel($response, $request, []);
+
+        $this->assertArrayHasKey('divisas', $api->getResources());
+
+        $excludedModels = new ReflectionProperty(APIModel::class, 'excluded_models');
+        $previousValue = $excludedModels->getValue();
+
+        try {
+            APIModel::excludeModel('Divisa');
+            APIModel::excludeModel('Divisa');
+
+            $this->assertArrayNotHasKey('divisas', $api->getResources());
+        } finally {
+            $excludedModels->setValue(null, $previousValue);
+        }
     }
 
     private function callApi(string $resource, string $method, array $params): array
