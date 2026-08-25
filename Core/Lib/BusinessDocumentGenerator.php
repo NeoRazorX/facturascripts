@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
 /**
- * Description of BusinessDocumentGenerator
+ * Generador de documentos de negocio.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
@@ -46,7 +46,7 @@ class BusinessDocumentGenerator
     private static $sameDate = false;
 
     /**
-     * Generates a new document from a prototype document.
+     * Genera un nuevo documento a partir de un documento prototipo.
      *
      * @param BusinessDocument $prototype
      * @param string $newClass
@@ -62,26 +62,22 @@ class BusinessDocumentGenerator
         $newDoc = new $newDocClass();
         $fields = array_keys($newDoc->getModelFields());
 
-        if (false === $this->pipeFalse('generateBefore', $prototype, $lines, $quantity, $properties, $newDoc)) {
-            return false;
-        }
-
         foreach (array_keys($prototype->getModelFields()) as $field) {
-            // exclude properties not in new line
+            // excluimos las propiedades que no existen en el nuevo documento
             if (false === in_array($field, $fields)) {
                 continue;
             }
 
-            // exclude some properties
+            // excluimos algunas propiedades
             if (in_array($field, $prototype::dontCopyFields())) {
                 continue;
             }
 
-            // copy properties to new document
+            // copiamos las propiedades al nuevo documento
             $newDoc->{$field} = $prototype->{$field};
         }
 
-        // assign the user
+        // asignamos el usuario
         $newDoc->nick = Session::user()->nick;
 
         if (self::$sameDate) {
@@ -93,12 +89,16 @@ class BusinessDocumentGenerator
             $newDoc->{$key} = $value;
         }
 
+        if (false === $this->pipeFalse('generateBefore', $prototype, $lines, $quantity, $properties, $newDoc)) {
+            return false;
+        }
+
         $protoLines = empty($lines) ? $prototype->getLines() : $lines;
         if ($newDoc->save() && $this->cloneLines($prototype, $newDoc, $protoLines, $quantity)) {
-            // recalculate totals on new document
+            // recalculamos los totales del nuevo documento
             $newLines = $newDoc->getLines();
             if (Calculator::calculate($newDoc, $newLines, true)) {
-                // add to last doc list
+                // añadimos el documento a la lista de últimos documentos
                 $this->lastDocs[] = $newDoc;
 
                 $this->pipeFalse('generateTrue', $prototype, $lines, $quantity, $properties, $newDoc, $newLines);
@@ -128,7 +128,7 @@ class BusinessDocumentGenerator
     }
 
     /**
-     * Clone the lines from the prototype document, to new document.
+     * Clona las líneas del documento prototipo en el nuevo documento.
      *
      * @param BusinessDocument $prototype
      * @param BusinessDocument $newDoc
@@ -143,15 +143,15 @@ class BusinessDocumentGenerator
         $fields = array_keys($newDoc->getNewLine()->getModelFields());
 
         foreach ($lines as $line) {
-            // copy line properties to new line
+            // copiamos las propiedades de la línea a la nueva línea
             $arrayLine = [];
             foreach (array_keys($line->getModelFields()) as $field) {
-                // exclude properties not in new line
+                // excluimos las propiedades que no existen en la nueva línea
                 if (false === in_array($field, $fields)) {
                     continue;
                 }
 
-                // exclude some properties
+                // excluimos algunas propiedades
                 if (in_array($field, $line::dontCopyFields())) {
                     continue;
                 }
@@ -182,7 +182,7 @@ class BusinessDocumentGenerator
                 return false;
             }
 
-            // save relation
+            // guardamos la relación
             $docTrans->clear();
             $docTrans->cantidad = $newLine->cantidad;
             $docTrans->model1 = $prototype->modelClassName();
@@ -200,7 +200,7 @@ class BusinessDocumentGenerator
             }
         }
 
-        // copy related files
+        // copiamos los archivos relacionados
         if ($newDoc instanceof TransformerDocument) {
             $this->copyRelatedFiles($newDoc);
         }
