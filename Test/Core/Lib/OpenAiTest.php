@@ -109,8 +109,6 @@ final class OpenAiTest extends TestCase
 
     private function getPrivateMethod(string $name): ReflectionMethod
     {
-        $method = new ReflectionMethod(OpenAi::class, $name);
-        $method->setAccessible(true);
-        return $method;
+        return new ReflectionMethod(OpenAi::class, $name);
     }
 }
