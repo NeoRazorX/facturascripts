@@ -36,7 +36,12 @@ use FacturaScripts\Dinamic\Model\Variante;
 use Throwable;
 
 /**
- * Description of PurchasesController
+ * Controlador base de los documentos de compra (presupuestos, pedidos, albaranes
+ * y facturas de proveedor). Monta el formulario mediante AJAX combinando
+ * PurchasesHeaderHTML, PurchasesLineHTML, PurchasesFooterHTML y
+ * PurchasesModalHTML, y atiende las peticiones de autocompletado de proveedores
+ * y productos, el recálculo de líneas con Calculator y el guardado del documento.
+ * Las clases hijas solo deben indicar el modelo con getModelClassName().
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

@@ -24,7 +24,12 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of ColumnItem
+ * Representa una columna definida en un archivo XMLView. Guarda el título, la
+ * descripción, la alineación, el orden, el ancho y el nivel de seguridad exigido
+ * para verla, y contiene el widget encargado de pintar el valor del campo. Genera
+ * tanto la celda de las tablas de ListView como el control de edición en los
+ * formularios, y sus atributos pueden personalizarse por el usuario desde
+ * EditPageOption.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>

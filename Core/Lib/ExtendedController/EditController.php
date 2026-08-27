@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Tools;
 
 /**
- * Controller to manage the data editing
+ * Controlador para editar los datos de un único registro de un modelo. Es un
+ * PanelController que crea automáticamente una pestaña de edición a partir del
+ * modelo indicado en getModelClassName(), carga el registro según el parámetro
+ * code de la petición y comprueba que el usuario tenga acceso a esos datos.
+ * También se encarga de exportar el contenido de las pestañas activas.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

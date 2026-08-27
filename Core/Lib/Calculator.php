@@ -33,6 +33,14 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
+ * Calcula los importes de los documentos de compra y de venta. A partir de la
+ * cabecera y de sus líneas aplica los impuestos, retenciones, recargos,
+ * excepciones de IVA, suplidos y descuentos que correspondan, obtiene el
+ * subtotal de cada línea y acumula los totales del documento (neto, IVA, IRPF,
+ * recargo, coste, beneficio y total), guardándolo todo si así se indica.
+ * Los plugins pueden intervenir en cualquier fase del cálculo registrando mods
+ * con addMod(), que pueden detener la cadena de mods o el cálculo completo.
+ *
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @collaborator Daniel Fernández Giménez <contacto@danielfg.es>
  */

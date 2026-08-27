@@ -22,7 +22,12 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
 
 /**
- * Verify numbers of fiscal identity
+ * Valida números de identificación fiscal según el tipo de identificador indicado:
+ * DNI, NIE, CIF y NIF españoles, RFC mexicano, RNC dominicano, y cédula y RUC de
+ * Ecuador. Antes de validar consulta el modelo IdentificadorFiscal para comprobar
+ * si ese tipo tiene activada la validación, de modo que puede desactivarse por
+ * configuración salvo que se fuerce. También ofrece un método para normalizar el
+ * número, pasándolo a mayúsculas y eliminando los caracteres no alfanuméricos.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>

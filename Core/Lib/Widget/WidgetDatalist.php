@@ -24,7 +24,13 @@ use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of WidgetDatalist
+ * Widget de texto libre con sugerencias, declarado con type="datalist" en las vistas XMLView.
+ * Hereda de WidgetSelect la carga de opciones desde un modelo o desde una lista de valores,
+ * pero las presenta en un elemento datalist de HTML5, de modo que el usuario puede escribir
+ * cualquier valor y no solo elegir uno de los propuestos.
+ * Cuando el widget depende de otro campo (atributo parent) cada fila necesita su propio
+ * datalist, porque JavaScript lo recarga según el valor del campo padre; en el resto de casos
+ * todas las filas comparten uno solo.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */

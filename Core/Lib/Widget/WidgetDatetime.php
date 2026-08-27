@@ -22,7 +22,10 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Request;
 
 /**
- * Description of WidgetDatetime
+ * Widget para campos de fecha y hora, declarado con type="datetime" en las vistas XMLView.
+ * Funciona igual que WidgetDate, pero genera un input datetime-local y muestra el valor
+ * en formato d-m-Y H:i:s, o un guion si el campo está vacío.
+ * Cuando la fecha es hoy o futura resalta la celda de la tabla en negrita.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

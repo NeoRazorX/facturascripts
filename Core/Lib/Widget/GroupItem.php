@@ -23,7 +23,11 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of GroupItem
+ * Representa un grupo de columnas definido en un archivo XMLView. Agrupa varios
+ * ColumnItem bajo un mismo título e icono y controla cómo se distribuyen en la
+ * rejilla de Bootstrap mediante el número de columnas, el orden y la alineación
+ * vertical. Se utiliza para organizar visualmente los formularios de edición en
+ * tarjetas o bloques.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>

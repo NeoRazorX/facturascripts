@@ -22,7 +22,10 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of RowStatistics
+ * Fila de estadísticas de un XMLView. Pinta una serie de etiquetas con forma de
+ * botón, cada una con su icono, color y enlace, cuyo valor se obtiene llamando al
+ * método del controlador indicado en el atributo function del elemento datalabel.
+ * Se emplea para mostrar contadores y totales rápidos encima de una vista.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */

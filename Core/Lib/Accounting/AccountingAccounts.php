@@ -32,13 +32,12 @@ use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Class for calculate/obtain accounting sub-account of:
- * (Respecting the additional levels)
- *
- *   - Customer
- *   - Customer Group
- *   - Supplier
- *   - Payment
+ * Localiza las subcuentas contables que corresponden a clientes, grupos de clientes,
+ * proveedores, acreedores, formas de pago, impuestos y retenciones dentro del ejercicio
+ * indicado en la propiedad exercise. Para cada elemento comprueba primero la subcuenta
+ * asignada al registro, después la del grupo cuando procede, y en último término recurre
+ * a la cuenta o subcuenta marcada como especial mediante las constantes SPECIAL_*.
+ * Si la subcuenta no existe todavía en el ejercicio, la crea apoyándose en AccountingCreation.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>

@@ -31,7 +31,10 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
 /**
- * Description of AccountingHeaderHTML
+ * Genera la cabecera del formulario de edición de asientos contables, con los campos de
+ * empresa, fecha, concepto, documento, diario, canal y tipo de operación, y traslada al
+ * modelo Asiento los valores enviados por el formulario. Los plugins pueden añadir sus
+ * propios campos registrando mods con addMod(), que implementan AccountingModInterface.
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

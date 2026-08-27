@@ -33,6 +33,15 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
+/**
+ * Reúne el código común para generar el HTML de las líneas de los documentos de
+ * compra y de venta: referencia, descripción, cantidad, impuesto, descuentos,
+ * IRPF, recargo de equivalencia, excepciones de IVA, suplidos y totales de línea.
+ * Lo utilizan SalesLineHTML y PurchasesLineHTML, que aportan las particularidades
+ * de cada ámbito. Cachea las variantes y el stock de los productos empleados para
+ * evitar consultas repetidas, y tiene en cuenta el régimen de IVA del cliente o
+ * proveedor a la hora de mostrar los impuestos disponibles.
+ */
 trait CommonLineHTML
 {
     /** @var string */

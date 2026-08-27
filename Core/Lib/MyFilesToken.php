@@ -20,7 +20,11 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * Description of MyFilesToken
+ * Genera y valida los tokens que autorizan el acceso a los archivos de la carpeta MyFiles,
+ * evitando que puedan descargarse conociendo únicamente su ruta. El token se calcula a
+ * partir de la ruta del archivo y de los datos de conexión a la base de datos, y puede ser
+ * permanente, válido solo durante el día en curso o con una fecha de caducidad concreta.
+ * También construye la URL completa con el parámetro myft ya incorporado.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

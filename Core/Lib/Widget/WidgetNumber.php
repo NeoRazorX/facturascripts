@@ -23,7 +23,13 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of WidgetNumber
+ * Widget para campos numéricos, declarado con type="number" en las vistas XMLView.
+ * Genera un input number de HTML5 con los atributos min, max y step indicados en la vista,
+ * y muestra el valor formateado con los decimales del atributo decimal, que por defecto son
+ * los configurados en el sistema.
+ * Con el atributo totals se puede pedir que la lista calcule y muestre la suma de la columna.
+ * Es la clase base de otros widgets numéricos como WidgetMoney, WidgetPercentage,
+ * WidgetSeconds y WidgetStars.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Jose Antonio Cuello  <yopli2000@gmail.com>

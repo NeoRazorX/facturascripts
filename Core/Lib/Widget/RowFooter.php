@@ -23,7 +23,11 @@ use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of RowFooter
+ * Representa la fila que se muestra bajo el contenido de una vista de un XMLView.
+ * Organiza sus elementos en grupos, y cada grupo se pinta como una tarjeta de
+ * Bootstrap con título, pie, botones, texto y, opcionalmente, una plantilla HTML
+ * propia renderizada con el controlador. Envuelve todo en un formulario cuando no
+ * se indica una función JavaScript que atienda las acciones.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */

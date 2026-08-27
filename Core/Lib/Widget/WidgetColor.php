@@ -23,7 +23,10 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
- * Description of WidgetColor
+ * Widget para seleccionar un color. Se declara con type="color" en las vistas XMLView
+ * y almacena el valor en el campo del modelo como una cadena hexadecimal.
+ * Añade el atributo data-jscolor al input y carga la librería jscolor, que sustituye
+ * el campo de texto por un selector visual de color.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

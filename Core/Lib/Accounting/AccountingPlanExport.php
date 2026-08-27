@@ -25,7 +25,10 @@ use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Class to export accounting plans.
+ * Exporta a un fichero CSV el plan contable de un ejercicio, volcando en una sola tabla
+ * primero las cuentas y después las subcuentas, con su código, su descripción y la cuenta
+ * especial asociada. El resultado usa el mismo formato que espera AccountingPlanImport,
+ * de modo que el plan exportado puede volver a importarse en otro ejercicio o instalación.
  *
  * @author Carlos García Gómez      <carlos@facturapascripts.com>
  * @author Oscar G. Villa González  <ogvilla@gmail.com>
