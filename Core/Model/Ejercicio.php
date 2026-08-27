@@ -28,7 +28,12 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
 /**
- * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes, etc.
+ * Ejercicio contable. Es el periodo, normalmente un año natural, en el que se agrupan los
+ * asientos, facturas, albaranes y demás documentos de una empresa. Define las fechas de
+ * inicio y fin, la longitud de las subcuentas del plan contable y su estado (abierto o
+ * cerrado), además de los asientos de apertura, regularización y cierre. Los rangos de
+ * fechas de los ejercicios de una misma empresa no pueden solaparse, y loadFromDate()
+ * permite obtener el ejercicio correspondiente a una fecha, creándolo si aún no existe.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

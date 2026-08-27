@@ -22,6 +22,12 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
 
+/**
+ * Trait que añade los campos de correo electrónico y teléfonos de contacto,
+ * junto con la validación y el saneado de estos datos antes de guardarlos.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 trait EmailAndPhonesTrait
 {
     /** @var string Dirección de correo electrónico principal. */

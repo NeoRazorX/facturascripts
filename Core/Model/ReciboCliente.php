@@ -33,7 +33,13 @@ use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\PagoCliente as DinPagoCliente;
 
 /**
- * Description of ReciboCliente
+ * Cada uno de los vencimientos en que se divide el cobro de una factura de
+ * cliente. Guarda el importe, la forma de pago, la fecha de vencimiento y el
+ * estado de cobro, y la fecha de vencimiento se ajusta a los días de pago que
+ * tenga configurado el cliente.
+ * Al marcarlo como pagado genera automáticamente un PagoCliente, y cualquier
+ * alta, cambio o borrado actualiza el estado de la factura y recalcula el
+ * riesgo alcanzado del cliente.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

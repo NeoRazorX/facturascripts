@@ -21,6 +21,13 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Dinamic\Model\Asiento;
 
+/**
+ * Trait que añade la relación con el asiento contable generado por el modelo
+ * que lo utiliza (por ejemplo una factura), permitiendo obtener el objeto
+ * Asiento correspondiente a partir de idasiento.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 trait AccEntryRelationTrait
 {
     /** @var int Identificador del asiento contable asociado. */

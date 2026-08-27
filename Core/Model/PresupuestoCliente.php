@@ -27,7 +27,11 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaPresupuestoCliente as LineaPresupuesto;
 
 /**
- * Customer estimation.
+ * Presupuesto de cliente, almacenado en la tabla presupuestoscli. Es el primer
+ * documento del circuito de ventas y recoge la oferta realizada al cliente con
+ * sus líneas, importes e impuestos, junto con una fecha de fin de oferta que
+ * nunca puede ser anterior a la del documento. Al aprobarlo se transforma en
+ * pedido, albarán o factura de venta.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

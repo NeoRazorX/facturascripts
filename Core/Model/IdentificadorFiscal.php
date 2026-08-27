@@ -24,7 +24,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of IdentificadorFiscal
+ * Tipo de identificador fiscal (NIF, CIF, NIE, pasaporte, etc.) que se puede asignar a
+ * clientes, proveedores y empresas mediante el campo tipoidfiscal. Guarda el código oficial
+ * equivalente (codeid), utilizado en exportaciones y comunicaciones telemáticas, y el
+ * indicador validar, que determina si FacturaScripts debe comprobar el formato del número
+ * fiscal introducido.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

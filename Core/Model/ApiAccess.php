@@ -25,7 +25,15 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ApiKey as DinApiKey;
 
 /**
- * Defines the individual permissions for each resource within an api key.
+ * Define los permisos individuales de cada recurso dentro de una clave de API. Se guarda en
+ * la tabla `api_access` y cada fila relaciona una `ApiKey` (`idapikey`) con el nombre de un
+ * recurso (`resource`), indicando qué métodos HTTP se permiten mediante los indicadores
+ * `allowget`, `allowpost`, `allowput` y `allowdelete`.
+ *
+ * La API consulta estos registros a través de `ApiKey::hasAccess()` para autorizar cada
+ * petición, salvo que la clave tenga acceso total. Por defecto una entrada nueva concede
+ * los cuatro permisos, aunque `addResourcesToApiKey()` permite dar de alta varios recursos
+ * de golpe con el estado que se indique, sin duplicar los que ya existan.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>

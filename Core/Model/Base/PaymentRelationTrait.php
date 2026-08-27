@@ -23,6 +23,9 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
 /**
+ * Trait que añade la relación con la forma de pago (FormaPago) a partir de
+ * codpago, permitiendo obtener la forma de pago asociada al documento.
+ *
  * @author Oscar G. Villa <ogvilla@gmail.com>
  */
 trait PaymentRelationTrait

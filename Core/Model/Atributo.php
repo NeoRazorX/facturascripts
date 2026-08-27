@@ -25,7 +25,15 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
 
 /**
- * Un atributo para artículos.
+ * Atributo de los artículos, es decir, la característica por la que se diferencian las
+ * variantes de un producto, como el color o la talla. Se guarda en la tabla `atributos` y
+ * se identifica con un código alfanumérico de hasta 20 caracteres (`codatributo`) que se
+ * genera automáticamente si no se indica.
+ *
+ * Los valores posibles del atributo se guardan como registros de `AtributoValor` asociados
+ * por `codatributo`, y esta clase ofrece métodos para añadirlos, consultarlos y eliminarlos.
+ * El campo `num_selector` indica en qué posición del selector de variantes se muestra el
+ * atributo al elegir una variante de producto.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

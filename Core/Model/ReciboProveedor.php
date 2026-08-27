@@ -32,7 +32,12 @@ use FacturaScripts\Dinamic\Model\PagoProveedor as DinPagoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 
 /**
- * Description of ReciboProveedor
+ * Cada uno de los vencimientos en que se divide el pago de una factura de
+ * proveedor. Guarda el importe, la forma de pago, la fecha de vencimiento y el
+ * estado de pago, junto con el importe ya liquidado.
+ * Al marcarlo como pagado genera automáticamente un PagoProveedor, y cualquier
+ * alta, cambio o borrado hace que se recalcule el estado de pago de la factura
+ * asociada.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

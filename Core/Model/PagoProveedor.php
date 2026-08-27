@@ -29,7 +29,12 @@ use FacturaScripts\Dinamic\Lib\Accounting\PaymentToAccounting;
 use FacturaScripts\Dinamic\Model\ReciboProveedor as DinReciboProveedor;
 
 /**
- * Description of PagoProveedor
+ * Pago realizado a un proveedor sobre un recibo, almacenado en la tabla
+ * pagosprov. Registra la fecha, la hora, el importe y la forma de pago
+ * empleada, y se relaciona con el recibo mediante idrecibo. Al guardarlo
+ * genera automáticamente el asiento contable correspondiente, salvo que se
+ * desactive con disableAccountingGeneration(). Al eliminarlo se borra también
+ * dicho asiento.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

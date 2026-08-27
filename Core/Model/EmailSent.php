@@ -27,7 +27,12 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 
 /**
- * Model EmailSent
+ * Registro histórico de los correos electrónicos enviados desde FacturaScripts.
+ * Guarda el remitente, el destinatario, el asunto, el cuerpo (en texto y en HTML), la fecha
+ * y el usuario que realizó el envío, así como la notificación que lo originó, si procede.
+ * Los archivos adjuntos se almacenan en disco en una carpeta identificada por el uuid del
+ * correo, y se eliminan junto al registro. El campo verificode permite detectar mediante
+ * la función verify() si el destinatario ha abierto el mensaje.
  *
  * @author Raul Jimenez         <raljopa@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>

@@ -35,7 +35,11 @@ use FacturaScripts\Dinamic\Model\Tarifa;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Documento de venta.
+ * Clase base abstracta para los documentos de venta (presupuesto, pedido,
+ * albarán y factura de cliente). Añade a TransformerDocument los datos
+ * propios del cliente (dirección, contacto, agente, agencia de transporte,
+ * grupo y tarifa), el control de riesgo de crédito y el cálculo de totales
+ * mediante Calculator.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

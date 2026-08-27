@@ -24,8 +24,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Visual configuration of the FacturaScripts views,
- * each PageOption corresponds to a view or tab.
+ * Configuración visual de una vista de FacturaScripts, almacenada en la tabla
+ * pages_options. Define los grupos y columnas que se muestran, los formularios
+ * modales y el tratamiento especial de las filas, partiendo de los XMLView del
+ * núcleo y los plugins. Puede ser global o personalizada por usuario mediante
+ * el campo nick. Estas definiciones se guardan codificadas en JSON y se
+ * decodifican a array al cargarlas.
  *
  * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>

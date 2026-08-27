@@ -25,7 +25,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\FacturaProveedor as DinFacturaProveedor;
 
 /**
- * Line of a supplier invoice.
+ * Línea de una factura de proveedor, almacenada en la tabla lineasfacturasprov.
+ * Guarda el producto o servicio comprado junto con su cantidad, precio,
+ * descuentos e impuestos, y se relaciona con la factura mediante idfactura.
+ * En las facturas rectificativas, idlinearect apunta a la línea original que
+ * se está rectificando.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

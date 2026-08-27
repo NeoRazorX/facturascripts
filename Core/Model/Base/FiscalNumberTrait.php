@@ -22,6 +22,13 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\FiscalNumberValidator;
 
+/**
+ * Trait que añade el número de identificación fiscal (cifnif) junto con su
+ * tipo (tipoidfiscal), y valida el formato del identificador según el país
+ * y el tipo indicado mediante FiscalNumberValidator.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 trait FiscalNumberTrait
 {
     /** @var string Número de identificación fiscal. */

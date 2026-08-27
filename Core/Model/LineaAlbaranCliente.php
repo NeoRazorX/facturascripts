@@ -24,7 +24,10 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\AlbaranCliente as DinAlbaranCliente;
 
 /**
- * Line of a customer's delivery note.
+ * Línea de un albarán de cliente. Guarda el producto o concepto vendido con su descripción,
+ * cantidad, precio, descuentos e impuestos, y se enlaza con el albarán mediante el campo
+ * idalbaran. Hereda de SalesDocumentLine todo el cálculo de importes y la gestión del stock
+ * asociada al estado del documento.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

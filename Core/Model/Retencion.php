@@ -26,7 +26,11 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
- * Class to manage the data of retenciones table
+ * Una retención de IRPF, con su porcentaje, su descripción y las subcuentas
+ * contables en las que se registra el importe retenido.
+ * Se asigna a clientes, proveedores y documentos de compra y venta para
+ * calcular automáticamente el importe de la retención, y puede desactivarse
+ * para que deje de ofrecerse sin perder los datos históricos.
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>

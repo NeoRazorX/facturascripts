@@ -25,7 +25,14 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Ciudad
+ * Ciudad o población. Se guarda en la tabla `ciudades` y pertenece a una `Provincia` a
+ * través de `idprovincia`, completando así la jerarquía geográfica país - provincia -
+ * ciudad que utiliza el resto de la aplicación.
+ *
+ * Además del nombre admite un alias, un código geográfico (`codeid`) y las coordenadas de
+ * latitud y longitud, y puede tener puntos de interés asociados (`PuntoInteresCiudad`).
+ * Se registra automáticamente quién creó el registro y quién lo modificó por última vez,
+ * junto con sus fechas. Su mantenimiento se realiza desde la ficha del país.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Frank Aguirre        <faguirre@soenac.com>

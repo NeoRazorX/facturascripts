@@ -29,7 +29,12 @@ use FacturaScripts\Dinamic\Model\LineaFacturaCliente as LineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
 
 /**
- * Customer's invoice.
+ * Factura de cliente. Es el documento de venta definitivo, con el que se factura al cliente
+ * y que genera el asiento contable y los recibos de cobro correspondientes. Sus líneas se
+ * guardan en LineaFacturaCliente y sus vencimientos en ReciboCliente, que determinan si la
+ * factura está pagada o vencida. Puede rectificar a otra factura y admite abonos.
+ * Para garantizar la correlación legal, se comprueba que la fecha sea coherente con la
+ * numeración: no puede haber facturas anteriores con fecha posterior, ni al revés.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
