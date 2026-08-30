@@ -241,7 +241,9 @@ class NewMail
     {
         $names = [];
         foreach ($this->mail->getAttachments() as $attach) {
-            $names[] = $attach[1];
+            // el índice 1 es el nombre del archivo en disco (puede llevar un sufijo temporal),
+            // el índice 2 es el nombre con el que se muestra el adjunto en el email
+            $names[] = empty($attach[2]) ? $attach[1] : $attach[2];
         }
 
         return $names;
