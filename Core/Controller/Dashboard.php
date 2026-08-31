@@ -309,7 +309,7 @@ class Dashboard extends Controller
      */
     private function loadReceiptSection(): void
     {
-        if (false === $this->user->can('ListReciboCliente')) {
+        if (false === $this->user->can('ListFacturaCliente')) {
             return;
         }
 
@@ -320,7 +320,7 @@ class Dashboard extends Controller
         ];
 
         // si el usuario solo ve sus datos, limitamos los recibos a los suyos
-        if ($this->user->can('ListReciboCliente', 'only-owner-data')) {
+        if ($this->user->can('ListFacturaCliente', 'only-owner-data')) {
             $where[] = Where::eq('nick', $this->user->nick);
         }
 
