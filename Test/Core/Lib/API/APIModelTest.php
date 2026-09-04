@@ -76,6 +76,22 @@ final class APIModelTest extends TestCase
         $this->assertArrayNotHasKey('two_factor_secret_key', $body);
     }
 
+    public function testUserHidesSensitiveFieldsOnDuplicatePost(): void
+    {
+        $user = $this->createUser();
+
+        $body = $this->callApi('User', 'POST', [], ['nick' => $user->nick]);
+
+        $this->assertArrayHasKey('error', $body);
+        $this->assertArrayHasKey('data', $body);
+        $this->assertSame($user->nick, $body['data']['nick']);
+        $this->assertArrayNotHasKey('password', $body['data']);
+        $this->assertArrayNotHasKey('logkey', $body['data']);
+        $this->assertArrayNotHasKey('two_factor_secret_key', $body['data']);
+
+        $this->assertTrue($user->delete());
+    }
+
     public function testApiKeyHidesApikeyField(): void
     {
         $key = new ApiKey();
@@ -134,11 +150,11 @@ final class APIModelTest extends TestCase
         }
     }
 
-    private function callApi(string $resource, string $method, array $params): array
+    private function callApi(string $resource, string $method, array $params, array $requestData = []): array
     {
         $_SERVER['REQUEST_METHOD'] = $method;
 
-        $request = new Request();
+        $request = new Request(['request' => $requestData]);
         $response = new Response();
         $response->disableSend(true);
 
