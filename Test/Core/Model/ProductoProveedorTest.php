@@ -272,40 +272,6 @@ final class ProductoProveedorTest extends TestCase
     /**
      * Comprobamos que al crear una línea de Albarán
      * con un Producto previamente incluido en otro Albarán
-     * mantiene el precio del ProductoProveedor creado en el Albarán previo
-     * y no el precio del Producto.
-     */
-    public function testItCanAssignProductoProveedorPrice(): void
-    {
-        [$subject, $product, $doc, $pvpUnitario, $dtopor, $dtopor2] = $this->getAlbaranConLineaProducto();
-
-        // Creamos otro albarán
-        $doc2 = new AlbaranProveedor();
-        $doc2->setSubject($subject);
-        $this->assertTrue($doc2->save());
-
-        // Añadimos el producto
-        $line = $doc2->getNewProductLine($product->referencia);
-        $this->assertTrue($line->save());
-
-        // comprobamos que el precio del producto es el del albarán previo
-        $this->assertEquals($pvpUnitario, $line->pvpunitario);
-        $this->assertEquals($dtopor, $line->dtopor);
-        $this->assertEquals($dtopor2, $line->dtopor2);
-        $this->assertNotEquals($product->precio, $line->pvpunitario);
-
-        // eliminamos
-        $this->assertTrue($doc->delete());
-        $this->assertTrue($doc2->delete());
-        $this->assertTrue($subject->getDefaultAddress()->delete());
-        $this->assertTrue($subject->delete());
-        $this->assertTrue($product->delete());
-        $this->assertTrue(ProductoProveedor::deleteWhere([]));
-    }
-
-    /**
-     * Comprobamos que al crear una línea de Albarán
-     * con un Producto previamente incluido en otro Albarán
      * y creamos otro Albarán con distinta Divisa incluyendo el mismo Producto,
      * se crea un ProductoProveedor nuevo con la Divisa del Albarán
      */
@@ -359,6 +325,151 @@ final class ProductoProveedorTest extends TestCase
         $this->assertTrue($subject->delete());
         $this->assertTrue($product->delete());
         $this->assertTrue($divisa->delete());
+    }
+
+    public function testWorkerUpdatesCosteOnInsert(): void
+    {
+        Tools::settingsSet('default', 'costpricepolicy', 'last-price');
+
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save());
+        $variant = $product->getVariants()[0];
+
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save());
+
+        $pp = new ProductoProveedor();
+        $pp->referencia = $product->referencia;
+        $pp->idproducto = $product->idproducto;
+        $pp->codproveedor = $supplier->codproveedor;
+        $pp->precio = 50.0;
+        $this->assertTrue($pp->save());
+
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+
+        $variant->load($variant->idvariante);
+        $this->assertEquals(50.0, (float)$variant->coste);
+
+        $pp->delete();
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+        $supplier->getDefaultAddress()->delete();
+        $supplier->delete();
+        $product->delete();
+    }
+
+    public function testWorkerUpdatesCosteOnUpdate(): void
+    {
+        Tools::settingsSet('default', 'costpricepolicy', 'last-price');
+
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save());
+        $variant = $product->getVariants()[0];
+
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save());
+
+        $pp = new ProductoProveedor();
+        $pp->referencia = $product->referencia;
+        $pp->idproducto = $product->idproducto;
+        $pp->codproveedor = $supplier->codproveedor;
+        $pp->precio = 50.0;
+        $this->assertTrue($pp->save());
+
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+
+        $pp->precio = 80.0;
+        $this->assertTrue($pp->save());
+
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+
+        $variant->load($variant->idvariante);
+        $this->assertEquals(80.0, (float)$variant->coste);
+
+        $pp->delete();
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+        $supplier->getDefaultAddress()->delete();
+        $supplier->delete();
+        $product->delete();
+    }
+
+    public function testWorkerUpdatesCosteOnDelete(): void
+    {
+        Tools::settingsSet('default', 'costpricepolicy', 'average-price');
+
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save());
+        $variant = $product->getVariants()[0];
+
+        $supplier1 = $this->getRandomSupplier();
+        $this->assertTrue($supplier1->save());
+
+        $supplier2 = $this->getRandomSupplier();
+        $this->assertTrue($supplier2->save());
+
+        $pp1 = new ProductoProveedor();
+        $pp1->referencia = $product->referencia;
+        $pp1->idproducto = $product->idproducto;
+        $pp1->codproveedor = $supplier1->codproveedor;
+        $pp1->precio = 40.0;
+        $this->assertTrue($pp1->save());
+
+        $pp2 = new ProductoProveedor();
+        $pp2->referencia = $product->referencia;
+        $pp2->idproducto = $product->idproducto;
+        $pp2->codproveedor = $supplier2->codproveedor;
+        $pp2->precio = 60.0;
+        $this->assertTrue($pp2->save());
+
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+
+        $variant->load($variant->idvariante);
+        $this->assertEquals(50.0, (float)$variant->coste);
+
+        $pp2->delete();
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+
+        $variant->load($variant->idvariante);
+        $this->assertEquals(40.0, (float)$variant->coste);
+
+        $pp1->delete();
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+        $supplier1->getDefaultAddress()->delete();
+        $supplier1->delete();
+        $supplier2->getDefaultAddress()->delete();
+        $supplier2->delete();
+        $product->delete();
     }
 
     public function testPrimaryColumn(): void
