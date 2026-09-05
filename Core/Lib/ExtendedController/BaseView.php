@@ -183,6 +183,7 @@ abstract class BaseView
             'customized' => false,
             'itemLimit' => Tools::settings('default', 'item_limit', 50),
             'megasearch' => false,
+            'navigation' => true,
             'saveFilters' => false,
         ];
         $this->template = static::DEFAULT_TEMPLATE;
