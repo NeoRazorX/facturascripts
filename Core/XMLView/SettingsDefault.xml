@@ -162,6 +162,13 @@
                 <widget type="library" fieldname="idloginimage" icon="fa-solid fa-image" onclick="EditAttachedFile"
                         accept=".gif,.jpg,.jpeg,.png,.webp"/>
             </column>
+            <column name="image-compression" numcolumns="3" order="125">
+                <widget type="select" fieldname="image_compression" icon="fa-solid fa-compress" required="true" translate="true">
+                    <values title="low">low</values>
+                    <values title="medium">medium</values>
+                    <values title="high">high</values>
+                </widget>
+            </column>
             <column name="table-size" numcolumns="3" order="130">
                 <widget type="select" fieldname="tablesize" icon="fa-solid fa-table" required="true" translate="true">
                     <values title="big">big</values>
