@@ -135,7 +135,8 @@ class APIModel extends APIResourceClass
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
         if ($this->model->load($code)) {
-            $this->setError(Tools::trans('duplicate-record'), $this->model->toArray());
+            $hidden = $this->model->getApiFieldsToHide();
+            $this->setError(Tools::trans('duplicate-record'), $this->filterHidden($this->model->toArray(), $hidden));
             return false;
         } elseif (empty($values)) {
             $this->setError(Tools::trans('no-data-received-form'));
