@@ -25,7 +25,12 @@ use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 
 /**
- * APIResource is an abstract class for any API Resource.
+ * Clase base de la que heredan todos los recursos de la API. Recibe la petición y la
+ * respuesta HTTP, publica los recursos que ofrece mediante getResources() y reparte
+ * cada llamada al método doGET(), doPOST(), doPUT() o doDELETE() correspondiente según
+ * el verbo HTTP recibido. Las clases hijas solo necesitan implementar los verbos que
+ * soporten, y disponen de returnResult(), setOk() y setError() para devolver la
+ * respuesta en formato JSON con el código de estado adecuado.
  *
  * @author Rafael San José Tovar (http://www.x-netdigital.com)  <rsanjoseo@gmail.com>
  * @author Carlos García Gómez                                  <carlos@facturascripts.com>

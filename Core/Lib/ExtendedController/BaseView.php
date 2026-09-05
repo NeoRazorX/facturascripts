@@ -30,7 +30,12 @@ use FacturaScripts\Dinamic\Model\PageOption;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Base definition for the views used in ExtendedControllers
+ * Definición base de las vistas o pestañas que utilizan los controladores extendidos.
+ * Cada vista tiene su propio modelo, título, icono y plantilla, y guarda los datos
+ * leídos junto con las condiciones, el orden y el desplazamiento aplicados. Las
+ * columnas y los modales se cargan desde el XML de la página, lo que permite
+ * mostrarlos, ocultarlos o reordenarlos, y las clases hijas implementan cómo se
+ * cargan, guardan y exportan los datos.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

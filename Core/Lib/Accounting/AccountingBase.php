@@ -23,7 +23,12 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
- * Description of AccountingBase
+ * Clase base de los informes contables que se calculan entre dos fechas, como el libro
+ * mayor, el balance de sumas y saldos o las cuentas anuales. Proporciona la conexión a
+ * la base de datos, las fechas de inicio y fin del periodo y el ejercicio sobre el que
+ * se trabaja, que puede cargarse por código con setExercise() o deducirse de una fecha
+ * y una empresa con setExerciseFromDate(). Las clases hijas deben implementar generate()
+ * para lanzar el cálculo y getData() para obtener los saldos de cada apartado.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author nazca                <comercial@nazcanetworks.com>

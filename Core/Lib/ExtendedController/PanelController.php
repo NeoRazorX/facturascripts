@@ -25,7 +25,12 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Controller to edit data through the vertical panel
+ * Controlador que muestra los datos repartidos en varias pestañas alrededor de
+ * un registro principal. La primera pestaña contiene el registro que se edita y
+ * el resto muestra la información relacionada, que solo se activa cuando la
+ * pestaña principal tiene datos. Las pestañas pueden colocarse a la izquierda,
+ * arriba o abajo con setTabsPosition(), y es la clase de la que parten los
+ * EditController.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

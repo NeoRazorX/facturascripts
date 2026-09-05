@@ -25,7 +25,12 @@ use FacturaScripts\Dinamic\Model\User;
 use const FS_ITEM_LIMIT;
 
 /**
- * View definition for its use in ExtendedControllers
+ * Vista que delega por completo la presentación en una plantilla Twig propia,
+ * indicada al construirla, en lugar de generar el formulario a partir de las
+ * columnas del XML. Se emplea en las pestañas de los PanelController que
+ * necesitan un diseño a medida, como la de archivos adjuntos o la de imágenes
+ * de producto. Carga el modelo y, si recibe filtros, también el listado, pero
+ * no procesa datos del formulario ni permite exportar.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

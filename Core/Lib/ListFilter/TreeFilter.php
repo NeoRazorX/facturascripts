@@ -25,7 +25,11 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Where;
 
 /**
- * Filter all records that match the search term and its children.
+ * Filtro de listado para tablas con estructura jerárquica, en las que cada registro puede
+ * apuntar a un padre. Construye un desplegable con todos los elementos ordenados en forma
+ * de árbol e indentados según su nivel, y al seleccionar uno filtra tanto ese registro
+ * como todos sus descendientes, obtenidos mediante una consulta recursiva. Si no se indica
+ * campo padre se comporta como un desplegable normal.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */

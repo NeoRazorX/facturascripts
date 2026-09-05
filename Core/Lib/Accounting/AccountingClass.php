@@ -26,7 +26,12 @@ use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Base class for creation of accounting processes
+ * Clase base de los procesos que generan asientos contables a partir de un documento,
+ * como facturas o recibos. Amplía AccountingAccounts para poder localizar las subcuentas
+ * implicadas y añade utilidades para crear las partidas del asiento: líneas simples de
+ * debe o haber, líneas generadas a partir de un array de totales por subcuenta y líneas
+ * de IVA o recargo de equivalencia con sus datos de registro fiscal. Las clases hijas
+ * sobrescriben generate() para construir el asiento que corresponda a su documento.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>

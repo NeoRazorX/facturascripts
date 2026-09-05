@@ -24,8 +24,11 @@ use FacturaScripts\Core\Model\RoleAccess;
 use FacturaScripts\Core\Model\User;
 
 /**
- * Manages user permissions for controller access and operations.
- * Determines what actions a user can perform on a specific page/controller.
+ * Gestiona los permisos de un usuario sobre un controlador concreto. A partir del
+ * usuario y del nombre de la página consulta los roles asignados para determinar si
+ * puede acceder, modificar, eliminar, importar o exportar datos, y si solamente debe
+ * ver la información de la que es propietario. Los administradores reciben todos los
+ * permisos de forma automática y las reglas de acceso se guardan en caché.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

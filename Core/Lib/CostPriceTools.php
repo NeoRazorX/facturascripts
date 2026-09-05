@@ -28,7 +28,11 @@ use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Description of CostPriceTools
+ * Recalcula y actualiza el precio de coste de una variante de producto según la
+ * política de coste configurada en la empresa: precio actual de las existencias,
+ * precio medio de compra, precio más alto o último precio de compra. Para ello
+ * consulta las líneas de albaranes y facturas de proveedor y los precios de
+ * proveedor asociados a la referencia, y guarda el nuevo coste en la variante.
  *
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
  * @author Raul Jimenez         <raljopa@gmail.com>

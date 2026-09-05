@@ -25,6 +25,13 @@ use PragmaRX\Google2FA\Google2FA;
 use Exception;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Gestiona la autenticación en dos factores (2FA) de los usuarios mediante
+ * códigos TOTP. Se apoya en la librería Google2FA para generar la clave secreta,
+ * construir la URL del código QR y verificar los códigos introducidos, admitiendo
+ * una pequeña ventana de tolerancia por desfase horario. También genera la imagen
+ * del QR en formato base64 para mostrarla directamente en el panel del usuario.
+ */
 class TwoFactorManager
 {
     private const QR_CODE_SIZE = 400;

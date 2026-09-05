@@ -33,7 +33,13 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
- * Description of CommonSalesPurchases
+ * Reúne el código común para generar el HTML de la cabecera y el pie de los
+ * documentos de compra y de venta: CIF/NIF, fechas, divisa, almacén, serie,
+ * forma de pago, empresa, estado del documento, enlaces a documentos
+ * relacionados y botones de acción. Lo utilizan SalesHeaderHTML,
+ * PurchasesHeaderHTML, SalesFooterHTML y PurchasesFooterHTML. Incluye además
+ * checkLevel(), que comprueba si el usuario de la sesión tiene nivel suficiente
+ * para editar determinados campos.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>

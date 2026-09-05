@@ -28,7 +28,12 @@ use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Description of AccountingClosing
+ * Clase base de los asientos especiales que se generan al cerrar un ejercicio contable:
+ * regularización, cierre y apertura. Obtiene mediante SQL los saldos de las subcuentas
+ * agrupados por canal, crea un asiento por cada canal y le añade una partida por cada
+ * subcuenta con saldo, más una partida de contrapartida cuando el proceso lo requiere.
+ * Las clases hijas concretan el concepto, la fecha, el tipo de operación y la consulta
+ * de saldos. También permite eliminar los asientos ya generados con delete().
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

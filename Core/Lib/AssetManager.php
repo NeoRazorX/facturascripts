@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Tools;
 
 /**
- * Gestiona los assets de la aplicación.
+ * Gestiona los assets (hojas de estilo, scripts y módulos JavaScript) que las
+ * vistas y los plugins añaden durante la ejecución. Mantiene una lista estática
+ * sin duplicados en la que cada asset tiene una prioridad que determina el orden
+ * en que se cargará, y permite recuperarlos por separado o combinados en un
+ * único archivo cacheado dentro de Dinamic/Assets.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

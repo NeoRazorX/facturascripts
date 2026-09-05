@@ -20,7 +20,12 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * This class centralizes all VAT tax exceptions and related validation rules.
+ * Centraliza las causas de exención o no sujeción de IVA que pueden indicarse en
+ * los documentos de compra y venta, con las constantes correspondientes a los
+ * artículos de la Ley del IVA española. Los plugins pueden añadir o quitar causas
+ * con add() y remove(). Además valida, mediante isValidCombination(), que la causa
+ * elegida sea coherente con el tipo de operación de la factura (intracomunitaria,
+ * exportación, importación, inversión del sujeto pasivo, etc.).
  *
  * @author          Carlos García Gómez         <carlos@facturascripts.com>
  * @collaborator    Daniel Fernández Giménez    <contacto@danielfg.es>

@@ -27,7 +27,13 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Widget para seleccionar una subcuenta desde un modal con búsqueda.
+ * Widget para seleccionar una subcuenta contable, declarado con type="subcuenta" en las
+ * vistas XMLView. Muestra un botón que abre una ventana modal donde se pueden buscar las
+ * subcuentas por código o descripción, filtrarlas por ejercicio y ordenarlas por código,
+ * descripción, debe, haber o saldo.
+ * El campo del modelo guarda el valor de la columna indicada en el atributo match, que por
+ * defecto es codsubcuenta. Si el modelo tiene idempresa, la lista de ejercicios del modal se
+ * limita a esa empresa.
  */
 class WidgetSubcuenta extends WidgetText
 {

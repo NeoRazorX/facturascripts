@@ -27,7 +27,11 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Export\PDFExport as ParentClass;
 
 /**
- * Description of MAILExport
+ * Exportación para enviar los datos por email. Se apoya en PDFExport para generar el
+ * documento, pero en lugar de descargarlo lo guarda como archivo temporal en la
+ * carpeta de adjuntos y redirige al controlador SendMail, al que pasa el nombre del
+ * archivo y los modelos exportados para que el usuario pueda componer y enviar el
+ * correo con el PDF ya adjunto.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

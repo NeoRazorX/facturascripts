@@ -23,7 +23,11 @@ use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Tools;
 
 /**
- * Class to prevent duplicated petitions.
+ * Evita que una misma petición se procese dos veces, por ejemplo cuando el usuario pulsa
+ * varias veces el botón de guardar. Genera tokens formados por un hash calculado a partir
+ * de una semilla propia de la instalación y de la hora actual, más una parte aleatoria que
+ * los hace únicos. Al recibir un token comprueba que sea válido, aceptando los generados
+ * en las últimas horas, y lleva en caché los ya utilizados para rechazar repeticiones.
  *
  * @author Juan José Prieto Dzul    <juanjoseprieto88@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>

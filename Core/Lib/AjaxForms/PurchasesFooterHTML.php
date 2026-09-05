@@ -24,7 +24,13 @@ use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of PurchasesFooterHTML
+ * Genera el HTML del pie del formulario de los documentos de compra: descuentos
+ * generales, observaciones, los totales del documento (neto, impuestos, IRPF,
+ * recargo, suplidos y total) y los botones de nueva línea, buscar producto,
+ * deshacer y guardar. También aplica sobre el modelo los datos de esos campos
+ * enviados por el usuario.
+ * Los plugins pueden añadir o modificar campos mediante mods que implementen
+ * PurchasesModInterface y se registren con addMod().
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

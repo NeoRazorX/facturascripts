@@ -35,7 +35,13 @@ use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
- * Description of PurchasesModalHTML
+ * Genera el HTML de las ventanas modales del formulario de los documentos de
+ * compra: la búsqueda de proveedores, la creación rápida de un proveedor nuevo
+ * y la búsqueda de productos con sus filtros de familia, fabricante, almacén y
+ * atributos. En el listado de productos muestra el coste, el precio, el stock
+ * disponible y la referencia de proveedor de cada variante.
+ * Los plugins pueden añadir o modificar campos y filtros mediante mods que
+ * implementen PurchasesModalInterface y se registren con addMod().
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
