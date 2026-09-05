@@ -7,6 +7,11 @@
 -->
 <table>
     <column>
+        <name>bloqueada</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>codbarras</name>
         <type>character varying(20)</type>
     </column>
