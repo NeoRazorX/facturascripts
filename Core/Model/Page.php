@@ -24,7 +24,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Element of the menu of InvoiceScripts, each corresponds to a controller.
+ * Página de FacturaScripts, almacenada en la tabla pages. Cada registro se
+ * corresponde con un controlador de la aplicación y define cómo se muestra en
+ * el menú: título, icono, menú y submenú donde aparece, orden de colocación y
+ * si debe mostrarse o permanecer oculta. Las páginas se registran
+ * automáticamente al desplegar el núcleo y los plugins, y sobre ellas se
+ * asignan los permisos de los roles de usuario.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

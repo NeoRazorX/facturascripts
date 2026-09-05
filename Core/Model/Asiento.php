@@ -30,7 +30,20 @@ use FacturaScripts\Dinamic\Model\Partida as DinPartida;
 use FacturaScripts\Dinamic\Model\RegularizacionImpuesto as DinRegularizacionImpuesto;
 
 /**
- * The accounting entry. It is related to an exercise and consists of games.
+ * Asiento contable. Se guarda en la tabla `asientos`, pertenece siempre a un ejercicio
+ * (`codejercicio`, resuelto a partir de la fecha mediante `setDate()`) y a una empresa, y se
+ * compone de partidas (`Partida`), cada una de las cuales apunta a una subcuenta de ese
+ * mismo ejercicio. El asiento está cuadrado cuando la suma del debe iguala a la del haber,
+ * lo que comprueba `isBalanced()`.
+ *
+ * Además de los asientos generales, `operacion` permite marcarlo como de apertura,
+ * regularización o cierre. Un asiento solo puede guardarse o eliminarse si es editable: el
+ * ejercicio debe estar abierto y la fecha no puede caer dentro de una regularización de
+ * impuestos bloqueada. Tampoco se admite cambiar de ejercicio una vez creado.
+ *
+ * La numeración (`numero`) es correlativa dentro del ejercicio y puede rehacerse por lotes
+ * con `renumber()`. Tanto el guardado como el borrado dejan constancia en el canal de
+ * auditoría del log.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>

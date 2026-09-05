@@ -28,8 +28,12 @@ use FacturaScripts\Dinamic\Model\Cuenta as DinCuenta;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * A tax (VAT) that can be associated to articles, delivery notes lines,
- * invoices, etc.
+ * Impuesto (IVA) que se puede asociar a productos y a las líneas de albaranes, pedidos,
+ * presupuestos y facturas. Define el porcentaje o importe fijo del impuesto y del recargo
+ * de equivalencia, según el valor del campo tipo. También permite indicar las subcuentas
+ * contables de IVA repercutido y soportado, con sus variantes intracomunitaria y de recargo,
+ * que se usan al generar los asientos; si no se indican, se obtienen de las cuentas especiales
+ * IVAREP, IVASOP e IVARRE. El impuesto predeterminado no se puede eliminar.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

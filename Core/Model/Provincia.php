@@ -28,7 +28,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A province.
+ * Una provincia, región o estado perteneciente a un país. Además del nombre
+ * guarda un alias, los códigos identificativos (codeid y codisoprov), el
+ * prefijo telefónico y las coordenadas geográficas de referencia.
+ * Cuelga de un país y agrupa a su vez las ciudades que contiene, por lo que
+ * se utiliza para normalizar direcciones de clientes, proveedores y contactos.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>

@@ -29,7 +29,21 @@ use FacturaScripts\Core\Where;
 use Throwable;
 
 /**
- * Class to store log information when a plugin is executed from cron.
+ * Trabajo programado del cron. Se guarda en la tabla `cronjobs` y cumple dos funciones: por
+ * un lado registra el estado de cada tarea periódica del núcleo o de un plugin (última
+ * ejecución, duración, número de fallos, ejecuciones del día y procesos en curso) y, por
+ * otro, ofrece la API encadenable con la que se programan esas tareas.
+ *
+ * El uso habitual es marcar la periodicidad con alguno de los métodos `every*`
+ * (`every('6 hours')`, `everyDayAt(2)`, `everyLastDayOfMonthAt(23)`, ...), opcionalmente
+ * evitar solapamientos con `withoutOverlapping()` y ejecutar la lógica con `run()`, que se
+ * encarga de guardar tiempos y resultados y de capturar cualquier excepción o error para
+ * registrarlo en el log y marcar el trabajo como fallido.
+ *
+ * Salvo en modo estricto, las tareas recuperan ejecuciones perdidas al estilo de anacron.
+ * `setMaxExecutionTime()` limita la duración del conjunto del cron rechazando los trabajos
+ * pendientes, sin interrumpir el que esté en marcha, y `releaseIfStale()` libera los
+ * trabajos zombis que llevan más de STALE_HOURS horas marcados como en ejecución.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>

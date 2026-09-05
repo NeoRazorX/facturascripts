@@ -24,7 +24,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A tax (VAT) that can be associated to tax, country, province, and.
+ * Regla de sustitución de impuestos por zona geográfica. Permite indicar que, cuando el
+ * cliente o proveedor pertenece a un país (codpais) o a una provincia (codisopro) concretos,
+ * el impuesto codimpuesto se sustituya por codimpuestosel o se aplique la excepción de IVA
+ * indicada en excepcioniva. Las reglas se evalúan según el campo prioridad, y una regla sin
+ * provincia se aplica a todo el país.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>

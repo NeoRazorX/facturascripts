@@ -25,7 +25,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A currency with its symbol and its conversion rate with respect to the euro.
+ * Divisa o moneda con la que se pueden emitir documentos de compra y venta.
+ * Guarda el código ISO, el símbolo y las tasas de conversión respecto a la moneda
+ * de referencia (el euro), diferenciando la tasa aplicada en ventas (tasaconv) de la
+ * aplicada en compras (tasaconvcompra). La divisa marcada como predeterminada en la
+ * configuración de la empresa no se puede eliminar.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

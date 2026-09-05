@@ -29,7 +29,12 @@ use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
 use FacturaScripts\Dinamic\Model\RoleUser as DinRoleUser;
 
 /**
- * Define a permission package to quickly assign users.
+ * Un rol es un paquete de permisos que se asigna a varios usuarios de una vez,
+ * en lugar de configurar página por página a cada uno de ellos.
+ * Agrupa los accesos a las páginas mediante RoleAccess y los usuarios que lo
+ * tienen asignado mediante RoleUser, ofreciendo métodos para añadir o quitar
+ * ambos. Al eliminarlo, la base de datos borra en cascada sus permisos y
+ * asignaciones, por lo que también se limpia la caché de esos modelos.
  *
  * @author Joe Nilson           <joenilson@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>

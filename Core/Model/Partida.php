@@ -29,8 +29,13 @@ use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * The line of an accounting entry.
- * It is related to an accounting entry and account.
+ * Línea o apunte de un asiento contable, almacenada en la tabla partidas.
+ * Anota un importe en el debe o en el haber sobre una subcuenta concreta,
+ * pudiendo indicar también la subcuenta de contrapartida, el concepto, la
+ * divisa con su tasa de conversión y los datos fiscales del documento que la
+ * origina (base imponible, IVA, recargo, CIF/NIF y número de factura).
+ * Solo se puede modificar mientras el asiento siga siendo editable y su
+ * ejercicio permanezca abierto.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

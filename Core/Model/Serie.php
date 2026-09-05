@@ -25,8 +25,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A series of invoicing or accounting, to have different numbering
- * in each series.
+ * Serie de facturación con la que se separa la numeración de los documentos de
+ * compra y venta, de forma que cada serie lleve su propio contador.
+ * Determina además el tipo de documento que se emite (ordinario, simplificado
+ * o rectificativo), si los documentos van sin impuestos y el diario y canal
+ * contable en los que se registran sus asientos.
+ * La serie marcada como predeterminada en la configuración no puede eliminarse.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

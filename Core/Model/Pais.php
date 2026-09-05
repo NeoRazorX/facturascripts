@@ -26,7 +26,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A country, for example Spain.
+ * País, por ejemplo España, almacenado en la tabla paises. Se identifica por
+ * el código alfa-3 de la norma ISO 3166-1 y guarda además el código alfa-2, el
+ * nombre, un alias, el prefijo telefónico y las coordenadas de referencia.
+ * Es la base de las direcciones de clientes, proveedores y empresas, agrupa a
+ * las provincias y determina el tratamiento fiscal en los documentos. El país
+ * marcado como predeterminado en la configuración no se puede eliminar.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

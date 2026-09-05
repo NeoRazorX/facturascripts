@@ -29,7 +29,13 @@ use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
 use FacturaScripts\Dinamic\Model\Partida as DinPartida;
 
 /**
- * Nivel de detalle de un plan contable. Se relaciona con una única cuenta.
+ * Último nivel de detalle del plan contable, donde se registran realmente los
+ * apuntes. Cada subcuenta pertenece a una cuenta y a un ejercicio, y mantiene
+ * acumulados el debe, el haber y el saldo resultante, que puede recalcularse a
+ * partir de las partidas.
+ * La longitud del código debe coincidir con la definida en el ejercicio, y no
+ * se permite crear, modificar ni eliminar subcuentas de ejercicios cerrados
+ * salvo que se desactiven las comprobaciones adicionales.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>

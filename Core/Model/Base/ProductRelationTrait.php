@@ -22,6 +22,9 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Dinamic\Model\Producto;
 
 /**
+ * Trait que añade la relación con el producto (Producto) a partir de
+ * idproducto, permitiendo obtener el producto asociado al registro.
+ *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 trait ProductRelationTrait
