@@ -196,7 +196,7 @@ class PurchasesLineHTML
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
         $line->excepcioniva = $formData['excepcioniva_' . $id] ?? null;
-        $line->irpf = (float)($formData['irpf_' . $id] ?? '0');
+        $line->setRetention($formData['irpf_' . $id] ?? null);
         $line->suplido = (bool)($formData['suplido_' . $id] ?? '0');
         $line->pvpunitario = (float)$formData['pvpunitario_' . $id];
 
