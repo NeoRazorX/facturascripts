@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -152,6 +152,29 @@
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
                 $("input:visible,textarea:visible").filter(":not([readonly='readonly']):not([disabled='disabled']):not([type='hidden']):not([type='checkbox']):not([type='radio'])").first().focus();
             }
+            var pageBaseTitle = document.title;
+            if (document.location.hash) {
+                $('a[data-bs-toggle="pill"][href="' + document.location.hash + '"]').tab('show');
+            }
+            $('a[data-bs-toggle="pill"]').click(function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+                if (history.pushState) {
+                    var tabTitle = $(this).find('span').first().text().trim();
+                    var newTitle = pageBaseTitle + ' - ' + tabTitle;
+                    document.title = newTitle;
+                    history.pushState({ title: newTitle }, '', this.hash);
+                }
+            });
+            $(window).on('popstate', function (e) {
+                var title = e.originalEvent.state && e.originalEvent.state.title
+                    ? e.originalEvent.state.title
+                    : pageBaseTitle;
+                document.title = title;
+                if (document.location.hash) {
+                    $('a[data-bs-toggle="pill"][href="' + document.location.hash + '"]').tab('show');
+                }
+            });
         });
     </script>
 {% endblock %}
