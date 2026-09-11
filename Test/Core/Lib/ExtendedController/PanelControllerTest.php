@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Controller\EditContacto;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\MenuManager;
@@ -32,7 +33,11 @@ final class PanelControllerTest extends TestCase
 {
     public function testViewsWithoutGroupAreReturnedUnderEmptyKey(): void
     {
+        // cargar las vistas no debe alterar el límite estático de CodeModel,
+        // aunque EditContacto.xml tenga un select con limit="9000"
+        $limit = CodeModel::getLimit();
         $controller = $this->controllerWithViews();
+        $this->assertSame($limit, CodeModel::getLimit());
 
         $groups = $controller->getTabGroups();
         $this->assertSame([''], array_keys($groups));
