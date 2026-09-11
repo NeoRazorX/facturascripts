@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -89,7 +89,7 @@
                 {% if image is empty %}
                     <i class="{{ pageData.icon }} fa-3x ps-3 float-end" aria-hidden="true"></i>
                 {% else %}
-                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail ms-3 mb-2 float-end"/>
+                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail panel-header-img ms-3 mb-2 float-end"/>
                 {% endif %}
                 <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
                 {% if fsc.hasData %}

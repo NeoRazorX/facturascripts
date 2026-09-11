@@ -80,20 +80,20 @@
                 {% endfor %}
             </div>
             {# -- Top right text -- #}
-            <div class="col-md-auto d-none d-md-block text-end">
+            <div class="col-md-auto d-none d-md-block text-end align-self-center pb-2">
                 <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
                 {% if fsc.hasData %}
-                    <p class="text-info mb-3">{{ firstView.model.primaryDescription() | raw }}</p>
+                    <p class="text-info mb-0">{{ firstView.model.primaryDescription() | raw }}</p>
                 {% else %}
-                    <p class="text-info mb-3">{{ trans('new') }}</p>
+                    <p class="text-info mb-0">{{ trans('new') }}</p>
                 {% endif %}
             </div>
-            <div class="col-md-auto d-none d-lg-block">
+            <div class="col-md-auto d-none d-lg-block align-self-center pb-2">
                 {% set image = fsc.getImageUrl() %}
                 {% if image is empty %}
                     <i class="{{ pageData.icon }} fa-3x" aria-hidden="true"></i>
                 {% else %}
-                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail"/>
+                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail panel-header-img"/>
                 {% endif %}
             </div>
         </div>
