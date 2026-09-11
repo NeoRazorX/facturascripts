@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
-use JetBrains\PhpStorm\Deprecated;
 
 /**
  * Clase base de la que heredan todos los modelos. Se encarga de la conexión
@@ -680,10 +679,6 @@ abstract class ModelClass
      * @return mixed
      * @deprecated Usar id() en su lugar
      */
-    #[Deprecated(
-        reason: 'Usar id() en su lugar',
-        replacement: '%class%->id()',
-    )]
     public function primaryColumnValue()
     {
         return $this->{static::primaryColumn()};
