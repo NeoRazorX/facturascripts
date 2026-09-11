@@ -124,7 +124,8 @@
             {% endif %}
             {# -- Right Panel -- #}
             {% set rightPanelClass = (fsc.views | length > 1) ? 'col-12 col-lg' : 'col-12' %}
-            <div class="{{ rightPanelClass }}">
+            {# min-width 0 evita que un contenido ancho (listados con muchas columnas) salte debajo de las pestañas #}
+            <div class="{{ rightPanelClass }}" style="min-width: 0;">
                 {# -- Tab content -- #}
                 <div class="tab-content" id="mainTabsContent">
                     {% for viewName, view in fsc.views %}
