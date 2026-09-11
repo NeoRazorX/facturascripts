@@ -54,9 +54,9 @@ class EditView extends BaseView
      * @param DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
-     * @param int $limit Si es 0, se usa el límite de registros configurado en los ajustes.
+     * @param int $limit Si es negativo se usa el límite de los ajustes; 0 significa sin límite.
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = 0)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = -1)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;

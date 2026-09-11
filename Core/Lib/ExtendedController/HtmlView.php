@@ -65,15 +65,15 @@ class HtmlView extends BaseView
      * @param array  $where
      * @param array  $order
      * @param int    $offset
-     * @param int    $limit  Si es 0, se usa el límite de registros configurado en los ajustes.
+     * @param int    $limit  Si es negativo se usa el límite de los ajustes; 0 significa sin límite.
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = 0)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = -1)
     {
         if (empty($code) && empty($where)) {
             return;
         }
 
-        if ($limit <= 0) {
+        if ($limit < 0) {
             $limit = (int)Tools::settings('default', 'item_limit', 50);
         }
 

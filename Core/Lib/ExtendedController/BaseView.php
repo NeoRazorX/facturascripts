@@ -141,9 +141,9 @@ abstract class BaseView
     abstract public function export(&$exportManager, $codes): bool;
 
     /**
-     * Loads view data. Si $limit es 0, se usa el límite de registros configurado en los ajustes.
+     * Loads view data. Si $limit es negativo se usa el límite de los ajustes; 0 significa sin límite.
      */
-    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = 0);
+    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = -1);
 
     /**
      * Process form data.
