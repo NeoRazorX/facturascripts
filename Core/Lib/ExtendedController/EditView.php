@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,9 +54,9 @@ class EditView extends BaseView
      * @param DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
-     * @param int $limit
+     * @param int $limit Si es 0, se usa el límite de registros configurado en los ajustes.
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = 0)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
