@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Dinamic\Model\User;
-use const FS_ITEM_LIMIT;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -65,12 +65,16 @@ class HtmlView extends BaseView
      * @param array  $where
      * @param array  $order
      * @param int    $offset
-     * @param int    $limit
+     * @param int    $limit  Si es 0, se usa el límite de registros configurado en los ajustes.
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = 0)
     {
         if (empty($code) && empty($where)) {
             return;
+        }
+
+        if ($limit <= 0) {
+            $limit = (int)Tools::settings('default', 'item_limit', 50);
         }
 
         $this->model->loadFromCode($code, $where, $order);
