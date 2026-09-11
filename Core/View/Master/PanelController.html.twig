@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -109,19 +109,15 @@
                 <div class="col-12 col-lg-auto mt-lg-2">
                     {# -- Left tabs -- #}
                     <div class="nav nav-pills flex-row flex-lg-column overflow-x-auto" id="mainTabs" role="tablist" style="white-space: nowrap;">
-                        {% for viewName, view in fsc.views %}
-                            {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                            {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }} text-nowrap" id="{{ viewName }}-tab" data-bs-toggle="pill"
-                               href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                <i class="{{ view.icon }} fa-fw me-1 d-none d-lg-inline-block"
-                                   aria-hidden="true"></i><span class="d-inline d-lg-inline">{{ view.title }}</span>
-                                {% if view.count > 1 %}
-                                    <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
-                                {% elseif view.count == 1 and viewName != firstView.getViewName() %}
-                                    <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
-                                {% endif %}
-                            </a>
+                        {% for group, views in fsc.getViewGroups() %}
+                            {% if group is not empty %}
+                                <div class="nav-group-header small text-uppercase text-body-secondary fw-bold px-3 mt-lg-3 mb-lg-1 align-self-center align-self-lg-start">
+                                    {{ trans(group) }}
+                                </div>
+                            {% endif %}
+                            {% for viewName, view in views %}
+                                {{ _self.tabLink(fsc, firstView, viewName, view) }}
+                            {% endfor %}
                         {% endfor %}
                     </div>
                 </div>
@@ -155,6 +151,21 @@
         });
     </script>
 {% endblock %}
+
+{% macro tabLink(fsc, firstView, viewName, view) %}
+    {% set active = (viewName == fsc.active) ? ' active' : '' %}
+    {% set disable = view.settings.active ? '' : ' disabled' %}
+    <a class="nav-link{{ active }}{{ disable }} text-nowrap" id="{{ viewName }}-tab" data-bs-toggle="pill"
+       href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+        <i class="{{ view.icon }} fa-fw me-1 d-none d-lg-inline-block"
+           aria-hidden="true"></i><span class="d-inline d-lg-inline">{{ view.title }}</span>
+        {% if view.count > 1 %}
+            <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
+        {% elseif view.count == 1 and viewName != firstView.getViewName() %}
+            <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
+        {% endif %}
+    </a>
+{% endmacro %}
 
 {% macro optionsButton(fsc, firstView) %}
     {% set show = false %}

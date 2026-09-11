@@ -181,6 +181,7 @@ abstract class BaseView
             'checkBoxes' => true,
             'clickable' => true,
             'customized' => false,
+            'group' => '',
             'itemLimit' => Tools::settings('default', 'item_limit', 50),
             'megasearch' => false,
             'saveFilters' => false,
