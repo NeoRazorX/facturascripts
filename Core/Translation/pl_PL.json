@@ -945,6 +945,7 @@
     "inactive": "Nieaktywny",
     "incidents": "Incidencias",
     "include-advance-documents": "Dołączyć wykaz otrzymanych zaliczek w dokumentach PDF",
+    "income": "Dochody",
     "income-and-expenses": "Przychody i wydatki",
     "incomes": "Przychody",
     "incompatible-document": "Dokument niezgodny: %code%. Aby móc grupować dokumenty, muszą mieć tego samego klienta lub dostawcę, serię, magazyn, walutę i łączne rabaty.",

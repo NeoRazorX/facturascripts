@@ -945,6 +945,7 @@
     "inactive": "inattivo",
     "incidents": "Incidenti",
     "include-advance-documents": "Includere l'elenco degli anticipi ricevuti nei documenti PDF",
+    "income": "Entrate",
     "income-and-expenses": "Ingressi e Uscite",
     "incomes": "Entrate",
     "incompatible-document": "Documento incompatibile: %code%. Per raggruppare i documenti devono avere lo stesso cliente o fornitore, serie, magazzino, valuta e sconti globali.",
