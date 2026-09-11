@@ -34,12 +34,12 @@ final class PanelControllerTest extends TestCase
     {
         $controller = $this->controllerWithViews();
 
-        $groups = $controller->getViewGroups();
+        $groups = $controller->getTabGroups();
         $this->assertSame([''], array_keys($groups));
         $this->assertSame(array_keys($controller->views), array_keys($groups['']));
     }
 
-    public function testSetViewGroupKeepsInsertionOrder(): void
+    public function testSetTabGroupKeepsInsertionOrder(): void
     {
         $controller = $this->controllerWithViews();
         $viewNames = array_keys($controller->views);
@@ -47,11 +47,11 @@ final class PanelControllerTest extends TestCase
 
         // agrupamos la última vista en 'sales' y la segunda en 'crm'
         $last = end($viewNames);
-        $controller->setViewGroup($last, 'sales');
-        $controller->setViewGroup($viewNames[1], 'crm');
+        $controller->setTabGroup($last, 'sales');
+        $controller->setTabGroup($viewNames[1], 'crm');
         $this->assertSame('sales', $controller->tab($last)->settings['group']);
 
-        $groups = $controller->getViewGroups();
+        $groups = $controller->getTabGroups();
 
         // las vistas sin grupo van primero; después los grupos según la primera vista que los usa
         $this->assertSame(['', 'crm', 'sales'], array_keys($groups));
@@ -66,7 +66,7 @@ final class PanelControllerTest extends TestCase
     {
         $controller = $this->controllerWithViews();
         $viewNames = array_keys($controller->views);
-        $controller->setViewGroup(end($viewNames), 'sales');
+        $controller->setTabGroup(end($viewNames), 'sales');
         Session::set('user', $controller->user);
 
         $html = Html::render($controller->getTemplate(), [

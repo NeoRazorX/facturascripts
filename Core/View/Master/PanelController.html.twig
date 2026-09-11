@@ -109,7 +109,7 @@
                 <div class="col-12 col-lg-auto mt-lg-2">
                     {# -- Left tabs -- #}
                     <div class="nav nav-pills flex-row flex-lg-column overflow-x-auto" id="mainTabs" role="tablist" style="white-space: nowrap;">
-                        {% for group, views in fsc.getViewGroups() %}
+                        {% for group, views in fsc.getTabGroups() %}
                             {% if group is not empty %}
                                 <div class="nav-group-header small text-uppercase text-body-secondary fw-bold px-3 mt-lg-3 mb-lg-1 align-self-center align-self-lg-start">
                                     {{ trans(group) }}

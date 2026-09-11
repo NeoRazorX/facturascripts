@@ -118,7 +118,7 @@ abstract class PanelController extends BaseController
      *
      * @return array<string, BaseView[]>
      */
-    public function getViewGroups(): array
+    public function getTabGroups(): array
     {
         $groups = ['' => []];
         foreach ($this->views as $viewName => $view) {
@@ -164,7 +164,7 @@ abstract class PanelController extends BaseController
      * Asigna la pestaña a un grupo. La clave se traduce al pintar las pestañas, por ejemplo 'sales'.
      * Solo se muestra agrupada en la posición de pestañas 'left'.
      */
-    public function setViewGroup(string $viewName, string $group): BaseView
+    public function setTabGroup(string $viewName, string $group): BaseView
     {
         return $this->setSettings($viewName, 'group', $group);
     }
