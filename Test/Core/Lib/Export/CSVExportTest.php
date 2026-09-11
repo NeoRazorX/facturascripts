@@ -25,6 +25,47 @@ use PHPUnit\Framework\TestCase;
 
 final class CSVExportTest extends TestCase
 {
+    public function testAddMultipleBusinessDocsWritesHeaderOnlyOnce(): void
+    {
+        $firstLine = self::businessDocLine('Producto A', 2);
+        $secondLine = self::businessDocLine('Producto B', 3);
+        $firstInvoice = self::businessDoc('FAC001', 20.0, [$firstLine]);
+        $secondInvoice = self::businessDoc('FAC002', 30.0, [$secondLine]);
+
+        $export = new CSVExport();
+        $export->newDoc('test', 0, 'es_ES');
+        $export->addBusinessDocPage($firstInvoice);
+        $export->addBusinessDocPage($secondInvoice);
+
+        $expected = "\xEF\xBB\xBF" . implode(PHP_EOL, [
+            '"descripcion";"cantidad";"codigo";"total"',
+            '"Producto A";2;"FAC001";20',
+            '"Producto B";3;"FAC002";30',
+        ]);
+
+        $this->assertSame($expected, $export->getDoc());
+    }
+
+    public function testAddBusinessDocWithoutLinesKeepsSameColumns(): void
+    {
+        $emptyInvoice = self::businessDoc('FAC001', 0.0, []);
+        $line = self::businessDocLine('Producto B', 3);
+        $secondInvoice = self::businessDoc('FAC002', 30.0, [$line]);
+
+        $export = new CSVExport();
+        $export->newDoc('test', 0, 'es_ES');
+        $export->addBusinessDocPage($emptyInvoice);
+        $export->addBusinessDocPage($secondInvoice);
+
+        $expected = "\xEF\xBB\xBF" . implode(PHP_EOL, [
+            '"descripcion";"cantidad";"codigo";"total"',
+            '"";"";"FAC001";0',
+            '"Producto B";3;"FAC002";30',
+        ]);
+
+        $this->assertSame($expected, $export->getDoc());
+    }
+
     public function testAddListModelPageUsesViewColumns(): void
     {
         // modelo falso que devuelve dos registros en la primera página
@@ -93,6 +134,27 @@ final class CSVExportTest extends TestCase
         $this->assertSame($expected, $export->getDoc());
     }
 
+    public function testAddMultipleModelsWritesHeaderOnlyOnce(): void
+    {
+        $columns = [
+            self::column('referencia', 'text'),
+            self::column('precio', 'money'),
+        ];
+
+        $export = new CSVExport();
+        $export->newDoc('test', 0, 'es_ES');
+        $export->addModelPage((object)['referencia' => 'A1', 'precio' => 10.5], $columns, 'test');
+        $export->addModelPage((object)['referencia' => 'B2', 'precio' => 20.0], $columns, 'test');
+
+        $expected = "\xEF\xBB\xBF" . implode(PHP_EOL, [
+            '"test-referencia";"test-precio"',
+            '"A1";10.5',
+            '"B2";20',
+        ]);
+
+        $this->assertSame($expected, $export->getDoc());
+    }
+
     public function testWriteDataEscapesFormulasAndDelimiters(): void
     {
         $export = new CSVExport();
@@ -140,5 +202,55 @@ final class CSVExportTest extends TestCase
             'title' => 'test-' . $fieldname, // clave sin traducción, se devuelve tal cual
             'children' => [$widget],
         ]);
+    }
+
+    private static function businessDoc(string $codigo, float $total, array $lines): object
+    {
+        return new class ($codigo, $total, $lines) {
+            public $codigo;
+            public $total;
+            private $lines;
+
+            public function __construct(string $codigo, float $total, array $lines)
+            {
+                $this->codigo = $codigo;
+                $this->total = $total;
+                $this->lines = $lines;
+            }
+
+            public function getLines(): array
+            {
+                return $this->lines;
+            }
+
+            public function getNewLine(): object
+            {
+                return CSVExportTest::businessDocLine('', 0);
+            }
+
+            public function getModelFields(): array
+            {
+                return ['codigo' => [], 'total' => []];
+            }
+        };
+    }
+
+    public static function businessDocLine(string $descripcion, float $cantidad): object
+    {
+        return new class ($descripcion, $cantidad) {
+            public $cantidad;
+            public $descripcion;
+
+            public function __construct(string $descripcion, float $cantidad)
+            {
+                $this->descripcion = $descripcion;
+                $this->cantidad = $cantidad;
+            }
+
+            public function getModelFields(): array
+            {
+                return ['descripcion' => [], 'cantidad' => []];
+            }
+        };
     }
 }
