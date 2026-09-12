@@ -135,9 +135,10 @@ final class MiniLog
      * @param string $message
      * @param array $context
      */
-    public function info(string $message, array $context = []): void
+    public function info(string $message, array $context = []): self
     {
         $this->log('info', $message, $context);
+        return $this;
     }
 
     /**
@@ -146,9 +147,10 @@ final class MiniLog
      * @param string $message
      * @param array $context
      */
-    public function notice(string $message, array $context = []): void
+    public function notice(string $message, array $context = []): self
     {
         $this->log('notice', $message, $context);
+        return $this;
     }
 
     /**
@@ -282,5 +284,21 @@ final class MiniLog
         if (count(self::$data) > self::LIMIT) {
             self::save($this->channel);
         }
+    }
+
+    public function bloquearInteraccion(): self
+    {
+        // Marca el último mensaje del canal actual para que la vista active
+        // un overlay bloqueante de interacción cuando ese mensaje se renderiza.
+        // Solo afecta al mensaje más reciente del canal para evitar bloquear
+        // otros avisos no relacionados.
+        for ($i = count(self::$data) - 1; $i >= 0; --$i) {
+            if (self::$data[$i]['channel'] === $this->channel) {
+                self::$data[$i]['block_interaction'] = true;
+                break;
+            }
+        }
+
+        return $this;
     }
 }
