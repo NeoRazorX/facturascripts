@@ -312,7 +312,9 @@
         const globalDiscount = (100 - globalDtopor) * (100 - globalDtopor2) / 10000;
         const iva = parseFloat(document.forms['purchasesForm']['iva_' + id].value) || 0;
         const recargo = document.forms['purchasesForm']['recargo_' + id] ? parseFloat(document.forms['purchasesForm']['recargo_' + id].value) || 0 : 0;
-        const irpf = parseFloat(document.forms['purchasesForm']['irpf_' + id].value) || 0;
+        const irpfSelect = document.forms['purchasesForm']['irpf_' + id];
+        const irpfOption = irpfSelect && irpfSelect.selectedIndex >= 0 ? irpfSelect.options[irpfSelect.selectedIndex] : null;
+        const irpf = irpfOption ? parseFloat(irpfOption.dataset.irpf) || 0 : 0;
         const cantidad = parseFloat(document.forms['purchasesForm']['cantidad_' + id].value) || 0;
         if (total <= 0) {
             alert('total > 0');
