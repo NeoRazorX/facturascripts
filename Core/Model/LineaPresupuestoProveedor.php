@@ -25,7 +25,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\PresupuestoProveedor as DinPresupuestoProveedor;
 
 /**
- * Supplier order line.
+ * Línea de un presupuesto de proveedor, almacenada en la tabla
+ * lineaspresupuestosprov. Guarda el producto o servicio presupuestado junto
+ * con su cantidad, precio, descuentos e impuestos, y se relaciona con el
+ * presupuesto mediante idpresupuesto. Al aprobar el presupuesto estas líneas
+ * se copian al pedido, albarán o factura de compra correspondiente.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

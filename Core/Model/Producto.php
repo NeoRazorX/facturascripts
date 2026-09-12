@@ -28,7 +28,14 @@ use FacturaScripts\Dinamic\Model\ProductoImagen as DinProductoImagen;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
 /**
- * Stores the data of an article.
+ * Producto o servicio del catálogo, almacenado en la tabla productos. Guarda
+ * la referencia, la descripción, el precio, el impuesto aplicable y los
+ * indicadores de compra, venta y publicación, además de las subcuentas
+ * contables específicas para compras y ventas. Cada producto agrupa una o
+ * varias variantes, que son las que realmente se emplean en los documentos y
+ * mantienen el stock, y puede tener imágenes asociadas. Al eliminarlo se
+ * borran sus imágenes, pero no se permite si alguna variante aparece en
+ * documentos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

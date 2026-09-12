@@ -20,7 +20,9 @@
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Línea de documento de venta.
+ * Clase base abstracta para las líneas de los documentos de venta. Añade a
+ * BusinessDocumentLine el coste del producto en el momento de la venta y
+ * opciones de impresión específicas de las líneas de venta.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

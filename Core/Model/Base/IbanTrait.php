@@ -22,6 +22,13 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Tools;
 use PHP_IBAN\IBAN;
 
+/**
+ * Trait que añade el campo iban con el código IBAN de una cuenta bancaria,
+ * junto con métodos para formatearlo (con o sin espacios, censurado) y
+ * validarlo, pudiendo desactivarse esta validación cuando sea necesario.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 trait IbanTrait
 {
     /** @var bool Indica si se debe omitir la validación del código IBAN. */

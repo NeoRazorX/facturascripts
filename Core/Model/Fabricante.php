@@ -25,7 +25,10 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A manufacturer of products.
+ * Fabricante o marca de los productos. Se utiliza para clasificar el catálogo y poder
+ * filtrar o agrupar los artículos por su marca comercial. Los productos se relacionan
+ * con el fabricante mediante el campo codfabricante, y numproductos mantiene el número
+ * de artículos asociados. Si no se indica código, se genera uno automáticamente.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>

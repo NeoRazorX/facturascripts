@@ -26,7 +26,12 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
 /**
- * Payment method of an invoice, delivery note, order or estimation.
+ * Forma de pago de una factura, albarán, pedido o presupuesto. Define el plazo de vencimiento
+ * que se aplica al generar los recibos (plazovencimiento y tipovencimiento), si el pago está
+ * domiciliado y si los recibos deben marcarse directamente como pagados. Se asocia a una
+ * empresa y, opcionalmente, a una cuenta bancaria, de la que se obtienen las subcuentas
+ * contables usadas en los asientos de pago. La forma de pago predeterminada no se puede
+ * eliminar.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

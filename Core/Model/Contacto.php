@@ -33,7 +33,19 @@ use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 
 /**
- * Description of crm_contacto
+ * Contacto. Se guarda en la tabla `contactos` y representa tanto a una persona con la que
+ * se mantiene relación comercial como a una dirección postal concreta, ya que los clientes
+ * y proveedores utilizan sus contactos como direcciones de facturación y de envío.
+ *
+ * Puede estar vinculado a un cliente (`codcliente`), a un proveedor (`codproveedor`) y a un
+ * agente (`codagente`), y los métodos `getCustomer()` y `getSupplier()` permiten convertirlo
+ * en cliente o proveedor creando el registro correspondiente con sus datos. Al eliminarlo se
+ * desvincula automáticamente de los clientes y proveedores que lo usaban como dirección.
+ *
+ * Incorpora los datos fiscales y de contacto habituales mediante los traits de NIF, correo y
+ * teléfonos, valida que la web sea una URL correcta y exige al menos nombre, email o
+ * dirección para poder guardarse. También guarda el consentimiento de privacidad y de
+ * marketing, útil de cara a la protección de datos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

@@ -33,8 +33,16 @@ use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
 /**
- * Un agente es una persona física o jurídica que actúa como comercial
- * y se le puede dar una comisión.
+ * Un agente es la persona física o jurídica que actúa como comercial de la empresa y a la
+ * que se le puede asignar una comisión. Se guarda en la tabla `agentes` y se identifica con
+ * un código alfanumérico de hasta 10 caracteres (`codagente`) que se genera automáticamente
+ * si no se indica.
+ *
+ * Cada agente lleva asociado un `Contacto`, que se crea de forma automática la primera vez
+ * que se guarda, y del que se toman los datos fiscales y de localización. Puede vincularse a
+ * clientes y a documentos de venta para calcular comisiones, y admite relación con productos
+ * mediante `ProductRelationTrait`. Dar de baja un agente consiste en rellenar `fechabaja`,
+ * que a su vez activa el indicador `debaja`.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa    <jcuello@artextrading.com>

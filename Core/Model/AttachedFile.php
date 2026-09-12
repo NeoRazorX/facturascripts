@@ -27,7 +27,18 @@ use FacturaScripts\Core\Tools;
 use finfo;
 
 /**
- * Class to manage attached files.
+ * Archivo adjunto almacenado por la aplicación. Se guarda en la tabla `attached_files` y
+ * registra el nombre original, el tipo MIME, el tamaño y la ruta relativa dentro de
+ * `MyFiles`, donde el fichero se ubica en carpetas por año y mes con el nombre
+ * `{idfile}_{slug}.{ext}` para garantizar que no haya colisiones.
+ *
+ * Al asignar un archivo se comprueba el límite de almacenamiento configurado, se detecta su
+ * tipo MIME real y, si se trata de una imagen JPEG, PNG o WebP, se vuelve a codificar para
+ * eliminar los metadatos incrustados (EXIF, GPS, autor, etc.). Al borrar el registro se
+ * elimina también el fichero del disco y las relaciones con productos.
+ *
+ * Otros modelos lo referencian mediante `AttachedFileRelation` y las descargas se realizan
+ * a través de una url firmada con `MyFilesToken`.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>

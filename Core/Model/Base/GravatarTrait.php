@@ -20,7 +20,8 @@
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Description of GravatarTrait
+ * Trait que añade la generación de la URL del avatar de Gravatar
+ * correspondiente al campo email del modelo que lo utiliza.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>
