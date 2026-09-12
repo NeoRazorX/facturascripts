@@ -28,7 +28,11 @@ use FacturaScripts\Dinamic\Lib\PDF\PDFDocument;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 
 /**
- * PDF export data.
+ * Exporta datos al formato PDF. Hereda de PDFDocument todas las utilidades de dibujo
+ * y se encarga de componer las páginas con la ficha de un modelo, un listado de
+ * registros, una tabla libre o un documento de compra y venta completo, aplicando en
+ * este último caso el formato de documento configurado para la empresa y la serie.
+ * Los documentos que todavía son editables se marcan como borrador.
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Carlos Jiménez Gómez         <carlos@evolunext.es>

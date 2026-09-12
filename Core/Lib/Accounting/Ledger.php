@@ -25,7 +25,12 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
 
 /**
- * Description of Ledger
+ * Genera el informe de libro mayor de una empresa entre dos fechas, recorriendo las
+ * partidas de los asientos del ejercicio y calculando los saldos acumulados. Según los
+ * parámetros recibidos puede devolver el listado sin agrupar o agrupado por cuenta o por
+ * subcuenta, añadiendo en todos los casos una fila final con los totales de debe, haber
+ * y saldo. Los importes se formatean según el formato de salida indicado, en texto plano
+ * para CSV y con separadores y negritas cuando el destino es un PDF.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author nazca                <comercial@nazcanetworks.com>

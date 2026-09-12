@@ -23,7 +23,11 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
- * Description of WidgetAutocomplete
+ * Widget de búsqueda con autocompletado. Muestra un campo de texto que consulta
+ * por AJAX los valores de la tabla origen configurada y guarda en el modelo el
+ * código seleccionado, mostrando al usuario su descripción. Admite un campo de
+ * filtro adicional y, mediante el atributo strict, permite decidir si el valor
+ * debe pertenecer obligatoriamente a la lista o el usuario puede escribir uno nuevo.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

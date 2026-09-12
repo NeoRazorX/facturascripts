@@ -20,7 +20,12 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 /**
- * Description of VisualItem
+ * Clase base de todos los elementos visuales que se cargan desde los archivos
+ * XMLView: columnas, grupos, filas, botones y widgets. Aporta los atributos
+ * comunes de nombre, identificador y clase CSS, además de utilidades compartidas
+ * como la conversión de colores a clases de Bootstrap, la generación de
+ * identificadores únicos y el acceso al nivel de seguridad y al token del usuario
+ * actual.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

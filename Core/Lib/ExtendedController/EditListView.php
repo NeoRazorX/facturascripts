@@ -26,7 +26,11 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 
 /**
- * View definition for its use in ExtendedControllers
+ * Vista que permite editar varios registros de un mismo modelo a la vez, cada
+ * uno en su propio formulario, más una fila vacía para añadir uno nuevo. Se usa
+ * en las pestañas de los PanelController para los datos dependientes del
+ * registro principal, como direcciones o líneas relacionadas. Con setInLine()
+ * se cambia a la plantilla compacta de edición en una sola línea.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

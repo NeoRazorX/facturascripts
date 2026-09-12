@@ -22,7 +22,10 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Validator;
 
 /**
- * Description of WidgetLink
+ * Widget para campos que contienen una URL, declarado con type="link" en las vistas XMLView.
+ * Se comporta como un WidgetText, pero cuando el valor almacenado es una URL válida
+ * convierte el contenido de la celda en un enlace que se abre en una pestaña nueva.
+ * Si el campo está vacío se mantiene el enlace definido por el atributo onclick de la columna.
  *
  * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>

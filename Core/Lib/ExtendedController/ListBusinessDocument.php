@@ -36,7 +36,11 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 
 /**
- * Description of ListBusinessDocument
+ * Clase base de los controladores que listan documentos de compra o de venta
+ * (presupuestos, pedidos, albaranes y facturas) y sus líneas. Prepara las
+ * vistas con sus ordenaciones, campos de búsqueda, filtros habituales y los
+ * colores de los estados del documento, y resuelve las acciones masivas del
+ * trait ListBusinessActionTrait.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

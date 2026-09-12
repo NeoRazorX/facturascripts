@@ -28,7 +28,12 @@ use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Perform opening of account balances for the exercise.
+ * Genera el asiento de apertura del ejercicio siguiente al que se cierra, trasladando
+ * los saldos de las subcuentas de los grupos 1 al 5 con su mismo signo. Localiza o crea
+ * el nuevo ejercicio a partir de la fecha de inicio del anterior y, salvo que se indique
+ * lo contrario con setCopySubAccounts(), copia antes todo el plan de cuentas y subcuentas.
+ * El saldo de la subcuenta de pérdidas y ganancias se lleva a la subcuenta especial de
+ * resultado positivo o negativo de ejercicios anteriores según corresponda.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

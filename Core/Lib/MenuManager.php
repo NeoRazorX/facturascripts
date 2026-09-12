@@ -26,6 +26,14 @@ use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Lib\MenuItem;
 use FacturaScripts\Dinamic\Model\Page;
 
+/**
+ * Construye el menú de navegación del usuario que ha iniciado sesión. Toma las páginas
+ * marcadas como visibles en el menú, descarta aquellas a las que el usuario no tiene
+ * acceso según sus roles y las agrupa en una estructura de MenuItem por menú, submenú y
+ * página, ordenada alfabéticamente. Tanto el listado de páginas como los permisos del
+ * usuario se guardan en caché. El método selectPage() marca como activa la rama que
+ * corresponde a la página que se está mostrando.
+ */
 class MenuManager
 {
     /**
