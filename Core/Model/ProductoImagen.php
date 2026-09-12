@@ -163,6 +163,16 @@ class ProductoImagen extends ModelClass
                 $height = intval($width / $ratio);
             }
             $thumb = imagecreatetruecolor($width, $height);
+            
+            //Activar transparencia
+            imagealphablending($thumb, false);
+            imagesavealpha($thumb, true);
+
+            //Rellenar con transparencia
+            $transparent = imagecolorallocatealpha($thumb, 0, 0, 0, 127);
+            imagefilledrectangle($thumb, 0, 0, $width, $height, $transparent);
+
+            //Continuamos con el flujo original
             imagecopyresampled($thumb, $image, 0, 0, 0, 0, $width, $height, $imageWidth, $imageHeight);
 
             // guardamos la miniatura con el formato correspondiente
