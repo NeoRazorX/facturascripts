@@ -389,6 +389,7 @@ class AccountingPlanImport
     protected function processCsvData(string $filePath): bool
     {
         $csv = new Csv();
+        $csv->output_encoding = 'UTF-8';
         $csv->auto($filePath);
 
         // Verificar que el CSV tenga al menos 2 columnas (código y descripción)
