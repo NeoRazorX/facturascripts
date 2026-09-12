@@ -98,7 +98,7 @@ final class CrashReport
             'core_version' => Kernel::version(),
             'php_version' => phpversion(),
             'os' => PHP_OS,
-            'plugin_list' => implode(',', Plugins::enabled()),
+            'plugin_list' => implode(',', Plugins::enabledWithVersion()),
             'idinstall' => $telemetryId,
             'site_url' => $siteUrl,
         ];
