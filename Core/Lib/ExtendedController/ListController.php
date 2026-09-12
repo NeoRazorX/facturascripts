@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
@@ -425,22 +426,27 @@ abstract class ListController extends BaseController
         // criterios de propiedad que el usuario puede cumplir en este modelo
         $owner = [];
 
+        // nombre de columna a usar en el Where, cualificado con su tabla de origen
+        // cuando el modelo es un JoinModel (ver ownerFieldName())
+        $codagenteField = $this->ownerFieldName($model, 'codagente');
+        $nickField = $this->ownerFieldName($model, 'nick');
+
         // si el modelo y el usuario tienen agente, filtramos por agente
-        if ($model->hasColumn('codagente') && false === empty($this->user->codagente)) {
-            $owner[] = Where::eq('codagente', $this->user->codagente);
+        if (null !== $codagenteField && false === empty($this->user->codagente)) {
+            $owner[] = Where::eq($codagenteField, $this->user->codagente);
         }
 
         // si el modelo tiene nick, añadimos el nick (con OR si ya filtramos por agente)
-        if ($model->hasColumn('nick')) {
+        if (null !== $nickField) {
             $owner[] = empty($owner)
-                ? Where::eq('nick', $this->user->nick)
-                : Where::orEq('nick', $this->user->nick);
+                ? Where::eq($nickField, $this->user->nick)
+                : Where::orEq($nickField, $this->user->nick);
         }
 
         // si el modelo tiene criterio de propiedad pero el usuario no puede cumplir
         // ninguno (tiene codagente pero el usuario no tiene agente, y no hay nick),
         // no posee nada: filtro imposible para no devolver filas
-        if (empty($owner) && $model->hasColumn('codagente')) {
+        if (empty($owner) && null !== $codagenteField) {
             return [Where::isNull($model->primaryColumn())];
         }
 
@@ -500,20 +506,6 @@ abstract class ListController extends BaseController
     }
 
     /**
-     * Saves filter values for active view and user.
-     */
-    protected function saveFilterAction(): void
-    {
-        $id_filter = $this->listView($this->active)->savePageFilter($this->request, $this->user);
-        if (!empty($id_filter)) {
-            Tools::log()->notice('record-updated-correctly');
-
-            // load filters in request
-            $this->request->request->set('loadfilter', $id_filter);
-        }
-    }
-
-    /**
      * Returns columns title for megaSearchAction function.
      *
      * @param ListView $view
@@ -530,5 +522,48 @@ abstract class ListController extends BaseController
         }
 
         return $result;
+    }
+
+    /**
+     * Devuelve el nombre de columna que debe usarse en el Where de getOwnerFilter().
+     *
+     * Un JoinModel puede unir varias tablas que compartan una misma columna física
+     * (por ejemplo 'nick' o 'codagente' en dos tablas distintas del join). Si el Where
+     * se construye con el nombre pelado, MySQL no puede resolverlo y devuelve el error
+     * "Column '...' in where clause is ambiguous". Para evitarlo, cuando el modelo es
+     * un JoinModel se usa el nombre cualificado (tabla.columna) que ya conoce el propio
+     * modelo a través de getModelFields().
+     *
+     * @param ModelClass|JoinModel $model
+     * @param string $columnName
+     *
+     * @return string|null nombre de columna a usar, o null si el modelo no tiene esa columna
+     */
+    protected function ownerFieldName($model, string $columnName): ?string
+    {
+        if (false === $model->hasColumn($columnName)) {
+            return null;
+        }
+
+        if ($model instanceof JoinModel) {
+            $fields = $model->getModelFields();
+            return $fields[$columnName]['name'] ?? $columnName;
+        }
+
+        return $columnName;
+    }
+
+    /**
+     * Saves filter values for active view and user.
+     */
+    protected function saveFilterAction(): void
+    {
+        $id_filter = $this->listView($this->active)->savePageFilter($this->request, $this->user);
+        if (!empty($id_filter)) {
+            Tools::log()->notice('record-updated-correctly');
+
+            // load filters in request
+            $this->request->request->set('loadfilter', $id_filter);
+        }
     }
 }
