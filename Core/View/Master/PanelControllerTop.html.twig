@@ -79,6 +79,14 @@
                 {% if fsc.hasData and firstView.settings.btnPrint %}
                     {{ _self.printButton(fsc, firstView, i18n) }}
                 {% endif %}
+                {# -- PDF preview button -- #}
+                {% if fsc.hasData and fsc.pdfPreviewSupport is defined and fsc.pdfPreviewSupport %}
+                    <button type="button" class="btn btn-sm btn-secondary"
+                            onclick="{{ fsc.pdfPreviewButtonJs(firstView.model.primaryColumnValue()) | raw }}">
+                        <i class="fa-solid fa-file-pdf fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-lg-inline-block">{{ trans('pdf-preview') }}</span>
+                    </button>
+                {% endif %}
                 {% for includeView in getIncludeViews('PanelControllerTop', 'topButtons') %}
                     {% include includeView['path'] %}
                 {% endfor %}
