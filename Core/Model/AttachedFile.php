@@ -202,6 +202,11 @@ class AttachedFile extends ModelClass
 
     public function url(string $type = 'auto', string $list = 'List'): string
     {
+        // Si el path es nulo/vacío y el tipo es de descarga, devolvemos string vacío
+        if (empty($this->path) && in_array($type, ['download', 'download-permanent'])) {
+            return '';
+        }
+
         switch ($type) {
             case 'download':
                 return $this->path . '?myft=' . MyFilesToken::get($this->path ?? '', false);
