@@ -1,0 +1,53 @@
+{#
+  Template for a ComponentBlock tab inside a PanelController.
+  Variables:
+    block     — ComponentBlock object
+    blockName — string identifier (equals block.name())
+#}
+{% set card = block.settings.card ?? true %}
+
+{% if card %}
+<div class="card shadow mb-3">
+    <div class="card-body">
+{% endif %}
+
+{# Global error summary #}
+{% if block.hasErrors() %}
+    <div class="alert alert-danger py-2">
+        <i class="fa-solid fa-triangle-exclamation me-1"></i>
+        {% for fieldname, errs in block.errors() %}
+            {% for err in errs %}
+                <div class="small">{{ err }}</div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
+    {{ formToken() }}
+    <input type="hidden" name="activetab" value="{{ blockName }}">
+    <input type="hidden" name="action" value="component">
+
+    <div class="row g-3">
+        {% for component in block.components() %}
+            {% set col_class = component.cols() > 0 ? 'col-sm-' ~ component.cols() : 'col-sm' %}
+            <div class="{{ col_class }}">
+                {{ component.renderEdit()|raw }}
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if block.components()|length > 0 %}
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk me-1"></i>
+                {{ trans('save') }}
+            </button>
+        </div>
+    {% endif %}
+</form>
+
+{% if card %}
+    </div>
+</div>
+{% endif %}
