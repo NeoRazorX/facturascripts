@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Contract\SalesModInterface;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Tools;
 
@@ -307,5 +308,36 @@ class SalesFooterHTML
         }
 
         return $html;
+    }
+
+    protected static function newLineBtn(BusinessDocument $model, string $jsName): string
+    {
+        if (false === $model->editable) {
+            return '';
+        }
+
+        $transLine = Tools::trans('line');
+        $transTextLine = Tools::trans('text-line');
+
+        return <<<HTML
+            <div class="dropdown col-3 col-md-auto">
+              <button class="btn btn-success w-100 mb-2 dropdown-toggle" type="button"
+                      data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-plus fa-fw"></i> {$transLine}
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item btn-spin-action" href="#" onclick="return {$jsName}('new-line', '0');">
+                    <i class="fa-solid fa-plus fa-fw"></i> {$transLine}
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item btn-spin-action" href="#" onclick="return {$jsName}('new-text-line', '0');">
+                    <i class="fa-solid fa-plus fa-fw"></i> {$transTextLine}
+                  </a>
+                </li>
+              </ul>
+            </div>
+            HTML;
     }
 }
