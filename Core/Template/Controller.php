@@ -34,6 +34,8 @@ use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
 
+// Permite que las extensiones de plugins añadan propiedades al controlador sin avisos en PHP 8.2+
+#[\AllowDynamicProperties]
 abstract class Controller implements ControllerInterface
 {
     /** @var string */

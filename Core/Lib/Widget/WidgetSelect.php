@@ -489,6 +489,8 @@ class WidgetSelect extends BaseWidget
         $this->groupTitle = $child['group_title'] ?? '';
 
         if ($loadData && $this->source) {
+            // el límite de CodeModel es estático: lo cambiamos solo mientras cargamos los valores
+            $previousLimit = static::$codeModel::getLimit();
             static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
 
@@ -501,7 +503,6 @@ class WidgetSelect extends BaseWidget
                 }
 
                 // Mapa de fieldcode => group_fieldcode (valor del campo de agrupación en cada registro)
-                static::$codeModel::setLimit($this->limit);
                 $groupFieldRows = static::$codeModel->all($this->source, $this->fieldcode, $this->groupFieldcode, false);
                 $groupFieldMap = [];
                 foreach ($groupFieldRows as $row) {
@@ -522,6 +523,8 @@ class WidgetSelect extends BaseWidget
             } else {
                 $this->setValuesFromCodeModel($values, $this->translate);
             }
+
+            static::$codeModel::setLimit($previousLimit);
         }
     }
 

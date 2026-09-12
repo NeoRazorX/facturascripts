@@ -113,6 +113,23 @@ abstract class PanelController extends BaseController
     }
 
     /**
+     * Devuelve las vistas agrupadas por la clave de grupo de sus settings, en el orden en que
+     * se añadieron. Las vistas sin grupo van primero, bajo la clave vacía.
+     *
+     * @return array<string, BaseView[]>
+     */
+    public function getTabGroups(): array
+    {
+        $groups = ['' => []];
+        foreach ($this->views as $viewName => $view) {
+            $group = (string)($view->settings['group'] ?? '');
+            $groups[$group][$viewName] = $view;
+        }
+
+        return array_filter($groups);
+    }
+
+    /**
      * Sets the tabs position, by default is set to 'left', also supported 'bottom', 'top' and 'left-bottom'.
      *
      * @param string $position
@@ -141,6 +158,15 @@ abstract class PanelController extends BaseController
         foreach (array_keys($this->views) as $viewName) {
             $this->views[$viewName]->settings['card'] = $this->tabsPosition !== 'top';
         }
+    }
+
+    /**
+     * Asigna la pestaña a un grupo. La clave se traduce al pintar las pestañas, por ejemplo 'sales'.
+     * Solo se muestra agrupada en la posición de pestañas 'left'.
+     */
+    public function setTabGroup(string $viewName, string $group): BaseView
+    {
+        return $this->setSettings($viewName, 'group', $group);
     }
 
     /**

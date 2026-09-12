@@ -110,9 +110,12 @@ class WidgetDatalist extends WidgetSelect
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
         $this->limit = $child['limit'] ?? CodeModel::getlimit();
         if ($loadData && $this->source) {
+            // el límite de CodeModel es estático: lo cambiamos solo mientras cargamos los valores
+            $previousLimit = static::$codeModel::getLimit();
             static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, false);
             $this->setValuesFromCodeModel($values, $this->translate);
+            static::$codeModel::setLimit($previousLimit);
         }
     }
 }

@@ -27,9 +27,6 @@ use FacturaScripts\Core\Base\DataBase;
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
-#[Deprecated(
-    reason: 'Use FacturaScripts\Core\Where instead',
-)]
 class DataBaseWhere
 {
     /**

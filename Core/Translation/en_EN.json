@@ -945,6 +945,7 @@
     "inactive": "Inactive",
     "incidents": "Incidents",
     "include-advance-documents": "Include the list of advances received in the PDF documents",
+    "income": "Income",
     "income-and-expenses": "Income and Expenses",
     "incomes": "Income",
     "incompatible-document": "Incompatible document: %code%. Different customer, supplier, currency or warehouse",

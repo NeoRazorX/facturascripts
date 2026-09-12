@@ -29,9 +29,6 @@ use FacturaScripts\Core\Cache;
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
  * @author Carlos García Gómez              <carlos@facturascripts.com>
  */
-#[Deprecated(
-    reason: 'Use FacturaScripts\Core\Template\JoinModel instead',
-)]
 abstract class JoinModel
 {
     /**

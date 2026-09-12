@@ -39,6 +39,7 @@ use FacturaScripts\Dinamic\Model\User as DinUser;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
+#[\AllowDynamicProperties]
 class Controller implements ControllerInterface
 {
     /**

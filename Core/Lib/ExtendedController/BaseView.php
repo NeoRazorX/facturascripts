@@ -141,9 +141,9 @@ abstract class BaseView
     abstract public function export(&$exportManager, $codes): bool;
 
     /**
-     * Loads view data.
+     * Loads view data. Si $limit es negativo se usa el límite de los ajustes; 0 significa sin límite.
      */
-    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
+    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = -1);
 
     /**
      * Process form data.
@@ -181,6 +181,7 @@ abstract class BaseView
             'checkBoxes' => true,
             'clickable' => true,
             'customized' => false,
+            'group' => '',
             'itemLimit' => Tools::settings('default', 'item_limit', 50),
             'megasearch' => false,
             'saveFilters' => false,

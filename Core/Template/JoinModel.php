@@ -331,9 +331,6 @@ abstract class JoinModel
      * @deprecated Usar load() cuando solo se necesita cargar por código, o loadWhere() cuando
      *             se requieren condiciones WHERE u ordenamiento adicionales.
      */
-    #[Deprecated(
-        reason: 'Use load() or loadWhere() instead',
-    )]
     public function loadFromCode($cod, array $where = [], array $orderby = []): bool
     {
         if (!empty($where)) {

@@ -71,10 +71,14 @@ class EditListView extends BaseView
      * @param DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
-     * @param int $limit
+     * @param int $limit Si es negativo se usa el límite de los ajustes; 0 significa sin límite.
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = -1)
     {
+        if ($limit < 0) {
+            $limit = (int)Tools::settings('default', 'item_limit', 50);
+        }
+
         $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
 

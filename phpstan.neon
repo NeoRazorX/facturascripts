@@ -1,0 +1,7 @@
+parameters:
+    level: 0
+    paths:
+        - Core
+    ignoreErrors:
+        # Los modelos y bloques de email usan new static() a propósito para que los plugins puedan extenderlos.
+        - '#^Unsafe usage of new static\(\)\.$#'

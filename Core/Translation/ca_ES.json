@@ -945,6 +945,7 @@
     "inactive": "Inactiu",
     "incidents": "Incidències",
     "include-advance-documents": "Incloure la relació de bestretes rebudes als documents PDF",
+    "income": "Ingressos",
     "income-and-expenses": "income and expenses",
     "incomes": "Ingressos",
     "incompatible-document": "Document incompatible: %code%. Per poder agrupar documents heu de tenir el mateix client o proveïdor, sèrie, magatzem, divisa i descomptes globals.",
