@@ -29,6 +29,9 @@ use FacturaScripts\Dinamic\Model\PedidoProveedor;
 use FacturaScripts\Dinamic\Model\PresupuestoProveedor;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 
+/**
+ * Actualiza los precios y descuentos de los productos de proveedor a partir de los documentos de compra.
+ */
 class PurchaseDocumentWorker extends WorkerClass
 {
     public function run(WorkEvent $event): bool

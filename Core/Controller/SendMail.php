@@ -124,6 +124,11 @@ class SendMail extends Controller
             return parent::url();
         }
 
+        $attachName = $this->request->queryOrInput('attachName', '');
+        if (false === empty($attachName)) {
+            $sendParams['attachName'] = $attachName;
+        }
+
         if ($this->request->has('modelClassName') && $this->request->has('modelCode')) {
             $sendParams['modelClassName'] = $this->request->queryOrInput('modelClassName');
             $sendParams['modelCode'] = $this->request->queryOrInput('modelCode');
@@ -433,7 +438,15 @@ class SendMail extends Controller
     {
         $fileName = $this->request->queryOrInput('fileName', '');
         Tools::folderCheckOrCreate(NewMail::ATTACHMENTS_TMP_PATH);
-        $this->newMail->addAttachment(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName, $fileName);
+
+        // el archivo temporal lleva un sufijo único para no colisionar en disco,
+        // pero en el email debe aparecer con su nombre limpio
+        $attachName = $this->request->queryOrInput('attachName', '');
+        if (empty($attachName)) {
+            $attachName = preg_replace('/_mail_\d+_\w+(\.\w+)$/', '$1', $fileName);
+        }
+
+        $this->newMail->addAttachment(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName, $attachName);
 
         foreach ($this->request->files->getArray('uploads') as $file) {
             // guardamos el adjunto en una carpeta temporal; el nombre lo pone el navegador,

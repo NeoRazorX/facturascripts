@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -211,7 +211,7 @@
         </div>
         <div class="list-group list-group-flush">
             {% if fsc.receiptCount > 0 %}
-                <a href="ListReciboCliente" class="list-group-item list-group-item-action d-flex align-items-center">
+                <a href="ListFacturaCliente?activetab=ListReciboCliente" class="list-group-item list-group-item-action d-flex align-items-center">
                     <i class="fa-solid fa-money-bill-wave fa-fw me-2 text-danger"></i>
                     <span class="flex-grow-1">{{ trans('receipts') }} · {{ trans('unpaid') }}</span>
                     <span class="badge bg-danger rounded-pill">{{ fsc.receiptCount }}</span>

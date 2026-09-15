@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -108,31 +108,30 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
 }
 
 function setModalParentForm(modal, form) {
-    if (form.code) {
-        // asignamos al formulario del modal el code del formulario donde sale el botón
+    const container = $("#" + modal).parent();
+
+    // eliminamos los inputs añadidos en aperturas anteriores del modal
+    container.find('input.modalParentFormInput').remove();
+
+    const addInput = function (name, value) {
         let input = document.createElement('input');
         input.type = 'hidden';
-        input.name = 'code';
-        input.value = form.code.value;
-        $("#" + modal).parent().append(input);
-    } else if (form.elements['codes[]']) {
-        let codes = [];
+        input.className = 'modalParentFormInput';
+        input.name = name;
+        input.value = value;
+        container.append(input);
+    };
 
+    if (form.code) {
+        // asignamos al formulario del modal el code del formulario donde sale el botón
+        addInput('code', form.code.value);
+    } else if (form.elements['codes[]']) {
         // recorremos los checkboxes del formulario donde sale el botón
+        // y añadimos un input de codes[] por cada uno
         let checkboxes = document.querySelectorAll('input[name="codes[]"]:checked');
         checkboxes.forEach((checkbox) => {
-            codes.push(checkbox.value);
+            addInput('codes[]', checkbox.value);
         });
-
-        // añadimos un input de codes[] con los códigos recogidos
-        codes.forEach((code) => {
-            let input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'codes[]';
-            input.value = code;
-            $("#" + modal).parent().append(input);
-        });
-        console.log(codes);
     }
 }
 

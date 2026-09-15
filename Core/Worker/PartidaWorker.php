@@ -27,6 +27,8 @@ use FacturaScripts\Dinamic\Model\Join\PartidaAsiento;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
+ * Recalcula los saldos de las partidas y los totales de la subcuenta asociada.
+ *
  * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class PartidaWorker extends WorkerClass

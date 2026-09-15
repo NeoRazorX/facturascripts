@@ -26,6 +26,15 @@ use ReflectionMethod;
 
 final class OpenAiTest extends TestCase
 {
+    public function testChatDefaults(): void
+    {
+        $chatParameters = (new ReflectionMethod(OpenAi::class, 'chat'))->getParameters();
+        $chatJsonParameters = (new ReflectionMethod(OpenAi::class, 'chatJson'))->getParameters();
+
+        $this->assertSame('gpt-5.6-luna', $chatParameters[2]->getDefaultValue());
+        $this->assertSame('gpt-5.6-luna', $chatJsonParameters[3]->getDefaultValue());
+    }
+
     public function testImageDefaults(): void
     {
         $method = new ReflectionMethod(OpenAi::class, 'image');
@@ -109,8 +118,6 @@ final class OpenAiTest extends TestCase
 
     private function getPrivateMethod(string $name): ReflectionMethod
     {
-        $method = new ReflectionMethod(OpenAi::class, $name);
-        $method->setAccessible(true);
-        return $method;
+        return new ReflectionMethod(OpenAi::class, $name);
     }
 }
