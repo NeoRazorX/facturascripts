@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
@@ -64,6 +65,44 @@ abstract class PanelController extends BaseController
     }
 
     /**
+     * Returns the data to navigate between the records in the source list.
+     *   - Array: When accessed from a row link with a navigation token.
+     *   - Empty: When no token, the seed has expired or the current record is not in it.
+     *
+     * @return array
+     */
+    public function getNavigation(): array
+    {
+        $token = $this->request->query->getAlnum('navfrom');
+        if (empty($token)) {
+            return [];
+        }
+
+        // search the seed of code list for user.
+        $data = Cache::get('nav-' . $this->user->nick . '-' . $token);
+        if (false === is_array($data) || empty($data['codes'])) {
+            return [];
+        }
+
+        // locate the record into the seed
+        $model = $this->tab($this->getMainViewName())->model;
+        $code = method_exists($model, 'id') ? $model->id() : $model->primaryColumnValue();
+        $codes = array_map('strval', $data['codes']);
+        $position = array_search((string)$code, $codes, true);
+        if (false === $position) {
+            return [];
+        }
+
+        $url = $this->url() . '?code=%s&navfrom=' . $token;
+        return [
+            'count' => $data['count'] ?? count($codes),
+            'next' => isset($codes[$position + 1]) ? sprintf($url, rawurlencode($codes[$position + 1])) : '',
+            'position' => ($data['start'] ?? 0) + $position + 1,
+            'prev' => $position > 0 ? sprintf($url, rawurlencode($codes[$position - 1])) : '',
+        ];
+    }
+
+    /**
      * Runs the controller's private logic.
      *
      * @param Response $response
@@ -104,6 +143,11 @@ abstract class PanelController extends BaseController
 
             if ($viewName === $mainViewName && $view->model->exists()) {
                 $this->hasData = true;
+            }
+
+            // save the navigation snapshot of list tabs, except on actions without page render
+            if ('export' !== $action && $view instanceof ListView) {
+                $view->saveNavigation();
             }
         }
 

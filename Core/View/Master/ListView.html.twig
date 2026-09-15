@@ -152,7 +152,11 @@
                 {% for model in currentView.cursor %}
                     {% set trClass = currentView.settings.clickable ? 'clickableListRow ' ~ rowStatus.trClass(model) : rowStatus.trClass(model) %}
                     {% set trTitle = rowStatus.trTitle(model) %}
-                    <tr class="{{ trClass }}" title="{{ trTitle }}" data-href="{{ asset(model.url()) }}">
+                    {% set rowUrl = model.url() %}
+                    {% if rowUrl and currentView.navToken %}
+                        {% set rowUrl = rowUrl ~ ('?' in rowUrl ? '&' : '?') ~ 'navfrom=' ~ currentView.navToken %}
+                    {% endif %}
+                    <tr class="{{ trClass }}" title="{{ trTitle }}" data-href="{{ asset(rowUrl) }}">
                         {% if currentView.settings.checkBoxes or currentView.settings.clickable %}
                             <td class="cancelClickable p-0 text-center align-middle">
                                 {% if currentView.settings.checkBoxes %}
@@ -162,7 +166,7 @@
                                     </div>
                                 {% endif %}
                                 {% if currentView.settings.clickable %}
-                                    <a href="{{ asset(model.url()) }}" target="_blank" class="toggle-ext-link d-none"
+                                    <a href="{{ asset(rowUrl) }}" target="_blank" class="toggle-ext-link d-none"
                                        onauxclick="$(this).addClass('text-dark');" title="{{ trans('open-tab') }}">
                                         <i class="fa-solid fa-external-link-alt"></i>
                                     </a>
