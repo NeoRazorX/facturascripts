@@ -14,7 +14,7 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     strategy:
       matrix:
@@ -180,7 +180,7 @@ jobs:
           fail_ci_if_error: false
 
   security-audit:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     name: Security Audit
 
     steps:
@@ -200,7 +200,7 @@ jobs:
         run: composer audit
 
   code-quality:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     name: Code Quality
 
     steps:
