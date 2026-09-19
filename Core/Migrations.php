@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,6 +40,8 @@ use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor;
 use FacturaScripts\Dinamic\Model\LogMessage;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Serie;
+use RuntimeException;
+use Throwable;
 
 /**
  * Ejecutor de migraciones del núcleo y de los plugins.
@@ -74,18 +76,24 @@ final class Migrations
      * había sido aplicada anteriormente. El orden importa: hay migraciones que dependen de que
      * otras hayan creado/normalizado datos antes (por ejemplo, las que desvinculan registros
      * huérfanos asumen que las tablas referenciadas ya existen).
+     *
+     * @return bool true si todas las migraciones se han aplicado (o ya lo estaban); false si alguna ha fallado
      */
-    public static function run(): void
+    public static function run(): bool
     {
-        self::runMigration('clearLogs', [self::class, 'clearLogs']);
-        self::runMigration('fixSeries', [self::class, 'fixSeries']);
-        self::runMigration('fixAgentes', [self::class, 'fixAgentes']);
-        self::runMigration('fixApiKeysUsers', [self::class, 'fixApiKeysUsers']);
-        self::runMigration('fixAgenciasTransporte', [self::class, 'fixAgenciasTransporte']);
-        self::runMigration('fixFormasPago', [self::class, 'fixFormasPago']);
-        self::runMigration('fixRectifiedInvoices', [self::class, 'fixRectifiedInvoices']);
-        self::runMigration('fixClientesOperationFromVatException', [self::class, 'fixClientesOperationFromVatException']);
-        self::runMigration('fixTaxException', [self::class, 'fixTaxException']);
+        $migrations = [
+            'clearLogs', 'fixSeries', 'fixAgentes', 'fixApiKeysUsers', 'fixAgenciasTransporte', 'fixFormasPago',
+            'fixRectifiedInvoices', 'fixClientesOperationFromVatException', 'fixTaxException'
+        ];
+
+        $result = true;
+        foreach ($migrations as $name) {
+            if (false === self::runMigration($name, [self::class, $name])) {
+                $result = false;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -96,17 +104,26 @@ final class Migrations
      * de nombrado que evite colisiones con otros plugins o con el núcleo.
      *
      * @param MigrationClass $migration instancia ya construida de la migración a ejecutar
+     *
+     * @return bool true si la migración se ha aplicado (o ya lo estaba); false si ha fallado
      */
-    public static function runPluginMigration(MigrationClass $migration): void
+    public static function runPluginMigration(MigrationClass $migration): bool
     {
         $migrationName = $migration->getFullMigrationName();
 
         if (self::isMigrationExecuted($migrationName)) {
-            return;
+            return true;
         }
 
-        $migration->run();
+        try {
+            $migration->run();
+        } catch (Throwable $exception) {
+            self::logError($migrationName, $exception);
+            return false;
+        }
+
         self::markMigrationAsExecuted($migrationName);
+        return true;
     }
 
     /**
@@ -116,12 +133,19 @@ final class Migrations
      * si debe ejecutarse según el registro persistido.
      *
      * @param array<MigrationClass> $migrations migraciones a ejecutar, en orden
+     *
+     * @return bool true si todas se han aplicado (o ya lo estaban); false si alguna ha fallado
      */
-    public static function runPluginMigrations(array $migrations): void
+    public static function runPluginMigrations(array $migrations): bool
     {
+        $result = true;
         foreach ($migrations as $migration) {
-            self::runPluginMigration($migration);
+            if (false === self::runPluginMigration($migration)) {
+                $result = false;
+            }
         }
+
+        return $result;
     }
 
     /**
@@ -142,7 +166,23 @@ final class Migrations
         // cuando hay miles de registros en el canal master, eliminamos los antiguos para evitar problemas de rendimiento
         $date = date("Y-m-d H:i:s", strtotime("-1 month"));
         $sql = "DELETE FROM logs WHERE channel = 'master' AND time < '" . $date . "';";
-        self::db()->exec($sql);
+        self::exec($sql);
+    }
+
+    /**
+     * Ejecuta una sentencia SQL y lanza una excepción si falla.
+     *
+     * `DataBase::exec()` solo devuelve false y deja el error en el log de base de datos, donde
+     * pasa desapercibido. Al convertirlo en excepción, `runMigration()` registra el fallo y no
+     * marca la migración como ejecutada.
+     *
+     * @throws RuntimeException si la sentencia no se ha podido ejecutar
+     */
+    private static function exec(string $sql): void
+    {
+        if (false === self::db()->exec($sql)) {
+            throw new RuntimeException('SQL ERROR: ' . $sql);
+        }
     }
 
     /** Devuelve la conexión a base de datos, abriéndola la primera vez (singleton perezoso interno). */
@@ -181,7 +221,7 @@ final class Migrations
             $sql = "UPDATE " . $table . " SET codagente = NULL WHERE codagente IS NOT NULL"
                 . " AND codagente NOT IN (SELECT codagente FROM agentes);";
 
-            self::db()->exec($sql);
+            self::exec($sql);
         }
     }
 
@@ -202,7 +242,7 @@ final class Migrations
         $sql = "UPDATE api_keys SET nick = NULL WHERE nick IS NOT NULL"
             . " AND nick NOT IN (SELECT nick FROM users);";
 
-        self::db()->exec($sql);
+        self::exec($sql);
     }
 
     /**
@@ -236,7 +276,7 @@ final class Migrations
         foreach ($updates as $exception => $operation) {
             $sql = "UPDATE clientes SET operacion = " . self::db()->var2str($operation)
                 . " WHERE operacion IS NULL AND excepcioniva = " . self::db()->var2str($exception) . ";";
-            self::db()->exec($sql);
+            self::exec($sql);
         }
     }
 
@@ -260,7 +300,7 @@ final class Migrations
             $sql = "UPDATE " . $table . " SET codtrans = NULL WHERE codtrans IS NOT NULL"
                 . " AND codtrans NOT IN (SELECT codtrans FROM agenciastrans);";
 
-            self::db()->exec($sql);
+            self::exec($sql);
         }
     }
 
@@ -303,7 +343,7 @@ final class Migrations
                 $sql = "INSERT INTO " . FormaPago::tableName() . " (codpago, descripcion) VALUES ("
                     . self::db()->var2str($formaPago->codpago) . ", "
                     . self::db()->var2str($formaPago->descripcion) . ");";
-                self::db()->exec($sql);
+                self::exec($sql);
             }
         }
     }
@@ -328,7 +368,7 @@ final class Migrations
                 . " WHERE idfacturarect IS NOT NULL"
                 . " AND idfacturarect NOT IN (SELECT idfactura FROM (SELECT idfactura FROM " . $table . ") AS subquery);";
 
-            self::db()->exec($sql);
+            self::exec($sql);
         }
     }
 
@@ -351,7 +391,7 @@ final class Migrations
         }
 
         $sqlUpdate = "UPDATE series SET tipo = 'R' WHERE codserie = " . self::db()->var2str($serieRectifying) . ";";
-        self::db()->exec($sqlUpdate);
+        self::exec($sqlUpdate);
     }
 
     /**
@@ -409,7 +449,7 @@ final class Migrations
             // ES_ART_14 = ES_14
             // ES_LOCATION_RULES = ES_68_70
             // ES_PASSIVE_SUBJECT = ES_84
-            self::db()->exec("UPDATE " . $table . " SET excepcioniva = CASE "
+            self::exec("UPDATE " . $table . " SET excepcioniva = CASE "
                 . "WHEN excepcioniva = 'ES_N1' THEN 'ES_7' "
                 . "WHEN excepcioniva = 'ES_N5' THEN 'ES_OTHER_NOT_SUBJECT' "
                 . "WHEN excepcioniva = 'ES_ART_7' THEN 'ES_7' "
@@ -441,6 +481,22 @@ final class Migrations
 
         $data = json_decode($content, true);
         return is_array($data) ? $data : [];
+    }
+
+    /**
+     * Registra en el log el fallo de una migración, con su nombre y el mensaje de la excepción.
+     *
+     * La migración fallida no se marca como ejecutada, por lo que volverá a intentarse en la
+     * siguiente actualización. Al ser idempotentes, el reintento es seguro.
+     */
+    private static function logError(string $migrationName, Throwable $exception): void
+    {
+        Tools::log()->error('MIGRATION ERROR: ' . $migrationName . ' - ' . $exception->getMessage(), [
+            'migration' => $migrationName,
+            'exception' => get_class($exception),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+        ]);
     }
 
     /** Indica si la migración con ese nombre ya consta como ejecutada en el JSON de control. */
@@ -477,16 +533,25 @@ final class Migrations
      * Ejecuta el callback indicado y marca la migración como aplicada, salvo que ya lo estuviera.
      *
      * Es el único punto por el que pasan todas las migraciones del núcleo. Si el callback lanza
-     * una excepción, la migración no se marcará como ejecutada y se reintentará en el próximo
-     * arranque.
+     * una excepción, se registra el error, la migración no se marca como ejecutada y se
+     * reintentará en la próxima actualización; el resto de migraciones siguen ejecutándose.
+     *
+     * @return bool true si la migración se ha aplicado (o ya lo estaba); false si ha fallado
      */
-    private static function runMigration(string $migrationName, callable $callback): void
+    private static function runMigration(string $migrationName, callable $callback): bool
     {
         if (self::isMigrationExecuted($migrationName)) {
-            return;
+            return true;
         }
 
-        call_user_func($callback);
+        try {
+            call_user_func($callback);
+        } catch (Throwable $exception) {
+            self::logError($migrationName, $exception);
+            return false;
+        }
+
         self::markMigrationAsExecuted($migrationName);
+        return true;
     }
 }

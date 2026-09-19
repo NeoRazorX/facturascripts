@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Template;
 
 use FacturaScripts\Core\Base\DataBase;
+use RuntimeException;
 
 /**
  * Template class for plugin migration
@@ -45,10 +46,14 @@ use FacturaScripts\Core\Base\DataBase;
  *             return;
  *         }
  *
- *         $sql = "ALTER TABLE users ADD COLUMN new_field VARCHAR(50)";
- *         $this->db()->exec($sql);
+ *         // exec() throws an exception if the SQL fails, so the migration is not
+ *         // marked as executed and will be retried on the next update
+ *         $this->exec("ALTER TABLE users ADD COLUMN new_field VARCHAR(50)");
  *     }
  * }
+ *
+ * Any exception thrown from run() is logged by Migrations and the migration is not
+ * marked as executed. To report a failure, throw an exception.
  *
  * Then in your plugin's Init.php update() method:
  *
@@ -101,9 +106,27 @@ abstract class MigrationClass
     }
 
     /**
-     * Execute the migration logic
+     * Execute the migration logic.
+     *
+     * Throw an exception to report a failure: Migrations will log it and will not mark the
+     * migration as executed, so it will be retried on the next update.
      */
     abstract public function run(): void;
+
+    /**
+     * Executes a SQL statement and throws an exception if it fails.
+     *
+     * Unlike db()->exec(), which only returns false, this makes the failure visible to
+     * Migrations so the migration is not marked as executed.
+     *
+     * @throws RuntimeException if the SQL statement fails
+     */
+    protected function exec(string $sql): void
+    {
+        if (false === $this->db()->exec($sql)) {
+            throw new RuntimeException('SQL ERROR: ' . $sql);
+        }
+    }
 
     /**
      * Get database instance
