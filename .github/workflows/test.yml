@@ -173,6 +173,7 @@ jobs:
         if: matrix.php-version == '8.3' && matrix.database.type == 'mysql' && matrix.database.version == '8.1'
         uses: codecov/codecov-action@v5
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
