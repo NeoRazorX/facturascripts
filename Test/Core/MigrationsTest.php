@@ -82,16 +82,27 @@ final class MigrationsTest extends TestCase
         $this->assertSame(2, $migration->runs);
     }
 
-    public function testFailedMigrationDoesNotStopTheOthers(): void
+    public function testFailedMigrationStopsTheFollowingOnes(): void
     {
+        $before = new MigrationsTestOk();
         $fail = new MigrationsTestFail();
-        $ok = new MigrationsTestOk();
-        $this->assertFalse(Migrations::runPluginMigrations([$fail, $ok]));
+        $after = new MigrationsTestOk2();
+        $this->assertFalse(Migrations::runPluginMigrations([$before, $fail, $after]));
 
-        $this->assertSame(1, $ok->runs);
+        // la anterior se ejecuta y se marca; la fallida y la posterior quedan pendientes
+        $this->assertSame(1, $before->runs);
+        $this->assertSame(1, $fail->runs);
+        $this->assertSame(0, $after->runs);
         $executed = $this->executed();
-        $this->assertContains($ok->getFullMigrationName(), $executed);
+        $this->assertContains($before->getFullMigrationName(), $executed);
         $this->assertNotContains($fail->getFullMigrationName(), $executed);
+        $this->assertNotContains($after->getFullMigrationName(), $executed);
+
+        // en el siguiente intento se reanuda desde la fallida
+        $this->assertFalse(Migrations::runPluginMigrations([$before, $fail, $after]));
+        $this->assertSame(1, $before->runs);
+        $this->assertSame(2, $fail->runs);
+        $this->assertSame(0, $after->runs);
     }
 
     public function testExecHelperThrowsOnInvalidSql(): void
@@ -126,6 +137,19 @@ final class MigrationsTest extends TestCase
 final class MigrationsTestOk extends MigrationClass
 {
     const MIGRATION_NAME = 'migrations_test_ok';
+
+    /** @var int */
+    public $runs = 0;
+
+    public function run(): void
+    {
+        $this->runs++;
+    }
+}
+
+final class MigrationsTestOk2 extends MigrationClass
+{
+    const MIGRATION_NAME = 'migrations_test_ok_2';
 
     /** @var int */
     public $runs = 0;

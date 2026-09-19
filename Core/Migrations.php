@@ -75,7 +75,9 @@ final class Migrations
      * Cada migración se invoca a través de `runMigration()`, que se encarga de saltarla si ya
      * había sido aplicada anteriormente. El orden importa: hay migraciones que dependen de que
      * otras hayan creado/normalizado datos antes (por ejemplo, las que desvinculan registros
-     * huérfanos asumen que las tablas referenciadas ya existen).
+     * huérfanos asumen que las tablas referenciadas ya existen). Por eso, si una falla, se
+     * detiene la ejecución: la fallida y las posteriores quedan pendientes y se reintentarán
+     * en la siguiente actualización.
      *
      * @return bool true si todas las migraciones se han aplicado (o ya lo estaban); false si alguna ha fallado
      */
@@ -86,14 +88,13 @@ final class Migrations
             'fixRectifiedInvoices', 'fixClientesOperationFromVatException', 'fixTaxException'
         ];
 
-        $result = true;
         foreach ($migrations as $name) {
             if (false === self::runMigration($name, [self::class, $name])) {
-                $result = false;
+                return false;
             }
         }
 
-        return $result;
+        return true;
     }
 
     /**
@@ -129,8 +130,9 @@ final class Migrations
     /**
      * Ejecuta una lista de migraciones de plugin en el orden recibido.
      *
-     * Es un simple atajo sobre `runPluginMigration()`; cada migración decide individualmente
-     * si debe ejecutarse según el registro persistido.
+     * Cada migración decide individualmente si debe ejecutarse según el registro persistido.
+     * El orden de la lista se entiende como dependencia: si una migración falla, no se ejecutan
+     * las siguientes, que quedan pendientes junto con la fallida para la próxima actualización.
      *
      * @param array<MigrationClass> $migrations migraciones a ejecutar, en orden
      *
@@ -138,14 +140,13 @@ final class Migrations
      */
     public static function runPluginMigrations(array $migrations): bool
     {
-        $result = true;
         foreach ($migrations as $migration) {
             if (false === self::runPluginMigration($migration)) {
-                $result = false;
+                return false;
             }
         }
 
-        return $result;
+        return true;
     }
 
     /**
@@ -533,8 +534,8 @@ final class Migrations
      * Ejecuta el callback indicado y marca la migración como aplicada, salvo que ya lo estuviera.
      *
      * Es el único punto por el que pasan todas las migraciones del núcleo. Si el callback lanza
-     * una excepción, se registra el error, la migración no se marca como ejecutada y se
-     * reintentará en la próxima actualización; el resto de migraciones siguen ejecutándose.
+     * una excepción, se registra el error y la migración no se marca como ejecutada, por lo que
+     * se reintentará en la próxima actualización.
      *
      * @return bool true si la migración se ha aplicado (o ya lo estaba); false si ha fallado
      */
