@@ -163,11 +163,10 @@ jobs:
 
       - name: Run PHPUnit tests
         run: |
-          if [ -f phpunit.xml ] || [ -f phpunit.xml.dist ]; then
-            vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+          if [ "${{ matrix.php-version }}" = "8.3" ] && [ "${{ matrix.database.type }}" = "mysql" ] && [ "${{ matrix.database.version }}" = "8.1" ]; then
+            vendor/bin/phpunit --coverage-clover=coverage.xml
           else
-            echo "No PHPUnit configuration found. Running with default settings..."
-            vendor/bin/phpunit --bootstrap vendor/autoload.php tests/
+            vendor/bin/phpunit
           fi
 
       - name: Upload coverage reports
