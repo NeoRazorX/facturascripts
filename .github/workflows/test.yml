@@ -14,7 +14,7 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     strategy:
       matrix:
@@ -189,24 +189,24 @@ jobs:
 
       - name: Run PHPUnit tests
         run: |
-          if [ -f phpunit.xml ] || [ -f phpunit.xml.dist ]; then
-            vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+          if [ "${{ matrix.php-version }}" = "8.3" ] && [ "${{ matrix.database.type }}" = "mysql" ] && [ "${{ matrix.database.version }}" = "8.1" ]; then
+            vendor/bin/phpunit --coverage-clover=coverage.xml
           else
-            echo "No PHPUnit configuration found. Running with default settings..."
-            vendor/bin/phpunit --bootstrap vendor/autoload.php tests/
+            vendor/bin/phpunit
           fi
 
       - name: Upload coverage reports
         if: matrix.php-version == '8.3' && matrix.database.type == 'mysql' && matrix.database.version == '8.1'
         uses: codecov/codecov-action@v5
         with:
-          file: ./coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
 
   security-audit:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     name: Security Audit
 
     steps:
@@ -226,7 +226,7 @@ jobs:
         run: composer audit
 
   code-quality:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     name: Code Quality
 
     steps:
