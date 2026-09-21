@@ -297,40 +297,46 @@ class DocumentStitcher extends Controller
 
     protected function closeDocuments(int $idestado): void
     {
-        // solamente permitimos cerrar con un estado de cierre válido
-        $valid = false;
-        foreach ($this->getCloseStatus() as $docState) {
-            if ($docState->id() == $idestado) {
-                $valid = true;
-                break;
-            }
-        }
-        if (false === $valid) {
-            Tools::log()->warning('record-not-found');
-            return;
-        }
+        $this->pipe('closeDocumentsBefore', $idestado);
 
-        foreach ($this->documents as $doc) {
-            if (false === $doc->editable) {
-                Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
+        try {
+            // solamente permitimos cerrar con un estado de cierre válido
+            $valid = false;
+            foreach ($this->getCloseStatus() as $docState) {
+                if ($docState->id() == $idestado) {
+                    $valid = true;
+                    break;
+                }
+            }
+            if (false === $valid) {
+                Tools::log()->warning('record-not-found');
                 return;
             }
-        }
 
-        $this->db()->beginTransaction();
-
-        foreach ($this->documents as $doc) {
-            $doc->setDocumentGeneration(false);
-            $doc->idestado = $idestado;
-            if (false === $doc->save()) {
-                $this->db()->rollback();
-                Tools::log()->error('record-save-error');
-                return;
+            foreach ($this->documents as $doc) {
+                if (false === $doc->editable) {
+                    Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
+                    return;
+                }
             }
-        }
 
-        $this->db()->commit();
-        Tools::log()->notice('record-updated-correctly');
+            $this->db()->beginTransaction();
+
+            foreach ($this->documents as $doc) {
+                $doc->setDocumentGeneration(false);
+                $doc->idestado = $idestado;
+                if (false === $doc->save()) {
+                    $this->db()->rollback();
+                    Tools::log()->error('record-save-error');
+                    return;
+                }
+            }
+
+            $this->db()->commit();
+            Tools::log()->notice('record-updated-correctly');
+        } finally {
+            $this->pipe('closeDocumentsAfter', $idestado);
+        }
     }
 
     /**
@@ -340,82 +346,88 @@ class DocumentStitcher extends Controller
      */
     protected function generateNewDocument(int $idestado): void
     {
-        foreach ($this->documents as $doc) {
-            if (false === $doc->editable) {
-                Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
-                return;
-            }
-        }
+        $this->pipe('generateNewDocumentBefore', $idestado);
 
-        $this->db()->beginTransaction();
-
-        // agrupamos los datos necesarios
-        $newLines = [];
-        $properties = [];
-        $prototype = null;
-        $quantities = [];
-
-        $newDate = $this->request->input('fecha', '');
-        if (!empty($newDate)) {
-            $properties['fecha'] = $newDate;
-            if (strtotime($newDate) === strtotime(Tools::date())) {
-                $properties['hora'] = Tools::hour();
-            }
-        }
-
-        foreach ($this->documents as $doc) {
-            $lines = $doc->getLines();
-
-            if (null === $prototype) {
-                $prototype = clone $doc;
-                $prototype->codserie = $this->request->input('codserie', $doc->codserie);
-            } elseif ('true' === $this->request->input('extralines', '') && !empty($lines)) {
-                $this->addBlankLine($newLines, $doc);
+        try {
+            foreach ($this->documents as $doc) {
+                if (false === $doc->editable) {
+                    Tools::log()->warning('non-editable-document', ['%code%' => $doc->codigo]);
+                    return;
+                }
             }
 
-            if ('true' === $this->request->input('extralines', '') && !empty($lines)) {
-                $this->addInfoLine($newLines, $doc);
+            $this->db()->beginTransaction();
+
+            // agrupamos los datos necesarios
+            $newLines = [];
+            $properties = [];
+            $prototype = null;
+            $quantities = [];
+
+            $newDate = $this->request->input('fecha', '');
+            if (!empty($newDate)) {
+                $properties['fecha'] = $newDate;
+                if (strtotime($newDate) === strtotime(Tools::date())) {
+                    $properties['hora'] = Tools::hour();
+                }
             }
 
-            // desglosamos las cantidades y líneas
-            if (false === $this->breakDownLines($doc, $lines, $newLines, $quantities, $idestado)) {
+            foreach ($this->documents as $doc) {
+                $lines = $doc->getLines();
+
+                if (null === $prototype) {
+                    $prototype = clone $doc;
+                    $prototype->codserie = $this->request->input('codserie', $doc->codserie);
+                } elseif ('true' === $this->request->input('extralines', '') && !empty($lines)) {
+                    $this->addBlankLine($newLines, $doc);
+                }
+
+                if ('true' === $this->request->input('extralines', '') && !empty($lines)) {
+                    $this->addInfoLine($newLines, $doc);
+                }
+
+                // desglosamos las cantidades y líneas
+                if (false === $this->breakDownLines($doc, $lines, $newLines, $quantities, $idestado)) {
+                    $this->db()->rollback();
+                    return;
+                }
+            }
+
+            if (null === $prototype || empty($newLines)) {
                 $this->db()->rollback();
                 return;
             }
-        }
 
-        if (null === $prototype || empty($newLines)) {
-            $this->db()->rollback();
-            return;
-        }
+            // permitimos a los plugins actuar sobre el prototipo antes de guardar
+            if (false === $this->pipe('checkPrototype', $prototype, $newLines)) {
+                $this->db()->rollback();
+                return;
+            }
 
-        // permitimos a los plugins actuar sobre el prototipo antes de guardar
-        if (false === $this->pipe('checkPrototype', $prototype, $newLines)) {
-            $this->db()->rollback();
-            return;
-        }
+            // generamos el nuevo documento
+            $generator = new BusinessDocumentGenerator();
+            $newClass = $this->getGenerateClass($idestado);
+            if (empty($newClass)) {
+                $this->db()->rollback();
+                return;
+            }
 
-        // generamos el nuevo documento
-        $generator = new BusinessDocumentGenerator();
-        $newClass = $this->getGenerateClass($idestado);
-        if (empty($newClass)) {
-            $this->db()->rollback();
-            return;
-        }
+            if (false === $generator->generate($prototype, $newClass, $newLines, $quantities, $properties)) {
+                $this->db()->rollback();
+                Tools::log()->error('record-save-error');
+                return;
+            }
 
-        if (false === $generator->generate($prototype, $newClass, $newLines, $quantities, $properties)) {
-            $this->db()->rollback();
-            Tools::log()->error('record-save-error');
-            return;
-        }
+            $this->db()->commit();
 
-        $this->db()->commit();
-
-        // redirigimos al nuevo documento
-        foreach ($generator->getLastDocs() as $doc) {
-            $this->redirect($doc->url());
-            Tools::log()->notice('record-updated-correctly');
-            break;
+            // redirigimos al nuevo documento
+            foreach ($generator->getLastDocs() as $doc) {
+                $this->redirect($doc->url());
+                Tools::log()->notice('record-updated-correctly');
+                break;
+            }
+        } finally {
+            $this->pipe('generateNewDocumentAfter', $idestado);
         }
     }
 
