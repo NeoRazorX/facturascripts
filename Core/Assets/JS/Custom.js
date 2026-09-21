@@ -48,12 +48,15 @@ function animateSpinner(animation, result = null) {
     }
 }
 
-function confirmAction(viewName, action, title, message, cancel, confirm) {
+function confirmAction(viewName, action, title, message, cancel, confirm, icon = '', btnClass = 'btn-danger') {
     // Si ya existe un modal con el ID 'dynamicModal', lo eliminamos
     const existingModal = document.getElementById('dynamicConfirmActionModal');
     if (existingModal) {
         existingModal.remove();
     }
+
+    // icono opcional para el título y el botón de confirmar
+    const titleIcon = icon ? `<i class="${icon} fa-fw me-1"></i>` : '';
 
     // Crear el HTML del modal como string usando los parámetros
     const modalHTML = `
@@ -61,7 +64,7 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="dynamicConfirmActionModalLabel">${title}</h5>
+            <h5 class="modal-title" id="dynamicConfirmActionModalLabel">${titleIcon}${title}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -69,7 +72,7 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary btn-spin-action" data-bs-dismiss="modal">${cancel}</button>
-            <button type="button" id="saveDynamicConfirmActionModalBtn" class="btn btn-danger btn-spin-action">${confirm}</button>
+            <button type="button" id="saveDynamicConfirmActionModalBtn" class="btn ${btnClass} btn-spin-action">${titleIcon}${confirm}</button>
           </div>
         </div>
       </div>
