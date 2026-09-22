@@ -24,3 +24,5 @@
 20;"AlbaranProveedor";"Itzulia";"false";"true";"false";0;
 21;"FacturaProveedor";"Berria";"true";"true";"true";1;
 22;"FacturaProveedor";"Burutua";"false";"true";"false";1;
+28;"FacturaCliente";"Stock ez eguneratu";"false";"true";"false";0;
+29;"FacturaProveedor";"Stock ez eguneratu";"false";"true";"false";0;
