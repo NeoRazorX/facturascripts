@@ -330,6 +330,9 @@ class DocumentStitcher extends Controller
         }
 
         $this->db()->commit();
+
+        // redirigimos al documento cerrado, o al listado si hay varios
+        $this->redirect(count($this->documents) === 1 ? $this->documents[0]->url() : 'List' . $this->modelName);
         Tools::log()->notice('record-updated-correctly');
     }
 
