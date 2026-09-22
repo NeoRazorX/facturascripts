@@ -405,9 +405,9 @@ trait CommonSalesPurchases
                 . '</div>';
         }
 
-        // añadimos los estados posibles, separando los editables de los no editables
-        $editableOptions = [];
-        $closedOptions = [];
+        // añadimos los estados posibles en el orden configurado
+        $reopenOptions = [];
+        $otherOptions = [];
         foreach ($model->getAvailableStatus() as $sta) {
             // si está seleccionado o no activo, lo saltamos
             if ($sta->idestado === $model->idestado || false === $sta->activo) {
@@ -418,28 +418,25 @@ trait CommonSalesPurchases
                 . ' href="#" onclick="return ' . $jsName . '(\'save-status\', \'' . $sta->idestado . '\', this);">'
                 . '<i class="' . static::idestadoIcon($sta, true) . ' fa-fw"></i> ' . $sta->nombre . '</a>';
 
-            if ($sta->editable) {
-                $editableOptions[] = $option;
+            // si el documento es editable, no separamos los estados
+            if ($model->editable || false === $sta->editable) {
+                $otherOptions[] = $option;
                 continue;
             }
 
-            $closedOptions[] = $option;
+            $reopenOptions[] = $option;
         }
 
         // si el documento no es editable, los estados editables sirven para reabrirlo
         $options = [];
-        if (false === $model->editable) {
-            if (count($editableOptions) > 0) {
-                $options[] = '<h6 class="dropdown-header">' . Tools::trans('re-open') . '</h6>';
-                array_push($options, ...$editableOptions);
-            }
-            if (count($editableOptions) > 0 && count($closedOptions) > 0) {
+        if (count($reopenOptions) > 0) {
+            $options[] = '<h6 class="dropdown-header">' . Tools::trans('re-open') . '</h6>';
+            array_push($options, ...$reopenOptions);
+            if (count($otherOptions) > 0) {
                 $options[] = '<div class="dropdown-divider"></div>';
             }
-            array_push($options, ...$closedOptions);
-        } else {
-            array_push($options, ...$editableOptions, ...$closedOptions);
         }
+        array_push($options, ...$otherOptions);
 
         // añadimos la opción de agrupar o partir (excepto facturas y documentos no editables)
         if ($model->editable && false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
