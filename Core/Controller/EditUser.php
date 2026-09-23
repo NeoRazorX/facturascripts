@@ -369,6 +369,8 @@ class EditUser extends EditController
                     Where::orIsNull('nick'),
                 ];
                 $view->loadData('', $where);
+                // al abrir una configuración, seleccionamos este usuario en EditPageOption
+                $view->settings['urlSuffix'] = '&nick=' . rawurlencode($nick);
                 break;
         }
     }
