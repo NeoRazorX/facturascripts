@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Lib\Widget\GroupItem;
 use FacturaScripts\Dinamic\Lib\Widget\VisualItemLoadEngine;
@@ -368,11 +369,17 @@ abstract class BaseView
         $viewName = explode('-', $this->name)[0];
         VisualItemLoadEngine::installXML($viewName, $this->pageOption);
 
-        // si hay personalización guardada, superponemos sus cambios sobre el XML
-        $custom = PageOption::findWhere(
-            $this->getPageWhere($user),
-            ['nick' => 'ASC']
-        );
+        // la personalización del usuario tiene prioridad sobre la general
+        $custom = is_bool($user) ? null : PageOption::findWhere([
+            Where::eq('name', $viewName),
+            Where::eq('nick', $user->nick)
+        ]);
+        if (is_null($custom)) {
+            $custom = PageOption::findWhere([
+                Where::eq('name', $viewName),
+                Where::isNull('nick')
+            ]);
+        }
         if (false === is_null($custom)) {
             $this->settings['customized'] = true;
             VisualItemLoadEngine::mergeCustomization($this->pageOption, $custom);
