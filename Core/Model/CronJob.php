@@ -62,6 +62,9 @@ class CronJob extends ModelClass
     /** @var int Número acumulado de ejecuciones fallidas. */
     public $fails;
 
+    /** @var string Periodicidad con la que se programó el trabajo en su última ejecución. */
+    public $frequency;
+
     /** @var int Identificador único del trabajo programado. */
     public $id;
 
@@ -143,6 +146,7 @@ class CronJob extends ModelClass
      */
     public function every(string $period): self
     {
+        $this->setFrequency('every', [$period]);
         if (false === $this->enabled) {
             $this->ready = false;
             return $this;
@@ -175,6 +179,7 @@ class CronJob extends ModelClass
      */
     public function everyDay(int $day, int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everyDay', [$day, $hour], $strict);
         $date = date('Y-m-' . $day, $this->getCurrentTimestamp());
         return $this->everyDayAux($date, $hour, $strict, '1 month');
     }
@@ -190,6 +195,7 @@ class CronJob extends ModelClass
      */
     public function everyDayAt(int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everyDayAt', [$hour], $strict);
         $date = date('Y-m-d', $this->getCurrentTimestamp());
         return $this->everyDayAux($date, $hour, $strict, '1 day');
     }
@@ -205,6 +211,7 @@ class CronJob extends ModelClass
      */
     public function everyFridayAt(int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everyFridayAt', [$hour], $strict);
         $date = date('Y-m-d', strtotime('friday', $this->getCurrentTimestamp()));
         return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
@@ -220,6 +227,7 @@ class CronJob extends ModelClass
      */
     public function everyLastDayOfMonthAt(int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everyLastDayOfMonthAt', [$hour], $strict);
         $date = date('Y-m-d', strtotime('last day of this month', $this->getCurrentTimestamp()));
 
         // si todavía no toca la de este mes, usamos el último día del mes anterior,
@@ -242,6 +250,7 @@ class CronJob extends ModelClass
      */
     public function everyMondayAt(int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everyMondayAt', [$hour], $strict);
         $date = date('Y-m-d', strtotime('monday', $this->getCurrentTimestamp()));
         return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
@@ -257,6 +266,7 @@ class CronJob extends ModelClass
      */
     public function everySaturdayAt(int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everySaturdayAt', [$hour], $strict);
         $date = date('Y-m-d', strtotime('saturday', $this->getCurrentTimestamp()));
         return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
@@ -272,6 +282,7 @@ class CronJob extends ModelClass
      */
     public function everySundayAt(int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everySundayAt', [$hour], $strict);
         $date = date('Y-m-d', strtotime('sunday', $this->getCurrentTimestamp()));
         return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
@@ -287,6 +298,7 @@ class CronJob extends ModelClass
      */
     public function everyThursdayAt(int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everyThursdayAt', [$hour], $strict);
         $date = date('Y-m-d', strtotime('thursday', $this->getCurrentTimestamp()));
         return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
@@ -302,6 +314,7 @@ class CronJob extends ModelClass
      */
     public function everyTuesdayAt(int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everyTuesdayAt', [$hour], $strict);
         $date = date('Y-m-d', strtotime('tuesday', $this->getCurrentTimestamp()));
         return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
@@ -317,6 +330,7 @@ class CronJob extends ModelClass
      */
     public function everyWednesdayAt(int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everyWednesdayAt', [$hour], $strict);
         $date = date('Y-m-d', strtotime('wednesday', $this->getCurrentTimestamp()));
         return $this->everyDayAux($date, $hour, $strict, '7 days');
     }
@@ -334,6 +348,7 @@ class CronJob extends ModelClass
      */
     public function everyYearAt(int $month, int $day, int $hour, bool $strict = false): self
     {
+        $this->setFrequency('everyYearAt', [$month, $day, $hour], $strict);
         $currentYear = date('Y', $this->getCurrentTimestamp());
         $date = sprintf('%s-%02d-%02d', $currentYear, $month, $day);
         return $this->everyDayAux($date, $hour, $strict, '1 year');
@@ -555,6 +570,7 @@ class CronJob extends ModelClass
      */
     public function test(): bool
     {
+        $this->frequency = Tools::noHtml($this->frequency);
         $this->jobname = Tools::noHtml($this->jobname);
 
         // normalizamos el nombre del plugin a null si está vacío, ya que el cron
@@ -696,5 +712,22 @@ class CronJob extends ModelClass
         }
 
         return time();
+    }
+
+    /**
+     * Guarda la periodicidad programada con el formato del método que la define,
+     * por ejemplo: everyDayAt(3) o everyMondayAt(9, strict).
+     *
+     * @param string $method Nombre del método de programación.
+     * @param array $params Parámetros de la programación.
+     * @param bool $strict Si la programación es estricta.
+     */
+    private function setFrequency(string $method, array $params, bool $strict = false): void
+    {
+        if ($strict) {
+            $params[] = 'strict';
+        }
+
+        $this->frequency = substr($method . '(' . implode(', ', $params) . ')', 0, 50);
     }
 }

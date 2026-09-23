@@ -24,38 +24,45 @@
             <column name="id" numcolumns="2" order="100">
                 <widget type="text" fieldname="id" icon="fa-solid fa-hashtag" readonly="dinamic"/>
             </column>
-            <column name="plugin" numcolumns="2" order="110">
+            <column name="plugin" numcolumns="3" order="110">
                 <widget type="text" fieldname="pluginname" readonly="true"/>
             </column>
             <column name="jobname" title="job-name" numcolumns="4" order="120">
                 <widget type="text" fieldname="jobname" readonly="true"/>
             </column>
-            <column name="date" numcolumns="2" order="130">
+            <column name="frequency" numcolumns="3" order="130">
+                <widget type="text" fieldname="frequency" readonly="true"/>
+            </column>
+        </group>
+        <group name="execution" valign="bottom" numcolumns="12">
+            <column name="date" numcolumns="2" order="100">
                 <widget type="datetime" fieldname="date" readonly="true"/>
             </column>
-            <column name="duration" numcolumns="2" order="140">
-                <widget type="number" fieldname="duration" icon="fa-solid fa-clock" readonly="true"/>
-            </column>
-            <column name="enabled" numcolumns="2" order="150">
-                <widget type="checkbox" fieldname="enabled"/>
-            </column>
-            <column name="done" numcolumns="1" order="160">
-                <widget type="checkbox" fieldname="done" readonly="true"/>
-            </column>
-            <column name="failed" numcolumns="1" order="170">
-                <widget type="checkbox" fieldname="failed" readonly="true"/>
-            </column>
-            <column name="running" numcolumns="2" order="180">
-                <widget type="number" fieldname="running" readonly="true"/>
-            </column>
-            <column name="fails" numcolumns="2" order="190">
-                <widget type="number" fieldname="fails" readonly="true"/>
-            </column>
-            <column name="daily-executions" numcolumns="2" order="200">
+            <column name="daily-executions" numcolumns="2" order="110">
                 <widget type="number" fieldname="daily_exec" readonly="true"/>
             </column>
-            <column name="last-duration" numcolumns="2" order="210">
+            <column name="duration" numcolumns="2" order="120">
+                <widget type="number" fieldname="duration" icon="fa-solid fa-clock" readonly="true"/>
+            </column>
+            <column name="last-duration" numcolumns="2" order="130">
                 <widget type="number" fieldname="last_duration" icon="fa-solid fa-clock" readonly="true"/>
+            </column>
+            <column name="fails" numcolumns="2" order="140">
+                <widget type="number" fieldname="fails" readonly="true"/>
+            </column>
+            <column name="running" numcolumns="2" order="150">
+                <widget type="number" fieldname="running" readonly="true"/>
+            </column>
+        </group>
+        <group name="status" valign="bottom" numcolumns="12">
+            <column name="enabled" numcolumns="2" order="100">
+                <widget type="checkbox" fieldname="enabled"/>
+            </column>
+            <column name="done" numcolumns="2" order="110">
+                <widget type="checkbox" fieldname="done" readonly="true"/>
+            </column>
+            <column name="failed" numcolumns="2" order="120">
+                <widget type="checkbox" fieldname="failed" readonly="true"/>
             </column>
         </group>
     </columns>
