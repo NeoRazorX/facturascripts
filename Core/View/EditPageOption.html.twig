@@ -56,6 +56,7 @@
                     <div class="card-body">
                         <form method="post">
                             <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
+                            <input type="hidden" name="url" value="{{ fsc.backPage }}"/>
                             <div class="row">
                                 <div class="col">
                                     <p>{{ trans('page-option-info') }}</p>
@@ -83,6 +84,7 @@
                         {{ formToken() }}
                         <input type="hidden" name="action" value="save"/>
                         <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
+                        <input type="hidden" name="url" value="{{ fsc.backPage }}"/>
                         <input type="hidden" name="nick" value="{{ fsc.selectedUser }}"/>
                         {% set showWidth = fsc.selectedViewName starts with 'List' ? false : true %}
                         <div class="table-responsive">
