@@ -370,7 +370,8 @@ class EditUser extends EditController
                 ];
                 $view->loadData('', $where);
                 // al abrir una configuración, seleccionamos este usuario en EditPageOption
-                $view->settings['urlSuffix'] = '&nick=' . rawurlencode($nick);
+                // e indicamos la pestaña a la que debe volver
+                $view->settings['urlSuffix'] = '&nick=' . rawurlencode($nick) . '&activetab=' . $viewName;
                 break;
         }
     }

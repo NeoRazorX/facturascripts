@@ -290,11 +290,18 @@ class EditPageOption extends Controller
         return true;
     }
 
-    /** Devuelve la página desde la que se ha llegado, si no es este mismo controlador. */
+    /** Devuelve la página desde la que se ha llegado, con la pestaña de origen si nos la indican. */
     private function getRefererUrl(): string
     {
         $url = ltrim(strrchr('/' . $this->request->header('referer', ''), '/'), '/');
-        return strpos($url, $this->getClassName()) === 0 ? '' : $url;
+        if (empty($url) || strpos($url, $this->getClassName()) === 0) {
+            return '';
+        }
+
+        $activeTab = $this->request->queryOrInput('activetab', '');
+        return empty($activeTab) ?
+            $url :
+            $url . (false === strpos($url, '?') ? '?' : '&') . 'activetab=' . $activeTab;
     }
 
     private function setBackPage(): void
