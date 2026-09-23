@@ -410,8 +410,10 @@ final class Kernel
             header('Content-Length: ' . ob_get_length());
         }
 
-        // enviamos el buffer de salida y cerramos
-        ob_end_flush();
+        // enviamos el buffer de salida, si queda alguno abierto, y cerramos
+        if (ob_get_level() > 0) {
+            ob_end_flush();
+        }
         flush();
     }
 

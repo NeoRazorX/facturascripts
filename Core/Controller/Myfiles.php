@@ -103,9 +103,9 @@ class Myfiles implements ControllerInterface
         header('Content-Type: ' . $this->getMime($this->filePath));
         header('Cache-Control: public, max-age=31536000, immutable');
 
-        // desactivamos el buffer si está activo
-        if (ob_get_contents()) {
-            ob_end_flush();
+        // descartamos los buffers de salida para no cargar el archivo entero en memoria
+        while (ob_get_level() > 0) {
+            ob_end_clean();
         }
 
         // forzamos la descarga de archivos svg, xml y html para evitar ataques XSS, y de csv para evitar que se muestren como texto
