@@ -290,12 +290,19 @@ class EditPageOption extends Controller
         return true;
     }
 
+    /** Devuelve la página desde la que se ha llegado, si no es este mismo controlador. */
+    private function getRefererUrl(): string
+    {
+        $url = ltrim(strrchr('/' . $this->request->header('referer', ''), '/'), '/');
+        return strpos($url, $this->getClassName()) === 0 ? '' : $url;
+    }
+
     private function setBackPage(): void
     {
         // check if the url is a real controller name
-        $url = $this->request->queryOrInput('url', '');
+        $url = $this->request->queryOrInput('url', '') ?: $this->getRefererUrl();
         foreach (Page::all() as $page) {
-            if (substr($url, 0, strlen($page->name)) === $page->name) {
+            if ($url !== '' && substr($url, 0, strlen($page->name)) === $page->name) {
                 $this->backPage = $url;
                 return;
             }
