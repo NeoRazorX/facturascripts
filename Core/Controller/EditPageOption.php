@@ -125,7 +125,7 @@ class EditPageOption extends Controller
         $this->loadSelectedViewName();
         $this->setBackPage();
         $this->selectedUser = $this->user->admin ?
-            $this->request->queryOrInput('nick') :
+            $this->request->inputOrQuery('nick') :
             $this->user->nick;
         $this->loadPageOptions();
 
