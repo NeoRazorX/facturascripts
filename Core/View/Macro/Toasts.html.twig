@@ -1,6 +1,20 @@
 <div id="messages-toasts" style="z-index: 9999; position: fixed; bottom: 2%; left: 50%; transform: translateX(-50%);"></div>
+<div id="messages-block-overlay" class="position-fixed top-0 start-0 w-100 h-100 d-none d-flex justify-content-center align-items-center" style="z-index: 9998; backdrop-filter: blur(2px); background: rgba(255,255,255,.55); pointer-events: all;">
+    <div class="alert alert-info border border-info shadow fw-semibold text-center mb-0 mx-3"></div>
+</div>
 
 <script>
+    function blockUserInteraction(message = '') {
+        const overlay = document.getElementById('messages-block-overlay');
+        if (!overlay) {
+            return;
+        }
+
+        overlay.querySelector('div').textContent = message !== '' ? message + ' - {{ trans('processing') }}...' : '{{ trans('processing') }}...';
+        overlay.classList.remove('d-none');
+        document.body.style.overflow = 'hidden';
+    }
+
     function setToast(message, style = 'info', title = '', time = 10000) {
         let icon = '';
         let styleBorder = '';
