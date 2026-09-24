@@ -1,0 +1,62 @@
+{% extends "Master/MenuTemplate.html.twig" %}
+
+{% block body %}
+    {{ parent() }}
+
+    {# Formulario auxiliar para eventos sin datos de formulario #}
+    <form id="f_ui_event" method="post">
+        {{ formToken() }}
+        <input type="hidden" name="_event">
+    </form>
+
+    <div class="container-fluid">
+
+        {# Mensajes de error globales #}
+        {% if fsc.hasErrors() %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-1"></i>
+                {% for field, errs in fsc.errors() %}
+                    {% for err in errs %}
+                        <div>{{ err }}</div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {# Formulario principal con los componentes #}
+        <form method="post" enctype="multipart/form-data">
+            {{ formToken() }}
+
+            <div class="row g-3">
+                {% for component in fsc.components() %}
+                    {% set col_class = component.cols() > 0 ? 'col-sm-' ~ component.cols() : 'col-sm' %}
+                    <div class="{{ col_class }}">
+                        {{ component.renderEdit()|raw }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if fsc.components()|length > 0 %}
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> {{ trans('save') }}
+                    </button>
+                </div>
+            {% endif %}
+
+        </form>
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        function send_ui_event(name) {
+            const form = document.getElementById('f_ui_event');
+            form._event.value = name;
+            form.submit();
+        }
+    </script>
+{% endblock %}
