@@ -268,6 +268,32 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job->delete());
     }
 
+    public function testFrequency(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestNameFrequency';
+        $job->pluginname = 'TestPluginFrequency';
+        $this->assertNull($job->frequency);
+
+        // cada método de programación guarda su periodicidad
+        $this->assertEquals('every(6 hours)', $job->every('6 hours')->frequency);
+        $this->assertEquals('everyDay(5, 3)', $job->everyDay(5, 3)->frequency);
+        $this->assertEquals('everyDayAt(3, strict)', $job->everyDayAt(3, true)->frequency);
+        $this->assertEquals('everyMondayAt(9)', $job->everyMondayAt(9)->frequency);
+        $this->assertEquals('everyLastDayOfMonthAt(23)', $job->everyLastDayOfMonthAt(23)->frequency);
+        $this->assertEquals('everyYearAt(12, 31, 22)', $job->everyYearAt(12, 31, 22)->frequency);
+
+        // al ejecutarlo se guarda en la base de datos
+        $this->assertTrue($job->everyDayAt(0)->run(function () {
+        }));
+        $job2 = new CronJob();
+        $this->assertTrue($job2->load($job->id()));
+        $this->assertEquals('everyDayAt(0)', $job2->frequency);
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
     public function testRunFunction(): void
     {
         $job = new CronJob();

@@ -393,19 +393,50 @@ trait CommonSalesPurchases
             $btnClass = 'btn w-100 btn-danger btn-spin-action';
         }
 
-        // añadimos los estados posibles. Siempre se puede cambiar el estado, incluso si
-        // ya generó documentos: al reabrir y volver a aprobar solamente se genera lo pendiente.
-        $options = [];
+        // si el documento no es editable y ya tiene documentos hijos, no se puede cambiar el estado
+        if (false === $model->editable && count($model->childrenDocuments()) > 0) {
+            return '<div class="col-sm-auto">'
+                . '<div class="mb-2">'
+                . '<button type="button" class="' . $btnClass . '">'
+                . '<i class="' . static::idestadoIcon($status) . ' fa-fw"></i> ' . $status->nombre
+                . '</button>'
+                . '<input type="hidden" name="idestado" value="' . $model->idestado . '">'
+                . '</div>'
+                . '</div>';
+        }
+
+        // añadimos los estados posibles en el orden configurado
+        $reopenOptions = [];
+        $otherOptions = [];
         foreach ($model->getAvailableStatus() as $sta) {
             // si está seleccionado o no activo, lo saltamos
             if ($sta->idestado === $model->idestado || false === $sta->activo) {
                 continue;
             }
 
-            $options[] = '<a class="dropdown-item' . static::idestadoTextColor($sta) . '"'
+            $option = '<a class="dropdown-item' . static::idestadoTextColor($sta) . '"'
                 . ' href="#" onclick="return ' . $jsName . '(\'save-status\', \'' . $sta->idestado . '\', this);">'
                 . '<i class="' . static::idestadoIcon($sta, true) . ' fa-fw"></i> ' . $sta->nombre . '</a>';
+
+            // si el documento es editable, no separamos los estados
+            if ($model->editable || false === $sta->editable) {
+                $otherOptions[] = $option;
+                continue;
+            }
+
+            $reopenOptions[] = $option;
         }
+
+        // si el documento no es editable, los estados editables sirven para reabrirlo
+        $options = [];
+        if (count($reopenOptions) > 0) {
+            $options[] = '<h6 class="dropdown-header">' . Tools::trans('re-open') . '</h6>';
+            array_push($options, ...$reopenOptions);
+            if (count($otherOptions) > 0) {
+                $options[] = '<div class="dropdown-divider"></div>';
+            }
+        }
+        array_push($options, ...$otherOptions);
 
         // añadimos la opción de agrupar o partir (excepto facturas y documentos no editables)
         if ($model->editable && false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {

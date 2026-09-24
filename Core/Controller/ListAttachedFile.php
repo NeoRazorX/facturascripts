@@ -107,6 +107,12 @@ class ListAttachedFile extends ListController
         header('Content-Type: application/zip');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Content-Length: ' . filesize($filepath));
+
+        // descartamos los buffers de salida para no cargar el archivo entero en memoria
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
         readfile($filepath);
 
         // borramos el zip
