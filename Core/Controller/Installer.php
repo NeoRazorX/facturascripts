@@ -260,11 +260,11 @@ class Installer implements ControllerInterface
             fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
         }
 
-        if ($this->db_type === 'mysql' && $this->request->input('mysql_socket') !== '') {
-            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->escapeConfig($this->request->input('mysql_socket')) . "');\n");
+        if ($this->db_type === 'mysql' && $this->request->input('mysql_socket', '') !== '') {
+            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->escapeConfig($this->request->input('mysql_socket', '')) . "');\n");
         } elseif ($this->db_type === 'postgresql') {
-            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->escapeConfig($this->request->input('pgsql_ssl_mode')) . "');\n");
-            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->escapeConfig($this->request->input('pgsql_endpoint')) . "');\n");
+            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->escapeConfig($this->request->input('pgsql_ssl_mode', '')) . "');\n");
+            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->escapeConfig($this->request->input('pgsql_endpoint', '')) . "');\n");
         }
 
         $fields = [
