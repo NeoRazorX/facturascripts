@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Lib\Widget\GroupItem;
 use FacturaScripts\Dinamic\Lib\Widget\VisualItemLoadEngine;
@@ -370,10 +371,7 @@ abstract class BaseView
         VisualItemLoadEngine::installXML($viewName, $this->pageOption);
 
         // si hay personalización guardada, superponemos sus cambios sobre el XML
-        $custom = PageOption::findWhere(
-            $this->getPageWhere($user),
-            ['nick' => 'ASC']
-        );
+        $custom = $this->getCustomPageOption($viewName, $user);
         if (false === is_null($custom)) {
             $this->settings['customized'] = true;
             VisualItemLoadEngine::mergeCustomization($this->pageOption, $custom);
@@ -459,6 +457,33 @@ abstract class BaseView
         }
 
         return null;
+    }
+
+    /**
+     * Devuelve la personalización guardada de la vista: la del usuario si existe o, en su defecto, la general.
+     *
+     * @param string $viewName
+     * @param User|false $user
+     *
+     * @return PageOption|null
+     */
+    protected function getCustomPageOption(string $viewName, $user = false): ?PageOption
+    {
+        // no ordenamos por nick: MySQL y MariaDB colocan los NULL primero y PostgreSQL al final
+        if (false === is_bool($user)) {
+            $custom = PageOption::findWhere([
+                Where::eq('name', $viewName),
+                Where::eq('nick', $user->nick),
+            ]);
+            if (null !== $custom) {
+                return $custom;
+            }
+        }
+
+        return PageOption::findWhere([
+            Where::eq('name', $viewName),
+            Where::isNull('nick'),
+        ]);
     }
 
     /**
