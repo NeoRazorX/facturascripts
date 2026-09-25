@@ -153,6 +153,9 @@
                     {% set trClass = currentView.settings.clickable ? 'clickableListRow ' ~ rowStatus.trClass(model) : rowStatus.trClass(model) %}
                     {% set trTitle = rowStatus.trTitle(model) %}
                     {% set rowUrl = model.url() %}
+                    {% if rowUrl and currentView.settings.rowUrlParams|default({}) is not empty %}
+                        {% set rowUrl = rowUrl ~ ('?' in rowUrl ? '&' : '?') ~ currentView.settings.rowUrlParams|url_encode %}
+                    {% endif %}
                     {% if rowUrl and currentView.navToken %}
                         {% set rowUrl = rowUrl ~ ('?' in rowUrl ? '&' : '?') ~ 'navfrom=' ~ currentView.navToken %}
                     {% endif %}

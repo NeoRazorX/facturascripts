@@ -369,6 +369,12 @@ class EditUser extends EditController
                     Where::orIsNull('nick'),
                 ];
                 $view->loadData('', $where);
+
+                // las opciones se abren con este usuario seleccionado y vuelven a esta pestaña
+                $view->setSettings('rowUrlParams', [
+                    'nick' => $nick,
+                    'url' => $this->getModel()->url('edit') . '&activetab=' . $viewName,
+                ]);
                 break;
         }
     }

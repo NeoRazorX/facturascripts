@@ -148,6 +148,24 @@ final class EditUserTest extends TestCase
         }
     }
 
+    public function testPageOptionsOpenWithTheUserSelected(): void
+    {
+        $user = $this->getRandomUser();
+        $this->assertTrue($user->save());
+
+        try {
+            $controller = $this->runController($user, ['code' => $user->nick], []);
+
+            $settings = $controller->views['ListPageOption']->settings;
+            $this->assertSame([
+                'nick' => $user->nick,
+                'url' => 'EditUser?code=' . rawurlencode($user->nick) . '&activetab=ListPageOption',
+            ], $settings['rowUrlParams']);
+        } finally {
+            $this->deleteUser($user->nick);
+        }
+    }
+
     protected function setUp(): void
     {
         MiniLog::clear();
