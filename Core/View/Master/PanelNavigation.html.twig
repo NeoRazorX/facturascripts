@@ -1,0 +1,46 @@
+{#
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2026 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+#}
+{% if navData %}
+    <div class="small text-body-secondary text-nowrap">
+        {% if navData.prev %}
+            <a href="{{ navData.prev }}" class="panel-nav-arrow link-secondary text-decoration-none"
+               title="{{ trans('previous') }}" aria-label="{{ trans('previous') }}">
+                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+            </a>
+        {% else %}
+            <span class="panel-nav-arrow text-body-tertiary" aria-disabled="true">
+                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+            </span>
+        {% endif %}
+        {% if navData.position %}
+            {{ navData.position }} / {{ navData.count }}
+        {% endif %}
+        {% if navData.next %}
+            <a href="{{ navData.next }}" class="panel-nav-arrow link-secondary text-decoration-none pe-0"
+               title="{{ trans('next') }}" aria-label="{{ trans('next') }}">
+                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            </a>
+        {% else %}
+            <span class="panel-nav-arrow text-body-tertiary pe-0" aria-disabled="true">
+                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            </span>
+        {% endif %}
+    </div>
+{% endif %}

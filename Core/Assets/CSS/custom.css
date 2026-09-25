@@ -140,6 +140,18 @@ select[required].form-select.select2 + .select2-container--bootstrap-5 .select2-
     object-fit: cover;
 }
 
+/* edit navigation: bigger click area without taking more space */
+.panel-nav-arrow {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    margin: -0.25rem 0;
+}
+
+.panel-nav-description {
+    max-width: 20rem;
+    vertical-align: bottom;
+}
+
 .pointer {
     cursor: pointer;
 }

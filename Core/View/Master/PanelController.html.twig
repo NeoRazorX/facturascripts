@@ -23,11 +23,12 @@
     {{ parent() }}
     {% set pageData = fsc.getPageData() %}
     {% set firstView = fsc.views | first %}
+    {% set navData = fsc.getNavigation() %}
     <div class="container-fluid d-print-none">
         <div class="row">
             <div class="col pb-2">
                 {# -- Hidden alternative page info -- #}
-                <nav aria-label="breadcrumb" class="d-block d-md-none">
+                <nav aria-label="breadcrumb" class="d-flex d-md-none align-items-baseline">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="#">{{ trans(pageData.menu) }}</a>
@@ -48,6 +49,12 @@
                             {% endif %}
                         </li>
                     </ol>
+                    {# -- Navigation (small screens) -- #}
+                    {% if navData %}
+                        <div class="ms-auto ps-2">
+                            {% include 'Master/PanelNavigation.html.twig' %}
+                        </div>
+                    {% endif %}
                 </nav>
             {# -- Top left buttons -- #}
                 <div class="btn-group">
@@ -81,11 +88,18 @@
             </div>
             {# -- Top right text -- #}
             <div class="col-md-auto d-none d-md-block text-end align-self-center pb-2">
-                <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
-                {% if fsc.hasData %}
-                    <p class="text-info mb-0">{{ firstView.model.primaryDescription() | raw }}</p>
+                {% set description = fsc.hasData ? firstView.model.primaryDescription() : trans('new') %}
+                {% if navData %}
+                    {# -- Navigation, then title and description on the same line -- #}
+                    {% include 'Master/PanelNavigation.html.twig' %}
+                    <h1 class="h5 mb-0">
+                        {{ trans(pageData.title) }}
+                        <span class="panel-nav-description d-inline-block text-truncate text-info fw-normal"
+                              title="{{ description | striptags }}">{{ description | raw }}</span>
+                    </h1>
                 {% else %}
-                    <p class="text-info mb-0">{{ trans('new') }}</p>
+                    <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
+                    <p class="text-info mb-0">{{ description | raw }}</p>
                 {% endif %}
             </div>
             <div class="col-md-auto d-none d-lg-block align-self-center pb-2">

@@ -44,6 +44,16 @@ class ListView extends BaseView
 
     const DEFAULT_TEMPLATE = 'Master/ListView.html.twig';
 
+    /** Number of tokens for view and user. Used for edit navigator */
+    const NAVIGATION_TOKENS = 10;
+
+    /**
+     * Token for actual render.
+     *
+     * @var string
+     */
+    public $navToken = '';
+
     /** @var string */
     public $orderKey = '';
 
@@ -289,6 +299,72 @@ class ListView extends BaseView
     }
 
     /**
+     * Guarda en caché la foto de los destinos visibles, identificada por un token
+     * nuevo que las filas añaden a sus enlaces para poder navegar entre registros
+     * desde el EditController de destino.
+     *
+     * @param bool $extended (true = amplía la foto una página antes y otra después)
+     */
+    public function saveNavigation(bool $extended = false): void
+    {
+        if (
+            empty($this->settings['navigation'])
+            || empty($this->settings['clickable'])
+            || empty($this->cursor)
+        ) {
+            return;
+        }
+
+        $start = $this->offset;
+        $rows = $this->navigationRows($start, $extended);
+
+        // group the codes by the controller that opens each row link, without duplicates
+        $targets = [];
+        foreach ($rows as $model) {
+            $url = (string)$model->url();
+            $controller = basename((string)parse_url($url, PHP_URL_PATH));
+            parse_str((string)parse_url($url, PHP_URL_QUERY), $params);
+            $code = $params['code'] ?? '';
+            if ('' === $controller || false === is_string($code) || '' === $code) {
+                continue;
+            }
+
+            $targets[$controller][] = $code;
+        }
+        if (empty($targets)) {
+            return;
+        }
+
+        foreach ($targets as $controller => $codes) {
+            $targets[$controller] = array_values(array_unique($codes));
+        }
+
+        // count and position are only exact with one target and one row per code
+        $exact = count($targets) === 1 && count(reset($targets)) === count($rows);
+
+        // save seed with new token
+        $nick = Session::user()->nick;
+        $this->navToken = bin2hex(random_bytes(8));
+        Cache::set('nav-' . $nick . '-' . $this->navToken, [
+            'count' => $exact ? $this->count : null,
+            'start' => $exact ? $start : null,
+            'targets' => $targets,
+        ]);
+
+        // only keep the latest tokens from this view
+        $tokensKey = 'nav-tokens-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . $nick;
+        $tokens = Cache::get($tokensKey);
+        if (false === is_array($tokens)) {
+            $tokens = [];
+        }
+        $tokens[] = $this->navToken;
+        while (count($tokens) > self::NAVIGATION_TOKENS) {
+            Cache::delete('nav-' . $nick . '-' . array_shift($tokens));
+        }
+        Cache::set($tokensKey, $tokens);
+    }
+
+    /**
      * Adds assets to the asset manager.
      */
     protected function assets(): void
@@ -425,5 +501,37 @@ class ListView extends BaseView
 
             $this->orderKey = $orderKey;
         }
+    }
+
+    /**
+     * Returns the rows for the navigation seed. By default, the already loaded cursor (no cost).
+     * In extended mode, one page before and one after are loaded with the same where and order
+     * as the list, adjusting $start to the actual start of the window. If the window does not
+     * contain the loaded cursor (data loaded in another way), the cursor is used.
+     *
+     * @param int &$start
+     * @param bool $extended
+     * @return array
+     */
+    private function navigationRows(int &$start, bool $extended): array
+    {
+        $limit = (int)$this->settings['itemLimit'];
+        if (false === $extended || $limit <= 0 || $this->count <= count($this->cursor)) {
+            return $this->cursor;
+        }
+
+        // have 3 record pages (previous - actual - next)
+        $windowStart = max(0, $this->offset - $limit);
+        $rows = $this->model->all($this->where, $this->order, $windowStart, 3 * $limit);
+
+        // check that the window contains the loaded cursor in the same position
+        $urls = fn(array $models) => array_map(fn($model) => (string)$model->url(), $models);
+        $slice = array_slice($rows, $this->offset - $windowStart, count($this->cursor));
+        if ($urls($slice) !== $urls($this->cursor)) {
+            return $this->cursor;
+        }
+
+        $start = $windowStart;
+        return $rows;
     }
 }
