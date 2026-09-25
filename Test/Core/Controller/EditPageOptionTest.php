@@ -36,6 +36,9 @@ final class EditPageOptionTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
+    /** @var Page[] */
+    private $pages = [];
+
     public static function setUpBeforeClass(): void
     {
         self::setDefaultSettings();
@@ -43,7 +46,16 @@ final class EditPageOptionTest extends TestCase
 
     public function testBackPageComesFromTheLink(): void
     {
-        $this->assertNotNull(Page::find('EditUser'));
+        // la página de vuelta debe estar registrada, y en una base de datos nueva aún no lo está
+        $page = Page::find('EditUser');
+        if (null === $page) {
+            $page = new Page();
+            $page->name = 'EditUser';
+            $page->title = 'user';
+            $page->menu = 'admin';
+            $this->assertTrue($page->save());
+            $this->pages[] = $page;
+        }
 
         $admin = $this->getAdmin();
         $url = 'EditUser?code=user1&activetab=ListPageOption';
@@ -104,6 +116,11 @@ final class EditPageOptionTest extends TestCase
 
     protected function tearDown(): void
     {
+        foreach ($this->pages as $page) {
+            $page->delete();
+        }
+        $this->pages = [];
+
         $this->logErrors();
     }
 
