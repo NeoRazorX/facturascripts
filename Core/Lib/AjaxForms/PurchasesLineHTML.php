@@ -28,7 +28,12 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Description of PurchasesLineHTML
+ * Genera el HTML de las líneas del formulario de los documentos de compra y
+ * aplica sobre ellas los datos enviados por el usuario, creando, actualizando o
+ * eliminando líneas según lo recibido. Sobre la base común de CommonLineHTML
+ * añade los campos propios de las compras y un modal por línea con los datos
+ * ampliados de cada una. Los plugins pueden añadir o modificar campos mediante
+ * mods que implementen PurchasesLineModInterface y se registren con addMod().
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

@@ -19,6 +19,13 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+/**
+ * Widget para valoraciones, declarado con type="stars" en las vistas XMLView.
+ * Amplía WidgetNumber fijando un rango de 0 a 5 con incrementos de media unidad, de forma
+ * que en edición se usa un input numérico acotado.
+ * En las celdas de las listas el valor se representa con estrellas llenas, media estrella
+ * cuando hay parte decimal y estrellas vacías hasta llegar al máximo.
+ */
 class WidgetStars extends WidgetNumber
 {
     public function __construct($data)

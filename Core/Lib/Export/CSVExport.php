@@ -26,7 +26,11 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
- * Clase para exportar datos al formato CSV.
+ * Exporta datos al formato CSV. Genera un fichero de texto con los campos separados
+ * por punto y coma y delimitados por comillas, tanto a partir de listados de modelos
+ * como de documentos de compra y venta, en cuyo caso combina en cada fila los datos
+ * de la cabecera con los de sus líneas. Para no agotar la memoria en listados muy
+ * grandes, los registros se leen por bloques.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

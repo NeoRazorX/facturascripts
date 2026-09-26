@@ -23,7 +23,11 @@ use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Where;
 
 /**
- * Description of SelectFilter
+ * Filtro de listado que muestra un desplegable con un conjunto de opciones y filtra por
+ * igualdad el campo indicado con el valor seleccionado. Las opciones pueden llegar como
+ * objetos CodeModel, como arrays con las claves code y description o como un array
+ * asociativo de clave y texto. Admite además un icono opcional a la izquierda del
+ * desplegable y envía el formulario automáticamente al cambiar la selección.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

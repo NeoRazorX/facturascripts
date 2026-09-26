@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib\ListFilter;
 use FacturaScripts\Core\Where;
 
 /**
- * Description of CheckboxFilter
+ * Filtro de listado con forma de casilla de verificación. Cuando el usuario la marca,
+ * añade una condición que compara el campo indicado con el valor de contraste mediante
+ * la operación configurada, que por defecto es la igualdad con true. Si la casilla está
+ * desmarcada puede aplicar un conjunto de condiciones por defecto, lo que permite
+ * alternar entre dos criterios de búsqueda distintos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

@@ -21,6 +21,12 @@ namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Tools;
 
+/**
+ * Widget para campos de duración expresada en segundos, declarado con type="seconds" en las
+ * vistas XMLView. Amplía WidgetNumber convirtiendo el valor a la unidad más legible al
+ * mostrarlo: segundos, minutos, horas o días, según su magnitud.
+ * En el formulario de edición el valor se sigue introduciendo y guardando en segundos.
+ */
 class WidgetSeconds extends WidgetNumber
 {
     protected function show()

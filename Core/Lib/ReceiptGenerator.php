@@ -28,7 +28,11 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 
 /**
- * Description of ReceiptGenerator
+ * Genera y actualiza los recibos de las facturas de cliente y de proveedor.
+ * A partir de una factura crea el número de recibos indicado, repartiendo entre
+ * ellos el importe que quede pendiente; si no se indica número, se limita a
+ * ajustar los recibos existentes al total de la factura. También recalcula el
+ * importe pagado y las marcas de pagada y vencida del propio documento.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

@@ -20,7 +20,11 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * Structure for each of the items in the FacturaScripts menu.
+ * Estructura de cada uno de los elementos del menú de FacturaScripts. Guarda el nombre
+ * identificativo, el título traducido, la URL de destino y el icono de Font Awesome, junto
+ * con un indicador de si el elemento está activo en la página actual. Como cada elemento
+ * contiene a su vez una lista de elementos hijos, permite representar menús, submenús y
+ * páginas con la misma clase. La construye y rellena MenuManager.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

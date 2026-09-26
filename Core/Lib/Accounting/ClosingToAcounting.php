@@ -30,7 +30,11 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Class that performs accounting closures
+ * Coordina el cierre contable completo de un ejercicio dentro de una única transacción:
+ * actualiza las cuentas especiales, bloquea las facturas de venta y compra comprobando
+ * que todas tengan asiento, y lanza en orden la regularización, el cierre y la apertura
+ * del ejercicio siguiente, marcando por último el ejercicio como cerrado. El método
+ * delete() deshace el proceso, eliminando los asientos generados y reabriendo el ejercicio.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

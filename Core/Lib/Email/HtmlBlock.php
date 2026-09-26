@@ -22,7 +22,9 @@ namespace FacturaScripts\Core\Lib\Email;
 use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
- * Description of HtmlBlock
+ * Bloque de email que inserta código HTML tal cual en el mensaje, sin envolverlo ni
+ * transformarlo. Resulta útil para incluir contenido personalizado que no encaja en
+ * el resto de bloques predefinidos.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>

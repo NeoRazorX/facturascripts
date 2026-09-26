@@ -20,7 +20,12 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * This class centralizes all available invoice operations.
+ * Centraliza el listado de operaciones disponibles para el campo operacion de las facturas
+ * y demás documentos: exportación, importación, intracomunitaria, inversión del sujeto
+ * pasivo, certificación de obra, tracto sucesivo, etc. Cada operación puede asociarse a
+ * ventas o a compras, de forma que los formularios solo muestren las que correspondan.
+ * Los plugins pueden añadir operaciones propias con add() o retirar las predefinidas
+ * con remove().
  *
  * @author Carlos Garcia Gómez <carlos@facturascripts.com>
  */

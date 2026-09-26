@@ -34,8 +34,12 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 
 /**
- * Controller for editing models that are related and show
- * a history of purchase or sale documents.
+ * Clase base de los controladores que editan un cliente o un proveedor y muestran
+ * junto a su ficha el histórico de documentos de compra o venta relacionados. Añade
+ * a esas pestañas los filtros habituales por fecha, importe, estado, agente, empresa,
+ * almacén, serie o forma de pago, y las acciones de grupo para agrupar o generar
+ * nuevos documentos. También incorpora la gestión de archivos adjuntos y el registro
+ * de incidencias del contacto.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

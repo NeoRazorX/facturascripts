@@ -25,7 +25,11 @@ use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 
 /**
- * Perform closing of account balances for the exercise.
+ * Genera el asiento de cierre del ejercicio, que salda todas las subcuentas de los
+ * grupos 1 al 5 llevando cada una a cero por su importe contrario. Antes de crearlo
+ * elimina cualquier asiento de cierre anterior del mismo ejercicio, y excluye del
+ * cálculo las partidas que pertenezcan a otro asiento de cierre. Se ejecuta después
+ * de la regularización y es el paso previo a la apertura del ejercicio siguiente.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */

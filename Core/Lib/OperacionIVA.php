@@ -20,7 +20,10 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * Esta clase centraliza todas las operaciones relacionadas con los impuestos.
+ * Centraliza el listado de tipos de operación de IVA que pueden asignarse a los impuestos,
+ * es decir, el régimen al que pertenecen: IVA general, Ceuta y Melilla, IGIC, IPSI u otro.
+ * Cada entrada relaciona un código con su clave de traducción, y los plugins pueden añadir
+ * tipos propios mediante add() para adaptarlo a otras legislaciones.
  *
  * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
