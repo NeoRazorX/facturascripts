@@ -124,6 +124,7 @@
     "api-resource-invalid": "Nieprawidłowy zasób API",
     "api-version-invalid": "Nieprawidłowa wersja API",
     "api-version-not-found": "Nie znaleziono wersji API",
+    "app-key-missing": "Falta la clave secreta de la instalación en el config.php. Añade esta línea: %line%",
     "app-preferences": "Preferencje aplikacji",
     "app-storage": "Przechowywanie",
     "applied-tax": "Zastosowany podatek",

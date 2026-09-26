@@ -124,6 +124,7 @@
     "api-resource-invalid": "Geçersiz API kaynağı",
     "api-version-invalid": "Geçersiz API sürümü",
     "api-version-not-found": "API sürümü bulunamadı",
+    "app-key-missing": "Falta la clave secreta de la instalación en el config.php. Añade esta línea: %line%",
     "app-preferences": "Uygulama tercihleri",
     "app-storage": "Depolama",
     "applied-tax": "Uygulanan vergi",

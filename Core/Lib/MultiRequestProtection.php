@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\AppKey;
 use FacturaScripts\Core\Cache;
-use FacturaScripts\Core\Tools;
 
 /**
  * Class to prevent duplicated petitions.
@@ -33,6 +33,7 @@ class MultiRequestProtection
     const CACHE_KEY = 'MultiRequestProtection';
     const MAX_TOKEN_AGE = 4;
     const MAX_TOKENS = 500;
+    const PURPOSE = 'multireqtoken';
     const RANDOM_STRING_LENGTH = 6;
 
     /** @var string */
@@ -40,7 +41,6 @@ class MultiRequestProtection
 
     public function __construct()
     {
-        // something unique in each installation
         if (false === isset(self::$seed)) {
             $this->clearSeed();
         }
@@ -53,7 +53,8 @@ class MultiRequestProtection
 
     public function clearSeed(): void
     {
-        self::$seed = PHP_VERSION . __FILE__ . Tools::config('db_name') . Tools::config('db_pass');
+        // la firma con la clave de la instalación ya hace que el token sea único en cada instalación
+        self::$seed = '';
     }
 
     /**
@@ -63,12 +64,8 @@ class MultiRequestProtection
      */
     public function newToken(): string
     {
-        // something that changes every hour
-        $num = intval(date('YmdH')) + strlen(self::$seed);
-
-        // combine and generate the token
-        $value = self::$seed . $num;
-        return sha1($value) . '|' . $this->getRandomStr();
+        // firmamos la semilla junto con algo que cambia cada hora
+        return AppKey::sign(self::PURPOSE, self::$seed . '|' . date('YmdH')) . '|' . $this->getRandomStr();
     }
 
     /**
@@ -98,16 +95,15 @@ class MultiRequestProtection
             return false;
         }
 
-        // check all valid tokens roots
-        $num = intval(date('YmdH')) + strlen(self::$seed);
-        $valid = [sha1(self::$seed . $num)];
-        for ($hour = 1; $hour <= self::MAX_TOKEN_AGE; $hour++) {
-            $time = strtotime('-' . $hour . ' hours');
-            $altNum = intval(date('YmdH', $time)) + strlen(self::$seed);
-            $valid[] = sha1(self::$seed . $altNum);
+        // comprobamos la firma de la hora actual y de las MAX_TOKEN_AGE horas anteriores
+        for ($hour = 0; $hour <= self::MAX_TOKEN_AGE; $hour++) {
+            $date = date('YmdH', strtotime('-' . $hour . ' hours'));
+            if (AppKey::verify(self::PURPOSE, self::$seed . '|' . $date, $tokenParts[0])) {
+                return true;
+            }
         }
 
-        return in_array($tokenParts[0], $valid);
+        return false;
     }
 
     protected function getRandomStr(): string

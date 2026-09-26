@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\AppKey;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Cache;
@@ -119,6 +120,13 @@ class Updater extends Controller
         parent::privateCore($response, $user, $permissions);
 
         $this->telemetryManager = new Telemetry();
+
+        // avisamos si falta la clave de la instalación en el config.php, proponiendo una nueva
+        if (AppKey::isDerived()) {
+            Tools::log()->warning('app-key-missing', [
+                '%line%' => "define('FS_APP_KEY', '" . AppKey::generate() . "');"
+            ]);
+        }
 
         // en las acciones que escriben en disco, comprobamos que las carpetas sean escribibles
         $action = $this->request->get('action', '');

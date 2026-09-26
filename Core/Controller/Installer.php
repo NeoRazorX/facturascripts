@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use DateTimeZone;
 use Exception;
+use FacturaScripts\Core\AppKey;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
@@ -268,6 +269,9 @@ class Installer implements ControllerInterface
         $config .= $this->configLineString('FS_DB_PASS', $this->db_pass);
         $config .= $this->configLineBool('FS_DB_FOREIGN_KEYS', true);
         $config .= $this->configLineBool('FS_DB_TYPE_CHECK', true);
+
+        // clave secreta de la instalación, para firmar los tokens
+        $config .= $this->configLineString('FS_APP_KEY', Tools::env('FS_APP_KEY', AppKey::generate()));
 
         if ($this->use_new_mysql) {
             // for new databases, we use utf8mb4

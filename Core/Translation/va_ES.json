@@ -124,6 +124,7 @@
     "api-resource-invalid": "Recurs d'API no vàlid",
     "api-version-invalid": "Versió de l'API no vàlida",
     "api-version-not-found": "Versió de API no trobada",
+    "app-key-missing": "Falta la clave secreta de la instalación en el config.php. Añade esta línea: %line%",
     "app-preferences": "Preferències de l'aplicació",
     "app-storage": "Emmagatzematge",
     "applied-tax": "Impost aplicat",
