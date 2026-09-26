@@ -55,7 +55,7 @@ class PDFExport extends PDFDocument
         if ($this->pdf === null) {
             $this->newPage();
         } else {
-            $this->pdf->ezNewPage();
+            $this->pdfNewPage();
             $this->insertedHeader = false;
         }
 
@@ -66,7 +66,7 @@ class PDFExport extends PDFDocument
 
         if (in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor']) && $model->editable) {
             $this->pdf->setColor(200, 0, 0);
-            $this->pdf->addText(0, 230, 15, $this->i18n->trans('sketch-invoice-warning'), 600, 'center', -35);
+            $this->pdfAddText(0, 230, 15, $this->i18n->trans('sketch-invoice-warning'), 600, 'center', -35);
             $this->pdf->setColor(0, 0, 0);
         }
 
@@ -110,12 +110,12 @@ class PDFExport extends PDFDocument
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
-            $this->pdf->ezTable($tableData, $tableColsTitle, '', $tableOptions);
+            $this->pdfTable($tableData, $tableColsTitle, '', $tableOptions);
         }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
             $this->removeEmptyCols($tableData, $tableColsTitle, Tools::number(0));
-            $this->pdf->ezTable($tableData, $tableColsTitle, $title, $tableOptions);
+            $this->pdfTable($tableData, $tableColsTitle, $title, $tableOptions);
 
             // Advance within the results
             $offset += self::LIST_LIMIT;
@@ -162,7 +162,7 @@ class PDFExport extends PDFDocument
         }
 
         $title .= ': ' . $model->primaryDescription();
-        $this->pdf->ezText("\n" . $this->fixValue($title) . "\n", self::FONT_SIZE + 6);
+        $this->pdfText("\n" . $this->fixValue($title) . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
         $this->insertParallelTable($tableDataAux, '', $tableOptions);
@@ -202,7 +202,7 @@ class PDFExport extends PDFDocument
         }
 
         $this->insertHeader();
-        $this->pdf->ezTable($rows, $headers, $title, $tableOptions);
+        $this->pdfTable($rows, $headers, $title, $tableOptions);
         $this->insertFooter();
         return true;
     }
@@ -216,10 +216,10 @@ class PDFExport extends PDFDocument
     {
         if ($this->pdf === null) {
             $this->newPage();
-            $this->pdf->ezText('');
+            $this->pdfText('');
         }
 
-        return $this->pdf->ezOutput();
+        return $this->pdfOutput();
     }
 
     /**
