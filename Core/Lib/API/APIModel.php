@@ -336,6 +336,13 @@ class APIModel extends APIResourceClass
         $operation = $this->request->query->getArray('operation');
         $order = $this->request->query->getArray('sort');
 
+        // el conector de cada filtro se concatena en el SQL: solo aceptamos AND u OR
+        $badOperations = array_keys(array_filter($operation, fn($value) => false === Where::isValidOperation($value)));
+        if (!empty($badOperations)) {
+            $this->setError('api: operation not allowed: ' . implode(', ', $badOperations));
+            return false;
+        }
+
         // obtenemos los registros
         $data = [];
         $hidden = $this->model->getApiFieldsToHide();

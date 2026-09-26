@@ -114,6 +114,29 @@ final class APIModelTest extends TestCase
         $this->assertTrue($key->delete());
     }
 
+    public function testListRejectsInjectedOperation(): void
+    {
+        $user = $this->createUser();
+
+        // el conector de un filtro no puede llevar SQL
+        $response = new Response();
+        $body = $this->callApi('User', 'GET', [], [], [
+            'filter' => ['nick' => $user->nick, 'email' => 'none'],
+            'operation' => ['email' => 'OR 1=1 --'],
+        ], $response);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'injected-operation-not-rejected');
+        $this->assertStringContainsString('operation not allowed', $body['error'] ?? '');
+
+        // AND y OR siguen funcionando
+        $body = $this->callApi('User', 'GET', [], [], [
+            'filter' => ['nick' => $user->nick, 'email' => 'none'],
+            'operation' => ['email' => 'or'],
+        ]);
+        $this->assertEquals([$user->nick], array_column($body, 'nick'), 'or-operation-not-applied');
+
+        $this->assertTrue($user->delete());
+    }
+
     public function testModelWithoutHiddenFieldsExposesAll(): void
     {
         // Divisa no oculta nada: comprobamos que su schema sigue devolviendo todos los campos.
@@ -150,12 +173,18 @@ final class APIModelTest extends TestCase
         }
     }
 
-    private function callApi(string $resource, string $method, array $params, array $requestData = []): array
-    {
+    private function callApi(
+        string $resource,
+        string $method,
+        array $params,
+        array $requestData = [],
+        array $queryData = [],
+        ?Response $response = null
+    ): array {
         $_SERVER['REQUEST_METHOD'] = $method;
 
-        $request = new Request(['request' => $requestData]);
-        $response = new Response();
+        $request = new Request(['request' => $requestData, 'query' => $queryData]);
+        $response = $response ?? new Response();
         $response->disableSend(true);
 
         $api = new APIModel($response, $request, $params);

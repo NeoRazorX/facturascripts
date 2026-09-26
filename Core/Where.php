@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -87,7 +87,7 @@ final class Where
         $this->fields = $fields;
         $this->value = $value;
         $this->operator = $operator;
-        $this->operation = $operation;
+        $this->operation = self::checkOperation($operation);
         $this->useField = $useField;
     }
 
@@ -159,6 +159,15 @@ final class Where
     }
 
     /**
+     * Indica si el valor es un conector válido entre cláusulas: AND u OR, sin distinguir mayúsculas.
+     * Útil para validar el conector cuando viene de la petición, antes de crear el Where.
+     */
+    public static function isValidOperation($operation): bool
+    {
+        return is_string($operation) && in_array(strtoupper(trim($operation)), ['AND', 'OR'], true);
+    }
+
+    /**
      * Crea `LOWER(campo) LIKE LOWER('%value%')`.
      *
      * Si `$value` ya contiene comodines `%`, se respetan tal cual; en caso contrario, se
@@ -198,7 +207,7 @@ final class Where
             }
 
             if (!empty($sql)) {
-                $sql .= ' ' . $item->operation . ' ';
+                $sql .= ' ' . self::checkOperation($item->operation) . ' ';
             }
 
             if ($item->operator === '(') {
@@ -231,7 +240,7 @@ final class Where
                 $dbWhere = new self($item->fields, $item->value, $item->operator, $item->operation, $item->useField ?? false);
 
                 if (!empty($sql)) {
-                    $sql .= ' ' . $item->operation . ' ';
+                    $sql .= ' ' . self::checkOperation($item->operation) . ' ';
                 }
 
                 // si el siguiente elemento es un OR, lo agrupamos
@@ -256,7 +265,7 @@ final class Where
             }
 
             if (!empty($sql)) {
-                $sql .= ' ' . $item->operation . ' ';
+                $sql .= ' ' . self::checkOperation($item->operation) . ' ';
             }
 
             if ($item->operator === '(') {
@@ -506,6 +515,21 @@ final class Where
     public static function xlike(string $fields, string $value): self
     {
         return new self($fields, $value, 'XLIKE');
+    }
+
+    /**
+     * Devuelve el conector normalizado (AND u OR). Cualquier otro valor se rechaza con una excepción,
+     * porque se concatena directamente en el SQL.
+     *
+     * @throws Exception
+     */
+    private static function checkOperation($operation): string
+    {
+        if (false === self::isValidOperation($operation)) {
+            throw new Exception('Invalid where operation: ' . (is_string($operation) ? $operation : gettype($operation)));
+        }
+
+        return strtoupper(trim($operation));
     }
 
     private static function db(): DataBase
