@@ -26,7 +26,10 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\LineaPedidoProveedor as LineaPedido;
 
 /**
- * Supplier order.
+ * Pedido de proveedor, almacenado en la tabla pedidosprov. Recoge la solicitud
+ * de compra realizada al proveedor con sus líneas, importes, impuestos y
+ * condiciones de pago. Según el estado del documento genera stock pendiente de
+ * recibir, y al aprobarlo se transforma en albarán o factura de compra.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

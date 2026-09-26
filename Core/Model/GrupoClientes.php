@@ -29,7 +29,11 @@ use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * A group of customers, which may be associated with a rate.
+ * Grupo de clientes. Permite agrupar clientes con características comunes para aplicarles
+ * una tarifa de precios común (codtarifa) y una subcuenta contable compartida (codsubcuenta),
+ * de forma que todas las ventas del grupo se imputen a la misma cuenta de cliente.
+ * El método getSubcuenta() localiza esa subcuenta en el ejercicio indicado y, si no existe,
+ * puede crearla a partir de la cuenta especial de clientes.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

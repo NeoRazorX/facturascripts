@@ -25,6 +25,11 @@ use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Tools;
 
 /**
+ * Trait que añade el tipo de operación fiscal del documento (operacion),
+ * y calcula automáticamente si corresponde marcarlo como operación
+ * intracomunitaria comprobando el país del cliente/proveedor y su
+ * validez en el censo VIES.
+ *
  * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 trait IntracomunitariaTrait

@@ -22,6 +22,13 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
+/**
+ * Trait con la funcionalidad común de las líneas de factura, principalmente
+ * el cálculo de la cantidad ya devuelta o rectificada de una línea a partir
+ * de las líneas de las facturas rectificativas que la referencian.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 trait InvoiceLineTrait
 {
     abstract public function hasRefundedQuantity(): bool;

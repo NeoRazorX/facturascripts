@@ -27,7 +27,11 @@ use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
- * Documento transformable en otro tipo de documento.
+ * Clase base abstracta para los documentos que pueden transformarse en
+ * otro tipo de documento (presupuesto → pedido → albarán → factura). Añade
+ * a BusinessDocument el estado del documento (EstadoDocumento), el
+ * historial de transformaciones (DocTransformation) y la generación
+ * automática de los documentos relacionados al cambiar de estado.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

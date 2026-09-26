@@ -22,7 +22,9 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\DataSrc\Divisas;
 
 /**
- * Description of CurrencyRelationTrait
+ * Trait que añade la relación con la divisa (Divisa) utilizada en el
+ * documento, junto con la tasa de conversión a euros aplicada en el
+ * momento de guardar el registro.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

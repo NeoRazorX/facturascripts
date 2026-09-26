@@ -26,7 +26,11 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * A family of products.
+ * Familia de productos. Sirve para clasificar el catálogo de forma jerárquica, ya que cada
+ * familia puede depender de otra a través del campo madre, controlándose que no se formen
+ * bucles entre ancestros. Además permite definir las subcuentas contables de compras, de
+ * ventas y de IRPF que se aplicarán a los productos de la familia; si una familia no tiene
+ * subcuenta definida, se hereda la de su familia madre.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

@@ -22,6 +22,12 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Dinamic\Model\Serie;
 
+/**
+ * Trait que añade la relación con la serie de facturación (Serie) a partir
+ * de codserie, permitiendo obtener la serie asociada al documento.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 trait SerieRelationTrait
 {
     /** @var string Código de la serie asociada. */

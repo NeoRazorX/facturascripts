@@ -24,6 +24,16 @@ use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Código postal. Se guarda en la tabla `codigos_postales` y relaciona un número postal
+ * (`number`) con el país, la provincia y la ciudad a los que corresponde, de modo que al
+ * introducir un código postal en una dirección se puedan completar el resto de datos
+ * geográficos.
+ *
+ * El país se inicializa con el configurado por defecto en la aplicación. Se registra
+ * automáticamente quién creó el registro y quién lo modificó por última vez, junto con sus
+ * fechas. Su mantenimiento se realiza desde la ficha del país.
+ */
 class CodigoPostal extends ModelClass
 {
     use ModelTrait;

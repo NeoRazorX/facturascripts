@@ -25,7 +25,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\PedidoProveedor as DinPedidoProveedor;
 
 /**
- * Supplier order line.
+ * Línea de un pedido de proveedor, almacenada en la tabla lineaspedidosprov.
+ * Guarda el producto o servicio solicitado junto con su cantidad, precio,
+ * descuentos e impuestos, y se relaciona con el pedido mediante idpedido.
+ * Al aprobar el pedido estas líneas se copian al albarán o factura de compra
+ * correspondiente.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

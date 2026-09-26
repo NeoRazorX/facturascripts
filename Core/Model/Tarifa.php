@@ -24,7 +24,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A fee for the products.
+ * Tarifa de precios que se aplica a los productos para obtener un precio de
+ * venta distinto del habitual, normalmente asociada a un grupo de clientes.
+ * El precio se calcula a partir del coste o del precio de venta de la variante,
+ * sumando o restando un porcentaje (valorx) y un importe fijo (valory).
+ * Opcionalmente puede limitarse el resultado para que nunca supere el precio de
+ * venta ni quede por debajo del coste.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

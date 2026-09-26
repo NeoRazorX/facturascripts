@@ -29,7 +29,21 @@ use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * First level of the accounting plan.
+ * Cuenta contable, el primer nivel del plan contable. Se guarda en la tabla `cuentas`,
+ * pertenece siempre a un ejercicio (`codejercicio`) y puede colgar de otra cuenta de nivel
+ * superior mediante `parent_idcuenta` y `parent_codcuenta`, formando así el árbol del plan.
+ * El código debe ser numérico, más largo que el de su cuenta padre y más corto que la
+ * longitud de subcuenta definida en el ejercicio.
+ *
+ * De cada cuenta cuelgan sus subcuentas (`Subcuenta`), que pueden crearse con
+ * `createSubcuenta()`. El método `getFreeSubjectAccountCode()` busca un código de subcuenta
+ * libre para un cliente o proveedor, partiendo de los números de su código y probando
+ * alternativas hasta encontrar uno que no esté en uso.
+ *
+ * Puede vincularse a una cuenta especial (`codcuentaesp`), que es lo que permite localizar
+ * automáticamente la cuenta de clientes, proveedores, bancos, etc. de cada ejercicio. No se
+ * puede guardar ni eliminar si el ejercicio está cerrado, salvo que se desactiven las
+ * comprobaciones adicionales con `disableAdditionalTest()`.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
