@@ -360,6 +360,9 @@ final class Plugins
 
             $plugin = new Plugin($item);
             if ($plugin->exists()) {
+                if ($plugin->folder !== $plugin->name) {
+                    $plugin->folder = $plugin->name;
+                }
                 self::$plugins[] = $plugin;
             }
         }
