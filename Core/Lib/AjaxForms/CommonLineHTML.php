@@ -179,16 +179,27 @@ trait CommonLineHTML
 
     private static function irpf(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
+        // si la línea no tiene retención asignada, por compatibilidad buscamos la primera con el mismo porcentaje
+        $selected = $line->codretencion;
+        if (empty($selected) && !empty($line->irpf)) {
+            foreach (Retenciones::all() as $ret) {
+                if ($ret->activa && $line->irpf == $ret->porcentaje) {
+                    $selected = $ret->codretencion;
+                    break;
+                }
+            }
+        }
+
         $options = ['<option value="">------</option>'];
         foreach (Retenciones::all() as $ret) {
-            // si la retención no está activa o seleccionada, la saltamos
-            if (!$ret->activa && $line->irpf != $ret->porcentaje) {
+            // si la retención no está activa ni seleccionada, la saltamos
+            if (!$ret->activa && $selected !== $ret->codretencion) {
                 continue;
             }
 
-            $options[] = $line->irpf === $ret->porcentaje ?
-                '<option value="' . $ret->porcentaje . '" selected>' . $ret->descripcion . '</option>' :
-                '<option value="' . $ret->porcentaje . '">' . $ret->descripcion . '</option>';
+            $options[] = $selected === $ret->codretencion ?
+                '<option value="' . $ret->codretencion . '" data-irpf="' . $ret->porcentaje . '" selected>' . $ret->descripcion . '</option>' :
+                '<option value="' . $ret->codretencion . '" data-irpf="' . $ret->porcentaje . '">' . $ret->descripcion . '</option>';
         }
 
         $attributes = $model->editable && false === $line->suplido ?
