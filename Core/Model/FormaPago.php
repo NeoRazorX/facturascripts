@@ -1,7 +1,8 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +24,10 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
+use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
  * Payment method of an invoice, delivery note, order or estimation.
@@ -175,6 +179,23 @@ class FormaPago extends ModelClass
         return parent::test();
     }
 
+    protected function deactivate(): void
+    {
+        $where = [Where::eq('codpago', $this->codpago)];
+
+        // desvincular de clientes
+        foreach (Cliente::all($where) as $cliente) {
+            $cliente->codpago = null;
+            $cliente->save();
+        }
+
+        // desvincular de proveedores
+        foreach (Proveedor::all($where) as $proveedor) {
+            $proveedor->codpago = null;
+            $proveedor->save();
+        }
+    }
+
     protected function saveInsert(): bool
     {
         if (empty($this->codpago)) {
@@ -182,6 +203,22 @@ class FormaPago extends ModelClass
         }
 
         return parent::saveInsert();
+    }
+
+    protected function saveUpdate(): bool
+    {
+        $result = parent::saveUpdate();
+        if ($result === false) {
+            return false;
+        }
+
+        // si antes la forma de apgo estaba activa y ahora no,
+        // hay que desvincularla de clientes y proveedores que la tengan asignada
+        if ($this->getOriginal('activa') && !$this->activa) {
+            $this->deactivate();
+        }
+
+        return true;
     }
 
     private function newLetterCode(): string
