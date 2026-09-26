@@ -133,6 +133,9 @@
         <column name="date" display="right" order="380">
             <widget type="date" fieldname="fecha"/>
         </column>
+        <column name="expiration" display="right" order="390">  
+            <widget type="date" fieldname="vencimiento"/>  
+        </column>
     </columns>
     <modals>
         <group name="renumber-invoices" title="renumber" icon="fa-solid fa-sort-numeric-down">
