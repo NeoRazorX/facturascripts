@@ -215,6 +215,26 @@ final class Plugins
         return array_keys($enabled);
     }
 
+    /**
+     * devuelve los plugins activos con su versión, respetando el orden de carga
+     *
+     * @return array
+     */
+    public static function enabledWithVersion(): array
+    {
+        $enabled = [];
+
+        self::load();
+        foreach (self::$plugins as $plugin) {
+            if ($plugin->enabled) {
+                $enabled[] = $plugin;
+            }
+        }
+
+        usort($enabled, static fn(Plugin $a, Plugin $b): int => $a->order <=> $b->order);
+        return array_map(static fn(Plugin $plugin): string => $plugin->name . ':' . $plugin->version, $enabled);
+    }
+
     public static function folder(): string
     {
         return Tools::folder('Plugins');
