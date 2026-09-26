@@ -205,9 +205,12 @@ class EditEjercicio extends EditController
     ): int {
         $count = 0;
         foreach ($fields as $field) {
+            // casteamos la longitud a entero, porque los valores se serializan entre comillas
+            // y sqlite no compara un entero con un texto, siempre los considera distintos
+            $lengthField = $this->db()->getEngine()->getSQL()->sql2Int('LENGTH(' . $field . ')');
             $fieldWhere = array_merge($where, [
                 Where::notEq($field, ''),
-                Where::notEq('LENGTH(' . $field . ')', $length),
+                Where::notEq($lengthField, $length),
             ]);
             $count += $modelClass::count($fieldWhere);
         }
