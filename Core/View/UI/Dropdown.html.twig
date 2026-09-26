@@ -1,0 +1,31 @@
+<div id="{{ c.domId() }}" data-ui-path="{{ c.path() }}" class="{{ c.colClass() }} d-flex align-items-end">
+    <div class="dropdown mb-3">
+        <button type="button" class="btn btn-{{ c.getColor() }} dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if c.getIcon() %}<i class="{{ c.getIcon() }} fa-fw me-1"></i>{% endif %}
+            {{ c.labelText() }}
+        </button>
+        <ul class="dropdown-menu">
+            {% for item in c.resolvedItems() %}
+                {% if item.type == 'divider' %}
+                    <li><hr class="dropdown-divider"/></li>
+                {% elseif item.type == 'link' %}
+                    <li>
+                        <a class="dropdown-item" href="{{ item.url }}">
+                            {% if item.icon %}<i class="{{ item.icon }} fa-fw me-1"></i>{% endif %}
+                            {{ item.labelText }}
+                        </a>
+                    </li>
+                {% else %}
+                    <li>
+                        <button type="button" class="dropdown-item" data-ui-on="click"
+                                data-ui-event="{{ item.eventId }}"
+                                {% if item.scopeNone %}data-ui-scope="none"{% endif %}>
+                            {% if item.icon %}<i class="{{ item.icon }} fa-fw me-1"></i>{% endif %}
+                            {{ item.labelText }}
+                        </button>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
