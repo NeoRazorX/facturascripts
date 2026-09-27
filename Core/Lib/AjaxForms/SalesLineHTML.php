@@ -164,7 +164,7 @@ class SalesLineHTML
     {
         self::$num++;
         $idlinea = $line->idlinea ?? 'n' . self::$num;
-        return '<div class="container-fluid fs-line"><div class="row g-2 align-items-center border-bottom pb-3 pb-lg-0">'
+        return '<div class="container-fluid fs-line"><div class="row g-2 align-items-end align-items-lg-center border-bottom pb-3 pb-lg-0">'
             . self::renderField($idlinea, $line, $model, 'referencia')
             . self::renderField($idlinea, $line, $model, 'descripcion')
             . self::renderField($idlinea, $line, $model, 'cantidad')
@@ -318,14 +318,14 @@ class SalesLineHTML
     {
         if (false === $model->editable) {
             return '<div class="col-sm col-lg-1 order-4">'
-                . '<span class="d-lg-none small">' . Tools::trans('price') . '</span>'
+                . '<div class="d-lg-none mt-2 small">' . Tools::trans('price') . '</div>'
                 . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-end border-0" disabled/>'
                 . '</div>';
         }
 
         $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"';
         return '<div class="col-sm col-lg-1 order-4">'
-            . '<span class="d-lg-none small">' . Tools::trans('price') . '</span>'
+            . '<div class="d-lg-none mt-2 small">' . Tools::trans('price') . '</div>'
             . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-end border-0"/>'
             . '</div>';
     }

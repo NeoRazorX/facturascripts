@@ -749,7 +749,10 @@ class NewMail
 
             // el adjunto puede estar en la carpeta temporal con un nombre de disco
             // distinto al visible, para evitar colisiones entre subidas simultáneas
-            if (str_starts_with($attach[0], FS_FOLDER . '/' . static::ATTACHMENTS_TMP_PATH) && file_exists($attach[0])) {
+            // comprobamos la ruta real para que un ../ no permita mover archivos de fuera
+            $realPath = realpath($attach[0]);
+            $tmpFolder = realpath(FS_FOLDER . '/' . static::ATTACHMENTS_TMP_PATH);
+            if ($realPath && $tmpFolder && str_starts_with($realPath, $tmpFolder . DIRECTORY_SEPARATOR)) {
                 rename($attach[0], $newPath);
                 continue;
             }

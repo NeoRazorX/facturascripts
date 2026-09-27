@@ -222,6 +222,25 @@ class SendMail extends Controller
         return NewMail::splitEmails($this->request->input($field, ''));
     }
 
+    /**
+     * Devuelve la ruta real del archivo dentro de la carpeta temporal de adjuntos,
+     * o null si no existe o está fuera de ella (por ejemplo, con ../).
+     */
+    protected function getTmpFilePath(string $fileName): ?string
+    {
+        if (empty($fileName)) {
+            return null;
+        }
+
+        $tmpFolder = realpath(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH);
+        $filePath = realpath(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName);
+        if (false === $tmpFolder || false === $filePath || false === is_file($filePath)) {
+            return null;
+        }
+
+        return str_starts_with($filePath, $tmpFolder . DIRECTORY_SEPARATOR) ? $filePath : null;
+    }
+
     protected function loadDataDefault($model): void
     {
         // si el email ya tiene asunto o cuerpo, no hacemos nada
@@ -439,14 +458,20 @@ class SendMail extends Controller
         $fileName = $this->request->queryOrInput('fileName', '');
         Tools::folderCheckOrCreate(NewMail::ATTACHMENTS_TMP_PATH);
 
-        // el archivo temporal lleva un sufijo único para no colisionar en disco,
-        // pero en el email debe aparecer con su nombre limpio
-        $attachName = $this->request->queryOrInput('attachName', '');
-        if (empty($attachName)) {
-            $attachName = preg_replace('/_mail_\d+_\w+(\.\w+)$/', '$1', $fileName);
-        }
+        // solo adjuntamos archivos de la carpeta temporal, nunca rutas externas
+        $filePath = $this->getTmpFilePath($fileName);
+        if (null !== $filePath) {
+            // el archivo temporal lleva un sufijo único para no colisionar en disco,
+            // pero en el email debe aparecer con su nombre limpio
+            $attachName = basename($this->request->queryOrInput('attachName', ''));
+            if (empty($attachName)) {
+                $attachName = preg_replace('/_mail_\d+_\w+(\.\w+)$/', '$1', basename($filePath));
+            }
 
-        $this->newMail->addAttachment(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName, $attachName);
+            $this->newMail->addAttachment($filePath, $attachName);
+        } elseif (false === empty($fileName)) {
+            Tools::log()->warning('file-not-found', ['%origName%' => htmlspecialchars($fileName)]);
+        }
 
         foreach ($this->request->files->getArray('uploads') as $file) {
             // guardamos el adjunto en una carpeta temporal; el nombre lo pone el navegador,

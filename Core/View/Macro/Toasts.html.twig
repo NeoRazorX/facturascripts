@@ -1,4 +1,4 @@
-<div id="messages-toasts" style="z-index: 9999; position: fixed; bottom: 2%; left: 50%; transform: translateX(-50%);"></div>
+<div id="messages-toasts" class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 9999;"></div>
 
 <script>
     function setToast(message, style = 'info', title = '', time = 10000) {
@@ -7,7 +7,6 @@
         let styleHeader = '';
         let role = 'status';
         let live = 'polite';
-        let delay = time > 0 ? 'data-delay="' + time + '"' : 'data-autohide="false"';
 
         switch (style) {
             case 'completed':
@@ -62,7 +61,7 @@
             styleHeader += ' border-bottom-0';
         }
 
-        let html = '<div class="toast toast-' + style + ' ' + styleBorder + '" style="margin: 15px auto 0 auto;" role="' + role + '" aria-live="' + live + '" aria-atomic="true" ' + delay + '>'
+        let html = '<div class="toast toast-' + style + ' ' + styleBorder + '" role="' + role + '" aria-live="' + live + '" aria-atomic="true">'
             + '<div class="toast-header ' + styleHeader + '">'
             + '<strong class="me-auto">' + icon + title + '</strong>'
             + '<button type="button" class="ms-4 btn btn-close ' + styleHeader + '" data-bs-dismiss="toast" aria-label="{{ trans('close') }}">'
@@ -76,13 +75,13 @@
 
             html += '</div>';
 
-        // eliminamos los toast con la clase hide
-        $('#messages-toasts .toast.hide').remove();
-
         // agregamos el toast al div
-        $('#messages-toasts').append(html);
+        const toast = $(html).appendTo('#messages-toasts')[0];
 
-        // mostramos los toast
-        $('#messages-toasts .toast').toast('show');
+        // lo eliminamos del DOM al ocultarse
+        toast.addEventListener('hidden.bs.toast', () => toast.remove());
+
+        // mostramos solamente el nuevo toast, para no reiniciar la cuenta atrás de los demás
+        bootstrap.Toast.getOrCreateInstance(toast, {autohide: time > 0, delay: time}).show();
     }
 </script>
