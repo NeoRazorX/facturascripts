@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -148,6 +148,24 @@ final class ToolsTest extends TestCase
         // comprobamos que podemos pasar un null a las funciones
         $this->assertNull(Tools::noHtml(null));
         $this->assertNull(Tools::fixHtml(null));
+    }
+
+    public function testPassword(): void
+    {
+        // la longitud mínima es 8
+        $this->assertEquals(8, mb_strlen(Tools::password(4)));
+
+        for ($i = 0; $i < 200; $i++) {
+            $password = Tools::password(20);
+
+            // la longitud se cuenta en caracteres y la cadena debe ser UTF-8 válido
+            $this->assertTrue(mb_check_encoding($password, 'UTF-8'), 'invalid-utf8-password');
+            $this->assertEquals(20, mb_strlen($password));
+
+            // al menos un número y una letra
+            $this->assertMatchesRegularExpression('/[0-9]/', $password);
+            $this->assertMatchesRegularExpression('/[a-zA-Z]/', $password);
+        }
     }
 
     public function testRandomString(): void

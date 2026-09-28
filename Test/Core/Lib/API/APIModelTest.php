@@ -114,6 +114,66 @@ final class APIModelTest extends TestCase
         $this->assertTrue($key->delete());
     }
 
+    public function testPutRejectsHiddenFields(): void
+    {
+        $user = $this->createUser();
+        $user->newLogkey('127.0.0.1');
+        $this->assertTrue($user->save());
+        $originalPassword = $user->password;
+        $originalLogkey = $user->logkey;
+
+        foreach (['PUT', 'PATCH'] as $method) {
+            $response = new Response();
+            $body = $this->callApi('User', $method, [$user->nick], [
+                'email' => 'changed@test.local',
+                'logkey' => 'attacker-logkey',
+                'password' => password_hash('attacker', PASSWORD_DEFAULT),
+            ], [], $response);
+            $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'hidden-fields-not-rejected-' . $method);
+            $this->assertStringContainsString('fields not allowed: logkey, password', $body['error'] ?? '');
+        }
+
+        // no se ha modificado nada, ni siquiera los campos permitidos
+        $this->assertTrue($user->reload());
+        $this->assertSame($originalPassword, $user->password);
+        $this->assertSame($originalLogkey, $user->logkey);
+        $this->assertNotSame('changed@test.local', $user->email);
+
+        // los campos permitidos se siguen pudiendo actualizar
+        $response = new Response();
+        $body = $this->callApi('User', 'PUT', [$user->nick], ['email' => 'changed@test.local'], [], $response);
+        $this->assertEquals(Response::HTTP_OK, $response->getHttpCode(), 'allowed-field-not-updated');
+        $this->assertArrayNotHasKey('password', $body['data'] ?? []);
+        $this->assertTrue($user->reload());
+        $this->assertSame('changed@test.local', $user->email);
+
+        $this->assertTrue($user->delete());
+    }
+
+    public function testPostRejectsHiddenFields(): void
+    {
+        $nick = 'apimodel_' . Tools::randomString(6);
+
+        $response = new Response();
+        $body = $this->callApi('User', 'POST', [], [
+            'nick' => $nick,
+            'email' => $nick . '@test.local',
+            'two_factor_secret_key' => 'ATTACKERSECRET',
+        ], [], $response);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'hidden-field-not-rejected');
+        $this->assertStringContainsString('fields not allowed: two_factor_secret_key', $body['error'] ?? '');
+        $this->assertFalse((new User())->load($nick), 'user-created-with-hidden-field');
+
+        $response = new Response();
+        $body = $this->callApi('ApiKey', 'POST', [], [
+            'description' => 'test-apimodel',
+            'apikey' => 'attacker-chosen-key',
+        ], [], $response);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'apikey-not-rejected');
+        $this->assertStringContainsString('fields not allowed: apikey', $body['error'] ?? '');
+        $this->assertFalse((new ApiKey())->loadWhereEq('apikey', 'attacker-chosen-key'), 'apikey-created');
+    }
+
     public function testListRejectsInjectedOperation(): void
     {
         $user = $this->createUser();

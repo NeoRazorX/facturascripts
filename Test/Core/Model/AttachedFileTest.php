@@ -146,6 +146,67 @@ final class AttachedFileTest extends TestCase
         $this->assertTrue($model->delete(), 'can-not-delete-file');
     }
 
+    public function testRejectsPathOutsideMyFiles(): void
+    {
+        // archivo fuera de MyFiles que no se debe mover
+        $outsideName = 'attached_outside_' . Tools::randomString(6) . '.txt';
+        $outsidePath = FS_FOLDER . '/' . $outsideName;
+        $this->assertNotFalse(file_put_contents($outsidePath, 'secret'), 'File not created');
+
+        foreach (['../' . $outsideName, '..\\' . $outsideName, 'Tmp/../../' . $outsideName, $outsidePath, '..'] as $path) {
+            $model = new AttachedFile();
+            $model->path = $path;
+            $this->assertFalse($model->save(), 'path-outside-myfiles-saved: ' . $path);
+            $this->assertFileExists($outsidePath, 'outside-file-moved: ' . $path);
+        }
+
+        // tampoco al cambiar el path de un archivo existente
+        $model = $this->createFile();
+        $storedPath = $model->path;
+        $model->path = '../' . $outsideName;
+        $this->assertFalse($model->save(), 'path-outside-myfiles-updated');
+        $this->assertFileExists($outsidePath, 'outside-file-moved-on-update');
+        $this->assertFileExists(FS_FOLDER . '/' . $storedPath, 'stored-file-removed-on-update');
+        $this->assertTrue($model->reload());
+        $this->assertSame($storedPath, $model->path);
+
+        $this->assertTrue($model->delete(), 'can-not-delete-file');
+        unlink($outsidePath);
+    }
+
+    public function testDeleteDoesNotRemoveFilesOutsideMyFiles(): void
+    {
+        $outsideName = 'attached_outside_' . Tools::randomString(6) . '.txt';
+        $outsidePath = FS_FOLDER . '/' . $outsideName;
+        $this->assertNotFalse(file_put_contents($outsidePath, 'secret'), 'File not created');
+
+        // simulamos un registro cuyo path apunta fuera de MyFiles
+        $model = $this->createFile();
+        $storedPath = $model->path;
+        AttachedFile::table()->whereEq('idfile', $model->idfile)->update(['path' => $outsideName]);
+        $this->assertTrue($model->reload());
+        $this->assertSame($outsideName, $model->path);
+
+        // se elimina el registro, pero no el archivo externo
+        $this->assertTrue($model->delete(), 'can-not-delete-file');
+        $this->assertFalse($model->exists());
+        $this->assertFileExists($outsidePath, 'outside-file-deleted');
+
+        unlink($outsidePath);
+        unlink(FS_FOLDER . '/' . $storedPath);
+    }
+
+    private function createFile(): AttachedFile
+    {
+        $name = 'attached_' . Tools::randomString(6) . '.jpg';
+        $this->assertTrue(copy(FS_FOLDER . '/Test/__files/product_image.jpg', FS_FOLDER . '/MyFiles/' . $name), 'File not copied');
+
+        $model = new AttachedFile();
+        $model->path = $name;
+        $this->assertTrue($model->save(), 'can-not-save-file');
+        return $model;
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

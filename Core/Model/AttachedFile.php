@@ -70,9 +70,9 @@ class AttachedFile extends ModelClass
 
     public function delete(): bool
     {
-        // eliminamos el archivo
+        // eliminamos el archivo, solo si está dentro de MyFiles
         $fullPath = $this->getFullPath();
-        if (file_exists($fullPath) && false === unlink($fullPath)) {
+        if (file_exists($fullPath) && $this->isInsideMyFiles($fullPath) && false === unlink($fullPath)) {
             Tools::log()->warning('cant-delete-file', ['%fileName%' => $this->path]);
             return false;
         }
@@ -260,9 +260,14 @@ class AttachedFile extends ModelClass
     {
         switch ($field) {
             case 'path':
-                if ($this->getOriginal('path')) {
+                if (false === $this->checkNewFilePath()) {
+                    return false;
+                }
+
+                $originalPath = FS_FOLDER . '/' . $this->getOriginal('path');
+                if ($this->getOriginal('path') && $this->isInsideMyFiles($originalPath)) {
                     // remove old file
-                    unlink(FS_FOLDER . '/' . $this->getOriginal('path'));
+                    unlink($originalPath);
                 }
                 return $this->setFile();
 
@@ -278,6 +283,10 @@ class AttachedFile extends ModelClass
      */
     protected function setFile(): bool
     {
+        if (false === $this->checkNewFilePath()) {
+            return false;
+        }
+
         $this->filename = $this->fixFileName($this->path);
         $newFolder = 'MyFiles/' . date('Y/m', strtotime($this->date));
         $newFolderPath = FS_FOLDER . '/' . $newFolder;
@@ -373,5 +382,37 @@ class AttachedFile extends ModelClass
                 }
                 break;
         }
+    }
+
+    /**
+     * Comprueba que path sea el nombre de un archivo situado directamente en MyFiles,
+     * sin carpetas ni recorrido de directorios, antes de moverlo a su carpeta definitiva.
+     *
+     * @return bool
+     */
+    private function checkNewFilePath(): bool
+    {
+        $name = (string)$this->path;
+        if (
+            $name === '' || $name !== basename($name) || in_array($name, ['.', '..'], true) ||
+            str_contains($name, '\\') || str_contains($name, "\0")
+        ) {
+            Tools::log()->error('unsafe-file');
+            return false;
+        }
+
+        if (false === is_file(FS_FOLDER . '/MyFiles/' . $name)) {
+            Tools::log()->error('file-not-found', ['%fileName%' => $name]);
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isInsideMyFiles(string $filePath): bool
+    {
+        $realPath = realpath($filePath);
+        $folder = realpath(FS_FOLDER . '/MyFiles');
+        return $realPath !== false && $folder !== false && str_starts_with($realPath, $folder . DIRECTORY_SEPARATOR);
     }
 }

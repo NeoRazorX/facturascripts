@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -573,20 +573,27 @@ class Tools
         $numbers = '0123456789';
         $letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $symbols = '.+-*¿?¡!#$%&/()=;:_,<>@';
-        $allCharacters = $numbers . $letters . $symbols;
+        // trabajamos con caracteres y no con bytes, porque hay símbolos multibyte (¿ y ¡)
+        $allCharacters = mb_str_split($numbers . $letters . $symbols);
 
         // Garantizar al menos un número y una letra
-        $randomString = '';
-        $randomString .= $numbers[random_int(0, strlen($numbers) - 1)];
-        $randomString .= $letters[random_int(0, strlen($letters) - 1)];
+        $chars = [];
+        $chars[] = $numbers[random_int(0, strlen($numbers) - 1)];
+        $chars[] = $letters[random_int(0, strlen($letters) - 1)];
 
         // Completar el resto de la longitud con caracteres aleatorios
         for ($i = 2; $i < $length; $i++) {
-            $randomString .= $allCharacters[random_int(0, strlen($allCharacters) - 1)];
+            $chars[] = $allCharacters[random_int(0, count($allCharacters) - 1)];
         }
 
-        // Mezclar los caracteres para que el número y la letra no estén siempre al principio
-        return str_shuffle($randomString);
+        // Mezclar los caracteres para que el número y la letra no estén siempre al principio.
+        // No usamos str_shuffle() porque no es criptográficamente seguro.
+        for ($i = count($chars) - 1; $i > 0; $i--) {
+            $j = random_int(0, $i);
+            [$chars[$i], $chars[$j]] = [$chars[$j], $chars[$i]];
+        }
+
+        return implode('', $chars);
     }
 
     /**
@@ -605,7 +612,7 @@ class Tools
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
         }
         return $randomString;
     }

@@ -448,7 +448,7 @@ class User extends ModelClass
 
     public function verifyLogkey(string $value): bool
     {
-        return $this->logkey === $value;
+        return is_string($this->logkey) && $this->logkey !== '' && hash_equals($this->logkey, $value);
     }
 
     public function verifyPassword(string $value): bool
