@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@ use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
+use ZipArchive;
 
 final class PluginsTest extends TestCase
 {
@@ -472,6 +473,41 @@ final class PluginsTest extends TestCase
         $this->assertFileDoesNotExist(Tools::folder() . '/rce.php');
     }
 
+    public function testPluginNameTraversal(): void
+    {
+        // obtenemos la lista de plugins
+        $initialList = Plugins::list();
+
+        // carpeta fuera de Plugins que el plugin intentaría borrar
+        $victim = Tools::folder('poc_victim_' . Tools::randomString(8));
+        mkdir($victim);
+        file_put_contents($victim . '/keep.txt', 'KEEP');
+
+        // carpeta fuera de Plugins a la que el plugin intentaría moverse
+        $target = 'poc_traversal_' . Tools::randomString(8);
+
+        // intentamos añadir plugins con nombres que salen de la carpeta Plugins
+        foreach (['../' . basename($victim), '../' . $target, 'Evil/../..', 'Evil.Plugin'] as $name) {
+            $zipPath = $this->buildPluginZip('Evil', $name);
+            $this->assertFalse(Plugins::add($zipPath), 'plugin-name-accepted: ' . $name);
+            unlink($zipPath);
+        }
+
+        // comprobamos que no se ha añadido ningún plugin, ni borrado ni movido nada
+        $this->assertEquals($initialList, Plugins::list());
+        $this->assertFileExists($victim . '/keep.txt');
+        $this->assertDirectoryDoesNotExist(Tools::folder($target));
+        $this->assertDirectoryDoesNotExist(Plugins::folder() . '/Evil');
+
+        // eliminar un plugin con un nombre no válido tampoco borra nada
+        $plugin = new Plugin(['name' => '../' . basename($victim)]);
+        $this->assertFalse($plugin->delete());
+        $this->assertFileExists($victim . '/keep.txt');
+
+        unlink($victim . '/keep.txt');
+        rmdir($victim);
+    }
+
     public function testEnableMissingPlugin(): void
     {
         // activamos un plugin que no existe
@@ -504,5 +540,21 @@ final class PluginsTest extends TestCase
     protected function tearDown(): void
     {
         $this->logErrors();
+    }
+
+    private function buildPluginZip(string $folder, string $name): string
+    {
+        $zipPath = tempnam(sys_get_temp_dir(), 'fs_plugin_');
+
+        $zip = new ZipArchive();
+        $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        $zip->addFromString(
+            $folder . '/facturascripts.ini',
+            'name = "' . $name . '"' . "\ndescription = poc\nversion = 1\nmin_version = 2025\n"
+        );
+        $zip->addFromString($folder . '/proof.txt', 'TRAVERSAL_OK');
+        $zip->close();
+
+        return $zipPath;
     }
 }

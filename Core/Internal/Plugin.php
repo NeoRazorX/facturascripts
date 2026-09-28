@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -96,6 +96,11 @@ final class Plugin
 
     public function delete(): bool
     {
+        // con un nombre no válido la ruta podría quedar fuera de la carpeta de plugins
+        if (false === self::isValidName($this->name)) {
+            return false;
+        }
+
         // si no existe el directorio, devolvemos true
         if (!file_exists($this->folder())) {
             return true;
@@ -279,6 +284,15 @@ final class Plugin
         $this->post_enable = false;
 
         return $done;
+    }
+
+    /**
+     * El nombre del plugin se usa para construir rutas y namespaces,
+     * así que solo admitimos letras, números, guiones y guiones bajos.
+     */
+    public static function isValidName(string $name): bool
+    {
+        return 1 === preg_match('/^[A-Za-z0-9_-]+$/', $name);
     }
 
     private function checkCompatibility(): void
