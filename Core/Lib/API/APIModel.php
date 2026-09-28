@@ -141,6 +141,8 @@ class APIModel extends APIResourceClass
         } elseif (empty($values)) {
             $this->setError(Tools::trans('no-data-received-form'));
             return false;
+        } elseif (false === $this->checkWritableFields($values)) {
+            return false;
         }
 
         foreach ($values as $key => $value) {
@@ -167,6 +169,8 @@ class APIModel extends APIResourceClass
             return false;
         } elseif (empty($values)) {
             $this->setError(Tools::trans('no-data-received-form'));
+            return false;
+        } elseif (false === $this->checkWritableFields($values)) {
             return false;
         }
 
@@ -468,5 +472,26 @@ class APIModel extends APIResourceClass
         }
 
         return $data;
+    }
+
+    /**
+     * Rechaza la petición si intenta escribir en campos ocultos de la API
+     * (hashes, tokens de sesión, secretos...). Solo se comprueban columnas:
+     * las claves dentro de columnas json (columna.clave) dependen del modelo.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    private function checkWritableFields(array $values): bool
+    {
+        $hidden = array_filter($this->model->getApiFieldsToHide(), fn($field) => strpos($field, '.') === false);
+        $badFields = array_intersect(array_keys($values), $hidden);
+        if (empty($badFields)) {
+            return true;
+        }
+
+        $this->setError('api: fields not allowed: ' . implode(', ', $badFields));
+        return false;
     }
 }

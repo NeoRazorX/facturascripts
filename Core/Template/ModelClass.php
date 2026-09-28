@@ -362,7 +362,8 @@ abstract class ModelClass
 
     /**
      * Devuelve los nombres de campos que no deben exponerse en la API
-     * (ni en GET, ni en el schema). Los modelos con datos sensibles
+     * (ni en GET, ni en el schema). Tampoco se pueden escribir mediante
+     * POST o PUT, salvo las claves de columnas json. Los modelos con datos sensibles
      * deben sobrescribir este método fusionando con parent::getApiFieldsToHide().
      *
      * @return string[]
