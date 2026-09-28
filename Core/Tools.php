@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -585,8 +585,14 @@ class Tools
             $randomString .= $allCharacters[random_int(0, strlen($allCharacters) - 1)];
         }
 
-        // Mezclar los caracteres para que el número y la letra no estén siempre al principio
-        return str_shuffle($randomString);
+        // Mezclar los caracteres para que el número y la letra no estén siempre al principio.
+        // No usamos str_shuffle() porque no es criptográficamente seguro.
+        for ($i = strlen($randomString) - 1; $i > 0; $i--) {
+            $j = random_int(0, $i);
+            [$randomString[$i], $randomString[$j]] = [$randomString[$j], $randomString[$i]];
+        }
+
+        return $randomString;
     }
 
     /**
@@ -605,7 +611,7 @@ class Tools
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
         }
         return $randomString;
     }
