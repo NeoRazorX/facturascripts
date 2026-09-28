@@ -573,26 +573,27 @@ class Tools
         $numbers = '0123456789';
         $letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $symbols = '.+-*¿?¡!#$%&/()=;:_,<>@';
-        $allCharacters = $numbers . $letters . $symbols;
+        // trabajamos con caracteres y no con bytes, porque hay símbolos multibyte (¿ y ¡)
+        $allCharacters = mb_str_split($numbers . $letters . $symbols);
 
         // Garantizar al menos un número y una letra
-        $randomString = '';
-        $randomString .= $numbers[random_int(0, strlen($numbers) - 1)];
-        $randomString .= $letters[random_int(0, strlen($letters) - 1)];
+        $chars = [];
+        $chars[] = $numbers[random_int(0, strlen($numbers) - 1)];
+        $chars[] = $letters[random_int(0, strlen($letters) - 1)];
 
         // Completar el resto de la longitud con caracteres aleatorios
         for ($i = 2; $i < $length; $i++) {
-            $randomString .= $allCharacters[random_int(0, strlen($allCharacters) - 1)];
+            $chars[] = $allCharacters[random_int(0, count($allCharacters) - 1)];
         }
 
         // Mezclar los caracteres para que el número y la letra no estén siempre al principio.
         // No usamos str_shuffle() porque no es criptográficamente seguro.
-        for ($i = strlen($randomString) - 1; $i > 0; $i--) {
+        for ($i = count($chars) - 1; $i > 0; $i--) {
             $j = random_int(0, $i);
-            [$randomString[$i], $randomString[$j]] = [$randomString[$j], $randomString[$i]];
+            [$chars[$i], $chars[$j]] = [$chars[$j], $chars[$i]];
         }
 
-        return $randomString;
+        return implode('', $chars);
     }
 
     /**
