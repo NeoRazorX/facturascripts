@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Lib\ClientIp;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 
@@ -42,15 +43,13 @@ final class Session
         return self::$data[$key] ?? null;
     }
 
+    /**
+     * Devuelve la IP del cliente. Las cabeceras de proxy solo se usan si la petición llega desde
+     * un proxy de confianza (ver ClientIp).
+     */
     public static function getClientIp(): string
     {
-        foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
-            if (!empty($_SERVER[$field])) {
-                return (string)$_SERVER[$field];
-            }
-        }
-
-        return '::1';
+        return ClientIp::resolve($_SERVER, Tools::config('trusted_proxies', []));
     }
 
     public static function permissions(): ControllerPermissions
