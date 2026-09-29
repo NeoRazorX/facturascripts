@@ -50,11 +50,18 @@ class EditFabricante extends EditController
 
     protected function addProductAction(): void
     {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $num = 0;
         $codes = $this->request->request->getArray('codes', false);
         foreach ($codes as $code) {
             $product = new Producto();
-            if (false === $product->loadFromCode($code)) {
+            if (false === $product->load($code)) {
                 continue;
             }
 
@@ -194,11 +201,18 @@ class EditFabricante extends EditController
 
     protected function removeProductAction(): void
     {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $num = 0;
         $codes = $this->request->request->getArray('codes', false);
         foreach ($codes as $code) {
             $product = new Producto();
-            if (false === $product->loadFromCode($code)) {
+            if (false === $product->load($code)) {
                 continue;
             }
 

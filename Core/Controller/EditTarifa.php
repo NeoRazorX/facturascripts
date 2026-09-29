@@ -184,6 +184,13 @@ class EditTarifa extends EditController
 
     protected function unsetCustomerRate(): void
     {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $codes = $this->request->request->getArray('codes');
         if (empty($codes) || false === is_array($codes)) {
             Tools::log()->warning('no-selected-item');
@@ -203,6 +210,13 @@ class EditTarifa extends EditController
 
     protected function unsetGroupRate(): void
     {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $codes = $this->request->request->getArray('codes');
         if (empty($codes) || false === is_array($codes)) {
             Tools::log()->warning('no-selected-item');
@@ -222,6 +236,13 @@ class EditTarifa extends EditController
 
     protected function setCustomerRate(): void
     {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $customer = new Cliente();
         $code = $this->request->input('setcustomerrate');
         if (empty($code) || false === $customer->load($code)) {
@@ -240,6 +261,13 @@ class EditTarifa extends EditController
 
     protected function setGroupRate(): void
     {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $group = new GrupoClientes();
         $code = $this->request->input('setgrouprate');
         if (empty($code) || false === $group->load($code)) {
