@@ -425,7 +425,7 @@ class ApiEditDocument extends ApiController
     {
         // asignamos la fecha y la hora
         $fecha = $this->request->input('fecha');
-        $hora = $this->request->input('hora', $doc->hora);
+        $hora = $this->request->input('hora') ?: $doc->hora;
         if ($fecha && false === $doc->setDate($fecha, $hora)) {
             $this->response
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
