@@ -186,7 +186,11 @@ class WidgetLibrary extends BaseWidget
                 . '</a>'
                 . '</div>';
 
-            $js = "widgetLibrarySelect('" . $id . "', '" . $file->idfile . "', '" . $file->shortFileName() . "');";
+            $js = $this->jsCall('widgetLibrarySelect', [
+                (string)$id,
+                (string)$file->idfile,
+                html_entity_decode($file->shortFileName(), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+            ]);
 
             if ($file->isImage()) {
                 $html .= '<div class="d-flex">'
@@ -233,6 +237,22 @@ class WidgetLibrary extends BaseWidget
         }
 
         return new AttachedFile();
+    }
+
+    /**
+     * Devuelve una llamada JavaScript lista para un atributo HTML como onclick.
+     * Codifica los argumentos como cadenas JavaScript y después escapa el resultado,
+     * ya que el navegador decodifica las entidades del atributo antes de ejecutarlo.
+     */
+    protected function jsCall(string $function, array $args): string
+    {
+        $flags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE
+            | JSON_INVALID_UTF8_SUBSTITUTE;
+        $params = array_map(function ($arg) use ($flags) {
+            return json_encode($arg, $flags);
+        }, $args);
+
+        return htmlspecialchars($function . '(' . implode(', ', $params) . ');', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
     protected function renderQueryFilter(): string

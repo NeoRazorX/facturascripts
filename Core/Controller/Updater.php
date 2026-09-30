@@ -27,6 +27,7 @@ use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Migrations;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
@@ -117,6 +118,11 @@ class Updater extends Controller
      */
     public function privateCore(&$response, $user, $permissions)
     {
+        // solo los administradores pueden usar esta página
+        if (false === $user->admin) {
+            throw new KernelException('AccessDenied', Tools::trans('access-denied'));
+        }
+
         parent::privateCore($response, $user, $permissions);
 
         $this->telemetryManager = new Telemetry();

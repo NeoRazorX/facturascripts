@@ -275,6 +275,35 @@ final class ApiCreateDocumentTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
 
+    public function testEmptyHourUsesCurrentHour(): void
+    {
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        // creamos el albarán con fecha y la hora vacía
+        $payload = [
+            'codcliente' => $subject->codcliente,
+            'fecha' => Tools::date(),
+            'hora' => '',
+            'lineas' => json_encode([
+                ['descripcion' => 'línea', 'cantidad' => 1, 'pvpunitario' => 100],
+            ]),
+        ];
+        $result = $this->callCreate('crearAlbaranCliente', $payload);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'create-empty-hour-bad-code');
+
+        // la hora vacía se sustituye por la actual
+        $doc = new AlbaranCliente();
+        $this->assertTrue($doc->load($result['body']['doc']['idalbaran'] ?? 0), 'can-not-load-albaran');
+        $this->assertNotEmpty($doc->hora, 'empty-hour-not-replaced');
+
+        // limpiamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-albaran');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
     public function testInvalidLineStructuresAreRejected(): void
     {
         $subject = $this->getRandomCustomer();

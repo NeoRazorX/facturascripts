@@ -73,6 +73,29 @@ final class ApiCreateFacturaRectificativaClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
 
+    public function testRefundWithoutHour(): void
+    {
+        // creamos una factura con una línea
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+
+        // la hora es opcional: sin ella debe crearse la rectificativa con la hora actual
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date()]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'refund-without-hour-failed');
+
+        $refunds = FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]);
+        $this->assertCount(1, $refunds, 'refund-not-created');
+        $this->assertNotEmpty($refunds[0]->hora, 'refund-without-hour');
+
+        // limpiamos (primero la rectificativa, luego la original)
+        $this->assertTrue($refunds[0]->delete(), 'can-not-delete-refund');
+        $invoice->reload();
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
     /**
      * Ejecuta el controlador ApiCreateFacturaRectificativaCliente simulando una
      * petición POST, evitando la validación de token (que pertenece a

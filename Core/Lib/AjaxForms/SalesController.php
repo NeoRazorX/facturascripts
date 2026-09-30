@@ -172,6 +172,12 @@ abstract class SalesController extends PanelController
             return false;
         }
 
+        // comprobamos el token del formulario para evitar CSRF
+        if (false === $this->validateFormToken()) {
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
         $model = $this->getModel();
         if (false === $model->delete()) {
             $this->sendJsonWithLogs(['ok' => false]);

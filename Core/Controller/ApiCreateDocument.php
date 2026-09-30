@@ -95,7 +95,7 @@ class ApiCreateDocument extends ApiController
 
         // asignamos la fecha
         $fecha = $this->request->input('fecha');
-        $hora = $this->request->input('hora', $doc->hora);
+        $hora = $this->request->input('hora') ?: $doc->hora;
         if ($fecha && false === $doc->setDate($fecha, $hora)) {
             $this->response
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
@@ -112,8 +112,11 @@ class ApiCreateDocument extends ApiController
             $doc->setCurrency($coddivisa);
         }
 
-        // asignamos el resto de campos del modelo
+        // asignamos el resto de campos del modelo (fecha y hora ya las asigna setDate)
         foreach ($doc->getModelFields() as $key => $field) {
+            if (in_array($key, ['fecha', 'hora'], true)) {
+                continue;
+            }
             if ($this->request->request->has($key)) {
                 $doc->{$key} = $this->request->input($key);
             }
@@ -207,7 +210,7 @@ class ApiCreateDocument extends ApiController
 
         // asignamos la fecha
         $fecha = $this->request->input('fecha');
-        $hora = $this->request->input('hora', $doc->hora);
+        $hora = $this->request->input('hora') ?: $doc->hora;
         if ($fecha && false === $doc->setDate($fecha, $hora)) {
             $this->response
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
@@ -224,8 +227,11 @@ class ApiCreateDocument extends ApiController
             $doc->setCurrency($coddivisa);
         }
 
-        // asignamos el resto de campos del modelo
+        // asignamos el resto de campos del modelo (fecha y hora ya las asigna setDate)
         foreach ($doc->getModelFields() as $key => $field) {
+            if (in_array($key, ['fecha', 'hora'], true)) {
+                continue;
+            }
             if ($this->request->request->has($key)) {
                 $doc->{$key} = $this->request->input($key);
             }

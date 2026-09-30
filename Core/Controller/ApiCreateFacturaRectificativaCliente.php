@@ -123,8 +123,9 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         $newRefund->nick = $this->request->input('nick');
         $newRefund->observaciones = $this->request->input('observaciones');
 
+        // la hora es opcional: si no se indica, se usa la actual
         $date = $this->request->input('fecha');
-        $hour = $this->request->input('hora');
+        $hour = $this->request->input('hora') ?: $newRefund->hora;
         if (false === $newRefund->setDate($date, $hour)) {
             $this->sendError('error-set-date', Response::HTTP_BAD_REQUEST);
             $this->db()->rollback();
