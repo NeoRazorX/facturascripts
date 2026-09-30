@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Controller\EditSubcuenta;
+use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Where;
@@ -39,6 +40,9 @@ final class EditSubcuentaTest extends TestCase
     use DefaultSettingsTrait;
     use LogErrorsTrait;
     use RandomDataTrait;
+
+    /** @var int */
+    private $codeModelLimit;
 
     /** @var User */
     private $user;
@@ -85,6 +89,9 @@ final class EditSubcuentaTest extends TestCase
     {
         MiniLog::clear();
 
+        // EditSubcuenta cambia el límite estático de CodeModel al crear sus vistas
+        $this->codeModelLimit = CodeModel::getLimit();
+
         $this->user = $this->getRandomUser();
         $this->user->admin = true;
         $this->assertTrue($this->user->save());
@@ -92,6 +99,7 @@ final class EditSubcuentaTest extends TestCase
 
     protected function tearDown(): void
     {
+        CodeModel::setLimit($this->codeModelLimit);
         $this->user->delete();
         $this->logErrors();
     }
