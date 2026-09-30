@@ -321,13 +321,18 @@ class Wizard extends Controller
         $this->saveInvoiceStartNumber();
         $this->saveBankAccount();
 
-        // change template and redirect
+        // change template and redirect (con un token nuevo para el paso 3)
         $this->setTemplate('Wizard-3');
-        $this->redirect($this->url() . '?action=step3', 2);
+        $token = $this->multiRequestProtection->newToken();
+        $this->redirect($this->url() . '?action=step3&multireqtoken=' . urlencode($token), 2);
     }
 
     protected function saveStep3(): void
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
         // load all models
         $modelNames = [];
         $modelsFolder = Tools::folder('Dinamic', 'Model');
