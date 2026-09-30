@@ -25,6 +25,7 @@ use FacturaScripts\Core\Controller\Wizard;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\User;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -39,6 +40,9 @@ final class WizardTest extends TestCase
 
     /** @var string|null */
     private $codrole;
+
+    /** @var Page[] */
+    private $createdPages = [];
 
     /** @var User */
     private $user;
@@ -55,7 +59,7 @@ final class WizardTest extends TestCase
 
         // con el token de la redirección del paso 2 sí se aplica
         $this->runStep3(true);
-        $this->assertNotEquals(self::TEST_HOMEPAGE, $this->reloadUser()->homepage, 'step3-not-applied-with-valid-token');
+        $this->assertContains($this->reloadUser()->homepage, ['AdminPlugins', 'Dashboard'], 'step3-not-applied-with-valid-token');
     }
 
     protected function setUp(): void
@@ -64,6 +68,11 @@ final class WizardTest extends TestCase
 
         // el paso 3 cambia el rol predeterminado; lo guardamos para restaurarlo
         $this->codrole = Tools::settings('default', 'codrole');
+
+        // homepage es clave ajena de pages: nos aseguramos de que existan las páginas que usa el test
+        foreach ([self::TEST_HOMEPAGE, 'AdminPlugins', 'Dashboard'] as $name) {
+            $this->ensurePage($name);
+        }
 
         $this->user = $this->getRandomUser();
         $this->user->admin = true;
@@ -77,7 +86,26 @@ final class WizardTest extends TestCase
         Tools::settingsSave();
 
         $this->user->delete();
+
+        // eliminamos solo las páginas que ha creado el test
+        foreach ($this->createdPages as $page) {
+            $page->delete();
+        }
+
         $this->logErrors();
+    }
+
+    private function ensurePage(string $name): void
+    {
+        $page = new Page();
+        if ($page->load($name)) {
+            return;
+        }
+
+        $page->name = $name;
+        $page->title = $name;
+        $this->assertTrue($page->save(), 'can-not-save-page-' . $name);
+        $this->createdPages[] = $page;
     }
 
     private function reloadUser(): User
