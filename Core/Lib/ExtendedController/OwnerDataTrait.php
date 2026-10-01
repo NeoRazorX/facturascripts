@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Tools;
 
 /**
  * Comprueba si el usuario activo es propietario de un registro, según la
@@ -30,6 +32,22 @@ use FacturaScripts\Core\Template\ModelClass;
  */
 trait OwnerDataTrait
 {
+    /**
+     * Interrumpe la petición con acceso denegado si el usuario activo no puede
+     * acceder al registro. A diferencia de cambiar la plantilla, ninguna acción
+     * posterior (exportar, json, etc.) llega a ejecutarse.
+     *
+     * @param ModelClass $model
+     *
+     * @throws KernelException
+     */
+    protected function assertOwnerData($model): void
+    {
+        if (false === $this->checkOwnerData($model)) {
+            throw new KernelException('AccessDenied', Tools::trans('access-denied'));
+        }
+    }
+
     /**
      * Returns true if the active user has permission to view the information
      * of the active record in the informed model.

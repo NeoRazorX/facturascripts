@@ -145,6 +145,9 @@ class EditEmailSent extends EditController
             return;
         }
 
+        // esta acción carga el email por su cuenta, antes de loadData()
+        $this->assertOwnerData($model);
+
         $this->response->json([
             'getHtml' => true,
             'html' => empty($model->html) ?

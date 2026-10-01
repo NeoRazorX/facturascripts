@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\ExtendedController\OwnerDataTrait;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -36,6 +37,11 @@ class OwnerDataTraitHost
 
     /** @var stdClass */
     public $user;
+
+    public function assertOwner($model): void
+    {
+        $this->assertOwnerData($model);
+    }
 
     public function isOwner($model): bool
     {
@@ -91,6 +97,21 @@ final class OwnerDataTraitTest extends TestCase
         $host->user->nick = $nick;
 
         return $host;
+    }
+
+    public function testAssertOwnerDataLanzaAccesoDenegado(): void
+    {
+        $host = $this->host(true, '5', 'pepe');
+
+        // el propietario pasa sin excepción
+        $host->assertOwner(new OwnerDataFakeModel(10, ['codagente'], '5'));
+
+        try {
+            $host->assertOwner(new OwnerDataFakeModel(10, ['codagente'], '9'));
+            $this->fail('owner-data-not-denied');
+        } catch (KernelException $exception) {
+            $this->assertEquals('AccessDenied', $exception->handler);
+        }
     }
 
     public function testSinRestriccionSiemprePermite(): void

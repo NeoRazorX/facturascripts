@@ -519,11 +519,8 @@ abstract class PurchasesController extends PanelController
 
                 $view->loadData($code);
 
-                // ¿el usuario puede acceder a este documento?
-                if (false === $this->checkOwnerData($view->model)) {
-                    $this->setTemplate('Error/AccessDenied');
-                    break;
-                }
+                // ¿el usuario puede acceder a este documento? si no, se interrumpe la petición
+                $this->assertOwnerData($view->model);
 
                 // data not found?
                 $action = $this->request->input('action', '');

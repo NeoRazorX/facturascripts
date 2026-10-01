@@ -89,6 +89,7 @@ class EditContacto extends EditController
             return true;
         }
 
+        $this->assertOwnerData($model);
         $model->checkVies();
         return true;
     }
