@@ -253,6 +253,11 @@ abstract class BaseController extends Controller
         // Create the views to display
         $this->createViews();
         $this->pipe('createViews');
+
+        // si la pestaña activa no existe (p.ej. el usuario no tiene permiso para verla), usamos la primera
+        if (false === isset($this->views[$this->active])) {
+            $this->active = (string)array_key_first($this->views);
+        }
     }
 
     public function setCurrentView(string $viewName): void
