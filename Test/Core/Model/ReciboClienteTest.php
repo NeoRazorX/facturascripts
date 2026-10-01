@@ -43,6 +43,46 @@ final class ReciboClienteTest extends TestCase
         self::installAccountingPlan();
     }
 
+    public function testCantChangeReceiptInvoice(): void
+    {
+        // creamos dos facturas
+        $invoice1 = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice1->exists(), 'can-not-create-random-invoice');
+        $invoice2 = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice2->exists(), 'can-not-create-random-invoice');
+
+        // obtenemos el recibo de la primera factura
+        $receipts = $invoice1->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $receipt = $receipts[0];
+
+        // guardar con el mismo idfactura como cadena (como llega del formulario) debe funcionar
+        $receipt->idfactura = (string)$invoice1->idfactura;
+        $this->assertTrue($receipt->save(), 'can-not-save-receipt-same-invoice');
+
+        // no se puede mover el recibo a otra factura
+        $receipt->idfactura = $invoice2->idfactura;
+        $this->assertFalse($receipt->save(), 'can-move-receipt-to-another-invoice');
+
+        // ni dejarlo sin factura
+        $receipt->idfactura = null;
+        $this->assertFalse($receipt->save(), 'can-remove-receipt-invoice');
+
+        // comprobamos que el recibo sigue en la primera factura
+        $this->assertTrue($receipt->reload(), 'can-not-reload-receipt');
+        $this->assertEquals($invoice1->idfactura, $receipt->idfactura, 'receipt-invoice-changed');
+        $this->assertCount(1, $invoice1->getReceipts(), 'bad-invoice1-receipts-count');
+        $this->assertCount(1, $invoice2->getReceipts(), 'bad-invoice2-receipts-count');
+
+        // eliminamos las facturas y sus sujetos
+        foreach ([$invoice1, $invoice2] as $invoice) {
+            $subject = $invoice->getSubject();
+            $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+            $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+            $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+        }
+    }
+
     public function testCreateInvoiceCreateReceipt(): void
     {
         // creamos una factura

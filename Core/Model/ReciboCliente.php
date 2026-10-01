@@ -294,6 +294,16 @@ class ReciboCliente extends ModelClass
         }
 
         switch ($field) {
+            case 'idfactura':
+                // el formulario envía cadenas, así que comparamos sin tipo estricto
+                if ($this->getOriginal('idfactura') == $this->idfactura) {
+                    return true;
+                }
+
+                // un recibo no se puede mover a otra factura ni quedarse sin ella
+                Tools::log()->warning('non-editable-columns', ['%columns%' => 'idfactura']);
+                return false;
+
             case 'importe':
                 return !$this->getOriginal('pagado');
 
