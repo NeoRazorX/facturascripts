@@ -117,6 +117,9 @@ abstract class PanelController extends BaseController
         // Get any operations that have to be performed
         $action = $this->request->inputOrQuery('action', '');
 
+        // el usuario debe poder acceder al registro antes de ejecutar ninguna acción sobre él
+        $this->assertActionOwnerData((string)$action);
+
         // Runs operations before reading data
         if ($this->execPreviousAction($action) === false || $this->pipeFalse('execPreviousAction', $action) === false) {
             return;
@@ -284,6 +287,17 @@ abstract class PanelController extends BaseController
         $this->addCustomView($viewName, $view);
 
         return $view;
+    }
+
+    /**
+     * Se ejecuta antes de cualquier acción para comprobar que el usuario puede acceder
+     * al registro sobre el que se ejecuta. Debe lanzar una KernelException si no puede.
+     * Por defecto no comprueba nada; EditController comprueba el registro principal.
+     *
+     * @param string $action
+     */
+    protected function assertActionOwnerData(string $action): void
+    {
     }
 
     /**

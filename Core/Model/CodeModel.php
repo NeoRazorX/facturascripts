@@ -19,11 +19,13 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\AppKey;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Template\JoinModel;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use ReflectionClass;
 
 /**
  * Modelo auxiliar para cargar una lista de códigos y sus descripciones.
@@ -38,9 +40,13 @@ class CodeModel
     const ALL_LIMIT = 1000;
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const SEARCH_LIMIT = 50;
+    const SIGN_PURPOSE = 'code-model';
 
     /** @var DataBase Conexión compartida con la base de datos. */
     protected static $dataBase;
+
+    /** @var array|null Columnas que cada tabla oculta en la API, indexadas por tabla. */
+    protected static $hiddenColumns;
 
     /** @var int Número máximo de resultados que se pueden obtener. */
     protected static $limit;
@@ -81,6 +87,13 @@ class CodeModel
             return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
         } elseif (false === self::isValidFieldName($fieldDescription)) {
             Tools::log()->error('invalid-field-description: ' . $fieldDescription);
+            return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
+        }
+
+        // nunca devolvemos las columnas que el modelo oculta en la API (contraseñas, claves, etc.)
+        $hiddenColumn = self::findHiddenColumn($tableName, [$fieldCode, $fieldDescription]);
+        if ('' !== $hiddenColumn) {
+            Tools::log()->error('invalid-field-name: ' . $hiddenColumn);
             return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
         }
 
@@ -302,6 +315,13 @@ class CodeModel
             return [];
         }
 
+        // nunca devolvemos las columnas que el modelo oculta en la API (contraseñas, claves, etc.)
+        $hiddenColumn = self::findHiddenColumn($tableName, [$fieldCode, $fieldDescription]);
+        if ('' !== $hiddenColumn) {
+            Tools::log()->error('invalid-field-name: ' . $hiddenColumn);
+            return [];
+        }
+
         // comprobamos si se trata de un modelo (admite Join\Nombre)
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
@@ -336,6 +356,43 @@ class CodeModel
     public static function setLimit(int $newLimit): void
     {
         self::$limit = $newLimit;
+    }
+
+    /**
+     * Firma los parámetros de consulta de un widget o filtro. El navegador devuelve la firma en las
+     * peticiones autocomplete, datalist y select, y el controlador la comprueba con verifySign()
+     * para que no se puedan pedir otras tablas o columnas.
+     *
+     * @param string $source
+     * @param string $fieldCode
+     * @param string $fieldTitle
+     * @param string $fieldFilter
+     *
+     * @return string
+     */
+    public static function sign(string $source, string $fieldCode, string $fieldTitle, string $fieldFilter = ''): string
+    {
+        return AppKey::sign(self::SIGN_PURPOSE, json_encode([$source, $fieldCode, $fieldTitle, $fieldFilter]));
+    }
+
+    /**
+     * Comprueba que la firma corresponde a los parámetros de consulta.
+     *
+     * @param string $signature
+     * @param string $source
+     * @param string $fieldCode
+     * @param string $fieldTitle
+     * @param string $fieldFilter
+     *
+     * @return bool
+     */
+    public static function verifySign(string $signature, string $source, string $fieldCode, string $fieldTitle, string $fieldFilter = ''): bool
+    {
+        return AppKey::verify(
+            self::SIGN_PURPOSE,
+            json_encode([$source, $fieldCode, $fieldTitle, $fieldFilter]),
+            $signature
+        );
     }
 
     private static function codeModelAll(mixed $model, string $fieldCode): array
@@ -389,6 +446,59 @@ class CodeModel
         }
 
         return self::$dataBase;
+    }
+
+    /**
+     * Devuelve la primera columna oculta en la API a la que hacen referencia los campos, o una
+     * cadena vacía si no hay ninguna. Los campos pueden ser expresiones como concat(a, b).
+     *
+     * @param string $tableName tabla o nombre de modelo.
+     * @param array $fields
+     *
+     * @return string
+     */
+    protected static function findHiddenColumn(string $tableName, array $fields): string
+    {
+        $modelClass = self::MODEL_NAMESPACE . $tableName;
+        if (class_exists($modelClass) && is_callable([$modelClass, 'tableName'])) {
+            $tableName = $modelClass::tableName();
+        }
+
+        foreach ($fields as $field) {
+            // quitamos los literales para quedarnos solo con los identificadores
+            $expression = preg_replace("/'[^']*'/", '', $field);
+            preg_match_all('/([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z_][a-zA-Z0-9_]*))?/', $expression, $matches, PREG_SET_ORDER);
+            foreach ($matches as $match) {
+                // con prefijo (tabla.columna) comprobamos esa tabla, además de la principal por si es un alias
+                $column = strtolower($match[2] ?? '') ?: strtolower($match[1]);
+                $tables = empty($match[2]) ? [$tableName] : [$tableName, $match[1]];
+                foreach ($tables as $table) {
+                    if (in_array($column, self::hiddenColumns($table), true)) {
+                        return $match[0];
+                    }
+                }
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Devuelve las columnas que la tabla oculta en la API, en minúsculas.
+     *
+     * @param string $tableName
+     *
+     * @return array
+     */
+    protected static function hiddenColumns(string $tableName): array
+    {
+        if (null === self::$hiddenColumns) {
+            self::$hiddenColumns = Cache::remember('code-model-hidden-columns', function () {
+                return self::loadHiddenColumns();
+            });
+        }
+
+        return self::$hiddenColumns[strtolower($tableName)] ?? [];
     }
 
     /**
@@ -450,5 +560,43 @@ class CodeModel
     {
         $parts = explode('\\', $tableName);
         return end($parts);
+    }
+
+    /**
+     * Recorre los modelos para obtener las columnas que cada tabla oculta en la API.
+     * Los campos JSON (columna.clave) ocultan la columna entera.
+     *
+     * @return array
+     */
+    private static function loadHiddenColumns(): array
+    {
+        $result = [];
+        foreach (glob(FS_FOLDER . '/Dinamic/Model/*.php') ?: [] as $file) {
+            $modelClass = self::MODEL_NAMESPACE . basename($file, '.php');
+            if (
+                false === class_exists($modelClass)
+                || false === is_callable([$modelClass, 'tableName'])
+                || false === method_exists($modelClass, 'getApiFieldsToHide')
+            ) {
+                continue;
+            }
+
+            $reflection = new ReflectionClass($modelClass);
+            if ($reflection->isAbstract()) {
+                continue;
+            }
+
+            // no llamamos al constructor para no comprobar ni crear la tabla de cada modelo
+            $model = $reflection->newInstanceWithoutConstructor();
+            $tableName = strtolower($modelClass::tableName());
+            foreach ($model->getApiFieldsToHide() as $field) {
+                $column = strtolower(explode('.', $field)[0]);
+                if (false === in_array($column, $result[$tableName] ?? [], true)) {
+                    $result[$tableName][] = $column;
+                }
+            }
+        }
+
+        return $result;
     }
 }

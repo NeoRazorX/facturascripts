@@ -24,6 +24,7 @@ function widgetSelectGetData(input, parent) {
         field: input.attr("data-field"),
         fieldcode: input.attr("data-fieldcode"),
         fieldfilter: input.attr("data-fieldfilter"),
+        fieldsign: input.attr("data-fieldsign"),
         fieldtitle: input.attr("data-fieldtitle"),
         required: input.attr('required') === 'required' ? 1 : 0,
         source: input.attr("data-source"),

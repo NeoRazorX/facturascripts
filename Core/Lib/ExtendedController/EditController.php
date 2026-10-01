@@ -52,6 +52,36 @@ abstract class EditController extends PanelController
     }
 
     /**
+     * Comprueba que el usuario puede acceder al registro principal antes de ejecutar la acción.
+     * Las acciones previas se ejecutan antes de loadData() y algunas cargan el registro por su
+     * cuenta, así que no basta con la comprobación de loadData().
+     *
+     * @param string $action
+     */
+    protected function assertActionOwnerData(string $action): void
+    {
+        if ('' === $action || false === $this->permissions->onlyOwnerData) {
+            return;
+        }
+
+        // el registro principal se identifica por code en la url y, si la pestaña activa es
+        // la principal, también por code o por su clave primaria en el formulario
+        $model = $this->getModel();
+        $codes = [$this->request->query('code')];
+        if ($this->active === $this->mainTabName()) {
+            $codes[] = $this->request->input('code');
+            $codes[] = $this->request->input($model->primaryColumn());
+        }
+
+        foreach (array_unique(array_filter($codes, fn($code) => null !== $code && '' !== $code)) as $code) {
+            $record = clone $model;
+            if ($record->loadFromCode($code)) {
+                $this->assertOwnerData($record);
+            }
+        }
+    }
+
+    /**
      * Create the view to display.
      */
     protected function createViews()
@@ -125,11 +155,8 @@ abstract class EditController extends PanelController
                 $code = $this->request->query('code', $primaryKey);
                 $view->loadData($code);
 
-                // User can access to data?
-                if (false === $this->checkOwnerData($view->model)) {
-                    $this->setTemplate('Error/AccessDenied');
-                    break;
-                }
+                // el usuario puede acceder a este registro? si no, se interrumpe la petición
+                $this->assertOwnerData($view->model);
 
                 // Data not found?
                 $action = $this->request->input('action', '');

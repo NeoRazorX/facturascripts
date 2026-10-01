@@ -55,6 +55,39 @@ final class SendMailTest extends TestCase
         $this->assertSame(['factura.pdf'], $controller->newMail->getAttachmentNames());
     }
 
+    public function testAutocompleteOnlySearchesContactEmails(): void
+    {
+        $user = $this->getRandomUser();
+        $logkey = $user->newLogkey('127.0.0.1');
+        $this->assertTrue($user->save());
+
+        try {
+            // la tabla y los campos de la petición se ignoran: solo se buscan emails de contactos
+            $controller = new SendMail('SendMail', '/SendMail');
+            $controller->request = new Request(['query' => [
+                'action' => 'autocomplete',
+                'source' => 'users',
+                'field' => 'logkey',
+                'title' => 'nick',
+                'term' => $user->nick,
+            ]]);
+
+            $permissions = new ControllerPermissions();
+            $permissions->set(true, 1, false, true);
+
+            $response = new Response();
+            $response->disableSend(true);
+            $controller->privateCore($response, $user, $permissions);
+
+            $results = json_decode($response->getContent(), true);
+            $this->assertIsArray($results);
+            $this->assertNotContains($logkey, array_column($results, 'key'));
+            $this->assertNotContains($user->nick, array_column($results, 'value'));
+        } finally {
+            $user->delete();
+        }
+    }
+
     public function testRejectsFilesOutsideTmpFolder(): void
     {
         // archivo existente fuera de la carpeta temporal, pero dentro de MyFiles

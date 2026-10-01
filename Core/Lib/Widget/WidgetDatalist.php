@@ -90,6 +90,7 @@ class WidgetDatalist extends WidgetSelect
             . ' data-fieldcode="' . $this->fieldcode . '"'
             . ' data-fieldtitle="' . $this->fieldtitle . '"'
             . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . ' data-fieldsign="' . $this->fieldSign() . '"'
             . ' data-limit="' . $this->limit . '"'
             . '/>';
 

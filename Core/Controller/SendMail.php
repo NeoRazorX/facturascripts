@@ -149,8 +149,9 @@ class SendMail extends Controller
     {
         $results = [];
 
+        // solo buscamos emails de contactos: no aceptamos la tabla ni los campos de la petición
         $data = $this->requestGet(['source', 'field', 'title', 'term']);
-        foreach ($this->codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
+        foreach ($this->codeModel->search('contactos', 'email', 'email', (string)$data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
 

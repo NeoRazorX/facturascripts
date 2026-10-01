@@ -109,7 +109,8 @@ class AutocompleteFilter extends BaseFilter
 
         $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control filter-autocomplete' . ($this->value ? ' is-valid' : '') . '"'
             . ' data-name="' . $this->name() . '" data-field="' . $this->field . '" data-source="' . $this->table . '" data-fieldcode="' . $this->fieldcode
-            . '" data-fieldtitle="' . $this->fieldtitle . '" placeholder = "' . $label . '" autocomplete="off" ' . $this->readonly() . '/>'
+            . '" data-fieldtitle="' . $this->fieldtitle . '" data-fieldsign="' . CodeModel::sign($this->table, $this->fieldcode, $this->fieldtitle)
+            . '" placeholder = "' . $label . '" autocomplete="off" ' . $this->readonly() . '/>'
             . '</div>'
             . '</div>'
             . '</div>';
@@ -125,7 +126,7 @@ class AutocompleteFilter extends BaseFilter
         $route = Tools::config('route');
         AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/ListFilterAutocomplete.js');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/ListFilterAutocomplete.js?v=2');
     }
 
     /**

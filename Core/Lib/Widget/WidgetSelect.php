@@ -297,7 +297,23 @@ class WidgetSelect extends BaseWidget
         AssetManager::addCss($route . '/node_modules/select2/dist/css/select2.min.css?v=5');
         AssetManager::addCss($route . '/node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css?v=5');
         AssetManager::addJs($route . '/node_modules/select2/dist/js/select2.min.js?v=5', 2);
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js?v=7');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js?v=8');
+    }
+
+    /**
+     * Firma de los parámetros de consulta, para que el controlador rechace las peticiones
+     * autocomplete, datalist y select que pidan otra tabla o columnas.
+     *
+     * @return string
+     */
+    protected function fieldSign(): string
+    {
+        return CodeModel::sign(
+            (string)$this->source,
+            (string)$this->fieldcode,
+            (string)$this->fieldtitle,
+            (string)$this->fieldfilter
+        );
     }
 
     /**
@@ -341,6 +357,7 @@ class WidgetSelect extends BaseWidget
             . ' data-fieldcode="' . $this->fieldcode . '"'
             . ' data-fieldtitle="' . $this->fieldtitle . '"'
             . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . ' data-fieldsign="' . $this->fieldSign() . '"'
             . ' data-limit="' . $this->limit . '"'
             . ($sharedList ? ' data-shared-list="' . $this->sharedListId . '"' : '')
             . ($sharedSource ? ' data-shared-source="true"' : '')
