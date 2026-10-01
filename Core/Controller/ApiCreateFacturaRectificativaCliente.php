@@ -184,8 +184,11 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
             }
         }
 
-        // asignamos el estado de la factura
-        $newRefund->idestado = $this->request->input('idestado');
+        // asignamos el estado indicado; si no se indica, conserva el de la factura original
+        $idestado = $this->request->input('idestado');
+        if (!empty($idestado)) {
+            $newRefund->idestado = $idestado;
+        }
         if (false === $newRefund->save()) {
             $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->db()->rollback();
