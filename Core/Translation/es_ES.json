@@ -1748,6 +1748,7 @@
     "server-software": "Software del servidor",
     "service": "Servicio",
     "services": "Servicios",
+    "session-expired-reload": "La sesión ha caducado. Recarga la página.",
     "settings": "Ajustes",
     "settlement": "Liquidación",
     "settlement-product": "Producto de liquidación",

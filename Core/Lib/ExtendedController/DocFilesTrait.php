@@ -76,6 +76,16 @@ trait DocFilesTrait
     }
 
     /**
+     * Indica si el usuario puede elegir archivos de la biblioteca. Vincular un archivo
+     * existente da acceso a su contenido, así que exigimos el mismo permiso que para
+     * consultar la biblioteca.
+     */
+    private function canUseFileLibrary(): bool
+    {
+        return $this->user->can('ListAttachedFile');
+    }
+
+    /**
      * Comprueba que el usuario puede modificar los adjuntos del registro actual
      * cuando solo tiene acceso a sus propios datos.
      */
@@ -299,6 +309,66 @@ trait DocFilesTrait
         }
 
         return true;
+    }
+
+    /**
+     * Devuelve, en formato json, los archivos de la biblioteca, marcando los que
+     * ya están vinculados al registro actual.
+     *
+     * Es protegida porque la resuelve PanelController::execPreviousAction(), así los
+     * controladores que usan este trait no tienen que enrutar la acción.
+     */
+    protected function searchLibraryAction(): bool
+    {
+        $this->setTemplate(false);
+
+        if (false === $this->permissions->allowUpdate) {
+            $this->response->json(['error' => Tools::trans('not-allowed-modify')]);
+            return false;
+        }
+
+        // el token caduca a las pocas horas, así que la respuesta pide recargar la página
+        if (false === $this->validateFileToken()) {
+            $this->response->json(['error' => Tools::trans('session-expired-reload'), 'reload' => true]);
+            return false;
+        }
+
+        if (false === $this->checkFileOwnerData()) {
+            $this->response->json(['error' => Tools::trans('access-denied')]);
+            return false;
+        }
+
+        if (false === $this->canUseFileLibrary()) {
+            // sin permiso no devolvemos la lista, para no filtrar los nombres de los archivos
+            $this->response->json([]);
+            return false;
+        }
+
+        $where = [];
+        $query = $this->request->input('query', '');
+        if (false === empty($query)) {
+            // xlike busca cada palabra por separado, así el orden de las palabras da igual
+            $where[] = Where::xlike('filename', $query);
+        }
+
+        $linked = $this->getLinkedFileIds($this->request->query('code'));
+
+        $files = [];
+        foreach (AttachedFile::all($where, ['date' => 'DESC', 'hour' => 'DESC', 'idfile' => 'DESC']) as $file) {
+            $files[] = [
+                'date' => $file->date . ' ' . $file->hour,
+                'filename' => $file->filename,
+                'idfile' => $file->idfile,
+                'image' => $file->isImage() ? $file->url('download') : '',
+                // los ya vinculados se muestran, pero no se pueden volver a elegir
+                'linked' => in_array($file->idfile, $linked),
+                'size' => Tools::bytes($file->size),
+                'url' => $file->url(),
+            ];
+        }
+
+        $this->response->json(['files' => $files]);
+        return false;
     }
 
     private function sortFilesAction(): bool
