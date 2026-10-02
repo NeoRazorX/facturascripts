@@ -83,7 +83,9 @@ class Login implements ControllerInterface
     public function run(): void
     {
         $this->empresa = Empresas::default();
-        $this->title = $this->empresa->nombrecorto;
+
+        // hasta completar el asistente (que guarda la página de inicio) la empresa tiene un nombre provisional
+        $this->title = Tools::settings('default', 'homepage') ? $this->empresa->nombrecorto : 'FacturaScripts';
 
         $request = Request::createFromGlobals();
         $action = $request->inputOrQuery('action', '');

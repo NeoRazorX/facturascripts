@@ -20,6 +20,8 @@
 namespace FacturaScripts\Test\Core\Controller;
 
 use FacturaScripts\Core\Controller\Login;
+use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
 final class LoginTest extends TestCase
@@ -172,8 +174,35 @@ final class LoginTest extends TestCase
         $this->assertFalse($this->controller->userHasManyIncidents($ip, $user));
     }
 
+    public function testTitleBeforeAndAfterWizard(): void
+    {
+        $homepage = Tools::settings('default', 'homepage');
+
+        try {
+            // antes del asistente no se muestra el nombre provisional de la empresa
+            Tools::settingsSet('default', 'homepage', null);
+            $this->runController();
+            $this->assertSame('FacturaScripts', $this->controller->title);
+
+            // después del asistente se muestra el nombre de la empresa
+            Tools::settingsSet('default', 'homepage', 'Root');
+            $this->runController();
+            $this->assertSame(Empresas::default()->nombrecorto, $this->controller->title);
+        } finally {
+            Tools::settingsSet('default', 'homepage', $homepage);
+        }
+    }
+
     private function getRandomIp(): string
     {
         return rand(1, 255) . '.' . rand(1, 255) . '.' . rand(1, 255) . '.' . rand(1, 255);
+    }
+
+    private function runController(): void
+    {
+        // run() imprime la página de login, que no necesitamos
+        ob_start();
+        $this->controller->run();
+        ob_end_clean();
     }
 }
