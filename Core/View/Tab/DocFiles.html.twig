@@ -35,7 +35,10 @@
                                                class="form-control docfiles-new-files"
                                                multiple onchange="docFilesPickUploads(this);"/>
                                         <div class="docfiles-upload-list mt-2"
-                                             data-remove="{{ trans('remove') }}"></div>
+                                             data-remove="{{ trans('remove') }}"
+                                             data-max="{{ fsc.maxUploadFilesPerRequest() }}"
+                                             data-max-text="{{ trans('max-files-per-request', {'%max%': fsc.maxUploadFilesPerRequest()}) }}"></div>
+                                        <p class="docfiles-upload-limit text-danger small mt-2 mb-0 d-none"></p>
                                     </div>
                                 </div>
                                 {% if canUseLibrary %}
@@ -228,7 +231,6 @@
         return $(element).closest('.docfiles-tab');
     }
 
-
     // el resultado se interpola también dentro de atributos, así que las comillas
     // tienen que salir escapadas, y .text().html() no las toca
     function docFilesLibraryEscape(text) {
@@ -294,6 +296,13 @@
         const input = root.find('.docfiles-new-files')[0];
         const list = root.find('.docfiles-upload-list');
         list.empty();
+
+        // php descarta en silencio los archivos que pasen de max_file_uploads, así que
+        // antes de guardar avisamos y bloqueamos el botón
+        const max = parseInt(list.data('max'), 10);
+        const tooMany = input.files.length > max;
+        root.find('.docfiles-upload-limit').text(list.data('max-text')).toggleClass('d-none', false === tooMany);
+        root.find('.docfiles-save').prop('disabled', tooMany);
 
         // como ahora se acumulan, hace falta poder quitar los que sobren
         const remove = docFilesLibraryEscape(list.data('remove'));

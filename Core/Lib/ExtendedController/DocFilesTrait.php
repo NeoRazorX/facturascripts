@@ -364,6 +364,19 @@ trait DocFilesTrait
     }
 
     /**
+     * Número máximo de archivos que PHP acepta en una sola petición. Si llegan más,
+     * PHP descarta los que sobran sin avisar, así que el formulario no deja guardar
+     * cuando se pasa de aquí.
+     * Es pública porque la vista la necesita para avisar al usuario.
+     */
+    public function maxUploadFilesPerRequest(): int
+    {
+        $max = (int)ini_get('max_file_uploads');
+
+        return $max > 0 ? $max : 20;
+    }
+
+    /**
      * Crea la relación entre un archivo y el registro actual.
      *
      * @param int $idFile
