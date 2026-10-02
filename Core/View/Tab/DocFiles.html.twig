@@ -19,25 +19,60 @@
                             <h5 class="card-title">
                                 <i class="fa-solid fa-folder-plus fa-fw"></i> {{ trans('add') }}
                             </h5>
-                            <div class="mb-3">
-                                <textarea name="observations" class="form-control"
-                                          placeholder="{{ trans('observations') }}"></textarea>
+
+                            {% set canUseLibrary = fsc.user.can('ListAttachedFile') %}
+                            <div class="row g-3 mb-3">
+                                <div class="docfiles-upload-col col-12{% if canUseLibrary %} col-lg-4{% endif %}">
+                                    <p class="text-muted small mb-3">
+                                        {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
+                                    </p>
+                                    <label for="{{ viewName }}-new-files" class="visually-hidden">{{ trans('files') }}</label>
+                                    <input type="file" name="new-files[]" id="{{ viewName }}-new-files"
+                                           class="form-control docfiles-new-files" multiple/>
+                                </div>
+                                {% if canUseLibrary %}
+                                <div class="docfiles-library-col col-12 col-lg-8">
+                                    <div class="input-group mb-2">
+                                        <label for="{{ viewName }}-library-query" class="visually-hidden">{{ trans('search') }}</label>
+                                        <input type="text" id="{{ viewName }}-library-query"
+                                               class="form-control docfiles-library-query"
+                                               placeholder="{{ trans('search') }}" autocomplete="off"
+                                               onkeydown="if(event.key==='Enter'){event.preventDefault();docFilesLibrarySearch(this);}"/>
+                                        <label for="{{ viewName }}-library-sort" class="visually-hidden">{{ trans('sort-by-date-desc') }}</label>
+                                        <select id="{{ viewName }}-library-sort"
+                                                class="form-select flex-grow-0 w-auto docfiles-library-sort"
+                                                onchange="docFilesLibrarySearch(this);">
+                                            <option value="date-desc" selected>{{ trans('sort-by-date-desc') }}</option>
+                                            <option value="date-asc">{{ trans('sort-by-date-asc') }}</option>
+                                        </select>
+                                        <button type="button" class="btn btn-primary" onclick="docFilesLibrarySearch(this);"
+                                                aria-label="{{ trans('search') }}">
+                                            <i class="fa-solid fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" class="docfiles-library-token" value="{{ formToken(false) }}"/>
+                                    <div class="docfiles-library-list list-group overflow-auto"
+                                         style="max-height: 200px;"
+                                         data-no-data="{{ trans('no-data') }}"
+                                         data-detail="{{ trans('attached-file') }}"></div>
+                                </div>
+                                {% endif %}
                             </div>
+
                             {% for includeView in getIncludeViews('DocFiles', 'formAddBody') %}
                                 {% include includeView['path'] %}
                             {% endfor %}
-                            <div class="row align-items-end">
-                                <div class="col">
-                                    <p class="text-muted mb-2">
-                                        {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
-                                    </p>
-                                    <input type="file" name="new-files[]" class="form-control" multiple required/>
-                                </div>
-                                <div class="col-auto">
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
-                                    </button>
-                                </div>
+
+                            <div class="mb-3">
+                                <label for="{{ viewName }}-observations" class="visually-hidden">{{ trans('observations') }}</label>
+                                <textarea name="observations" id="{{ viewName }}-observations" class="form-control"
+                                          placeholder="{{ trans('observations') }}"></textarea>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-success docfiles-save">
+                                    <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -163,8 +198,80 @@
         return $(element).closest('.docfiles-tab');
     }
 
+
+    // el resultado se interpola también dentro de atributos, así que las comillas
+    // tienen que salir escapadas, y .text().html() no las toca
+    function docFilesLibraryEscape(text) {
+        return $('<div/>').text(text === null || text === undefined ? '' : text).html()
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function docFilesLibraryRender(root, files) {
+        const list = root.find('.docfiles-library-list');
+
+        if (files.length === 0) {
+            return '<div class="list-group-item text-center text-muted">'
+                + docFilesLibraryEscape(list.data('no-data')) + '</div>';
+        }
+
+        let html = '';
+        files.forEach(function (file) {
+            const thumb = file.image ?
+                '<img src="' + docFilesLibraryEscape(file.image) + '" class="flex-shrink-0" width="32" height="32"'
+                + ' loading="lazy" style="object-fit: cover;" alt=""/>' :
+                '<i class="fa-regular fa-file fa-fw text-secondary flex-shrink-0" aria-hidden="true"></i>';
+
+            html += '<div class="list-group-item d-flex align-items-center gap-2">'
+                + thumb
+                + '<span class="flex-grow-1 text-truncate">' + docFilesLibraryEscape(file.filename) + '</span>'
+                + '<span class="text-muted small text-nowrap">' + docFilesLibraryEscape(file.size) + ' &middot; '
+                + docFilesLibraryEscape(file.date) + '</span>'
+                + '<a href="' + docFilesLibraryEscape(file.url) + '" target="_blank" aria-label="'
+                + docFilesLibraryEscape(list.data('detail')) + '">'
+                + '<i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i></a>'
+                + '</div>';
+        });
+
+        return html;
+    }
+
+    function docFilesLibrarySearch(element) {
+        const root = element instanceof jQuery ? element : docFilesRoot(element);
+        const list = root.find('.docfiles-library-list');
+
+        // sin permiso sobre la biblioteca, el bloque no se pinta y no hay nada que pedir
+        if (list.length === 0) {
+            return;
+        }
+
+        list.html('<div class="docfiles-library-loading list-group-item text-center p-4">'
+            + '<i class="fa-solid fa-circle-notch fa-2x fa-spin" aria-hidden="true"></i></div>');
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('action', 'search-library');
+
+        $.ajax({
+            method: "POST",
+            url,
+            data: {
+                multireqtoken: root.find('.docfiles-library-token').val(),
+                query: root.find('.docfiles-library-query').val(),
+                sort: root.find('.docfiles-library-sort').val()
+            },
+            dataType: "json",
+            success: function (data) {
+                list.html(docFilesLibraryRender(root, data.files || []));
+            },
+            error: function () {
+                list.find('.docfiles-library-loading').remove();
+            }
+        });
+    }
+
     $(document).ready(function () {
         const docFilesTabRoot = $('#{{ viewName }}-docfiles');
+        docFilesLibrarySearch(docFilesTabRoot);
 
         docFilesTabRoot.find('.docfiles-docs-container').sortable({
             cursor: "move",
