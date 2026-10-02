@@ -187,6 +187,32 @@ trait DocFilesTrait
         $view->loadData('', $where, ['orden' => 'ASC', 'creationdate' => 'DESC']);
     }
 
+    /**
+     * Crea la relación entre un archivo y el registro actual.
+     *
+     * @param int $idFile
+     * @param string $hook nombre de la extensión que reciben los plugins
+     * @return bool
+     */
+    private function saveFileRelation(int $idFile, string $hook): bool
+    {
+        $fileRelation = new AttachedFileRelation();
+        $fileRelation->idfile = $idFile;
+        $fileRelation->model = $this->getModelClassName();
+        $fileRelation->modelcode = $this->request->query('code');
+        $fileRelation->modelid = (int)$fileRelation->modelcode;
+        $fileRelation->nick = $this->user->nick;
+        $fileRelation->observations = $this->request->input('observations');
+        $this->pipeFalse($hook, $fileRelation, $this->request);
+
+        if (false === $fileRelation->save()) {
+            Tools::log()->error('fail-relation');
+            return false;
+        }
+
+        return true;
+    }
+
     private function unlinkFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
@@ -270,17 +296,7 @@ trait DocFilesTrait
                 return false;
             }
 
-            $fileRelation = new AttachedFileRelation();
-            $fileRelation->idfile = $newFile->idfile;
-            $fileRelation->model = $this->getModelClassName();
-            $fileRelation->modelcode = $this->request->query('code');
-            $fileRelation->modelid = (int)$fileRelation->modelcode;
-            $fileRelation->nick = $this->user->nick;
-            $fileRelation->observations = $this->request->input('observations');
-            $this->pipeFalse('addFileAction', $fileRelation, $this->request);
-
-            if (false === $fileRelation->save()) {
-                Tools::log()->error('fail-relation');
+            if (false === $this->saveFileRelation($newFile->idfile, 'addFileAction')) {
                 return false;
             }
         }
