@@ -1,15 +1,18 @@
 {% set firstView = fsc.views | first %}
 {% set doc = firstView.model %}
 {% set currentView = fsc.getCurrentView() %}
+{% set viewName = currentView.getViewName() %}
 
-<div class="container-fluid">
+{# todos los selectores del javascript se buscan dentro de esta raíz, para que un
+   controlador pueda tener más de una pestaña de archivos sin que choquen entre sí #}
+<div class="container-fluid docfiles-tab" id="{{ viewName }}-docfiles">
     <div class="row">
         <div class="col-sm-12">
             {% if fsc.permissions.allowUpdate %}
                 <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
                       onsubmit="animateSpinner('add')">
                     {{ formToken() }}
-                    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                    <input type="hidden" name="activetab" value="{{ viewName }}"/>
                     <input type="hidden" name="action" value="add-file"/>
                     <div class="card border-success shadow mb-3">
                         <div class="card-body p-3">
@@ -43,7 +46,7 @@
 
             {# los archivos compartidos se resuelven en una sola consulta, no una por tarjeta #}
             {% set sharedFiles = fsc.getSharedFileIds() %}
-            <div id="docs-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+            <div class="docfiles-docs-container row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
                 {% for docfile in currentView.cursor %}
                     {% set file = docfile.getFile() %}
                     {% if file %}
@@ -54,7 +57,7 @@
                         <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
                               onsubmit="animateSpinner('add')">
                             {{ formToken() }}
-                            <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                            <input type="hidden" name="activetab" value="{{ viewName }}"/>
                             <input type="hidden" name="id" value="{{ docfile.id }}"/>
                             <input type="hidden" name="action" value=""/>
                             <div class="card shadow h-100">
@@ -155,8 +158,15 @@
 </div>
 
 <script>
+    // la raíz es la pestaña a la que pertenece el elemento, nunca el documento entero
+    function docFilesRoot(element) {
+        return $(element).closest('.docfiles-tab');
+    }
+
     $(document).ready(function () {
-        $('#docs-container').sortable({
+        const docFilesTabRoot = $('#{{ viewName }}-docfiles');
+
+        docFilesTabRoot.find('.docfiles-docs-container').sortable({
             cursor: "move",
             tolerance: "pointer",
             opacity: 0.65,
