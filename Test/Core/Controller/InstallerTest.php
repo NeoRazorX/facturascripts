@@ -94,6 +94,40 @@ final class InstallerTest extends TestCase
         MiniLog::clear();
     }
 
+    public function testPostgresqlWrongPassword(): void
+    {
+        if (Tools::config('db_type') !== 'postgresql') {
+            $this->markTestSkipped('Solo aplica a PostgreSQL.');
+        }
+
+        // con una contraseña incorrecta no se puede conectar ni a la base de datos ni a postgres,
+        // y como en el servidor web, los avisos de PHP vienen escapados como HTML
+        MiniLog::clear();
+        $htmlErrors = ini_set('html_errors', '1');
+        try {
+            $result = $this->invoke('testPostgresql', [[
+                'host' => Tools::config('db_host'),
+                'port' => (int)Tools::config('db_port'),
+                'user' => Tools::config('db_user'),
+                'pass' => Tools::config('db_pass') . '-incorrecta',
+                'name' => Tools::config('db_name'),
+                'pgsql-ssl' => '',
+                'pgsql-endpoint' => '',
+            ]]);
+        } finally {
+            ini_set('html_errors', $htmlErrors);
+        }
+
+        // devuelve false sin emitir avisos de PHP y explica el motivo, sin escapar
+        $this->assertFalse($result);
+        $logs = MiniLog::read('', ['critical']);
+        $this->assertContains('cant-connect-database', array_column($logs, 'original'));
+        $this->assertCount(2, $logs);
+        $this->assertStringContainsString('"' . Tools::config('db_user') . '"', $logs[1]['original']);
+        $this->assertStringNotContainsString('&quot;', $logs[1]['original']);
+        MiniLog::clear();
+    }
+
     private function configLine(string $method, string $name, $value): string
     {
         return $this->invoke($method, [$name, $value]);

@@ -456,7 +456,8 @@ class Installer implements ControllerInterface
         }
 
         // can't connect to the database, try to connect to the default database
-        $connection = pg_connect($connectionStr . ' dbname=postgres');
+        error_clear_last();
+        $connection = @pg_connect($connectionStr . ' dbname=postgres');
         if ($connection !== false) {
             // if postgresql version is too old, we can't continue
             if ($this->versionPostgres($connection) < 10) {
@@ -479,9 +480,13 @@ class Installer implements ControllerInterface
             return false;
         }
 
+        // sin conexión no hay pg_last_error(), así que mostramos el aviso que ha generado pg_connect(),
+        // que con html_errors activado ya viene escapado como HTML
         Tools::log()->critical('cant-connect-database');
-        if (is_resource($connection) && pg_last_error($connection) != false) {
-            Tools::log()->critical(pg_last_error($connection));
+        $error = error_get_last();
+        if ($error !== null) {
+            $message = html_entity_decode(strip_tags($error['message']), ENT_QUOTES);
+            Tools::log()->critical(str_replace('pg_connect(): ', '', $message));
         }
 
         return false;
