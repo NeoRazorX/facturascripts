@@ -56,7 +56,10 @@
                                          data-no-data="{{ trans('no-data') }}"
                                          data-detail="{{ trans('attached-file') }}"
                                          data-remove="{{ trans('remove') }}"
-                                         data-linked="{{ trans('already-attached') }}"></div>
+                                         data-linked="{{ trans('already-attached') }}"
+                                         data-reload="{{ trans('refresh-page') }}"
+                                         data-retry="{{ trans('retry') }}"
+                                         data-error="{{ trans('try-again-later') }}"></div>
                                     <div class="docfiles-library-more text-center mt-1 d-none">
                                         <button type="button" class="btn btn-sm btn-outline-secondary"
                                                 onclick="docFilesLibraryMore(this);">
@@ -331,6 +334,42 @@
         return html;
     }
 
+    function docFilesLibraryError(root, message, action, append) {
+        const list = root.find('.docfiles-library-list');
+
+        // el botón recarga la página o repite lo último que se intentó
+        let button = '';
+        if (action === 'reload' || action === 'retry') {
+            const onclick = action === 'reload' ?
+                'window.location.reload();' :
+                (append ? 'docFilesLibraryMore(this);' : 'docFilesLibrarySearch(this);');
+            const label = action === 'reload' ? list.data('reload') : list.data('retry');
+            button = '<div class="mt-2"><button type="button" class="btn btn-sm btn-outline-danger"'
+                + ' onclick="' + onclick + '"><i class="fa-solid fa-rotate-right fa-fw"'
+                + ' aria-hidden="true"></i> ' + docFilesLibraryEscape(label) + '</button></div>';
+        }
+
+        const html = '<div class="docfiles-library-failed list-group-item text-center text-danger">'
+            + '<i class="fa-solid fa-triangle-exclamation fa-fw" aria-hidden="true"></i> '
+            + docFilesLibraryEscape(message) + button + '</div>';
+
+        // al fallar una página siguiente mantenemos lo que el usuario ya tiene delante
+        if (append) {
+            list.find('.docfiles-library-failed').remove();
+            list.append(html);
+            return;
+        }
+
+        list.html(html);
+    }
+
+    function docFilesLibraryDisable(root) {
+        // sin biblioteca, el formulario se queda solo con la subida de archivos
+        root.find('.docfiles-library-col').addClass('d-none');
+        root.find('.docfiles-library-more').addClass('d-none');
+        root.find('.docfiles-upload-col').removeClass('col-lg-4');
+    }
+
     // pide la siguiente página de resultados, sin perder los que ya se ven
     function docFilesLibraryMore(element) {
         const root = docFilesRoot(element);
@@ -373,6 +412,20 @@
             success: function (data) {
                 list.find('.docfiles-library-loading').remove();
 
+                // los errores se muestran en la lista, porque aquí no hay recarga de página
+                if (data.error) {
+                    docFilesLibraryError(root, data.error, true === data.reload ? 'reload' : '', nextPage > 0);
+                    return;
+                }
+
+                // sin permiso sobre la biblioteca la respuesta no trae la lista
+                if (false === Array.isArray(data.files)) {
+                    docFilesLibraryDisable(root);
+                    return;
+                }
+
+                list.find('.docfiles-library-failed').remove();
+
                 const html = docFilesLibraryRender(root, data.files);
                 if (nextPage === 0) {
                     list.html(html);
@@ -384,8 +437,18 @@
                 root.find('.docfiles-library-more').toggleClass('d-none', true !== data.more);
                 docFilesLibraryCount(root);
             },
-            error: function () {
+            error: function (jqXHR, textStatus) {
                 list.find('.docfiles-library-loading').remove();
+
+                // si la respuesta no es json, el controlador no atiende la acción y
+                // devuelve la página entera. Reintentar no lo va a arreglar.
+                if (textStatus === 'parsererror') {
+                    docFilesLibraryDisable(root);
+                    return;
+                }
+
+                // un fallo de red no significa que la biblioteca no exista: dejamos reintentar
+                docFilesLibraryError(root, list.data('error'), 'retry', nextPage > 0);
             }
         });
     }
