@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Test\Core\Controller;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Controller\Installer;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
@@ -68,13 +70,40 @@ final class InstallerTest extends TestCase
         $this->assertSame("'a\\\\\\');phpinfo();//'", array_values($strings)[1][1]);
     }
 
+    public function testMysqlInvalidDatabaseName(): void
+    {
+        if (Tools::config('db_type') !== 'mysql') {
+            $this->markTestSkipped('Solo aplica a MySQL.');
+        }
+
+        // un nombre con guion no es un identificador válido sin comillas
+        MiniLog::clear();
+        $result = $this->invoke('testMysql', [[
+            'host' => Tools::config('db_host'),
+            'port' => (int)Tools::config('db_port'),
+            'user' => Tools::config('db_user'),
+            'pass' => Tools::config('db_pass'),
+            'name' => 'fs-installer-test',
+            'socket' => '',
+        ]]);
+
+        // devuelve false y lo explica, en lugar de lanzar una excepción
+        $this->assertFalse($result);
+        $originals = array_column(MiniLog::read('', ['critical']), 'original');
+        $this->assertContains('cant-create-database', $originals);
+        MiniLog::clear();
+    }
+
     private function configLine(string $method, string $name, $value): string
+    {
+        return $this->invoke($method, [$name, $value]);
+    }
+
+    private function invoke(string $method, array $args)
     {
         // el constructor falla si ya existe config.php, así que lo omitimos
         $installer = (new ReflectionClass(Installer::class))->newInstanceWithoutConstructor();
 
-        $reflection = new ReflectionMethod(Installer::class, $method);
-        $reflection->setAccessible(true);
-        return $reflection->invoke($installer, $name, $value);
+        return (new ReflectionMethod(Installer::class, $method))->invokeArgs($installer, $args);
     }
 }

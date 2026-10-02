@@ -393,7 +393,16 @@ class Installer implements ControllerInterface
 
         // create the database if it doesn't exist
         $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS ' . $connection->escape_string($dbData['name']) . ';';
-        if (!$connection->query($sqlCrearBD)) {
+        try {
+            if (!$connection->query($sqlCrearBD)) {
+                Tools::log()->critical('cant-create-database');
+                Tools::log()->critical($connection->errno . ': ' . $connection->error);
+                return false;
+            }
+        } catch (Exception $e) {
+            // desde PHP 8.1 mysqli lanza excepciones, p. ej. con un nombre de base de datos no válido
+            Tools::log()->critical('cant-create-database');
+            Tools::log()->critical($e->getMessage());
             return false;
         }
 
