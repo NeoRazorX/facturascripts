@@ -1117,6 +1117,7 @@
     "linux": "Linux",
     "list": "Lista",
     "load-def-acc-plan": "Cargar plan contable predeterminado",
+    "load-more": "Cargar más",
     "loading": "Cargando...",
     "loading-controller": "Cargando controlador: '%controllerName%'",
     "local-business-rental": "Alquiler locales",

@@ -57,6 +57,13 @@
                                          data-detail="{{ trans('attached-file') }}"
                                          data-remove="{{ trans('remove') }}"
                                          data-linked="{{ trans('already-attached') }}"></div>
+                                    <div class="docfiles-library-more text-center mt-1 d-none">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                onclick="docFilesLibraryMore(this);">
+                                            <i class="fa-solid fa-angles-down fa-fw" aria-hidden="true"></i>
+                                            {{ trans('load-more') }}
+                                        </button>
+                                    </div>
                                 </div>
                                 {% endif %}
                             </div>
@@ -324,7 +331,13 @@
         return html;
     }
 
-    function docFilesLibrarySearch(element) {
+    // pide la siguiente página de resultados, sin perder los que ya se ven
+    function docFilesLibraryMore(element) {
+        const root = docFilesRoot(element);
+        docFilesLibrarySearch(root, parseInt(root.find('.docfiles-library-list').data('offset') || 0, 10) + 1);
+    }
+
+    function docFilesLibrarySearch(element, page) {
         const root = element instanceof jQuery ? element : docFilesRoot(element);
         const list = root.find('.docfiles-library-list');
 
@@ -333,8 +346,16 @@
             return;
         }
 
-        list.html('<div class="docfiles-library-loading list-group-item text-center p-4">'
-            + '<i class="fa-solid fa-circle-notch fa-2x fa-spin" aria-hidden="true"></i></div>');
+        // la primera página sustituye la lista, las siguientes se añaden debajo
+        const nextPage = page || 0;
+        const spinner = '<div class="docfiles-library-loading list-group-item text-center p-4">'
+            + '<i class="fa-solid fa-circle-notch fa-2x fa-spin" aria-hidden="true"></i></div>';
+        if (nextPage === 0) {
+            list.html(spinner);
+        } else {
+            list.append(spinner);
+        }
+        root.find('.docfiles-library-more').addClass('d-none');
 
         const url = new URL(window.location.href);
         url.searchParams.set('action', 'search-library');
@@ -345,11 +366,22 @@
             data: {
                 multireqtoken: root.find('.docfiles-library-token').val(),
                 query: root.find('.docfiles-library-query').val(),
-                sort: root.find('.docfiles-library-sort').val()
+                sort: root.find('.docfiles-library-sort').val(),
+                offset: nextPage * {{ fsc.libraryPageSize() }}
             },
             dataType: "json",
             success: function (data) {
-                list.html(docFilesLibraryRender(root, data.files || []));
+                list.find('.docfiles-library-loading').remove();
+
+                const html = docFilesLibraryRender(root, data.files);
+                if (nextPage === 0) {
+                    list.html(html);
+                } else if (data.files.length > 0) {
+                    list.append(html);
+                }
+
+                list.data('offset', nextPage);
+                root.find('.docfiles-library-more').toggleClass('d-none', true !== data.more);
                 docFilesLibraryCount(root);
             },
             error: function () {
@@ -360,7 +392,17 @@
 
     $(document).ready(function () {
         const docFilesTabRoot = $('#{{ viewName }}-docfiles');
-        docFilesLibrarySearch(docFilesTabRoot);
+
+        // la biblioteca se carga al abrir la pestaña, no antes, para no pedirla si no se usa
+        if ($('#{{ viewName }}').hasClass('active')) {
+            docFilesLibrarySearch(docFilesTabRoot);
+        } else {
+            $('a[href="#{{ viewName }}"]').on('shown.bs.tab', function () {
+                if (docFilesTabRoot.find('.docfiles-library-list').children().length === 0) {
+                    docFilesLibrarySearch(docFilesTabRoot);
+                }
+            });
+        }
 
         docFilesTabRoot.find('.docfiles-docs-container').sortable({
             cursor: "move",
