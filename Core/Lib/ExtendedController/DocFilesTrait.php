@@ -295,6 +295,13 @@ trait DocFilesTrait
             return false;
         }
 
+        // no recortamos la lista: si llegan de más, el usuario tiene que saber que no se ha guardado
+        $max = $this->maxLibraryFilesPerRequest();
+        if (count($idFiles) > $max) {
+            Tools::log()->warning('max-files-per-request', ['%max%' => $max]);
+            return false;
+        }
+
         $linked = $this->getLinkedFileIds($this->request->query('code'));
         foreach ($idFiles as $idFile) {
             // los ids llegan del formulario, así que no nos fiamos del formato
@@ -344,6 +351,16 @@ trait DocFilesTrait
     public function libraryPageSize(): int
     {
         return 8;
+    }
+
+    /**
+     * Número máximo de archivos de la biblioteca que se pueden vincular en una sola
+     * petición. Los plugins pueden sobrescribirlo si necesitan más.
+     * Es pública porque la vista también muestra el límite al usuario.
+     */
+    public function maxLibraryFilesPerRequest(): int
+    {
+        return 20;
     }
 
     /**
