@@ -779,6 +779,7 @@
     "file": "Archivo",
     "file-audio-codec-not-accepted": "Error al enviar el archivo de audio %fileName% porque su códec %codec% no está permitido. Los códecs permitidos son: %supported%",
     "file-extension-not-accepted": "Error al enviar el archivo %fileName% porque su extensión no está permitida. Las extensiones permitidas son: %accepted%",
+    "file-in-use": "En uso en otros registros",
     "file-in-use-cannot-delete": "No se puede eliminar el archivo porque está adjunto en otros %count% registros. Desvincúlalo de este registro.",
     "file-move-error": "Error al mover el archivo: (%origName%)",
     "file-name": "Nombre de archivo",

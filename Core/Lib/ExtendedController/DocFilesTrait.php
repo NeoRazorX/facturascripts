@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Model\AttachedFileRelation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Tools;
@@ -32,6 +33,9 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
  */
 trait DocFilesTrait
 {
+    /** @var array ids compartidos, cacheados por modelo y código */
+    private $sharedFileIds = [];
+
     abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fa-brands fa-html5');
 
     abstract protected function checkOwnerData($model): bool;
@@ -199,6 +203,62 @@ trait DocFilesTrait
 
         Tools::log()->notice('record-updated-correctly');
         return true;
+    }
+
+    /**
+     * Devuelve los ids de los archivos que ya están vinculados al registro actual.
+     *
+     * @param string|null $modelCode
+     * @return array
+     */
+    private function getLinkedFileIds($modelCode): array
+    {
+        $where = [Where::eq('model', $this->getModelClassName())];
+        $where[] = is_numeric($modelCode) ?
+            Where::eq('modelid|modelcode', $modelCode) :
+            Where::eq('modelcode', $modelCode);
+
+        // solamente necesitamos la columna, no los modelos
+        $ids = [];
+        foreach (DbQuery::table(AttachedFileRelation::tableName())->where($where)->select('idfile')->get() as $row) {
+            $ids[] = (int)$row['idfile'];
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Devuelve los ids de los archivos del registro actual que además están adjuntos
+     * en otros registros. La vista lo necesita para todas las tarjetas, así que se
+     * resuelve con una sola consulta.
+     */
+    public function getSharedFileIds(): array
+    {
+        // la caché va por modelo y código, no por controlador, para que un controlador
+        // con más de una pestaña de archivos no reutilice la respuesta de otra
+        $code = $this->request->query('code');
+        $cacheKey = $this->getModelClassName() . '|' . $code;
+        if (isset($this->sharedFileIds[$cacheKey])) {
+            return $this->sharedFileIds[$cacheKey];
+        }
+
+        $this->sharedFileIds[$cacheKey] = [];
+
+        $idFiles = $this->getLinkedFileIds($code);
+        if (empty($idFiles)) {
+            return $this->sharedFileIds[$cacheKey];
+        }
+
+        $counts = DbQuery::table(AttachedFileRelation::tableName())
+            ->whereIn('idfile', $idFiles)
+            ->countArray('idfile', 'idfile');
+        foreach ($counts as $idFile => $count) {
+            if ($count > 1) {
+                $this->sharedFileIds[$cacheKey][] = (int)$idFile;
+            }
+        }
+
+        return $this->sharedFileIds[$cacheKey];
     }
 
     /**

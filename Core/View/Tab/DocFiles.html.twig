@@ -41,10 +41,15 @@
                 </form>
             {% endif %}
 
+            {# los archivos compartidos se resuelven en una sola consulta, no una por tarjeta #}
+            {% set sharedFiles = fsc.getSharedFileIds() %}
             <div id="docs-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
                 {% for docfile in currentView.cursor %}
                     {% set file = docfile.getFile() %}
                     {% if file %}
+                    {% set sharedFile = docfile.idfile in sharedFiles %}
+                    {# eliminar saca el archivo de la biblioteca, hace falta permiso sobre ella #}
+                    {% set canDeleteFile = fsc.canDeleteFiles(docfile) %}
                     <div class="col" data-doc-id="{{ docfile.id }}">
                         <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
                               onsubmit="animateSpinner('add')">
@@ -90,6 +95,9 @@
                                         {% endif %}
                                         <i class="fa-solid fa-calendar-alt ms-3" aria-hidden="true"></i> {{ docfile.creationdate }}
                                         <i class="fa-solid fa-hard-drive ms-3" aria-hidden="true"></i> {{ bytes(file.size) }}
+                                        {% if sharedFile %}
+                                            <i class="fa-solid fa-link ms-3" aria-hidden="true"></i> {{ trans('file-in-use') }}
+                                        {% endif %}
                                     </p>
                                 </div>
                                 <div class="card-footer p-2" style="cursor: move;">
@@ -111,11 +119,19 @@
                                                     </li>
                                                     <li><hr class="dropdown-divider"></li>
                                                     <li>
-                                                        <button type="button"
-                                                                onclick="if(confirm('{{ trans('confirm-delete') }}')) { this.form.action.value='delete-file';this.form.submit(); }"
-                                                                class="dropdown-item text-danger">
-                                                            <i class="fa-regular fa-trash-alt fa-fw" aria-hidden="true"></i> {{ trans('delete-file') }}
-                                                        </button>
+                                                        {% if sharedFile or not canDeleteFile %}
+                                                            {# en uso en otros registros, o sin permiso sobre la biblioteca: solo desvincular #}
+                                                            <button type="button" class="dropdown-item disabled" disabled
+                                                                    title="{{ sharedFile ? trans('file-in-use') : trans('not-allowed-delete-library-files') }}">
+                                                                <i class="fa-regular fa-trash-alt fa-fw" aria-hidden="true"></i> {{ trans('delete-file') }}
+                                                            </button>
+                                                        {% else %}
+                                                            <button type="button"
+                                                                    onclick="if(confirm('{{ trans('confirm-delete') }}')) { this.form.action.value='delete-file';this.form.submit(); }"
+                                                                    class="dropdown-item text-danger">
+                                                                <i class="fa-regular fa-trash-alt fa-fw" aria-hidden="true"></i> {{ trans('delete-file') }}
+                                                            </button>
+                                                        {% endif %}
                                                     </li>
                                                 </ul>
                                             </div>
