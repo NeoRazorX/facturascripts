@@ -21,8 +21,11 @@ namespace FacturaScripts\Test\Core\Controller;
 
 use FacturaScripts\Core\Controller\Login;
 use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\Lib\MultiRequestProtection;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 final class LoginTest extends TestCase
 {
@@ -38,6 +41,7 @@ final class LoginTest extends TestCase
     protected function tearDown(): void
     {
         $this->controller->clearIncidents();
+        (new MultiRequestProtection())->clearSeed();
     }
 
     public function testBlockIP(): void
@@ -193,9 +197,52 @@ final class LoginTest extends TestCase
         }
     }
 
+    public function testFormTokenIgnoresStaleNickCookie(): void
+    {
+        // el formulario de login genera el token sin nick
+        $token = $this->newToken('');
+
+        // aunque el navegador conserve la cookie fsNick de una sesión anterior, el token es válido
+        $request = new Request([
+            'cookies' => ['fsNick' => 'admin'],
+            'request' => ['multireqtoken' => $token],
+        ]);
+        $this->assertTrue($this->invoke('validateFormToken', [$request]));
+    }
+
+    public function testLogoutTokenRequiresNick(): void
+    {
+        // el enlace de cerrar sesión se genera en páginas con sesión, con el nick en la semilla
+        $request = new Request([
+            'cookies' => ['fsNick' => 'admin'],
+            'query' => ['multireqtoken' => $this->newToken('admin')],
+        ]);
+        $this->assertTrue($this->invoke('checkFormToken', [$request, 'admin']));
+
+        // un token sin el nick no sirve para cerrar la sesión de ese usuario
+        $request = new Request([
+            'cookies' => ['fsNick' => 'admin'],
+            'query' => ['multireqtoken' => $this->newToken('')],
+        ]);
+        $this->assertFalse($this->invoke('checkFormToken', [$request, 'admin']));
+    }
+
     private function getRandomIp(): string
     {
         return rand(1, 255) . '.' . rand(1, 255) . '.' . rand(1, 255) . '.' . rand(1, 255);
+    }
+
+    private function invoke(string $method, array $args)
+    {
+        return (new ReflectionMethod(Login::class, $method))->invokeArgs($this->controller, $args);
+    }
+
+    private function newToken(string $seed): string
+    {
+        $multiRequestProtection = new MultiRequestProtection();
+        $multiRequestProtection->clearSeed();
+        $multiRequestProtection->addSeed($seed);
+        return $multiRequestProtection->newToken();
     }
 
     private function runController(): void
