@@ -213,6 +213,39 @@ trait DocFilesTrait
         return true;
     }
 
+    private function sortFilesAction(): bool
+    {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === $this->checkFileOwnerData()) {
+            return true;
+        }
+
+        $idsOrdenadas = $this->request->request->getArray('orden');
+        if (false === empty($idsOrdenadas)) {
+            $orden = 1;
+            foreach ($idsOrdenadas as $id_archivo) {
+                // solo reordenamos las relaciones del registro actual
+                $archivo = new AttachedFileRelation();
+                if (false === $archivo->load($id_archivo) || false === $this->checkFileRelation($archivo)) {
+                    continue;
+                }
+
+                $archivo->orden = $orden;
+                if ($archivo->save()) {
+                    $orden++;
+                }
+            }
+        }
+
+        $this->setTemplate(false);
+
+        $this->response->json(['status' => 'ok']);
+
+        return false;
+    }
+
     private function unlinkFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
@@ -307,13 +340,12 @@ trait DocFilesTrait
     private function validateFileActionToken(): bool
     {
         // valid request?
-        $token = $this->request->input('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
-            Tools::log()->warning('invalid-request');
+        if (false === $this->validateFileToken()) {
             return false;
         }
 
         // duplicated request?
+        $token = $this->request->input('multireqtoken', '');
         if ($this->multiRequestProtection->tokenExist($token)) {
             Tools::log()->warning('duplicated-request');
             return false;
@@ -322,36 +354,19 @@ trait DocFilesTrait
         return true;
     }
 
-    private function sortFilesAction(): bool
+    /**
+     * Comprueba la firma del token, pero sin marcarlo como usado. La búsqueda en
+     * la biblioteca se repite varias veces en la misma página, así que no puede
+     * consumir el token del formulario.
+     */
+    private function validateFileToken(): bool
     {
-        if (false === $this->permissions->allowUpdate) {
-            Tools::log()->warning('not-allowed-modify');
-            return true;
-        } elseif (false === $this->checkFileOwnerData()) {
-            return true;
+        $token = $this->request->input('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+            Tools::log()->warning('invalid-request');
+            return false;
         }
 
-        $idsOrdenadas = $this->request->request->getArray('orden');
-        if (false === empty($idsOrdenadas)) {
-            $orden = 1;
-            foreach ($idsOrdenadas as $id_archivo) {
-                // solo reordenamos las relaciones del registro actual
-                $archivo = new AttachedFileRelation();
-                if (false === $archivo->load($id_archivo) || false === $this->checkFileRelation($archivo)) {
-                    continue;
-                }
-
-                $archivo->orden = $orden;
-                if ($archivo->save()) {
-                    $orden++;
-                }
-            }
-        }
-
-        $this->setTemplate(false);
-
-        $this->response->json(['status' => 'ok']);
-
-        return false;
+        return true;
     }
 }
