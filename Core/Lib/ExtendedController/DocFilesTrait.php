@@ -144,9 +144,19 @@ trait DocFilesTrait
             return true;
         }
 
+        // el archivo puede estar adjunto en más registros, incluso en registros que este
+        // usuario no puede ver. En ese caso no se puede eliminar: hay que desvincularlo.
         $file = $fileRelation->getFile();
+        $others = $file ? $file->countRelations() - 1 : 0;
+        if ($others > 0) {
+            Tools::log()->warning('file-in-use-cannot-delete', ['%count%' => $others]);
+            return true;
+        }
+
         $fileRelation->delete();
-        $file->delete();
+        if ($file) {
+            $file->delete();
+        }
 
         Tools::log()->notice('record-deleted-correctly');
 
