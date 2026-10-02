@@ -85,6 +85,17 @@
         return salesFormAction('create-customer', '0');
     }
 
+    function newCustomerKeyDown(event) {
+        // al pulsar intro en un campo del modal, guardamos el cliente como con el botón guardar
+        if (event.key !== 'Enter' || event.repeat || event.isComposing || event.target.tagName !== 'INPUT') {
+            return true;
+        }
+
+        event.preventDefault();
+        createCustomerFromSales();
+        return false;
+    }
+
     function showCustomerModal() {
         $('#newCustomerModal').one('hidden.bs.modal', function () {
             $('#findCustomerModal').modal('show');

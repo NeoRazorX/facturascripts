@@ -85,6 +85,17 @@
         return purchasesFormAction('create-supplier', '0');
     }
 
+    function newSupplierKeyDown(event) {
+        // al pulsar intro en un campo del modal, guardamos el proveedor como con el botón guardar
+        if (event.key !== 'Enter' || event.repeat || event.isComposing || event.target.tagName !== 'INPUT') {
+            return true;
+        }
+
+        event.preventDefault();
+        createSupplierFromPurchases();
+        return false;
+    }
+
     function showSupplierModal() {
         $('#newSupplierModal').one('hidden.bs.modal', function () {
             $('#findSupplierModal').modal('show');
