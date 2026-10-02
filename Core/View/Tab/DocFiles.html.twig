@@ -32,7 +32,10 @@
                                         </p>
                                         <label for="{{ viewName }}-new-files" class="visually-hidden">{{ trans('files') }}</label>
                                         <input type="file" name="new-files[]" id="{{ viewName }}-new-files"
-                                               class="form-control docfiles-new-files" multiple/>
+                                               class="form-control docfiles-new-files"
+                                               multiple onchange="docFilesPickUploads(this);"/>
+                                        <div class="docfiles-upload-list mt-2"
+                                             data-remove="{{ trans('remove') }}"></div>
                                     </div>
                                 </div>
                                 {% if canUseLibrary %}
@@ -260,6 +263,67 @@
         docFilesLibraryCount(root);
     }
 
+    // deja en el input la unión de las listas recibidas, sin repetir el mismo archivo.
+    // lo usan el selector y el arrastrar, para que los dos acumulen igual.
+    function docFilesMergeUploads(input, lists) {
+        const data = new DataTransfer();
+        const names = [];
+        for (const list of lists) {
+            for (const file of list) {
+                if (names.includes(file.name + file.size)) {
+                    continue;
+                }
+
+                names.push(file.name + file.size);
+                data.items.add(file);
+            }
+        }
+
+        input.files = data.files;
+        docFilesRenderUploads(input);
+    }
+
+    function docFilesPickUploads(input) {
+        // el selector nativo ya ha reemplazado la lista, así que recuperamos la
+        // anterior para sumarla en vez de perderla
+        docFilesMergeUploads(input, [input.docFilesPrevious || [], input.files]);
+    }
+
+    function docFilesRenderUploads(element) {
+        const root = docFilesRoot(element);
+        const input = root.find('.docfiles-new-files')[0];
+        const list = root.find('.docfiles-upload-list');
+        list.empty();
+
+        // como ahora se acumulan, hace falta poder quitar los que sobren
+        const remove = docFilesLibraryEscape(list.data('remove'));
+        for (let pos = 0; pos < input.files.length; pos++) {
+            list.append('<span class="badge bg-success d-inline-flex align-items-center me-1 mb-1">'
+                + '<i class="fa-solid fa-file-arrow-up fa-fw" aria-hidden="true"></i> '
+                + docFilesLibraryEscape(input.files[pos].name)
+                + '<button type="button" class="btn-close btn-close-white ms-2" style="font-size: .5rem;"'
+                + ' aria-label="' + remove + '" onclick="docFilesRemoveUpload(this, ' + pos + ');"></button>'
+                + '</span>');
+        }
+
+        input.docFilesPrevious = Array.from(input.files);
+    }
+
+    function docFilesRemoveUpload(element, position) {
+        const root = docFilesRoot(element);
+        const input = root.find('.docfiles-new-files')[0];
+
+        const data = new DataTransfer();
+        for (let pos = 0; pos < input.files.length; pos++) {
+            if (pos !== position) {
+                data.items.add(input.files[pos]);
+            }
+        }
+
+        input.files = data.files;
+        docFilesRenderUploads(input);
+    }
+
     function docFilesDropzoneInit(root) {
         const zone = root.find('.docfiles-dropzone')[0];
         const input = root.find('.docfiles-new-files')[0];
@@ -291,7 +355,8 @@
                 return;
             }
 
-            input.files = event.dataTransfer.files;
+            // lo arrastrado se suma a lo ya elegido, en vez de reemplazarlo
+            docFilesMergeUploads(input, [input.files, event.dataTransfer.files]);
         });
     }
 
