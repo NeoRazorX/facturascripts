@@ -427,6 +427,15 @@ abstract class PanelController extends BaseController
                 }
                 break;
 
+            case 'search-library':
+                // los controladores que usan DocFilesTrait no tienen que enrutar esta
+                // acción: si no se resuelve aquí, la petición ajax recibe la página
+                // entera en lugar de la lista de archivos
+                if (method_exists($this, 'searchLibraryAction')) {
+                    return $this->searchLibraryAction();
+                }
+                break;
+
             case 'select':
                 $this->setTemplate(false);
                 $results = $this->selectAction();
