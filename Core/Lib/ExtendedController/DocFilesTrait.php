@@ -49,8 +49,15 @@ trait DocFilesTrait
             return true;
         }
 
+        // el formulario permite subir archivos nuevos y vincular otros de la biblioteca a la vez
         $uploadFiles = array_filter($this->request->files->getArray('new-files'));
-        if (false === $this->uploadNewFiles($uploadFiles)) {
+        $idFiles = $this->request->request->getArray('idfiles');
+        if (empty($uploadFiles) && empty($idFiles)) {
+            Tools::log()->warning('no-data');
+            return true;
+        }
+
+        if (false === $this->uploadNewFiles($uploadFiles) || false === $this->linkLibraryFiles($idFiles)) {
             return true;
         }
 
@@ -269,6 +276,51 @@ trait DocFilesTrait
         }
 
         return $this->sharedFileIds[$cacheKey];
+    }
+
+    /**
+     * Vincula al registro actual archivos que ya están en la biblioteca.
+     *
+     * @param array $idFiles
+     * @return bool false si hay que interrumpir la acción
+     */
+    private function linkLibraryFiles(array $idFiles): bool
+    {
+        if (empty($idFiles)) {
+            return true;
+        }
+
+        if (false === $this->canUseFileLibrary()) {
+            Tools::log()->warning('not-allowed-modify');
+            return false;
+        }
+
+        $linked = $this->getLinkedFileIds($this->request->query('code'));
+        foreach ($idFiles as $idFile) {
+            // los ids llegan del formulario, así que no nos fiamos del formato
+            if (false === is_numeric($idFile)) {
+                continue;
+            }
+
+            $file = new AttachedFile();
+            if (false === $file->load($idFile)) {
+                Tools::log()->warning('record-not-found');
+                continue;
+            }
+
+            // si ya está vinculado a este registro, no lo duplicamos
+            if (in_array($file->idfile, $linked)) {
+                continue;
+            }
+
+            if (false === $this->saveFileRelation($file->idfile, 'linkFilesAction')) {
+                return false;
+            }
+
+            $linked[] = $file->idfile;
+        }
+
+        return true;
     }
 
     /**
