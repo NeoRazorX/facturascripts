@@ -307,10 +307,14 @@
         // como ahora se acumulan, hace falta poder quitar los que sobren
         const remove = docFilesLibraryEscape(list.data('remove'));
         for (let pos = 0; pos < input.files.length; pos++) {
-            list.append('<span class="badge bg-success d-inline-flex align-items-center me-1 mb-1">'
-                + '<i class="fa-solid fa-file-arrow-up fa-fw" aria-hidden="true"></i> '
-                + docFilesLibraryEscape(input.files[pos].name)
-                + '<button type="button" class="btn-close btn-close-white ms-2" style="font-size: .5rem;"'
+            // el nombre se recorta y el resto de la etiqueta no encoge, para que la
+            // X siga alcanzable con nombres largos. el nombre completo va en el title.
+            const name = docFilesLibraryEscape(input.files[pos].name);
+            list.append('<span class="badge bg-success d-inline-flex align-items-center mw-100 me-1 mb-1"'
+                + ' title="' + name + '">'
+                + '<i class="fa-solid fa-file-arrow-up fa-fw flex-shrink-0" aria-hidden="true"></i> '
+                + '<span class="text-truncate">' + name + '</span>'
+                + '<button type="button" class="btn-close btn-close-white flex-shrink-0 ms-2" style="font-size: .5rem;"'
                 + ' aria-label="' + remove + '" onclick="docFilesRemoveUpload(this, ' + pos + ');"></button>'
                 + '</span>');
         }
