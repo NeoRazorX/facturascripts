@@ -23,12 +23,17 @@
                             {% set canUseLibrary = fsc.user.can('ListAttachedFile') %}
                             <div class="row g-3 mb-3">
                                 <div class="docfiles-upload-col col-12{% if canUseLibrary %} col-lg-4{% endif %}">
-                                    <p class="text-muted small mb-3">
-                                        {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
-                                    </p>
-                                    <label for="{{ viewName }}-new-files" class="visually-hidden">{{ trans('files') }}</label>
-                                    <input type="file" name="new-files[]" id="{{ viewName }}-new-files"
-                                           class="form-control docfiles-new-files" multiple/>
+                                    <div class="docfiles-dropzone rounded text-center p-3 h-100 d-flex flex-column justify-content-center"
+                                         style="border: 2px dashed #198754; background-color: #f4fbf7;">
+                                        <i class="fa-solid fa-cloud-arrow-up fa-2x text-success mb-2" aria-hidden="true"></i>
+                                        <p class="mb-1">{{ trans('upload-file') }}</p>
+                                        <p class="text-muted small mb-3">
+                                            {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
+                                        </p>
+                                        <label for="{{ viewName }}-new-files" class="visually-hidden">{{ trans('files') }}</label>
+                                        <input type="file" name="new-files[]" id="{{ viewName }}-new-files"
+                                               class="form-control docfiles-new-files" multiple/>
+                                    </div>
                                 </div>
                                 {% if canUseLibrary %}
                                 <div class="docfiles-library-col col-12 col-lg-8">
@@ -255,6 +260,41 @@
         docFilesLibraryCount(root);
     }
 
+    function docFilesDropzoneInit(root) {
+        const zone = root.find('.docfiles-dropzone')[0];
+        const input = root.find('.docfiles-new-files')[0];
+        if (undefined === zone || undefined === input) {
+            return;
+        }
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function (name) {
+            zone.addEventListener(name, function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+        });
+
+        ['dragenter', 'dragover'].forEach(function (name) {
+            zone.addEventListener(name, function () {
+                zone.style.backgroundColor = '#d1e7dd';
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(function (name) {
+            zone.addEventListener(name, function () {
+                zone.style.backgroundColor = '#f4fbf7';
+            });
+        });
+
+        zone.addEventListener('drop', function (event) {
+            if (event.dataTransfer.files.length === 0) {
+                return;
+            }
+
+            input.files = event.dataTransfer.files;
+        });
+    }
+
     function docFilesLibraryToggle(checkbox) {
         const root = docFilesRoot(checkbox);
         const chips = root.find('.docfiles-library-chips');
@@ -455,6 +495,7 @@
 
     $(document).ready(function () {
         const docFilesTabRoot = $('#{{ viewName }}-docfiles');
+        docFilesDropzoneInit(docFilesTabRoot);
 
         // la biblioteca se carga al abrir la pestaña, no antes, para no pedirla si no se usa
         if ($('#{{ viewName }}').hasClass('active')) {
