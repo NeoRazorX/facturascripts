@@ -60,6 +60,18 @@ trait DocFilesTrait
     }
 
     /**
+     * Indica si el usuario puede eliminar el archivo, no solo desvincularlo. Eliminar
+     * lo saca de la biblioteca, que es un almacén compartido, así que exigimos permiso
+     * de borrado sobre ella. Cada usuario sí puede eliminar lo que él mismo subió.
+     * Es pública porque la vista decide con ella si muestra el botón.
+     */
+    public function canDeleteFiles(AttachedFileRelation $fileRelation): bool
+    {
+        return $this->user->can('ListAttachedFile', 'delete')
+            || (false === empty($fileRelation->nick) && $fileRelation->nick === $this->user->nick);
+    }
+
+    /**
      * Comprueba que el usuario puede modificar los adjuntos del registro actual
      * cuando solo tiene acceso a sus propios datos.
      */
@@ -123,6 +135,12 @@ trait DocFilesTrait
 
         if (false === $this->checkFileRelation($fileRelation)) {
             Tools::log()->warning('not-allowed-delete');
+            return true;
+        }
+
+        // eliminar saca el archivo de la biblioteca, no solo de este registro
+        if (false === $this->canDeleteFiles($fileRelation)) {
+            Tools::log()->warning('not-allowed-delete-library-files');
             return true;
         }
 

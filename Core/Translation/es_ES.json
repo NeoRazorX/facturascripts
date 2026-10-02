@@ -1300,6 +1300,7 @@
     "normal": "Normal",
     "normal-declaration": "Nueva",
     "not-allowed-delete": "No tiene permiso para eliminar",
+    "not-allowed-delete-library-files": "No tiene permiso para eliminar archivos de la biblioteca",
     "not-allowed-modify": "No tiene permiso para modificar",
     "not-allowed-update": "Actualización no permitida",
     "not-editable": "No editable",
