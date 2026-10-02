@@ -20,7 +20,9 @@
 namespace FacturaScripts\Test\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\Widget\WidgetSelect;
+use FacturaScripts\Core\Request;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class WidgetSelectTest extends TestCase
 {
@@ -83,6 +85,29 @@ class WidgetSelectTest extends TestCase
         $this->assertStringContainsString('<option value="3" selected>Three</option>', $second);
     }
 
+    public function testMultipleSelectJoinsSubmittedValues(): void
+    {
+        $widget = new WidgetSelect($this->widgetData(['multiple' => 'true']));
+        $model = new stdClass();
+
+        $widget->processFormData($model, new Request(['request' => ['test' => ['a', 'b', ['c']]]]));
+
+        $this->assertSame('a,b', $model->test);
+    }
+
+    public function testMultipleSelectDoesNotUnserializeSubmittedString(): void
+    {
+        WidgetSelectGadgetForTest::$wakeups = 0;
+        $widget = new WidgetSelect($this->widgetData(['multiple' => 'true']));
+        $model = new stdClass();
+        $payload = serialize([new WidgetSelectGadgetForTest()]);
+
+        $widget->processFormData($model, new Request(['request' => ['test' => $payload]]));
+
+        $this->assertSame(0, WidgetSelectGadgetForTest::$wakeups);
+        $this->assertNull($model->test);
+    }
+
     private function widgetData(array $extra = []): array
     {
         return array_merge([
@@ -99,5 +124,16 @@ class WidgetSelectForTest extends WidgetSelect
     {
         $this->setCustomValue($value);
         return $this->inputHtml();
+    }
+}
+
+class WidgetSelectGadgetForTest
+{
+    /** @var int */
+    public static $wakeups = 0;
+
+    public function __wakeup()
+    {
+        self::$wakeups++;
     }
 }
