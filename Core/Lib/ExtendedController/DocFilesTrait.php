@@ -45,48 +45,9 @@ trait DocFilesTrait
             return true;
         }
 
-        $uploadFiles = $this->request->files->getArray('new-files');
-        foreach ($uploadFiles as $uploadFile) {
-            if (is_null($uploadFile)) {
-                continue;
-            } elseif (false === $uploadFile->isValid()) {
-                Tools::log()->error($uploadFile->getErrorMessage());
-                continue;
-            }
-
-            // check if the file already exists
-            $destiny = FS_FOLDER . '/MyFiles/';
-            $destinyName = $uploadFile->getClientOriginalName();
-            if (file_exists($destiny . $destinyName)) {
-                $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
-            }
-
-            // move the file to the MyFiles folder
-            if (false === $uploadFile->move($destiny, $destinyName)) {
-                Tools::log()->error(Tools::trans('file-not-found'));
-                continue;
-            }
-
-            $newFile = new AttachedFile();
-            $newFile->path = $destinyName;
-            if (false === $newFile->save()) {
-                Tools::log()->error('fail');
-                return true;
-            }
-
-            $fileRelation = new AttachedFileRelation();
-            $fileRelation->idfile = $newFile->idfile;
-            $fileRelation->model = $this->getModelClassName();
-            $fileRelation->modelcode = $this->request->query('code');
-            $fileRelation->modelid = (int)$fileRelation->modelcode;
-            $fileRelation->nick = $this->user->nick;
-            $fileRelation->observations = $this->request->input('observations');
-            $this->pipeFalse('addFileAction', $fileRelation, $this->request);
-
-            if (false === $fileRelation->save()) {
-                Tools::log()->error('fail-relation');
-                return true;
-            }
+        $uploadFiles = array_filter($this->request->files->getArray('new-files'));
+        if (false === $this->uploadNewFiles($uploadFiles)) {
+            return true;
         }
 
         // Si se trata de un documento, actualizamos el número de documentos adjuntos.
@@ -273,6 +234,58 @@ trait DocFilesTrait
         if (false === $model->save()) {
             Tools::log()->error('record-save-error');
         }
+    }
+
+    /**
+     * Mueve a MyFiles los archivos subidos y los vincula al registro actual.
+     *
+     * @param array $uploadFiles
+     * @return bool false si hay que interrumpir la acción
+     */
+    private function uploadNewFiles(array $uploadFiles): bool
+    {
+        foreach ($uploadFiles as $uploadFile) {
+            if (false === $uploadFile->isValid()) {
+                Tools::log()->error($uploadFile->getErrorMessage());
+                continue;
+            }
+
+            // check if the file already exists
+            $destiny = FS_FOLDER . '/MyFiles/';
+            $destinyName = $uploadFile->getClientOriginalName();
+            if (file_exists($destiny . $destinyName)) {
+                $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
+            }
+
+            // move the file to the MyFiles folder
+            if (false === $uploadFile->move($destiny, $destinyName)) {
+                Tools::log()->error(Tools::trans('file-not-found'));
+                continue;
+            }
+
+            $newFile = new AttachedFile();
+            $newFile->path = $destinyName;
+            if (false === $newFile->save()) {
+                Tools::log()->error('fail');
+                return false;
+            }
+
+            $fileRelation = new AttachedFileRelation();
+            $fileRelation->idfile = $newFile->idfile;
+            $fileRelation->model = $this->getModelClassName();
+            $fileRelation->modelcode = $this->request->query('code');
+            $fileRelation->modelid = (int)$fileRelation->modelcode;
+            $fileRelation->nick = $this->user->nick;
+            $fileRelation->observations = $this->request->input('observations');
+            $this->pipeFalse('addFileAction', $fileRelation, $this->request);
+
+            if (false === $fileRelation->save()) {
+                Tools::log()->error('fail-relation');
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function validateFileActionToken(): bool
