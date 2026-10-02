@@ -286,6 +286,15 @@ trait DocFilesTrait
     }
 
     /**
+     * Número de archivos de la biblioteca que devuelve cada página de la búsqueda.
+     * Es pública porque la vista la necesita para pedir la página siguiente.
+     */
+    public function libraryPageSize(): int
+    {
+        return 8;
+    }
+
+    /**
      * Crea la relación entre un archivo y el registro actual.
      *
      * @param int $idFile
@@ -351,10 +360,27 @@ trait DocFilesTrait
             $where[] = Where::xlike('filename', $query);
         }
 
+        // el idfile desempata: sin él, dos archivos de la misma hora pueden
+        // repetirse o perderse al pasar de página
+        $orderBy = $this->request->input('sort') === 'date-asc' ?
+            ['date' => 'ASC', 'hour' => 'ASC', 'idfile' => 'ASC'] :
+            ['date' => 'DESC', 'hour' => 'DESC', 'idfile' => 'DESC'];
+
         $linked = $this->getLinkedFileIds($this->request->query('code'));
 
+        // devolvemos solo la página pedida. pedimos un archivo de más para saber
+        // si hay siguiente sin tener que contarlos todos.
+        $limit = $this->libraryPageSize();
+        $offset = max(0, (int)$this->request->input('offset', 0));
+
         $files = [];
-        foreach (AttachedFile::all($where, ['date' => 'DESC', 'hour' => 'DESC', 'idfile' => 'DESC']) as $file) {
+        $more = false;
+        foreach (AttachedFile::all($where, $orderBy, $offset, $limit + 1) as $file) {
+            if (count($files) >= $limit) {
+                $more = true;
+                break;
+            }
+
             $files[] = [
                 'date' => $file->date . ' ' . $file->hour,
                 'filename' => $file->filename,
@@ -367,7 +393,7 @@ trait DocFilesTrait
             ];
         }
 
-        $this->response->json(['files' => $files]);
+        $this->response->json(['files' => $files, 'more' => $more, 'offset' => $offset]);
         return false;
     }
 
