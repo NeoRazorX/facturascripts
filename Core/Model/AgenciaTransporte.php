@@ -26,7 +26,15 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
 
 /**
- * Merchandise transport agency.
+ * Agencia de transporte de mercancías, es decir, la empresa que se encarga de llevar
+ * los artículos hasta el cliente. Se almacena en la tabla `agenciastrans` y se identifica
+ * mediante un código alfanumérico de hasta 8 caracteres (`codtrans`) que se genera
+ * automáticamente si no se indica al guardar.
+ *
+ * Los albaranes y facturas de venta la referencian a través del campo `codtrans` para
+ * indicar quién realiza el envío. Al guardar se valida el formato del código y que la
+ * web sea una URL válida, y se limpia la caché de `DataSrc\AgenciasTransporte`, que
+ * mantiene el listado en memoria para los desplegables.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>

@@ -24,8 +24,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Visual filter configuration of the FacturaScripts views,
- * each PageFilter corresponds to a view or tab filter.
+ * Filtro guardado de una vista de FacturaScripts, almacenado en la tabla
+ * pages_filters. Permite que cada usuario conserve con un nombre descriptivo
+ * la combinación de filtros que aplica habitualmente sobre una página, para
+ * poder recuperarla después con un solo clic. Los valores de los filtros se
+ * guardan codificados en JSON y se decodifican a array al cargarlos.
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */

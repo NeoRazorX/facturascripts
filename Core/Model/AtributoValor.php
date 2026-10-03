@@ -25,7 +25,15 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Atributo as DinAtributo;
 
 /**
- * A Value for an article attribute.
+ * Valor concreto de un atributo de artículo: por ejemplo «rojo» para el atributo «color».
+ * Se guarda en la tabla `atributos_valores` y pertenece a un `Atributo` a través de
+ * `codatributo`. Las variantes de producto referencian estos valores para describir en qué
+ * se diferencian entre sí.
+ *
+ * Al guardar, el campo `descripcion` se recalcula uniendo el nombre del atributo y el valor,
+ * de modo que sea legible en los desplegables. El campo `orden` controla la posición en la
+ * que se muestra e imprime, y los listados de códigos se devuelven ordenados por atributo y
+ * por ese orden. Su edición se realiza siempre desde la ficha del atributo padre.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

@@ -23,7 +23,9 @@ use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
- * Description of InvoiceTrait
+ * Trait que añade la relación con el ejercicio contable (Ejercicio) a partir
+ * de codejercicio, permitiendo obtener el ejercicio asociado o, si no se
+ * indica ninguno, el ejercicio actual por defecto.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

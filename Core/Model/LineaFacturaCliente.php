@@ -25,7 +25,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\FacturaCliente as DinFacturaCliente;
 
 /**
- * Line of a customer invoice.
+ * Línea de una factura de cliente, almacenada en la tabla lineasfacturascli.
+ * Guarda el producto o servicio facturado junto con su cantidad, precio,
+ * descuentos e impuestos, y se relaciona con la factura mediante idfactura.
+ * En las facturas rectificativas, idlinearect apunta a la línea original que
+ * se está rectificando. La cantidad servida se fuerza siempre a cero para
+ * evitar alteraciones del stock al eliminar facturas rectificadas.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

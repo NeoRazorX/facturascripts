@@ -27,7 +27,12 @@ use FacturaScripts\Dinamic\Model\LineaFacturaProveedor as LineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboProveedor as DinReciboProveedor;
 
 /**
- * Invoice from a supplier.
+ * Factura de proveedor. Es el documento de compra definitivo, con el que se registra el gasto
+ * y que genera el asiento contable y los recibos de pago correspondientes. Sus líneas se
+ * guardan en LineaFacturaProveedor y sus vencimientos en ReciboProveedor, que determinan si
+ * la factura está pagada o vencida. Admite facturas rectificativas y abonos.
+ * A diferencia de las facturas de cliente, no se comprueba la correlación entre fecha y
+ * numeración, ya que la numeración la establece el proveedor.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

@@ -22,6 +22,13 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
+/**
+ * Trait que añade la relación con el impuesto (Impuesto) a partir de
+ * codimpuesto, permitiendo obtener el impuesto asociado o, si no se
+ * indica ninguno, el impuesto por defecto.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 trait TaxRelationTrait
 {
     /**

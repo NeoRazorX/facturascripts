@@ -26,7 +26,17 @@ use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinFile;
 
 /**
- * Description of AttachedFileRelation
+ * Relación entre un archivo adjunto y el registro de cualquier otro modelo. Se guarda en la
+ * tabla `attached_files_rel` y permite asociar un mismo `AttachedFile` (`idfile`) a varios
+ * documentos, clientes, productos, etc., sin necesidad de añadir campos a esas tablas.
+ *
+ * El registro relacionado se identifica por el nombre del modelo (`model`) junto con
+ * `modelid` cuando su clave primaria es numérica o `modelcode` cuando es un código. Además
+ * se guarda quién creó la relación, la fecha, unas observaciones y un campo `orden` para
+ * poder ordenar los adjuntos de un mismo registro.
+ *
+ * El método `url()` resuelve dinámicamente la clase del modelo en `Dinamic` para devolver
+ * la url del registro al que pertenece el archivo.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

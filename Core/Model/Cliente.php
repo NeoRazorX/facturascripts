@@ -41,7 +41,21 @@ use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * The client. You can have one or more associated addresses and accounts.
+ * Cliente, la persona física o jurídica a la que se le vende. Se guarda en la tabla
+ * `clientes` y se identifica con un código alfanumérico de hasta 10 caracteres
+ * (`codcliente`) que se genera automáticamente si no se indica. Puede tener varias
+ * direcciones asociadas, que son registros de `Contacto`, y varias cuentas bancarias
+ * (`CuentaBancoCliente`); al crearlo se genera un contacto de facturación de forma
+ * automática.
+ *
+ * Concentra las condiciones comerciales que se aplican por defecto a sus documentos de
+ * venta: agente, grupo de clientes, tarifa, forma de pago, serie, retención, régimen de
+ * IVA, días de pago y riesgo máximo autorizado.
+ *
+ * En el plano contable, `getSubcuenta()` devuelve la subcuenta del cliente para el
+ * ejercicio indicado y, si no existe, puede crearla a partir de la cuenta especial
+ * `CLIENT` o heredarla del grupo de clientes. Dar de baja al cliente consiste en rellenar
+ * `fechabaja`, que activa el indicador `debaja`.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
