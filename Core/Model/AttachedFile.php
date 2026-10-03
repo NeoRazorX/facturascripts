@@ -68,6 +68,14 @@ class AttachedFile extends ModelClass
         $this->size = 0;
     }
 
+    /** Devuelve el número de registros a los que está adjunto este archivo. */
+    public function countRelations(): int
+    {
+        return empty($this->idfile) ?
+            0 :
+            AttachedFileRelation::countWhereEq('idfile', $this->idfile);
+    }
+
     public function delete(): bool
     {
         // eliminamos el archivo, solo si está dentro de MyFiles
