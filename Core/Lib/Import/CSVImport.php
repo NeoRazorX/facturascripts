@@ -167,6 +167,7 @@ class CSVImport
                 break;
 
             case 'postgresql':
+            case 'sqlite':
                 $sql .= ' ON CONFLICT ('
                     . $csv->titles[0]
                     . ') DO UPDATE SET '
