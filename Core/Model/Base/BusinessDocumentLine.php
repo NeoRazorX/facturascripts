@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Template\ModelClass as NewModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
@@ -50,6 +51,9 @@ abstract class BusinessDocumentLine extends NewModelClass
      * @var float|int
      */
     public $cantidad;
+
+    /** @var string Código de la retención aplicada a la línea. */
+    public $codretencion;
 
     /**
      * Descripción de la línea.
@@ -173,6 +177,7 @@ abstract class BusinessDocumentLine extends NewModelClass
 
         $this->actualizastock = 0;
         $this->cantidad = 1.0;
+        $this->codretencion = null;
         $this->descripcion = '';
         $this->dtopor = 0.0;
         $this->dtopor2 = 0.0;
@@ -364,6 +369,26 @@ abstract class BusinessDocumentLine extends NewModelClass
         $this->pvpunitario = round($newPrice, Producto::ROUND_DECIMALS);
     }
 
+    public function setRetention(?string $codretencion): void
+    {
+        if (empty($codretencion)) {
+            $this->codretencion = null;
+            $this->irpf = 0.0;
+            return;
+        }
+
+        $retencion = Retenciones::get($codretencion);
+        if (empty($retencion->codretencion)) {
+            // la retención no existe
+            $this->codretencion = null;
+            $this->irpf = 0.0;
+            return;
+        }
+
+        $this->codretencion = $retencion->codretencion;
+        $this->irpf = (float)$retencion->porcentaje;
+    }
+
     public function setTax(?string $codimpuesto): void
     {
         if (empty($codimpuesto)) {
@@ -435,6 +460,10 @@ abstract class BusinessDocumentLine extends NewModelClass
             $this->codimpuesto = null;
             $this->iva = 0.0;
             $this->recargo = 0.0;
+        }
+
+        if (empty($this->codretencion)) {
+            $this->codretencion = null;
         }
 
         if ($this->servido < 0 && $this->cantidad >= 0) {
