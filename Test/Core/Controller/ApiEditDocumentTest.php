@@ -288,6 +288,36 @@ final class ApiEditDocumentTest extends TestCase
         $this->assertTrue($product->delete(), 'can-not-delete-product');
     }
 
+    public function testHourWithoutDateIsApplied(): void
+    {
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        // creamos el albarán
+        $doc = new AlbaranCliente();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-set-subject');
+        $this->assertTrue($doc->save(), 'can-not-create-albaran');
+        $fecha = $doc->fecha;
+
+        // cambiamos solo la hora
+        $result = $this->callEdit('editarAlbaranCliente', $doc->idalbaran, [
+            'hora' => '09:15:00',
+            'lineas' => '[]',
+        ]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'edit-hour-without-date-bad-code');
+
+        // la hora cambia y la fecha se conserva
+        $doc->reload();
+        $this->assertEquals('09:15:00', $doc->hora, 'hour-without-date-not-applied');
+        $this->assertEquals($fecha, $doc->fecha, 'date-changed');
+
+        // limpiamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-albaran');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
     public function testLineIrpfIsApplied(): void
     {
         // creamos un cliente sin retención, para que la cabecera no aporte IRPF
