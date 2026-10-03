@@ -145,6 +145,63 @@ final class ApiEditDocumentTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
 
+    public function testChangeStatus(): void
+    {
+        // creamos un estado no editable para facturas (sin generar documento ni mover stock)
+        $estado = new EstadoDocumento();
+        $estado->tipodoc = 'FacturaCliente';
+        $estado->nombre = 'Test no editable ' . mt_rand(1, 99999);
+        $estado->editable = false;
+        $estado->actualizastock = 0;
+        $this->assertTrue($estado->save(), 'can-not-save-estado');
+
+        // creamos una factura editable con una línea
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->editable, 'invoice-should-be-editable');
+        $initialStatus = $invoice->idestado;
+        $idlinea = $invoice->getLines()[0]->idlinea;
+
+        // cambiamos las líneas y el estado en la misma llamada
+        $payload = [
+            'idestado' => $estado->idestado,
+            'lineas' => json_encode([
+                ['idlinea' => $idlinea, 'cantidad' => 2, 'pvpunitario' => 50],
+            ]),
+        ];
+        $result = $this->callEdit('editarFacturaCliente', $invoice->idfactura, $payload);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'change-status-bad-code');
+
+        $invoice->reload();
+        $this->assertEquals(100, $invoice->neto, 'change-status-bad-neto');
+        $this->assertEquals($estado->idestado, $invoice->idestado, 'status-not-changed');
+        $this->assertEquals($initialStatus, $invoice->idestado_ant, 'bad-previous-status');
+        $this->assertFalse($invoice->editable, 'invoice-should-not-be-editable');
+
+        // un estado de otro tipo de documento debe rechazarse
+        $otherStatus = (new AlbaranCliente())->getAvailableStatus()[0];
+        $result = $this->callEdit('editarFacturaCliente', $invoice->idfactura, ['idestado' => $otherStatus->idestado]);
+        $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $result['code'], 'other-type-status-bad-code');
+        $this->assertEquals('invalid-status', $result['body']['message'] ?? '', 'other-type-status-bad-message');
+
+        $invoice->reload();
+        $this->assertEquals($estado->idestado, $invoice->idestado, 'status-changed-to-other-type');
+
+        // desde el documento no editable podemos volver al estado inicial
+        $result = $this->callEdit('editarFacturaCliente', $invoice->idfactura, ['idestado' => $initialStatus]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'restore-status-bad-code');
+
+        $invoice->reload();
+        $this->assertEquals($initialStatus, $invoice->idestado, 'status-not-restored');
+        $this->assertTrue($invoice->editable, 'invoice-should-be-editable-again');
+
+        // limpiamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($estado->delete(), 'can-not-delete-estado');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
     public function testDocumentNotFound(): void
     {
         $result = $this->callEdit('editarFacturaCliente', 99999999, ['lineas' => '[]']);

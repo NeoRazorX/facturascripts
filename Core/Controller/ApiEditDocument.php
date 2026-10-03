@@ -40,6 +40,54 @@ class ApiEditDocument extends ApiController
     protected $model;
 
     /**
+     * Cambia el estado del documento si se recibe idestado. Se aplica después de
+     * guardar la cabecera y las líneas, igual que en la web, para que el cambio de
+     * estado (stock, generación de documentos) trabaje sobre el documento ya guardado.
+     */
+    protected function changeStatus(BusinessDocument &$doc): bool
+    {
+        if (false === $doc instanceof TransformerDocument || false === $this->request->request->has('idestado')) {
+            return true;
+        }
+
+        $idestado = (int)$this->request->input('idestado');
+        if ($idestado === (int)$doc->idestado) {
+            return true;
+        }
+
+        // el estado debe estar activo y pertenecer a este tipo de documento
+        $valid = false;
+        foreach ($doc->getAvailableStatus() as $status) {
+            if ((int)$status->idestado === $idestado && $status->activo) {
+                $valid = true;
+                break;
+            }
+        }
+        if (false === $valid) {
+            $this->response
+                ->setHttpCode(Response::HTTP_UNPROCESSABLE_ENTITY)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'invalid-status',
+                ]);
+            return false;
+        }
+
+        $doc->idestado = $idestado;
+        if (false === $doc->save()) {
+            $this->response
+                ->setHttpCode(Response::HTTP_UNPROCESSABLE_ENTITY)
+                ->json([
+                    'status' => 'error',
+                    'message' => Tools::trans('record-save-error'),
+                ]);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Comprueba que la empresa (idempresa) no se cambia, porque rompería la
      * numeración, la contabilidad y el stock asociado al documento.
      */
@@ -140,6 +188,11 @@ class ApiEditDocument extends ApiController
             return false;
         }
 
+        // cambiamos el estado, con el documento ya guardado
+        if (false === $this->changeStatus($doc)) {
+            return false;
+        }
+
         // procesamos factura pagada si aplica
         $this->processInvoicePaid($doc);
 
@@ -179,9 +232,9 @@ class ApiEditDocument extends ApiController
             }
         }
 
-        // aplicamos los campos desbloqueados (pagada se gestiona aparte)
+        // aplicamos los campos desbloqueados (pagada y el estado se gestionan aparte)
         foreach ($unlocked as $key) {
-            if ($key === 'pagada') {
+            if ($key === 'pagada' || $key === 'idestado') {
                 continue;
             }
             if ($doc->hasColumn($key) && $this->request->request->has($key)) {
@@ -196,6 +249,11 @@ class ApiEditDocument extends ApiController
                     'status' => 'error',
                     'message' => Tools::trans('record-save-error'),
                 ]);
+            return false;
+        }
+
+        // cambiamos el estado
+        if (false === $this->changeStatus($doc)) {
             return false;
         }
 
@@ -419,7 +477,7 @@ class ApiEditDocument extends ApiController
      * Actualiza la cabecera del documento con los campos permitidos. No toca el
      * sujeto ni el almacén (ya validados como inmutables), ni la clave primaria,
      * la numeración (numero, codigo, codejercicio) ni el estado (idestado), que
-     * deben cambiarse por sus mecanismos propios y no por asignación directa.
+     * se cambia después en changeStatus(), con las líneas ya guardadas.
      */
     protected function updateHeader(BusinessDocument &$doc): bool
     {
@@ -445,7 +503,7 @@ class ApiEditDocument extends ApiController
         // asignamos el resto de campos del modelo, excepto los protegidos: sujeto,
         // empresa, almacén, fecha/hora/divisa (ya gestionados arriba), la clave
         // primaria, la numeración (numero, codigo, codejercicio) y el estado
-        // (idestado/idestado_ant), que rompen integridad si se asignan a pelo
+        // (idestado/idestado_ant): idestado se aplica después en changeStatus()
         $protected = [
             $doc->primaryColumn(), $doc->subjectColumn(), 'idempresa', 'codalmacen',
             'fecha', 'hora', 'coddivisa', 'numero', 'codigo', 'codejercicio',

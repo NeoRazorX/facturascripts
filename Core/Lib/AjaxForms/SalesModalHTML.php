@@ -393,7 +393,7 @@ class SalesModalHTML
             . Tools::trans('new-customer') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'
             . '</div>'
-            . '<div class="modal-body">'
+            . '<div class="modal-body" onkeydown="return newCustomerKeyDown(event);">'
             . '<div class="row g-2">'
             . '<div class="col-sm-8"><label for="newCustomerName" class="form-label">' . Tools::trans('name') . '</label>'
             . '<input type="text" name="newcustomer_nombre" id="newCustomerName" class="form-control" maxlength="100" required></div>'

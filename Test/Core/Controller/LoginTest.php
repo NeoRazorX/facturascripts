@@ -20,7 +20,12 @@
 namespace FacturaScripts\Test\Core\Controller;
 
 use FacturaScripts\Core\Controller\Login;
+use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\Lib\MultiRequestProtection;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 final class LoginTest extends TestCase
 {
@@ -36,6 +41,7 @@ final class LoginTest extends TestCase
     protected function tearDown(): void
     {
         $this->controller->clearIncidents();
+        (new MultiRequestProtection())->clearSeed();
     }
 
     public function testBlockIP(): void
@@ -172,8 +178,78 @@ final class LoginTest extends TestCase
         $this->assertFalse($this->controller->userHasManyIncidents($ip, $user));
     }
 
+    public function testTitleBeforeAndAfterWizard(): void
+    {
+        $homepage = Tools::settings('default', 'homepage');
+
+        try {
+            // antes del asistente no se muestra el nombre provisional de la empresa
+            Tools::settingsSet('default', 'homepage', null);
+            $this->runController();
+            $this->assertSame('FacturaScripts', $this->controller->title);
+
+            // después del asistente se muestra el nombre de la empresa
+            Tools::settingsSet('default', 'homepage', 'Root');
+            $this->runController();
+            $this->assertSame(Empresas::default()->nombrecorto, $this->controller->title);
+        } finally {
+            Tools::settingsSet('default', 'homepage', $homepage);
+        }
+    }
+
+    public function testFormTokenIgnoresStaleNickCookie(): void
+    {
+        // el formulario de login genera el token sin nick
+        $token = $this->newToken('');
+
+        // aunque el navegador conserve la cookie fsNick de una sesión anterior, el token es válido
+        $request = new Request([
+            'cookies' => ['fsNick' => 'admin'],
+            'request' => ['multireqtoken' => $token],
+        ]);
+        $this->assertTrue($this->invoke('validateFormToken', [$request]));
+    }
+
+    public function testLogoutTokenRequiresNick(): void
+    {
+        // el enlace de cerrar sesión se genera en páginas con sesión, con el nick en la semilla
+        $request = new Request([
+            'cookies' => ['fsNick' => 'admin'],
+            'query' => ['multireqtoken' => $this->newToken('admin')],
+        ]);
+        $this->assertTrue($this->invoke('checkFormToken', [$request, 'admin']));
+
+        // un token sin el nick no sirve para cerrar la sesión de ese usuario
+        $request = new Request([
+            'cookies' => ['fsNick' => 'admin'],
+            'query' => ['multireqtoken' => $this->newToken('')],
+        ]);
+        $this->assertFalse($this->invoke('checkFormToken', [$request, 'admin']));
+    }
+
     private function getRandomIp(): string
     {
         return rand(1, 255) . '.' . rand(1, 255) . '.' . rand(1, 255) . '.' . rand(1, 255);
+    }
+
+    private function invoke(string $method, array $args)
+    {
+        return (new ReflectionMethod(Login::class, $method))->invokeArgs($this->controller, $args);
+    }
+
+    private function newToken(string $seed): string
+    {
+        $multiRequestProtection = new MultiRequestProtection();
+        $multiRequestProtection->clearSeed();
+        $multiRequestProtection->addSeed($seed);
+        return $multiRequestProtection->newToken();
+    }
+
+    private function runController(): void
+    {
+        // run() imprime la página de login, que no necesitamos
+        ob_start();
+        $this->controller->run();
+        ob_end_clean();
     }
 }

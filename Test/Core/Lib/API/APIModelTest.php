@@ -150,6 +150,28 @@ final class APIModelTest extends TestCase
         $this->assertTrue($user->delete());
     }
 
+    public function testPutNewPasswordIsHashed(): void
+    {
+        $user = $this->createUser();
+
+        $response = new Response();
+        $body = $this->callApi('User', 'PUT', [$user->nick], [
+            'newPassword' => 'ChangedPassword456',
+            'newPassword2' => 'ChangedPassword456',
+        ], [], $response);
+        $this->assertEquals(Response::HTTP_OK, $response->getHttpCode(), 'password-not-updated');
+        $this->assertArrayNotHasKey('password', $body['data'] ?? []);
+
+        // se guarda el hash, nunca la contraseña en claro
+        $this->assertTrue($user->reload());
+        $this->assertNotSame('ChangedPassword456', $user->password);
+        $this->assertNotEmpty(password_get_info($user->password)['algo'], 'password-not-hashed');
+        $this->assertTrue($user->verifyPassword('ChangedPassword456'), 'new-password-not-valid');
+        $this->assertFalse($user->verifyPassword('TestPassword123!'), 'old-password-still-valid');
+
+        $this->assertTrue($user->delete());
+    }
+
     public function testPostRejectsHiddenFields(): void
     {
         $nick = 'apimodel_' . Tools::randomString(6);

@@ -141,7 +141,9 @@ class WidgetSelect extends BaseWidget
         if ('' === $value) {
             $model->{$this->fieldname} = null;
         } elseif ($this->multiple && false === $this->readonly()) {
-            $model->{$this->fieldname} = implode(',', unserialize($value));
+            // el select múltiple llega como array: nunca se deserializa lo que envía el usuario
+            $values = array_filter($request->request->getArray($this->fieldname), 'is_scalar');
+            $model->{$this->fieldname} = empty($values) ? null : implode(',', $values);
         } else {
             $model->{$this->fieldname} = $value;
         }

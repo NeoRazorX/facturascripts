@@ -85,6 +85,17 @@
         return purchasesFormAction('create-supplier', '0');
     }
 
+    function newSupplierKeyDown(event) {
+        // al pulsar intro en un campo del modal, guardamos el proveedor como con el botón guardar
+        if (event.key !== 'Enter' || event.repeat || event.isComposing || event.target.tagName !== 'INPUT') {
+            return true;
+        }
+
+        event.preventDefault();
+        createSupplierFromPurchases();
+        return false;
+    }
+
     function showSupplierModal() {
         $('#newSupplierModal').one('hidden.bs.modal', function () {
             $('#findSupplierModal').modal('show');
@@ -157,8 +168,11 @@
                 document.getElementById("purchasesFormLines").innerHTML = data.lines;
             } else {
                 $.each(data.linesMap, function (index, value) {
-                    if (document.forms['purchasesForm'][index] != null) {
-                        document.forms['purchasesForm'][index].value = value;
+                    // no reescribimos un campo que ya tiene ese valor: si el usuario está escribiendo
+                    // en él (p.ej. "16," a falta de los decimales), perdería lo que lleva escrito
+                    let field = document.forms['purchasesForm'][index];
+                    if (field != null && field.value != value) {
+                        field.value = value;
                     }
                 });
             }
@@ -236,6 +250,12 @@
         let waitNum = waitCounter;
         await new Promise(r => setTimeout(r, 300));
         if (waitNum < waitCounter) {
+            return false;
+        }
+
+        // si el número está a medio escribir (p.ej. "16,"), algunos navegadores dan un valor vacío
+        // y recalcular pondría el campo a 0: esperamos a que el número vuelva a ser válido
+        if (event.target && event.target.validity && event.target.validity.badInput) {
             return false;
         }
 

@@ -121,9 +121,7 @@ final class SendMailTest extends TestCase
         $mail->addAttachment(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . '../' . $outsideName, $outsideName);
         $this->assertSame([$outsideName], $mail->getAttachmentNames());
 
-        $method = new ReflectionMethod($mail, 'saveMailSent');
-        $method->setAccessible(true);
-        $method->invoke($mail);
+        (new ReflectionMethod($mail, 'saveMailSent'))->invoke($mail);
 
         // el archivo original debe seguir en su sitio
         $this->assertFileExists($outsidePath);

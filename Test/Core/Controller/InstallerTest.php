@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Test\Core\Controller;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Controller\Installer;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
@@ -68,13 +70,74 @@ final class InstallerTest extends TestCase
         $this->assertSame("'a\\\\\\');phpinfo();//'", array_values($strings)[1][1]);
     }
 
+    public function testMysqlInvalidDatabaseName(): void
+    {
+        if (Tools::config('db_type') !== 'mysql') {
+            $this->markTestSkipped('Solo aplica a MySQL.');
+        }
+
+        // un nombre con guion no es un identificador válido sin comillas
+        MiniLog::clear();
+        $result = $this->invoke('testMysql', [[
+            'host' => Tools::config('db_host'),
+            'port' => (int)Tools::config('db_port'),
+            'user' => Tools::config('db_user'),
+            'pass' => Tools::config('db_pass'),
+            'name' => 'fs-installer-test',
+            'socket' => '',
+        ]]);
+
+        // devuelve false y lo explica, en lugar de lanzar una excepción
+        $this->assertFalse($result);
+        $originals = array_column(MiniLog::read('', ['critical']), 'original');
+        $this->assertContains('cant-create-database', $originals);
+        MiniLog::clear();
+    }
+
+    public function testPostgresqlWrongPassword(): void
+    {
+        if (Tools::config('db_type') !== 'postgresql') {
+            $this->markTestSkipped('Solo aplica a PostgreSQL.');
+        }
+
+        // con una contraseña incorrecta no se puede conectar ni a la base de datos ni a postgres,
+        // y como en el servidor web, los avisos de PHP vienen escapados como HTML
+        MiniLog::clear();
+        $htmlErrors = ini_set('html_errors', '1');
+        try {
+            $result = $this->invoke('testPostgresql', [[
+                'host' => Tools::config('db_host'),
+                'port' => (int)Tools::config('db_port'),
+                'user' => Tools::config('db_user'),
+                'pass' => Tools::config('db_pass') . '-incorrecta',
+                'name' => Tools::config('db_name'),
+                'pgsql-ssl' => '',
+                'pgsql-endpoint' => '',
+            ]]);
+        } finally {
+            ini_set('html_errors', $htmlErrors);
+        }
+
+        // devuelve false sin emitir avisos de PHP y explica el motivo, sin escapar
+        $this->assertFalse($result);
+        $logs = MiniLog::read('', ['critical']);
+        $this->assertContains('cant-connect-database', array_column($logs, 'original'));
+        $this->assertCount(2, $logs);
+        $this->assertStringContainsString('"' . Tools::config('db_user') . '"', $logs[1]['original']);
+        $this->assertStringNotContainsString('&quot;', $logs[1]['original']);
+        MiniLog::clear();
+    }
+
     private function configLine(string $method, string $name, $value): string
+    {
+        return $this->invoke($method, [$name, $value]);
+    }
+
+    private function invoke(string $method, array $args)
     {
         // el constructor falla si ya existe config.php, así que lo omitimos
         $installer = (new ReflectionClass(Installer::class))->newInstanceWithoutConstructor();
 
-        $reflection = new ReflectionMethod(Installer::class, $method);
-        $reflection->setAccessible(true);
-        return $reflection->invoke($installer, $name, $value);
+        return (new ReflectionMethod(Installer::class, $method))->invokeArgs($installer, $args);
     }
 }
