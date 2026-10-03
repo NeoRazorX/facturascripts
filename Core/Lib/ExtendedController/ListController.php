@@ -30,7 +30,11 @@ use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Controller that lists the data in table mode
+ * Controlador que muestra los datos de uno o varios modelos en forma de listado
+ * con pestañas. Cada pestaña es una ListView con sus ordenaciones, campos de
+ * búsqueda y filtros, que se añaden desde createViews() con los métodos
+ * addView() y addFilter*(). Gestiona la paginación, la búsqueda, los filtros
+ * guardados y las acciones sobre los registros seleccionados.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

@@ -26,7 +26,12 @@ use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**
- * Description of PDFCore
+ * Clase base de la que heredan las exportaciones a PDF. Envuelve la librería Cezpdf y
+ * ofrece las operaciones comunes de composición del documento: crear páginas, cambiar la
+ * orientación, insertar imágenes desde archivo o desde un adjunto, escribir tablas y
+ * tablas de dos columnas, y preparar los datos y las cabeceras de cada columna. También
+ * se encarga de acortar los títulos demasiado largos y de eliminar las columnas vacías
+ * para que el resultado quepa en el ancho de la página.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

@@ -34,7 +34,13 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 /**
- * Description of NewMail
+ * Compone y envía emails desde FacturaScripts. Se configura automáticamente con los
+ * ajustes de correo de la empresa, ya sea mediante SMTP, sendmail o la función mail
+ * de PHP, y utiliza PHPMailer por debajo. El cuerpo del mensaje se genera con una
+ * plantilla Twig a la que se añaden bloques de contenido, tanto en el cuerpo como en
+ * el pie, y admite destinatarios en copia, archivos adjuntos y un código de
+ * verificación para saber si el correo ha sido leído. Cada envío queda registrado en
+ * el modelo EmailSent.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>

@@ -24,7 +24,12 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UploadedFile;
 
 /**
- * Description of WidgetFile
+ * Widget para subir archivos, declarado con type="file" en las vistas XMLView.
+ * Los archivos recibidos se mueven a la carpeta MyFiles y se guarda su nombre en el campo
+ * del modelo; si ya existe otro archivo con ese nombre se le antepone un número aleatorio.
+ * Admite los atributos accept, para limitar los tipos permitidos, y multiple, para
+ * seleccionar varios archivos a la vez. En la descripción del campo informa del tamaño
+ * máximo de subida que acepta el servidor.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

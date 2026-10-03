@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of RowActions
+ * Representa la fila de acciones definida en un XMLView, es decir, la barra de
+ * botones que acompaña a una vista. Contiene objetos RowButton y permite añadir
+ * botones desde los controladores en tiempo de ejecución, agrupándolos en
+ * desplegables cuando se indica la clave 'group'. Los botones cuyo nivel de
+ * seguridad supere al del usuario no se pintan.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */

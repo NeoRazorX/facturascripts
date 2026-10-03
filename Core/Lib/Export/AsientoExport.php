@@ -26,6 +26,13 @@ use FacturaScripts\Core\Model\Partida;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 
+/**
+ * Genera la exportación de un asiento contable en el formato solicitado. Utiliza el
+ * ExportManager para volcar primero la cabecera del asiento, tomando las columnas de
+ * la vista EditAsiento, después las partidas con su saldo acumulado y contrapartida,
+ * a continuación los datos de IVA de las partidas que los tengan, y por último los
+ * totales de debe, haber y saldo.
+ */
 class AsientoExport
 {
     private static $debe = 0;

@@ -21,6 +21,11 @@ namespace FacturaScripts\Core\Lib\Email;
 
 use FacturaScripts\Core\Template\ExtensionsTrait;
 
+/**
+ * Bloque de email que únicamente añade un espacio vertical en blanco entre otros
+ * bloques. La altura, de 30 píxeles por defecto, se puede indicar al construirlo o
+ * mediante el atributo height del shortcode.
+ */
 class SpaceBlock extends BaseBlock
 {
     use ExtensionsTrait;

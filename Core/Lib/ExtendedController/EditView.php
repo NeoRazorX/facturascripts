@@ -24,7 +24,11 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 
 /**
- * View definition for its use in ExtendedControllers
+ * Vista que muestra el formulario de edición de un único registro de un modelo,
+ * generado a partir de las columnas definidas en el XML de la página. Es la
+ * vista principal de los EditController y una de las habituales en las pestañas
+ * de los PanelController. Con setReadOnly() se muestra el mismo formulario en
+ * modo solo lectura.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

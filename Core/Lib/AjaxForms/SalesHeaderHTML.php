@@ -34,7 +34,13 @@ use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Pais;
 
 /**
- * Description of SalesHeaderHTML
+ * Genera el HTML de la cabecera del formulario de los documentos de venta:
+ * cliente, dirección de facturación y de envío, fechas, serie, forma de pago,
+ * divisa, almacén, agente, estado y demás datos generales del documento.
+ * También aplica sobre el modelo los datos enviados por el usuario, rellenando
+ * automáticamente los valores del cliente cuando este cambia.
+ * Los plugins pueden añadir o modificar campos mediante mods que implementen
+ * SalesModInterface y se registren con addMod().
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>

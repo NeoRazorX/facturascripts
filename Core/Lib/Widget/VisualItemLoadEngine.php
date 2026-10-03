@@ -24,7 +24,12 @@ use FacturaScripts\Core\Tools;
 use SimpleXMLElement;
 
 /**
- * Description of VisualItemLoadEngine
+ * Motor de carga de las vistas XML. Lee el archivo XMLView correspondiente, lo
+ * convierte en un array y lo vuelca sobre un modelo PageOption, aplicando encima
+ * las personalizaciones que el usuario haya guardado en columnas y widgets. A
+ * partir de esa estructura instancia las columnas, grupos y filas usando siempre
+ * el espacio de nombres Dinamic, de modo que los plugins puedan sustituir estas
+ * clases.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>

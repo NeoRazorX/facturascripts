@@ -28,11 +28,12 @@ use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Class to create accounting subaccounts automatically:
- *
- *   - General
- *   - Customer
- *   - Supplier
+ * Crea de forma automática cuentas y subcuentas contables dentro de un ejercicio,
+ * comprobando siempre que este permanece abierto. Permite crear una subcuenta a partir
+ * de su cuenta padre, copiar cuentas y subcuentas de un ejercicio a otro y generar la
+ * subcuenta de un cliente o proveedor, buscando para ello el primer código libre bajo
+ * la cuenta indicada y respetando la longitud de subcuenta definida en el ejercicio.
+ * La utiliza AccountingAccounts cuando la subcuenta buscada todavía no existe.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
