@@ -56,11 +56,13 @@ class WidgetLibrary extends BaseWidget
         $file = new AttachedFile();
         $file->load($this->value);
 
+        $data_url_image = $file->isImage() ? $file->url('download-permanent') : '';
+
         if ($this->readonly()) {
             return '<div class="mb-3">'
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
                 . $labelHtml
-                . '<a href="' . $file->url() . '" class="btn w-100 btn-outline-secondary">'
+                . '<a href="' . $file->url() . '" class="btn w-100 btn-outline-secondary btn-widget-library" data-url-image="' . $data_url_image . '">'
                 . '<i class="' . $icon . ' fa-fw"></i> ' . ($file->filename ? $file->shortFileName() : Tools::trans('select'))
                 . '</a>'
                 . $descriptionHtml
@@ -70,7 +72,7 @@ class WidgetLibrary extends BaseWidget
         return '<div class="mb-3" id="' . $this->id . '">'
             . '<input type="hidden" class="input-hidden" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
-            . '<a href="#" class="btn w-100 btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
+            . '<a href="#" class="btn w-100 btn-outline-secondary btn-widget-library" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '" data-url-image="' . $data_url_image . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
             . '<span class="file-name">'
             . ($file->filename ? $file->shortFileName() : Tools::trans('select'))
