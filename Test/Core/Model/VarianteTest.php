@@ -56,6 +56,32 @@ final class VarianteTest extends TestCase
         $this->assertEmpty($variante->exists());
     }
 
+    public function testBloqueada(): void
+    {
+        // creamos un producto
+        $producto = new Producto();
+        $this->assertTrue($producto->save(), 'cant-save-product');
+
+        // por defecto la variante no está bloqueada
+        $variante = $producto->getVariants()[0];
+        $this->assertFalse((bool)$variante->bloqueada, 'variant-blocked-by-default');
+
+        // bloqueamos la variante
+        $variante->bloqueada = true;
+        $this->assertTrue($variante->save(), 'cant-save-variant');
+
+        // la recargamos y comprobamos que sigue bloqueada
+        $reload = new Variante();
+        $this->assertTrue($reload->load($variante->idvariante), 'cant-reload-variant');
+        $this->assertTrue((bool)$reload->bloqueada, 'variant-not-blocked-after-reload');
+
+        // bloquear la variante no bloquea el producto
+        $this->assertFalse((bool)$producto->bloqueado, 'product-should-not-be-blocked');
+
+        // eliminamos el producto
+        $this->assertTrue($producto->delete(), 'cant-delete-product');
+    }
+
     public function testSetPriceWithTax(): void
     {
         $default_tax = Impuestos::default();
