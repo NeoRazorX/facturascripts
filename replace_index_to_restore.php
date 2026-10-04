@@ -38,7 +38,7 @@ function restoreMessage(string $message, bool $error = false): void
         . '</p>';
 
     if (!$error) {
-        echo '<p><a href="./">Click here to continue</a>.</p>';
+        echo '<p><a href="./deploy">Click here to continue</a>.</p>';
     }
 
     echo '</body></html>';
@@ -389,6 +389,14 @@ if (!restoreDeletePath($stagingPath)) {
 }
 if (!restoreDeletePath($archivePath)) {
     $warnings[] = 'CORE.zip could not be removed.';
+}
+
+// remove the classes generated with the previous core, so the deploy page rebuilds them
+if (!restoreDeletePath(__DIR__ . DIRECTORY_SEPARATOR . 'Dinamic')) {
+    $warnings[] = 'The Dinamic folder could not be removed. Delete it before continuing.';
+}
+if (!restoreDeletePath(__DIR__ . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'Cache')) {
+    $warnings[] = 'The MyFiles/Cache folder could not be removed.';
 }
 
 restoreReleaseLock($lock, $lockPath);
