@@ -110,7 +110,6 @@ function restoreDownloadArchive(string $archivePath): void
     ]);
 
     if (!$configured) {
-        curl_close($curl);
         fclose($stream);
         restoreDeletePath($tempPath);
         throw new RuntimeException('Unable to configure the download.');
@@ -119,7 +118,6 @@ function restoreDownloadArchive(string $archivePath): void
     $downloaded = curl_exec($curl);
     $error = curl_error($curl);
     $status = (int)curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
-    curl_close($curl);
     fclose($stream);
 
     $fileSize = filesize($tempPath);
@@ -261,6 +259,17 @@ function restoreInstallPackage(string $packagePath, string $backupPath): void
     }
 }
 
+/**
+ * @param resource $lock
+ */
+function restoreReleaseLock($lock, string $lockPath): void
+{
+    // remove the file while it is still locked, so no other process can lock it in between
+    @unlink($lockPath);
+    flock($lock, LOCK_UN);
+    fclose($lock);
+}
+
 // This file must replace index.php before it can perform a restoration.
 if (basename(__FILE__) !== 'index.php') {
     restoreMessage('Remove index.php and rename this file to index.php.', true);
@@ -292,10 +301,24 @@ if (!flock($lock, LOCK_EX | LOCK_NB)) {
     restoreMessage('Another restoration process is already running. Try again in a few minutes.', true);
 }
 
+// if another process finished and removed the lock file after we opened it, our lock is no longer valid
+// (some systems, like Windows, do not report the inode of an open file, so it is only compared when available)
+clearstatcache(true, $lockPath);
+$lockInfo = fstat($lock);
+$currentLockInfo = @stat($lockPath);
+$lockReplaced = false === $currentLockInfo || (!empty($lockInfo['ino'])
+        && ($lockInfo['dev'] !== $currentLockInfo['dev'] || $lockInfo['ino'] !== $currentLockInfo['ino']));
+if ($lockReplaced) {
+    flock($lock, LOCK_UN);
+    fclose($lock);
+    restoreMessage('Another restoration process has just finished. Reload this page to check the result.', true);
+}
+
 $archivePath = __DIR__ . DIRECTORY_SEPARATOR . FS_RESTORE_ARCHIVE;
 $token = bin2hex(random_bytes(8));
 $stagingPath = __DIR__ . DIRECTORY_SEPARATOR . 'restore-staging-' . $token;
 $backupPath = __DIR__ . DIRECTORY_SEPARATOR . 'restore-backup-' . $token;
+$rejectArchive = false;
 
 try {
     if (restorePathExists($archivePath)) {
@@ -313,6 +336,8 @@ try {
         restoreDownloadArchive($archivePath);
     }
 
+    // if the archive is not a valid package, remove it so the next attempt downloads it again
+    $rejectArchive = true;
     $zip = new ZipArchive();
     $zipStatus = $zip->open($archivePath, ZipArchive::CHECKCONS);
     if (true !== $zipStatus) {
@@ -339,12 +364,20 @@ try {
 
     $packagePath = $stagingPath . DIRECTORY_SEPARATOR . FS_RESTORE_PACKAGE_FOLDER;
     restoreValidatePackage($packagePath);
+    $rejectArchive = false;
+
     restoreInstallPackage($packagePath, $backupPath);
 } catch (Throwable $exception) {
+    $message = $exception->getMessage();
     restoreDeletePath($stagingPath);
-    flock($lock, LOCK_UN);
-    fclose($lock);
-    restoreMessage($exception->getMessage(), true);
+    if ($rejectArchive) {
+        $message .= restoreDeletePath($archivePath) ?
+            ' CORE.zip has been removed. Reload this page to download it again.' :
+            ' CORE.zip could not be removed. Delete it and reload this page to download it again.';
+    }
+
+    restoreReleaseLock($lock, $lockPath);
+    restoreMessage($message, true);
 }
 
 $warnings = [];
@@ -358,8 +391,7 @@ if (!restoreDeletePath($archivePath)) {
     $warnings[] = 'CORE.zip could not be removed.';
 }
 
-flock($lock, LOCK_UN);
-fclose($lock);
+restoreReleaseLock($lock, $lockPath);
 
 $message = 'The latest stable version has been installed.';
 if (!empty($warnings)) {
