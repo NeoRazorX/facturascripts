@@ -304,6 +304,35 @@ final class ApiCreateDocumentTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
 
+    public function testHourWithoutDateIsApplied(): void
+    {
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        // creamos el albarán con hora pero sin fecha
+        $payload = [
+            'codcliente' => $subject->codcliente,
+            'hora' => '09:15:00',
+            'lineas' => json_encode([
+                ['descripcion' => 'línea', 'cantidad' => 1, 'pvpunitario' => 100],
+            ]),
+        ];
+        $result = $this->callCreate('crearAlbaranCliente', $payload);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'create-hour-without-date-bad-code');
+
+        // la hora se aplica y la fecha es la actual
+        $doc = new AlbaranCliente();
+        $this->assertTrue($doc->load($result['body']['doc']['idalbaran'] ?? 0), 'can-not-load-albaran');
+        $this->assertEquals('09:15:00', $doc->hora, 'hour-without-date-not-applied');
+        $this->assertEquals(Tools::date(), $doc->fecha, 'date-not-current');
+
+        // limpiamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-albaran');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
     public function testInvalidLineStructuresAreRejected(): void
     {
         $subject = $this->getRandomCustomer();
