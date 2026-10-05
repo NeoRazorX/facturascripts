@@ -173,9 +173,14 @@ final class Telemetry
         return Tools::settingsSave();
     }
 
-    public function update(): bool
+    public function update(bool $force = false): bool
     {
-        if (false === $this->ready() || time() - $this->last_update < self::UPDATE_INTERVAL) {
+        if (false === $this->ready()) {
+            return false;
+        }
+
+        // si no se fuerza, respetamos el intervalo entre actualizaciones
+        if (false === $force && time() - $this->last_update < self::UPDATE_INTERVAL) {
             return false;
         }
 

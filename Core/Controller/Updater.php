@@ -461,6 +461,9 @@ class Updater extends Controller
 
         Migrations::run();
         Plugins::deploy(true, true);
+
+        // informamos a la telemetría de la nueva versión del core y de la lista de plugins
+        $this->telemetryManager->update(true);
     }
 
     private function setCoreWarnings(): void
