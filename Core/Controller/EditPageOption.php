@@ -93,7 +93,7 @@ class EditPageOption extends Controller
     }
 
     /**
-     * Get the list of users, excluding the user admin
+     * Get the list of users, excluding the user admin unless it is the selected user
      *
      * @return array
      */
@@ -102,7 +102,7 @@ class EditPageOption extends Controller
         $result = [];
         $users = CodeModel::all(User::tableName(), 'nick', 'nick', false);
         foreach ($users as $codeModel) {
-            if ($codeModel->code != 'admin') {
+            if ($codeModel->code != 'admin' || $codeModel->code === $this->selectedUser) {
                 $result[$codeModel->code] = $codeModel->description;
             }
         }
@@ -125,7 +125,7 @@ class EditPageOption extends Controller
         $this->loadSelectedViewName();
         $this->setBackPage();
         $this->selectedUser = $this->user->admin ?
-            $this->request->queryOrInput('nick') :
+            $this->request->inputOrQuery('nick') :
             $this->user->nick;
         $this->loadPageOptions();
 
@@ -169,14 +169,21 @@ class EditPageOption extends Controller
      */
     protected function loadPageOptions(): void
     {
-        if ($this->selectedUser && false === $this->loadPageOptionsForUser()) {
+        // comprobamos si existen personalizaciones guardadas
+        $customized = $this->selectedUser ?
+            $this->loadPageOptionsForUser() :
+            $this->loadPageOptionsForAll();
+
+        // partimos de la estructura actual del XML y, si hay personalización, aplicamos sus cambios sobre ella
+        if ($customized) {
+            $custom = clone $this->model;
+            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
+            VisualItemLoadEngine::mergeCustomization($this->model, $custom);
+        } else {
             VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
         }
 
-        if (empty($this->selectedUser) && false === $this->loadPageOptionsForAll()) {
-            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
-        }
-
+        // creamos la estructura visual
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->model);
     }
 

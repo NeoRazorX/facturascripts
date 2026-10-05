@@ -78,6 +78,30 @@ class FiscalNumberValidatorTest extends TestCase
         }
     }
 
+    /**
+     * @dataProvider normalizeProvider
+     */
+    public function testNormalize(string $expected, ?string $number, string $pattern = '', string $default = ''): void
+    {
+        $this->assertSame($expected, FiscalNumberValidator::normalize($number, $pattern, $default));
+    }
+
+    public function normalizeProvider(): array
+    {
+        return [
+            'unchanged' => ['75897326V', '75897326V'],
+            'lowercase' => ['B12345678', 'b12345678'],
+            'common separators' => ['ES75897326V', ' ES-758.97326/V '],
+            'any non-alphanumeric character' => ['ES75897326V', "(ES) +758:97326\\V\t"],
+            'empty string' => ['', ''],
+            'null' => ['', null],
+            'zero is not empty' => ['0', '0'],
+            'matching pattern' => ['B12345678', 'B-12345678', '/^[A-Z0-9]{1,9}$/'],
+            'non-matching pattern' => ['UNKNOWN', 'ES-B12345678', '/^[A-Z0-9]{1,9}$/', 'UNKNOWN'],
+            'only separators' => ['UNKNOWN', ' -- ', '', 'UNKNOWN'],
+        ];
+    }
+
     public function testValidateSpainCif(): void
     {
         $valid = ['P4698162G', 'B43359165', 'B85461424', 'A82744681', 'R2200465I'];

@@ -43,7 +43,7 @@ class Files implements ControllerInterface
             return;
         }
 
-        $this->filePath = Tools::folder() . $url;
+        $this->filePath = Tools::folder() . str_replace('/', DIRECTORY_SEPARATOR, $url);
 
         if (false !== strpos($url, '..')) {
             throw new KernelException('UnsafeFolder', $url);
@@ -108,9 +108,9 @@ class Files implements ControllerInterface
         header('Content-Type: ' . $this->getMime($this->filePath));
         header('Cache-Control: public, max-age=604800');
 
-        // desactivamos el buffer si está activo
-        if (ob_get_contents()) {
-            ob_end_flush();
+        // descartamos los buffers de salida para no cargar el archivo entero en memoria
+        while (ob_get_level() > 0) {
+            ob_end_clean();
         }
 
         // forzamos la descarga de archivos svg para evitar ataques XSS

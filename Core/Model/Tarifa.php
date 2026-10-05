@@ -76,11 +76,6 @@ class Tarifa extends ModelClass
                 break;
         }
 
-        $ext = $this->pipe('apply', $finalPrice, $cost, $price);
-        if ($ext && is_numeric($ext)) {
-            $finalPrice = $ext;
-        }
-
         // Aplicar límite máximo de pvp si corresponde
         if ($this->maxpvp && $finalPrice > $price) {
             $finalPrice = (float)$price;
@@ -88,7 +83,12 @@ class Tarifa extends ModelClass
 
         // Aplicar límite mínimo de coste (tiene prioridad sobre maxpvp)
         if ($this->mincoste && $finalPrice < $cost) {
-            return (float)$cost;
+            $finalPrice = (float)$cost;
+        }
+
+        $ext = $this->pipe('apply', $finalPrice, $cost, $price);
+        if ($ext && is_numeric($ext)) {
+            $finalPrice = $ext;
         }
 
         return $finalPrice;
@@ -102,6 +102,11 @@ class Tarifa extends ModelClass
      */
     public function applyTo($variant, $product): float
     {
+        $ext = $this->pipe('applyTo', $variant, $product);
+        if ($ext && is_numeric($ext)) {
+            return $ext;
+        }
+
         return $this->apply((float)$variant->coste, (float)$variant->precio);
     }
 

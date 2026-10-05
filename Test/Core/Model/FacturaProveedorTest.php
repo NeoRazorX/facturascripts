@@ -632,7 +632,7 @@ final class FacturaProveedorTest extends TestCase
             'direccion' => [200, 201],
             'nombre' => [100, 101],
             'numproveedor' => [50, 51],
-            'operacion' => [20, 21],
+            'operacion' => [InvoiceOperation::MAX_KEY_LENGTH, InvoiceOperation::MAX_KEY_LENGTH + 1],
             'provincia' => [100, 101],
         ];
 

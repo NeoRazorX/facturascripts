@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,11 +23,12 @@
     {{ parent() }}
     {% set pageData = fsc.getPageData() %}
     {% set firstView = fsc.views | first %}
+    {% set navData = fsc.getNavigation() %}
     <div class="container-fluid d-print-none">
         <div class="row">
             <div class="col pb-2">
                 {# -- Hidden alternative page info -- #}
-                <nav aria-label="breadcrumb" class="d-block d-md-none">
+                <nav aria-label="breadcrumb" class="d-flex d-md-none align-items-baseline">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="#">{{ trans(pageData.menu) }}</a>
@@ -48,6 +49,12 @@
                             {% endif %}
                         </li>
                     </ol>
+                    {# -- Navigation (small screens) -- #}
+                    {% if navData %}
+                        <div class="ms-auto ps-2">
+                            {% include 'Master/PanelNavigation.html.twig' %}
+                        </div>
+                    {% endif %}
                 </nav>
             {# -- Top left buttons -- #}
                 <div class="btn-group">
@@ -80,20 +87,27 @@
                 {% endfor %}
             </div>
             {# -- Top right text -- #}
-            <div class="col-md-auto d-none d-md-block text-end">
-                <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
-                {% if fsc.hasData %}
-                    <p class="text-info mb-3">{{ firstView.model.primaryDescription() | raw }}</p>
+            <div class="col-md-auto d-none d-md-block text-end align-self-center pb-2">
+                {% set description = fsc.hasData ? firstView.model.primaryDescription() : trans('new') %}
+                {% if navData %}
+                    {# -- Navigation, then title and description on the same line -- #}
+                    {% include 'Master/PanelNavigation.html.twig' %}
+                    <h1 class="h5 mb-0">
+                        {{ trans(pageData.title) }}
+                        <span class="panel-nav-description d-inline-block text-truncate text-info fw-normal"
+                              title="{{ description | striptags }}">{{ description | raw }}</span>
+                    </h1>
                 {% else %}
-                    <p class="text-info mb-3">{{ trans('new') }}</p>
+                    <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
+                    <p class="text-info mb-0">{{ description | raw }}</p>
                 {% endif %}
             </div>
-            <div class="col-md-auto d-none d-lg-block">
+            <div class="col-md-auto d-none d-lg-block align-self-center pb-2">
                 {% set image = fsc.getImageUrl() %}
                 {% if image is empty %}
                     <i class="{{ pageData.icon }} fa-3x" aria-hidden="true"></i>
                 {% else %}
-                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail"/>
+                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail panel-header-img"/>
                 {% endif %}
             </div>
         </div>
@@ -109,26 +123,23 @@
                 <div class="col-12 col-lg-auto mt-lg-2">
                     {# -- Left tabs -- #}
                     <div class="nav nav-pills flex-row flex-lg-column overflow-x-auto" id="mainTabs" role="tablist" style="white-space: nowrap;">
-                        {% for viewName, view in fsc.views %}
-                            {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                            {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }} text-nowrap" id="{{ viewName }}-tab" data-bs-toggle="pill"
-                               href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                <i class="{{ view.icon }} fa-fw me-1 d-none d-lg-inline-block"
-                                   aria-hidden="true"></i><span class="d-inline d-lg-inline">{{ view.title }}</span>
-                                {% if view.count > 1 %}
-                                    <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
-                                {% elseif view.count == 1 and viewName != firstView.getViewName() %}
-                                    <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
-                                {% endif %}
-                            </a>
+                        {% for group, views in fsc.getTabGroups() %}
+                            {% if group is not empty %}
+                                <div class="nav-group-header small text-uppercase text-body-secondary fw-bold px-3 mt-lg-3 mb-lg-1 align-self-center align-self-lg-start">
+                                    {{ trans(group) }}
+                                </div>
+                            {% endif %}
+                            {% for viewName, view in views %}
+                                {{ _self.tabLink(fsc, firstView, viewName, view) }}
+                            {% endfor %}
                         {% endfor %}
                     </div>
                 </div>
             {% endif %}
             {# -- Right Panel -- #}
             {% set rightPanelClass = (fsc.views | length > 1) ? 'col-12 col-lg' : 'col-12' %}
-            <div class="{{ rightPanelClass }}">
+            {# min-width 0 evita que un contenido ancho (listados con muchas columnas) salte debajo de las pestañas #}
+            <div class="{{ rightPanelClass }}" style="min-width: 0;">
                 {# -- Tab content -- #}
                 <div class="tab-content" id="mainTabsContent">
                     {% for viewName, view in fsc.views %}
@@ -155,6 +166,21 @@
         });
     </script>
 {% endblock %}
+
+{% macro tabLink(fsc, firstView, viewName, view) %}
+    {% set active = (viewName == fsc.active) ? ' active' : '' %}
+    {% set disable = view.settings.active ? '' : ' disabled' %}
+    <a class="nav-link{{ active }}{{ disable }} text-nowrap" id="{{ viewName }}-tab" data-bs-toggle="pill"
+       href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+        <i class="{{ view.icon }} fa-fw me-1 d-none d-lg-inline-block"
+           aria-hidden="true"></i><span class="d-inline d-lg-inline">{{ view.title }}</span>
+        {% if view.count > 1 %}
+            <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
+        {% elseif view.count == 1 and viewName != firstView.getViewName() %}
+            <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
+        {% endif %}
+    </a>
+{% endmacro %}
 
 {% macro optionsButton(fsc, firstView) %}
     {% set show = false %}

@@ -54,6 +54,15 @@ class WidgetSelect extends BaseWidget
     /** @var string */
     protected $parent;
 
+    /** @var bool */
+    protected $shared;
+
+    /** @var string|null */
+    protected $sharedListId = null;
+
+    /** @var bool */
+    protected $sharedListRendered = false;
+
     /** @var string */
     protected $source;
 
@@ -82,6 +91,7 @@ class WidgetSelect extends BaseWidget
         $this->parent = $data['parent'] ?? '';
         $this->translate = isset($data['translate']);
         $this->multiple = isset($data['multiple']) && strtolower($data['multiple']) === 'true';
+        $this->shared = isset($data['shared']) && strtolower($data['shared']) === 'true';
 
         foreach ($data['children'] as $child) {
             if ($child['tag'] !== 'values') {
@@ -131,7 +141,9 @@ class WidgetSelect extends BaseWidget
         if ('' === $value) {
             $model->{$this->fieldname} = null;
         } elseif ($this->multiple && false === $this->readonly()) {
-            $model->{$this->fieldname} = implode(',', unserialize($value));
+            // el select múltiple llega como array: nunca se deserializa lo que envía el usuario
+            $values = array_filter($request->request->getArray($this->fieldname), 'is_scalar');
+            $model->{$this->fieldname} = empty($values) ? null : implode(',', $values);
         } else {
             $model->{$this->fieldname} = $value;
         }
@@ -287,7 +299,23 @@ class WidgetSelect extends BaseWidget
         AssetManager::addCss($route . '/node_modules/select2/dist/css/select2.min.css?v=5');
         AssetManager::addCss($route . '/node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css?v=5');
         AssetManager::addJs($route . '/node_modules/select2/dist/js/select2.min.js?v=5', 2);
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js?v=5');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js?v=8');
+    }
+
+    /**
+     * Firma de los parámetros de consulta, para que el controlador rechace las peticiones
+     * autocomplete, datalist y select que pidan otra tabla o columnas.
+     *
+     * @return string
+     */
+    protected function fieldSign(): string
+    {
+        return CodeModel::sign(
+            (string)$this->source,
+            (string)$this->fieldcode,
+            (string)$this->fieldtitle,
+            (string)$this->fieldfilter
+        );
     }
 
     /**
@@ -299,6 +327,11 @@ class WidgetSelect extends BaseWidget
     protected function inputHtml($type = 'text', $extraClass = '')
     {
         $class = $this->combineClasses($this->css('form-select select2'), $this->class, $extraClass);
+        $sharedList = $this->shared && empty($this->parent);
+        if ($sharedList && null === $this->sharedListId) {
+            $this->sharedListId = 'select-list-' . $this->getUniqueId();
+        }
+        $sharedSource = $sharedList && false === $this->sharedListRendered;
 
         if ($this->parent) {
             $class .= ' parentSelect';
@@ -326,8 +359,15 @@ class WidgetSelect extends BaseWidget
             . ' data-fieldcode="' . $this->fieldcode . '"'
             . ' data-fieldtitle="' . $this->fieldtitle . '"'
             . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . ' data-fieldsign="' . $this->fieldSign() . '"'
             . ' data-limit="' . $this->limit . '"'
+            . ($sharedList ? ' data-shared-list="' . $this->sharedListId . '"' : '')
+            . ($sharedSource ? ' data-shared-source="true"' : '')
             . '>';
+
+        if ($sharedList && false === $sharedSource) {
+            return $html . $this->selectedOptionsHtml() . '</select>';
+        }
 
         $found = false;
         $hasGroups = false;
@@ -398,6 +438,44 @@ class WidgetSelect extends BaseWidget
         }
 
         $html .= '</select>';
+        $this->sharedListRendered = $sharedList;
+        return $html;
+    }
+
+    /**
+     * Renders only the options needed to preserve the current value. The complete
+     * list is read by Select2 from the first select rendered by this widget.
+     *
+     * @return string
+     */
+    protected function selectedOptionsHtml(): string
+    {
+        $html = '';
+        $found = false;
+        foreach ($this->values as $option) {
+            if (!$this->valuesMatch($option['value'], $this->value) || ($found && false === $this->multiple)) {
+                continue;
+            }
+
+            $found = true;
+            $title = empty($option['title']) ? $option['value'] : $option['title'];
+            $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
+        }
+
+        // value not found?
+        if (!$this->multiple && !$found && $this->value != '' && !empty($this->source)) {
+            return '<option value="' . $this->value . '" selected>'
+                . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
+                . '</option>';
+        }
+
+        // A native single select chooses its first option when none matches.
+        if (!$this->multiple && !$found && false === empty($this->values)) {
+            $option = reset($this->values);
+            $title = empty($option['title']) ? $option['value'] : $option['title'];
+            $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
+        }
+
         return $html;
     }
 
@@ -430,6 +508,8 @@ class WidgetSelect extends BaseWidget
         $this->groupTitle = $child['group_title'] ?? '';
 
         if ($loadData && $this->source) {
+            // el límite de CodeModel es estático: lo cambiamos solo mientras cargamos los valores
+            $previousLimit = static::$codeModel::getLimit();
             static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
 
@@ -442,7 +522,6 @@ class WidgetSelect extends BaseWidget
                 }
 
                 // Mapa de fieldcode => group_fieldcode (valor del campo de agrupación en cada registro)
-                static::$codeModel::setLimit($this->limit);
                 $groupFieldRows = static::$codeModel->all($this->source, $this->fieldcode, $this->groupFieldcode, false);
                 $groupFieldMap = [];
                 foreach ($groupFieldRows as $row) {
@@ -463,12 +542,16 @@ class WidgetSelect extends BaseWidget
             } else {
                 $this->setValuesFromCodeModel($values, $this->translate);
             }
+
+            static::$codeModel::setLimit($previousLimit);
         }
     }
 
     /**
      * Compares two values for equality, normalizing booleans to strings
      * and using strict string comparison to avoid type juggling issues.
+     * On multiple selects $value2 is the comma-separated string stored in
+     * the model field, so $value1 is matched against each of its parts.
      *
      * @param mixed $value1
      * @param mixed $value2
@@ -482,6 +565,10 @@ class WidgetSelect extends BaseWidget
         }
         if (is_bool($value2)) {
             $value2 = $value2 ? '1' : '0';
+        }
+
+        if ($this->multiple && is_string($value2)) {
+            return in_array((string)$value1, explode(',', $value2), true);
         }
 
         // use string comparison to avoid type juggling (e.g., "01" != "1")

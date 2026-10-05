@@ -33,6 +33,7 @@ package-lock.json
 .history
 
 # IA
+AGENTS.md
 CLAUDE.md
 /.claude
 .codex

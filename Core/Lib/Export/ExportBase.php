@@ -19,6 +19,13 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Lib\Widget\BaseWidget;
+use FacturaScripts\Core\Lib\Widget\WidgetCheckbox;
+use FacturaScripts\Core\Lib\Widget\WidgetDate;
+use FacturaScripts\Core\Lib\Widget\WidgetDatetime;
+use FacturaScripts\Core\Lib\Widget\WidgetInfo;
+use FacturaScripts\Core\Lib\Widget\WidgetNumber;
+use FacturaScripts\Core\Lib\Widget\WidgetTime;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ModelClass;
@@ -176,7 +183,7 @@ abstract class ExportBase
         $widgets = $this->getColumnWidgets($columns);
         foreach ($cursor as $num => $row) {
             foreach ($widgets as $key => $widget) {
-                $data[$num][$key] = $widget->plainText($row);
+                $data[$num][$key] = $this->getCursorValue($widget, $row);
             }
         }
 
@@ -204,6 +211,65 @@ abstract class ExportBase
         }
 
         return $data;
+    }
+
+    /**
+     * Devuelve el valor de una celda. En los formatos procesables (CSV, XLS) los
+     * campos numéricos, moneda, fecha y checkbox se vuelcan en crudo o normalizados
+     * para poder procesarlos; el resto usa el texto formateado del widget.
+     *
+     * @param BaseWidget $widget
+     * @param ModelClass $row
+     *
+     * @return mixed
+     */
+    protected function getCursorValue($widget, $row)
+    {
+        $value = $row->{$widget->fieldname} ?? null;
+        if ($widget instanceof WidgetNumber) {
+            return $value;
+        }
+
+        if ($widget instanceof WidgetCheckbox) {
+            return is_null($value) ? null : ($value ? 1 : 0);
+        }
+
+        if ($widget instanceof WidgetDate) {
+            return $this->normalizeDate('Y-m-d', $value);
+        }
+
+        if ($widget instanceof WidgetDatetime) {
+            return $this->normalizeDate('Y-m-d H:i:s', $value);
+        }
+
+        if ($widget instanceof WidgetTime) {
+            return $this->normalizeDate('H:i:s', $value);
+        }
+
+        // los valores null se vuelcan vacíos, no como el guion '-' que muestran los
+        // widgets. Excepto WidgetInfo, cuyo texto no depende del valor del campo.
+        if (is_null($value) && false === $widget instanceof WidgetInfo) {
+            return null;
+        }
+
+        return $widget->plainText($row);
+    }
+
+    /**
+     * Normaliza una fecha/hora al formato ISO indicado, procesable en hojas de cálculo.
+     *
+     * @param string $format
+     * @param mixed $value
+     *
+     * @return string|null
+     */
+    private function normalizeDate(string $format, $value): ?string
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        return is_numeric($value) ? date($format, (int)$value) : date($format, strtotime((string)$value));
     }
 
     protected function escapeSpreadsheetFormula(string $value): string

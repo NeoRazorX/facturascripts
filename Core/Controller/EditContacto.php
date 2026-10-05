@@ -89,6 +89,7 @@ class EditContacto extends EditController
             return true;
         }
 
+        $this->assertOwnerData($model);
         $model->checkVies();
         return true;
     }
@@ -96,8 +97,10 @@ class EditContacto extends EditController
     protected function createCustomerAction(): void
     {
         $access = $this->getRolePermissions('EditCliente');
-        if (false === $access['allowupdate']) {
+        if (false === $this->permissions->allowUpdate || false === $access['allowupdate']) {
             Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
             return;
         }
 
@@ -131,8 +134,10 @@ class EditContacto extends EditController
     protected function createSupplierAction(): void
     {
         $access = $this->getRolePermissions('EditProveedor');
-        if (false === $access['allowupdate']) {
+        if (false === $this->permissions->allowUpdate || false === $access['allowupdate']) {
             Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
             return;
         }
 

@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Where;
 
 /**
  * Controlador para editar un único elemento del modelo EmailNotification
@@ -54,5 +56,35 @@ class EditEmailNotification extends EditController
             ->setSettings('btnNew', false)
             ->setSettings('btnOptions', false)
             ->setSettings('btnPrint', false);
+
+        $this->createViewsEmails();
+        $this->setTabsPosition('bottom');
+    }
+
+    protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
+            ->addOrderBy(['date'], 'date', 2)
+            ->addSearchFields(['addressee', 'body', 'subject'])
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false);
+    }
+
+    /**
+     * @param string $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListEmailSent':
+                $where = [Where::eq('notification', $this->mainTabModelValue('name'))];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }

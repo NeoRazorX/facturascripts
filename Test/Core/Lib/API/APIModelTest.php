@@ -28,6 +28,7 @@ use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 
 final class APIModelTest extends TestCase
 {
@@ -75,6 +76,22 @@ final class APIModelTest extends TestCase
         $this->assertArrayNotHasKey('two_factor_secret_key', $body);
     }
 
+    public function testUserHidesSensitiveFieldsOnDuplicatePost(): void
+    {
+        $user = $this->createUser();
+
+        $body = $this->callApi('User', 'POST', [], ['nick' => $user->nick]);
+
+        $this->assertArrayHasKey('error', $body);
+        $this->assertArrayHasKey('data', $body);
+        $this->assertSame($user->nick, $body['data']['nick']);
+        $this->assertArrayNotHasKey('password', $body['data']);
+        $this->assertArrayNotHasKey('logkey', $body['data']);
+        $this->assertArrayNotHasKey('two_factor_secret_key', $body['data']);
+
+        $this->assertTrue($user->delete());
+    }
+
     public function testApiKeyHidesApikeyField(): void
     {
         $key = new ApiKey();
@@ -97,6 +114,111 @@ final class APIModelTest extends TestCase
         $this->assertTrue($key->delete());
     }
 
+    public function testPutRejectsHiddenFields(): void
+    {
+        $user = $this->createUser();
+        $user->newLogkey('127.0.0.1');
+        $this->assertTrue($user->save());
+        $originalPassword = $user->password;
+        $originalLogkey = $user->logkey;
+
+        foreach (['PUT', 'PATCH'] as $method) {
+            $response = new Response();
+            $body = $this->callApi('User', $method, [$user->nick], [
+                'email' => 'changed@test.local',
+                'logkey' => 'attacker-logkey',
+                'password' => password_hash('attacker', PASSWORD_DEFAULT),
+            ], [], $response);
+            $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'hidden-fields-not-rejected-' . $method);
+            $this->assertStringContainsString('fields not allowed: logkey, password', $body['error'] ?? '');
+        }
+
+        // no se ha modificado nada, ni siquiera los campos permitidos
+        $this->assertTrue($user->reload());
+        $this->assertSame($originalPassword, $user->password);
+        $this->assertSame($originalLogkey, $user->logkey);
+        $this->assertNotSame('changed@test.local', $user->email);
+
+        // los campos permitidos se siguen pudiendo actualizar
+        $response = new Response();
+        $body = $this->callApi('User', 'PUT', [$user->nick], ['email' => 'changed@test.local'], [], $response);
+        $this->assertEquals(Response::HTTP_OK, $response->getHttpCode(), 'allowed-field-not-updated');
+        $this->assertArrayNotHasKey('password', $body['data'] ?? []);
+        $this->assertTrue($user->reload());
+        $this->assertSame('changed@test.local', $user->email);
+
+        $this->assertTrue($user->delete());
+    }
+
+    public function testPutNewPasswordIsHashed(): void
+    {
+        $user = $this->createUser();
+
+        $response = new Response();
+        $body = $this->callApi('User', 'PUT', [$user->nick], [
+            'newPassword' => 'ChangedPassword456',
+            'newPassword2' => 'ChangedPassword456',
+        ], [], $response);
+        $this->assertEquals(Response::HTTP_OK, $response->getHttpCode(), 'password-not-updated');
+        $this->assertArrayNotHasKey('password', $body['data'] ?? []);
+
+        // se guarda el hash, nunca la contraseña en claro
+        $this->assertTrue($user->reload());
+        $this->assertNotSame('ChangedPassword456', $user->password);
+        $this->assertNotEmpty(password_get_info($user->password)['algo'], 'password-not-hashed');
+        $this->assertTrue($user->verifyPassword('ChangedPassword456'), 'new-password-not-valid');
+        $this->assertFalse($user->verifyPassword('TestPassword123!'), 'old-password-still-valid');
+
+        $this->assertTrue($user->delete());
+    }
+
+    public function testPostRejectsHiddenFields(): void
+    {
+        $nick = 'apimodel_' . Tools::randomString(6);
+
+        $response = new Response();
+        $body = $this->callApi('User', 'POST', [], [
+            'nick' => $nick,
+            'email' => $nick . '@test.local',
+            'two_factor_secret_key' => 'ATTACKERSECRET',
+        ], [], $response);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'hidden-field-not-rejected');
+        $this->assertStringContainsString('fields not allowed: two_factor_secret_key', $body['error'] ?? '');
+        $this->assertFalse((new User())->load($nick), 'user-created-with-hidden-field');
+
+        $response = new Response();
+        $body = $this->callApi('ApiKey', 'POST', [], [
+            'description' => 'test-apimodel',
+            'apikey' => 'attacker-chosen-key',
+        ], [], $response);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'apikey-not-rejected');
+        $this->assertStringContainsString('fields not allowed: apikey', $body['error'] ?? '');
+        $this->assertFalse((new ApiKey())->loadWhereEq('apikey', 'attacker-chosen-key'), 'apikey-created');
+    }
+
+    public function testListRejectsInjectedOperation(): void
+    {
+        $user = $this->createUser();
+
+        // el conector de un filtro no puede llevar SQL
+        $response = new Response();
+        $body = $this->callApi('User', 'GET', [], [], [
+            'filter' => ['nick' => $user->nick, 'email' => 'none'],
+            'operation' => ['email' => 'OR 1=1 --'],
+        ], $response);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'injected-operation-not-rejected');
+        $this->assertStringContainsString('operation not allowed', $body['error'] ?? '');
+
+        // AND y OR siguen funcionando
+        $body = $this->callApi('User', 'GET', [], [], [
+            'filter' => ['nick' => $user->nick, 'email' => 'none'],
+            'operation' => ['email' => 'or'],
+        ]);
+        $this->assertEquals([$user->nick], array_column($body, 'nick'), 'or-operation-not-applied');
+
+        $this->assertTrue($user->delete());
+    }
+
     public function testModelWithoutHiddenFieldsExposesAll(): void
     {
         // Divisa no oculta nada: comprobamos que su schema sigue devolviendo todos los campos.
@@ -112,12 +234,39 @@ final class APIModelTest extends TestCase
         $this->assertSame(['apikey'], (new ApiKey())->getApiFieldsToHide());
     }
 
-    private function callApi(string $resource, string $method, array $params): array
+    public function testExcludeModel(): void
     {
-        $_SERVER['REQUEST_METHOD'] = $method;
-
         $request = new Request();
         $response = new Response();
+        $api = new APIModel($response, $request, []);
+
+        $this->assertArrayHasKey('divisas', $api->getResources());
+
+        $excludedModels = new ReflectionProperty(APIModel::class, 'excluded_models');
+        $previousValue = $excludedModels->getValue();
+
+        try {
+            APIModel::excludeModel('Divisa');
+            APIModel::excludeModel('Divisa');
+
+            $this->assertArrayNotHasKey('divisas', $api->getResources());
+        } finally {
+            $excludedModels->setValue(null, $previousValue);
+        }
+    }
+
+    private function callApi(
+        string $resource,
+        string $method,
+        array $params,
+        array $requestData = [],
+        array $queryData = [],
+        ?Response $response = null
+    ): array {
+        $_SERVER['REQUEST_METHOD'] = $method;
+
+        $request = new Request(['request' => $requestData, 'query' => $queryData]);
+        $response = $response ?? new Response();
         $response->disableSend(true);
 
         $api = new APIModel($response, $request, $params);

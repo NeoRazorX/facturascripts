@@ -86,19 +86,22 @@ final class ProductoImagenTest extends TestCase
         // Devuelve la ruta del archivo. Creamos una thumbnail sin parámetros
         $result = $productoImagen->getThumbnail();
 
-        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME) . '_100x100.' . $extension;
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . $attachedFile->idfile . '_'
+            . pathinfo($attachedFile->filename, PATHINFO_FILENAME) . '_100x100.' . $extension;
         $this->assertEquals($expectedPath, $result);
         $this->assertFileExists(FS_FOLDER . $expectedPath);
 
         // Comprobamos las rutas con tokens
         $thumbnailsPath = $expectedPath;
         $result = $productoImagen->getThumbnail(100, 100, true, false);
-        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME)
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . $attachedFile->idfile . '_'
+            . pathinfo($attachedFile->filename, PATHINFO_FILENAME)
             . '_100x100.' . $extension . '?myft=' . MyFilesToken::get($thumbnailsPath, false);
         $this->assertEquals($expectedPath, $result);
 
         $result = $productoImagen->getThumbnail(100, 100, true, true);
-        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME)
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . $attachedFile->idfile . '_'
+            . pathinfo($attachedFile->filename, PATHINFO_FILENAME)
             . '_100x100.' . $extension . '?myft=' . MyFilesToken::get($thumbnailsPath, true);
         $this->assertEquals($expectedPath, $result);
 
@@ -112,7 +115,8 @@ final class ProductoImagenTest extends TestCase
         // Creamos una thumbnail pasando dimensiones
         $productoImagen->idfile = $attachedFile->idfile;
         $result = $productoImagen->getThumbnail(100, 50);
-        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME) . '_100x50.' . $extension;
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . $attachedFile->idfile . '_'
+            . pathinfo($attachedFile->filename, PATHINFO_FILENAME) . '_100x50.' . $extension;
         $this->assertEquals($expectedPath, $result);
         $this->assertFileExists(FS_FOLDER . $expectedPath);
         $this->assertEquals(50, getimagesize(FS_FOLDER . $expectedPath)[0]);
@@ -175,7 +179,8 @@ final class ProductoImagenTest extends TestCase
         $productoImagen->getThumbnail(300, 500);
 
         // Comprobamos antes de borrarlo que existen los archivos y entradas en la BBDD
-        $expectedPath = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME);
+        $expectedPath = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/' . $attachedFile->idfile . '_'
+            . pathinfo($attachedFile->filename, PATHINFO_FILENAME);
         $this->assertFileExists($expectedPath . '_100x100.jpg');
         $this->assertFileExists($expectedPath . '_200x200.jpg');
         $this->assertFileExists($expectedPath . '_300x500.jpg');
@@ -185,7 +190,8 @@ final class ProductoImagenTest extends TestCase
         $productoImagen->delete();
 
         // Comprobamos que, una vez borrado, no existen los archivos ni las entradas en la BBDD
-        $expectedPath = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME);
+        $expectedPath = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/' . $attachedFile->idfile . '_'
+            . pathinfo($attachedFile->filename, PATHINFO_FILENAME);
         $this->assertFileDoesNotExist($expectedPath . '_100x100.jpg');
         $this->assertFileDoesNotExist($expectedPath . '_200x200.jpg');
         $this->assertFileDoesNotExist($expectedPath . '_300x500.jpg');
@@ -193,6 +199,67 @@ final class ProductoImagenTest extends TestCase
 
         // eliminamos
         $attachedFile->delete();
+        $producto->delete();
+    }
+
+    public function testThumbnailsWithSameFileName(): void
+    {
+        // saltamos el test si la extensión GD no está instalada
+        if (!extension_loaded('gd')) {
+            $this->markTestSkipped('La extensión GD no está instalada.');
+        }
+
+        // saltamos el test si GD no soporta JPEG
+        $info = gd_info();
+        if (!isset($info['JPEG Support']) || !$info['JPEG Support']) {
+            $this->markTestSkipped('GD does not support JPEG.');
+        }
+
+        $producto = $this->getRandomProduct();
+        $this->assertTrue($producto->save());
+
+        // Creamos dos adjuntos distintos que conservan el mismo nombre original
+        $attachedFile1 = $this->getFakeAttachedFile('same_name.jpg', 'product_image.jpg');
+        $this->assertTrue($attachedFile1->save());
+        $attachedFile2 = $this->getFakeAttachedFile('same_name.jpg', 'xss_img_src_onerror_alert(123).jpeg');
+        $this->assertTrue($attachedFile2->save());
+        $this->assertSame($attachedFile1->filename, $attachedFile2->filename);
+        $this->assertNotSame($attachedFile1->idfile, $attachedFile2->idfile);
+
+        $productoImagen1 = new ProductoImagen();
+        $productoImagen1->idfile = $attachedFile1->idfile;
+        $productoImagen1->idproducto = $producto->idproducto;
+        $productoImagen1->referencia = $producto->referencia;
+        $this->assertTrue($productoImagen1->save());
+
+        $productoImagen2 = new ProductoImagen();
+        $productoImagen2->idfile = $attachedFile2->idfile;
+        $productoImagen2->idproducto = $producto->idproducto;
+        $productoImagen2->referencia = $producto->referencia;
+        $this->assertTrue($productoImagen2->save());
+
+        // Las miniaturas de igual tamaño deben tener rutas y contenidos distintos
+        $thumbnail1 = $productoImagen1->getThumbnail(100, 100);
+        $thumbnail2 = $productoImagen2->getThumbnail(100, 100);
+        $this->assertNotSame($thumbnail1, $thumbnail2);
+        $this->assertFileExists(FS_FOLDER . $thumbnail1);
+        $this->assertFileExists(FS_FOLDER . $thumbnail2);
+        $this->assertNotSame(sha1_file(FS_FOLDER . $thumbnail1), sha1_file(FS_FOLDER . $thumbnail2));
+
+        // Cada imagen solo debe listar sus propias miniaturas
+        $productoImagen2->getThumbnail(200, 200);
+        $this->assertCount(1, $productoImagen1->getThumbnails());
+        $this->assertCount(2, $productoImagen2->getThumbnails());
+
+        // Borrar una imagen no debe eliminar las miniaturas de la otra
+        $this->assertTrue($productoImagen1->delete());
+        $this->assertFileDoesNotExist(FS_FOLDER . $thumbnail1);
+        $this->assertFileExists(FS_FOLDER . $thumbnail2);
+        $this->assertCount(2, $productoImagen2->getThumbnails());
+
+        // eliminamos
+        $attachedFile1->delete();
+        $attachedFile2->delete();
         $producto->delete();
     }
 
@@ -286,9 +353,9 @@ final class ProductoImagenTest extends TestCase
         $this->assertEquals('?myft=' . MyFilesToken::get('', true), $result);
     }
 
-    private function getFakeAttachedFile(string $file_name): AttachedFile
+    private function getFakeAttachedFile(string $file_name, string $source_name = ''): AttachedFile
     {
-        $source_path = FS_FOLDER . '/Test/__files/' . $file_name;
+        $source_path = FS_FOLDER . '/Test/__files/' . ($source_name ?: $file_name);
         if (false === file_exists($source_path)) {
             throw new Exception('File ' . $source_path . ' not found');
         }

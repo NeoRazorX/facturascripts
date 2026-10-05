@@ -178,12 +178,12 @@ class Dashboard extends Controller
         $this->loadCreateLinks();
         $this->loadFirstSteps();
         $this->loadOpenLinks();
+        $this->loadNews();
 
         if (false === $this->isOnboarding) {
             $this->loadLowStockSection();
             $this->loadReceiptSection();
             $this->loadStats();
-            $this->loadNews();
         }
 
         $this->pipe('loadExtensions');
@@ -282,7 +282,7 @@ class Dashboard extends Controller
                 ->setTimeout(5)
                 ->json() ?? [];
         });
-        $this->news = is_array($news) ? array_slice($news, 0, 1) : [];
+        $this->news = is_array($news) ? array_slice($news, 0, 5) : [];
     }
 
     /**
@@ -309,7 +309,7 @@ class Dashboard extends Controller
      */
     private function loadReceiptSection(): void
     {
-        if (false === $this->user->can('ListReciboCliente')) {
+        if (false === $this->user->can('ListFacturaCliente')) {
             return;
         }
 
@@ -320,7 +320,7 @@ class Dashboard extends Controller
         ];
 
         // si el usuario solo ve sus datos, limitamos los recibos a los suyos
-        if ($this->user->can('ListReciboCliente', 'only-owner-data')) {
+        if ($this->user->can('ListFacturaCliente', 'only-owner-data')) {
             $where[] = Where::eq('nick', $this->user->nick);
         }
 

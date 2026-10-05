@@ -34,12 +34,30 @@ use FacturaScripts\Core\Where;
  */
 class APIModel extends APIResourceClass
 {
+    /** @var string[] */
+    private static $excluded_models = ['CodeModel', 'TotalModel'];
+
     /**
      * ModelClass object.
      *
      * @var ModelClass $model
      */
     private $model;
+
+    /**
+     * Excludes a model from the API resources map.
+     *
+     * Plugins can call this method from Init::init(), using the class name
+     * without namespace.
+     *
+     * @param string $modelName
+     */
+    public static function excludeModel(string $modelName): void
+    {
+        if (false === in_array($modelName, self::$excluded_models, true)) {
+            self::$excluded_models[] = $modelName;
+        }
+    }
 
     /**
      * Process the GET request. Overwrite this function to implement is functionality.
@@ -117,10 +135,13 @@ class APIModel extends APIResourceClass
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
         if ($this->model->load($code)) {
-            $this->setError(Tools::trans('duplicate-record'), $this->model->toArray());
+            $hidden = $this->model->getApiFieldsToHide();
+            $this->setError(Tools::trans('duplicate-record'), $this->filterHidden($this->model->toArray(), $hidden));
             return false;
         } elseif (empty($values)) {
             $this->setError(Tools::trans('no-data-received-form'));
+            return false;
+        } elseif (false === $this->checkWritableFields($values)) {
             return false;
         }
 
@@ -148,6 +169,8 @@ class APIModel extends APIResourceClass
             return false;
         } elseif (empty($values)) {
             $this->setError(Tools::trans('no-data-received-form'));
+            return false;
+        } elseif (false === $this->checkWritableFields($values)) {
             return false;
         }
 
@@ -198,16 +221,12 @@ class APIModel extends APIResourceClass
      */
     private function getResourcesFromFolder($folder): array
     {
-        // Modelos que no deben exponerse en la API
-        $excludedModels = ['CodeModel', 'TotalModel'];
-
         $resources = [];
         foreach (scandir(FS_FOLDER . '/Dinamic/' . $folder, SCANDIR_SORT_ASCENDING) as $fName) {
             if (substr($fName, -4) === '.php') {
                 $modelName = substr($fName, 0, -4);
 
-                // Excluir modelos auxiliares
-                if (in_array($modelName, $excludedModels, true)) {
+                if (in_array($modelName, self::$excluded_models, true)) {
                     continue;
                 }
 
@@ -321,6 +340,13 @@ class APIModel extends APIResourceClass
         $operation = $this->request->query->getArray('operation');
         $order = $this->request->query->getArray('sort');
 
+        // el conector de cada filtro se concatena en el SQL: solo aceptamos AND u OR
+        $badOperations = array_keys(array_filter($operation, fn($value) => false === Where::isValidOperation($value)));
+        if (!empty($badOperations)) {
+            $this->setError('api: operation not allowed: ' . implode(', ', $badOperations));
+            return false;
+        }
+
         // obtenemos los registros
         $data = [];
         $hidden = $this->model->getApiFieldsToHide();
@@ -331,6 +357,12 @@ class APIModel extends APIResourceClass
             $this->setError('api: fields not allowed: ' . implode(', ', array_unique($badFields)));
             return false;
         }
+
+        // sin orden, el limit/offset no es estable: ordenamos por la clave primaria
+        if (empty($order)) {
+            $order = [$this->model->primaryColumn() => 'ASC'];
+        }
+
         foreach ($this->model->all($where, $order, $offset, $limit) as $item) {
             $data[] = $this->filterHidden($item->toArray(true), $hidden);
         }
@@ -440,5 +472,26 @@ class APIModel extends APIResourceClass
         }
 
         return $data;
+    }
+
+    /**
+     * Rechaza la petición si intenta escribir en campos ocultos de la API
+     * (hashes, tokens de sesión, secretos...). Solo se comprueban columnas:
+     * las claves dentro de columnas json (columna.clave) dependen del modelo.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    private function checkWritableFields(array $values): bool
+    {
+        $hidden = array_filter($this->model->getApiFieldsToHide(), fn($field) => strpos($field, '.') === false);
+        $badFields = array_intersect(array_keys($values), $hidden);
+        if (empty($badFields)) {
+            return true;
+        }
+
+        $this->setError('api: fields not allowed: ' . implode(', ', $badFields));
+        return false;
     }
 }

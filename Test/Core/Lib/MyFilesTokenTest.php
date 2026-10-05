@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Lib;
 
+use FacturaScripts\Core\AppKey;
 use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Model\AttachedFile;
 use PHPUnit\Framework\TestCase;
@@ -75,6 +76,67 @@ final class MyFilesTokenTest extends TestCase
 
         // volvemos a la fecha de hoy
         MyFilesToken::setCurrentDate(date('d-m-Y'));
+    }
+
+    /**
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
+    public function testHmacTokensWithAppKey(): void
+    {
+        if (false === defined('FS_APP_KEY')) {
+            define('FS_APP_KEY', AppKey::generate());
+        }
+        $this->assertFalse(AppKey::isDerived(), 'app-key-not-used');
+
+        // con FS_APP_KEY los tokens nuevos ya no son los antiguos
+        $path = 'MyFiles' . DIRECTORY_SEPARATOR . 'test.jpg';
+        $init = FS_DB_NAME . FS_DB_PASS;
+        $nextWeek = date('d-m-Y', strtotime('+1 week'));
+        $tokenPermanent = MyFilesToken::get($path, true);
+        $tokenTemporal = MyFilesToken::get($path, false);
+        $tokenOneWeek = MyFilesToken::get($path, false, $nextWeek);
+        $this->assertNotEquals(sha1($init . $path), $tokenPermanent, 'permanent-token-is-legacy');
+        $this->assertStringEndsWith('|' . $nextWeek, $tokenOneWeek, 'expiration-not-in-token');
+
+        // los nuevos y los antiguos son válidos
+        $this->assertTrue(MyFilesToken::validate($path, $tokenPermanent), 'permanent-token-not-valid');
+        $this->assertTrue(MyFilesToken::validate($path, $tokenTemporal), 'temporal-token-not-valid');
+        $this->assertTrue(MyFilesToken::validate($path, $tokenOneWeek), 'one-week-token-not-valid');
+        $this->assertTrue(MyFilesToken::validate($path, sha1($init . $path)), 'legacy-permanent-token-not-valid');
+
+        // pero no sirven para otro archivo
+        $this->assertFalse(MyFilesToken::validate('test2.jpg', $tokenPermanent), 'token-valid-for-other-file');
+    }
+
+    public function testLegacyTokens(): void
+    {
+        // los tokens anteriores a FS_APP_KEY siguen siendo válidos, para no romper los enlaces compartidos
+        $path = 'MyFiles' . DIRECTORY_SEPARATOR . 'test.jpg';
+        $init = FS_DB_NAME . FS_DB_PASS;
+        $nextWeek = date('d-m-Y', strtotime('+1 week'));
+        $this->assertTrue(MyFilesToken::validate($path, sha1($init . $path)), 'legacy-permanent-token-not-valid');
+        $this->assertTrue(MyFilesToken::validate($path, sha1($init . $path . MyFilesToken::getCurrentDate())), 'legacy-daily-token-not-valid');
+        $this->assertTrue(MyFilesToken::validate($path, sha1($init . $path . $nextWeek) . '|' . $nextWeek), 'legacy-expiring-token-not-valid');
+
+        // pero no los de otro archivo, ni los caducados
+        $this->assertFalse(MyFilesToken::validate($path, sha1($init . $path . 'x')), 'legacy-other-file-token-valid');
+        $lastWeek = date('d-m-Y', strtotime('-1 week'));
+        $this->assertFalse(MyFilesToken::validate($path, sha1($init . $path . $lastWeek) . '|' . $lastWeek), 'legacy-expired-token-valid');
+    }
+
+    public function testTokenOfOtherFile(): void
+    {
+        $token = MyFilesToken::get('test.jpg', true);
+        $this->assertFalse(MyFilesToken::validate('test2.jpg', $token), 'token-valid-for-other-file');
+        $this->assertFalse(MyFilesToken::validate('test.jpg', ''), 'empty-token-valid');
+
+        // un token con fecha de expiración manipulada no es válido
+        $nextWeek = date('d-m-Y', strtotime('+1 week'));
+        $nextYear = date('d-m-Y', strtotime('+1 year'));
+        $tokenWeek = MyFilesToken::get('test.jpg', false, $nextWeek);
+        $hash = explode('|', $tokenWeek)[0];
+        $this->assertFalse(MyFilesToken::validate('test.jpg', $hash . '|' . $nextYear), 'tampered-expiration-valid');
     }
 
     public function testGetUrl(): void

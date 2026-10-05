@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -451,20 +451,34 @@ final class RequestTest extends TestCase
         $originalServer = $_SERVER;
 
         try {
-            // Test IP desde Cloudflare
-            $_SERVER = ['HTTP_CF_CONNECTING_IP' => '192.168.1.1'];
+            // sin proxy de confianza se ignoran las cabeceras
+            $_SERVER = ['HTTP_CF_CONNECTING_IP' => '203.0.113.1', 'REMOTE_ADDR' => '198.51.100.7'];
             $request = $this->createRequest(['headers' => $_SERVER]);
-            $this->assertEquals('192.168.1.1', $request->ip());
+            $this->assertEquals('198.51.100.7', $request->ip());
 
-            // Test IP desde proxy
-            $_SERVER = ['HTTP_X_FORWARDED_FOR' => '10.0.0.1'];
+            $_SERVER = ['HTTP_X_FORWARDED_FOR' => '203.0.113.1', 'REMOTE_ADDR' => '198.51.100.7'];
             $request = $this->createRequest(['headers' => $_SERVER]);
-            $this->assertEquals('10.0.0.1', $request->ip());
+            $this->assertEquals('198.51.100.7', $request->ip());
+
+            // Test IP desde Cloudflare
+            $_SERVER = ['HTTP_CF_CONNECTING_IP' => '203.0.113.1', 'REMOTE_ADDR' => '172.64.0.10'];
+            $request = $this->createRequest(['headers' => $_SERVER]);
+            $this->assertEquals('203.0.113.1', $request->ip());
+
+            // Test IP desde proxy local
+            $_SERVER = ['HTTP_X_FORWARDED_FOR' => '203.0.113.1', 'REMOTE_ADDR' => '127.0.0.1'];
+            $request = $this->createRequest(['headers' => $_SERVER]);
+            $this->assertEquals('203.0.113.1', $request->ip());
 
             // Test IP directa
             $_SERVER = ['REMOTE_ADDR' => '172.16.0.1'];
             $request = $this->createRequest(['headers' => $_SERVER]);
             $this->assertEquals('172.16.0.1', $request->ip());
+
+            // cabeceras sin REMOTE_ADDR
+            $_SERVER = ['HTTP_CF_CONNECTING_IP' => '203.0.113.1', 'HTTP_X_FORWARDED_FOR' => '203.0.113.2'];
+            $request = $this->createRequest(['headers' => $_SERVER]);
+            $this->assertEquals('::1', $request->ip());
 
             // Test sin IP
             $_SERVER = [];

@@ -109,7 +109,7 @@
     {% set cancel = trans('cancel') %}
     {% set confirm = trans('confirm') %}
     <button type="button" class="btn btn-sm btn-outline-danger p-1"
-            onclick="confirmAction('{{ formName }}','delete-image','{{ label }}','{{ text }}','{{ cancel }}','{{ confirm }}');">
+            onclick="confirmAction('{{ formName }}','delete-image','{{ label }}','{{ text }}','{{ cancel }}','{{ confirm }}','fa-solid fa-trash-alt');">
         <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
     </button>
 {% endmacro %}

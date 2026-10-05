@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\ApiKey;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -450,6 +451,25 @@ final class CodeModelTest extends TestCase
         $this->assertEquals('', $result->description);
     }
 
+    public function testSearchWithInvalidFieldNames(): void
+    {
+        $result = CodeModel::search(
+            'Join\\PartidaAsiento',
+            '(SELECT(SLEEP(5)))',
+            'concepto',
+            'x'
+        );
+        $this->assertSame([], $result);
+
+        $result = CodeModel::search(
+            'Join\\PartidaAsiento',
+            'idpartida',
+            '(SELECT(SLEEP(5)))',
+            'x'
+        );
+        $this->assertSame([], $result);
+    }
+
     public function testAllWithJoinModelName(): void
     {
         // Pasar 'Join\StockProducto' debe entrar en el branch de modelo y, al
@@ -575,12 +595,72 @@ final class CodeModelTest extends TestCase
     {
         // Verifica que el helper protegido modelBaseName devuelve el último segmento
         $method = new \ReflectionMethod(CodeModel::class, 'modelBaseName');
-        if (PHP_VERSION_ID < 80100) {
-            $method->setAccessible(true);
-        }
         $this->assertEquals('PartidaAsiento', $method->invoke(null, 'Join\\PartidaAsiento'));
         $this->assertEquals('Variante', $method->invoke(null, 'Variante'));
         $this->assertEquals('C', $method->invoke(null, 'A\\B\\C'));
+    }
+
+    public function testSignAndVerify(): void
+    {
+        $sign = CodeModel::sign('clientes', 'codcliente', 'nombre', 'codgrupo');
+        $this->assertTrue(CodeModel::verifySign($sign, 'clientes', 'codcliente', 'nombre', 'codgrupo'));
+
+        // cambiar cualquiera de los parámetros invalida la firma
+        $this->assertFalse(CodeModel::verifySign($sign, 'users', 'codcliente', 'nombre', 'codgrupo'));
+        $this->assertFalse(CodeModel::verifySign($sign, 'clientes', 'logkey', 'nombre', 'codgrupo'));
+        $this->assertFalse(CodeModel::verifySign($sign, 'clientes', 'codcliente', 'password', 'codgrupo'));
+        $this->assertFalse(CodeModel::verifySign($sign, 'clientes', 'codcliente', 'nombre', ''));
+        $this->assertFalse(CodeModel::verifySign('', 'clientes', 'codcliente', 'nombre', 'codgrupo'));
+
+        // no se pueden mover caracteres de un parámetro a otro
+        $sign = CodeModel::sign('a|b', 'c', 'd');
+        $this->assertFalse(CodeModel::verifySign($sign, 'a', 'b|c', 'd'));
+    }
+
+    public function testHiddenColumnsAreNeverReturned(): void
+    {
+        $user = $this->getRandomUser();
+        $logkey = $user->newLogkey('127.0.0.1');
+        $this->assertTrue($user->save());
+
+        $apiKey = new ApiKey();
+        $apiKey->description = 'CodeModelTest';
+        $this->assertTrue($apiKey->save());
+
+        try {
+            // las columnas visibles se siguen devolviendo
+            $nicks = array_column(CodeModel::all('users', 'nick', 'nick', false), 'code');
+            $this->assertContains($user->nick, $nicks);
+
+            // ni por tabla, ni por modelo, ni con prefijo, ni dentro de una expresión
+            $queries = [
+                ['users', 'logkey', 'nick'],
+                ['users', 'nick', 'logkey'],
+                ['users', 'password', 'nick'],
+                ['users', 'two_factor_secret_key', 'nick'],
+                ['users', 'users.logkey', 'nick'],
+                ['users', 'LOGKEY', 'nick'],
+                ['users', 'upper(logkey)', 'nick'],
+                ['users', "concat(nick, ':', logkey)", 'nick'],
+                ['User', 'logkey', 'nick'],
+                ['api_keys', 'apikey', 'description'],
+                ['ApiKey', 'apikey', 'description'],
+            ];
+            foreach ($queries as [$table, $fieldCode, $fieldTitle]) {
+                $label = $table . ':' . $fieldCode . ':' . $fieldTitle;
+                $this->assertEmpty(CodeModel::all($table, $fieldCode, $fieldTitle, false), 'all ' . $label);
+                $this->assertEmpty(CodeModel::search($table, $fieldCode, $fieldTitle, ''), 'search ' . $label);
+            }
+
+            // con la opción vacía solo se devuelve esa opción
+            $rows = CodeModel::all('users', 'logkey', 'nick');
+            $this->assertCount(1, $rows);
+            $this->assertNull($rows[0]->code);
+            $this->assertNotContains($logkey, array_column($rows, 'code'));
+        } finally {
+            $apiKey->delete();
+            $user->delete();
+        }
     }
 
     protected function tearDown(): void

@@ -248,13 +248,31 @@ class EditSubcuenta extends EditController
      */
     private function dotAccountingAction(bool $value): bool
     {
+        // comprobamos el permiso de modificación y el token del formulario
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
+        }
+
         $ids = $this->request->request->getArray('codes');
         if (empty($ids)) {
             Tools::log()->warning('no-selected-item');
             return true;
         }
 
-        $where = [Where::in('idpartida', $ids)];
+        // solo modificamos las partidas de la subcuenta que se está editando
+        $subaccount = new Subcuenta();
+        if (false === $subaccount->load($this->request->queryOrInput('code'))) {
+            Tools::log()->warning('record-not-found');
+            return true;
+        }
+
+        $where = [
+            Where::in('idpartida', $ids),
+            Where::eq('idsubcuenta', $subaccount->idsubcuenta)
+        ];
         foreach (Partida::all($where) as $row) {
             $row->setDottedStatus($value);
         }

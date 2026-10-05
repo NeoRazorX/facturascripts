@@ -36,6 +36,9 @@ class InvoiceOperation
 
     const INTRA_COMMUNITY_SERVICES = 'intracom-servicios';
 
+    /** Longitud máxima de la clave, igual que la del campo operacion de las tablas de documentos. */
+    const MAX_KEY_LENGTH = 30;
+
     const REVERSE_CHARGE = 'inv-sujeto-pasivo';
 
     const SUCCESSIVE_TRACT = 'successive-tract';
@@ -57,7 +60,7 @@ class InvoiceOperation
 
     public static function add(string $key, string $value, ?string $type = null): void
     {
-        $fixedKey = substr($key, 0, 20);
+        $fixedKey = substr($key, 0, self::MAX_KEY_LENGTH);
         self::$all[$fixedKey] = $value;
         unset(self::$removed[$fixedKey]);
 
@@ -93,7 +96,7 @@ class InvoiceOperation
 
     public static function remove(string $key): void
     {
-        $fixedKey = substr($key, 0, 20);
+        $fixedKey = substr($key, 0, self::MAX_KEY_LENGTH);
         unset(self::$all[$fixedKey], self::$types[$fixedKey]);
         self::$removed[$fixedKey] = true;
     }

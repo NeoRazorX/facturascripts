@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,10 +30,33 @@ use FacturaScripts\Core\Tools;
  */
 class WidgetDatalist extends WidgetSelect
 {
+    /**
+     * Id of the datalist shared by every row of the view.
+     *
+     * @var string
+     */
+    protected $listId = null;
+
     protected function assets(): void
     {
         $route = Tools::config('route');
         AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetDatalist.js?v=' . Tools::date());
+    }
+
+    /**
+     * Html of the datalist with every available option.
+     *
+     * @return string
+     */
+    protected function datalistHtml(): string
+    {
+        $html = '<datalist id="' . $this->listId . '">';
+        foreach ($this->values as $option) {
+            $title = empty($option['title']) ? $option['value'] : $option['title'];
+            $html .= '<option value="' . $title . '" />';
+        }
+
+        return $html . '</datalist>';
     }
 
     /**
@@ -49,10 +72,17 @@ class WidgetDatalist extends WidgetSelect
             $class = $class . ' parentDatalist';
         }
 
-        $list = $this->fieldname . '-list-' . $this->getUniqueId();
+        // los datalist en cascada los recarga javascript según el valor del campo padre,
+        // así que cada fila necesita el suyo. Los demás comparten uno entre todas las filas,
+        // porque los valores se cargan una sola vez y son idénticos para todas.
+        $newList = $this->parent || null === $this->listId;
+        if ($newList) {
+            $this->listId = $this->fieldname . '-list-' . $this->getUniqueId();
+        }
+
         $html = '<input type="text" name="' . $this->fieldname . '" value="' . $this->value . '"'
             . ' class="' . $class . '"'
-            . ' list="' . $list . '"'
+            . ' list="' . $this->listId . '"'
             . $this->inputHtmlExtraParams()
             . ' parent="' . $this->parent . '"'
             . ' data-field="' . $this->fieldname . '"'
@@ -60,16 +90,11 @@ class WidgetDatalist extends WidgetSelect
             . ' data-fieldcode="' . $this->fieldcode . '"'
             . ' data-fieldtitle="' . $this->fieldtitle . '"'
             . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . ' data-fieldsign="' . $this->fieldSign() . '"'
             . ' data-limit="' . $this->limit . '"'
             . '/>';
 
-        $html .= '<datalist id="' . $list . '">';
-        foreach ($this->values as $option) {
-            $title = empty($option['title']) ? $option['value'] : $option['title'];
-            $html .= '<option value="' . $title . '" />';
-        }
-        $html .= '</datalist>';
-        return $html;
+        return $newList ? $html . $this->datalistHtml() : $html;
     }
 
     /**
@@ -86,9 +111,12 @@ class WidgetDatalist extends WidgetSelect
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
         $this->limit = $child['limit'] ?? CodeModel::getlimit();
         if ($loadData && $this->source) {
+            // el límite de CodeModel es estático: lo cambiamos solo mientras cargamos los valores
+            $previousLimit = static::$codeModel::getLimit();
             static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, false);
             $this->setValuesFromCodeModel($values, $this->translate);
+            static::$codeModel::setLimit($previousLimit);
         }
     }
 }

@@ -249,7 +249,14 @@ class Cuenta extends ModelClass
         $this->descripcion = Tools::noHtml($this->descripcion);
 
         if (empty($this->codcuenta) || false === is_numeric($this->codcuenta)) {
-            Tools::log()->warning('invalid-number', ['%number%' => $this->codcuenta]);
+            Tools::log()->warning('invalid-number', [
+                '%number%' => $this->codcuenta === null || $this->codcuenta === '' ? Tools::trans('empty') : $this->codcuenta,
+                'codejercicio' => $this->codejercicio,
+                'field' => 'codcuenta',
+                'model-class' => $this->modelClassName(),
+                'model-code' => $this->id(),
+                'value' => $this->codcuenta,
+            ]);
             return false;
         }
 

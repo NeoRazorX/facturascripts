@@ -394,7 +394,7 @@ final class DataBase
     public function lastval()
     {
         $aux = $this->select(self::$engine->getSQL()->sqlLastValue());
-        return empty($aux) ? false : $aux[0]['num'];
+        return empty($aux) ? false : (int)$aux[0]['num'];
     }
 
     /**

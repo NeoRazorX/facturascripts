@@ -124,6 +124,11 @@ class SendMail extends Controller
             return parent::url();
         }
 
+        $attachName = $this->request->queryOrInput('attachName', '');
+        if (false === empty($attachName)) {
+            $sendParams['attachName'] = $attachName;
+        }
+
         if ($this->request->has('modelClassName') && $this->request->has('modelCode')) {
             $sendParams['modelClassName'] = $this->request->queryOrInput('modelClassName');
             $sendParams['modelCode'] = $this->request->queryOrInput('modelCode');
@@ -144,8 +149,9 @@ class SendMail extends Controller
     {
         $results = [];
 
+        // solo buscamos emails de contactos: no aceptamos la tabla ni los campos de la petición
         $data = $this->requestGet(['source', 'field', 'title', 'term']);
-        foreach ($this->codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
+        foreach ($this->codeModel->search('contactos', 'email', 'email', (string)$data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
 
@@ -215,6 +221,25 @@ class SendMail extends Controller
     protected function getEmails(string $field): array
     {
         return NewMail::splitEmails($this->request->input($field, ''));
+    }
+
+    /**
+     * Devuelve la ruta real del archivo dentro de la carpeta temporal de adjuntos,
+     * o null si no existe o está fuera de ella (por ejemplo, con ../).
+     */
+    protected function getTmpFilePath(string $fileName): ?string
+    {
+        if (empty($fileName)) {
+            return null;
+        }
+
+        $tmpFolder = realpath(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH);
+        $filePath = realpath(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName);
+        if (false === $tmpFolder || false === $filePath || false === is_file($filePath)) {
+            return null;
+        }
+
+        return str_starts_with($filePath, $tmpFolder . DIRECTORY_SEPARATOR) ? $filePath : null;
     }
 
     protected function loadDataDefault($model): void
@@ -433,14 +458,33 @@ class SendMail extends Controller
     {
         $fileName = $this->request->queryOrInput('fileName', '');
         Tools::folderCheckOrCreate(NewMail::ATTACHMENTS_TMP_PATH);
-        $this->newMail->addAttachment(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName, $fileName);
+
+        // solo adjuntamos archivos de la carpeta temporal, nunca rutas externas
+        $filePath = $this->getTmpFilePath($fileName);
+        if (null !== $filePath) {
+            // el archivo temporal lleva un sufijo único para no colisionar en disco,
+            // pero en el email debe aparecer con su nombre limpio
+            $attachName = basename($this->request->queryOrInput('attachName', ''));
+            if (empty($attachName)) {
+                $attachName = preg_replace('/_mail_\d+_\w+(\.\w+)$/', '$1', basename($filePath));
+            }
+
+            $this->newMail->addAttachment($filePath, $attachName);
+        } elseif (false === empty($fileName)) {
+            Tools::log()->warning('file-not-found', ['%origName%' => htmlspecialchars($fileName)]);
+        }
 
         foreach ($this->request->files->getArray('uploads') as $file) {
-            // guardamos el adjunto en una carpeta temporal
-            if ($file->move(NewMail::ATTACHMENTS_TMP_PATH, $file->getClientOriginalName())) {
-                // añadimos el adjunto al email
-                $filePath = FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $file->getClientOriginalName();
-                $this->newMail->addAttachment($filePath, $file->getClientOriginalName());
+            // guardamos el adjunto en una carpeta temporal; el nombre lo pone el navegador,
+            // por lo que dos subidas simultáneas con el mismo nombre se pisarían el archivo;
+            // en disco usamos un nombre único, pero el email conserva el nombre original
+            $originalName = $file->getClientOriginalName();
+            $parts = pathinfo($originalName);
+            $diskName = $parts['filename'] . '_' . uniqid()
+                . (empty($parts['extension']) ? '' : '.' . $parts['extension']);
+            if ($file->move(NewMail::ATTACHMENTS_TMP_PATH, $diskName)) {
+                $filePath = FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $diskName;
+                $this->newMail->addAttachment($filePath, $originalName);
             }
         }
 

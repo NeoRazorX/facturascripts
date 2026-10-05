@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
@@ -304,9 +305,9 @@ class EditUser extends EditController
             case 'EditUser':
                 parent::loadData($viewName, $view);
 
+                // si no puede, interrumpimos la petición para que ninguna acción posterior muestre el usuario
                 if (false === $this->allowUpdate()) {
-                    $this->setTemplate('Error/AccessDenied');
-                    break;
+                    throw new KernelException('AccessDenied', Tools::trans('access-denied'));
                 }
 
                 $this->loadHomepageValues();
@@ -369,6 +370,12 @@ class EditUser extends EditController
                     Where::orIsNull('nick'),
                 ];
                 $view->loadData('', $where);
+
+                // las opciones se abren con este usuario seleccionado y vuelven a esta pestaña
+                $view->setSettings('rowUrlParams', [
+                    'nick' => $nick,
+                    'url' => $this->getModel()->url('edit') . '&activetab=' . $viewName,
+                ]);
                 break;
         }
     }

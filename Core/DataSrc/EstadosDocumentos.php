@@ -33,7 +33,7 @@ final class EstadosDocumentos implements DataSrcInterface
     {
         if (!isset(self::$list)) {
             self::$list = Cache::remember('model-EstadoDocumento-list', function () {
-                return EstadoDocumento::all([], ['idestado' => 'ASC'], 0, 0);
+                return EstadoDocumento::all([], ['orden' => 'ASC', 'idestado' => 'ASC'], 0, 0);
             });
         }
 

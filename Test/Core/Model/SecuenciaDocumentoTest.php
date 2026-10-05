@@ -693,6 +693,182 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertTrue($company->delete(), 'company-cant-delete');
     }
 
+    public function testFillGapsChangesDate(): void
+    {
+        // eliminamos todas las secuencias de PresupuestoCliente
+        $sequence = new SecuenciaDocumento();
+        $this->deleteSequences($sequence);
+
+        // creamos una secuencia con huecos y sin mantener la fecha
+        $sequence->codserie = 'A';
+        $sequence->idempresa = 1;
+        $sequence->inicio = 1;
+        $sequence->longnumero = 6;
+        $sequence->mantenerfecha = false;
+        $sequence->numero = 1;
+        $sequence->patron = 'PRE{EJE}{SERIE}{0NUM}';
+        $sequence->tipodoc = 'PresupuestoCliente';
+        $sequence->usarhuecos = true;
+        $this->assertTrue($sequence->save(), 'document-sequence-cant-save');
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'customer-cant-save');
+
+        // creamos 3 presupuestos consecutivos
+        $doc = new PresupuestoCliente();
+        $doc->setSubject($customer);
+        $doc->setDate('10-01-2018', '00:00:00');
+        $this->assertTrue($doc->save(), 'document-cant-save');
+        $this->assertEquals(1, $doc->numero, 'document-not-one');
+
+        $doc2 = new PresupuestoCliente();
+        $doc2->setSubject($customer);
+        $doc2->setDate('12-01-2018', '00:00:00');
+        $this->assertTrue($doc2->save(), 'document-cant-save');
+        $this->assertEquals(2, $doc2->numero, 'document-not-two');
+
+        $doc3 = new PresupuestoCliente();
+        $doc3->setSubject($customer);
+        $doc3->setDate('15-01-2018', '00:00:00');
+        $this->assertTrue($doc3->save(), 'document-cant-save');
+        $this->assertEquals(3, $doc3->numero, 'document-not-three');
+
+        // eliminamos el segundo presupuesto, para dejar el hueco
+        $this->assertTrue($doc2->delete(), 'document-cant-delete');
+
+        // creamos un presupuesto para rellenar el hueco
+        $doc4 = new PresupuestoCliente();
+        $doc4->setSubject($customer);
+        $doc4->setDate('20-01-2018', '00:00:00');
+        $this->assertTrue($doc4->save(), 'document-cant-save');
+
+        // ocupa el hueco y adopta la fecha del documento contiguo
+        $this->assertEquals(2, $doc4->numero, 'document-not-two');
+        $this->assertEquals($doc3->fecha, $doc4->fecha, 'document-date-not-changed');
+
+        // eliminamos
+        $this->assertTrue($doc4->delete(), 'document-cant-delete');
+        $this->assertTrue($doc3->delete(), 'document-cant-delete');
+        $this->assertTrue($doc->delete(), 'document-cant-delete');
+        $this->assertTrue($sequence->delete(), 'document-sequence-cant-delete');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'address-cant-delete');
+        $this->assertTrue($customer->delete(), 'customer-cant-delete');
+    }
+
+    public function testFillGapsKeepsDate(): void
+    {
+        // eliminamos todas las secuencias de PresupuestoCliente
+        $sequence = new SecuenciaDocumento();
+        $this->deleteSequences($sequence);
+
+        // creamos una secuencia con huecos y manteniendo la fecha
+        $sequence->codserie = 'A';
+        $sequence->idempresa = 1;
+        $sequence->inicio = 1;
+        $sequence->longnumero = 6;
+        $sequence->mantenerfecha = true;
+        $sequence->numero = 1;
+        $sequence->patron = 'PRE{EJE}{SERIE}{0NUM}';
+        $sequence->tipodoc = 'PresupuestoCliente';
+        $sequence->usarhuecos = true;
+        $this->assertTrue($sequence->save(), 'document-sequence-cant-save');
+
+        // la opción se mantiene, porque los presupuestos la admiten
+        $this->assertTrue($sequence->canKeepDate(), 'sequence-cant-keep-date');
+        $this->assertTrue($sequence->mantenerfecha, 'sequence-keep-date-disabled');
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'customer-cant-save');
+
+        // creamos 3 presupuestos consecutivos
+        $doc = new PresupuestoCliente();
+        $doc->setSubject($customer);
+        $doc->setDate('10-01-2018', '00:00:00');
+        $this->assertTrue($doc->save(), 'document-cant-save');
+        $this->assertEquals(1, $doc->numero, 'document-not-one');
+
+        $doc2 = new PresupuestoCliente();
+        $doc2->setSubject($customer);
+        $doc2->setDate('12-01-2018', '00:00:00');
+        $this->assertTrue($doc2->save(), 'document-cant-save');
+        $this->assertEquals(2, $doc2->numero, 'document-not-two');
+
+        $doc3 = new PresupuestoCliente();
+        $doc3->setSubject($customer);
+        $doc3->setDate('15-01-2018', '00:00:00');
+        $this->assertTrue($doc3->save(), 'document-cant-save');
+        $this->assertEquals(3, $doc3->numero, 'document-not-three');
+
+        // eliminamos el segundo presupuesto, para dejar el hueco
+        $this->assertTrue($doc2->delete(), 'document-cant-delete');
+
+        // creamos un presupuesto para rellenar el hueco
+        $doc4 = new PresupuestoCliente();
+        $doc4->setSubject($customer);
+        $doc4->setDate('20-01-2018', '00:00:00');
+        $this->assertTrue($doc4->save(), 'document-cant-save');
+
+        // ocupa el hueco, pero conserva su propia fecha
+        $this->assertEquals(2, $doc4->numero, 'document-not-two');
+        $this->assertEquals('20-01-2018', $doc4->fecha, 'document-date-changed');
+
+        // eliminamos
+        $this->assertTrue($doc4->delete(), 'document-cant-delete');
+        $this->assertTrue($doc3->delete(), 'document-cant-delete');
+        $this->assertTrue($doc->delete(), 'document-cant-delete');
+        $this->assertTrue($sequence->delete(), 'document-sequence-cant-delete');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'address-cant-delete');
+        $this->assertTrue($customer->delete(), 'customer-cant-delete');
+    }
+
+    public function testKeepDateNotAllowedOnInvoices(): void
+    {
+        // creamos una empresa
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save(), 'company-cant-save');
+
+        // creamos una serie
+        $serie = $this->getRandomSerie();
+        $this->assertTrue($serie->save(), 'serie-cant-save');
+
+        // creamos una secuencia de facturas manteniendo la fecha
+        $sequence = new SecuenciaDocumento();
+        $sequence->codserie = $serie->codserie;
+        $sequence->idempresa = $company->idempresa;
+        $sequence->longnumero = 6;
+        $sequence->mantenerfecha = true;
+        $sequence->numero = 1;
+        $sequence->patron = 'FAC{EJE}{SERIE}{0NUM}';
+        $sequence->tipodoc = 'FacturaCliente';
+        $sequence->usarhuecos = true;
+        $this->assertTrue($sequence->save(), 'document-sequence-cant-save');
+
+        // en facturas la opción no está disponible, se desactiva sola
+        $this->assertFalse($sequence->canKeepDate(), 'invoice-sequence-can-keep-date');
+        $this->assertFalse($sequence->mantenerfecha, 'invoice-sequence-keeps-date');
+
+        // lo mismo con las facturas de proveedor
+        $sequence->mantenerfecha = true;
+        $sequence->tipodoc = 'FacturaProveedor';
+        $sequence->patron = 'FPR{EJE}{SERIE}{0NUM}';
+        $this->assertTrue($sequence->save(), 'document-sequence-cant-save');
+        $this->assertFalse($sequence->mantenerfecha, 'invoice-sequence-keeps-date');
+
+        // pero en albaranes sí está disponible
+        $sequence->mantenerfecha = true;
+        $sequence->tipodoc = 'AlbaranCliente';
+        $sequence->patron = 'ALB{EJE}{SERIE}{0NUM}';
+        $this->assertTrue($sequence->save(), 'document-sequence-cant-save');
+        $this->assertTrue($sequence->mantenerfecha, 'delivery-note-sequence-not-keeps-date');
+
+        // eliminamos
+        $this->assertTrue($sequence->delete(), 'document-sequence-cant-delete');
+        $this->assertTrue($serie->delete(), 'serie-cant-delete');
+        $this->assertTrue($company->delete(), 'company-cant-delete');
+    }
+
     private function deleteSequences(SecuenciaDocumento $sequence): void
     {
         $where = [Where::eq('tipodoc', 'PresupuestoCliente')];

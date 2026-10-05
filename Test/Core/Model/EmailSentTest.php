@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,10 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Lib\Email\NewMail;
 use FacturaScripts\Core\Model\EmailSent;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -44,9 +46,72 @@ final class EmailSentTest extends TestCase
         // comprobamos valores por defecto
         $this->assertFalse($emailSent->opened);
         $this->assertNotNull($emailSent->date);
+        $this->assertNull($emailSent->notification);
 
         // eliminamos
         $this->assertTrue($emailSent->delete());
+    }
+
+    public function testNotification(): void
+    {
+        $emailSent = new EmailSent();
+        $emailSent->addressee = 'notification@example.com';
+        $emailSent->email_from = 'sender@example.com';
+        $emailSent->notification = str_repeat('n', 100);
+        $emailSent->subject = 'Test notification';
+        $emailSent->body = 'Test body';
+        $this->assertTrue($emailSent->save());
+
+        $emailSent->reload();
+        $this->assertSame(str_repeat('n', 100), $emailSent->notification);
+
+        $this->assertTrue($emailSent->delete());
+    }
+
+    public function testNewMailSavesNotification(): void
+    {
+        $notificationName = 'test-new-mail-notification';
+        $mailer = new class extends NewMail {
+            public function saveTestMail(): void
+            {
+                $this->saveMailSent();
+            }
+        };
+        $mailer->notification($notificationName)
+            ->to('new-mail-notification@example.com')
+            ->subject('Test NewMail notification')
+            ->body('Test body');
+        $mailer->saveTestMail();
+
+        $where = [
+            Where::eq('addressee', 'new-mail-notification@example.com'),
+            Where::eq('notification', $notificationName),
+        ];
+        $emails = EmailSent::all($where);
+        $this->assertCount(1, $emails);
+        $this->assertSame($notificationName, $emails[0]->notification);
+
+        foreach (EmailSent::allWhereEq('notification', $notificationName) as $email) {
+            $this->assertTrue($email->delete());
+        }
+
+        $plainMailer = new class extends NewMail {
+            public function saveTestMail(): void
+            {
+                $this->saveMailSent();
+            }
+        };
+        $plainMailer->to('new-mail-without-notification@example.com')
+            ->subject('Test NewMail without notification')
+            ->body('Test body');
+        $plainMailer->saveTestMail();
+
+        $plainEmails = EmailSent::allWhereEq('addressee', 'new-mail-without-notification@example.com');
+        $this->assertCount(1, $plainEmails);
+        $this->assertNull($plainEmails[0]->notification);
+        foreach (EmailSent::allWhereEq('uuid', $plainEmails[0]->uuid) as $email) {
+            $this->assertTrue($email->delete());
+        }
     }
 
     public function testClear(): void

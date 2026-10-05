@@ -23,6 +23,9 @@ use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\WorkEvent;
 use FacturaScripts\Core\Template\WorkerClass;
 
+/**
+ * Guarda en caché los datos del evento para comprobar el funcionamiento de los workers.
+ */
 class TestWorker extends WorkerClass
 {
     public function run(WorkEvent $event): bool

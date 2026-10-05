@@ -168,6 +168,7 @@ final class Kernel
         Calculator::addMod(new CalculatorModSpain());
 
         // workers
+        WorkQueue::addWorker('AtributoWorker', 'Model.Atributo.Update');
         WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Delete');
         WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Update');
         WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Delete');
@@ -355,7 +356,7 @@ final class Kernel
      */
     public static function version(): float
     {
-        return 2026.51;
+        return 2026.71;
     }
 
     /**
@@ -409,8 +410,10 @@ final class Kernel
             header('Content-Length: ' . ob_get_length());
         }
 
-        // enviamos el buffer de salida y cerramos
-        ob_end_flush();
+        // enviamos el buffer de salida, si queda alguno abierto, y cerramos
+        if (ob_get_level() > 0) {
+            ob_end_flush();
+        }
         flush();
     }
 

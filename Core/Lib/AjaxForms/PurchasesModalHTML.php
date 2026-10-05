@@ -410,7 +410,7 @@ class PurchasesModalHTML
             . Tools::trans('new-supplier') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'
             . '</div>'
-            . '<div class="modal-body">'
+            . '<div class="modal-body" onkeydown="return newSupplierKeyDown(event);">'
             . '<div class="row g-2">'
             . '<div class="col-sm-8"><label for="newSupplierName" class="form-label">' . Tools::trans('name') . '</label>'
             . '<input type="text" name="newsupplier_nombre" id="newSupplierName" class="form-control" maxlength="100" required></div>'

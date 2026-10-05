@@ -51,6 +51,13 @@ class EditFamilia extends EditController
 
     protected function addProductAction(): void
     {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
             return;
@@ -59,7 +66,7 @@ class EditFamilia extends EditController
         $num = 0;
         foreach ($codes as $code) {
             $product = new Producto();
-            if (false === $product->loadFromCode($code)) {
+            if (false === $product->load($code)) {
                 continue;
             }
 
@@ -212,6 +219,13 @@ class EditFamilia extends EditController
 
     protected function removeProductAction(): void
     {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
         $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
             return;
@@ -220,7 +234,7 @@ class EditFamilia extends EditController
         $num = 0;
         foreach ($codes as $code) {
             $product = new Producto();
-            if (false === $product->loadFromCode($code)) {
+            if (false === $product->load($code)) {
                 continue;
             }
 

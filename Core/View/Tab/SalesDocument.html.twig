@@ -85,6 +85,17 @@
         return salesFormAction('create-customer', '0');
     }
 
+    function newCustomerKeyDown(event) {
+        // al pulsar intro en un campo del modal, guardamos el cliente como con el botón guardar
+        if (event.key !== 'Enter' || event.repeat || event.isComposing || event.target.tagName !== 'INPUT') {
+            return true;
+        }
+
+        event.preventDefault();
+        createCustomerFromSales();
+        return false;
+    }
+
     function showCustomerModal() {
         $('#newCustomerModal').one('hidden.bs.modal', function () {
             $('#findCustomerModal').modal('show');
@@ -154,8 +165,11 @@
                 document.getElementById("salesFormLines").innerHTML = data.lines;
             } else {
                 $.each(data.linesMap, function (index, value) {
-                    if (document.forms['salesForm'][index] != null) {
-                        document.forms['salesForm'][index].value = value;
+                    // no reescribimos un campo que ya tiene ese valor: si el usuario está escribiendo
+                    // en él (p.ej. "16," a falta de los decimales), perdería lo que lleva escrito
+                    let field = document.forms['salesForm'][index];
+                    if (field != null && field.value != value) {
+                        field.value = value;
                     }
                 });
             }
@@ -236,6 +250,12 @@
             return false;
         }
 
+        // si el número está a medio escribir (p.ej. "16,"), algunos navegadores dan un valor vacío
+        // y recalcular pondría el campo a 0: esperamos a que el número vuelva a ser válido
+        if (event.target && event.target.validity && event.target.validity.badInput) {
+            return false;
+        }
+
         // obtenemos el name del input si cumple la condición de pulsado
         if ($(event.target).is('input') && ['keyup', 'keypress', 'change'].includes(event.type)) {
             keyupInputName = event.target.name;
@@ -279,6 +299,10 @@
                 data.messages.forEach(item => alert(item.message));
             }
             if (data.ok) {
+                const navfrom = new URLSearchParams(window.location.search).get('navfrom');
+                if (navfrom) {
+                    data.newurl += (data.newurl.includes('?') ? '&' : '?') + 'navfrom=' + encodeURIComponent(navfrom);
+                }
                 window.location.replace(data.newurl);
             } else {
                 animateSpinner('remove', true);

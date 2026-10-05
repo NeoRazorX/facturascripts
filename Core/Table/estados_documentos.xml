@@ -46,6 +46,11 @@
         <null>NO</null>
     </column>
     <column>
+        <name>orden</name>
+        <type>integer</type>
+        <default>100</default>
+    </column>
+    <column>
         <name>predeterminado</name>
         <type>boolean</type>
     </column>

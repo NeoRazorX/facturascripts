@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\AppKey;
+
 /**
  * Description of MyFilesToken
  *
@@ -26,6 +28,8 @@ namespace FacturaScripts\Core\Lib;
  */
 class MyFilesToken
 {
+    const PURPOSE = 'myfiles';
+
     /** @var string */
     private static $date;
 
@@ -33,14 +37,19 @@ class MyFilesToken
     {
         self::checkPath($path);
 
-        $init = FS_DB_NAME . FS_DB_PASS;
-        if ($expiration && $permanent === false) {
-            // si se especifica una fecha de expiración, la añadimos también al final para poder validarla
-            return sha1($init . $path . $expiration) . '|' . $expiration;
+        // sin FS_APP_KEY seguimos generando el token antiguo, para que siga siendo válido cuando se añada la clave
+        if (AppKey::isDerived()) {
+            return self::legacyToken($path, $permanent, $expiration);
         }
 
-        $date = self::getCurrentDate();
-        return $permanent ? sha1($init . $path) : sha1($init . $path . $date);
+        if ($expiration && $permanent === false) {
+            // si se especifica una fecha de expiración, la añadimos también al final para poder validarla
+            return AppKey::sign(self::PURPOSE, 'until|' . $expiration . '|' . $path) . '|' . $expiration;
+        }
+
+        return $permanent ?
+            AppKey::sign(self::PURPOSE, 'permanent|' . $path) :
+            AppKey::sign(self::PURPOSE, 'daily|' . self::getCurrentDate() . '|' . $path);
     }
 
     public static function getUrl(string $path, bool $permanent, string $expiration = ''): string
@@ -68,6 +77,14 @@ class MyFilesToken
     {
         self::checkPath($path);
 
+        $valid = [
+            static::get($path, true),
+            static::get($path, false),
+            // tokens generados antes de existir FS_APP_KEY, para no romper los enlaces ya compartidos
+            self::legacyToken($path, true),
+            self::legacyToken($path, false),
+        ];
+
         // ¿El token contiene "|"?
         if (strpos($token, '|') !== false) {
             $expiration = explode('|', $token)[1];
@@ -77,13 +94,17 @@ class MyFilesToken
                 return false;
             }
 
-            // ¿El token es válido?
-            if ($token === self::get($path, false, $expiration)) {
+            $valid[] = self::get($path, false, $expiration);
+            $valid[] = self::legacyToken($path, false, $expiration);
+        }
+
+        foreach ($valid as $validToken) {
+            if (hash_equals($validToken, $token)) {
                 return true;
             }
         }
 
-        return $token === static::get($path, true) || $token === static::get($path, false);
+        return false;
     }
 
     private static function checkPath(string &$path): void
@@ -102,5 +123,15 @@ class MyFilesToken
         if (strpos($path, 'MyFiles') !== 0) {
             $path = 'MyFiles' . DIRECTORY_SEPARATOR . $path;
         }
+    }
+
+    private static function legacyToken(string $path, bool $permanent, string $expiration = ''): string
+    {
+        $init = FS_DB_NAME . FS_DB_PASS;
+        if ($expiration && $permanent === false) {
+            return sha1($init . $path . $expiration) . '|' . $expiration;
+        }
+
+        return $permanent ? sha1($init . $path) : sha1($init . $path . self::getCurrentDate());
     }
 }

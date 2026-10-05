@@ -66,6 +66,9 @@
             <column name="use-gaps" numcolumns="2" order="130">
                 <widget type="checkbox" fieldname="usarhuecos"/>
             </column>
+            <column name="keep-date" numcolumns="2" order="135">
+                <widget type="checkbox" fieldname="mantenerfecha"/>
+            </column>
             <column name="pattern" order="140">
                 <widget type="text" fieldname="patron" maxlength="50" required="true"/>
             </column>

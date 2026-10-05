@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -80,6 +80,7 @@ class MailNotifier
             $params['verificode'] = $newMail->verificode;
         }
 
+        $newMail->notification($notificationName);
         $newMail->to($email, $name);
         $newMail->title = static::getText($notification->subject, $params);
         $newMail->text = static::getText($notification->body, $params);

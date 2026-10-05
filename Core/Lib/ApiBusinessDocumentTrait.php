@@ -28,6 +28,29 @@ use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 trait ApiBusinessDocumentTrait
 {
     /**
+     * Decodifica y valida la lista de líneas recibida por la API.
+     *
+     * @param mixed $data
+     *
+     * @return array|null
+     */
+    protected function decodeLines($data): ?array
+    {
+        $lines = is_string($data) ? json_decode($data, true) : $data;
+        if (false === is_array($lines) || false === array_is_list($lines)) {
+            return null;
+        }
+
+        foreach ($lines as $line) {
+            if (false === is_array($line)) {
+                return null;
+            }
+        }
+
+        return $lines;
+    }
+
+    /**
      * Asigna a la línea los campos recibidos en el array de datos.
      * Si un campo no viene en los datos se conserva el valor actual de la línea,
      * salvo la cantidad, que en una línea nueva ($isNew) toma 1 por defecto.
@@ -43,6 +66,22 @@ trait ApiBusinessDocumentTrait
         $line->pvpunitario = (float)($data['pvpunitario'] ?? $line->pvpunitario);
         $line->dtopor = (float)($data['dtopor'] ?? $line->dtopor);
         $line->dtopor2 = (float)($data['dtopor2'] ?? $line->dtopor2);
+
+        // el IRPF solo se sobrescribe si viene en los datos, para no perder
+        // el porcentaje heredado de la cabecera (retención del cliente o
+        // proveedor) ni el de una línea que ya existe.
+        if (isset($data['irpf'])) {
+            $line->irpf = (float)$data['irpf'];
+        }
+
+        if (isset($data['orden'])) {
+            $line->orden = (int)$data['orden'];
+        }
+
+        // coste solo existe en las líneas de venta.
+        if (isset($data['coste']) && property_exists($line, 'coste')) {
+            $line->coste = (float)$data['coste'];
+        }
 
         if (isset($data['excepcioniva'])) {
             $line->excepcioniva = $data['excepcioniva'] === 'null' ? null : $data['excepcioniva'];

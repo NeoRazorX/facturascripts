@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Internal\Forja;
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Telemetry;
@@ -73,6 +74,11 @@ class AdminPlugins extends Controller
      */
     public function privateCore(&$response, $user, $permissions)
     {
+        // solo los administradores pueden usar esta página
+        if (false === $user->admin) {
+            throw new KernelException('AccessDenied', Tools::trans('access-denied'));
+        }
+
         parent::privateCore($response, $user, $permissions);
 
         $action = $this->request->inputOrQuery('action', '');
@@ -208,9 +214,11 @@ class AdminPlugins extends Controller
         $installedPlugins = Plugins::list();
         foreach (Forja::plugins() as $item) {
             // plugin is already installed?
+            $item['installed'] = false;
             foreach ($installedPlugins as $plugin) {
                 if ($plugin->name == $item['name']) {
-                    continue 2;
+                    $item['installed'] = true;
+                    break;
                 }
             }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -204,6 +204,35 @@ final class VarianteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($producto->delete(), 'producto-cant-delete');
+    }
+
+    public function testCodeModelSearchIgnoresInvalidFieldCode(): void
+    {
+        $producto = new Producto();
+        $producto->referencia = 'tst-zzqfield-321';
+        $producto->descripcion = 'Producto zzqfield';
+        $this->assertTrue($producto->save(), 'producto-cant-save');
+
+        try {
+            $variante = $producto->getVariants()[0];
+            $search = new Variante();
+
+            // una columna del modelo se usa como código
+            $results = $search->codeModelSearch('zzqfield', 'referencia');
+            $this->assertCount(1, $results);
+            $this->assertSame($variante->referencia, $results[0]->code);
+
+            // cualquier otro valor se sustituye por la clave primaria y no llega al SQL
+            $payload = "referencia AS code, (SELECT nick FROM users LIMIT 1) AS description,"
+                . " v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4"
+                . " FROM variantes v LEFT JOIN productos p ON v.idproducto = p.idproducto WHERE 1=1 -- ";
+            $results = $search->codeModelSearch('zzqfield', $payload);
+            $this->assertCount(1, $results);
+            $this->assertSame((int)$variante->idvariante, (int)$results[0]->code);
+            $this->assertStringContainsString('zzqfield', $results[0]->description);
+        } finally {
+            $this->assertTrue($producto->delete(), 'producto-cant-delete');
+        }
     }
 
     private function assertFindsVariant(int $id, array $results, string $case): void

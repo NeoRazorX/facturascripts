@@ -21,8 +21,11 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\Model\Familia;
 use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Core\Model\Pais;
+use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -48,6 +51,104 @@ final class DbQueryTest extends TestCase
 
         $data = $this->db()->select($sql);
         $this->assertEquals($data, $query->get());
+    }
+
+    public function testJoinSql(): void
+    {
+        $query = DbQuery::table('productos')
+            ->join('familias', 'productos.codfamilia', 'familias.codfamilia')
+            ->leftJoin('variantes', 'productos.idproducto', 'variantes.idproducto')
+            ->whereEq('productos.referencia', 'test');
+
+        $sql = 'SELECT * FROM ' . $this->db()->escapeColumn('productos')
+            . ' INNER JOIN ' . $this->db()->escapeColumn('familias')
+            . ' ON ' . $this->db()->escapeColumn('productos.codfamilia')
+            . ' = ' . $this->db()->escapeColumn('familias.codfamilia')
+            . ' LEFT JOIN ' . $this->db()->escapeColumn('variantes')
+            . ' ON ' . $this->db()->escapeColumn('productos.idproducto')
+            . ' = ' . $this->db()->escapeColumn('variantes.idproducto')
+            . ' WHERE ' . $this->db()->escapeColumn('productos.referencia')
+            . ' = ' . $this->db()->var2str('test');
+        $this->assertEquals($sql, $query->sql());
+    }
+
+    public function testJoinExecution(): void
+    {
+        $this->requireJoinTables();
+        $familyCode = $this->newFamilyCode();
+        $reference = 'join-' . $familyCode;
+
+        try {
+            $this->createFamily($familyCode, 'Join family');
+            $this->createProduct($reference, $familyCode);
+
+            $rows = DbQuery::table('productos')
+                ->select('productos.referencia, familias.descripcion')
+                ->join('familias', 'productos.codfamilia', 'familias.codfamilia')
+                ->whereEq('productos.referencia', $reference)
+                ->get();
+
+            $this->assertCount(1, $rows);
+            $this->assertSame($reference, $rows[0]['referencia']);
+            $this->assertSame('Join family', $rows[0]['descripcion']);
+        } finally {
+            $this->removeJoinFixtures([$reference], [$familyCode]);
+        }
+    }
+
+    public function testLeftJoinPreservesUnmatchedRows(): void
+    {
+        $this->requireJoinTables();
+        $matchedFamily = $this->newFamilyCode();
+        $unmatchedFamily = $this->newFamilyCode();
+        $reference = 'join-' . $matchedFamily;
+
+        try {
+            $this->createFamily($matchedFamily, 'Matched family');
+            $this->createFamily($unmatchedFamily, 'Unmatched family');
+            $this->createProduct($reference, $matchedFamily);
+
+            $rows = DbQuery::table('familias')
+                ->select('familias.codfamilia, productos.referencia')
+                ->leftJoin('productos', 'familias.codfamilia', 'productos.codfamilia')
+                ->whereIn('familias.codfamilia', [$matchedFamily, $unmatchedFamily])
+                ->get();
+
+            $this->assertCount(2, $rows);
+            $references = [];
+            foreach ($rows as $row) {
+                $references[$row['codfamilia']] = $row['referencia'];
+            }
+
+            $this->assertSame($reference, $references[$matchedFamily]);
+            $this->assertNull($references[$unmatchedFamily]);
+        } finally {
+            $this->removeJoinFixtures([$reference], [$matchedFamily, $unmatchedFamily]);
+        }
+    }
+
+    public function testMultipleJoins(): void
+    {
+        $this->requireJoinTables();
+        $familyCode = $this->newFamilyCode();
+        $reference = 'join-' . $familyCode;
+
+        try {
+            $this->createFamily($familyCode, 'Multiple join family');
+            $this->createProduct($reference, $familyCode);
+
+            $row = DbQuery::table('familias')
+                ->select('familias.codfamilia, variantes.referencia')
+                ->join('productos', 'familias.codfamilia', 'productos.codfamilia')
+                ->join('variantes', 'productos.idproducto', 'variantes.idproducto')
+                ->whereEq('familias.codfamilia', $familyCode)
+                ->first();
+
+            $this->assertSame($familyCode, $row['codfamilia']);
+            $this->assertSame($reference, $row['referencia']);
+        } finally {
+            $this->removeJoinFixtures([$reference], [$familyCode]);
+        }
     }
 
     public function testWhere(): void
@@ -525,6 +626,55 @@ final class DbQueryTest extends TestCase
         }
 
         return $this->db;
+    }
+
+    private function createFamily(string $code, string $description): void
+    {
+        $family = new Familia();
+        $family->codfamilia = $code;
+        $family->descripcion = $description;
+        $this->assertTrue($family->save(), 'can-not-create-join-family');
+    }
+
+    private function createProduct(string $reference, string $familyCode): void
+    {
+        $product = new Producto();
+        $product->codfamilia = $familyCode;
+        $product->codimpuesto = null;
+        $product->descripcion = 'Join product';
+        $product->referencia = $reference;
+        $this->assertTrue($product->save(), 'can-not-create-join-product');
+    }
+
+    private function newFamilyCode(): string
+    {
+        return 'J' . strtoupper(Tools::randomString(7));
+    }
+
+    private function removeJoinFixtures(array $references, array $familyCodes): void
+    {
+        foreach ($references as $reference) {
+            $product = new Producto();
+            if ($product->loadWhereEq('referencia', $reference)) {
+                $product->delete();
+            }
+        }
+
+        foreach ($familyCodes as $familyCode) {
+            $family = new Familia();
+            if ($family->load($familyCode)) {
+                $family->delete();
+            }
+        }
+    }
+
+    private function requireJoinTables(): void
+    {
+        foreach (['familias', 'productos', 'variantes'] as $table) {
+            if (false === $this->db()->tableExists($table)) {
+                $this->markTestSkipped('Table ' . $table . ' does not exist.');
+            }
+        }
     }
 
     protected function tearDown(): void

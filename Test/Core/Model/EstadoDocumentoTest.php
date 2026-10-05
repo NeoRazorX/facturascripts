@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Core\Model\EstadoDocumento;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -266,6 +267,36 @@ final class EstadoDocumentoTest extends TestCase
 
         // Comprobamos que no se pueda guardar un estado que sea predeterminado y no editable.
         $this->assertFalse($status->save());
+    }
+
+    public function testStatusSortedByOrder(): void
+    {
+        // un estado nuevo tiene orden 100 por defecto
+        $status = new EstadoDocumento();
+        $this->assertEquals(100, $status->orden, 'estado-documento-default-order-not-100');
+
+        // creamos dos estados, el segundo con menor orden
+        $type = 'PresupuestoProveedor';
+        $status1 = new EstadoDocumento();
+        $status1->nombre = 'Test order 1';
+        $status1->orden = 9999;
+        $status1->tipodoc = $type;
+        $this->assertTrue($status1->save(), 'estado-documento-cant-save');
+
+        $status2 = new EstadoDocumento();
+        $status2->nombre = 'Test order 2';
+        $status2->orden = -9999;
+        $status2->tipodoc = $type;
+        $this->assertTrue($status2->save(), 'estado-documento-cant-save');
+
+        // el segundo debe salir el primero y el primero el último
+        $list = EstadosDocumentos::byTipoDoc($type);
+        $this->assertEquals($status2->idestado, $list[0]->idestado, 'estado-documento-order-not-applied');
+        $this->assertEquals($status1->idestado, end($list)->idestado, 'estado-documento-order-not-applied');
+
+        // eliminamos
+        $this->assertTrue($status1->delete(), 'estado-documento-cant-delete');
+        $this->assertTrue($status2->delete(), 'estado-documento-cant-delete');
     }
 
     protected function tearDown(): void

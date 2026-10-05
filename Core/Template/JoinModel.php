@@ -287,12 +287,7 @@ abstract class JoinModel
     /** Devuelve el valor de la clave primaria del modelo master. */
     public function id()
     {
-        if (isset($this->masterModel)) {
-            $primaryColumn = $this->masterModel->primaryColumn();
-            return $this->{$primaryColumn};
-        }
-
-        return null;
+        return $this->primaryColumnValue();
     }
 
     /**
@@ -336,9 +331,6 @@ abstract class JoinModel
      * @deprecated Usar load() cuando solo se necesita cargar por código, o loadWhere() cuando
      *             se requieren condiciones WHERE u ordenamiento adicionales.
      */
-    #[Deprecated(
-        reason: 'Use load() or loadWhere() instead',
-    )]
     public function loadFromCode($cod, array $where = [], array $orderby = []): bool
     {
         if (!empty($where)) {
@@ -405,17 +397,20 @@ abstract class JoinModel
 
     /**
      * Devuelve el valor de la clave primaria del modelo principal.
+     * Contiene la implementación real y se mantiene como punto de extensión
+     * por compatibilidad con plugins que lo sobreescriben.
      *
      * @return mixed
      * @deprecated Usar id() en su lugar.
      */
-    #[Deprecated(
-        reason: 'Use id() instead',
-        replacement: '%class%->id()',
-    )]
     public function primaryColumnValue()
     {
-        return $this->id();
+        if (isset($this->masterModel)) {
+            $primaryColumn = $this->masterModel->primaryColumn();
+            return $this->{$primaryColumn};
+        }
+
+        return null;
     }
 
     /**

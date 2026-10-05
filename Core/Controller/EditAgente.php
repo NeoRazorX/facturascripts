@@ -90,7 +90,8 @@ class EditAgente extends ComercialContactController
     protected function createDocumentView(string $viewName, string $model, string $label): void
     {
         $this->createCustomerListView($viewName, $model, $label)
-            ->setSettings('btnPrint', true);
+            ->setSettings('btnPrint', true)
+            ->setSettings('group', 'sales');
 
         // agrupamos las acciones en un dropdown
         $this->tab($viewName)->addButtonGroup([
@@ -114,7 +115,8 @@ class EditAgente extends ComercialContactController
     protected function createInvoiceView(string $viewName): void
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices')
-            ->setSettings('btnPrint', true);
+            ->setSettings('btnPrint', true)
+            ->setSettings('group', 'sales');
 
         // agrupamos las acciones de facturas en un dropdown
         $this->tab($viewName)->addButtonGroup([

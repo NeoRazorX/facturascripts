@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
@@ -292,7 +293,7 @@ final class PresupuestoProveedorTest extends TestCase
             'direccion' => [200, 201],
             'nombre' => [100, 101],
             'numproveedor' => [50, 51],
-            'operacion' => [20, 21],
+            'operacion' => [InvoiceOperation::MAX_KEY_LENGTH, InvoiceOperation::MAX_KEY_LENGTH + 1],
             'provincia' => [100, 101],
         ];
 

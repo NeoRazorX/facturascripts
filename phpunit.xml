@@ -55,4 +55,9 @@
             </directory>
         </testsuite>
     </testsuites>
+    <coverage>
+        <include>
+            <directory suffix=".php">Core</directory>
+        </include>
+    </coverage>
 </phpunit>

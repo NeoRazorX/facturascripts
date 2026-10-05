@@ -31,7 +31,7 @@
             <column name="api-key" order="120">
                 <widget type="password" fieldname="apikey" required="true"/>
             </column>
-            <column name="user" titleurl="ListUser" order="130">
+            <column name="created-by" titleurl="ListUser" order="130">
                 <widget type="select" fieldname="nick" onclick="EditUser" readonly="true" required="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick"/>
                 </widget>

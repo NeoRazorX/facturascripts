@@ -253,6 +253,11 @@ abstract class BaseController extends Controller
         // Create the views to display
         $this->createViews();
         $this->pipe('createViews');
+
+        // si la pestaña activa no existe (p.ej. el usuario no tiene permiso para verla), usamos la primera
+        if (false === isset($this->views[$this->active])) {
+            $this->active = (string)array_key_first($this->views);
+        }
     }
 
     public function setCurrentView(string $viewName): void
@@ -295,13 +300,15 @@ abstract class BaseController extends Controller
      */
     protected function autocompleteAction(): array
     {
-        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'strict', 'term']);
+        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldsign', 'fieldtitle', 'formname', 'source', 'strict', 'term']);
         if ($data['source'] == '') {
             // sin source necesitamos el nombre de la vista y el campo para localizar el widget
             if (empty($data['formname']) || empty($data['field']) || false === isset($this->views[$data['formname']])) {
                 return [];
             }
             return $this->getAutocompleteValues($data['formname'], $data['field']);
+        } elseif (false === $this->validFieldSign($data)) {
+            return [];
         }
 
         $where = [];
@@ -337,7 +344,10 @@ abstract class BaseController extends Controller
      */
     protected function datalistAction(): array
     {
-        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
+        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldsign', 'fieldtitle', 'formname', 'source', 'term']);
+        if (false === $this->validFieldSign($data)) {
+            return [];
+        }
 
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
@@ -489,11 +499,13 @@ abstract class BaseController extends Controller
     protected function selectAction(): array
     {
         $required = (bool)$this->request->queryOrInput('required', false);
-        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
+        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldsign', 'fieldtitle', 'formname', 'source', 'term']);
 
         $return = $this->pipe('selectAction', $data, $required);
         if ($return) {
             return $return;
+        } elseif (false === $this->validFieldSign($data)) {
+            return [];
         }
 
         $where = [];
@@ -512,5 +524,30 @@ abstract class BaseController extends Controller
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;
+    }
+
+    /**
+     * Comprueba la firma que los widgets y filtros envían con sus parámetros de consulta.
+     * Sin ella se podría leer cualquier columna de cualquier tabla cambiando source,
+     * fieldcode o fieldtitle en la petición.
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    protected function validFieldSign(array $data): bool
+    {
+        $valid = CodeModel::verifySign(
+            (string)($data['fieldsign'] ?? ''),
+            (string)($data['source'] ?? ''),
+            (string)($data['fieldcode'] ?? ''),
+            (string)($data['fieldtitle'] ?? ''),
+            (string)($data['fieldfilter'] ?? '')
+        );
+        if (false === $valid) {
+            Tools::log()->warning('invalid-autocomplete-source: ' . $data['source']);
+        }
+
+        return $valid;
     }
 }

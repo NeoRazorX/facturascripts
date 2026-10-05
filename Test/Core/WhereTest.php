@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Where;
@@ -322,6 +323,49 @@ final class WhereTest extends TestCase
         $item2 = new DataBaseWhere('precio', 'field:stock', '>', 'AND', true);
         $sql2 = ' WHERE ' . $this->db()->escapeColumn('precio') . ' > ' . $this->db()->escapeColumn('stock');
         $this->assertEquals($sql2, DataBaseWhere::getSQLWhere([$item2]));
+    }
+
+    public function testInvalidOperation(): void
+    {
+        foreach (['AND', 'OR', 'and', ' Or '] as $operation) {
+            $this->assertTrue(Where::isValidOperation($operation), 'valid-operation-rejected: ' . $operation);
+        }
+        foreach (['XOR', '', 'OR 1=1 --', 'AND (SELECT 1)', null, ['OR']] as $operation) {
+            $this->assertFalse(Where::isValidOperation($operation), 'invalid-operation-accepted: ' . json_encode($operation));
+        }
+
+        // el conector se normaliza a mayúsculas
+        $this->assertEquals('OR', (new Where('nick', 'test', '=', 'or'))->operation);
+        $this->assertEquals('OR', (new DataBaseWhere('nick', 'test', '=', ' or '))->operation);
+
+        // un conector con SQL inyectado se rechaza al crear la cláusula
+        foreach ([Where::class, DataBaseWhere::class] as $class) {
+            try {
+                new $class('nick', 'test', '=', 'OR 1=1 --');
+                $this->fail('injected-operation-accepted: ' . $class);
+            } catch (Exception $exc) {
+                $this->assertStringContainsString('Invalid where operation', $exc->getMessage());
+            }
+        }
+
+        // y también si se modifica la propiedad después de crearla
+        $item = Where::eq('nick', 'test');
+        $item->operation = 'OR 1=1 --';
+        try {
+            Where::multiSql([Where::eq('name', 'test'), $item]);
+            $this->fail('tampered-operation-accepted');
+        } catch (Exception $exc) {
+            $this->assertStringContainsString('Invalid where operation', $exc->getMessage());
+        }
+
+        $legacy = new DataBaseWhere('nick', 'test');
+        $legacy->operation = 'OR 1=1 --';
+        try {
+            DataBaseWhere::getSQLWhere([new DataBaseWhere('name', 'test'), $legacy]);
+            $this->fail('tampered-legacy-operation-accepted');
+        } catch (Exception $exc) {
+            $this->assertStringContainsString('Invalid where operation', $exc->getMessage());
+        }
     }
 
     public function testLegacyCompatibility(): void

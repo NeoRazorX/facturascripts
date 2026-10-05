@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\AttachedFileRelation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Tools;
@@ -35,12 +34,14 @@ trait DocFilesTrait
 {
     abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fa-brands fa-html5');
 
+    abstract protected function checkOwnerData($model): bool;
+
     private function addFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === $this->validateFileActionToken()) {
+        } elseif (false === $this->validateFileActionToken() || false === $this->checkFileOwnerData()) {
             return true;
         }
 
@@ -67,7 +68,7 @@ trait DocFilesTrait
             }
 
             $newFile = new AttachedFile();
-            $newFile->path = $uploadFile->getClientOriginalName();
+            $newFile->path = $destinyName;
             if (false === $newFile->save()) {
                 Tools::log()->error('fail');
                 return true;
@@ -97,6 +98,47 @@ trait DocFilesTrait
         return true;
     }
 
+    /**
+     * Comprueba que el usuario puede modificar los adjuntos del registro actual
+     * cuando solo tiene acceso a sus propios datos.
+     */
+    private function checkFileOwnerData(): bool
+    {
+        if (empty($this->permissions->onlyOwnerData)) {
+            return true;
+        }
+
+        // en este punto el registro principal puede no estar cargado todavía
+        $model = $this->getModel();
+        $code = $this->request->query('code');
+        if (empty($model->id()) && false === empty($code)) {
+            $modelClass = get_class($model);
+            $model = new $modelClass();
+            $model->load($code);
+        }
+
+        if (false === $this->checkOwnerData($model)) {
+            Tools::log()->warning('access-denied');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Comprueba que la relación pertenece al registro actual.
+     */
+    private function checkFileRelation(AttachedFileRelation $fileRelation): bool
+    {
+        $code = $this->request->query('code');
+        if (empty($code) || $fileRelation->model !== $this->getModelClassName()) {
+            return false;
+        }
+
+        $modelId = empty($fileRelation->modelcode) ? $fileRelation->modelid : $fileRelation->modelcode;
+        return $modelId == $code;
+    }
+
     protected function createViewDocFiles(string $viewName = 'docfiles', string $template = 'Tab/DocFiles'): void
     {
         $this->addHtmlView($viewName, $template, 'AttachedFileRelation', 'files', 'fa-solid fa-paperclip');
@@ -107,7 +149,7 @@ trait DocFilesTrait
         if (false === $this->permissions->allowDelete) {
             Tools::log()->warning('not-allowed-delete');
             return true;
-        } elseif (false === $this->validateFileActionToken()) {
+        } elseif (false === $this->validateFileActionToken() || false === $this->checkFileOwnerData()) {
             return true;
         }
 
@@ -118,11 +160,7 @@ trait DocFilesTrait
             return true;
         }
 
-        $modelId = $fileRelation->modelid ?? $fileRelation->modelcode;
-        if (
-            $modelId != $this->request->query('code') ||
-            $fileRelation->model !== $this->getModelClassName()
-        ) {
+        if (false === $this->checkFileRelation($fileRelation)) {
             Tools::log()->warning('not-allowed-delete');
             return true;
         }
@@ -146,7 +184,7 @@ trait DocFilesTrait
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === $this->validateFileActionToken()) {
+        } elseif (false === $this->validateFileActionToken() || false === $this->checkFileOwnerData()) {
             return true;
         }
 
@@ -157,10 +195,7 @@ trait DocFilesTrait
             return true;
         }
 
-        if (
-            $fileRelation->modelcode != $this->request->query('code') ||
-            $fileRelation->model !== $this->getModelClassName()
-        ) {
+        if (false === $this->checkFileRelation($fileRelation)) {
             Tools::log()->warning('not-allowed-modify');
             return true;
         }
@@ -184,10 +219,10 @@ trait DocFilesTrait
      */
     private function loadDataDocFiles($view, $model, $modelid): void
     {
-        $where = [new DataBaseWhere('model', $model)];
+        $where = [Where::eq('model', $model)];
         $where[] = is_numeric($modelid) ?
-            new DataBaseWhere('modelid|modelcode', $modelid) :
-            new DataBaseWhere('modelcode', $modelid);
+            Where::eq('modelid|modelcode', $modelid) :
+            Where::eq('modelcode', $modelid);
         $view->loadData('', $where, ['orden' => 'ASC', 'creationdate' => 'DESC']);
     }
 
@@ -196,15 +231,23 @@ trait DocFilesTrait
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
-        } elseif (false === $this->validateFileActionToken()) {
+        } elseif (false === $this->validateFileActionToken() || false === $this->checkFileOwnerData()) {
             return true;
         }
 
         $fileRelation = new AttachedFileRelation();
         $id = $this->request->input('id');
-        if ($fileRelation->load($id)) {
-            $fileRelation->delete();
+        if (false === $fileRelation->load($id)) {
+            Tools::log()->warning('record-not-found');
+            return true;
         }
+
+        if (false === $this->checkFileRelation($fileRelation)) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $fileRelation->delete();
 
         Tools::log()->notice('record-updated-correctly');
 
@@ -255,14 +298,20 @@ trait DocFilesTrait
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
             return true;
+        } elseif (false === $this->checkFileOwnerData()) {
+            return true;
         }
 
         $idsOrdenadas = $this->request->request->getArray('orden');
         if (false === empty($idsOrdenadas)) {
             $orden = 1;
             foreach ($idsOrdenadas as $id_archivo) {
+                // solo reordenamos las relaciones del registro actual
                 $archivo = new AttachedFileRelation();
-                $archivo->load($id_archivo);
+                if (false === $archivo->load($id_archivo) || false === $this->checkFileRelation($archivo)) {
+                    continue;
+                }
+
                 $archivo->orden = $orden;
                 if ($archivo->save()) {
                     $orden++;

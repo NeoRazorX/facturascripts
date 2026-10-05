@@ -91,7 +91,14 @@ class CuentaBancoCliente extends ModelClass
         $this->swift = Tools::noHtml($this->swift);
 
         if (!empty($this->codcuenta) && false === is_numeric($this->codcuenta)) {
-            Tools::log()->error('invalid-number', ['%number%' => $this->codcuenta]);
+            Tools::log()->error('invalid-number', [
+                '%number%' => $this->codcuenta,
+                'codcliente' => $this->codcliente,
+                'field' => 'codcuenta',
+                'model-class' => $this->modelClassName(),
+                'model-code' => $this->id(),
+                'value' => $this->codcuenta,
+            ]);
             return false;
         }
 

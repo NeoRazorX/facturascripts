@@ -179,9 +179,8 @@ class Vies
     }
 
     /**
-     * Normaliza un cifnif para enviarlo a VIES: lo pasa a mayúsculas, descarta
-     * separadores habituales (espacios, guiones, puntos, barras...) y, si el
-     * resultado empieza por el código ISO indicado, también lo elimina.
+     * Normaliza un cifnif para enviarlo a VIES y, si el resultado empieza por
+     * el código ISO indicado, elimina también dicho prefijo.
      *
      * El codiso debe llegar ya en mayúsculas; si no, no se reconocerá como
      * prefijo y se enviará tal cual a VIES.
@@ -193,7 +192,7 @@ class Vies
      */
     public static function normalize(string $cifnif, string $codiso): string
     {
-        $cifnif = str_replace(['_', '-', '.', ',', '?', '¿', ' ', '/', '\\'], '', strtoupper(trim($cifnif)));
+        $cifnif = FiscalNumberValidator::normalize($cifnif);
 
         if (substr($cifnif, 0, 2) === $codiso) {
             $cifnif = substr($cifnif, 2);

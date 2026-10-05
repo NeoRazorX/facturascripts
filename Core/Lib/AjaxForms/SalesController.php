@@ -172,6 +172,12 @@ abstract class SalesController extends PanelController
             return false;
         }
 
+        // comprobamos el token del formulario para evitar CSRF
+        if (false === $this->validateFormToken()) {
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
         $model = $this->getModel();
         if (false === $model->delete()) {
             $this->sendJsonWithLogs(['ok' => false]);
@@ -499,11 +505,8 @@ abstract class SalesController extends PanelController
 
                 $view->loadData($code);
 
-                // ¿el usuario puede acceder a este documento?
-                if (false === $this->checkOwnerData($view->model)) {
-                    $this->setTemplate('Error/AccessDenied');
-                    break;
-                }
+                // ¿el usuario puede acceder a este documento? si no, se interrumpe la petición
+                $this->assertOwnerData($view->model);
 
                 // data not found?
                 $action = $this->request->input('action', '');
@@ -737,7 +740,55 @@ abstract class SalesController extends PanelController
 
     private function sendJsonWithLogs(array $data): void
     {
-        $data['messages'] = Tools::log()::read('master', $this->logLevels);
+        $messages = array_merge(
+            Tools::log()::read('master', $this->logLevels),
+            $this->humanizeDatabaseMessages(Tools::log()::read('database', $this->logLevels))
+        );
+
+        if (($data['ok'] ?? null) === false && empty($messages)) {
+            Tools::log()->error('record-save-error');
+            $messages = Tools::log()::read('master', $this->logLevels);
+        }
+
+        $data['messages'] = $messages;
         $this->response->json($data);
+    }
+
+    private function humanizeDatabaseMessages(array $messages): array
+    {
+        $model = $this->getModel();
+        foreach ($messages as &$item) {
+            // la consulta SQL puede contener datos del documento y no es necesaria en la interfaz
+            unset($item['context']);
+
+            $message = $item['message'] ?? '';
+            if (false !== stripos($message, 'uniq_codigo_')) {
+                $item['message'] = $this->translateDuplicateMessage(
+                    'document-code-already-exists',
+                    '%code%',
+                    $model->codigo
+                );
+            } elseif (preg_match('/uniq_(number|numero)_/i', $message)) {
+                $item['message'] = $this->translateDuplicateMessage(
+                    'document-number-already-exists',
+                    '%number%',
+                    $model->numero
+                );
+            } elseif (
+                preg_match('/duplicate (entry|key value)/i', $message)
+                || false !== stripos($message, 'SQLSTATE[23505]')
+            ) {
+                $item['message'] = Tools::trans('record-already-exists');
+            }
+        }
+        unset($item);
+
+        return $messages;
+    }
+
+    private function translateDuplicateMessage(string $key, string $parameter, $value): string
+    {
+        $message = Tools::trans($key, [$parameter => $value]);
+        return $message === $key ? Tools::trans('record-already-exists') . ': ' . $value : $message;
     }
 }

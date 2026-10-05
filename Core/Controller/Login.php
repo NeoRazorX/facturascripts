@@ -83,7 +83,9 @@ class Login implements ControllerInterface
     public function run(): void
     {
         $this->empresa = Empresas::default();
-        $this->title = $this->empresa->nombrecorto;
+
+        // hasta completar el asistente (que guarda la página de inicio) la empresa tiene un nombre provisional
+        $this->title = Tools::settings('default', 'homepage') ? $this->empresa->nombrecorto : 'FacturaScripts';
 
         $request = Request::createFromGlobals();
         $action = $request->inputOrQuery('action', '');
@@ -224,12 +226,17 @@ class Login implements ControllerInterface
 
     protected function validateFormToken(Request $request): bool
     {
-        $multiRequestProtection = new MultiRequestProtection();
+        // los formularios de esta página se generan sin sesión, así que su token no lleva el nick,
+        // aunque el navegador conserve la cookie fsNick de una sesión anterior
+        return $this->checkFormToken($request, '');
+    }
 
-        // si el usuario está autenticado, añadimos su nick a la semilla
-        $cookieNick = $request->cookie('fsNick', '');
-        if ($cookieNick) {
-            $multiRequestProtection->addSeed($cookieNick);
+    private function checkFormToken(Request $request, string $seed): bool
+    {
+        $multiRequestProtection = new MultiRequestProtection();
+        $multiRequestProtection->clearSeed();
+        if ($seed) {
+            $multiRequestProtection->addSeed($seed);
         }
 
         // comprobamos el token
@@ -392,7 +399,8 @@ class Login implements ControllerInterface
 
     protected function logoutAction(Request $request): void
     {
-        if (false === $this->validateFormToken($request)) {
+        // el enlace de cerrar sesión se genera en páginas con sesión, cuyo token lleva el nick
+        if (false === $this->checkFormToken($request, $request->cookie('fsNick', ''))) {
             return;
         }
 

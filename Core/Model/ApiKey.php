@@ -60,7 +60,7 @@ class ApiKey extends ModelClass
     /** @var string Dirección IP desde la que se utilizó la clave API por última vez. */
     public $lastip;
 
-    /** @var string Nombre del usuario asociado a la clave API. */
+    /** @var string Nombre del usuario que creó la clave API. No determina los permisos de la clave. */
     public $nick;
 
     /**

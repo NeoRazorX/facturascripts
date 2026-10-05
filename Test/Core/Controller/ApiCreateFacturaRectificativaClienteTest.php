@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Controller;
 
 use FacturaScripts\Core\Controller\ApiCreateFacturaRectificativaCliente;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -71,6 +72,156 @@ final class ApiCreateFacturaRectificativaClienteTest extends TestCase
         $this->assertTrue($original->delete(), 'can-not-delete-invoice');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
+    public function testRefundOneLine(): void
+    {
+        // creamos una factura con dos líneas
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+        $line2 = $invoice->getNewLine();
+        $line2->cantidad = 3;
+        $line2->pvpunitario = 10;
+        $this->assertTrue($line2->save(), 'can-not-save-line');
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'can-not-calculate-invoice');
+
+        // rectificamos solo 1 unidad de la segunda línea
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'refund_' . $line2->idlinea => 1,
+        ]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'refund-one-line-failed');
+
+        // la rectificativa solo debe tener esa línea, con cantidad -1
+        $refunds = FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]);
+        $this->assertCount(1, $refunds, 'refund-not-created');
+        $refundLines = $refunds[0]->getLines();
+        $this->assertCount(1, $refundLines, 'bad-refund-lines-count');
+        $this->assertEquals($line2->idlinea, $refundLines[0]->idlinearect, 'bad-refund-line');
+        $this->assertEquals(-1, $refundLines[0]->cantidad, 'bad-refund-quantity');
+
+        // sin idestado, la rectificativa conserva el estado de la factura original y su efecto en el stock
+        $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
+        $this->assertEquals($invoice->idestado, $refunds[0]->idestado, 'refund-should-keep-invoice-status');
+        $this->assertEquals($line2->actualizastock, $refundLines[0]->actualizastock, 'bad-refund-line-stock');
+
+        // limpiamos (primero la rectificativa, luego la original)
+        $this->deleteRefund($refunds[0]);
+        $invoice->reload();
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
+    public function testRefundWithStatus(): void
+    {
+        // creamos una factura con una línea
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+
+        // buscamos un estado de factura distinto del que tendrá la rectificativa por defecto
+        $status = null;
+        foreach ($invoice->getAvailableStatus() as $item) {
+            if ($item->activo && false === $item->editable && empty($item->generadoc)) {
+                $status = $item;
+            }
+        }
+        $this->assertNotNull($status, 'no-status-found');
+
+        // si se indica idestado, la rectificativa lo usa
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'idestado' => $status->idestado,
+        ]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'refund-with-status-failed');
+
+        $refunds = FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]);
+        $this->assertCount(1, $refunds, 'refund-not-created');
+        $this->assertEquals($status->idestado, $refunds[0]->idestado, 'refund-should-use-status');
+
+        // limpiamos (primero la rectificativa, luego la original)
+        $this->deleteRefund($refunds[0]);
+        $invoice->reload();
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
+    public function testRefundUnknownLineFails(): void
+    {
+        // creamos una factura con una línea
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+        $lines = $invoice->getLines();
+        $this->assertCount(1, $lines, 'bad-invoice-lines-count');
+
+        // un refund_X que no es el idlinea de ninguna línea debe rechazarse, no rectificar toda la factura
+        $badKey = 'refund_' . ($lines[0]->idlinea + 1000);
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            $badKey => 1,
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'refund-unknown-line-should-fail');
+        $this->assertStringContainsString($badKey, $result['body']['message'] ?? '', 'error-should-name-the-key');
+
+        // no se ha creado ninguna rectificativa y la factura sigue editable
+        $refunds = FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]);
+        $this->assertCount(0, $refunds, 'refund-created');
+        $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
+        $this->assertTrue($invoice->editable, 'invoice-should-stay-editable');
+
+        // limpiamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
+    public function testRefundWithoutHour(): void
+    {
+        // creamos una factura con una línea
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+
+        // la hora es opcional: sin ella debe crearse la rectificativa con la hora actual
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date()]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'refund-without-hour-failed');
+
+        $refunds = FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]);
+        $this->assertCount(1, $refunds, 'refund-not-created');
+        $this->assertNotEmpty($refunds[0]->hora, 'refund-without-hour');
+
+        // limpiamos (primero la rectificativa, luego la original)
+        $this->deleteRefund($refunds[0]);
+        $invoice->reload();
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
+    /**
+     * Elimina una rectificativa, devolviéndola antes a un estado editable si hace falta.
+     */
+    private function deleteRefund(FacturaCliente $refund): void
+    {
+        if (false === $refund->editable) {
+            foreach ($refund->getAvailableStatus() as $status) {
+                if ($status->editable && $status->activo) {
+                    $refund->idestado = $status->idestado;
+                    $this->assertTrue($refund->save(), 'can-not-unlock-refund');
+                    break;
+                }
+            }
+        }
+
+        $this->assertTrue($refund->delete(), 'can-not-delete-refund');
     }
 
     /**

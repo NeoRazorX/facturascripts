@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\AppKey;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Cache;
@@ -26,6 +27,7 @@ use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Migrations;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
@@ -116,9 +118,21 @@ class Updater extends Controller
      */
     public function privateCore(&$response, $user, $permissions)
     {
+        // solo los administradores pueden usar esta página
+        if (false === $user->admin) {
+            throw new KernelException('AccessDenied', Tools::trans('access-denied'));
+        }
+
         parent::privateCore($response, $user, $permissions);
 
         $this->telemetryManager = new Telemetry();
+
+        // avisamos si falta la clave de la instalación en el config.php, proponiendo una nueva
+        if (AppKey::isDerived()) {
+            Tools::log()->warning('app-key-missing', [
+                '%line%' => "define('FS_APP_KEY', '" . AppKey::generate() . "');"
+            ]);
+        }
 
         // en las acciones que escriben en disco, comprobamos que las carpetas sean escribibles
         $action = $this->request->get('action', '');

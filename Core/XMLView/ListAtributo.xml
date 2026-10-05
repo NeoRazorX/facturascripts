@@ -33,7 +33,7 @@
     </columns>
     <rows>
         <row type="status">
-            <option fieldname="num_selector" color="info">gt:0</option>
+            <option fieldname="num_selector" color="info" title="selector-number">gt:0</option>
         </row>
     </rows>
 </view>

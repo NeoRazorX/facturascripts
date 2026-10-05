@@ -22,23 +22,41 @@ namespace FacturaScripts\Core\Contract;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Dinamic\Model\Cliente;
 
+/**
+ * Define los puntos de extensión de los modales de clientes y productos de los documentos de venta.
+ */
 interface SalesModalInterface
 {
+    /**
+     * Ejecuta la fase posterior del mod después de procesar los filtros estándar de los modales.
+     *
+     * @param array $formData Datos recibidos desde el formulario.
+     */
     public function apply(SalesDocument &$model, array $formData): void;
 
+    /**
+     * Ejecuta la fase previa del mod antes de procesar los filtros estándar de los modales.
+     *
+     * @param array $formData Datos recibidos desde el formulario.
+     */
     public function applyBefore(SalesDocument &$model, array $formData): void;
 
+    /**
+     * Registra los recursos CSS y JavaScript que necesita el mod.
+     */
     public function assets(): void;
 
     /**
-     * Devuelve los nombres de las columnas a añadir al modal de selección de cliente.
+     * Devuelve los identificadores de las columnas a añadir al modal de selección de cliente.
+     * Cada identificador se enviará posteriormente a renderField().
      *
      * @return string[]
      */
     public function newCustomerFields(): array;
 
     /**
-     * Devuelve los nombres de las columnas a añadir al modal de búsqueda de producto.
+     * Devuelve los identificadores de las columnas a añadir al modal de búsqueda de producto.
+     * Cada identificador se enviará posteriormente a renderField() y renderFieldHead().
      *
      * @return string[]
      */

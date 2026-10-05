@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,12 +48,15 @@ function animateSpinner(animation, result = null) {
     }
 }
 
-function confirmAction(viewName, action, title, message, cancel, confirm) {
+function confirmAction(viewName, action, title, message, cancel, confirm, icon = '', btnClass = 'btn-danger') {
     // Si ya existe un modal con el ID 'dynamicModal', lo eliminamos
     const existingModal = document.getElementById('dynamicConfirmActionModal');
     if (existingModal) {
         existingModal.remove();
     }
+
+    // icono opcional para el título y el botón de confirmar
+    const titleIcon = icon ? `<i class="${icon} fa-fw me-1"></i>` : '';
 
     // Crear el HTML del modal como string usando los parámetros
     const modalHTML = `
@@ -61,7 +64,7 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="dynamicConfirmActionModalLabel">${title}</h5>
+            <h5 class="modal-title" id="dynamicConfirmActionModalLabel">${titleIcon}${title}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -69,7 +72,7 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary btn-spin-action" data-bs-dismiss="modal">${cancel}</button>
-            <button type="button" id="saveDynamicConfirmActionModalBtn" class="btn btn-danger btn-spin-action">${confirm}</button>
+            <button type="button" id="saveDynamicConfirmActionModalBtn" class="btn ${btnClass} btn-spin-action">${titleIcon}${confirm}</button>
           </div>
         </div>
       </div>
@@ -108,31 +111,30 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
 }
 
 function setModalParentForm(modal, form) {
-    if (form.code) {
-        // asignamos al formulario del modal el code del formulario donde sale el botón
+    const container = $("#" + modal).parent();
+
+    // eliminamos los inputs añadidos en aperturas anteriores del modal
+    container.find('input.modalParentFormInput').remove();
+
+    const addInput = function (name, value) {
         let input = document.createElement('input');
         input.type = 'hidden';
-        input.name = 'code';
-        input.value = form.code.value;
-        $("#" + modal).parent().append(input);
-    } else if (form.elements['codes[]']) {
-        let codes = [];
+        input.className = 'modalParentFormInput';
+        input.name = name;
+        input.value = value;
+        container.append(input);
+    };
 
+    if (form.code) {
+        // asignamos al formulario del modal el code del formulario donde sale el botón
+        addInput('code', form.code.value);
+    } else if (form.elements['codes[]']) {
         // recorremos los checkboxes del formulario donde sale el botón
+        // y añadimos un input de codes[] por cada uno
         let checkboxes = document.querySelectorAll('input[name="codes[]"]:checked');
         checkboxes.forEach((checkbox) => {
-            codes.push(checkbox.value);
+            addInput('codes[]', checkbox.value);
         });
-
-        // añadimos un input de codes[] con los códigos recogidos
-        codes.forEach((code) => {
-            let input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'codes[]';
-            input.value = code;
-            $("#" + modal).parent().append(input);
-        });
-        console.log(codes);
     }
 }
 

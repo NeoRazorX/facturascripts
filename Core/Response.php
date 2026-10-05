@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -160,6 +160,11 @@ final class Response
         }
 
         $this->sendHeaders();
+
+        // descartamos los buffers de salida para no cargar el archivo entero en memoria
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
 
         readfile($real_path);
     }

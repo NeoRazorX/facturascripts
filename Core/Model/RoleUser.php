@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson at gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Internal\CacheWithMemory;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -44,6 +45,17 @@ class RoleUser extends ModelClass
 
     /** @var string Nombre del usuario al que se asigna el rol. */
     public $nick;
+
+    /**
+     * Además de la caché del modelo, limpia la caché de permisos de acceso,
+     * porque las claves model-RoleAccess-* dependen de los roles asignados.
+     */
+    public function clearCache(): void
+    {
+        parent::clearCache();
+
+        CacheWithMemory::deleteMulti('model-RoleAccess-');
+    }
 
     public function getRole(): Role
     {

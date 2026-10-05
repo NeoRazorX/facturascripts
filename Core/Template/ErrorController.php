@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -61,22 +61,7 @@ abstract class ErrorController implements ErrorControllerInterface
 
     protected function canShowDeployButtons(): bool
     {
-        if (Tools::config('disable_deploy_actions', false)) {
-            return false;
-        }
-
-        // comprobamos si existen las cookies de login
-        if (isset($_COOKIE['fsNick']) && isset($_COOKIE['fsLogkey'])) {
-            return true;
-        }
-
-        // si el dominio es localhost, también mostramos los botones
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        if (strpos($host, 'localhost') !== false) {
-            return true;
-        }
-
-        return false;
+        return CrashReport::canShowDeployButtons();
     }
 
     protected function html(string $title, string $body): string

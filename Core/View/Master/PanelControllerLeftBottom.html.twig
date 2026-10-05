@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -55,7 +55,7 @@
                     </div>
                 </div>
                 {# -- Right Panel -- #}
-                <div class="col-12 col-lg">
+                <div class="col-12 col-lg" style="min-width: 0;">
                     <div class="tab-content" id="mainTabsContent">
                         {# -- All views but we skipped the first one -- #}
                         {% for viewName, view in fsc.views[1:] %}

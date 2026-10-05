@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,6 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\CrashReport;
 use FacturaScripts\Core\Kernel;
-use FacturaScripts\Core\NextCode;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
@@ -74,7 +73,4 @@ if ($db->connected()) {
     // guardamos los logs y cerramos la conexión a la base de datos
     MiniLog::save();
     $db->close();
-
-    // limpiamos archivos temporales antiguos
-    NextCode::clearOld();
 }

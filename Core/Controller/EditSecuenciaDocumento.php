@@ -63,12 +63,12 @@ class EditSecuenciaDocumento extends EditController
         // añadimos las vistas de los documentos
         $this->createViewsDocuments('ListFacturaCliente', 'FacturaCliente', 'customer-invoices');
         $this->createViewsDocuments('ListFacturaProveedor', 'FacturaProveedor', 'supplier-invoices');
-        $this->createViewsDocuments('ListAlbaranCliente', 'AlbaranCliente', 'customer-delivery-notes');
-        $this->createViewsDocuments('ListAlbaranProveedor', 'AlbaranProveedor', 'supplier-delivery-notes');
-        $this->createViewsDocuments('ListPedidoCliente', 'PedidoCliente', 'customer-orders');
-        $this->createViewsDocuments('ListPedidoProveedor', 'PedidoProveedor', 'supplier-orders');
-        $this->createViewsDocuments('ListPresupuestoCliente', 'PresupuestoCliente', 'customer-quotes');
-        $this->createViewsDocuments('ListPresupuestoProveedor', 'PresupuestoProveedor', 'supplier-quotes');
+        $this->createViewsDocuments('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
+        $this->createViewsDocuments('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
+        $this->createViewsDocuments('ListPedidoCliente', 'PedidoCliente', 'orders');
+        $this->createViewsDocuments('ListPedidoProveedor', 'PedidoProveedor', 'orders');
+        $this->createViewsDocuments('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        $this->createViewsDocuments('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
     }
 
     protected function createViewsDocuments(string $viewName, string $model, string $title): void
@@ -116,6 +116,11 @@ class EditSecuenciaDocumento extends EditController
 
             case $mvn:
                 parent::loadData($viewName, $view);
+
+                // en facturas no ofrecemos la opción de mantener la fecha al rellenar huecos
+                if (false === $view->model->canKeepDate()) {
+                    $this->mainTab()->disableColumn('keep-date');
+                }
 
                 // desactivamos todas las pestañas de documentos
                 $this->setSettings('ListAlbaranCliente', 'active', false);

@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use DateTimeZone;
 use Exception;
+use FacturaScripts\Core\AppKey;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
@@ -137,6 +138,31 @@ class Installer implements ControllerInterface
         ]);
     }
 
+    /**
+     * Devuelve la línea define() de config.php para una constante booleana.
+     */
+    private function configLineBool(string $name, $value): string
+    {
+        $bool = is_bool($value) ? $value : filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        return "define('" . $name . "', " . ($bool ? 'true' : 'false') . ");\n";
+    }
+
+    /**
+     * Devuelve la línea define() de config.php para una constante entera.
+     */
+    private function configLineInt(string $name, $value): string
+    {
+        return "define('" . $name . "', " . (int)$value . ");\n";
+    }
+
+    /**
+     * Devuelve la línea define() de config.php para una constante de texto, escapando el valor.
+     */
+    private function configLineString(string $name, ?string $value): string
+    {
+        return "define('" . $name . "', '" . $this->escapeConfig($value ?? '') . "');\n";
+    }
+
     private function createDataBase(): bool
     {
         $dbData = [
@@ -232,39 +258,36 @@ class Installer implements ControllerInterface
 
     private function saveInstall(): bool
     {
-        $file = fopen(FS_FOLDER . '/config.php', 'wb');
-        if (false === is_resource($file)) {
-            Tools::log()->critical('cant-save-install');
-            return false;
-        }
+        $config = "<?php\n";
+        $config .= $this->configLineInt('FS_COOKIES_EXPIRE', $this->request->input('fs_cookie_expire', 31536000));
+        $config .= $this->configLineString('FS_ROUTE', $this->request->input('fs_route', $this->getUri()));
+        $config .= $this->configLineString('FS_DB_TYPE', $this->db_type);
+        $config .= $this->configLineString('FS_DB_HOST', $this->db_host);
+        $config .= $this->configLineInt('FS_DB_PORT', $this->db_port);
+        $config .= $this->configLineString('FS_DB_NAME', $this->db_name);
+        $config .= $this->configLineString('FS_DB_USER', $this->db_user);
+        $config .= $this->configLineString('FS_DB_PASS', $this->db_pass);
+        $config .= $this->configLineBool('FS_DB_FOREIGN_KEYS', true);
+        $config .= $this->configLineBool('FS_DB_TYPE_CHECK', true);
 
-        fwrite($file, "<?php\n");
-        fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->input('fs_cookie_expire', 31536000) . ");\n");
-        fwrite($file, "define('FS_ROUTE', '" . $this->escapeConfig($this->request->input('fs_route', $this->getUri())) . "');\n");
-        fwrite($file, "define('FS_DB_TYPE', '" . $this->escapeConfig($this->db_type) . "');\n");
-        fwrite($file, "define('FS_DB_HOST', '" . $this->escapeConfig($this->db_host) . "');\n");
-        fwrite($file, "define('FS_DB_PORT', " . $this->db_port . ");\n");
-        fwrite($file, "define('FS_DB_NAME', '" . $this->escapeConfig($this->db_name) . "');\n");
-        fwrite($file, "define('FS_DB_USER', '" . $this->escapeConfig($this->db_user) . "');\n");
-        fwrite($file, "define('FS_DB_PASS', '" . $this->escapeConfig($this->db_pass) . "');\n");
-        fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
-        fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
+        // clave secreta de la instalación, para firmar los tokens
+        $config .= $this->configLineString('FS_APP_KEY', Tools::env('FS_APP_KEY', AppKey::generate()));
 
         if ($this->use_new_mysql) {
             // for new databases, we use utf8mb4
-            fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8mb4');\n");
-            fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8mb4_unicode_520_ci');\n");
+            $config .= $this->configLineString('FS_MYSQL_CHARSET', 'utf8mb4');
+            $config .= $this->configLineString('FS_MYSQL_COLLATE', 'utf8mb4_unicode_520_ci');
         } elseif ($this->db_type === 'mysql') {
             // for existing databases, we use utf8
-            fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8');\n");
-            fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
+            $config .= $this->configLineString('FS_MYSQL_CHARSET', 'utf8');
+            $config .= $this->configLineString('FS_MYSQL_COLLATE', 'utf8_bin');
         }
 
-        if ($this->db_type === 'mysql' && $this->request->input('mysql_socket') !== '') {
-            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->escapeConfig($this->request->input('mysql_socket')) . "');\n");
+        if ($this->db_type === 'mysql' && $this->request->input('mysql_socket', '') !== '') {
+            $config .= "\nini_set('mysqli.default_socket', '" . $this->escapeConfig($this->request->input('mysql_socket', '')) . "');\n";
         } elseif ($this->db_type === 'postgresql') {
-            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->escapeConfig($this->request->input('pgsql_ssl_mode')) . "');\n");
-            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->escapeConfig($this->request->input('pgsql_endpoint')) . "');\n");
+            $config .= $this->configLineString('FS_PGSQL_SSL', $this->request->input('pgsql_ssl_mode', ''));
+            $config .= $this->configLineString('FS_PGSQL_ENDPOINT', $this->request->input('pgsql_endpoint', ''));
         }
 
         $fields = [
@@ -273,28 +296,33 @@ class Installer implements ControllerInterface
             'hidden_plugins' => ''
         ];
         foreach ($fields as $field => $default) {
-            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->escapeConfig($this->request->input('fs_' . $field, $default)) . "');\n");
+            $config .= $this->configLineString('FS_' . strtoupper($field), $this->request->input('fs_' . $field, $default));
         }
 
         $booleanFields = ['disable_add_plugins', 'disable_rm_plugins'];
         foreach ($booleanFields as $field) {
-            fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->input('fs_' . $field, 'false') . ");\n");
+            $config .= $this->configLineBool('FS_' . strtoupper($field), $this->request->input('fs_' . $field, 'false'));
         }
-        fwrite($file, "define('FS_DEBUG', " . ($this->debug ? 'true' : 'false') . ");\n");
+        $config .= $this->configLineBool('FS_DEBUG', $this->debug);
 
         if ($this->request->input('fs_gtm', false)) {
-            fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
+            $config .= $this->configLineString('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');
         }
 
         if (!empty($this->initial_user)) {
-            fwrite($file, "define('FS_INITIAL_USER', '" . $this->escapeConfig($this->initial_user) . "');\n");
+            $config .= $this->configLineString('FS_INITIAL_USER', $this->initial_user);
         }
 
         if (!empty($this->initial_pass)) {
-            fwrite($file, "define('FS_INITIAL_PASS', '" . $this->escapeConfig($this->initial_pass) . "');\n");
+            $config .= $this->configLineString('FS_INITIAL_PASS', $this->initial_pass);
         }
 
-        fclose($file);
+        // escribimos el fichero de una vez para no dejar un config.php incompleto si algo falla
+        if (false === file_put_contents(FS_FOLDER . '/config.php', $config)) {
+            Tools::log()->critical('cant-save-install');
+            return false;
+        }
+
         return true;
     }
 
@@ -365,7 +393,16 @@ class Installer implements ControllerInterface
 
         // create the database if it doesn't exist
         $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS ' . $connection->escape_string($dbData['name']) . ';';
-        if (!$connection->query($sqlCrearBD)) {
+        try {
+            if (!$connection->query($sqlCrearBD)) {
+                Tools::log()->critical('cant-create-database');
+                Tools::log()->critical($connection->errno . ': ' . $connection->error);
+                return false;
+            }
+        } catch (Exception $e) {
+            // desde PHP 8.1 mysqli lanza excepciones, p. ej. con un nombre de base de datos no válido
+            Tools::log()->critical('cant-create-database');
+            Tools::log()->critical($e->getMessage());
             return false;
         }
 
@@ -419,7 +456,8 @@ class Installer implements ControllerInterface
         }
 
         // can't connect to the database, try to connect to the default database
-        $connection = pg_connect($connectionStr . ' dbname=postgres');
+        error_clear_last();
+        $connection = @pg_connect($connectionStr . ' dbname=postgres');
         if ($connection !== false) {
             // if postgresql version is too old, we can't continue
             if ($this->versionPostgres($connection) < 10) {
@@ -442,9 +480,13 @@ class Installer implements ControllerInterface
             return false;
         }
 
+        // sin conexión no hay pg_last_error(), así que mostramos el aviso que ha generado pg_connect(),
+        // que con html_errors activado ya viene escapado como HTML
         Tools::log()->critical('cant-connect-database');
-        if (is_resource($connection) && pg_last_error($connection) != false) {
-            Tools::log()->critical(pg_last_error($connection));
+        $error = error_get_last();
+        if ($error !== null) {
+            $message = html_entity_decode(strip_tags($error['message']), ENT_QUOTES);
+            Tools::log()->critical(str_replace('pg_connect(): ', '', $message));
         }
 
         return false;

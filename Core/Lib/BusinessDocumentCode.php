@@ -181,8 +181,10 @@ class BusinessDocumentCode
                     $document->codejercicio == $preCodejercicio
                 ) {
                     // hole found
-                    $document->fecha = $preDate;
-                    $document->hora = $preHour;
+                    if (false === static::keepDate($sequence)) {
+                        $document->fecha = $preDate;
+                        $document->hora = $preHour;
+                    }
                     $sequence->disablePatternTest(true);
                     $sequence->save();
                     $sequence->disablePatternTest(false);
@@ -205,8 +207,10 @@ class BusinessDocumentCode
                 $document->codejercicio == $preCodejercicio
             ) {
                 // the gap is in the first positions of the range
-                $document->fecha = $preDate;
-                $document->hora = $preHour;
+                if (false === static::keepDate($sequence)) {
+                    $document->fecha = $preDate;
+                    $document->hora = $preHour;
+                }
                 $sequence->disablePatternTest(true);
                 $sequence->save();
                 $sequence->disablePatternTest(false);
@@ -245,5 +249,14 @@ class BusinessDocumentCode
             ['CAST(numero as integer)' => 'DESC'] :
             ['CAST(numero as unsigned)' => 'DESC'];
         return $document->all($where, $orderBy, 0, self::GAP_LIMIT);
+    }
+
+    /**
+     * Indica si al rellenar un hueco debemos respetar la fecha del documento,
+     * en lugar de asignarle la del documento anterior.
+     */
+    protected static function keepDate(SecuenciaDocumento $sequence): bool
+    {
+        return $sequence->mantenerfecha && $sequence->canKeepDate();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -76,6 +76,9 @@ class EstadoDocumento extends ModelClass
     /** @var string Nombre del estado de documento. */
     public $nombre;
 
+    /** @var int Posición del estado al mostrar los estados de su tipo de documento. */
+    public $orden;
+
     /** @var bool Indica si es el estado predeterminado para su tipo de documento. */
     public $predeterminado;
 
@@ -89,6 +92,7 @@ class EstadoDocumento extends ModelClass
         $this->actualizastock = 0;
         $this->bloquear = false;
         $this->editable = true;
+        $this->orden = 100;
         $this->predeterminado = false;
     }
 

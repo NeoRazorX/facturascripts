@@ -66,6 +66,10 @@ class PaymentToAccounting
             case 'PagoProveedor':
                 $this->payment = $payment;
                 $this->receipt = $payment->getReceipt();
+                if (false === $this->receipt->exists()) {
+                    Tools::log()->warning('record-not-found');
+                    return false;
+                }
                 $this->exercise->idempresa = $this->receipt->idempresa;
                 if (false === $this->exercise->loadFromDate($this->payment->fecha)) {
                     Tools::log()->warning('closed-exercise', [
