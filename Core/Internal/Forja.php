@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -79,6 +79,11 @@ final class Forja
     public static function canUpdateCore(): bool
     {
         foreach (self::getBuilds(self::CORE_PROJECT_ID) as $build) {
+            // si la build requiere una versión de PHP más reciente, no se puede actualizar a ella
+            if (false === self::isPhpCompatible($build)) {
+                continue;
+            }
+
             if ($build['stable'] && $build['version'] > Kernel::version()) {
                 return true;
             }
@@ -115,6 +120,25 @@ final class Forja
         }
 
         return [];
+    }
+
+    /**
+     * Comprueba si la versión de PHP indicada (o la actual) cumple el min_php de la build.
+     * Si la build no indica una versión mínima válida, se considera compatible.
+     */
+    public static function isPhpCompatible(array $build, string $phpVersion = PHP_VERSION): bool
+    {
+        $minPhp = $build['min_php'] ?? null;
+        if (false === is_string($minPhp) && false === is_numeric($minPhp)) {
+            return true;
+        }
+
+        $minPhp = trim((string)$minPhp);
+        if (empty($minPhp) || 1 !== preg_match('/^\d+(\.\d+)*$/', $minPhp)) {
+            return true;
+        }
+
+        return version_compare($phpVersion, $minPhp, '>=');
     }
 
     public static function plugins(): array

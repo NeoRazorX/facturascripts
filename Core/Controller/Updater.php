@@ -342,6 +342,11 @@ class Updater extends Controller
                 continue;
             }
 
+            // si la build requiere una versión de PHP más reciente, no la ofrecemos
+            if (false === Forja::isPhpCompatible($build)) {
+                continue;
+            }
+
             $item = [
                 'description' => Tools::trans('core-update', [
                     '%currentVersion%' => self::getCoreVersion(),
@@ -387,6 +392,9 @@ class Updater extends Controller
             }
             if ($build['maxcore'] > 0 && $build['maxcore'] < $coreVersion) {
                 continue; // Build demasiado antigua para el core actual
+            }
+            if (false === Forja::isPhpCompatible($build)) {
+                continue; // Requiere una versión de PHP más reciente
             }
 
             $item = [
