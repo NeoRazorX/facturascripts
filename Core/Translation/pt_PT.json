@@ -1522,7 +1522,7 @@
     "private-key": "Chave privada",
     "process": "Processo",
     "processing": "A processar",
-    "product": "produtos",
+    "product": "Produto",
     "product-not-found": "Produto %ref% não encontrado",
     "product-with-tax-exception": "O produto '%reference%' tem exceção fiscal",
     "product-with-tax-exception-distinct-cero": "O produto '%reference%' tem uma exceção de impostos diferente de zero",

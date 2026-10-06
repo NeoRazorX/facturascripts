@@ -1124,7 +1124,7 @@
     "lock-unlock": "sperren-entsperren",
     "lock-unlock-account-entry": "Buchung sperren\/entsperren",
     "locked": "Verschlossen",
-    "log": "Register",
+    "log": "Protokoll",
     "login": "Anmeldung",
     "login-cookie-fail": "Session-Cookie ist fehlgeschlagen: Möglicherweise haben Sie sich von einem anderen Gerät oder Browser angemeldet.",
     "login-empty-fields": "Bei der Anmeldung sind Felder leer",
