@@ -41,9 +41,10 @@
     <!-- Inline comments must end with proper punctuation -->
     <rule ref="PEAR.Commenting.InlineComment"/>
 
-    <!-- Test files can mix declarations and side effects -->
+    <!-- Test files and the standalone restore script can mix declarations and side effects -->
     <rule ref="PSR1.Files.SideEffects">
         <exclude-pattern>Test/*.php</exclude-pattern>
+        <exclude-pattern>*/replace_index_to_restore\.php</exclude-pattern>
     </rule>
 
     <!-- Test files can declare helper classes (fixtures) alongside the test class -->
