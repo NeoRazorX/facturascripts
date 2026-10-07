@@ -407,6 +407,12 @@ if (!restoreDeletePath(__DIR__ . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEP
     $warnings[] = 'The MyFiles/Cache folder could not be removed.';
 }
 
+// the data cache may contain table columns and objects from the previous core
+$fileCachePath = __DIR__ . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'Tmp' . DIRECTORY_SEPARATOR . 'FileCache';
+if (!restoreDeletePath($fileCachePath)) {
+    $warnings[] = 'The MyFiles/Tmp/FileCache folder could not be removed.';
+}
+
 // the saved routes point to the removed Dinamic classes, the deploy page saves them again
 if (!restoreDeletePath(__DIR__ . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'routes.json')) {
     $warnings[] = 'The MyFiles/routes.json file could not be removed. Delete it before continuing.';
