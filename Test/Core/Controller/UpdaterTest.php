@@ -69,7 +69,6 @@ final class UpdaterTest extends TestCase
         file_put_contents($dest . DIRECTORY_SEPARATOR . 'index.php', 'old index');
 
         $method = new ReflectionMethod(Updater::class, 'updateRootFiles');
-        $method->setAccessible(true);
         $method->invoke(null, $origin, $dest);
 
         $index = $dest . DIRECTORY_SEPARATOR . 'index.php';
