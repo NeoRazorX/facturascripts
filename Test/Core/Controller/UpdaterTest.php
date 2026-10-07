@@ -22,7 +22,9 @@ namespace FacturaScripts\Test\Core\Controller;
 use FacturaScripts\Core\Controller\Updater;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 final class UpdaterTest extends TestCase
 {
@@ -49,6 +51,37 @@ final class UpdaterTest extends TestCase
         $items = $this->coreItems();
         $this->assertCount(1, $items);
         $this->assertSame($nextVersion + 2, $items[0]['version']);
+    }
+
+    public function testUpdateRootFilesSeparatesRestoreFileTime(): void
+    {
+        $origin = Tools::folder('MyFiles', 'Tmp', 'UpdaterTest', 'origin');
+        $dest = Tools::folder('MyFiles', 'Tmp', 'UpdaterTest', 'dest');
+        Tools::folderCheckOrCreate($origin);
+        Tools::folderCheckOrCreate($dest);
+
+        // ambos archivos del paquete con la misma fecha de modificación
+        $time = time() - 3600;
+        foreach (['index.php' => 'new index', 'replace_index_to_restore.php' => 'restore'] as $name => $content) {
+            file_put_contents($origin . DIRECTORY_SEPARATOR . $name, $content);
+            touch($origin . DIRECTORY_SEPARATOR . $name, $time);
+        }
+        file_put_contents($dest . DIRECTORY_SEPARATOR . 'index.php', 'old index');
+
+        $method = new ReflectionMethod(Updater::class, 'updateRootFiles');
+        $method->setAccessible(true);
+        $method->invoke(null, $origin, $dest);
+
+        $index = $dest . DIRECTORY_SEPARATOR . 'index.php';
+        $restore = $dest . DIRECTORY_SEPARATOR . 'replace_index_to_restore.php';
+        $this->assertSame('new index', file_get_contents($index));
+        $this->assertSame('restore', file_get_contents($restore));
+
+        // opcache solo compara la fecha de modificación, así que deben ser distintas
+        clearstatcache();
+        $this->assertNotSame(filemtime($index), filemtime($restore));
+
+        Tools::folderDelete(Tools::folder('MyFiles', 'Tmp', 'UpdaterTest'));
     }
 
     private function build(float $version, ?string $minPhp): array
