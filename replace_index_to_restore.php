@@ -22,6 +22,9 @@ const FS_RESTORE_MIN_PHP = '7.3.0';
 const FS_RESTORE_PACKAGE_FOLDER = 'facturascripts';
 const FS_RESTORE_URL = 'https://facturascripts.com/DownloadBuild/1/stable';
 
+// increment it on every change: a restoration keeps this script if the package has an older one
+const FS_RESTORE_VERSION = 1;
+
 function restoreMessage(string $message, bool $error = false): void
 {
     if (!headers_sent()) {
@@ -224,6 +227,40 @@ function restoreRollback(string $backupPath, array $states): array
     return $errors;
 }
 
+/**
+ * Returns the FS_RESTORE_VERSION of a restoration script. Scripts without it are older than this check.
+ */
+function restoreScriptVersion(string $content): int
+{
+    return preg_match('/^const FS_RESTORE_VERSION = (\d+);/m', $content, $matches) ? (int)$matches[1] : 0;
+}
+
+/**
+ * Keeps the running restoration script when the package has an older one (old core versions are
+ * downloaded for old PHP versions), so the next restoration still works.
+ */
+function restorePrepareScript(string $packagePath, string $runningScript): void
+{
+    $packageScript = $packagePath . DIRECTORY_SEPARATOR . 'replace_index_to_restore.php';
+    $packageContent = @file_get_contents($packageScript);
+    $runningContent = @file_get_contents($runningScript);
+    if (false === $packageContent || false === $runningContent) {
+        throw new RuntimeException('Unable to read the restoration script.');
+    }
+
+    $keepRunning = restoreScriptVersion($packageContent) < restoreScriptVersion($runningContent);
+    if ($keepRunning && false === @file_put_contents($packageScript, $runningContent)) {
+        throw new RuntimeException('Unable to keep the current restoration script.');
+    }
+
+    // opcache only compares the modification time: if this file had the same as index.php,
+    // after renaming it the cached index.php would still be executed
+    $indexTime = filemtime($packagePath . DIRECTORY_SEPARATOR . 'index.php');
+    if (false === $indexTime || !@touch($packageScript, $indexTime - 60)) {
+        throw new RuntimeException('Unable to set the restoration script modification time.');
+    }
+}
+
 function restoreInstallPackage(string $packagePath, string $backupPath): void
 {
     if (!@mkdir($backupPath, 0755, true)) {
@@ -275,6 +312,11 @@ function restoreReleaseLock($lock, string $lockPath): void
     @unlink($lockPath);
     flock($lock, LOCK_UN);
     fclose($lock);
+}
+
+// the tests only load the functions
+if (defined('FS_RESTORE_SKIP_RUN')) {
+    return;
 }
 
 // This file must replace index.php before it can perform a restoration.
@@ -373,6 +415,8 @@ try {
     $packagePath = $stagingPath . DIRECTORY_SEPARATOR . FS_RESTORE_PACKAGE_FOLDER;
     restoreValidatePackage($packagePath);
     $rejectArchive = false;
+
+    restorePrepareScript($packagePath, __FILE__);
 
     restoreInstallPackage($packagePath, $backupPath);
 } catch (Throwable $exception) {
