@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
+use FacturaScripts\Core\Internal\PhpExtensions;
 use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
@@ -134,8 +135,16 @@ class Updater extends Controller
             ]);
         }
 
-        // en las acciones que escriben en disco, comprobamos que las carpetas sean escribibles
+        // avisamos de las extensiones de PHP que faltan
+        PhpExtensions::warnMissing();
+
+        // sin la extensión zip no se pueden instalar las actualizaciones
         $action = $this->request->get('action', '');
+        if (in_array($action, ['download', 'update']) && PhpExtensions::missing(['zip'])) {
+            return;
+        }
+
+        // en las acciones que escriben en disco, comprobamos que las carpetas sean escribibles
         if (in_array($action, ['cancel', 'download', 'post-update', 'update'])) {
             $folders = $this->notWritableFolders();
             if ($folders) {
