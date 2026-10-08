@@ -85,7 +85,8 @@ final class Migrations
     {
         $migrations = [
             'clearLogs', 'fixSeries', 'fixAgentes', 'fixApiKeysUsers', 'fixAgenciasTransporte', 'fixFormasPago',
-            'fixRectifiedInvoices', 'fixClientesOperationFromVatException', 'fixTaxException'
+            'fixRectifiedInvoices', 'fixClientesOperationFromVatException', 'fixTaxException',
+            'fixProveedoresIntraCommunityVatException'
         ];
 
         foreach ($migrations as $name) {
@@ -170,6 +171,17 @@ final class Migrations
         self::exec($sql);
     }
 
+    /** Devuelve la conexión a base de datos, abriéndola la primera vez (singleton perezoso interno). */
+    private static function db(): DataBase
+    {
+        if (self::$database === null) {
+            self::$database = new DataBase();
+            self::$database->connect();
+        }
+
+        return self::$database;
+    }
+
     /**
      * Ejecuta una sentencia SQL y lanza una excepción si falla.
      *
@@ -186,15 +198,28 @@ final class Migrations
         }
     }
 
-    /** Devuelve la conexión a base de datos, abriéndola la primera vez (singleton perezoso interno). */
-    private static function db(): DataBase
+    /**
+     * Pone a NULL los `codtrans` huérfanos en documentos de venta.
+     *
+     * Se instancia `AgenciaTransporte` para asegurar que la tabla `agenciastrans` existe y, a
+     * continuación, se anulan los códigos de agencia que ya no se encuentran en ella.
+     */
+    private static function fixAgenciasTransporte(): void
     {
-        if (self::$database === null) {
-            self::$database = new DataBase();
-            self::$database->connect();
-        }
+        // forzamos la comprobación de la tabla agenciastransporte
+        new AgenciaTransporte();
 
-        return self::$database;
+        // desvinculamos las agencias de transporte que no existan
+        foreach (['albaranescli', 'facturascli', 'pedidoscli', 'presupuestoscli'] as $table) {
+            if (false === self::db()->tableExists($table)) {
+                continue;
+            }
+
+            $sql = "UPDATE " . $table . " SET codtrans = NULL WHERE codtrans IS NOT NULL"
+                . " AND codtrans NOT IN (SELECT codtrans FROM agenciastrans);";
+
+            self::exec($sql);
+        }
     }
 
     /**
@@ -250,10 +275,13 @@ final class Migrations
      * Rellena `clientes.operacion` a partir de `clientes.excepcioniva` cuando viene vacía.
      *
      * Versión 2026.01, fecha 06-03-2026. Con la nueva validación, ciertas excepciones de IVA
-     * (exportaciones y operaciones intracomunitarias) requieren que el cliente tenga informada
+     * (exportaciones y entregas intracomunitarias) requieren que el cliente tenga informada
      * la operación. Para no romper a clientes ya existentes, esta migración mapea las excepciones
      * conocidas a su operación correspondiente, pero sólo cuando la columna `operacion` está NULL
      * (no se sobrescriben valores ya configurados manualmente).
+     *
+     * ES_22 (asimiladas a exportaciones) y ES_23_24 (zonas francas y depósitos) no se mapean:
+     * son válidas sin operación y no implican una entrega intracomunitaria.
      */
     private static function fixClientesOperationFromVatException(): void
     {
@@ -269,38 +297,12 @@ final class Migrations
         // compatibilidad: con la nueva validación, estos casos requieren operación informada
         $updates = [
             TaxExceptions::ES_TAX_EXCEPTION_21 => InvoiceOperation::EXPORT,
-            TaxExceptions::ES_TAX_EXCEPTION_22 => InvoiceOperation::INTRA_COMMUNITY,
-            TaxExceptions::ES_TAX_EXCEPTION_23_24 => InvoiceOperation::INTRA_COMMUNITY,
             TaxExceptions::ES_TAX_EXCEPTION_25 => InvoiceOperation::INTRA_COMMUNITY,
         ];
 
         foreach ($updates as $exception => $operation) {
             $sql = "UPDATE clientes SET operacion = " . self::db()->var2str($operation)
                 . " WHERE operacion IS NULL AND excepcioniva = " . self::db()->var2str($exception) . ";";
-            self::exec($sql);
-        }
-    }
-
-    /**
-     * Pone a NULL los `codtrans` huérfanos en documentos de venta.
-     *
-     * Se instancia `AgenciaTransporte` para asegurar que la tabla `agenciastrans` existe y, a
-     * continuación, se anulan los códigos de agencia que ya no se encuentran en ella.
-     */
-    private static function fixAgenciasTransporte(): void
-    {
-        // forzamos la comprobación de la tabla agenciastransporte
-        new AgenciaTransporte();
-
-        // desvinculamos las agencias de transporte que no existan
-        foreach (['albaranescli', 'facturascli', 'pedidoscli', 'presupuestoscli'] as $table) {
-            if (false === self::db()->tableExists($table)) {
-                continue;
-            }
-
-            $sql = "UPDATE " . $table . " SET codtrans = NULL WHERE codtrans IS NOT NULL"
-                . " AND codtrans NOT IN (SELECT codtrans FROM agenciastrans);";
-
             self::exec($sql);
         }
     }
@@ -347,6 +349,33 @@ final class Migrations
                 self::exec($sql);
             }
         }
+    }
+
+    /**
+     * Cambia a ES_84 la excepción de IVA de los proveedores intracomunitarios que tengan ES_68_70 o ES_7.
+     *
+     * Versión 2026.71, fecha 08-10-2026. En las compras intracomunitarias el comprador autorepercute
+     * el IVA (arts. 84-85 LIVA) y CalculatorModSpain ya forzaba ES_84 en las líneas, por lo que
+     * ES_68_70 y ES_7 dejan de ser combinaciones válidas en el proveedor. Sin esta migración, esos
+     * proveedores no podrían volver a guardarse. Se ejecuta después de `fixTaxException` para
+     * cubrir también los códigos heredados ya renombrados (`ES_LOCATION_RULES`, `ES_N1`...).
+     */
+    private static function fixProveedoresIntraCommunityVatException(): void
+    {
+        if (false === self::db()->tableExists('proveedores')) {
+            return;
+        }
+
+        $columns = self::db()->getColumns('proveedores');
+        if (!isset($columns['operacion']) || !isset($columns['excepcioniva'])) {
+            return;
+        }
+
+        $sql = "UPDATE proveedores SET excepcioniva = " . self::db()->var2str(TaxExceptions::ES_TAX_EXCEPTION_84)
+            . " WHERE operacion = " . self::db()->var2str(InvoiceOperation::INTRA_COMMUNITY)
+            . " AND excepcioniva IN (" . self::db()->var2str(TaxExceptions::ES_TAX_EXCEPTION_68_70)
+            . ", " . self::db()->var2str(TaxExceptions::ES_TAX_EXCEPTION_7) . ");";
+        self::exec($sql);
     }
 
     /**
@@ -484,6 +513,13 @@ final class Migrations
         return is_array($data) ? $data : [];
     }
 
+    /** Indica si la migración con ese nombre ya consta como ejecutada en el JSON de control. */
+    private static function isMigrationExecuted(string $migrationName): bool
+    {
+        $executed = self::getExecutedMigrations();
+        return in_array($migrationName, $executed, true);
+    }
+
     /**
      * Registra en el log el fallo de una migración, con su nombre y el mensaje de la excepción.
      *
@@ -498,13 +534,6 @@ final class Migrations
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
         ]);
-    }
-
-    /** Indica si la migración con ese nombre ya consta como ejecutada en el JSON de control. */
-    private static function isMigrationExecuted(string $migrationName): bool
-    {
-        $executed = self::getExecutedMigrations();
-        return in_array($migrationName, $executed, true);
     }
 
     /**
