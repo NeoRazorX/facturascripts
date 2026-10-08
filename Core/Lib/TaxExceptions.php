@@ -27,10 +27,10 @@ namespace FacturaScripts\Core\Lib;
  */
 class TaxExceptions
 {
-    /** No sujeta – Otros supuestos de no sujeción (cobros por cuenta de terceros, indemnizaciones...). Verifactu N1. */
-    const ES_OTHER_NOT_SUBJECT = 'ES_OTHER_NOT_SUBJECT';
+    /** No sujeta – Art. 7 LIVA (transmisión de un negocio, muestras, servicios en relación laboral...). Verifactu N1. */
+    const ES_TAX_EXCEPTION_7 = 'ES_7';
 
-    /** No sujeta – Art. 14 LIVA: adquisiciones intracomunitarias no sujetas. Verifactu N1. */
+    /** No sujeta – Art. 14 LIVA: adquisiciones intracomunitarias no sujetas (solo compras). Verifactu N1. */
     const ES_TAX_EXCEPTION_14 = 'ES_14';
 
     /** Exenta – Art. 20 LIVA: exenciones interiores (sanidad, enseñanza, seguros, financieras...). Verifactu E1. */
@@ -51,20 +51,19 @@ class TaxExceptions
     /** No sujeta – Arts. 68–70 LIVA: reglas de localización, la operación tributa fuera de España. Verifactu N2. */
     const ES_TAX_EXCEPTION_68_70 = 'ES_68_70';
 
-    /** No sujeta – Art. 7 LIVA (transmisión de un negocio, muestras, servicios en relación laboral...). Verifactu N1. */
-    const ES_TAX_EXCEPTION_7 = 'ES_7';
-
     /** Sujeta – Inversión del sujeto pasivo, arts. 84 y 85 LIVA (AIB, servicios de no establecidos, ISP doméstico). Verifactu S2. */
     const ES_TAX_EXCEPTION_84 = 'ES_84';
 
     /** Exenta – Otras exenciones (oro de inversión art. 140 bis, art. 26, régimen agrario...). Verifactu E6. */
     const ES_TAX_EXCEPTION_OTHER = 'ES_OTHER';
 
-    /** @var array Excepciones eliminadas por plugins mediante remove(). */
-    private static $removedValues = [];
+    /** No sujeta – Otros supuestos de no sujeción (cobros por cuenta de terceros, indemnizaciones...). Verifactu N1. */
+    const ES_OTHER_NOT_SUBJECT = 'ES_OTHER_NOT_SUBJECT';
 
     /** @var array Excepciones añadidas o sobrescritas por plugins mediante add(). */
     private static $values = [];
+    /** @var array Excepciones eliminadas por plugins mediante remove(). */
+    private static $removedValues = [];
 
     public static function add(string $key, string $value): void
     {
@@ -106,10 +105,14 @@ class TaxExceptions
     /**
      * Comprueba si la combinación de operación y excepción de IVA es válida.
      *
-     * - Sin operación: se admiten las excepciones genéricas (exenciones interiores, operaciones
-     *   asimiladas a exportaciones, zonas francas, supuestos no sujetos, ISP doméstico...) o ninguna.
-     * - Compras intracomunitarias: solo ES_84, que es la que fuerza CalculatorModSpain en las líneas.
-     * - Operación no reconocida (añadida por plugins): se admite cualquier combinación.
+     * Para las operaciones especiales solo se admiten las excepciones que CalculatorModSpain pone en
+     * las líneas, para que lo que se guarda en el cliente o proveedor sea lo que sale en los documentos:
+     * - Ventas intracomunitarias: ES_25. Compras intracomunitarias: ES_84.
+     * - Servicios intracomunitarios: ES_68_70 en ventas y ES_84 en compras.
+     *
+     * Sin operación se admiten las excepciones genéricas o ninguna. ES_14 solo en compras, porque
+     * se refiere a adquisiciones intracomunitarias no sujetas. Una operación no reconocida (añadida
+     * por plugins) admite cualquier combinación.
      *
      * @param string|null $operation valor de InvoiceOperation (intracomunitaria, exportacion, importacion, null...)
      * @param string|null $exception código de excepción de IVA (ES_20, ES_25, ES_84, null...)
@@ -121,8 +124,7 @@ class TaxExceptions
     {
         $validMap = [
             InvoiceOperation::INTRA_COMMUNITY => [
-                'sales' => [self::ES_TAX_EXCEPTION_22, self::ES_TAX_EXCEPTION_23_24, self::ES_TAX_EXCEPTION_25, self::ES_TAX_EXCEPTION_68_70],
-                // la adquisición intracomunitaria la autorepercute el comprador (arts. 84-85 LIVA)
+                'sales' => [self::ES_TAX_EXCEPTION_25],
                 'purchases' => [self::ES_TAX_EXCEPTION_84],
             ],
             InvoiceOperation::INTRA_COMMUNITY_SERVICES => [
@@ -148,7 +150,6 @@ class TaxExceptions
             $allowed = [
                 null,
                 self::ES_TAX_EXCEPTION_7,
-                self::ES_TAX_EXCEPTION_14,
                 self::ES_TAX_EXCEPTION_20,
                 self::ES_TAX_EXCEPTION_22,
                 self::ES_TAX_EXCEPTION_23_24,
@@ -157,6 +158,12 @@ class TaxExceptions
                 self::ES_TAX_EXCEPTION_OTHER,
                 self::ES_OTHER_NOT_SUBJECT,
             ];
+
+            // las adquisiciones intracomunitarias no sujetas (art. 14) solo existen en compras
+            if ($context === 'purchases') {
+                $allowed[] = self::ES_TAX_EXCEPTION_14;
+            }
+
             return in_array($exception, $allowed);
         }
 
