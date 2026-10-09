@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -132,6 +132,9 @@
         </column>
         <column name="date" display="right" order="380">
             <widget type="date" fieldname="fecha"/>
+        </column>
+        <column name="hour" display="none" order="390">
+            <widget type="time" fieldname="hora"/>
         </column>
     </columns>
     <modals>
