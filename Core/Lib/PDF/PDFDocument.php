@@ -40,6 +40,7 @@ use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
+use FacturaScripts\Dinamic\Model\Retencion;
 
 /**
  * PDF document data.
@@ -240,7 +241,7 @@ abstract class PDFDocument extends PDFCore
                 continue;
             }
 
-            $key = 'irpf_' . $line->irpf;
+            $key = 'irpf_' . ($line->codretencion ?: $line->irpf);
             if (!isset($subtotals[$key])) {
                 $subtotals[$key] = [
                     'tax' => $this->i18n->trans('irpf') . ' ' . $line->irpf . '%',
@@ -250,6 +251,11 @@ abstract class PDFDocument extends PDFCore
                     'taxsurchargep' => 0,
                     'taxsurcharge' => 0
                 ];
+
+                $retencion = new Retencion();
+                if (!empty($line->codretencion) && $retencion->load($line->codretencion)) {
+                    $subtotals[$key]['tax'] = $retencion->descripcion;
+                }
             }
 
             $subtotals[$key]['taxbase'] += $line->pvptotal * $eud;
