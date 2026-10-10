@@ -62,6 +62,11 @@ function widgetLibrarySelect(id, id_file, filename) {
     $("div#" + id + ' span.file-name').text(filename);
     $('div#list_' + id + ' div.file').removeClass('border-primary');
     $('div#list_' + id + ' div[data-idfile="' + id_file + '"]').addClass('border-primary');
+
+    const srcSelectedImage = $('div#list_' + id + ' div[data-idfile="' + id_file + '"] img').attr('src');
+    const hasSelection = id_file && srcSelectedImage;
+    $("#" + id + " .btn-widget-library").attr('data-url-image', hasSelection ? srcSelectedImage : '');
+
     $("#modal_" + id).modal("hide");
 }
 
@@ -95,3 +100,61 @@ function widgetLibraryUpload(id, file) {
         }
     });
 }
+
+$(document).ready(function () {
+    // Inyectar CSS
+    const style = document.createElement('style');
+    style.textContent = `
+      #popover-img {
+        position: fixed;
+        display: none;
+        z-index: 9999;
+        pointer-events: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #fff;
+        padding: 4px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+      #popover-img img {
+        display: block;
+        width: 200px;
+        height: 150px;
+        object-fit: cover;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Crear el popover dinámicamente
+    const img = document.createElement('img');
+    const popover = document.createElement('div');
+    popover.id = 'popover-img';
+    popover.appendChild(img);
+    document.body.appendChild(popover);
+
+    document.querySelectorAll('.btn-widget-library').forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+            if(!btn.dataset.urlImage){
+                return;
+            }
+            img.src = btn.dataset.urlImage;
+            popover.style.display = 'block';
+        });
+
+        btn.addEventListener('mousemove', (e) => {
+            if(!btn.dataset.urlImage){
+                return;
+            }
+            popover.style.left = (e.clientX - 100) + 'px';
+            popover.style.top  = (e.clientY + 25) + 'px';
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            if(!btn.dataset.urlImage){
+                return;
+            }
+            popover.style.display = 'none';
+            img.src = '';
+        });
+    });
+});
