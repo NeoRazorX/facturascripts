@@ -223,7 +223,7 @@ class PurchasesModalHTML
             . ' LEFT JOIN productosprov pp ON pp.referencia = p.referencia'
             . ' AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor)
             . ' AND pp.coddivisa = ' . $dataBase->var2str(self::$coddivisa)
-            . ' WHERE p.secompra = true AND p.bloqueado = false';
+            . ' WHERE p.secompra = true AND p.bloqueado = false AND v.bloqueada = false';
 
         if (self::$codfabricante) {
             $sql .= ' AND p.codfabricante = ' . $dataBase->var2str(self::$codfabricante);
