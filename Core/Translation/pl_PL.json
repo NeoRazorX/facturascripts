@@ -994,7 +994,7 @@
     "invalid-web": "Nieprawidłowy adres sieciowy: %web%",
     "invoice": "Faktura",
     "invoice-email-subject": "Twoja faktura %code%",
-    "invoice-email-text": "Szanowny kliencie, w załączeniu przesyłamy fakturę odpowiadającą świadczonym usługom. Jeśli masz jakiekolwiek pytania, możesz odpowiedzieć na ten sam e-mail. Dziękujemy! Pozdrawiamy,",
+    "invoice-email-text": "Dzień dobry, załączam Pani\/Panu fakturę %code%",
     "invoice-has-no-receipts": "Faktura nie ma paragonów. Utwórz przynajmniej jeden z zakładki paragonów.",
     "invoice-have-rectifying-cant-delete": "Faktura ma już korektę. Nie można jej usunąć.",
     "invoice-new-assigned-date": "Istnieją już faktury po wybranej dacie (%oldDate%). Nowa data przypisana: %newDate%",

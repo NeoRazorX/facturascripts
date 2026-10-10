@@ -994,7 +994,7 @@
     "invalid-web": "Neplatná webová adresa: %web%",
     "invoice": "Faktura",
     "invoice-email-subject": "Vaše faktura %code%",
-    "invoice-email-text": "Vážený zákazníku,  v příloze Vám zasíláme fakturu za poskytnuté služby. Máte-li jakékoli dotazy, můžete odpovědět na tento e-mail.  Děkujeme! S pozdravem,",
+    "invoice-email-text": "Dobrý den, v příloze Vám zasílám Vaši fakturu %code%",
     "invoice-has-no-receipts": "Faktura nemá žádné splátky. Vytvořte je na záložce splátky.",
     "invoice-have-rectifying-cant-delete": "Faktura již má opravný doklad. Nelze ji odstranit.",
     "invoice-new-assigned-date": "Již existují faktury novější než vybrané datum (%oldDate%). Přiřazeno nové datum: %newDate%",
