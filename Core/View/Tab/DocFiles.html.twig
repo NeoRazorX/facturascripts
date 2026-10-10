@@ -1,55 +1,131 @@
 {% set firstView = fsc.views | first %}
 {% set doc = firstView.model %}
 {% set currentView = fsc.getCurrentView() %}
+{% set viewName = currentView.getViewName() %}
 
-<div class="container-fluid">
+{# todos los selectores del javascript se buscan dentro de esta raíz, para que un
+   controlador pueda tener más de una pestaña de archivos sin que choquen entre sí #}
+<div class="container-fluid docfiles-tab" id="{{ viewName }}-docfiles">
     <div class="row">
         <div class="col-sm-12">
             {% if fsc.permissions.allowUpdate %}
                 <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
                       onsubmit="animateSpinner('add')">
                     {{ formToken() }}
-                    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                    <input type="hidden" name="activetab" value="{{ viewName }}"/>
                     <input type="hidden" name="action" value="add-file"/>
                     <div class="card border-success shadow mb-3">
                         <div class="card-body p-3">
                             <h5 class="card-title">
                                 <i class="fa-solid fa-folder-plus fa-fw"></i> {{ trans('add') }}
                             </h5>
-                            <div class="mb-3">
-                                <textarea name="observations" class="form-control"
-                                          placeholder="{{ trans('observations') }}"></textarea>
+
+                            {% set canUseLibrary = fsc.user.can('ListAttachedFile') %}
+                            <div class="row g-3 mb-3">
+                                <div class="docfiles-upload-col col-12{% if canUseLibrary %} col-lg-4{% endif %}">
+                                    <div class="docfiles-dropzone rounded text-center p-3 h-100 d-flex flex-column justify-content-center"
+                                         style="border: 2px dashed #198754; background-color: #f4fbf7;">
+                                        <i class="fa-solid fa-cloud-arrow-up fa-2x text-success mb-2" aria-hidden="true"></i>
+                                        <p class="mb-1">{{ trans('upload-file') }}</p>
+                                        <p class="text-muted small mb-3">
+                                            {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
+                                        </p>
+                                        <label for="{{ viewName }}-new-files" class="visually-hidden">{{ trans('files') }}</label>
+                                        <input type="file" name="new-files[]" id="{{ viewName }}-new-files"
+                                               class="form-control docfiles-new-files"
+                                               multiple onchange="docFilesPickUploads(this);"/>
+                                        <div class="docfiles-upload-list mt-2"
+                                             data-remove="{{ trans('remove') }}"
+                                             data-max="{{ fsc.maxUploadFilesPerRequest() }}"
+                                             data-max-text="{{ trans('max-files-per-request', {'%max%': fsc.maxUploadFilesPerRequest()}) }}"></div>
+                                        <p class="docfiles-upload-limit text-danger small mt-2 mb-0 d-none"></p>
+                                    </div>
+                                </div>
+                                {% if canUseLibrary %}
+                                <div class="docfiles-library-col col-12 col-lg-8">
+                                    <div class="input-group mb-2">
+                                        <label for="{{ viewName }}-library-query" class="visually-hidden">{{ trans('search') }}</label>
+                                        <input type="text" id="{{ viewName }}-library-query"
+                                               class="form-control docfiles-library-query"
+                                               placeholder="{{ trans('search') }}" autocomplete="off"
+                                               onkeydown="if(event.key==='Enter'){event.preventDefault();docFilesLibrarySearch(this);}"/>
+                                        <label for="{{ viewName }}-library-sort" class="visually-hidden">{{ trans('sort-by-date-desc') }}</label>
+                                        <select id="{{ viewName }}-library-sort"
+                                                class="form-select flex-grow-0 w-auto docfiles-library-sort"
+                                                onchange="docFilesLibrarySearch(this);">
+                                            <option value="date-desc" selected>{{ trans('sort-by-date-desc') }}</option>
+                                            <option value="date-asc">{{ trans('sort-by-date-asc') }}</option>
+                                        </select>
+                                        <button type="button" class="btn btn-primary" onclick="docFilesLibrarySearch(this);"
+                                                aria-label="{{ trans('search') }}">
+                                            <i class="fa-solid fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" class="docfiles-library-token" value="{{ formToken(false) }}"/>
+                                    <div class="docfiles-library-list list-group overflow-auto"
+                                         style="max-height: 200px;"
+                                         data-no-data="{{ trans('no-data') }}"
+                                         data-detail="{{ trans('attached-file') }}"
+                                         data-remove="{{ trans('remove') }}"
+                                         data-linked="{{ trans('already-attached') }}"
+                                         data-reload="{{ trans('refresh-page') }}"
+                                         data-retry="{{ trans('retry') }}"
+                                         data-error="{{ trans('try-again-later') }}"></div>
+                                    <div class="docfiles-library-more text-center mt-1 d-none">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                onclick="docFilesLibraryMore(this);">
+                                            <i class="fa-solid fa-angles-down fa-fw" aria-hidden="true"></i>
+                                            {{ trans('load-more') }}
+                                        </button>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
+
                             {% for includeView in getIncludeViews('DocFiles', 'formAddBody') %}
                                 {% include includeView['path'] %}
                             {% endfor %}
-                            <div class="row align-items-end">
-                                <div class="col">
-                                    <p class="text-muted mb-2">
-                                        {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
-                                    </p>
-                                    <input type="file" name="new-files[]" class="form-control" multiple required/>
-                                </div>
-                                <div class="col-auto">
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
-                                    </button>
-                                </div>
+
+                            {% if canUseLibrary %}
+                            <div class="docfiles-library-selected mb-3 d-none">
+                                <span class="text-muted small me-1">{{ trans('choose-files') }}:</span>
+                                <span class="docfiles-library-chips"
+                                      data-max="{{ fsc.maxLibraryFilesPerRequest() }}"
+                                      data-max-text="{{ trans('max-files-per-request', {'%max%': fsc.maxLibraryFilesPerRequest()}) }}"></span>
+                                <p class="docfiles-library-limit text-danger small mt-1 mb-0 d-none"></p>
+                            </div>
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <label for="{{ viewName }}-observations" class="visually-hidden">{{ trans('observations') }}</label>
+                                <textarea name="observations" id="{{ viewName }}-observations" class="form-control"
+                                          placeholder="{{ trans('observations') }}"></textarea>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-success docfiles-save">
+                                    <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+                                </button>
                             </div>
                         </div>
                     </div>
                 </form>
             {% endif %}
 
-            <div id="docs-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+            {# los archivos compartidos se resuelven en una sola consulta, no una por tarjeta #}
+            {% set sharedFiles = fsc.getSharedFileIds() %}
+            <div class="docfiles-docs-container row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
                 {% for docfile in currentView.cursor %}
                     {% set file = docfile.getFile() %}
                     {% if file %}
+                    {% set sharedFile = docfile.idfile in sharedFiles %}
+                    {# eliminar saca el archivo de la biblioteca, hace falta permiso sobre ella #}
+                    {% set canDeleteFile = fsc.canDeleteFiles(docfile) %}
                     <div class="col" data-doc-id="{{ docfile.id }}">
                         <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
                               onsubmit="animateSpinner('add')">
                             {{ formToken() }}
-                            <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                            <input type="hidden" name="activetab" value="{{ viewName }}"/>
                             <input type="hidden" name="id" value="{{ docfile.id }}"/>
                             <input type="hidden" name="action" value=""/>
                             <div class="card shadow h-100">
@@ -90,6 +166,9 @@
                                         {% endif %}
                                         <i class="fa-solid fa-calendar-alt ms-3" aria-hidden="true"></i> {{ docfile.creationdate }}
                                         <i class="fa-solid fa-hard-drive ms-3" aria-hidden="true"></i> {{ bytes(file.size) }}
+                                        {% if sharedFile %}
+                                            <i class="fa-solid fa-link ms-3" aria-hidden="true"></i> {{ trans('file-in-use') }}
+                                        {% endif %}
                                     </p>
                                 </div>
                                 <div class="card-footer p-2" style="cursor: move;">
@@ -111,11 +190,19 @@
                                                     </li>
                                                     <li><hr class="dropdown-divider"></li>
                                                     <li>
-                                                        <button type="button"
-                                                                onclick="if(confirm('{{ trans('confirm-delete') }}')) { this.form.action.value='delete-file';this.form.submit(); }"
-                                                                class="dropdown-item text-danger">
-                                                            <i class="fa-regular fa-trash-alt fa-fw" aria-hidden="true"></i> {{ trans('delete-file') }}
-                                                        </button>
+                                                        {% if sharedFile or not canDeleteFile %}
+                                                            {# en uso en otros registros, o sin permiso sobre la biblioteca: solo desvincular #}
+                                                            <button type="button" class="dropdown-item disabled" disabled
+                                                                    title="{{ sharedFile ? trans('file-in-use') : trans('not-allowed-delete-library-files') }}">
+                                                                <i class="fa-regular fa-trash-alt fa-fw" aria-hidden="true"></i> {{ trans('delete-file') }}
+                                                            </button>
+                                                        {% else %}
+                                                            <button type="button"
+                                                                    onclick="if(confirm('{{ trans('confirm-delete') }}')) { this.form.action.value='delete-file';this.form.submit(); }"
+                                                                    class="dropdown-item text-danger">
+                                                                <i class="fa-regular fa-trash-alt fa-fw" aria-hidden="true"></i> {{ trans('delete-file') }}
+                                                            </button>
+                                                        {% endif %}
                                                     </li>
                                                 </ul>
                                             </div>
@@ -139,8 +226,367 @@
 </div>
 
 <script>
+    // la raíz es la pestaña a la que pertenece el elemento, nunca el documento entero
+    function docFilesRoot(element) {
+        return $(element).closest('.docfiles-tab');
+    }
+
+    // el resultado se interpola también dentro de atributos, así que las comillas
+    // tienen que salir escapadas, y .text().html() no las toca
+    function docFilesLibraryEscape(text) {
+        return $('<div/>').text(text === null || text === undefined ? '' : text).html()
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function docFilesLibraryCount(root) {
+        const total = root.find('.docfiles-library-chips span[data-idfile]').length;
+        root.find('.docfiles-library-selected').toggleClass('d-none', total === 0);
+    }
+
+    function docFilesLibraryChip(root, idFile, filename) {
+        return '<span class="badge bg-primary d-inline-flex align-items-center me-1 mb-1" data-idfile="' + idFile + '">'
+            + '<input type="hidden" name="idfiles[]" value="' + idFile + '"/>'
+            + docFilesLibraryEscape(filename)
+            + '<button type="button" class="btn-close btn-close-white ms-2" style="font-size: .5rem;"'
+            + ' aria-label="' + docFilesLibraryEscape(root.find('.docfiles-library-list').data('remove')) + '"'
+            + ' onclick="docFilesLibraryRemove(this, ' + idFile + ');"></button>'
+            + '</span>';
+    }
+
+    function docFilesLibraryRemove(element, idFile) {
+        const root = docFilesRoot(element);
+        root.find('.docfiles-library-chips span[data-idfile="' + idFile + '"]').remove();
+
+        const checkbox = root.find('.docfiles-library-list input[value="' + idFile + '"]');
+        checkbox.prop('checked', false);
+        checkbox.closest('.list-group-item').removeClass('list-group-item-primary');
+
+        docFilesLibraryCount(root);
+    }
+
+    // deja en el input la unión de las listas recibidas, sin repetir el mismo archivo.
+    // lo usan el selector y el arrastrar, para que los dos acumulen igual.
+    function docFilesMergeUploads(input, lists) {
+        const data = new DataTransfer();
+        const names = [];
+        for (const list of lists) {
+            for (const file of list) {
+                if (names.includes(file.name + file.size)) {
+                    continue;
+                }
+
+                names.push(file.name + file.size);
+                data.items.add(file);
+            }
+        }
+
+        input.files = data.files;
+        docFilesRenderUploads(input);
+    }
+
+    function docFilesPickUploads(input) {
+        // el selector nativo ya ha reemplazado la lista, así que recuperamos la
+        // anterior para sumarla en vez de perderla
+        docFilesMergeUploads(input, [input.docFilesPrevious || [], input.files]);
+    }
+
+    function docFilesRenderUploads(element) {
+        const root = docFilesRoot(element);
+        const input = root.find('.docfiles-new-files')[0];
+        const list = root.find('.docfiles-upload-list');
+        list.empty();
+
+        // php descarta en silencio los archivos que pasen de max_file_uploads, así que
+        // antes de guardar avisamos y bloqueamos el botón
+        const max = parseInt(list.data('max'), 10);
+        const tooMany = input.files.length > max;
+        root.find('.docfiles-upload-limit').text(list.data('max-text')).toggleClass('d-none', false === tooMany);
+        root.find('.docfiles-save').prop('disabled', tooMany);
+
+        // como ahora se acumulan, hace falta poder quitar los que sobren
+        const remove = docFilesLibraryEscape(list.data('remove'));
+        for (let pos = 0; pos < input.files.length; pos++) {
+            // el nombre se recorta y el resto de la etiqueta no encoge, para que la
+            // X siga alcanzable con nombres largos. el nombre completo va en el title.
+            const name = docFilesLibraryEscape(input.files[pos].name);
+            list.append('<span class="badge bg-success d-inline-flex align-items-center mw-100 me-1 mb-1"'
+                + ' title="' + name + '">'
+                + '<i class="fa-solid fa-file-arrow-up fa-fw flex-shrink-0" aria-hidden="true"></i> '
+                + '<span class="text-truncate">' + name + '</span>'
+                + '<button type="button" class="btn-close btn-close-white flex-shrink-0 ms-2" style="font-size: .5rem;"'
+                + ' aria-label="' + remove + '" onclick="docFilesRemoveUpload(this, ' + pos + ');"></button>'
+                + '</span>');
+        }
+
+        input.docFilesPrevious = Array.from(input.files);
+    }
+
+    function docFilesRemoveUpload(element, position) {
+        const root = docFilesRoot(element);
+        const input = root.find('.docfiles-new-files')[0];
+
+        const data = new DataTransfer();
+        for (let pos = 0; pos < input.files.length; pos++) {
+            if (pos !== position) {
+                data.items.add(input.files[pos]);
+            }
+        }
+
+        input.files = data.files;
+        docFilesRenderUploads(input);
+    }
+
+    function docFilesDropzoneInit(root) {
+        const zone = root.find('.docfiles-dropzone')[0];
+        const input = root.find('.docfiles-new-files')[0];
+        if (undefined === zone || undefined === input) {
+            return;
+        }
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function (name) {
+            zone.addEventListener(name, function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+        });
+
+        ['dragenter', 'dragover'].forEach(function (name) {
+            zone.addEventListener(name, function () {
+                zone.style.backgroundColor = '#d1e7dd';
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(function (name) {
+            zone.addEventListener(name, function () {
+                zone.style.backgroundColor = '#f4fbf7';
+            });
+        });
+
+        zone.addEventListener('drop', function (event) {
+            if (event.dataTransfer.files.length === 0) {
+                return;
+            }
+
+            // lo arrastrado se suma a lo ya elegido, en vez de reemplazarlo
+            docFilesMergeUploads(input, [input.files, event.dataTransfer.files]);
+        });
+    }
+
+    function docFilesLibraryToggle(checkbox) {
+        const root = docFilesRoot(checkbox);
+        const chips = root.find('.docfiles-library-chips');
+        const chip = chips.find('span[data-idfile="' + checkbox.value + '"]');
+
+        // el tope de verdad está en el servidor, aquí solo avisamos antes de guardar
+        const max = parseInt(chips.data('max'), 10);
+        if (checkbox.checked && chip.length === 0 && chips.find('span[data-idfile]').length >= max) {
+            checkbox.checked = false;
+            root.find('.docfiles-library-limit').text(chips.data('max-text')).removeClass('d-none');
+            return;
+        }
+        root.find('.docfiles-library-limit').addClass('d-none');
+
+        if (checkbox.checked && chip.length === 0) {
+            // el nombre lo tomamos de la fila, así no hay que repetirlo en un atributo
+            chips.append(docFilesLibraryChip(root, checkbox.value,
+                $(checkbox).closest('.list-group-item').find('label').text()));
+        } else if (false === checkbox.checked) {
+            chip.remove();
+        }
+
+        $(checkbox).closest('.list-group-item').toggleClass('list-group-item-primary', checkbox.checked);
+        docFilesLibraryCount(root);
+    }
+
+    function docFilesLibraryCardClick(card, event) {
+        // la casilla, la etiqueta y el enlace de descarga ya se gestionan solos
+        if ($(event.target).closest('a, input, label').length > 0) {
+            return;
+        }
+
+        const checkbox = $(card).find('input[type="checkbox"]');
+        checkbox.prop('checked', false === checkbox.prop('checked'));
+        docFilesLibraryToggle(checkbox[0]);
+    }
+
+    function docFilesLibraryRender(root, files) {
+        const list = root.find('.docfiles-library-list');
+
+        if (files.length === 0) {
+            return '<div class="list-group-item text-center text-muted">'
+                + docFilesLibraryEscape(list.data('no-data')) + '</div>';
+        }
+
+        let html = '';
+        files.forEach(function (file) {
+            const id = root.attr('id') + '-library-file-' + file.idfile;
+            const selected = root.find('.docfiles-library-chips span[data-idfile="' + file.idfile + '"]').length > 0;
+            const thumb = file.image ?
+                '<img src="' + docFilesLibraryEscape(file.image) + '" class="flex-shrink-0" width="32" height="32"'
+                + ' loading="lazy" style="object-fit: cover;" alt=""/>' :
+                '<i class="fa-regular fa-file fa-fw text-secondary flex-shrink-0" aria-hidden="true"></i>';
+
+            // los que ya están adjuntos se muestran apagados, para que se vea que no faltan
+            html += '<div class="list-group-item d-flex align-items-center gap-2'
+                + (file.linked ? ' bg-light text-muted' : ' clickable')
+                + (selected ? ' list-group-item-primary' : '') + '"'
+                + (file.linked ? '' : ' onclick="docFilesLibraryCardClick(this, event);"') + '>'
+                + '<input type="checkbox" class="form-check-input m-0 flex-shrink-0" value="' + file.idfile
+                + '" id="' + id + '" onchange="docFilesLibraryToggle(this);"'
+                + (file.linked ? ' disabled checked' : (selected ? ' checked' : '')) + '/>'
+                + thumb
+                + '<label class="flex-grow-1 text-truncate mb-0' + (file.linked ? '' : ' clickable') + '" for="' + id + '">'
+                + docFilesLibraryEscape(file.filename) + '</label>'
+                + (file.linked ?
+                    '<span class="badge bg-secondary text-nowrap">'
+                    + docFilesLibraryEscape(list.data('linked')) + '</span>' :
+                    '<span class="text-muted small text-nowrap">' + docFilesLibraryEscape(file.size) + ' &middot; '
+                    + docFilesLibraryEscape(file.date) + '</span>')
+                + '<a href="' + docFilesLibraryEscape(file.url) + '" target="_blank" aria-label="'
+                + docFilesLibraryEscape(list.data('detail')) + '">'
+                + '<i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i></a>'
+                + '</div>';
+        });
+
+        return html;
+    }
+
+    function docFilesLibraryError(root, message, action, append) {
+        const list = root.find('.docfiles-library-list');
+
+        // el botón recarga la página o repite lo último que se intentó
+        let button = '';
+        if (action === 'reload' || action === 'retry') {
+            const onclick = action === 'reload' ?
+                'window.location.reload();' :
+                (append ? 'docFilesLibraryMore(this);' : 'docFilesLibrarySearch(this);');
+            const label = action === 'reload' ? list.data('reload') : list.data('retry');
+            button = '<div class="mt-2"><button type="button" class="btn btn-sm btn-outline-danger"'
+                + ' onclick="' + onclick + '"><i class="fa-solid fa-rotate-right fa-fw"'
+                + ' aria-hidden="true"></i> ' + docFilesLibraryEscape(label) + '</button></div>';
+        }
+
+        const html = '<div class="docfiles-library-failed list-group-item text-center text-danger">'
+            + '<i class="fa-solid fa-triangle-exclamation fa-fw" aria-hidden="true"></i> '
+            + docFilesLibraryEscape(message) + button + '</div>';
+
+        // al fallar una página siguiente mantenemos lo que el usuario ya tiene delante
+        if (append) {
+            list.find('.docfiles-library-failed').remove();
+            list.append(html);
+            return;
+        }
+
+        list.html(html);
+    }
+
+    function docFilesLibraryDisable(root) {
+        // sin biblioteca, el formulario se queda solo con la subida de archivos
+        root.find('.docfiles-library-col').addClass('d-none');
+        root.find('.docfiles-library-more').addClass('d-none');
+        root.find('.docfiles-upload-col').removeClass('col-lg-4');
+    }
+
+    // pide la siguiente página de resultados, sin perder los que ya se ven
+    function docFilesLibraryMore(element) {
+        const root = docFilesRoot(element);
+        docFilesLibrarySearch(root, parseInt(root.find('.docfiles-library-list').data('offset') || 0, 10) + 1);
+    }
+
+    function docFilesLibrarySearch(element, page) {
+        const root = element instanceof jQuery ? element : docFilesRoot(element);
+        const list = root.find('.docfiles-library-list');
+
+        // sin permiso sobre la biblioteca, el bloque no se pinta y no hay nada que pedir
+        if (list.length === 0) {
+            return;
+        }
+
+        // la primera página sustituye la lista, las siguientes se añaden debajo
+        const nextPage = page || 0;
+        const spinner = '<div class="docfiles-library-loading list-group-item text-center p-4">'
+            + '<i class="fa-solid fa-circle-notch fa-2x fa-spin" aria-hidden="true"></i></div>';
+        if (nextPage === 0) {
+            list.html(spinner);
+        } else {
+            list.append(spinner);
+        }
+        root.find('.docfiles-library-more').addClass('d-none');
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('action', 'search-library');
+
+        $.ajax({
+            method: "POST",
+            url,
+            data: {
+                multireqtoken: root.find('.docfiles-library-token').val(),
+                query: root.find('.docfiles-library-query').val(),
+                sort: root.find('.docfiles-library-sort').val(),
+                offset: nextPage * {{ fsc.libraryPageSize() }}
+            },
+            dataType: "json",
+            success: function (data) {
+                list.find('.docfiles-library-loading').remove();
+
+                // los errores se muestran en la lista, porque aquí no hay recarga de página
+                if (data.error) {
+                    docFilesLibraryError(root, data.error, true === data.reload ? 'reload' : '', nextPage > 0);
+                    return;
+                }
+
+                // sin permiso sobre la biblioteca la respuesta no trae la lista
+                if (false === Array.isArray(data.files)) {
+                    docFilesLibraryDisable(root);
+                    return;
+                }
+
+                list.find('.docfiles-library-failed').remove();
+
+                const html = docFilesLibraryRender(root, data.files);
+                if (nextPage === 0) {
+                    list.html(html);
+                } else if (data.files.length > 0) {
+                    list.append(html);
+                }
+
+                list.data('offset', nextPage);
+                root.find('.docfiles-library-more').toggleClass('d-none', true !== data.more);
+                docFilesLibraryCount(root);
+            },
+            error: function (jqXHR, textStatus) {
+                list.find('.docfiles-library-loading').remove();
+
+                // si la respuesta no es json, el controlador no atiende la acción y
+                // devuelve la página entera. Reintentar no lo va a arreglar.
+                if (textStatus === 'parsererror') {
+                    docFilesLibraryDisable(root);
+                    return;
+                }
+
+                // un fallo de red no significa que la biblioteca no exista: dejamos reintentar
+                docFilesLibraryError(root, list.data('error'), 'retry', nextPage > 0);
+            }
+        });
+    }
+
     $(document).ready(function () {
-        $('#docs-container').sortable({
+        const docFilesTabRoot = $('#{{ viewName }}-docfiles');
+        docFilesDropzoneInit(docFilesTabRoot);
+
+        // la biblioteca se carga al abrir la pestaña, no antes, para no pedirla si no se usa
+        if ($('#{{ viewName }}').hasClass('active')) {
+            docFilesLibrarySearch(docFilesTabRoot);
+        } else {
+            $('a[href="#{{ viewName }}"]').on('shown.bs.tab', function () {
+                if (docFilesTabRoot.find('.docfiles-library-list').children().length === 0) {
+                    docFilesLibrarySearch(docFilesTabRoot);
+                }
+            });
+        }
+
+        docFilesTabRoot.find('.docfiles-docs-container').sortable({
             cursor: "move",
             tolerance: "pointer",
             opacity: 0.65,
