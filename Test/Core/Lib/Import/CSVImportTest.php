@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Lib\Import;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\EmailNotification;
+use ParseCsv\Csv;
 use PHPUnit\Framework\TestCase;
 
 final class CSVImportTest extends TestCase
@@ -70,15 +71,20 @@ final class CSVImportTest extends TestCase
 
             $this->assertMatchesRegularExpression('/^[A-Z]{2}$/', $folder, 'Nombre de carpeta de idioma no válido: ' . $folder);
 
-            // cada CSV debe existir también en ES y tener sus mismas columnas
+            // cada CSV debe existir también en ES y tener sus mismas columnas y filas
             foreach (glob($langPath . '/' . $folder . '/*.csv') as $filePath) {
                 $fileName = basename($filePath);
                 $esFilePath = $langPath . '/ES/' . $fileName;
                 $this->assertFileExists($esFilePath, 'No existe en ES: ' . $folder . '/' . $fileName);
+
+                // leemos los CSV igual que CSVImport::importFileSQL(), con detección automática del delimitador
+                $esCsv = $this->parseCsv($esFilePath);
+                $csv = $this->parseCsv($filePath);
+                $this->assertEquals($esCsv->titles, $csv->titles, 'Las columnas no coinciden con ES: ' . $folder . '/' . $fileName);
                 $this->assertEquals(
-                    $this->getCsvHeader($esFilePath),
-                    $this->getCsvHeader($filePath),
-                    'Las columnas no coinciden con ES: ' . $folder . '/' . $fileName
+                    array_column($esCsv->data, $esCsv->titles[0]),
+                    array_column($csv->data, $csv->titles[0]),
+                    'Las filas no coinciden con ES: ' . $folder . '/' . $fileName
                 );
             }
         }
@@ -192,12 +198,11 @@ final class CSVImportTest extends TestCase
         }
     }
 
-    private function getCsvHeader(string $filePath): array
+    private function parseCsv(string $filePath): Csv
     {
-        $handle = fopen($filePath, 'r');
-        $header = fgetcsv($handle, 0, ';', '"', '\\');
-        fclose($handle);
+        $csv = new Csv();
+        $csv->auto($filePath);
 
-        return $header;
+        return $csv;
     }
 }

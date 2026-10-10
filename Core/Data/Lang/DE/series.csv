@@ -1,0 +1,4 @@
+codserie;descripcion;tipo;siniva
+"A";"Allgemein";;false
+"R";"Korrekturrechnungen";"R";false
+"S";"Vereinfachte Rechnungen";"S";false

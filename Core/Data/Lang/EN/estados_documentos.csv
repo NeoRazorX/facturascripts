@@ -1,0 +1,28 @@
+idestado;tipodoc;nombre;predeterminado;bloquear;editable;actualizastock;generadoc;icon;orden
+1;PresupuestoCliente;Open;true;true;true;0;;;10
+2;PresupuestoCliente;Order;false;true;false;0;PedidoCliente;;50
+3;PresupuestoCliente;Rejected;false;true;false;0;;;210
+23;PresupuestoCliente;Expired;false;true;false;0;;fa-solid fa-hourglass-end;200
+24;PresupuestoCliente;Invoice;false;true;false;0;FacturaCliente;;60
+4;PedidoCliente;Open;true;true;true;-2;;;10
+5;PedidoCliente;Delivery note;false;true;false;0;AlbaranCliente;;50
+25;PedidoCliente;Invoice;false;true;false;0;FacturaCliente;;60
+6;PedidoCliente;Cancelled;false;true;false;0;;;200
+7;AlbaranCliente;Open;true;true;true;-1;;;10
+8;AlbaranCliente;Invoice;false;true;false;0;FacturaCliente;;50
+9;AlbaranCliente;Returned;false;true;false;0;;;200
+10;FacturaCliente;Draft;true;true;true;-1;;;10
+11;FacturaCliente;Issued;false;true;false;-1;;;50
+12;PresupuestoProveedor;Open;true;true;true;0;;;10
+13;PresupuestoProveedor;Order;false;true;false;0;PedidoProveedor;;50
+14;PresupuestoProveedor;Cancelled;false;true;false;0;;;200
+26;PresupuestoProveedor;Invoice;false;true;false;0;FacturaProveedor;;60
+15;PedidoProveedor;Open;true;true;true;2;;;10
+16;PedidoProveedor;Delivery note;false;true;false;0;AlbaranProveedor;;50
+17;PedidoProveedor;Cancelled;false;true;false;0;;;200
+27;PedidoProveedor;Invoice;false;true;false;0;FacturaProveedor;;60
+18;AlbaranProveedor;Open;true;true;true;1;;;10
+19;AlbaranProveedor;Invoice;false;true;false;0;FacturaProveedor;;50
+20;AlbaranProveedor;Returned;false;true;false;0;;;200
+21;FacturaProveedor;Draft;true;true;true;1;;;10
+22;FacturaProveedor;Received;false;true;false;1;;;50
