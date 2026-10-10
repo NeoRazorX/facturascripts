@@ -1,0 +1,15 @@
+<form method="post" id="{{ c.domId() }}" data-ui-form data-ui-path="{{ c.path() }}"
+      data-ui-event="{{ c.eventId('submit') }}" class="ui-form mb-3">
+    {{ formToken() }}
+    {% if c.titleText() %}
+        <legend class="fs-5 border-bottom pb-1 mb-3">
+            {% if c.getIcon() %}<i class="{{ c.getIcon() }} fa-fw me-1"></i>{% endif %}
+            {{ c.titleText() }}
+        </legend>
+    {% endif %}
+    <div class="row g-3">
+        {% for child in c.children() %}
+            {{ child.render()|raw }}
+        {% endfor %}
+    </div>
+</form>
