@@ -59,6 +59,31 @@ final class CSVImportTest extends TestCase
         Tools::settingsSet('default', 'codpais', $originalCodpais);
     }
 
+    public function testLangFoldersMatchSpanishFiles(): void
+    {
+        // getTableFilePath() busca las carpetas de idioma por las dos primeras letras en mayúsculas
+        $langPath = FS_FOLDER . '/Core/Data/Lang';
+        foreach (scandir($langPath) as $folder) {
+            if (in_array($folder, ['.', '..'], true)) {
+                continue;
+            }
+
+            $this->assertMatchesRegularExpression('/^[A-Z]{2}$/', $folder, 'Nombre de carpeta de idioma no válido: ' . $folder);
+
+            // cada CSV debe existir también en ES y tener sus mismas columnas
+            foreach (glob($langPath . '/' . $folder . '/*.csv') as $filePath) {
+                $fileName = basename($filePath);
+                $esFilePath = $langPath . '/ES/' . $fileName;
+                $this->assertFileExists($esFilePath, 'No existe en ES: ' . $folder . '/' . $fileName);
+                $this->assertEquals(
+                    $this->getCsvHeader($esFilePath),
+                    $this->getCsvHeader($filePath),
+                    'Las columnas no coinciden con ES: ' . $folder . '/' . $fileName
+                );
+            }
+        }
+    }
+
     public function testGetTableFilePathReturnsEmptyForSettings(): void
     {
         // el método debe retornar vacío para la tabla settings
@@ -165,5 +190,14 @@ final class CSVImportTest extends TestCase
         } elseif ($dbType === 'postgresql') {
             $this->assertStringContainsString('ON CONFLICT', strtoupper($sql));
         }
+    }
+
+    private function getCsvHeader(string $filePath): array
+    {
+        $handle = fopen($filePath, 'r');
+        $header = fgetcsv($handle, 0, ';', '"', '\\');
+        fclose($handle);
+
+        return $header;
     }
 }
