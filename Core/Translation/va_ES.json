@@ -613,7 +613,7 @@
     "dto-2": "Dte. 2",
     "duplicate-customer-name-or-cif": "Hi ha un client amb el mateix nom o CIF\/NIF",
     "duplicate-record": "Registre duplicat",
-    "duplicated-cifnif": "El CIF\\\/NIF %cifnif% ja està en ús: %records%",
+    "duplicated-cifnif": "El CIF\/NIF %cifnif% ja està en ús: %records%",
     "duplicated-cifnif-customer": "Ja existix un client amb el CIF\/NIF %cifnif%: %customers%. Vols crear-lo de totes formes?",
     "duplicated-cifnif-supplier": "Ja existix un proveïdor amb el CIF\/NIF %cifnif%: %suppliers%. Vols crear-lo de totes formes?",
     "duplicated-numsupplier": "El número de proveïdor %numsupplier% ja està en ús: %documents%",

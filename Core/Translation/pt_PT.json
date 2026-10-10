@@ -615,7 +615,7 @@
     "duplicate-record": "Registro duplicado",
     "duplicated-cifnif": "O CIF\/NIF %cifnif% já está em uso: %records%",
     "duplicated-cifnif-customer": "Já existe um cliente com o CIF\/NIF %cifnif%: %customers%. Quer criá-lo na mesma?",
-    "duplicated-cifnif-supplier": "Já existe um fornecedor com o CIF\\\/NIF %cifnif%: %suppliers%. Quer criá-lo na mesma?",
+    "duplicated-cifnif-supplier": "Já existe um fornecedor com o CIF\/NIF %cifnif%: %suppliers%. Quer criá-lo na mesma?",
     "duplicated-numsupplier": "O número de fornecedor %numsupplier% já está em uso: %documents%",
     "duplicated-reference": "Referência '%reference%' duplicada",
     "duplicated-request": "Pedido duplicado",
