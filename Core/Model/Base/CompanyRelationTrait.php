@@ -22,6 +22,13 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Dinamic\Model\Empresa;
 
+/**
+ * Trait que añade la relación con la empresa (Empresa) a la que pertenece
+ * el registro, útil en entornos multiempresa, permitiendo obtener la
+ * empresa asociada a partir de idempresa.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 trait CompanyRelationTrait
 {
     /** @var int|null Identificador de la empresa asociada. */

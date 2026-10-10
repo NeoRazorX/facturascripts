@@ -28,7 +28,12 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
 
 /**
- * Defines the relationship between a user and a role.
+ * Relaciona un usuario con un rol, de modo que el usuario hereda todos los
+ * permisos definidos en ese rol. Un mismo usuario puede tener varios roles y
+ * un rol puede asignarse a muchos usuarios.
+ * Permite consultar los permisos de acceso resultantes, y al modificarse limpia
+ * la caché de RoleAccess, ya que los permisos efectivos dependen de los roles
+ * que el usuario tenga asignados.
  *
  * @author Joe Nilson            <joenilson@gmail.com>
  * @author Carlos García Gómez   <carlos@facturascripts.com>

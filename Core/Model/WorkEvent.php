@@ -24,6 +24,14 @@ use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Evento de la cola de trabajos, que permite ejecutar tareas de forma asíncrona
+ * fuera de la petición que las genera. Guarda el nombre del evento, un valor
+ * asociado y unos parámetros en formato JSON que, si son muy grandes, se
+ * almacenan en un archivo dentro de MyFiles/Tmp.
+ * Los workers registrados para ese nombre lo procesan y dejan constancia de
+ * cuáles se ejecutaron, cuándo terminó y cuánto tiempo tardó.
+ */
 class WorkEvent extends ModelClass
 {
     use ModelTrait;

@@ -24,7 +24,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of EmailNotification
+ * Plantilla de notificación por email. Almacena el asunto y el cuerpo de los correos
+ * automáticos que envía FacturaScripts (nuevo usuario, recuperación de contraseña, envío
+ * de documentos, etc.), identificados por su nombre, que actúa como clave primaria.
+ * Cada notificación se puede activar o desactivar mediante el campo enabled, de forma que
+ * el sistema no envía el correo correspondiente cuando está deshabilitada.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

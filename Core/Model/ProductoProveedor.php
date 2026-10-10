@@ -31,7 +31,11 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
 /**
- * Description of ProductoProveedor
+ * Relaciona una variante de producto con un proveedor, guardando la referencia
+ * que este utiliza, su precio, los dos descuentos aplicables, la divisa y el
+ * stock que declara tener. A partir del precio y los descuentos se calcula el
+ * neto y su equivalente en euros, valores que sirven para actualizar el precio
+ * de coste del producto cada vez que se crea, modifica o elimina un registro.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

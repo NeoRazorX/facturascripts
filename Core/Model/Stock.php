@@ -29,7 +29,12 @@ use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
 /**
- * The quantity in inventory of an item in a particular warehouse.
+ * Existencias de una variante de producto en un almacén concreto. Guarda la
+ * cantidad física, la reservada en pedidos de clientes, la pendiente de recibir
+ * de proveedores y la disponible resultante, además de los stocks mínimo y
+ * máximo recomendados y la ubicación dentro del almacén.
+ * Cada vez que se guarda o elimina un registro se recalcula el stock total del
+ * producto y de la variante, y permite transferir unidades a otro almacén.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

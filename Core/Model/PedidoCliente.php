@@ -27,7 +27,11 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaPedidoCliente as LineaPedido;
 
 /**
- * Customer order.
+ * Pedido de cliente, almacenado en la tabla pedidoscli. Recoge el compromiso
+ * de compra del cliente con sus líneas, importes, impuestos, dirección de
+ * envío y forma de pago, y puede tener una fecha de fin de oferta que nunca
+ * puede ser anterior a la del documento. Según el estado del documento reserva
+ * stock, y al aprobarlo se transforma en albarán o factura de venta.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

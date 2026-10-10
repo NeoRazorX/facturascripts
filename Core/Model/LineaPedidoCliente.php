@@ -25,7 +25,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\PedidoCliente as DinPedidoCliente;
 
 /**
- * Customer order line
+ * Línea de un pedido de cliente, almacenada en la tabla lineaspedidoscli.
+ * Guarda el producto o servicio pedido junto con su cantidad, precio,
+ * descuentos e impuestos, y se relaciona con el pedido mediante idpedido.
+ * Al aprobar el pedido estas líneas se copian al albarán o factura
+ * correspondiente.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

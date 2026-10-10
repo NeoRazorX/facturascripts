@@ -24,7 +24,13 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A predefined concept for a line item (the line of an accounting entry).
+ * Concepto predefinido para las partidas, es decir, para las líneas de un asiento contable.
+ * Se guarda en la tabla `conceptos_partidas` y se identifica con un código
+ * (`codconcepto`) que se genera automáticamente si no se indica.
+ *
+ * Sirve para reutilizar textos habituales al contabilizar y evitar tener que escribir una
+ * y otra vez la misma descripción en el campo `concepto` de las partidas. Se gestiona desde
+ * el listado de asientos contables.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

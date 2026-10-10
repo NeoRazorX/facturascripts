@@ -24,6 +24,13 @@ use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Un punto de interés dentro de una ciudad: un polígono industrial, un barrio,
+ * una estación, etc. Guarda su nombre, un alias alternativo y las coordenadas
+ * geográficas que permiten situarlo en el mapa.
+ * Depende de una ciudad y sirve para afinar direcciones y búsquedas por zona,
+ * registrando además quién lo creó y quién lo modificó por última vez.
+ */
 class PuntoInteresCiudad extends ModelClass
 {
     use ModelTrait;
