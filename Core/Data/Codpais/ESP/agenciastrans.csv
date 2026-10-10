@@ -1,10 +1,10 @@
 codtrans;nombre;web;activo
-"GLS";"GLS";"https://gls-group.com/ES/es/";true
-"TIPSA";"TIPSA";"https://www.tip-sa.com/";true
-"SEUR";"SEUR";"https://www.seur.com/";true
-"MRW";"MRW";"https://www.mrw.es/";true
-"DHL";"DHL";"https://www.dhl.com/es-es/home.html";true
 "CORREOS";"Correos";"https://www.correos.es/";true
 "CEX";"Correos Express";"https://www.correosexpress.es/";true
-"NACEX";"NACEX";"https://www.nacex.com/";true
 "CTT";"CTT Express";"https://www.cttexpress.com/";true
+"DHL";"DHL";"https://www.dhl.com/es-es/home.html";true
+"GLS";"GLS";"https://gls-group.com/ES/es/";true
+"MRW";"MRW";"https://www.mrw.es/";true
+"NACEX";"NACEX";"https://www.nacex.com/";true
+"SEUR";"SEUR";"https://www.seur.com/";true
+"TIPSA";"TIPSA";"https://www.tip-sa.com/";true
