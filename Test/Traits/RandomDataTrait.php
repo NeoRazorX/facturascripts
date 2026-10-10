@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -240,7 +240,8 @@ trait RandomDataTrait
     protected function getRandomUser(): User
     {
         $user = new User();
-        $user->nick = 'user_' . mt_rand(1, 999);
+        // nick aleatorio amplio para que dos usuarios del mismo test no coincidan
+        $user->nick = 'user_' . bin2hex(random_bytes(6));
         $user->email = $user->nick . '@facturascripts.com';
         $user->setPassword(Tools::password());
 
