@@ -60,7 +60,7 @@ class PurchaseDocumentWorker extends WorkerClass
                 empty($line->referencia) ||
                 $line->cantidad <= 0 ||
                 $line->pvpunitario <= 0 ||
-                false === Tools::settings('default', 'updatesupplierprices')
+                false === (bool)Tools::settings('default', 'updatesupplierprices', true)
             ) {
                 continue;
             }
