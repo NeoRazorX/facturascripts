@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -110,10 +110,10 @@ abstract class PDFCore extends ExportBase
 
             $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
         } elseif ($forceNewPage || $this->pdf->y < 200) {
-            $this->pdf->ezNewPage();
+            $this->pdfNewPage();
             $this->insertedHeader = false;
         } else {
-            $this->pdf->ezText("\n");
+            $this->pdfText("\n");
         }
     }
 
@@ -249,7 +249,7 @@ abstract class PDFCore extends ExportBase
     {
         $headers = ['data1' => 'data1', 'data2' => 'data2'];
         $rows = $this->parallelTableData($tableData);
-        $this->pdf->ezTable($rows, $headers, $title, $options);
+        $this->pdfTable($rows, $headers, $title, $options);
     }
 
     /**
@@ -258,7 +258,7 @@ abstract class PDFCore extends ExportBase
     protected function newLine()
     {
         $posY = $this->pdf->y + 5;
-        $this->pdf->line(self::CONTENT_X, $posY, $this->tableWidth + self::CONTENT_X, $posY);
+        $this->pdfLine(self::CONTENT_X, $posY, $this->tableWidth + self::CONTENT_X, $posY);
     }
 
     /**
@@ -283,7 +283,7 @@ abstract class PDFCore extends ExportBase
         }
 
         if ($txt !== '') {
-            $this->pdf->ezText($txt);
+            $this->pdfText($txt);
         }
     }
 
@@ -392,5 +392,35 @@ abstract class PDFCore extends ExportBase
                 ];
             }
         }
+    }
+
+    protected function pdfText(string $text, int $size = self::FONT_SIZE, array $options = []): void
+    {
+        $this->pdf->ezText($text, $size, $options);
+    }
+
+    protected function pdfTable(array $rows, array $headers, string $title = '', array $options = []): void
+    {
+        $this->pdf->ezTable($rows, $headers, $title, $options);
+    }
+
+    protected function pdfNewPage(): void
+    {
+        $this->pdf->ezNewPage();
+    }
+
+    protected function pdfAddText(float $x, float $y, int $size, string $text, float $width = 0, string $justification = 'left', float $angle = 0): void
+    {
+        $this->pdf->addText($x, $y, $size, $text, $width, $justification, $angle);
+    }
+
+    protected function pdfLine(float $x1, float $y1, float $x2, float $y2): void
+    {
+        $this->pdf->line($x1, $y1, $x2, $y2);
+    }
+
+    protected function pdfOutput(): string
+    {
+        return $this->pdf->ezOutput();
     }
 }
