@@ -20,7 +20,11 @@
 namespace FacturaScripts\Core\Lib\Email;
 
 /**
- * Description of BaseBlock
+ * Clase base de los bloques que componen el cuerpo de un email. Cada bloque se
+ * encarga de generar su propio fragmento de HTML mediante el método render(),
+ * indicando si se está dibujando en el cuerpo o en el pie del mensaje, y puede
+ * recibir clases CSS y estilos propios. También permite crear el bloque a partir
+ * de un shortcode de la plantilla y asignarle el código de verificación del correo.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>

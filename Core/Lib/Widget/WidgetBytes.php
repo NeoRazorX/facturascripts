@@ -21,6 +21,13 @@ namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Tools;
 
+/**
+ * Widget numérico para mostrar tamaños de archivo. En las celdas de las tablas
+ * multiplica el valor del campo por el factor indicado en el atributo multiplier
+ * y lo presenta en la unidad más adecuada (bytes, KB, MB, etc.) mediante
+ * Tools::bytes(), lo que permite guardar el dato en kilobytes o megabytes y
+ * seguir mostrándolo de forma legible.
+ */
 class WidgetBytes extends WidgetNumber
 {
     /** @var int */

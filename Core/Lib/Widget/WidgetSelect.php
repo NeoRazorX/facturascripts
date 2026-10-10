@@ -25,7 +25,14 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
- * Description of WidgetSelect
+ * Widget de lista desplegable, declarado con type="select" en las vistas XMLView.
+ * Las opciones pueden definirse en la propia vista, generarse a partir de un rango o cargarse
+ * desde un modelo mediante CodeModel, con posibilidad de agruparlas en optgroup y de
+ * traducirlas. Se apoya en Select2 para la búsqueda dentro del desplegable.
+ * Admite selección múltiple con el atributo multiple, listas encadenadas que se recargan por
+ * JavaScript según el valor de otro campo con el atributo parent, y listas compartidas entre
+ * todas las filas de una vista con el atributo shared, que evita repetir las opciones.
+ * Es la clase base de WidgetDatalist.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

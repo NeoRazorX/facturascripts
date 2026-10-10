@@ -25,7 +25,11 @@ use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Description of AccountingModalHTML
+ * Genera el HTML del modal de búsqueda de subcuentas del formulario de asientos
+ * contables. Filtra las subcuentas por el ejercicio del asiento y por el texto
+ * introducido, permitiendo ordenar los resultados por código, descripción o
+ * saldo. Al pulsar sobre una fila se añade una nueva partida al asiento con esa
+ * subcuenta.
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

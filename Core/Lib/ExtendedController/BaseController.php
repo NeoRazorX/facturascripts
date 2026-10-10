@@ -31,7 +31,11 @@ use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Description of BaseController
+ * Clase base de los controladores extendidos, aquellos que muestran su contenido
+ * repartido en varias vistas o pestañas. Se encarga de crear y registrar esas vistas,
+ * de saber cuál está activa, de cargar sus datos y de gestionar las acciones comunes
+ * como autocompletar campos, seleccionar registros o exportar la información mediante
+ * el ExportManager. De ella heredan EditController, ListController y PanelController.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

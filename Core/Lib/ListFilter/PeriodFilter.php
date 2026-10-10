@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib\ListFilter;
 use FacturaScripts\Core\Request;
 
 /**
- * Description of PeriodFilter
+ * Filtro de listado que combina tres controles sobre un mismo campo de fecha: un
+ * desplegable con periodos predefinidos (hoy, esta semana, trimestre anterior, año
+ * pasado, etc.) y dos selectores de fecha para el inicio y el fin del intervalo. Al
+ * elegir un periodo del desplegable, PeriodTools calcula ambas fechas y los selectores
+ * quedan bloqueados; si no se elige ninguno, el usuario puede indicar el rango a mano.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>

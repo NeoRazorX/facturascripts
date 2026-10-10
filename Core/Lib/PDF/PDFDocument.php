@@ -42,7 +42,12 @@ use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 
 /**
- * PDF document data.
+ * Clase base para la generación de PDFs de documentos de compra y venta.
+ * Amplía PDFCore con los métodos necesarios para pintar las cabeceras, los datos
+ * del cliente o proveedor, las líneas del documento, los desgloses de impuestos,
+ * los recibos y las observaciones, tomando la configuración de la plantilla del
+ * modelo FormatoDocumento. Las clases hijas deciden el diseño final de cada tipo
+ * de documento y pueden modificarse mediante extensiones gracias a ExtensionsTrait.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
