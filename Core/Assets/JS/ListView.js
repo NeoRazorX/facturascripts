@@ -158,9 +158,28 @@ $(document).ready(function () {
     $(".noEnterKey").keypress(function (e) {
         return !(e.which == 13 || e.keyCode == 13);
     });
+    // mientras se escribe en un filtro de fecha, retrasamos el envío pendiente
+    $(document).on('keydown', 'input[type="date"][onchange^="dateFilterOnChange"]', dateFilterDelay);
 });
 
+let dateFilterPending = null;
+let dateFilterTimer = null;
+
 function dateFilterOnChange(e, form){
+    dateFilterPending = () => dateFilterSubmit(e, form);
+    dateFilterDelay();
+}
+
+function dateFilterDelay(){
+    clearTimeout(dateFilterTimer);
+    if (dateFilterPending) {
+        dateFilterTimer = setTimeout(dateFilterPending, 1500);
+    }
+}
+
+function dateFilterSubmit(e, form){
+    dateFilterPending = null;
+
     // determinamos si el input es dateStart
     const isStart = e.name.includes('start');
 
@@ -181,5 +200,5 @@ function dateFilterOnChange(e, form){
 
 function isValidDateInput(input) {
     // un input type="date" solo devuelve cadena vacía o una fecha válida YYYY-MM-DD
-    return Boolean(input) && /^\d{4}-\d{2}-\d{2}$/.test(input.value);
+    return Boolean(input) && /^\d{4}-\d{2}-\d{2}$/.test(input.value) && Number(input.value.substring(0, 4)) >= 1000;
 }
