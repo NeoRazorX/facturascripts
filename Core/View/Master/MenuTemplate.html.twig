@@ -64,6 +64,16 @@
         <script src="{{ asset('node_modules/@fortawesome/fontawesome-free/js/all.min.js') }}?v=6"></script>
         <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}?v={{ 'now' | date('ymd') }}"></script>
     {% endblock %}
+    {# Global translations for JS #}
+    <script>
+        var i18n = {
+            "autocomplete-error-network": "{{ trans('autocomplete-error-network') }}",
+            "autocomplete-error-bad-request": "{{ trans('autocomplete-error-bad-request') }}",
+            "autocomplete-error-server": "{{ trans('autocomplete-error-server') }}",
+            "autocomplete-error-generic": "{{ trans('autocomplete-error-generic') }}",
+            "autocomplete-error-invalid-response": "{{ trans('autocomplete-error-invalid-response') }}"
+        };
+    </script>
     {# Adds custom JS assets #}
     {% for js in assetManager.get('js') %}
         <script src="{{ js }}"></script>
