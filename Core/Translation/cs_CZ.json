@@ -1003,8 +1003,8 @@
     "invoice-have-rectifying-cant-delete": "Faktura již má opravný doklad. Nelze ji odstranit.",
     "invoice-new-assigned-date": "Již existují faktury novější než vybrané datum (%oldDate%). Přiřazeno nové datum: %newDate%",
     "invoice-number": "Číslo faktury",
-    "invoice-receipts-diff": "Existuje rozdíl (%diff%) mezi částkou faktury a součtem jejích splátek.",
-    "invoice-regularized-cant-change-date": "Faktura je součástí vyrovnání daně %tax%. Datum nelze změnit.",
+    "invoice-receipts-diff": "Existuje rozdíl (%diff%) mezi částkou faktury a součtem jejích účtenek.",
+    "invoice-regularized-cant-change-date": "Faktura se nachází v rámci vyrovnání %tax%. Datum nelze změnit.",
     "invoice-regularized-cant-delete": "Faktura je součástí vyrovnání daně %tax% Nelze ji odstranit.",
     "invoice-start-number": "Počáteční číslo faktury",
     "invoice-subtotals-error": "Chyba v mezisoučtech dokumentu %document%",
@@ -1773,7 +1773,7 @@
     "simplified": "Zjednodušený",
     "site-url": "URL webu",
     "size": "Velikost",
-    "sketch": "Koncept",
+    "sketch": "Náčrt",
     "sketch-invoice-warning": "Tato faktura je stále koncept. Učiňte ji oficiální změnou stavu na vystavená.",
     "small": "Malý",
     "smaller-than": "Menor que",
@@ -2164,7 +2164,7 @@
     "your": "Suyo",
     "zip-code": "PSČ",
     "zip-codes": "Poštovní směrovací čísla",
-    "zip-error-wrong-structure": "Struktura zip je nesprávná. Musí obsahovat složku pluginu a pouze jeden plugin.",
+    "zip-error-wrong-structure": "Struktura zipu je nesprávná. Musí obsahovat složku pluginu a pouze jeden plugin.",
     "zone": "Zona",
     "zones": "Zóny"
 }
