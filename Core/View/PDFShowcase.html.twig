@@ -1,0 +1,114 @@
+{#
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2026 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+#}
+{% extends "Master/MenuTemplate.html.twig" %}
+
+{% block body %}
+    <div class="container-fluid mt-3 mb-4">
+        <div class="row">
+            <div class="col-lg-3 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h1 class="h4 mb-1">
+                            <i class="fa-solid fa-file-pdf fa-fw" aria-hidden="true"></i> {{ trans('pdf-showcase') }}
+                        </h1>
+                        <p class="text-muted small mb-3">
+                            El mismo documento, reconstruido en vivo con cada cambio.
+                            Todo se genera con <code>PDFBuilder</code> y se convierte a PDF en el navegador.
+                        </p>
+                        <div class="mb-3">
+                            <label class="form-label" for="showcaseTheme">Tema</label>
+                            <select class="form-select" id="showcaseTheme">
+                                <option value="core">FacturaScripts (core)</option>
+                                <option value="azul">Azul</option>
+                                <option value="verde">Verde</option>
+                                <option value="burdeos">Burdeos</option>
+                                <option value="oscuro">Oscuro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="showcaseOrientation">Orientación</label>
+                            <select class="form-select" id="showcaseOrientation">
+                                <option value="portrait">Vertical (A4)</option>
+                                <option value="landscape">Horizontal (A4)</option>
+                            </select>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="showcaseWatermark">
+                            <label class="form-check-label" for="showcaseWatermark">Marca de agua</label>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-secondary" id="showcasePrint">
+                                <i class="fa-solid fa-print fa-fw" aria-hidden="true"></i> {{ trans('print') }}
+                            </button>
+                            <button type="button" class="btn btn-primary" id="showcaseDownload">
+                                <i class="fa-solid fa-download fa-fw" aria-hidden="true"></i> {{ trans('download-pdf') }}
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="showcaseModal">
+                                <i class="fa-solid fa-up-right-from-square fa-fw" aria-hidden="true"></i> {{ trans('pdf-preview') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <iframe id="showcaseFrame" style="width: 100%; height: 82vh; border: 0; border-radius: 4px;"></iframe>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            function showcaseParams() {
+                return {
+                    theme: document.getElementById('showcaseTheme').value,
+                    orientation: document.getElementById('showcaseOrientation').value,
+                    watermark: document.getElementById('showcaseWatermark').checked ? '1' : '0'
+                };
+            }
+
+            function reloadShowcase() {
+                const params = new URLSearchParams(Object.assign({action: 'pdf-preview'}, showcaseParams()));
+                document.getElementById('showcaseFrame').src = '{{ fsc.url() }}?' + params.toString();
+            }
+
+            ['showcaseTheme', 'showcaseOrientation', 'showcaseWatermark'].forEach(function (id) {
+                document.getElementById(id).addEventListener('change', reloadShowcase);
+            });
+
+            document.getElementById('showcasePrint').addEventListener('click', function () {
+                document.getElementById('showcaseFrame').contentWindow.fsPrint();
+            });
+
+            document.getElementById('showcaseDownload').addEventListener('click', function () {
+                document.getElementById('showcaseFrame').contentWindow.fsDownloadPdf('pdf-showcase.pdf');
+            });
+
+            document.getElementById('showcaseModal').addEventListener('click', function () {
+                fsShowPdfPreview(showcaseParams(), 'pdf-showcase.pdf', {
+                    title: '{{ trans('pdf-preview') }}',
+                    print: '{{ trans('print') }}',
+                    download: '{{ trans('download-pdf') }}',
+                    generating: '{{ trans('generating-pdf') }}'
+                });
+            });
+
+            reloadShowcase();
+        })();
+    </script>
+{% endblock %}
