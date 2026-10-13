@@ -1,0 +1,28 @@
+idestado;tipodoc;nombre;predeterminado;bloquear;editable;actualizastock;generadoc;icon;orden
+1;PresupuestoCliente;Otwarty;true;true;true;0;;;10
+2;PresupuestoCliente;Zamówienie;false;true;false;0;PedidoCliente;;50
+3;PresupuestoCliente;Odrzucony;false;true;false;0;;;210
+23;PresupuestoCliente;Wygasły;false;true;false;0;;fa-solid fa-hourglass-end;200
+24;PresupuestoCliente;Do zafakturowania;false;true;false;0;FacturaCliente;;60
+4;PedidoCliente;Otwarty;true;true;true;-2;;;10
+5;PedidoCliente;Dowód dostawy;false;true;false;0;AlbaranCliente;;50
+25;PedidoCliente;Do zafakturowania;false;true;false;0;FacturaCliente;;60
+6;PedidoCliente;Anulowany;false;true;false;0;;;200
+7;AlbaranCliente;Otwarty;true;true;true;-1;;;10
+8;AlbaranCliente;Do zafakturowania;false;true;false;0;FacturaCliente;;50
+9;AlbaranCliente;Zwrócony;false;true;false;0;;;200
+10;FacturaCliente;Szkic;true;true;true;-1;;;10
+11;FacturaCliente;Wystawiona;false;true;false;-1;;;50
+12;PresupuestoProveedor;Otwarty;true;true;true;0;;;10
+13;PresupuestoProveedor;Zamówienie;false;true;false;0;PedidoProveedor;;50
+14;PresupuestoProveedor;Anulowany;false;true;false;0;;;200
+26;PresupuestoProveedor;Do zafakturowania;false;true;false;0;FacturaProveedor;;60
+15;PedidoProveedor;Otwarty;true;true;true;2;;;10
+16;PedidoProveedor;Dowód dostawy;false;true;false;0;AlbaranProveedor;;50
+17;PedidoProveedor;Anulowany;false;true;false;0;;;200
+27;PedidoProveedor;Do zafakturowania;false;true;false;0;FacturaProveedor;;60
+18;AlbaranProveedor;Otwarty;true;true;true;1;;;10
+19;AlbaranProveedor;Do zafakturowania;false;true;false;0;FacturaProveedor;;50
+20;AlbaranProveedor;Zwrócony;false;true;false;0;;;200
+21;FacturaProveedor;Szkic;true;true;true;1;;;10
+22;FacturaProveedor;Otrzymana;false;true;false;1;;;50

@@ -138,6 +138,6 @@ class EditListView extends BaseView
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/EditListView.js?v=' . Tools::date());
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/EditListView.js');
     }
 }

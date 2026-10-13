@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Model\AgenciaTransporte;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -29,6 +30,11 @@ final class AgenciaTransporteTest extends TestCase
 
     public function testDataInstalled(): void
     {
+        // solo algunos países tienen agencias de transporte por defecto
+        if (empty(CSVImport::getTableFilePath(AgenciaTransporte::tableName()))) {
+            $this->markTestSkipped('no-default-agencies-for-country');
+        }
+
         // llamamos de forma estática
         $this->assertNotEmpty(AgenciaTransporte::all(), 'agency-data-not-installed-from-csv');
 

@@ -227,6 +227,11 @@ final class Plugin
                 continue;
             }
 
+            // si la build requiere una versión de PHP más reciente, continuamos
+            if (false === Forja::isPhpCompatible($build)) {
+                continue;
+            }
+
             // comprobamos si hay una versión estable más reciente
             if ($build['stable']) {
                 return true;

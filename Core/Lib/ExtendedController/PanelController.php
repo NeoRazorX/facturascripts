@@ -23,6 +23,8 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -572,6 +574,12 @@ abstract class PanelController extends BaseController
             return [];
         }
 
+        // la variante seleccionada se muestra la primera en la carga inicial del modal
+        $selected = (string)$this->request->input('selected', '');
+        if ('' !== $selected) {
+            $column->widget->setCustomValue($selected);
+        }
+
         $variantes = $column->widget->variantes(
             $this->request->input('query', ''),
             $this->request->input('codfabricante', ''),
@@ -579,8 +587,25 @@ abstract class PanelController extends BaseController
             $this->request->input('sort', '')
         );
 
+        // cargamos los productos en una sola consulta para obtener sus urls
+        $productIds = [];
+        foreach ($variantes as $variante) {
+            $productIds[$variante->idproducto] = $variante->idproducto;
+        }
+        $productos = [];
+        if (!empty($productIds)) {
+            $where = [Where::in('idproducto', array_values($productIds))];
+            foreach (Producto::all($where, [], 0, 0) as $producto) {
+                $productos[$producto->idproducto] = $producto;
+            }
+        }
+
         $results = [];
         foreach ($variantes as $variante) {
+            $url = isset($productos[$variante->idproducto]) ?
+                $productos[$variante->idproducto]->url() :
+                $variante->url();
+
             $results[] = [
                 'id_variante' => $variante->idvariante,
                 'id_producto' => $variante->idproducto,
@@ -591,7 +616,7 @@ abstract class PanelController extends BaseController
                 'stock' => $variante->stockfis,
                 'stock_str' => Tools::number($variante->stockfis, 0),
                 'match' => $variante->{$column->widget->match},
-                'url' => $variante->url()
+                'url' => $url
             ];
         }
         return $results;
@@ -614,6 +639,12 @@ abstract class PanelController extends BaseController
             return [];
         }
 
+        // la subcuenta seleccionada se muestra la primera en la carga inicial del modal
+        $selected = (string)$this->request->input('selected', '');
+        if ('' !== $selected) {
+            $column->widget->setCustomValue($selected);
+        }
+
         $subcuentas = $column->widget->subcuentas(
             $this->request->input('query', ''),
             $this->request->request->get('codejercicio', ''),
@@ -625,6 +656,7 @@ abstract class PanelController extends BaseController
             $results[] = [
                 'codsubcuenta' => $subcuenta->codsubcuenta,
                 'descripcion' => $subcuenta->descripcion,
+                'match' => $subcuenta->{$column->widget->match},
                 'saldo' => $subcuenta->saldo,
                 'url' => $subcuenta->url()
             ];

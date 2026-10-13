@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
@@ -54,6 +55,20 @@ final class HtmlTest extends TestCase
 
         $html = Html::render('@Test/testTemplate.html.twig');
         $this->assertEquals($expected, $html, 'html-not-equal-for-testTemplate');
+    }
+
+    public function testAssetFunction()
+    {
+        $route = Tools::config('route');
+        $version = AssetManager::version();
+
+        // la versión sustituye a la que tuviera y también funciona dentro de las macros
+        $expected = $route . '/test.js' . "\n"
+            . $route . '/test.js?v=' . $version . "\n"
+            . $route . '/test.js?v=' . $version . "\n"
+            . $route . '/test.css?v=' . $version;
+        $html = Html::render('@Test/testAsset.html.twig');
+        $this->assertEquals($expected, $html, 'html-not-equal-for-testAsset');
     }
 
     public function testSessionFunction()

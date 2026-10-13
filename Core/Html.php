@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -94,15 +94,18 @@ final class Html
 
     private static function assetFunction(): TwigFunction
     {
-        return new TwigFunction('asset', function ($string) {
+        return new TwigFunction('asset', function ($string, bool $version = false) {
             if (null === $string) {
                 return '';
             }
 
             $path = Tools::config('route') . '/';
-            return substr($string, 0, strlen($path)) == $path ?
+            $url = substr($string, 0, strlen($path)) == $path ?
                 $string :
                 str_replace('//', '/', $path . $string);
+
+            // añadimos la versión de los assets, que cambia en cada despliegue
+            return $version ? AssetManager::addVersion($url) : $url;
         });
     }
 

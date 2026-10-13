@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,8 +35,8 @@ class WidgetPassword extends WidgetText
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetPassword.js?v=' . Tools::date(), 2);
-        AssetManager::addCss($route . '/Dinamic/Assets/CSS/WidgetPassword.css?v=' . Tools::date(), 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetPassword.js', 2);
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/WidgetPassword.css', 2);
     }
 
     /**

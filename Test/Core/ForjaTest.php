@@ -20,6 +20,8 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Internal\Forja;
+use FacturaScripts\Core\Internal\Plugin;
+use FacturaScripts\Core\Kernel;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -74,6 +76,51 @@ final class ForjaTest extends TestCase
         $this->assertSame([], Forja::builds());
     }
 
+    public function testCanUpdateCoreSkipsBuildsRequiringNewerPhp(): void
+    {
+        Forja::$builds = [[
+            'project' => Forja::CORE_PROJECT_ID,
+            'name' => 'CORE',
+            'builds' => [$this->build(Kernel::version() + 1, '99.0')],
+        ]];
+        $this->assertFalse(Forja::canUpdateCore());
+
+        Forja::$builds[0]['builds'][] = $this->build(Kernel::version() + 2, null);
+        $this->assertTrue(Forja::canUpdateCore());
+    }
+
+    public function testIsPhpCompatible(): void
+    {
+        $this->assertTrue(Forja::isPhpCompatible([], '8.1.0'));
+        $this->assertTrue(Forja::isPhpCompatible(['min_php' => null], '8.1.0'));
+        $this->assertTrue(Forja::isPhpCompatible(['min_php' => ''], '8.1.0'));
+        $this->assertTrue(Forja::isPhpCompatible(['min_php' => '0'], '8.1.0'));
+        $this->assertTrue(Forja::isPhpCompatible(['min_php' => 'invalid'], '8.1.0'));
+        $this->assertTrue(Forja::isPhpCompatible(['min_php' => '8'], '8.1.0'));
+        $this->assertTrue(Forja::isPhpCompatible(['min_php' => '8.1'], '8.1.0'));
+        $this->assertTrue(Forja::isPhpCompatible(['min_php' => 8.1], '8.3.6'));
+        $this->assertTrue(Forja::isPhpCompatible(['min_php' => '7.4.0'], '8.1.0'));
+        $this->assertFalse(Forja::isPhpCompatible(['min_php' => '8.2'], '8.1.30'));
+        $this->assertFalse(Forja::isPhpCompatible(['min_php' => '8.4'], '8.3.6'));
+        $this->assertFalse(Forja::isPhpCompatible(['min_php' => '99.0']));
+    }
+
+    public function testPluginHasUpdateSkipsBuildsRequiringNewerPhp(): void
+    {
+        $plugin = new Plugin(['name' => 'ForjaTestPlugin']);
+        $plugin->version = 1.0;
+
+        Forja::$builds = [[
+            'project' => 999999,
+            'name' => 'ForjaTestPlugin',
+            'builds' => [$this->build(2.0, '99.0')],
+        ]];
+        $this->assertFalse($plugin->hasUpdate());
+
+        Forja::$builds[0]['builds'][] = $this->build(3.0, '8.0');
+        $this->assertTrue($plugin->hasUpdate());
+    }
+
     public function testPluginsDiscardInvalidItems(): void
     {
         $this->setPluginList([
@@ -95,6 +142,18 @@ final class ForjaTest extends TestCase
         $this->setPluginList('service unavailable');
 
         $this->assertSame([], Forja::plugins());
+    }
+
+    private function build(float $version, ?string $minPhp): array
+    {
+        return [
+            'version' => $version,
+            'stable' => true,
+            'beta' => false,
+            'mincore' => null,
+            'maxcore' => null,
+            'min_php' => $minPhp,
+        ];
     }
 
     private function setPluginList($value): void

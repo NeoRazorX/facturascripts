@@ -1,0 +1,5 @@
+codpago;descripcion;domiciliado;plazovencimiento;tipovencimiento;idempresa
+"CONT";"Al comptat";false;"0";"days";"1"
+"TRANS";"Transferència bancària";false;"1";"months";"1"
+"TARJETA";"Targeta de crèdit";false;"0";"days";"1"
+"PAYPAL";"PayPal";false;"0";"days";"1"
