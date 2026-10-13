@@ -206,7 +206,7 @@ class WidgetVariante extends WidgetText
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetVariante.js?v=' . Tools::date());
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetVariante.js');
     }
 
     protected function renderFamilyFilter(): string

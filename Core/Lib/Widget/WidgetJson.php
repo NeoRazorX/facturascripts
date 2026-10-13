@@ -27,7 +27,7 @@ class WidgetJson extends WidgetTextarea
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addCss($route . '/Dinamic/Assets/CSS/WidgetJson.css?v=' . Tools::date(), 2);
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/WidgetJson.css', 2);
     }
 
     protected function recursiveRender($arg, $class = 'col-12'): string

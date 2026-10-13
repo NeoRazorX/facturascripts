@@ -204,7 +204,7 @@ class WidgetSubcuenta extends WidgetText
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSubcuenta.js?v=' . Tools::date());
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSubcuenta.js');
     }
 
     protected function renderModal(string $icon, string $label): string

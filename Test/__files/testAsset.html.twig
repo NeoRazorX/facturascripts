@@ -1,0 +1,6 @@
+{% import _self as macros %}
+{% macro versioned(path) %}{{ asset(path, version = true) }}{% endmacro %}
+{{ asset('test.js') }}
+{{ asset('test.js', true) }}
+{{ asset('test.js?v=5', version = true) }}
+{{ macros.versioned('test.css') }}

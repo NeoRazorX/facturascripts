@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,6 +37,6 @@ class WidgetColor extends BaseWidget
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/node_modules/@eastdesire/jscolor/jscolor.min.js?v=' . Tools::date());
+        AssetManager::addJs($route . '/node_modules/@eastdesire/jscolor/jscolor.min.js');
     }
 }
