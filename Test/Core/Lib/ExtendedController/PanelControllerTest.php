@@ -102,40 +102,35 @@ final class PanelControllerTest extends TestCase
 
     public function testWidgetSubcuentaSearchReturnsMatchValue(): void
     {
-        // creamos una subcuenta
-        $exercise = $this->getRandomExercise();
-        $this->assertTrue($exercise->save());
-        $account = $this->getRandomAccount($exercise->codejercicio);
-        $this->assertTrue($account->save());
-        $this->created[] = $account;
-        $subaccount = new Subcuenta();
-        $subaccount->codcuenta = $account->codcuenta;
-        $subaccount->codejercicio = $exercise->codejercicio;
-        $subaccount->codsubcuenta = $account->codcuenta . '.1';
-        $subaccount->descripcion = 'Test';
-        $this->assertTrue($subaccount->save());
-        $this->created[] = $subaccount;
+        $subaccount = $this->createSubaccounts(1)[0];
 
         // configuramos el widget para guardar el id en lugar del código
-        $controller = new EditImpuesto('EditImpuesto', '/EditImpuesto');
-        $controller->user = new User();
-        $controller->user->admin = true;
-        $method = new ReflectionMethod(EditImpuesto::class, 'createViews');
-        $method->invoke($controller);
-        $controller->tab('EditImpuesto')->columnForField('codsubcuentarep')->widget->match = 'idsubcuenta';
-
-        $controller->request = new Request(['request' => [
-            'active_tab' => 'EditImpuesto',
-            'col_name' => 'codsubcuentarep',
-            'codejercicio' => $exercise->codejercicio,
+        $results = $this->subcuentaSearch([
+            'codejercicio' => $subaccount->codejercicio,
             'query' => $subaccount->codsubcuenta,
-        ]]);
-        $method = new ReflectionMethod(EditImpuesto::class, 'widgetSubcuentaSearchAction');
-        $results = $method->invoke($controller);
+        ], 'idsubcuenta');
 
         $this->assertCount(1, $results);
         $this->assertSame($subaccount->codsubcuenta, $results[0]['codsubcuenta']);
         $this->assertSame($subaccount->idsubcuenta, $results[0]['match']);
+    }
+
+    public function testWidgetSubcuentaSearchShowsSelectedFirst(): void
+    {
+        [$first, $second] = $this->createSubaccounts(2);
+        $request = [
+            'codejercicio' => $first->codejercicio,
+            'query' => $first->codcuenta,
+            'sort' => 'cod-desc',
+        ];
+
+        // sin valor seleccionado se respeta el orden pedido
+        $results = $this->subcuentaSearch($request);
+        $this->assertSame([$second->codsubcuenta, $first->codsubcuenta], array_column($results, 'codsubcuenta'));
+
+        // en la carga inicial, la subcuenta seleccionada aparece la primera y una sola vez
+        $results = $this->subcuentaSearch($request + ['selected' => $first->codsubcuenta]);
+        $this->assertSame([$first->codsubcuenta, $second->codsubcuenta], array_column($results, 'codsubcuenta'));
     }
 
     protected function tearDown(): void
@@ -147,6 +142,49 @@ final class PanelControllerTest extends TestCase
         $this->created = [];
 
         $this->logErrors();
+    }
+
+    /** @return Subcuenta[] */
+    private function createSubaccounts(int $count): array
+    {
+        $exercise = $this->getRandomExercise();
+        $this->assertTrue($exercise->save());
+        $account = $this->getRandomAccount($exercise->codejercicio);
+        $this->assertTrue($account->save());
+        $this->created[] = $account;
+
+        $list = [];
+        for ($num = 1; $num <= $count; $num++) {
+            $subaccount = new Subcuenta();
+            $subaccount->codcuenta = $account->codcuenta;
+            $subaccount->codejercicio = $exercise->codejercicio;
+            $subaccount->codsubcuenta = $account->codcuenta . '.' . $num;
+            $subaccount->descripcion = 'Test';
+            $this->assertTrue($subaccount->save());
+            $this->created[] = $subaccount;
+            $list[] = $subaccount;
+        }
+
+        return $list;
+    }
+
+    private function subcuentaSearch(array $request, string $match = ''): array
+    {
+        $controller = new EditImpuesto('EditImpuesto', '/EditImpuesto');
+        $controller->user = new User();
+        $controller->user->admin = true;
+        $method = new ReflectionMethod(EditImpuesto::class, 'createViews');
+        $method->invoke($controller);
+        if ($match) {
+            $controller->tab('EditImpuesto')->columnForField('codsubcuentarep')->widget->match = $match;
+        }
+
+        $controller->request = new Request(['request' => $request + [
+            'active_tab' => 'EditImpuesto',
+            'col_name' => 'codsubcuentarep',
+        ]]);
+        $method = new ReflectionMethod(EditImpuesto::class, 'widgetSubcuentaSearchAction');
+        return $method->invoke($controller);
     }
 
     private function controllerWithViews(): EditContacto

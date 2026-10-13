@@ -639,6 +639,12 @@ abstract class PanelController extends BaseController
             return [];
         }
 
+        // la subcuenta seleccionada se muestra la primera en la carga inicial del modal
+        $selected = (string)$this->request->input('selected', '');
+        if ('' !== $selected) {
+            $column->widget->setCustomValue($selected);
+        }
+
         $subcuentas = $column->widget->subcuentas(
             $this->request->input('query', ''),
             $this->request->request->get('codejercicio', ''),
