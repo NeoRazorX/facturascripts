@@ -134,7 +134,7 @@ class WidgetVariante extends WidgetText
 
         // cargamos y añadimos la variante seleccionada
         $model = new Variante();
-        if ($this->value && $model->load($this->value)) {
+        if ($this->value && $model->loadWhereEq($this->match, $this->value)) {
             $list[] = $model;
             $where[] = Where::notEq('variantes.referencia', $model->referencia);
         }
