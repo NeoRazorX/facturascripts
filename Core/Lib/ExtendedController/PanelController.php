@@ -650,6 +650,7 @@ abstract class PanelController extends BaseController
             $results[] = [
                 'codsubcuenta' => $subcuenta->codsubcuenta,
                 'descripcion' => $subcuenta->descripcion,
+                'match' => $subcuenta->{$column->widget->match},
                 'saldo' => $subcuenta->saldo,
                 'url' => $subcuenta->url()
             ];

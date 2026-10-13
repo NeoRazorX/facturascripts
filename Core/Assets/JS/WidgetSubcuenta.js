@@ -28,10 +28,11 @@ function widgetSubaccountDraw(id, results) {
         const saldoClass = saldoValue < 0 ? ' text-danger' : '';
         const codsubcuenta = widgetSubaccountDecodeHtml(element.codsubcuenta);
         const descripcion = widgetSubaccountDecodeHtml(element.descripcion || '');
+        const match = widgetSubaccountDecodeHtml(element.match);
         const $row = $('<tr/>', {
             class: 'clickableRow widget-subaccount-option'
         }).data('widget-subaccount-id', id)
-            .data('widget-subaccount-value', codsubcuenta);
+            .data('widget-subaccount-value', match);
 
         const $link = $('<a/>', {
             class: 'widget-subaccount-link',
