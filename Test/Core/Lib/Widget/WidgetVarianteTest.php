@@ -31,6 +31,19 @@ final class WidgetVarianteTest extends TestCase
     /** @var Producto[] */
     private $products = [];
 
+    public function testModalListIsNotRenderedOnEdit(): void
+    {
+        $selected = $this->createProduct('ZZZ-WV-' . mt_rand(1, 99999));
+
+        $model = (object)['test' => $selected->referencia];
+        $html = $this->getWidget('referencia')->edit($model);
+
+        $this->assertStringContainsString('widget-variante-modal', $html);
+        $this->assertStringContainsString($selected->referencia, $html);
+        $this->assertStringNotContainsString('widget-variante-option', $html);
+        $this->assertMatchesRegularExpression('/<tbody id="list_\d+"><\/tbody>/', $html);
+    }
+
     public function testSelectedVariantIsFirstWhenMatchingByIdProducto(): void
     {
         $this->createProduct('AAA-WV-' . mt_rand(1, 99999));

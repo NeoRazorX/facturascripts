@@ -572,6 +572,12 @@ abstract class PanelController extends BaseController
             return [];
         }
 
+        // la variante seleccionada se muestra la primera en la carga inicial del modal
+        $selected = (string)$this->request->input('selected', '');
+        if ('' !== $selected) {
+            $column->widget->setCustomValue($selected);
+        }
+
         $variantes = $column->widget->variantes(
             $this->request->input('query', ''),
             $this->request->input('codfabricante', ''),

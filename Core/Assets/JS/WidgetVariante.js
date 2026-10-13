@@ -88,8 +88,19 @@ function widgetVarianteDecodeHtml(value) {
     return textarea.value;
 }
 
-function widgetVarianteSearch(id) {
-    $("#list_" + id).empty();
+// Objeto para almacenar la búsqueda en curso de cada instancia del widget
+let widgetVarianteSearchRequests = {};
+
+function widgetVarianteSearch(id, selected) {
+    $("#list_" + id).empty().append(
+        $('<tr/>').append($('<td/>', {
+            class: 'text-center',
+            colspan: 4
+        }).append($('<div/>', {
+            class: 'spinner-border spinner-border-sm text-primary',
+            role: 'status'
+        })))
+    );
 
     let input = $("#" + id);
     let data = {
@@ -102,7 +113,17 @@ function widgetVarianteSearch(id) {
         sort: $("#modal_" + id + "_s").val(),
     };
 
-    $.ajax({
+    // en la carga inicial enviamos el valor actual para mostrarlo el primero
+    if (selected) {
+        data.selected = selected;
+    }
+
+    // cancelamos la búsqueda anterior para que no sobrescriba los resultados nuevos
+    if (widgetVarianteSearchRequests[id]) {
+        widgetVarianteSearchRequests[id].abort();
+    }
+
+    widgetVarianteSearchRequests[id] = $.ajax({
         method: "POST",
         url: window.location.href,
         data: data,
@@ -110,7 +131,10 @@ function widgetVarianteSearch(id) {
         success: function (results) {
             widgetVarianteDraw(id, results);
         },
-        error: function (msg) {
+        error: function (msg, status) {
+            if (status === 'abort') {
+                return;
+            }
             alert(msg.status + " " + msg.responseText);
         }
     });
@@ -136,6 +160,18 @@ function widgetVarianteSelect(id, value) {
     $("#modal_" + id).modal("hide");
     $("#modal_span_" + id).text(value);
 }
+
+// cargamos la lista la primera vez que se abre cada modal
+$(document).on('show.bs.modal', '.widget-variante-modal', function () {
+    const $modal = $(this);
+    if ($modal.data('widget-variante-loaded')) {
+        return;
+    }
+
+    $modal.data('widget-variante-loaded', true);
+    const id = $modal.data('widget-variante-id');
+    widgetVarianteSearch(id, $("#" + id).val());
+});
 
 $(document).on('click', '.widget-variante-option', function () {
     const value = $(this).data('widget-variante-value');
