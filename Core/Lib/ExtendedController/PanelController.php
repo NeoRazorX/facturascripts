@@ -23,6 +23,8 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -585,8 +587,25 @@ abstract class PanelController extends BaseController
             $this->request->input('sort', '')
         );
 
+        // cargamos los productos en una sola consulta para obtener sus urls
+        $productIds = [];
+        foreach ($variantes as $variante) {
+            $productIds[$variante->idproducto] = $variante->idproducto;
+        }
+        $productos = [];
+        if (!empty($productIds)) {
+            $where = [Where::in('idproducto', array_values($productIds))];
+            foreach (Producto::all($where, [], 0, 0) as $producto) {
+                $productos[$producto->idproducto] = $producto;
+            }
+        }
+
         $results = [];
         foreach ($variantes as $variante) {
+            $url = isset($productos[$variante->idproducto]) ?
+                $productos[$variante->idproducto]->url() :
+                $variante->url();
+
             $results[] = [
                 'id_variante' => $variante->idvariante,
                 'id_producto' => $variante->idproducto,
@@ -597,7 +616,7 @@ abstract class PanelController extends BaseController
                 'stock' => $variante->stockfis,
                 'stock_str' => Tools::number($variante->stockfis, 0),
                 'match' => $variante->{$column->widget->match},
-                'url' => $variante->url()
+                'url' => $url
             ];
         }
         return $results;

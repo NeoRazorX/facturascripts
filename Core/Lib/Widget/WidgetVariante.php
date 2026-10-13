@@ -179,8 +179,25 @@ class WidgetVariante extends WidgetText
                 break;
         }
 
+        $ids = [];
         foreach ($joinModel->all($where, $orderBy, 0, 50) as $item) {
-            $list[] = $model->get($item->idvariante);
+            $ids[] = $item->idvariante;
+        }
+        if (empty($ids)) {
+            return $list;
+        }
+
+        // cargamos todas las variantes en una sola consulta
+        $variantes = [];
+        foreach (Variante::all([Where::in('idvariante', $ids)], [], 0, 0) as $variante) {
+            $variantes[$variante->idvariante] = $variante;
+        }
+
+        // respetamos el orden de la búsqueda
+        foreach ($ids as $id) {
+            if (isset($variantes[$id])) {
+                $list[] = $variantes[$id];
+            }
         }
 
         return $list;

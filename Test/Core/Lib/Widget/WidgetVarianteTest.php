@@ -44,6 +44,30 @@ final class WidgetVarianteTest extends TestCase
         $this->assertMatchesRegularExpression('/<tbody id="list_\d+"><\/tbody>/', $html);
     }
 
+    public function testSearchKeepsSortOrder(): void
+    {
+        $token = 'WVSORT' . mt_rand(1, 99999);
+        $cheap = $this->createProduct($token . '-B', 10);
+        $expensive = $this->createProduct($token . '-A', 30);
+        $middle = $this->createProduct($token . '-C', 20);
+
+        $cases = [
+            'price-asc' => [$cheap, $middle, $expensive],
+            'price-desc' => [$expensive, $middle, $cheap],
+            'ref-asc' => [$expensive, $cheap, $middle],
+            'ref-desc' => [$middle, $cheap, $expensive],
+        ];
+        foreach ($cases as $sort => $expected) {
+            $list = $this->getWidget('referencia')->variantes($token, '', '', $sort);
+
+            $this->assertSame(
+                array_map(fn($product) => $product->referencia, $expected),
+                array_map(fn($variante) => $variante->referencia, $list),
+                $sort
+            );
+        }
+    }
+
     public function testSelectedVariantIsFirstWhenMatchingByIdProducto(): void
     {
         $this->createProduct('AAA-WV-' . mt_rand(1, 99999));
@@ -94,12 +118,16 @@ final class WidgetVarianteTest extends TestCase
         $this->assertSame(1, $count);
     }
 
-    private function createProduct(string $referencia): Producto
+    private function createProduct(string $referencia, float $precio = 0): Producto
     {
         $product = new Producto();
         $product->referencia = $referencia;
         $product->descripcion = 'Widget variante test ' . $referencia;
         $this->assertTrue($product->save());
+
+        $variante = $product->getVariants()[0];
+        $variante->precio = $precio;
+        $this->assertTrue($variante->save());
 
         $this->products[] = $product;
         return $product;
