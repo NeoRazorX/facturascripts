@@ -480,16 +480,6 @@ trait CommonSalesPurchases
         return false === $status->editable && empty($status->actualizastock) ? ' text-danger' : '';
     }
 
-    /**
-     * Indica si el documento es una factura rectificativa: tiene factura rectificada o su serie es de rectificativas.
-     */
-    protected static function isRefund(BusinessDocument $model): bool
-    {
-        return false === empty($model->idfacturarect)
-            || false === empty($model->codigorect)
-            || $model->getSerie()->tipo === 'R';
-    }
-
     public static function modalDocList(array $documents, string $title, string $id): string
     {
         $list = '';
@@ -543,7 +533,7 @@ trait CommonSalesPurchases
      */
     protected static function motivorect(BusinessDocument $model): string
     {
-        if (false === $model->hasColumn('motivorect') || false === static::isRefund($model)) {
+        if (false === method_exists($model, 'isRefund') || false === $model->isRefund()) {
             return '';
         }
 

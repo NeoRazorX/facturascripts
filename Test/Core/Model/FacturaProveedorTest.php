@@ -784,30 +784,44 @@ final class FacturaProveedorTest extends TestCase
 
     public function testRefundReason(): void
     {
-        // creamos una factura
+        // creamos una factura y su rectificativa
         $invoice = $this->getRandomSupplierInvoice();
         $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+        $refund = new FacturaProveedor();
+        $refund->setSubject($invoice->getSubject());
+        $refund->codigorect = $invoice->codigo;
+        $refund->idfacturarect = $invoice->idfactura;
+        $this->assertTrue($refund->save(), 'can-not-create-refund');
+        $this->assertTrue($refund->isRefund(), 'refund-not-detected');
+
+        // una factura que no es rectificativa no guarda el motivo
+        $this->assertFalse($invoice->isRefund(), 'invoice-detected-as-refund');
+        $invoice->motivorect = RefundReason::ES_REFUND_REASON_80_4;
+        $this->assertTrue($invoice->save(), 'can-not-save-invoice');
+        $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
+        $this->assertNull($invoice->motivorect, 'refund-reason-saved-on-invoice');
 
         // un motivo que no existe no se guarda
-        $invoice->motivorect = 'NO_EXISTE';
-        $this->assertFalse($invoice->save(), 'invalid-refund-reason-saved');
+        $refund->motivorect = 'NO_EXISTE';
+        $this->assertFalse($refund->save(), 'invalid-refund-reason-saved');
 
         // un motivo de la lista se guarda
-        $invoice->motivorect = RefundReason::ES_REFUND_REASON_80_4;
-        $this->assertTrue($invoice->save(), 'can-not-save-refund-reason');
-        $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
-        $this->assertEquals(RefundReason::ES_REFUND_REASON_80_4, $invoice->motivorect, 'bad-refund-reason');
+        $refund->motivorect = RefundReason::ES_REFUND_REASON_80_4;
+        $this->assertTrue($refund->save(), 'can-not-save-refund-reason');
+        $this->assertTrue($refund->reload(), 'can-not-reload-refund');
+        $this->assertEquals(RefundReason::ES_REFUND_REASON_80_4, $refund->motivorect, 'bad-refund-reason');
 
         // el motivo no se copia a otros documentos (por ejemplo, a una rectificativa)
-        $this->assertContains('motivorect', $invoice::dontCopyFields(), 'refund-reason-is-copied');
+        $this->assertContains('motivorect', $refund::dontCopyFields(), 'refund-reason-is-copied');
 
         // vacío se guarda como null
-        $invoice->motivorect = '';
-        $this->assertTrue($invoice->save(), 'can-not-save-empty-refund-reason');
-        $this->assertNull($invoice->motivorect, 'empty-refund-reason-not-null');
+        $refund->motivorect = '';
+        $this->assertTrue($refund->save(), 'can-not-save-empty-refund-reason');
+        $this->assertNull($refund->motivorect, 'empty-refund-reason-not-null');
 
         // eliminamos
         $subject = $invoice->getSubject();
+        $this->assertTrue($refund->delete(), 'can-not-delete-refund');
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
@@ -815,28 +829,33 @@ final class FacturaProveedorTest extends TestCase
 
     public function testRemovedRefundReasonDoesNotBlockSave(): void
     {
-        // creamos una factura con un motivo añadido por un plugin
+        // creamos una rectificativa con un motivo añadido por un plugin
         RefundReason::add('TEST_REASON', 'test-reason');
         $invoice = $this->getRandomSupplierInvoice();
-        $invoice->motivorect = 'TEST_REASON';
-        $this->assertTrue($invoice->save(), 'can-not-save-plugin-refund-reason');
+        $refund = new FacturaProveedor();
+        $refund->setSubject($invoice->getSubject());
+        $refund->codigorect = $invoice->codigo;
+        $refund->idfacturarect = $invoice->idfactura;
+        $refund->motivorect = 'TEST_REASON';
+        $this->assertTrue($refund->save(), 'can-not-save-plugin-refund-reason');
 
-        // el plugin quita el motivo: la factura se puede seguir guardando
+        // el plugin quita el motivo: la rectificativa se puede seguir guardando
         RefundReason::remove('TEST_REASON');
-        $invoice->observaciones = 'test';
-        $this->assertTrue($invoice->save(), 'removed-refund-reason-blocks-save');
-        $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
-        $this->assertEquals('TEST_REASON', $invoice->motivorect, 'bad-refund-reason');
+        $refund->observaciones = 'test';
+        $this->assertTrue($refund->save(), 'removed-refund-reason-blocks-save');
+        $this->assertTrue($refund->reload(), 'can-not-reload-refund');
+        $this->assertEquals('TEST_REASON', $refund->motivorect, 'bad-refund-reason');
 
         // pero no se puede volver a asignar
-        $invoice->motivorect = RefundReason::ES_REFUND_REASON_80_4;
-        $this->assertTrue($invoice->save(), 'can-not-change-refund-reason');
-        $invoice->motivorect = 'TEST_REASON';
-        $this->assertFalse($invoice->save(), 'removed-refund-reason-saved');
+        $refund->motivorect = RefundReason::ES_REFUND_REASON_80_4;
+        $this->assertTrue($refund->save(), 'can-not-change-refund-reason');
+        $refund->motivorect = 'TEST_REASON';
+        $this->assertFalse($refund->save(), 'removed-refund-reason-saved');
 
         // eliminamos
-        $invoice->reload();
+        $refund->reload();
         $subject = $invoice->getSubject();
+        $this->assertTrue($refund->delete(), 'can-not-delete-refund');
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');

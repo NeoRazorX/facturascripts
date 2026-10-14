@@ -135,6 +135,16 @@ trait InvoiceTrait
         return $sql;
     }
 
+    /**
+     * Indica si es una factura rectificativa: tiene factura rectificada o su serie es de rectificativas.
+     */
+    public function isRefund(): bool
+    {
+        return false === empty($this->idfacturarect)
+            || false === empty($this->codigorect)
+            || $this->getSerie()->tipo === 'R';
+    }
+
     public function paid(): bool
     {
         return $this->pagada;
@@ -238,10 +248,11 @@ trait InvoiceTrait
     /**
      * Comprueba que el motivo de rectificación, si se indica, es uno de los de RefundReason.
      * Solo se comprueba al cambiarlo: si un plugin quita un motivo, sus facturas se pueden seguir guardando.
+     * Las facturas que no son rectificativas no guardan motivo.
      */
     protected function testRefundReason(): bool
     {
-        if (empty($this->motivorect)) {
+        if (empty($this->motivorect) || false === $this->isRefund()) {
             $this->motivorect = null;
             return true;
         }
