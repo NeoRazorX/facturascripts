@@ -212,24 +212,6 @@ trait InvoiceTrait
         return true;
     }
 
-    /**
-     * Comprueba que el motivo de rectificación, si se indica, es uno de los de RefundReason.
-     */
-    protected function testRefundReason(): bool
-    {
-        if (empty($this->motivorect)) {
-            $this->motivorect = null;
-            return true;
-        }
-
-        if (null === RefundReason::get($this->motivorect)) {
-            Tools::log()->warning('invalid-refund-reason', ['%reason%' => $this->motivorect]);
-            return false;
-        }
-
-        return true;
-    }
-
     protected function onChangeTotal(): bool
     {
         // eliminamos el asiento contable
@@ -249,6 +231,29 @@ trait InvoiceTrait
         $generator = new ReceiptGenerator();
         $generator->generate($this);
         $generator->update($this);
+
+        return true;
+    }
+
+    /**
+     * Comprueba que el motivo de rectificación, si se indica, es uno de los de RefundReason.
+     * Solo se comprueba al cambiarlo: si un plugin quita un motivo, sus facturas se pueden seguir guardando.
+     */
+    protected function testRefundReason(): bool
+    {
+        if (empty($this->motivorect)) {
+            $this->motivorect = null;
+            return true;
+        }
+
+        if ($this->motivorect === $this->getOriginal('motivorect')) {
+            return true;
+        }
+
+        if (null === RefundReason::get($this->motivorect)) {
+            Tools::log()->warning('invalid-refund-reason', ['%reason%' => $this->motivorect]);
+            return false;
+        }
 
         return true;
     }

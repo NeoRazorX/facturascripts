@@ -130,14 +130,14 @@ class FacturaProveedor extends PurchaseDocument
         );
     }
 
-    public function test(): bool
-    {
-        return $this->testRefundReason() && parent::test();
-    }
-
     public static function tableName(): string
     {
         return 'facturasprov';
+    }
+
+    public function test(): bool
+    {
+        return $this->testRefundReason() && parent::test();
     }
 
     protected function testDate(): bool

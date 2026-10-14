@@ -813,6 +813,35 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
+    public function testRemovedRefundReasonDoesNotBlockSave(): void
+    {
+        // creamos una factura con un motivo añadido por un plugin
+        RefundReason::add('TEST_REASON', 'test-reason');
+        $invoice = $this->getRandomSupplierInvoice();
+        $invoice->motivorect = 'TEST_REASON';
+        $this->assertTrue($invoice->save(), 'can-not-save-plugin-refund-reason');
+
+        // el plugin quita el motivo: la factura se puede seguir guardando
+        RefundReason::remove('TEST_REASON');
+        $invoice->observaciones = 'test';
+        $this->assertTrue($invoice->save(), 'removed-refund-reason-blocks-save');
+        $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
+        $this->assertEquals('TEST_REASON', $invoice->motivorect, 'bad-refund-reason');
+
+        // pero no se puede volver a asignar
+        $invoice->motivorect = RefundReason::ES_REFUND_REASON_80_4;
+        $this->assertTrue($invoice->save(), 'can-not-change-refund-reason');
+        $invoice->motivorect = 'TEST_REASON';
+        $this->assertFalse($invoice->save(), 'removed-refund-reason-saved');
+
+        // eliminamos
+        $invoice->reload();
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

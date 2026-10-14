@@ -86,7 +86,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         // el motivo de rectificación, si se indica, debe ser uno de los disponibles
         $reason = $this->request->input('motivorect');
         if (!empty($reason) && null === RefundReason::get($reason)) {
-            $this->sendError('invalid-refund-reason', Response::HTTP_BAD_REQUEST);
+            $this->sendError('invalid-refund-reason', Response::HTTP_BAD_REQUEST, ['%reason%' => $reason]);
             return null;
         }
 
@@ -149,7 +149,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         $newRefund->idfacturarect = $invoice->idfactura;
         $newRefund->nick = $this->request->input('nick');
         $newRefund->observaciones = $this->request->input('observaciones');
-        $newRefund->motivorect = $this->request->input('motivorect') ?: null;
+        $newRefund->motivorect = $reason ?: null;
 
         // la hora es opcional: si no se indica, se usa la actual
         $date = $this->request->input('fecha');
@@ -210,13 +210,13 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         return $newRefund;
     }
 
-    private function sendError(string $message, int $http_code): void
+    private function sendError(string $message, int $http_code, array $params = []): void
     {
         $this->response
             ->setHttpCode($http_code)
             ->json([
                 'status' => 'error',
-                'message' => Tools::trans($message),
+                'message' => Tools::trans($message, $params),
             ]);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -1022,6 +1022,35 @@ final class FacturaClienteTest extends TestCase
         $this->assertNull($invoice->motivorect, 'empty-refund-reason-not-null');
 
         // eliminamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testRemovedRefundReasonDoesNotBlockSave(): void
+    {
+        // creamos una factura con un motivo añadido por un plugin
+        RefundReason::add('TEST_REASON', 'test-reason');
+        $invoice = $this->getRandomCustomerInvoice();
+        $invoice->motivorect = 'TEST_REASON';
+        $this->assertTrue($invoice->save(), 'can-not-save-plugin-refund-reason');
+
+        // el plugin quita el motivo: la factura se puede seguir guardando
+        RefundReason::remove('TEST_REASON');
+        $invoice->observaciones = 'test';
+        $this->assertTrue($invoice->save(), 'removed-refund-reason-blocks-save');
+        $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
+        $this->assertEquals('TEST_REASON', $invoice->motivorect, 'bad-refund-reason');
+
+        // pero no se puede volver a asignar
+        $invoice->motivorect = RefundReason::ES_REFUND_REASON_80_4;
+        $this->assertTrue($invoice->save(), 'can-not-change-refund-reason');
+        $invoice->motivorect = 'TEST_REASON';
+        $this->assertFalse($invoice->save(), 'removed-refund-reason-saved');
+
+        // eliminamos
+        $invoice->reload();
         $subject = $invoice->getSubject();
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');

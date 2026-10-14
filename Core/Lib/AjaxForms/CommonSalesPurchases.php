@@ -480,6 +480,16 @@ trait CommonSalesPurchases
         return false === $status->editable && empty($status->actualizastock) ? ' text-danger' : '';
     }
 
+    /**
+     * Indica si el documento es una factura rectificativa: tiene factura rectificada o su serie es de rectificativas.
+     */
+    protected static function isRefund(BusinessDocument $model): bool
+    {
+        return false === empty($model->idfacturarect)
+            || false === empty($model->codigorect)
+            || $model->getSerie()->tipo === 'R';
+    }
+
     public static function modalDocList(array $documents, string $title, string $id): string
     {
         $list = '';
@@ -528,6 +538,30 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
+    /**
+     * Selector del motivo de la rectificación, solo en las facturas rectificativas.
+     */
+    protected static function motivorect(BusinessDocument $model): string
+    {
+        if (false === $model->hasColumn('motivorect') || false === static::isRefund($model)) {
+            return '';
+        }
+
+        $options = ['<option value="">' . Tools::trans('refund-reason-none') . '</option>'];
+        foreach (RefundReason::all() as $key => $value) {
+            $options[] = ($key === $model->motivorect) ?
+                '<option value="' . $key . '" selected>' . Tools::trans($value) . '</option>' :
+                '<option value="' . $key . '">' . Tools::trans($value) . '</option>';
+        }
+
+        $attributes = $model->editable ? ' name="motivorect"' : ' disabled';
+        return '<div class="col-sm-6">'
+            . '<div class="mb-2">' . Tools::trans('refund-reason')
+            . '<select' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
     protected static function netosindto(BusinessDocument $model): string
     {
         $nf0 = Tools::settings('default', 'decimals', 2);
@@ -557,40 +591,6 @@ trait CommonSalesPurchases
             . '<textarea ' . $attributes . ' class="form-control" placeholder="' . Tools::trans('observations')
             . '" rows="' . $rows . '">' . Tools::noHtml($model->observaciones) . '</textarea>'
             . '</div></div>';
-    }
-
-    /**
-     * Indica si el documento es una factura rectificativa: tiene factura rectificada o su serie es de rectificativas.
-     */
-    protected static function isRefund(BusinessDocument $model): bool
-    {
-        return false === empty($model->idfacturarect)
-            || false === empty($model->codigorect)
-            || $model->getSerie()->tipo === 'R';
-    }
-
-    /**
-     * Selector del motivo de la rectificación, solo en las facturas rectificativas.
-     */
-    protected static function motivorect(BusinessDocument $model): string
-    {
-        if (false === $model->hasColumn('motivorect') || false === static::isRefund($model)) {
-            return '';
-        }
-
-        $options = ['<option value="">' . Tools::trans('refund-reason-none') . '</option>'];
-        foreach (RefundReason::all() as $key => $value) {
-            $options[] = ($key === $model->motivorect) ?
-                '<option value="' . $key . '" selected>' . Tools::trans($value) . '</option>' :
-                '<option value="' . $key . '">' . Tools::trans($value) . '</option>';
-        }
-
-        $attributes = $model->editable ? ' name="motivorect"' : ' disabled';
-        return '<div class="col-sm-6">'
-            . '<div class="mb-2">' . Tools::trans('refund-reason')
-            . '<select' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
-            . '</div>'
-            . '</div>';
     }
 
     protected static function operacion(BusinessDocument $model): string

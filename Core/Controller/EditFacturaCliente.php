@@ -31,14 +31,6 @@ class EditFacturaCliente extends SalesController
         return 'FacturaCliente';
     }
 
-    /**
-     * Motivos de rectificación para el formulario de nueva rectificativa: clave => clave de traducción.
-     */
-    public function refundReasons(): array
-    {
-        return RefundReason::all();
-    }
-
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -47,6 +39,14 @@ class EditFacturaCliente extends SalesController
         $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         $data['showonmenu'] = false;
         return $data;
+    }
+
+    /**
+     * Motivos de rectificación para el formulario de nueva rectificativa: clave => clave de traducción.
+     */
+    public function refundReasons(): array
+    {
+        return RefundReason::all();
     }
 
     /**
