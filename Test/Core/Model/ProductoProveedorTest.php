@@ -180,6 +180,35 @@ final class ProductoProveedorTest extends TestCase
     }
 
     /**
+     * Comprobamos que con el ajuste updatesupplierprices desactivado no se crea
+     * el ProductoProveedor. Los ajustes se guardan como texto, así que al desmarcar
+     * la casilla el valor es una cadena vacía, no false.
+     */
+    public function testItDoesNotCreateWhenUpdateSupplierPricesIsDisabled(): void
+    {
+        foreach (['', '0', false] as $value) {
+            Tools::settingsSet('default', 'updatesupplierprices', $value);
+
+            [$subject, $product, $doc] = $this->getAlbaranConLineaProducto();
+            $this->assertCount(1, $doc->getLines());
+
+            $where = [
+                Where::eq('referencia', $product->referencia),
+                Where::eq('codproveedor', $subject->codproveedor),
+            ];
+            $this->assertEquals(0, ProductoProveedor::count($where), 'value: ' . var_export($value, true));
+
+            // eliminamos
+            $this->assertTrue($doc->delete());
+            $this->assertTrue($subject->getDefaultAddress()->delete());
+            $this->assertTrue($subject->delete());
+            $this->assertTrue($product->delete());
+        }
+
+        Tools::settingsSet('default', 'updatesupplierprices', true);
+    }
+
+    /**
      * Comprobamos que si un Albarán tiene una fecha futura (por error del usuario),
      * el ProductoProveedor no guarda una fecha de actualización en el futuro.
      * De lo contrario, una compra posterior con fecha correcta quedaría bloqueada

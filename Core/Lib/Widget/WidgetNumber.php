@@ -130,6 +130,11 @@ class WidgetNumber extends BaseWidget
     {
         parent::setValue($model);
 
+        // los valores vacíos o no numéricos (por ejemplo, cadenas vacías) se tratan como nulos
+        if (is_string($this->value)) {
+            $this->value = is_numeric($this->value) ? (float)$this->value : null;
+        }
+
         // solo asignamos un valor por defecto cuando el campo es obligatorio y está vacío
         if (null !== $this->value || false === $this->required) {
             return;

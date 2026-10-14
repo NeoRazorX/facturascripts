@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -28,8 +29,13 @@ use FacturaScripts\Core\Tools;
  */
 class AssetManager
 {
+    const VERSION_FILE = 'assets-version.txt';
+
     /** @var array */
     protected static $list;
+
+    /** @var string */
+    protected static $version;
 
     /**
      * Añade un asset a la lista.
@@ -41,6 +47,7 @@ class AssetManager
     public static function add(string $type, string $asset, int $priority = 1): void
     {
         static::init();
+        $asset = static::addVersion($asset);
 
         // evitamos duplicados
         foreach (static::$list[$type] as $item) {
@@ -71,6 +78,33 @@ class AssetManager
         static::add('mjs', $asset, $priority);
     }
 
+    /**
+     * Añade la versión actual a los assets locales, sustituyendo la que tuvieran.
+     *
+     * @param string $asset
+     *
+     * @return string
+     */
+    public static function addVersion(string $asset): string
+    {
+        // las urls externas no se modifican
+        if (preg_match('#^([a-z][a-z0-9+.-]*:|//)#i', $asset)) {
+            return $asset;
+        }
+
+        // conservamos el resto de parámetros
+        $parts = explode('?', $asset, 2);
+        $params = [];
+        foreach (explode('&', $parts[1] ?? '') as $param) {
+            if ($param !== '' && $param !== 'v' && strpos($param, 'v=') !== 0) {
+                $params[] = $param;
+            }
+        }
+        $params[] = 'v=' . static::version();
+
+        return $parts[0] . '?' . implode('&', $params);
+    }
+
     /** Eliminamos todos los assets de la lista */
     public static function clear(): void
     {
@@ -91,8 +125,8 @@ class AssetManager
         $assets = static::pull('css');
         $route = Tools::config('route');
 
-        // generamos una semilla a partir de la fecha y las rutas de los assets
-        $seed = date('Y-m-d');
+        // generamos una semilla a partir de la versión y las rutas de los assets
+        $seed = static::version();
         foreach ($assets as $item) {
             $seed .= $item['asset'];
         }
@@ -111,10 +145,8 @@ class AssetManager
                     continue;
                 }
 
-                $content .= static::fixCombinedCss(
-                    file_get_contents($item['asset']),
-                    $route . '/' . $item['asset']
-                );
+                $path = static::removeQuery($item['asset']);
+                $content .= static::fixCombinedCss(file_get_contents($path), $route . '/' . $path);
             }
             file_put_contents($file_path, $content);
         }
@@ -132,8 +164,8 @@ class AssetManager
         $assets = static::pull('js');
         $route = Tools::config('route');
 
-        // generamos una semilla a partir de la fecha y las rutas de los assets
-        $seed = date('Y-m-d');
+        // generamos una semilla a partir de la versión y las rutas de los assets
+        $seed = static::version();
         foreach ($assets as $item) {
             $seed .= $item['asset'];
         }
@@ -152,7 +184,7 @@ class AssetManager
                     continue;
                 }
 
-                $content .= file_get_contents($item['asset']);
+                $content .= file_get_contents(static::removeQuery($item['asset']));
             }
             file_put_contents($file_path, $content);
         }
@@ -212,6 +244,40 @@ class AssetManager
         }
     }
 
+    /**
+     * Genera una nueva versión de los assets para que los navegadores descarguen
+     * de nuevo los archivos. Se llama en cada despliegue.
+     *
+     * @return bool
+     */
+    public static function updateVersion(): bool
+    {
+        static::$version = uniqid();
+
+        Tools::folderCheckOrCreate(Tools::folder('MyFiles'));
+        $filePath = Tools::folder('MyFiles', self::VERSION_FILE);
+        return false !== file_put_contents($filePath, static::$version);
+    }
+
+    /**
+     * Devuelve la versión de los assets, que cambia en cada despliegue.
+     *
+     * @return string
+     */
+    public static function version(): string
+    {
+        if (isset(static::$version)) {
+            return static::$version;
+        }
+
+        // si todavía no se ha desplegado, usamos la versión del núcleo
+        $filePath = Tools::folder('MyFiles', self::VERSION_FILE);
+        $version = file_exists($filePath) ? trim((string)file_get_contents($filePath)) : '';
+        static::$version = preg_match('/^[a-zA-Z0-9._-]+$/', $version) ? $version : (string)Kernel::version();
+
+        return static::$version;
+    }
+
     protected static function dirname(string $path, int $levels = 1): string
     {
         return str_replace('\\', '/', dirname($path, $levels));
@@ -258,6 +324,11 @@ class AssetManager
         static::$list[$type] = [];
 
         return $list;
+    }
+
+    protected static function removeQuery(string $asset): string
+    {
+        return explode('?', $asset, 2)[0];
     }
 
     /** Ordenamos los assets por prioridad */

@@ -204,13 +204,13 @@ class WidgetSubcuenta extends WidgetText
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSubcuenta.js?v=' . Tools::date());
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSubcuenta.js');
     }
 
     protected function renderModal(string $icon, string $label): string
     {
-        return '<div class="modal fade" id="modal_' . $this->id . '" tabindex="-1" aria-labelledby="modal_'
-            . $this->id . '_label" aria-hidden="true">'
+        return '<div class="modal fade widget-subaccount-modal" id="modal_' . $this->id . '" data-widget-subaccount-id="'
+            . $this->id . '" tabindex="-1" aria-labelledby="modal_' . $this->id . '_label" aria-hidden="true">'
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
@@ -287,25 +287,7 @@ class WidgetSubcuenta extends WidgetText
 
     protected function renderSubaccountList(): string
     {
-        $items = [];
-        foreach ($this->subcuentas() as $item) {
-            $match = $this->escapeHtml($item->{$this->match});
-            $code = $this->escapeHtml($item->codsubcuenta);
-            $description = $this->escapeHtml($item->descripcion);
-            $url = $this->escapeHtml($item->url());
-            $saldoClass = $item->saldo < 0 ? ' text-danger' : '';
-            $items[] = '<tr class="clickableRow widget-subaccount-option" data-widget-subaccount-id="' . $this->id . '" data-widget-subaccount-value="' . $match . '">'
-                . '<td class="text-center">'
-                . '<a href="' . $url . '" target="_blank" class="widget-subaccount-link">'
-                . '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
-                . '</a>'
-                . '</td>'
-                . '<td><b>' . $code . '</b></td>'
-                . '<td>' . $description . '</td>'
-                . '<td class="text-end' . $saldoClass . '">' . Tools::number($item->saldo) . '</td>'
-                . '</tr>';
-        }
-
+        // la lista se carga por ajax al abrir el modal
         return '<div class="table-responsive">'
             . '<table class="table table-hover mb-0">'
             . '<thead>'
@@ -316,7 +298,7 @@ class WidgetSubcuenta extends WidgetText
             . '<th class="text-end">' . Tools::trans('balance') . '</th>'
             . '</tr>'
             . '</thead>'
-            . '<tbody id="list_' . $this->id . '">' . implode('', $items) . '</tbody>'
+            . '<tbody id="list_' . $this->id . '"></tbody>'
             . '</table>'
             . '</div>';
     }

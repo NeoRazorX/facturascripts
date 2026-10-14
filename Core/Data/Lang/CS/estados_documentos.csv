@@ -1,0 +1,28 @@
+idestado;tipodoc;nombre;predeterminado;bloquear;editable;actualizastock;generadoc;icon;orden
+1;PresupuestoCliente;Otevřený;true;true;true;0;;;10
+2;PresupuestoCliente;Objednávka;false;true;false;0;PedidoCliente;;50
+3;PresupuestoCliente;Zamítnutý;false;true;false;0;;;210
+23;PresupuestoCliente;Prošlý;false;true;false;0;;fa-solid fa-hourglass-end;200
+24;PresupuestoCliente;Fakturovat;false;true;false;0;FacturaCliente;;60
+4;PedidoCliente;Otevřený;true;true;true;-2;;;10
+5;PedidoCliente;Dodací list;false;true;false;0;AlbaranCliente;;50
+25;PedidoCliente;Fakturovat;false;true;false;0;FacturaCliente;;60
+6;PedidoCliente;Zrušený;false;true;false;0;;;200
+7;AlbaranCliente;Otevřený;true;true;true;-1;;;10
+8;AlbaranCliente;Fakturovat;false;true;false;0;FacturaCliente;;50
+9;AlbaranCliente;Vrácený;false;true;false;0;;;200
+10;FacturaCliente;Koncept;true;true;true;-1;;;10
+11;FacturaCliente;Vystavená;false;true;false;-1;;;50
+12;PresupuestoProveedor;Otevřený;true;true;true;0;;;10
+13;PresupuestoProveedor;Objednávka;false;true;false;0;PedidoProveedor;;50
+14;PresupuestoProveedor;Zrušený;false;true;false;0;;;200
+26;PresupuestoProveedor;Fakturovat;false;true;false;0;FacturaProveedor;;60
+15;PedidoProveedor;Otevřený;true;true;true;2;;;10
+16;PedidoProveedor;Dodací list;false;true;false;0;AlbaranProveedor;;50
+17;PedidoProveedor;Zrušený;false;true;false;0;;;200
+27;PedidoProveedor;Fakturovat;false;true;false;0;FacturaProveedor;;60
+18;AlbaranProveedor;Otevřený;true;true;true;1;;;10
+19;AlbaranProveedor;Fakturovat;false;true;false;0;FacturaProveedor;;50
+20;AlbaranProveedor;Vrácený;false;true;false;0;;;200
+21;FacturaProveedor;Koncept;true;true;true;1;;;10
+22;FacturaProveedor;Přijatá;false;true;false;1;;;50

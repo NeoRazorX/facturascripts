@@ -18,8 +18,12 @@
  */
 
 const FS_RESTORE_ARCHIVE = 'CORE.zip';
+const FS_RESTORE_MIN_PHP = '7.3.0';
 const FS_RESTORE_PACKAGE_FOLDER = 'facturascripts';
 const FS_RESTORE_URL = 'https://facturascripts.com/DownloadBuild/1/stable';
+
+// increment it on every change: a restoration keeps this script if the package has an older one
+const FS_RESTORE_VERSION = 1;
 
 function restoreMessage(string $message, bool $error = false): void
 {
@@ -90,7 +94,8 @@ function restoreDownloadArchive(string $archivePath): void
         throw new RuntimeException('Unable to create the temporary download file.');
     }
 
-    $curl = curl_init(FS_RESTORE_URL);
+    // the server returns the latest stable version compatible with this PHP version
+    $curl = curl_init(FS_RESTORE_URL . '?php=' . rawurlencode(PHP_VERSION));
     if (false === $curl) {
         fclose($stream);
         restoreDeletePath($tempPath);
@@ -119,6 +124,11 @@ function restoreDownloadArchive(string $archivePath): void
     $error = curl_error($curl);
     $status = (int)curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
     fclose($stream);
+
+    if (404 === $status) {
+        restoreDeletePath($tempPath);
+        throw new RuntimeException('There is no stable version compatible with PHP ' . PHP_VERSION . '.');
+    }
 
     $fileSize = filesize($tempPath);
     if (false === $downloaded || $status < 200 || $status >= 300 || false === $fileSize || $fileSize === 0) {
@@ -163,7 +173,7 @@ function restoreValidateArchive(ZipArchive $zip): void
             throw new RuntimeException('CORE.zip contains files outside the expected package folder.');
         }
 
-        if (in_array('..', $parts, true) || str_starts_with($normalized, '/')) {
+        if (in_array('..', $parts, true) || strpos($normalized, '/') === 0) {
             throw new RuntimeException('CORE.zip contains an unsafe path.');
         }
 
@@ -215,6 +225,40 @@ function restoreRollback(string $backupPath, array $states): array
     }
 
     return $errors;
+}
+
+/**
+ * Returns the FS_RESTORE_VERSION of a restoration script. Scripts without it are older than this check.
+ */
+function restoreScriptVersion(string $content): int
+{
+    return preg_match('/^const FS_RESTORE_VERSION = (\d+);/m', $content, $matches) ? (int)$matches[1] : 0;
+}
+
+/**
+ * Keeps the running restoration script when the package has an older one (old core versions are
+ * downloaded for old PHP versions), so the next restoration still works.
+ */
+function restorePrepareScript(string $packagePath, string $runningScript): void
+{
+    $packageScript = $packagePath . DIRECTORY_SEPARATOR . 'replace_index_to_restore.php';
+    $packageContent = @file_get_contents($packageScript);
+    $runningContent = @file_get_contents($runningScript);
+    if (false === $packageContent || false === $runningContent) {
+        throw new RuntimeException('Unable to read the restoration script.');
+    }
+
+    $keepRunning = restoreScriptVersion($packageContent) < restoreScriptVersion($runningContent);
+    if ($keepRunning && false === @file_put_contents($packageScript, $runningContent)) {
+        throw new RuntimeException('Unable to keep the current restoration script.');
+    }
+
+    // opcache only compares the modification time: if this file had the same as index.php,
+    // after renaming it the cached index.php would still be executed
+    $indexTime = filemtime($packagePath . DIRECTORY_SEPARATOR . 'index.php');
+    if (false === $indexTime || !@touch($packageScript, $indexTime - 60)) {
+        throw new RuntimeException('Unable to set the restoration script modification time.');
+    }
 }
 
 function restoreInstallPackage(string $packagePath, string $backupPath): void
@@ -270,13 +314,19 @@ function restoreReleaseLock($lock, string $lockPath): void
     fclose($lock);
 }
 
+// the tests only load the functions
+if (defined('FS_RESTORE_SKIP_RUN')) {
+    return;
+}
+
 // This file must replace index.php before it can perform a restoration.
 if (basename(__FILE__) !== 'index.php') {
     restoreMessage('Remove index.php and rename this file to index.php.', true);
 }
 
-if (version_compare(PHP_VERSION, '8.1.0') < 0) {
-    restoreMessage('FacturaScripts requires PHP 8.1.0 or newer.', true);
+// this script must also run on old PHP versions, to restore the latest version compatible with them
+if (version_compare(PHP_VERSION, FS_RESTORE_MIN_PHP) < 0) {
+    restoreMessage('FacturaScripts restoration requires PHP ' . FS_RESTORE_MIN_PHP . ' or newer.', true);
 }
 
 if (!class_exists('ZipArchive')) {
@@ -366,6 +416,8 @@ try {
     restoreValidatePackage($packagePath);
     $rejectArchive = false;
 
+    restorePrepareScript($packagePath, __FILE__);
+
     restoreInstallPackage($packagePath, $backupPath);
 } catch (Throwable $exception) {
     $message = $exception->getMessage();
@@ -399,9 +451,20 @@ if (!restoreDeletePath(__DIR__ . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEP
     $warnings[] = 'The MyFiles/Cache folder could not be removed.';
 }
 
+// the data cache may contain table columns and objects from the previous core
+$fileCachePath = __DIR__ . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'Tmp' . DIRECTORY_SEPARATOR . 'FileCache';
+if (!restoreDeletePath($fileCachePath)) {
+    $warnings[] = 'The MyFiles/Tmp/FileCache folder could not be removed.';
+}
+
+// the saved routes point to the removed Dinamic classes, the deploy page saves them again
+if (!restoreDeletePath(__DIR__ . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'routes.json')) {
+    $warnings[] = 'The MyFiles/routes.json file could not be removed. Delete it before continuing.';
+}
+
 restoreReleaseLock($lock, $lockPath);
 
-$message = 'The latest stable version has been installed.';
+$message = 'The latest stable version compatible with PHP ' . PHP_VERSION . ' has been installed.';
 if (!empty($warnings)) {
     $message .= ' Cleanup warnings: ' . implode(' ', $warnings);
 }

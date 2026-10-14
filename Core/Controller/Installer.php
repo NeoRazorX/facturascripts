@@ -24,6 +24,7 @@ use Exception;
 use FacturaScripts\Core\AppKey;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Internal\PhpExtensions;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Plugins;
@@ -335,11 +336,9 @@ class Installer implements ControllerInterface
             $errors = true;
         }
 
-        foreach (['bcmath', 'curl', 'fileinfo', 'gd', 'mbstring', 'openssl', 'simplexml', 'zip'] as $extension) {
-            if (false === extension_loaded($extension)) {
-                Tools::log()->critical('php-extension-not-found', ['%extension%' => $extension]);
-                $errors = true;
-            }
+        foreach (PhpExtensions::missing() as $extension) {
+            Tools::log()->critical('php-extension-not-found', ['%extension%' => $extension]);
+            $errors = true;
         }
 
         if (function_exists('apache_get_modules') && false === in_array('mod_rewrite', apache_get_modules())) {

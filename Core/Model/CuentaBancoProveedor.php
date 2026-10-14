@@ -83,17 +83,6 @@ class CuentaBancoProveedor extends ModelClass
         }
 
         $this->updatePrimaryAccount();
-
-        // si ha cambiado el iban, añadimos un aviso al log
-        if (!empty($this->getOriginal('iban')) && $this->isDirty('iban')) {
-            Tools::log(LogMessage::AUDIT_CHANNEL)->warning('supplier-iban-changed', [
-                '%account%' => $this->codcuenta,
-                '%old%' => $this->getOriginal('iban'),
-                '%new%' => $this->iban,
-                '%codproveedor%' => $this->codproveedor,
-            ]);
-        }
-
         return true;
     }
 
@@ -154,5 +143,24 @@ class CuentaBancoProveedor extends ModelClass
         }
 
         return parent::saveInsert();
+    }
+
+    protected function saveUpdate(): bool
+    {
+        if (false === parent::saveUpdate()) {
+            return false;
+        }
+
+        // si ha cambiado el iban, añadimos un aviso al log
+        if (!empty($this->getOriginal('iban')) && $this->isDirty('iban')) {
+            Tools::log(LogMessage::AUDIT_CHANNEL)->warning('supplier-iban-changed', [
+                '%account%' => $this->codcuenta,
+                '%old%' => $this->getOriginal('iban'),
+                '%new%' => $this->iban,
+                '%codproveedor%' => $this->codproveedor,
+            ]);
+        }
+
+        return true;
     }
 }
