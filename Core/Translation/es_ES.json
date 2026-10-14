@@ -2162,5 +2162,12 @@
     "zip-codes": "Códigos postales",
     "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin.",
     "zone": "Zona",
-    "zones": "Zonas"
+    "zones": "Zonas",
+    "refund-reason": "Motivo de la rectificación",
+    "refund-reason-none": "Sin indicar",
+    "es-refund-reason-80-1-2-6": "España - Art. 80 Uno, Dos y Seis LIVA o error fundado en derecho (devoluciones, descuentos, cambios de precio)",
+    "es-refund-reason-80-3": "España - Art. 80 Tres LIVA: concurso de acreedores",
+    "es-refund-reason-80-4": "España - Art. 80 Cuatro LIVA: créditos incobrables",
+    "es-refund-reason-other": "España - Otras causas",
+    "invalid-refund-reason": "El motivo de rectificación «%reason%» no es válido."
 }

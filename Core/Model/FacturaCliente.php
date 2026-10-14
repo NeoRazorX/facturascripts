@@ -43,6 +43,7 @@ class FacturaCliente extends SalesDocument
         parent::__construct($data);
 
         self::$dont_copy_fields[] = 'fechadevengo';
+        self::$dont_copy_fields[] = 'motivorect';
     }
 
     public function clear(): void
@@ -134,6 +135,11 @@ class FacturaCliente extends SalesDocument
             $this->idfactura,
             ['numero' => 'ASC', 'idrecibo' => 'ASC']
         );
+    }
+
+    public function test(): bool
+    {
+        return $this->testRefundReason() && parent::test();
     }
 
     public static function tableName(): string

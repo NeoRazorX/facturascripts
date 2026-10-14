@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Lib\RefundReason;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Tools;
@@ -82,6 +83,13 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
             return null;
         }
 
+        // el motivo de rectificación, si se indica, debe ser uno de los disponibles
+        $reason = $this->request->input('motivorect');
+        if (!empty($reason) && null === RefundReason::get($reason)) {
+            $this->sendError('invalid-refund-reason', Response::HTTP_BAD_REQUEST);
+            return null;
+        }
+
         $lines = [];
         $invoiceLines = $invoice->getLines();
 
@@ -141,6 +149,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         $newRefund->idfacturarect = $invoice->idfactura;
         $newRefund->nick = $this->request->input('nick');
         $newRefund->observaciones = $this->request->input('observaciones');
+        $newRefund->motivorect = $this->request->input('motivorect') ?: null;
 
         // la hora es opcional: si no se indica, se usa la actual
         $date = $this->request->input('fecha');

@@ -25,6 +25,7 @@ use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
+use FacturaScripts\Core\Lib\RefundReason;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\FacturaProveedor;
@@ -779,6 +780,37 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete());
         $this->assertTrue($product->delete());
         $this->assertTrue($company->delete());
+    }
+
+    public function testRefundReason(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomSupplierInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+
+        // un motivo que no existe no se guarda
+        $invoice->motivorect = 'NO_EXISTE';
+        $this->assertFalse($invoice->save(), 'invalid-refund-reason-saved');
+
+        // un motivo de la lista se guarda
+        $invoice->motivorect = RefundReason::ES_REFUND_REASON_80_4;
+        $this->assertTrue($invoice->save(), 'can-not-save-refund-reason');
+        $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
+        $this->assertEquals(RefundReason::ES_REFUND_REASON_80_4, $invoice->motivorect, 'bad-refund-reason');
+
+        // el motivo no se copia a otros documentos (por ejemplo, a una rectificativa)
+        $this->assertContains('motivorect', $invoice::dontCopyFields(), 'refund-reason-is-copied');
+
+        // vacío se guarda como null
+        $invoice->motivorect = '';
+        $this->assertTrue($invoice->save(), 'can-not-save-empty-refund-reason');
+        $this->assertNull($invoice->motivorect, 'empty-refund-reason-not-null');
+
+        // eliminamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
     protected function tearDown(): void

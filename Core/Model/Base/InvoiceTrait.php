@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Lib\RefundReason;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
@@ -50,6 +51,9 @@ trait InvoiceTrait
 
     /** @var int Identificador de la factura rectificada por esta factura. */
     public $idfacturarect;
+
+    /** @var string|null Motivo de la rectificación (claves de RefundReason). Vacío si no es rectificativa o no se indica. */
+    public $motivorect;
 
     /** @var bool Indica si la factura está completamente pagada. */
     public $pagada;
@@ -203,6 +207,24 @@ trait InvoiceTrait
                     return false;
                 }
                 break;
+        }
+
+        return true;
+    }
+
+    /**
+     * Comprueba que el motivo de rectificación, si se indica, es uno de los de RefundReason.
+     */
+    protected function testRefundReason(): bool
+    {
+        if (empty($this->motivorect)) {
+            $this->motivorect = null;
+            return true;
+        }
+
+        if (null === RefundReason::get($this->motivorect)) {
+            Tools::log()->warning('invalid-refund-reason', ['%reason%' => $this->motivorect]);
+            return false;
         }
 
         return true;
