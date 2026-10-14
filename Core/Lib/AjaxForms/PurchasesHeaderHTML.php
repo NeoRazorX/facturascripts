@@ -101,6 +101,11 @@ class PurchasesHeaderHTML
             }
         }
 
+        // motivo de la rectificación: solo lo tienen las facturas
+        if (isset($formData['motivorect']) && $model->hasColumn('motivorect')) {
+            $model->motivorect = empty($formData['motivorect']) ? null : $formData['motivorect'];
+        }
+
         // mods
         foreach (self::$mods as $mod) {
             $mod->apply($model, $formData);
@@ -221,6 +226,7 @@ class PurchasesHeaderHTML
             . self::renderField($model, 'fechadevengo')
             . self::renderField($model, 'hora')
             . self::renderField($model, 'operacion')
+            . self::renderField($model, 'motivorect')
             . self::renderField($model, 'femail')
             . self::renderField($model, 'coddivisa')
             . self::renderField($model, 'tasaconv')
@@ -423,6 +429,9 @@ class PurchasesHeaderHTML
 
             case 'numproveedor':
                 return self::numproveedor($model);
+
+            case 'motivorect':
+                return self::motivorect($model);
 
             case 'operacion':
                 return self::operacion($model);
