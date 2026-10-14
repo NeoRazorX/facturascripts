@@ -30,9 +30,9 @@ use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
  * `Cliente` a través de `codcliente`. Guarda el IBAN, que valida `IbanTrait`, y el SWIFT o
  * BIC de la entidad.
  *
- * Es la cuenta que se utiliza para domiciliar los recibos del cliente, por lo que incluye
- * los datos del mandato SEPA: la referencia (`mandato`), que se genera automáticamente a
- * partir del código de cuenta si no se indica, y su fecha de firma (`fmandato`).
+ * Incluye los datos del mandato SEPA para domiciliaciones: la referencia (`mandato`), que
+ * al guardar se genera automáticamente (a partir del código de cuenta, o del siguiente
+ * código disponible) si no se indica, y su fecha de firma (`fmandato`).
  *
  * Un cliente puede tener varias cuentas, pero solo una marcada como principal: al guardar
  * una cuenta con `principal` activo se desmarcan automáticamente las demás del mismo

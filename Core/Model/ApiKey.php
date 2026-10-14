@@ -26,17 +26,19 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
- * Clave de acceso a la API, es decir, el token que se genera para que aplicaciones externas
- * puedan sincronizarse con FacturaScripts. Se guarda en la tabla `api_keys` y al crearse
+ * Clave de acceso a la API, es decir, el token con el que las aplicaciones externas se
+ * autentican en la API de FacturaScripts. Se guarda en la tabla `api_keys` y al crearse
  * recibe automáticamente una clave aleatoria de 20 caracteres y la fecha de creación.
  *
- * Los permisos se resuelven en `hasAccess()`: si `fullaccess` está activo la clave puede
- * usar cualquier recurso, y en caso contrario se comprueban los registros de `ApiAccess`
- * asociados por `idapikey`, que detallan qué métodos HTTP se admiten en cada recurso. El
- * campo `nick` solo indica quién creó la clave, no limita sus permisos.
+ * Si `fullaccess` está activo la clave puede usar cualquier recurso; en caso contrario, los
+ * registros de `ApiAccess` asociados por `idapikey` detallan qué métodos HTTP se admiten en
+ * cada recurso. La API autoriza las peticiones con `ApiController::isAllowed()`, que
+ * consulta `ApiAccess` directamente; `hasAccess()` ofrece la misma comprobación desde el
+ * modelo. El campo `nick` indica quién creó la clave y no limita sus permisos.
  *
- * Cada petición atendida actualiza `lastactivity` y `lastip` mediante `updateActivity()`,
- * y el propio valor de `apikey` se oculta al exponer el modelo a través de la API.
+ * `ApiController` llama a `updateActivity()` (que actualiza `lastactivity` y `lastip`) solo
+ * para las claves sin `fullaccess`. El valor de `apikey` se oculta al exponer el modelo en
+ * la API.
  *
  * @author Joe Nilson           <joenilson@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,8 @@ use PHP_IBAN\IBAN;
 /**
  * Trait que añade el campo iban con el código IBAN de una cuenta bancaria,
  * junto con métodos para formatearlo (con o sin espacios, censurado) y
- * validarlo, pudiendo desactivarse esta validación cuando sea necesario.
+ * validarlo. La validación solo se aplica si el ajuste default/validate_iban
+ * está activado, y puede desactivarse con setDisableIbanTest().
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -38,10 +39,10 @@ trait IbanTrait
     public $iban;
 
     /**
-     * Returns the IBAN with or without spaces.
+     * Devuelve el IBAN, con o sin espacios (grupos de 4) y opcionalmente censurado.
      *
-     * @param bool $spaced
-     * @param bool $censure
+     * @param bool $spaced Indica si se separan los grupos con espacios.
+     * @param bool $censure Indica si se sustituyen los grupos 2 a 5 por XXXX.
      *
      * @return string
      */
@@ -68,11 +69,22 @@ trait IbanTrait
         return $spaced ? implode(' ', $groups) : implode('', $groups);
     }
 
+    /**
+     * Activa o desactiva la omisión de la validación del IBAN al guardar.
+     *
+     * @param bool $value
+     */
     public function setDisableIbanTest(bool $value): void
     {
         $this->disable_iban_test = $value;
     }
 
+    /**
+     * Verifica el IBAN indicado; si el ajuste default/validate_iban está desactivado, devuelve siempre true.
+     *
+     * @param string $iban
+     * @return bool
+     */
     public function verifyIBAN(string $iban): bool
     {
         if (Tools::settings('default', 'validate_iban', false)) {
@@ -83,6 +95,11 @@ trait IbanTrait
         return true;
     }
 
+    /**
+     * Sanea el IBAN y lo valida salvo que esté vacío o la validación esté desactivada.
+     *
+     * @return bool
+     */
     protected function testIBAN(): bool
     {
         $this->iban = Tools::noHtml($this->iban);

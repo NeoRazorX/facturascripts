@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,10 +31,10 @@ use FacturaScripts\Core\Tools;
  * (`codalmacen`) que se genera automáticamente si no se indica.
  *
  * Cada almacén pertenece a una empresa (`idempresa`, mediante `CompanyRelationTrait`) y
- * guarda su propia dirección postal. Es la referencia de los movimientos y del stock de
- * los productos, y los documentos de compra y venta lo indican en `codalmacen` para saber
- * de dónde sale o dónde entra la mercancía. El almacén marcado como predeterminado en la
- * configuración no se puede eliminar.
+ * guarda su propia dirección postal. Es la referencia del stock de los productos (`Stock`),
+ * y los documentos de compra y venta lo indican en `codalmacen` para saber de dónde sale o
+ * dónde entra la mercancía. El almacén marcado como predeterminado en la configuración no se
+ * puede eliminar.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>

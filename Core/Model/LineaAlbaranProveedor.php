@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,8 +26,8 @@ use FacturaScripts\Dinamic\Model\AlbaranProveedor as DinAlbaranProveedor;
 /**
  * Línea de un albarán de proveedor. Guarda el producto o concepto comprado con su descripción,
  * cantidad, coste, descuentos e impuestos, y se enlaza con el albarán mediante el campo
- * idalbaran. Hereda de BusinessDocumentLine el cálculo de importes y la actualización del
- * stock del almacén según el estado del documento.
+ * idalbaran. Hereda de BusinessDocumentLine la actualización del stock del almacén según
+ * el estado del documento. Los importes los calcula Calculator.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

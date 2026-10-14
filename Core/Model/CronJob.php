@@ -40,7 +40,8 @@ use Throwable;
  * encarga de guardar tiempos y resultados y de capturar cualquier excepción o error para
  * registrarlo en el log y marcar el trabajo como fallido.
  *
- * Salvo en modo estricto, las tareas recuperan ejecuciones perdidas al estilo de anacron.
+ * Los métodos `every*` con día u hora, salvo que se les pase `$strict = true`, recuperan
+ * ejecuciones perdidas al estilo de anacron.
  * `setMaxExecutionTime()` limita la duración del conjunto del cron rechazando los trabajos
  * pendientes, sin interrumpir el que esté en marcha, y `releaseIfStale()` libera los
  * trabajos zombis que llevan más de STALE_HOURS horas marcados como en ejecución.

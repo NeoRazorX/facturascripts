@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,8 +29,8 @@ use FacturaScripts\Core\Tools;
  * País, por ejemplo España, almacenado en la tabla paises. Se identifica por
  * el código alfa-3 de la norma ISO 3166-1 y guarda además el código alfa-2, el
  * nombre, un alias, el prefijo telefónico y las coordenadas de referencia.
- * Es la base de las direcciones de clientes, proveedores y empresas, agrupa a
- * las provincias y determina el tratamiento fiscal en los documentos. El país
+ * Se usa en las direcciones de contactos y empresas, agrupa a
+ * las provincias y es uno de los criterios de las zonas de impuestos. El país
  * marcado como predeterminado en la configuración no se puede eliminar.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>

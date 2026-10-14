@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,9 +22,9 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\DataSrc\Divisas;
 
 /**
- * Trait que añade la relación con la divisa (Divisa) utilizada en el
- * documento, junto con la tasa de conversión a euros aplicada en el
- * momento de guardar el registro.
+ * Trait que añade el código de divisa (coddivisa) y su tasa de conversión
+ * (tasaconv), y el método setCurrency() que copia dicha tasa desde la divisa.
+ * No interviene al guardar el registro.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -38,15 +38,20 @@ trait CurrencyRelationTrait
     public $coddivisa;
 
     /**
-     * Tasa de conversión a euros de la divisa seleccionada.
+     * Tasa de conversión de la divisa seleccionada, copiada por setCurrency().
      *
      * @var float|int
      */
     public $tasaconv;
 
     /**
-     * @param string $coddivisa
-     * @param bool $purchase
+     * Asigna la divisa y copia su tasa de conversión en el momento de la llamada:
+     * tasaconvcompra si $purchase es true (y la divisa la tiene), si no tasaconv.
+     * Si la divisa no existe, asigna el código indicado con tasa 1.0.
+     * Se invoca desde clear() de PurchaseDocument y SalesDocument.
+     *
+     * @param string $coddivisa Código de la divisa.
+     * @param bool $purchase Indica si se usa la tasa de compra.
      */
     public function setCurrency($coddivisa, $purchase = false): void
     {

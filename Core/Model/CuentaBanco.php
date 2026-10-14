@@ -34,12 +34,14 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  * una empresa (`idempresa`) y guarda el IBAN validado por `IbanTrait`, el SWIFT o BIC y el
  * sufijo de acreedor que se utiliza en los ficheros SEPA.
  *
- * Es la cuenta a la que se asocian las formas de pago y los recibos, y en el plano contable
+ * Es la cuenta que se asocia a las formas de pago (`codcuentabanco`) y, en el plano contable,
  * enlaza con la contabilidad mediante `codsubcuenta`, para los movimientos de tesorería, y
  * `codsubcuentagasto`, para los gastos bancarios. Los métodos `getSubcuenta()` y
- * `getSubcuentaGastos()` localizan esas subcuentas en el ejercicio indicado y pueden
- * crearlas si no existen, tomando como cuenta padre la especial `BANCO` o, si no está
- * mapeada en ese ejercicio, la especial `CAJA`.
+ * `getSubcuentaGastos()` buscan esas subcuentas en el ejercicio indicado; si el campo está
+ * vacío no crean nada y devuelven la subcuenta de la cuenta especial `BANCO` (o `CAJA` si
+ * no hay). Si el código está informado pero la subcuenta no existe, solo la crean cuando se
+ * les pide, colgándola de la cuenta especial `BANCO` o, si no está mapeada en ese ejercicio,
+ * de `CAJA`.
  *
  * Cualquier cambio del IBAN de una cuenta existente queda registrado en el canal de
  * auditoría del log.

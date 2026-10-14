@@ -32,8 +32,8 @@ use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
  *
  * Los valores posibles del atributo se guardan como registros de `AtributoValor` asociados
  * por `codatributo`, y esta clase ofrece métodos para añadirlos, consultarlos y eliminarlos.
- * El campo `num_selector` indica en qué posición del selector de variantes se muestra el
- * atributo al elegir una variante de producto.
+ * El campo `num_selector` indica en cuál de los cuatro selectores de atributo se ofrece
+ * (0 = en todos).
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -47,7 +47,7 @@ class Atributo extends ModelClass
     /** @var string Nombre del atributo. */
     public $nombre;
 
-    /** @var int Posición del selector de variantes en el que se muestra el atributo. */
+    /** @var int Selector de atributo (1 a 4) en el que se ofrece; 0 = todos. */
     public $num_selector;
 
     public function addValue(string $value): bool

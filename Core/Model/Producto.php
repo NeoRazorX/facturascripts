@@ -88,7 +88,7 @@ class Producto extends ModelClass
     /** @var float|int Precio de venta del producto sin impuestos. */
     public $precio;
 
-    /** @var bool Indica si el producto se publica o sincroniza con la tienda online. */
+    /** @var bool Indica si el producto es público. */
     public $publico;
 
     /** @var string Referencia principal o SKU del producto. */

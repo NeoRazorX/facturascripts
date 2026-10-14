@@ -28,8 +28,8 @@ use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor as LineaPresupuesto;
 /**
  * Presupuesto de proveedor, almacenado en la tabla presupuestosprov. Es el
  * primer documento del circuito de compras y recoge la oferta recibida del
- * proveedor con sus líneas, importes e impuestos. Al aprobarlo se transforma
- * en pedido, albarán o factura de compra.
+ * proveedor con sus líneas, importes e impuestos. Con los estados por defecto se
+ * transforma en pedido o factura de compra.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

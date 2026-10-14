@@ -30,12 +30,8 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
  * `Proveedor` a través de `codproveedor`. Guarda el IBAN, que valida `IbanTrait`, y el
  * SWIFT o BIC de la entidad.
  *
- * Es la cuenta en la que se le realizan las transferencias y pagos al proveedor. Un mismo
- * proveedor puede tener varias cuentas, pero solo una marcada como principal: al guardar
- * una cuenta con `principal` activo se desmarcan automáticamente las demás.
- *
- * Cualquier cambio del IBAN de una cuenta existente queda registrado en el canal de
- * auditoría del log, ya que es un dato sensible frente al fraude en los pagos.
+ * Un mismo proveedor puede tener varias cuentas, pero solo una marcada como principal: al
+ * guardar una cuenta con `principal` activo se desmarcan automáticamente las demás.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

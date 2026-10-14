@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,11 +24,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Regla de sustitución de impuestos por zona geográfica. Permite indicar que, cuando el
- * cliente o proveedor pertenece a un país (codpais) o a una provincia (codisopro) concretos,
- * el impuesto codimpuesto se sustituya por codimpuestosel o se aplique la excepción de IVA
- * indicada en excepcioniva. Las reglas se evalúan según el campo prioridad, y una regla sin
- * provincia se aplica a todo el país.
+ * Regla de sustitución de impuestos por zona geográfica. Solo se aplica a documentos de
+ * venta (SalesDocument): si el país (codpais) y la provincia (codisopro) del documento coinciden
+ * con la regla, el impuesto codimpuesto de la línea se sustituye por codimpuestosel y se
+ * sobrescribe excepcioniva con el valor de la regla. Las reglas se evalúan por prioridad
+ * descendente y se aplica la primera cuyo codimpuesto coincide con el de la línea. Una regla
+ * sin provincia se aplica a todo el país.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>

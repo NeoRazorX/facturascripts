@@ -25,16 +25,16 @@ use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor as LineaAlbaran;
 
 /**
- * Albarán de proveedor. Representa la recepción del material que se ha comprado y, por
- * tanto, implica la entrada de ese material en el almacén. Se almacena en la tabla
- * `albaranesprov` y hereda de `PurchaseDocument` la cabecera común de los documentos de
+ * Albarán de proveedor. Representa la recepción del material que se ha comprado y, según
+ * el estado del documento, la entrada de ese material en el almacén. Se almacena en la
+ * tabla `albaranesprov` y hereda de `PurchaseDocument` la cabecera común de los documentos de
  * compra: proveedor, almacén, serie, divisa, fechas y totales.
  *
  * Sus líneas son objetos `LineaAlbaranProveedor` relacionados por `idalbaran`. Al crear una
  * línea nueva se hereda de la cabecera el estado del documento (que determina si se
- * actualiza el stock), la excepción de IVA del proveedor y el IRPF, y se calculan los
- * importes con `Calculator`. Suele proceder de un pedido de compra y puede agruparse
- * después en una factura de proveedor.
+ * actualiza el stock), la excepción de IVA del proveedor y el IRPF; si la línea no
+ * trae referencia de producto, se calcula con `Calculator::calculateLine()`.
+ * Suele proceder de un pedido de compra y puede agruparse después en una factura de proveedor.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

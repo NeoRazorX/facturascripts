@@ -102,7 +102,7 @@ class Partida extends ModelClass
     /** @var float|int Porcentaje de recargo de equivalencia aplicado. */
     public $recargo;
 
-    /** @var float Saldo acumulado de la subcuenta tras la partida. */
+    /** @var float Saldo de la partida (el modelo no lo calcula). */
     public $saldo;
 
     /** @var float|int Tasa de conversión de la divisa utilizada. */

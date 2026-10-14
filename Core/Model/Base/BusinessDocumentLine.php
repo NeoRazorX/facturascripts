@@ -32,8 +32,9 @@ use FacturaScripts\Dinamic\Model\Variante;
  * Clase base abstracta para las líneas de cualquier documento de negocio.
  * Contiene los campos comunes a todas las líneas (producto, cantidad,
  * precio, descuentos, impuesto y totales) y la lógica compartida para
- * calcular importes, actualizar el stock del producto según el tipo de
- * documento y gestionar la trazabilidad de las líneas transformadas.
+ * actualizar el stock del producto según actualizastock y consultar las
+ * líneas padre e hijas mediante DocTransformation. El cálculo de importes
+ * no se hace aquí, lo realiza Calculator.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,6 +33,11 @@ trait SerieRelationTrait
     /** @var string Código de la serie asociada. */
     public $codserie;
 
+    /**
+     * Devuelve la serie según codserie.
+     *
+     * @return Serie
+     */
     public function getSerie(): Serie
     {
         return Series::get($this->codserie);

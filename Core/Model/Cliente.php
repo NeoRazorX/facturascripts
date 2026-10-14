@@ -45,17 +45,18 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  * `clientes` y se identifica con un código alfanumérico de hasta 10 caracteres
  * (`codcliente`) que se genera automáticamente si no se indica. Puede tener varias
  * direcciones asociadas, que son registros de `Contacto`, y varias cuentas bancarias
- * (`CuentaBancoCliente`); al crearlo se genera un contacto de facturación de forma
- * automática.
+ * (`CuentaBancoCliente`); al crearlo, si no tiene contacto de facturación
+ * (`idcontactofact`), se genera uno con sus datos.
  *
  * Concentra las condiciones comerciales que se aplican por defecto a sus documentos de
  * venta: agente, grupo de clientes, tarifa, forma de pago, serie, retención, régimen de
  * IVA, días de pago y riesgo máximo autorizado.
  *
- * En el plano contable, `getSubcuenta()` devuelve la subcuenta del cliente para el
- * ejercicio indicado y, si no existe, puede crearla a partir de la cuenta especial
- * `CLIENT` o heredarla del grupo de clientes. Dar de baja al cliente consiste en rellenar
- * `fechabaja`, que activa el indicador `debaja`.
+ * En el plano contable, `getSubcuenta()` busca la subcuenta propia del cliente (`codsubcuenta`)
+ * en el ejercicio indicado y, si no existe y se pide crearla, la crea a partir de la cuenta
+ * especial `CLIENT`. Si el cliente no tiene subcuenta propia, se usa la de su grupo de
+ * clientes y, en último caso, si se pide crearla, se genera una nueva. Dar de baja al
+ * cliente consiste en rellenar `fechabaja`, que activa el indicador `debaja`.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

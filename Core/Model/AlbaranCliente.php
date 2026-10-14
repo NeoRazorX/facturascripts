@@ -26,15 +26,15 @@ use FacturaScripts\Dinamic\Model\LineaAlbaranCliente as LineaAlbaran;
 
 /**
  * Albarán de cliente. Representa la entrega al cliente del material que se le ha vendido
- * y, por tanto, implica la salida de ese material del almacén de la empresa. Se almacena
+ * y, según el estado del documento, la salida de ese material del almacén. Se almacena
  * en la tabla `albaranescli` y hereda de `SalesDocument` toda la cabecera común de los
  * documentos de venta: cliente, almacén, serie, divisa, fechas y totales.
  *
  * Sus líneas son objetos `LineaAlbaranCliente` relacionados por `idalbaran`. Al crear una
  * línea nueva se hereda de la cabecera el estado del documento (que determina si se
- * actualiza el stock), la excepción de IVA del cliente y el IRPF, y se calculan los
- * importes con `Calculator`. Normalmente procede de un pedido y puede agruparse
- * posteriormente en una factura de cliente.
+ * actualiza el stock), la excepción de IVA del cliente y el IRPF; si la línea no
+ * trae referencia de producto, se calcula con `Calculator::calculateLine()`.
+ * Normalmente procede de un pedido y puede agruparse posteriormente en una factura de cliente.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

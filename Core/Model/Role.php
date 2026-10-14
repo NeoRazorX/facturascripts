@@ -46,7 +46,7 @@ class Role extends ModelClass
     /** @var string Código identificativo del rol. */
     public $codrole;
 
-    /** @var string Descripción del rol y de sus permisos. */
+    /** @var string Descripción del rol. */
     public $descripcion;
 
     public function addPage(string $page_name): bool

@@ -29,7 +29,7 @@ use FacturaScripts\Core\Tools;
  * columna properties como un JSON de pares clave-valor.
  * Los valores se leen y escriben como si fueran propiedades del modelo gracias
  * a los métodos mágicos, y normalmente se consultan de forma indirecta con
- * Tools::settings(). Las claves sensibles, como password, se ocultan en la API.
+ * Tools::settings(). En la API se oculta siempre la clave properties.password.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>

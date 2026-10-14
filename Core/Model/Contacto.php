@@ -38,9 +38,10 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
  * y proveedores utilizan sus contactos como direcciones de facturación y de envío.
  *
  * Puede estar vinculado a un cliente (`codcliente`), a un proveedor (`codproveedor`) y a un
- * agente (`codagente`), y los métodos `getCustomer()` y `getSupplier()` permiten convertirlo
- * en cliente o proveedor creando el registro correspondiente con sus datos. Al eliminarlo se
- * desvincula automáticamente de los clientes y proveedores que lo usaban como dirección.
+ * agente (`codagente`), y los métodos `getCustomer()` y `getSupplier()` devuelven el cliente
+ * o proveedor vinculado y, por defecto, si no existe lo crean con los datos del contacto.
+ * Al eliminarlo se desvincula automáticamente de los clientes y proveedores que lo usaban
+ * como dirección.
  *
  * Incorpora los datos fiscales y de contacto habituales mediante los traits de NIF, correo y
  * teléfonos, valida que la web sea una URL correcta y exige al menos nombre, email o

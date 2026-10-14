@@ -31,10 +31,9 @@ use FacturaScripts\Core\Validator;
  * mediante un código alfanumérico de hasta 8 caracteres (`codtrans`) que se genera
  * automáticamente si no se indica al guardar.
  *
- * Los albaranes y facturas de venta la referencian a través del campo `codtrans` para
- * indicar quién realiza el envío. Al guardar se valida el formato del código y que la
- * web sea una URL válida, y se limpia la caché de `DataSrc\AgenciasTransporte`, que
- * mantiene el listado en memoria para los desplegables.
+ * Los documentos de venta la referencian a través del campo `codtrans` para indicar quién
+ * realiza el envío. Al guardar se valida el formato del código y que la web sea una URL
+ * válida, y se limpia la caché de `DataSrc\AgenciasTransporte`.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>

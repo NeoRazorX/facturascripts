@@ -31,12 +31,13 @@ use FacturaScripts\Dinamic\Model\AttachedFile as DinFile;
  * documentos, clientes, productos, etc., sin necesidad de añadir campos a esas tablas.
  *
  * El registro relacionado se identifica por el nombre del modelo (`model`) junto con
- * `modelid` cuando su clave primaria es numérica o `modelcode` cuando es un código. Además
- * se guarda quién creó la relación, la fecha, unas observaciones y un campo `orden` para
+ * `modelid` y `modelcode`, que normalmente se rellenan ambos con la clave del registro.
+ * Además se guarda quién creó la relación, la fecha, unas observaciones y un campo `orden` para
  * poder ordenar los adjuntos de un mismo registro.
  *
  * El método `url()` resuelve dinámicamente la clase del modelo en `Dinamic` para devolver
- * la url del registro al que pertenece el archivo.
+ * la url del registro al que pertenece el archivo (usa `modelcode` si no está vacío, si no
+ * `modelid`).
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -56,10 +57,10 @@ class AttachedFileRelation extends ModelClass
     /** @var string Nombre del modelo al que pertenece el archivo. */
     public $model;
 
-    /** @var int Identificador numérico del registro relacionado. */
+    /** @var int Identificador numérico (entero) de la clave del registro relacionado. */
     public $modelid;
 
-    /** @var string Código del registro relacionado cuando su clave no es numérica. */
+    /** @var string Clave (id o código) del registro relacionado, en formato texto. */
     public $modelcode;
 
     /** @var string Nombre del usuario que creó la relación. */

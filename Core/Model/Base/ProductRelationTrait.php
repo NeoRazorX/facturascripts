@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,6 +32,11 @@ trait ProductRelationTrait
     /** @var int Identificador del producto asociado. */
     public $idproducto;
 
+    /**
+     * Devuelve el producto según idproducto (vacío si no existe).
+     *
+     * @return Producto
+     */
     public function getProducto(): Producto
     {
         $producto = new Producto();

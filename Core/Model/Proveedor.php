@@ -40,7 +40,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 /**
  * Un proveedor o acreedor de la empresa. Guarda sus datos fiscales, de contacto
  * y las preferencias que se aplican por defecto en sus documentos de compra:
- * forma de pago, serie, retención, régimen de IVA y divisa.
+ * forma de pago, serie, retención y régimen de IVA.
  * Puede tener varias direcciones (contactos) y varias cuentas bancarias, y al
  * crearlo se genera automáticamente su contacto principal.
  * También resuelve la subcuenta contable del proveedor para cada ejercicio,

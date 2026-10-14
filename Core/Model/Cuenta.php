@@ -40,8 +40,8 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  * libre para un cliente o proveedor, partiendo de los números de su código y probando
  * alternativas hasta encontrar uno que no esté en uso.
  *
- * Puede vincularse a una cuenta especial (`codcuentaesp`), que es lo que permite localizar
- * automáticamente la cuenta de clientes, proveedores, bancos, etc. de cada ejercicio. No se
+ * Puede vincularse a una cuenta especial (`codcuentaesp`), que permite
+ * localizar en cada ejercicio la cuenta de clientes, proveedores, bancos, etc. No se
  * puede guardar ni eliminar si el ejercicio está cerrado, salvo que se desactiven las
  * comprobaciones adicionales con `disableAdditionalTest()`.
  *

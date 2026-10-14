@@ -26,9 +26,9 @@ use FacturaScripts\Core\Tools;
 
 /**
  * Trait que añade el tipo de operación fiscal del documento (operacion),
- * y calcula automáticamente si corresponde marcarlo como operación
- * intracomunitaria comprobando el país del cliente/proveedor y su
- * validez en el censo VIES.
+ * y el método setIntracomunitaria(), que comprueba el país de la empresa y
+ * del documento y su validez en VIES para marcarlo como operación
+ * intracomunitaria. No es automático: hay que llamarlo explícitamente.
  *
  * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
@@ -41,6 +41,13 @@ trait IntracomunitariaTrait
      */
     public $operacion;
 
+    /**
+     * Asigna operacion = intracomunitaria si se cumplen las comprobaciones (empresa y
+     * destinatario en la UE y en países distintos, y VIES válido para ambos).
+     * Devuelve false, con un aviso, si alguna no se cumple.
+     *
+     * @return bool
+     */
     public function setIntracomunitaria(): bool
     {
         // comprobamos que el país de la empresa este dentro de la UE

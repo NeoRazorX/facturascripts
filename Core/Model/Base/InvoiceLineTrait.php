@@ -25,14 +25,25 @@ use FacturaScripts\Dinamic\Model\DocTransformation;
 /**
  * Trait con la funcionalidad común de las líneas de factura, principalmente
  * el cálculo de la cantidad ya devuelta o rectificada de una línea a partir
- * de las líneas de las facturas rectificativas que la referencian.
+ * de las líneas que la referencian en idlinearect o, si no hay, de las
+ * transformaciones de documentos (DocTransformation).
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 trait InvoiceLineTrait
 {
+    /**
+     * Indica si la línea puede tener cantidad rectificada; lo implementa la clase que usa el trait.
+     *
+     * @return bool
+     */
     abstract public function hasRefundedQuantity(): bool;
 
+    /**
+     * Devuelve la cantidad (en valor absoluto) ya rectificada o devuelta de la línea.
+     *
+     * @return float
+     */
     public function refundedQuantity(): float
     {
         // si no hay una rectificativa, devolvemos 0

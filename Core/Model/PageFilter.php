@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,8 +27,8 @@ use FacturaScripts\Core\Tools;
  * Filtro guardado de una vista de FacturaScripts, almacenado en la tabla
  * pages_filters. Permite que cada usuario conserve con un nombre descriptivo
  * la combinación de filtros que aplica habitualmente sobre una página, para
- * poder recuperarla después con un solo clic. Los valores de los filtros se
- * guardan codificados en JSON y se decodifican a array al cargarlos.
+ * poder recuperarla después. Los valores de los filtros se guardan
+ * codificados en JSON y se decodifican a array al cargarlos.
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */

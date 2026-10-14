@@ -35,8 +35,9 @@ use FacturaScripts\Dinamic\Model\Stock as DinStock;
  * Cada una de las combinaciones de un producto, identificada por su referencia
  * y por hasta cuatro valores de atributo (talla, color, etc.). Guarda el código
  * de barras, el coste, el margen, el precio de venta y el stock físico total.
- * Todo producto tiene al menos una variante, que no puede eliminarse, ni
- * tampoco aquellas que aparezcan en líneas de documentos de compra o venta.
+ * Todo producto tiene una variante principal (la que comparte referencia con el
+ * producto), que no puede eliminarse; tampoco las que aparezcan en líneas de
+ * documentos de compra o venta.
  * Al guardarla se recalcula el precio si hay margen y se actualizan los datos
  * del producto al que pertenece.
  *

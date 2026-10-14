@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025    Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026    Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014         Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,8 +28,9 @@ use FacturaScripts\Dinamic\Model\PresupuestoCliente as DinPresupuestoCliente;
  * Línea de un presupuesto de cliente, almacenada en la tabla
  * lineaspresupuestoscli. Guarda el producto o servicio ofertado junto con su
  * cantidad, precio, descuentos e impuestos, y se relaciona con el presupuesto
- * mediante idpresupuesto. Al aprobar el presupuesto estas líneas se copian al
- * pedido, albarán o factura correspondiente.
+ * mediante idpresupuesto. Al cambiar el presupuesto a un estado que genera documento,
+ * es el propio documento (TransformerDocument) quien copia las líneas, solo con la
+ * cantidad pendiente (cantidad - servido).
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

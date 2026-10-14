@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,7 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
  * Trait que añade la relación con el ejercicio contable (Ejercicio) a partir
- * de codejercicio, permitiendo obtener el ejercicio asociado o, si no se
- * indica ninguno, el ejercicio actual por defecto.
+ * de codejercicio, permitiendo obtener el ejercicio asociado.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -38,6 +37,13 @@ trait ExerciseRelationTrait
      */
     public $codejercicio;
 
+    /**
+     * Devuelve el ejercicio del código indicado o, si se deja vacío, el de $this->codejercicio.
+     * Si el código no existe, devuelve un Ejercicio vacío.
+     *
+     * @param string $codejercicio
+     * @return Ejercicio
+     */
     public function getExercise(string $codejercicio = ''): Ejercicio
     {
         $code = empty($codejercicio) ? $this->codejercicio : $codejercicio;

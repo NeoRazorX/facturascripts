@@ -34,6 +34,11 @@ trait CompanyRelationTrait
     /** @var int|null Identificador de la empresa asociada. */
     public $idempresa;
 
+    /**
+     * Devuelve la empresa asociada según idempresa.
+     *
+     * @return Empresa
+     */
     public function getCompany(): Empresa
     {
         return Empresas::get($this->idempresa);

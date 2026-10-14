@@ -28,10 +28,10 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
  * Clase base abstracta para los documentos que pueden transformarse en
- * otro tipo de documento (presupuesto → pedido → albarán → factura). Añade
- * a BusinessDocument el estado del documento (EstadoDocumento), el
- * historial de transformaciones (DocTransformation) y la generación
- * automática de los documentos relacionados al cambiar de estado.
+ * otro tipo de documento (presupuesto, pedido, albarán y factura). Añade
+ * a BusinessDocument el estado del documento (EstadoDocumento), la consulta de
+ * documentos padre e hijos (DocTransformation) y la generación de un nuevo
+ * documento al cambiar a un estado con generadoc.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

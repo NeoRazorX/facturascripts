@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,10 @@ namespace FacturaScripts\Core\Model\Base;
 trait GravatarTrait
 {
     /**
-     * Returns gravatar image url.
+     * Devuelve la URL de la imagen de Gravatar o una cadena vacía si no hay email.
+     *
+     * @param int $size Tamaño de la imagen en píxeles.
+     * @return string
      */
     public function gravatar(int $size = 80): string
     {

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,8 +37,9 @@ use FacturaScripts\Dinamic\Model\User;
  * Clase base abstracta para todos los documentos de negocio (presupuestos,
  * pedidos, albaranes y facturas, tanto de venta como de compra). Reúne los
  * campos y comportamientos comunes a cualquier documento: empresa, ejercicio,
- * divisa, forma de pago, serie y operación intracomunitaria, además de los
- * datos fiscales y de dirección del cliente o proveedor asociado.
+ * divisa, forma de pago, serie y operación intracomunitaria, además del
+ * cifnif del cliente o proveedor. Los datos de dirección están en
+ * SalesDocument y PurchaseDocument.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

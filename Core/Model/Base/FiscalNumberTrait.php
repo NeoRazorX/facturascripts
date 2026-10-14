@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,8 @@ use FacturaScripts\Dinamic\Lib\FiscalNumberValidator;
 
 /**
  * Trait que añade el número de identificación fiscal (cifnif) junto con su
- * tipo (tipoidfiscal), y valida el formato del identificador según el país
- * y el tipo indicado mediante FiscalNumberValidator.
+ * tipo (tipoidfiscal), y valida el identificador mediante FiscalNumberValidator,
+ * que solo depende del tipo y no valida si el tipo tiene validar=false.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -37,6 +37,11 @@ trait FiscalNumberTrait
     /** @var string Tipo de identificación fiscal utilizado. */
     public $tipoidfiscal;
 
+    /**
+     * Sanea cifnif y tipoidfiscal y, si hay cifnif, lo valida; devuelve false si no es válido.
+     *
+     * @return bool
+     */
     protected function testFiscalNumber(): bool
     {
         $this->cifnif = Tools::noHtml($this->cifnif);

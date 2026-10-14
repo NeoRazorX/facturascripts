@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify

@@ -31,8 +31,8 @@ use FacturaScripts\Dinamic\Model\Variante;
 /**
  * Clase base abstracta para los documentos de compra (presupuesto, pedido,
  * albarán y factura de proveedor). Añade a TransformerDocument los datos
- * propios del proveedor (dirección, contacto, agente) y la lógica de
- * cálculo de totales mediante Calculator.
+ * propios del proveedor (código, nombre, dirección y numproveedor). Solo
+ * calcula con Calculator la línea nueva en getNewProductLine().
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

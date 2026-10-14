@@ -27,8 +27,9 @@ use FacturaScripts\Core\Tools;
 /**
  * Fabricante o marca de los productos. Se utiliza para clasificar el catálogo y poder
  * filtrar o agrupar los artículos por su marca comercial. Los productos se relacionan
- * con el fabricante mediante el campo codfabricante, y numproductos mantiene el número
- * de artículos asociados. Si no se indica código, se genera uno automáticamente.
+ * con el fabricante mediante el campo codfabricante, y numproductos guarda el número
+ * de artículos asociados, que no mantiene el modelo sino el cron diario
+ * (Cron::updateManufacturers). Si no se indica código, se genera uno automáticamente.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
@@ -43,7 +44,7 @@ class Fabricante extends ModelClass
     /** @var string Nombre del fabricante. */
     public $nombre;
 
-    /** @var int Número de productos asociados al fabricante. */
+    /** @var int Número de productos asociados al fabricante; lo recalcula el cron diario. */
     public $numproductos;
 
     public function clear(): void

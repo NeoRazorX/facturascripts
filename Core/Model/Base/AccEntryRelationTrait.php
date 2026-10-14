@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,6 +33,11 @@ trait AccEntryRelationTrait
     /** @var int Identificador del asiento contable asociado. */
     public $idasiento;
 
+    /**
+     * Devuelve el asiento contable asociado (si idasiento no existe, un Asiento vacío).
+     *
+     * @return Asiento
+     */
     public function getAccountingEntry(): Asiento
     {
         $accEntry = new Asiento();

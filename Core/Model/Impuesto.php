@@ -33,7 +33,9 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  * de equivalencia, según el valor del campo tipo. También permite indicar las subcuentas
  * contables de IVA repercutido y soportado, con sus variantes intracomunitaria y de recargo,
  * que se usan al generar los asientos; si no se indican, se obtienen de las cuentas especiales
- * IVAREP, IVASOP e IVARRE. El impuesto predeterminado no se puede eliminar.
+ * IVAREP, IVASOP e IVARRE. Las variantes intracomunitaria y de recargo (soportado), si no
+ * se indican, usan la subcuenta general de IVA correspondiente. El impuesto predeterminado
+ * no se puede eliminar.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
