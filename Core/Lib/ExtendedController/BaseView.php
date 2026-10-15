@@ -444,11 +444,14 @@ abstract class BaseView
     /**
      * Añade un grupo de botones (dropdown) a la fila de acciones de la vista.
      * Después se pueden añadir botones a este grupo llamando a addButton()
-     * pasando la clave 'group' con el mismo nombre.
+     * pasando la clave 'group' con el mismo nombre. Si el grupo ya existe, se
+     * actualizan sus datos (icono, etiqueta, color...) en lugar de duplicarlo.
      *
-     * @param array $groupArray
+     * @param array $groupArray debe incluir la clave 'name', que identifica el grupo
      *
      * @return BaseView
+     *
+     * @throws \InvalidArgumentException si falta 'name' o está vacío
      */
     public function addButtonGroup(array $groupArray): BaseView
     {

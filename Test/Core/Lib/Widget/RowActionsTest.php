@@ -20,10 +20,69 @@
 namespace FacturaScripts\Test\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\Widget\RowActions;
+use FacturaScripts\Core\Tools;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class RowActionsTest extends TestCase
 {
+    public function testAddButtonGroupExigeNombre(): void
+    {
+        $row = new RowActions(['children' => []]);
+
+        foreach ([[], ['name' => ''], ['name' => null], ['label' => 'documents']] as $group) {
+            try {
+                $row->addButtonGroup($group);
+                $this->fail('Se esperaba una excepción para el grupo ' . json_encode($group));
+            } catch (InvalidArgumentException $e) {
+                $this->assertStringContainsString('name', $e->getMessage());
+            }
+        }
+
+        // los intentos fallidos no dejan nada en la fila
+        $this->assertSame('', $row->render());
+    }
+
+    public function testAddButtonGroupNoDuplicaUnGrupoExistente(): void
+    {
+        $row = new RowActions(['children' => []]);
+        $row->addButtonGroup(['name' => 'doc-actions', 'label' => 'documents']);
+        $row->addButton(['action' => 'first', 'group' => 'doc-actions']);
+
+        // segunda llamada: actualiza el icono, conserva etiqueta y botones
+        $row->addButtonGroup(['name' => 'doc-actions', 'icon' => 'fa-solid fa-star']);
+        $row->addButton(['action' => 'second', 'group' => 'doc-actions']);
+
+        $html = $row->render();
+        $this->assertSame(1, substr_count($html, 'data-bs-toggle="dropdown"'));
+        $this->assertStringContainsString('fa-star', $html);
+        $this->assertStringContainsString(Tools::trans('documents'), $html);
+        $this->assertTrue($row->hasButton('first', 'doc-actions'));
+        $this->assertTrue($row->hasButton('second', 'doc-actions'));
+    }
+
+    public function testAddButtonGroupConservaLosBotonesDelGrupoAlFusionar(): void
+    {
+        $row = new RowActions(['children' => []]);
+        $row->addButtonGroup(['name' => 'group-a', 'children' => [['tag' => 'button', 'action' => 'one']]]);
+        $row->addButtonGroup(['name' => 'group-a', 'children' => [['tag' => 'button', 'action' => 'two']]]);
+
+        $this->assertTrue($row->hasButton('one', 'group-a'));
+        $this->assertTrue($row->hasButton('two', 'group-a'));
+    }
+
+    public function testAddButtonGroupAutoCreadoPorAddButtonSePuedeCompletar(): void
+    {
+        $row = new RowActions(['children' => []]);
+        $row->addButton(['action' => 'test', 'group' => 'auto-group']);
+        $row->addButtonGroup(['name' => 'auto-group', 'label' => 'my-label', 'icon' => 'fa-solid fa-star']);
+
+        $html = $row->render();
+        $this->assertSame(1, substr_count($html, 'data-bs-toggle="dropdown"'));
+        $this->assertStringContainsString('fa-star', $html);
+        $this->assertTrue($row->hasButton('test', 'auto-group'));
+    }
+
     public function testHasButtonBuscaEntreSueltosYGrupos(): void
     {
         $row = new RowActions(['children' => []]);

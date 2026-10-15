@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Tools;
+use InvalidArgumentException;
 
 /**
  * Description of RowActions
@@ -73,15 +74,34 @@ class RowActions extends VisualItem
     /**
      * Añade un nuevo grupo de botones (dropdown). Se pueden colocar botones
      * dentro llamando a addButton() con la clave 'group' establecida al
-     * nombre de este grupo.
+     * nombre de este grupo. Si ya existe un grupo con el mismo nombre, no se
+     * crea otro: sus datos (icono, etiqueta, color...) se actualizan con los
+     * nuevos y se conservan sus botones.
      *
-     * @param array $groupArray
+     * @param array $groupArray debe incluir la clave 'name', que identifica el grupo
+     *
+     * @throws InvalidArgumentException si falta 'name' o está vacío
      */
     public function addButtonGroup(array $groupArray): void
     {
+        $name = $groupArray['name'] ?? '';
+        if (!is_string($name) || $name === '') {
+            throw new InvalidArgumentException('A button group requires a non-empty name.');
+        }
+
         $groupArray['tag'] = 'group';
         if (!isset($groupArray['children'])) {
             $groupArray['children'] = [];
+        }
+
+        foreach ($this->children as $key => $child) {
+            if (($child['tag'] ?? '') !== 'group' || ($child['name'] ?? '') !== $name) {
+                continue;
+            }
+
+            $groupArray['children'] = array_merge($child['children'] ?? [], $groupArray['children']);
+            $this->children[$key] = array_merge($child, $groupArray);
+            return;
         }
 
         $this->children[] = $groupArray;
