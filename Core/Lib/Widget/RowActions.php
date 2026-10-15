@@ -87,6 +87,56 @@ class RowActions extends VisualItem
         $this->children[] = $groupArray;
     }
 
+    /**
+     * Indica si existe un botón con la acción indicada. Si se indica un
+     * grupo, solo se busca dentro de ese grupo; si no, se busca tanto entre
+     * los botones sueltos como dentro de cualquier grupo.
+     *
+     * @param string $action
+     * @param string $group
+     *
+     * @return bool
+     */
+    public function hasButton(string $action, string $group = ''): bool
+    {
+        foreach ($this->children as $child) {
+            $tag = $child['tag'] ?? '';
+            if ($tag === 'button' && $group === '' && ($child['action'] ?? '') === $action) {
+                return true;
+            }
+
+            if ($tag !== 'group' || ($group !== '' && ($child['name'] ?? '') !== $group)) {
+                continue;
+            }
+
+            foreach ($child['children'] ?? [] as $item) {
+                if (($item['tag'] ?? 'button') === 'button' && ($item['action'] ?? '') === $action) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Indica si existe un grupo de botones (dropdown) con el nombre indicado.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasButtonGroup(string $name): bool
+    {
+        foreach ($this->children as $child) {
+            if (($child['tag'] ?? '') === 'group' && ($child['name'] ?? '') === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function render(bool $small = false, string $viewName = ''): string
     {
         $html = '';

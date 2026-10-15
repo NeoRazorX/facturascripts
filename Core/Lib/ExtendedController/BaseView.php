@@ -341,6 +341,35 @@ abstract class BaseView
     }
 
     /**
+     * Indica si la fila de acciones de la vista tiene un botón con la acción
+     * indicada. Si se indica un grupo, solo se busca dentro de ese grupo.
+     *
+     * @param string $action
+     * @param string $group
+     *
+     * @return bool
+     */
+    public function hasButton(string $action, string $group = ''): bool
+    {
+        $row = $this->getRow('actions');
+        return $row && method_exists($row, 'hasButton') && $row->hasButton($action, $group);
+    }
+
+    /**
+     * Indica si la fila de acciones de la vista tiene un grupo de botones
+     * (dropdown) con el nombre indicado.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasButtonGroup(string $name): bool
+    {
+        $row = $this->getRow('actions');
+        return $row && method_exists($row, 'hasButtonGroup') && $row->hasButtonGroup($name);
+    }
+
+    /**
      * Verifies the structure and loads into the model the given data array
      *
      * @param array $data
