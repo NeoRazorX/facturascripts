@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Controller;
 
 use FacturaScripts\Core\Controller\ApiCreateFacturaRectificativaCliente;
 use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Lib\RefundReason;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -106,6 +107,41 @@ final class ApiCreateFacturaRectificativaClienteTest extends TestCase
         $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
         $this->assertEquals($invoice->idestado, $refunds[0]->idestado, 'refund-should-keep-invoice-status');
         $this->assertEquals($line2->actualizastock, $refundLines[0]->actualizastock, 'bad-refund-line-stock');
+
+        // limpiamos (primero la rectificativa, luego la original)
+        $this->deleteRefund($refunds[0]);
+        $invoice->reload();
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
+    public function testRefundWithReason(): void
+    {
+        // creamos una factura con una línea
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+
+        // un motivo que no existe se rechaza sin crear nada
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'motivorect' => 'NO_EXISTE',
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'invalid-reason-should-fail');
+        $this->assertCount(0, FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]), 'refund-created-with-invalid-reason');
+
+        // con un motivo válido, la rectificativa lo guarda
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'motivorect' => RefundReason::ES_REFUND_REASON_80_4,
+        ]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'refund-with-reason-failed');
+        $refunds = FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]);
+        $this->assertCount(1, $refunds, 'refund-not-created');
+        $this->assertEquals(RefundReason::ES_REFUND_REASON_80_4, $refunds[0]->motivorect, 'bad-refund-reason');
 
         // limpiamos (primero la rectificativa, luego la original)
         $this->deleteRefund($refunds[0]);
