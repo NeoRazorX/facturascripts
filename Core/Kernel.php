@@ -180,7 +180,66 @@ final class Kernel
         WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PedidoProveedor.Update');
         WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PresupuestoProveedor.Update');
 
+        // avisamos al navegador cuando la respuesta no sustituye la página (descargas de ficheros)
+        if (PHP_SAPI !== 'cli') {
+            header_register_callback([self::class, 'signalNonPageResponse']);
+        }
+
         self::stopTimer('kernel::init');
+    }
+
+    /**
+     * Avisa al navegador de que la respuesta no va a sustituir la página actual (descarga de un
+     * fichero, PDF, etc.) para que pueda quitar el aviso de procesando. PHP lo ejecuta justo antes
+     * de enviar las cabeceras, así que cubre cualquier respuesta, la envíe el controlador mediante
+     * Response o directamente con header().
+     *
+     * No hay que llamarlo directamente: lo registra init() con header_register_callback().
+     * El navegador manda en la cookie fsSpinner el identificador de la espera activa, y aquí se
+     * devuelve en la cookie fsSpinnerDone.
+     */
+    public static function signalNonPageResponse(): void
+    {
+        // solo si el navegador está esperando una respuesta
+        $token = $_COOKIE['fsSpinner'] ?? '';
+        if (!is_string($token) || 1 !== preg_match('/^[A-Za-z0-9]{1,64}$/', $token)) {
+            return;
+        }
+
+        // solo las peticiones de navegación (envío de formularios): las peticiones en segundo
+        // plano (ajax) no deben quitar el aviso. Sec-Fetch-Dest no llega en conexiones http sin
+        // certificado, así que entonces se usa la cabecera Accept, que en las navegaciones
+        // empieza por text/html.
+        $dest = $_SERVER['HTTP_SEC_FETCH_DEST'] ?? '';
+        if ($dest !== '') {
+            if ($dest !== 'document') {
+                return;
+            }
+        } elseif (0 !== strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'text/html')) {
+            return;
+        }
+
+        // si la respuesta es una página, el navegador la mostrará y el aviso desaparece solo
+        $isPage = true;
+        foreach (headers_list() as $header) {
+            $header = strtolower($header);
+            if (0 === strpos($header, 'content-disposition:') && false !== strpos($header, 'attachment')) {
+                $isPage = false;
+            } elseif (0 === strpos($header, 'content-type:') && 0 !== strpos(trim(substr($header, 13)), 'text/html')) {
+                $isPage = false;
+            }
+        }
+        if ($isPage) {
+            return;
+        }
+
+        setcookie('fsSpinnerDone', $token, [
+            'expires' => time() + 60,
+            'path' => '/',
+            'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+            'httponly' => false,
+            'samesite' => 'Lax',
+        ]);
     }
 
     /**
