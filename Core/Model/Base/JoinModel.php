@@ -206,8 +206,12 @@ abstract class JoinModel
     public function delete(): bool
     {
         if (isset($this->masterModel)) {
+            // cargamos el modelo completo para que su delete() y sus extensiones tengan todos los datos
             $primaryColumn = $this->masterModel->primaryColumn();
-            $this->masterModel->{$primaryColumn} = $this->primaryColumnValue();
+            $this->masterModel->clear();
+            if (false === $this->masterModel->loadFromCode($this->primaryColumnValue())) {
+                $this->masterModel->{$primaryColumn} = $this->primaryColumnValue();
+            }
             return $this->masterModel->delete();
         }
 
