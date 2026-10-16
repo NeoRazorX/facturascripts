@@ -81,6 +81,34 @@ final class JoinModelTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
     }
 
+    public function testExistsAfterLoad(): void
+    {
+        // creamos el asiento
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test JoinModel';
+        $this->assertTrue($asiento->save(), 'asiento-cant-save');
+
+        // creamos una partida
+        $partida = new Partida();
+        $partida->idasiento = $asiento->idasiento;
+        $partida->codsubcuenta = $this->getSampleSubaccount($asiento->getExercise());
+        $partida->concepto = 'Test JoinModel';
+        $partida->debe = 100;
+        $this->assertTrue($partida->save(), 'partida-cant-save');
+
+        // cargamos la partida desde el join y debe existir
+        $join = $this->getJoinModel();
+        $this->assertTrue($join->loadFromCode($partida->idpartida), 'join-cant-load');
+        $this->assertTrue($join->exists(), 'join-not-exists-after-load');
+
+        // eliminamos la partida y el join ya no debe existir
+        $this->assertTrue($partida->delete(), 'partida-cant-delete');
+        $this->assertFalse($join->exists(), 'join-exists-after-delete');
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

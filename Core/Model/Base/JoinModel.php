@@ -234,7 +234,14 @@ abstract class JoinModel
      */
     public function exists(): bool
     {
-        return isset($this->masterModel) ? $this->masterModel->exists() : $this->count() > 0;
+        if (isset($this->masterModel)) {
+            // asignamos la clave al master, que no se actualiza al cargar el join
+            $primaryColumn = $this->masterModel->primaryColumn();
+            $this->masterModel->{$primaryColumn} = $this->primaryColumnValue();
+            return $this->masterModel->exists();
+        }
+
+        return $this->count() > 0;
     }
 
     public function getModelFields(): array

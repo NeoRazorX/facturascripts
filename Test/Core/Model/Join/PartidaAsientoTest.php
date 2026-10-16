@@ -122,6 +122,34 @@ final class PartidaAsientoTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
     }
 
+    public function testExistsAfterLoad(): void
+    {
+        // creamos el asiento
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test PartidaAsiento';
+        $this->assertTrue($asiento->save(), 'asiento-cant-save');
+
+        // creamos una partida
+        $partida = new Partida();
+        $partida->idasiento = $asiento->idasiento;
+        $partida->codsubcuenta = $this->getSampleSubaccount($asiento->getExercise());
+        $partida->concepto = 'Test PartidaAsiento';
+        $partida->debe = 100;
+        $this->assertTrue($partida->save(), 'partida-cant-save');
+
+        // cargamos la partida desde el join y debe existir
+        $join = new PartidaAsiento();
+        $this->assertTrue($join->load($partida->idpartida), 'join-cant-load');
+        $this->assertTrue($join->exists(), 'join-not-exists-after-load');
+
+        // eliminamos la partida y el join ya no debe existir
+        $this->assertTrue($partida->delete(), 'partida-cant-delete');
+        $this->assertFalse($join->exists(), 'join-exists-after-delete');
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
+    }
+
     private function getRecordingJoin(): PartidaAsiento
     {
         // join cuyo modelo master guarda los datos con los que se llama a su delete()
