@@ -33,7 +33,8 @@ final class MegaSearchTest extends TestCase
         $data = [
             'results' => [
                 ['title' => 'Factura <b>1</b>', 'description' => '<p>Texto</p>', 'url' => 'https://facturascripts.com/a'],
-                ['title' => 'Sin https', 'url' => 'http://facturascripts.com/b'],
+                ['title' => 'Con http', 'url' => 'http://city.localhost/ayuda/b'],
+                ['title' => 'Ftp', 'url' => 'ftp://facturascripts.com/c'],
                 ['title' => 'Javascript', 'url' => 'javascript:alert(1)'],
                 ['title' => 'Sin url'],
                 'no es un array',
@@ -41,7 +42,8 @@ final class MegaSearchTest extends TestCase
         ];
         $section = $controller->docsSearchResults($data);
         $this->assertArrayHasKey('docs', $section);
-        $this->assertCount(1, $section['docs']['results']);
+        $this->assertCount(2, $section['docs']['results']);
+        $this->assertSame('http://city.localhost/ayuda/b', $section['docs']['results'][1]['url']);
 
         $item = $section['docs']['results'][0];
         $this->assertSame('https://facturascripts.com/a', $item['url']);

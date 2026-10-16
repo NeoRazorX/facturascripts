@@ -81,8 +81,8 @@ class MegaSearch extends Controller
                 continue;
             }
 
-            // solo aceptamos enlaces https
-            if (stripos($item['url'], 'https://') !== 0 || filter_var($item['url'], FILTER_VALIDATE_URL) === false) {
+            // solo aceptamos enlaces http o https
+            if (preg_match('#^https?://#i', $item['url']) !== 1 || filter_var($item['url'], FILTER_VALIDATE_URL) === false) {
                 continue;
             }
 
@@ -178,12 +178,12 @@ class MegaSearch extends Controller
         $lang = Tools::lang()->getLang();
         $cacheKey = 'megasearch-docs-' . md5($url . '|' . $lang . '|' . $this->query);
         $json = Cache::get($cacheKey);
-        if (!is_array($json)) {
+        if (empty($json) || !is_array($json)) {
             $request = Http::get($url, ['query' => $this->query, 'lang' => $lang])->setTimeout(5);
             $json = $request->ok() ? $this->docsSearchResults($request->json()) : [];
 
-            // solo guardamos en caché las respuestas correctas
-            if ($request->ok()) {
+            // solo guardamos en caché las respuestas con resultados
+            if (!empty($json)) {
                 Cache::set($cacheKey, $json);
             }
         }
