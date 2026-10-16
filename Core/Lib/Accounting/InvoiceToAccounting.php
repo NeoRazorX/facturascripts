@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
@@ -189,6 +190,9 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Añade las líneas de retención de IRPF de compras al asiento, repartidas por
+     * la subcuenta de IRPF del producto/familia o, en su defecto, la de la retención.
+     *
      * @param Asiento $entry
      *
      * @return bool
@@ -199,8 +203,8 @@ class InvoiceToAccounting extends AccountingClass
             return true;
         }
 
-        $retention = new Retencion();
-        if (false === $retention->loadFromPercentage($this->subtotals['irpf'])) {
+        $retention = $this->getRetention();
+        if (null === $retention) {
             Tools::log()->warning('irpf-record-not-found', ['%value%' => $this->subtotals['irpf']]);
             return false;
         }
@@ -324,6 +328,9 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Añade la línea de retención de IRPF de ventas al asiento, en la subcuenta
+     * de la retención o, en su defecto, en la cuenta especial IRPF.
+     *
      * @param Asiento $entry
      *
      * @return bool
@@ -334,8 +341,8 @@ class InvoiceToAccounting extends AccountingClass
             return true;
         }
 
-        $retention = new Retencion();
-        if (false === $retention->loadFromPercentage($this->subtotals['irpf'])) {
+        $retention = $this->getRetention();
+        if (null === $retention) {
             Tools::log()->warning('irpf-record-not-found', ['%value%' => $this->subtotals['irpf']]);
             return false;
         }
@@ -477,6 +484,34 @@ class InvoiceToAccounting extends AccountingClass
 
         $this->counterpart = $subAccount;
         return $this->addBasicLine($entry, $subAccount, false);
+    }
+
+    /**
+     * Obtiene la retención a contabilizar para el porcentaje de IRPF del documento.
+     * Usa la del cliente/proveedor o la de por defecto si su porcentaje coincide;
+     * en otro caso, la primera retención con ese porcentaje.
+     *
+     * @return Retencion|null
+     */
+    protected function getRetention(): ?Retencion
+    {
+        $codes = [
+            $this->document->getSubject()->codretencion,
+            Tools::settings('default', 'codretencion'),
+        ];
+        foreach ($codes as $code) {
+            if (empty($code)) {
+                continue;
+            }
+
+            $retention = Retenciones::get($code);
+            if ($retention->exists() && Tools::floatCmp($retention->porcentaje, $this->subtotals['irpf'], FS_NF0, true)) {
+                return $retention;
+            }
+        }
+
+        $retention = new Retencion();
+        return $retention->loadFromPercentage($this->subtotals['irpf']) ? $retention : null;
     }
 
     /**
