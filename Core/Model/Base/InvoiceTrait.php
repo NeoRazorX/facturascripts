@@ -209,6 +209,7 @@ trait InvoiceTrait
                 }
             // no break
             case 'fechadevengo':
+            case 'operacion':
             case 'total':
                 return $this->onChangeTotal();
 

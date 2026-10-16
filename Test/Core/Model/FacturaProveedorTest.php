@@ -619,6 +619,53 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete());
     }
 
+    public function testChangeOperationRegeneratesAccountingEntry(): void
+    {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
+        // creamos un proveedor
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save());
+
+        // creamos una factura intracomunitaria
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($supplier);
+        $invoice->operacion = InvoiceOperation::INTRA_COMMUNITY;
+        $this->assertTrue($invoice->save());
+
+        // añadimos una línea
+        $line = $invoice->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save());
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true));
+        $this->assertEquals(100, $invoice->total);
+        $oldEntryId = $invoice->idasiento;
+        $this->assertNotEmpty($oldEntryId);
+
+        // cambiamos la operación a inversión del sujeto pasivo, el total no cambia
+        $invoice->operacion = InvoiceOperation::REVERSE_CHARGE;
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true));
+        $this->assertEquals(100, $invoice->total);
+
+        // comprobamos que se ha regenerado el asiento
+        $this->assertNotEmpty($invoice->idasiento);
+        $this->assertNotEquals($oldEntryId, $invoice->idasiento, 'accounting-entry-not-regenerated');
+        $this->assertCount(4, $invoice->getAccountingEntry()->getLines());
+
+        // eliminamos
+        $this->assertTrue($invoice->delete());
+        $this->assertTrue($supplier->getDefaultAddress()->delete());
+        $this->assertTrue($supplier->delete());
+    }
+
     public function testPropertiesLength(): void
     {
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
