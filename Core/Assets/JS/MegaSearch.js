@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,7 +39,9 @@ function json2tr(json) {
                 tableTR += "<td>" + val2 + "</td>";
             }
         });
-        items.push("<tr class='clickableRow' data-href='" + val.url + "'>" + tableTR + "</tr>");
+        // external links are opened in a new tab
+        var target = /^https?:\/\//i.test(val.url) ? " data-bs-target='_blank'" : "";
+        items.push("<tr class='clickableRow' data-href='" + val.url + "'" + target + ">" + tableTR + "</tr>");
     });
 
     return items;
