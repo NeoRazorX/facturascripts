@@ -49,6 +49,29 @@ class BaseViewTest extends TestCase
         $this->assertEmpty($base_view->getPagination());
     }
 
+    public function testHasButtonYHasButtonGroup(): void
+    {
+        // sin cargar la vista no hay fila de acciones y no debe fallar
+        $view = new ListView(self::VIEW_NAME, 'countries', Pais::class, 'fa-solid fa-globe');
+        $this->assertFalse($view->hasButton('test'));
+        $this->assertFalse($view->hasButtonGroup('test-group'));
+
+        $view->loadPageOptions();
+        $this->assertFalse($view->hasButton('test'));
+        $this->assertFalse($view->hasButtonGroup('test-group'));
+
+        $view->addButtonGroup(['name' => 'test-group', 'label' => 'test']);
+        $view->addButton(['action' => 'test', 'group' => 'test-group']);
+        $view->addButton(['action' => 'loose']);
+
+        $this->assertTrue($view->hasButtonGroup('test-group'));
+        $this->assertTrue($view->hasButton('test'));
+        $this->assertTrue($view->hasButton('test', 'test-group'));
+        $this->assertFalse($view->hasButton('test', 'other-group'));
+        $this->assertTrue($view->hasButton('loose'));
+        $this->assertFalse($view->hasButton('loose', 'test-group'));
+    }
+
     public function testLoadPageOptionsPrefiereLaDelUsuario(): void
     {
         $user = $this->createUser();

@@ -63,6 +63,10 @@ class WidgetJson extends WidgetTextarea
             return parent::inputHtml($type, $extraClass);
         }
 
-        return $this->recursiveRender($data);
+        // el listado no es un campo de formulario: enviamos el valor en un campo oculto
+        // para que al guardar no se pierda el contenido
+        return $this->recursiveRender($data)
+            . '<input type="hidden" name="' . $this->fieldname . '" value="'
+            . Tools::noHtml(Tools::fixHtml($this->value)) . '"/>';
     }
 }

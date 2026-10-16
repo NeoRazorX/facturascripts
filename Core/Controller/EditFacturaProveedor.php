@@ -6,6 +6,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\RefundReason;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
@@ -39,6 +40,14 @@ class EditFacturaProveedor extends PurchasesController
         $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         $data['showonmenu'] = false;
         return $data;
+    }
+
+    /**
+     * Motivos de rectificación para el formulario de nueva rectificativa: clave => clave de traducción.
+     */
+    public function refundReasons(): array
+    {
+        return RefundReason::all();
     }
 
     /**
@@ -337,6 +346,7 @@ class EditFacturaProveedor extends PurchasesController
         $newRefund->nick = $this->user->nick;
         $newRefund->numproveedor = $this->request->input('numproveedor');
         $newRefund->observaciones = $this->request->input('observaciones');
+        $newRefund->motivorect = $this->request->input('motivorect') ?: null;
         $newRefund->setDate($this->request->input('fecha'), date(Tools::HOUR_STYLE));
         if (false === $newRefund->save()) {
             Tools::log()->error('record-save-error');

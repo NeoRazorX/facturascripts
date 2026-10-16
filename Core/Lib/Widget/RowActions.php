@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Tools;
+use InvalidArgumentException;
 
 /**
  * Description of RowActions
@@ -73,18 +74,87 @@ class RowActions extends VisualItem
     /**
      * Añade un nuevo grupo de botones (dropdown). Se pueden colocar botones
      * dentro llamando a addButton() con la clave 'group' establecida al
-     * nombre de este grupo.
+     * nombre de este grupo. Si ya existe un grupo con el mismo nombre, no se
+     * crea otro: sus datos (icono, etiqueta, color...) se actualizan con los
+     * nuevos y se conservan sus botones.
      *
-     * @param array $groupArray
+     * @param array $groupArray debe incluir la clave 'name', que identifica el grupo
+     *
+     * @throws InvalidArgumentException si falta 'name' o está vacío
      */
     public function addButtonGroup(array $groupArray): void
     {
+        $name = $groupArray['name'] ?? '';
+        if (!is_string($name) || $name === '') {
+            throw new InvalidArgumentException('A button group requires a non-empty name.');
+        }
+
         $groupArray['tag'] = 'group';
         if (!isset($groupArray['children'])) {
             $groupArray['children'] = [];
         }
 
+        foreach ($this->children as $key => $child) {
+            if (($child['tag'] ?? '') !== 'group' || ($child['name'] ?? '') !== $name) {
+                continue;
+            }
+
+            $groupArray['children'] = array_merge($child['children'] ?? [], $groupArray['children']);
+            $this->children[$key] = array_merge($child, $groupArray);
+            return;
+        }
+
         $this->children[] = $groupArray;
+    }
+
+    /**
+     * Indica si existe un botón con la acción indicada. Si se indica un
+     * grupo, solo se busca dentro de ese grupo; si no, se busca tanto entre
+     * los botones sueltos como dentro de cualquier grupo.
+     *
+     * @param string $action
+     * @param string $group
+     *
+     * @return bool
+     */
+    public function hasButton(string $action, string $group = ''): bool
+    {
+        foreach ($this->children as $child) {
+            $tag = $child['tag'] ?? '';
+            if ($tag === 'button' && $group === '' && ($child['action'] ?? '') === $action) {
+                return true;
+            }
+
+            if ($tag !== 'group' || ($group !== '' && ($child['name'] ?? '') !== $group)) {
+                continue;
+            }
+
+            foreach ($child['children'] ?? [] as $item) {
+                if (($item['tag'] ?? 'button') === 'button' && ($item['action'] ?? '') === $action) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Indica si existe un grupo de botones (dropdown) con el nombre indicado.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasButtonGroup(string $name): bool
+    {
+        foreach ($this->children as $child) {
+            if (($child['tag'] ?? '') === 'group' && ($child['name'] ?? '') === $name) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function render(bool $small = false, string $viewName = ''): string

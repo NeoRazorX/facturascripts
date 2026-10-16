@@ -127,6 +127,10 @@
         <type>double precision</type>
     </column>
     <column>
+        <name>motivorect</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
         <name>neto</name>
         <type>double precision</type>
     </column>
