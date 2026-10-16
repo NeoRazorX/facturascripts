@@ -51,6 +51,7 @@ abstract class PDFDocument extends PDFCore
 {
     use ExtensionsTrait;
 
+    /** Posición Y de referencia de los totales de la factura. Ya no se usa en el core: la posición se calcula midiendo el bloque. */
     const INVOICE_TOTALS_Y = 200;
 
     /** @var FormatoDocumento */
@@ -374,6 +375,18 @@ abstract class PDFDocument extends PDFCore
 
         $this->newPage();
 
+        // si el bloque de totales cabe en la página actual, lo bajamos al pie
+        $this->moveTotalsToBottom($model);
+        $this->insertBusinessDocTotals($model);
+    }
+
+    /**
+     * Inserts the taxes breakdown, the totals, the receipts and the format text of the document.
+     *
+     * @param BusinessDocument $model
+     */
+    protected function insertBusinessDocTotals($model)
+    {
         // taxes
         $taxHeaders = [
             'tax' => $this->i18n->trans('tax'),
@@ -401,8 +414,6 @@ abstract class PDFDocument extends PDFCore
             $this->removeEmptyCols($taxRows, $taxHeaders, Tools::number(0));
             $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
             $this->pdf->ezText("\n");
-        } elseif ($this->pdf->ezPageCount < 2 && strlen($this->format->texto ?? '') < 400 && $this->pdf->y > static::INVOICE_TOTALS_Y) {
-            $this->pdf->y = static::INVOICE_TOTALS_Y;
         }
 
         // subtotals
@@ -460,6 +471,40 @@ abstract class PDFDocument extends PDFCore
 
         if (!empty($this->format->texto)) {
             $this->pdf->ezText("\n" . Tools::fixHtml($this->format->texto), self::FONT_SIZE);
+        }
+    }
+
+    /**
+     * Baja el cursor para que el bloque de totales termine en el pie de la página.
+     * Mide la altura real del bloque pintándolo en una transacción que después se deshace,
+     * así funciona con cualquier número de impuestos, recibos o texto del formato.
+     * Si el bloque no cabe en lo que queda de la página, no mueve nada.
+     *
+     * @param BusinessDocument $model
+     */
+    protected function moveTotalsToBottom($model)
+    {
+        if ($this->pdf->ezPageCount > 1) {
+            return;
+        }
+
+        $startY = $this->pdf->y;
+        $pages = $this->pdf->ezPageCount;
+
+        $this->pdf->transaction('start');
+        $this->insertBusinessDocTotals($model);
+        $endY = $this->pdf->y;
+        $newPages = $this->pdf->ezPageCount;
+        $this->pdf->transaction('rewind');
+        $this->pdf->transaction('commit');
+
+        if ($newPages !== $pages) {
+            return;
+        }
+
+        $targetY = $this->pdf->ez['bottomMargin'] + ($startY - $endY);
+        if ($startY > $targetY) {
+            $this->pdf->y = $targetY;
         }
     }
 
