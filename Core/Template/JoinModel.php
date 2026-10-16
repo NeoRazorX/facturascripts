@@ -206,12 +206,21 @@ abstract class JoinModel
     public function delete(): bool
     {
         if (isset($this->masterModel)) {
-            // cargamos el modelo completo para que su delete() y sus extensiones tengan todos los datos
+            // cargamos el registro completo en el modelo master y no solo su clave primaria,
+            // para que su delete(), sus extensiones, onDelete() y el evento de WorkQueue
+            // tengan todos los datos (por ejemplo, Partida::delete() necesita el idasiento)
             $primaryColumn = $this->masterModel->primaryColumn();
+
+            // limpiamos antes de cargar porque el mismo modelo master se reutiliza en cada
+            // borrado y load() devuelve false sin limpiarlo cuando la clave es null o vacía:
+            // sin esto conservaría los datos de la fila eliminada anteriormente
             $this->masterModel->clear();
-            if (false === $this->masterModel->loadFromCode($this->id())) {
+
+            // si el registro ya no existe, solo asignamos la clave primaria, como antes
+            if (false === $this->masterModel->load($this->id())) {
                 $this->masterModel->{$primaryColumn} = $this->id();
             }
+
             return $this->masterModel->delete();
         }
 
