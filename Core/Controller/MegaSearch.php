@@ -21,6 +21,8 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Page;
@@ -33,6 +35,12 @@ use FacturaScripts\Dinamic\Model\User;
  */
 class MegaSearch extends Controller
 {
+    /** URL por defecto del buscador de documentación. Los plugins pueden cambiarla con la extensión docsSearchUrl. */
+    const DOCS_SEARCH_URL = 'https://facturascripts.com/MegaSearchDocs';
+
+    /** Número máximo de resultados de documentación a mostrar. */
+    const DOCS_SEARCH_LIMIT = 20;
+
     /**
      * This variable contains the input text as the $query parameter
      * to be used to filter the model data
@@ -54,6 +62,69 @@ class MegaSearch extends Controller
      * @var array
      */
     public $sections;
+
+    /**
+     * Convierte la respuesta del buscador de documentación en una sección del megabuscador.
+     *
+     * @param mixed $data
+     * @return array
+     */
+    public function docsSearchResults($data): array
+    {
+        if (!is_array($data) || !isset($data['results']) || !is_array($data['results'])) {
+            return [];
+        }
+
+        $results = [];
+        foreach ($data['results'] as $item) {
+            if (!is_array($item) || !is_string($item['url'] ?? null) || !is_string($item['title'] ?? null)) {
+                continue;
+            }
+
+            // solo aceptamos enlaces http o https
+            if (preg_match('#^https?://#i', $item['url']) !== 1 || filter_var($item['url'], FILTER_VALIDATE_URL) === false) {
+                continue;
+            }
+
+            $description = is_string($item['description'] ?? null) ? $item['description'] : '';
+            $results[] = [
+                'url' => $item['url'],
+                'title' => Tools::noHtml($item['title']),
+                'description' => Tools::noHtml(Tools::textBreak(strip_tags($description), 120))
+            ];
+
+            if (count($results) >= self::DOCS_SEARCH_LIMIT) {
+                break;
+            }
+        }
+
+        if (empty($results)) {
+            return [];
+        }
+
+        return [
+            'docs' => [
+                'columns' => [
+                    'title' => Tools::trans('title'),
+                    'description' => Tools::trans('description')
+                ],
+                'icon' => 'fa-solid fa-book',
+                'title' => Tools::trans('documentation'),
+                'results' => $results
+            ]
+        ];
+    }
+
+    /**
+     * Devuelve la URL del buscador de documentación.
+     *
+     * @return string
+     */
+    public function docsSearchUrl(): string
+    {
+        $url = $this->pipe('docsSearchUrl');
+        return is_string($url) && $url !== '' ? $url : static::DOCS_SEARCH_URL;
+    }
 
     public function getPageData(): array
     {
@@ -78,11 +149,46 @@ class MegaSearch extends Controller
         $this->results = [];
         $this->sections = [];
 
-        $query = $this->request->input('query', '');
+        $query = $this->request->queryOrInput('query', '');
         $this->query = Tools::noHtml(mb_strtolower($query, 'UTF8'));
+
+        if ($this->request->query('action') === 'docs') {
+            $this->docsSearchAction();
+            return;
+        }
+
         if ($this->query !== '') {
             $this->search();
         }
+    }
+
+    /**
+     * Busca la consulta en la documentación remota y devuelve los resultados en JSON.
+     */
+    protected function docsSearchAction(): void
+    {
+        $this->setTemplate(false);
+
+        if (mb_strlen($this->query) < 3 || mb_strlen($this->query) > 200) {
+            $this->response->json([]);
+            return;
+        }
+
+        $url = $this->docsSearchUrl();
+        $lang = Tools::lang()->getLang();
+        $cacheKey = 'megasearch-docs-' . md5($url . '|' . $lang . '|' . $this->query);
+        $json = Cache::get($cacheKey);
+        if (empty($json) || !is_array($json)) {
+            $request = Http::get($url, ['query' => $this->query, 'lang' => $lang])->setTimeout(5);
+            $json = $request->ok() ? $this->docsSearchResults($request->json()) : [];
+
+            // solo guardamos en caché las respuestas con resultados
+            if (!empty($json)) {
+                Cache::set($cacheKey, $json);
+            }
+        }
+
+        $this->response->json($json);
     }
 
     /**
@@ -110,7 +216,7 @@ class MegaSearch extends Controller
 
             // Is it a ListController that could return more results?
             if (strpos($page->name, 'List') === 0) {
-                $this->sections[$page->name] = $page->url() . '?action=megasearch&query=' . $this->query;
+                $this->sections[$page->name] = $page->url() . '?action=megasearch&query=' . urlencode($this->query);
             }
         }
 
@@ -127,5 +233,10 @@ class MegaSearch extends Controller
     protected function search(): void
     {
         $this->pageSearch();
+
+        // buscamos también en la documentación
+        if (mb_strlen($this->query) >= 3) {
+            $this->sections['docs'] = $this->url() . '?action=docs&query=' . urlencode($this->query);
+        }
     }
 }
