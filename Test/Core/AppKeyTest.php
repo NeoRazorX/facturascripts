@@ -90,6 +90,17 @@ final class AppKeyTest extends TestCase
         // ni si no existe
         $this->assertNull(AppKey::saveToConfig($file), 'key-saved-in-missing-config');
         $this->assertFileDoesNotExist($file, 'missing-config-created');
+
+        // ni si es un enlace simbólico, porque lo sustituiría por un archivo normal
+        $target = $file . '.target';
+        file_put_contents($target, $original);
+        if (@symlink($target, $file)) {
+            $this->assertNull(AppKey::saveToConfig($file), 'key-saved-in-symlink');
+            $this->assertTrue(is_link($file), 'symlink-replaced');
+            $this->assertEquals($original, file_get_contents($target), 'symlink-target-modified');
+            unlink($file);
+        }
+        unlink($target);
     }
 
     public function testSignAndVerify(): void

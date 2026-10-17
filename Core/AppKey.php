@@ -73,6 +73,9 @@ final class AppKey
         $configFile = empty($configFile) ? FS_FOLDER . DIRECTORY_SEPARATOR . 'config.php' : $configFile;
         if (false === is_writable($configFile) || false === is_writable(dirname($configFile))) {
             return null;
+        } elseif (is_link($configFile)) {
+            // al renombrar el temporal sustituiríamos el enlace por un archivo normal
+            return null;
         }
 
         // solo modificamos un config.php normal que no mencione ya la clave
@@ -101,7 +104,8 @@ final class AppKey
         }
 
         @chmod($tmpFile, fileperms($configFile) & 0777);
-        if (false === rename($tmpFile, $configFile)) {
+        // falla, por ejemplo, si el config.php es un archivo montado en un contenedor
+        if (false === @rename($tmpFile, $configFile)) {
             @unlink($tmpFile);
             return null;
         }
