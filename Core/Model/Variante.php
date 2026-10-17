@@ -42,6 +42,9 @@ class Variante extends ModelClass
     use ModelTrait;
     use ProductRelationTrait;
 
+    /** @var bool Indica si la variante está bloqueada (no se vende ni se compra), sin afectar al producto. */
+    public $bloqueada;
+
     /** @var string Código de barras de la variante. */
     public $codbarras;
 
@@ -78,6 +81,7 @@ class Variante extends ModelClass
     public function clear(): void
     {
         parent::clear();
+        $this->bloqueada = false;
         $this->coste = 0.0;
         $this->margen = 0.0;
         $this->precio = 0.0;
