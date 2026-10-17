@@ -967,4 +967,82 @@ final class CalculatorModSpainTest extends TestCase
         $this->assertEquals(150.0, $doc->total, 'bad-total');
         $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
     }
+
+    public function testDestinationExemptionWithoutOperation(): void
+    {
+        // venta sin operación con excepción del art. 22 (asimilada a exportación)
+        $doc = new PresupuestoCliente();
+
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $line->iva = 21;
+        $line->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_22;
+
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // la línea mantiene la excepción y no lleva IVA
+        $this->assertEquals(0.0, $lines[0]->iva, 'bad-line-iva');
+        $this->assertEquals(Impuestos::get('IVA0')->codimpuesto, $lines[0]->codimpuesto, 'bad-line-codimpuesto');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_22, $lines[0]->excepcioniva, 'bad-line-excepcioniva');
+        $this->assertEquals(100.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totaliva, 'bad-totaliva');
+
+        // compra sin operación con excepción de los arts. 23-24 (zona franca o depósito)
+        $purchase = new PresupuestoProveedor();
+
+        $purchaseLine = $purchase->getNewLine();
+        $purchaseLine->cantidad = 1;
+        $purchaseLine->pvpunitario = 100;
+        $purchaseLine->iva = 21;
+        $purchaseLine->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_23_24;
+
+        $purchaseLines = [$purchaseLine];
+        $this->assertTrue(Calculator::calculate($purchase, $purchaseLines, false));
+
+        $this->assertEquals(0.0, $purchaseLines[0]->iva, 'bad-purchase-line-iva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_23_24, $purchaseLines[0]->excepcioniva, 'bad-purchase-line-excepcioniva');
+        $this->assertEquals(100.0, $purchase->total, 'bad-purchase-total');
+    }
+
+    public function testValidCombinationsAreKeptByCalculator(): void
+    {
+        // toda combinación de operación y excepción que admite la ficha del cliente o proveedor
+        // debe mantenerse en las líneas tras el cálculo, si no el usuario la cambia y vuelve a otra
+        $operations = [
+            null,
+            InvoiceOperation::INTRA_COMMUNITY,
+            InvoiceOperation::INTRA_COMMUNITY_SERVICES,
+            InvoiceOperation::REVERSE_CHARGE,
+            InvoiceOperation::EXPORT,
+            InvoiceOperation::IMPORT,
+        ];
+        $exceptions = array_merge([null], array_keys(TaxExceptions::all()));
+
+        foreach (['sales', 'purchases'] as $context) {
+            foreach ($operations as $operation) {
+                foreach ($exceptions as $exception) {
+                    if (false === TaxExceptions::isValidCombination($operation, $exception, $context)) {
+                        continue;
+                    }
+
+                    $doc = $context === 'sales' ? new PresupuestoCliente() : new PresupuestoProveedor();
+                    $doc->operacion = $operation;
+
+                    $line = $doc->getNewLine();
+                    $line->cantidad = 1;
+                    $line->pvpunitario = 100;
+                    $line->iva = 21;
+                    $line->excepcioniva = $exception;
+
+                    $lines = [$line];
+                    $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+                    $label = $context . '|' . ($operation ?? 'null') . '|' . ($exception ?? 'null');
+                    $this->assertSame($exception, $lines[0]->excepcioniva, 'calculator-changes-valid-combination: ' . $label);
+                }
+            }
+        }
+    }
 }

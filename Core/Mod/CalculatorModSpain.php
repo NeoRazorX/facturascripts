@@ -176,6 +176,11 @@ class CalculatorModSpain extends CalculatorModClass
                 continue;
             }
 
+            // exenciones por el destino o el régimen de la operación (arts. 22-24 LIVA)
+            if (self::applyDestinationExemption($line)) {
+                continue;
+            }
+
             // Oro de inversión: exento de IVA (art. 140 LIVA)
             if ($docRegimen === RegimenIVA::TAX_SYSTEM_GOLD) {
                 $line->codimpuesto = null;
@@ -219,6 +224,29 @@ class CalculatorModSpain extends CalculatorModClass
         }
 
         return $this->done();
+    }
+
+    /**
+     * Pone IVA 0 en las líneas exentas por el destino o el régimen de la operación.
+     *
+     * Las operaciones asimiladas a exportaciones (art. 22 LIVA) y las de zonas francas, depósitos y
+     * regímenes aduaneros (arts. 23-24 LIVA) están exentas por a quién o a dónde va la operación, no
+     * por el tipo de producto, igual que las exportaciones (art. 21) o las entregas intracomunitarias
+     * (art. 25). Por eso, aunque el documento no tenga operación, la línea no puede llevar IVA.
+     *
+     * @param BusinessDocumentLine $line
+     *
+     * @return bool true si se ha aplicado la exención
+     */
+    protected static function applyDestinationExemption(BusinessDocumentLine $line): bool
+    {
+        if (false === in_array($line->excepcioniva, [TaxExceptions::ES_TAX_EXCEPTION_22, TaxExceptions::ES_TAX_EXCEPTION_23_24], true)) {
+            return false;
+        }
+
+        $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
+        $line->iva = $line->recargo = 0.0;
+        return true;
     }
 
     protected static function applyOperation(BusinessDocument $doc, BusinessDocumentLine $line): bool
