@@ -151,6 +151,10 @@ abstract class TransformerDocument extends BusinessDocument
         // obtenemos las líneas antes de abrir la transacción para que la comprobación de tablas ocurra fuera
         $lines = $this->getLines();
 
+        // obtenemos los documentos padre antes de eliminar las líneas, porque al eliminarlas
+        // se borran también las relaciones en las que se basa parentDocuments()
+        $parents = $this->parentDocuments();
+
         // comprobamos si ya hay una transacción abierta para no romperla
         $newTransaction = false === static::db()->inTransaction() && self::db()->beginTransaction();
 
@@ -174,7 +178,6 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // eliminamos las relaciones y actualizamos la columna servido
-        $parents = $this->parentDocuments();
         $docTransformation = new DocTransformation();
         $docTransformation->deleteFrom($this->modelClassName(), $this->id());
 

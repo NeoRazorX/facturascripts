@@ -506,11 +506,24 @@ abstract class BusinessDocumentLine extends NewModelClass
 
     /**
      * Este método se ejecuta después de eliminar este registro de la base de datos.
+     * Actualiza el stock de la línea y elimina las relaciones con las líneas padre,
+     * lo que restaura el servido (y por tanto el stock reservado o pendiente) de estas.
      */
     protected function onDelete(): void
     {
         $this->cantidad = 0.0;
         $this->updateStock();
+
+        // borramos por objeto cada relación donde esta línea es la hija, para que
+        // DocTransformation::onDelete() reste la cantidad al servido de la línea padre
+        $where = [
+            Where::eq('model2', $this->getDocument()->modelClassName()),
+            Where::eq('iddoc2', $this->documentColumnValue()),
+            Where::eq('idlinea2', $this->id())
+        ];
+        foreach (DocTransformation::all($where, [], 0, 0) as $docTrans) {
+            $docTrans->delete();
+        }
 
         parent::onDelete();
     }

@@ -21,7 +21,10 @@ namespace FacturaScripts\Test\Core\Model\Base;
 
 use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Model\LineaPedidoCliente;
+use FacturaScripts\Core\Model\PedidoCliente;
 use FacturaScripts\Core\Model\PresupuestoCliente;
+use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -114,5 +117,85 @@ final class BusinessDocumentLineTest extends TestCase
         $this->assertTrue($doc->delete(), 'document-cant-delete');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'address-cant-delete');
         $this->assertTrue($subject->delete(), 'customer-cant-delete');
+    }
+
+    /**
+     * Al eliminar una línea de un albarán generado desde un pedido, se debe restaurar
+     * el servido de la línea del pedido y, con ello, el stock reservado del producto.
+     * La otra línea del albarán no debe verse afectada.
+     */
+    public function testDeleteChildLineRestoresParentServedAndStock(): void
+    {
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'customer-cant-save');
+
+        // creamos dos productos que permiten vender sin existencias
+        $productA = $this->getRandomProduct();
+        $productA->ventasinstock = true;
+        $this->assertTrue($productA->save(), 'product-a-cant-save');
+
+        $productB = $this->getRandomProduct();
+        $productB->ventasinstock = true;
+        $this->assertTrue($productB->save(), 'product-b-cant-save');
+
+        // creamos el pedido con una línea de 10 unidades y otra de 5
+        $order = new PedidoCliente();
+        $this->assertTrue($order->setSubject($subject), 'order-cant-set-subject');
+        $this->assertTrue($order->save(), 'order-cant-save');
+
+        $orderLineA = $order->getNewProductLine($productA->referencia);
+        $orderLineA->cantidad = 10;
+        $this->assertTrue($orderLineA->save(), 'order-line-a-cant-save');
+
+        $orderLineB = $order->getNewProductLine($productB->referencia);
+        $orderLineB->cantidad = 5;
+        $this->assertTrue($orderLineB->save(), 'order-line-b-cant-save');
+
+        // pedido aprobado: todo reservado
+        $stockA = new Stock();
+        $stockA->loadWhereEq('referencia', $productA->referencia);
+        $this->assertEquals(10, $stockA->reservada, 'order-bad-reserved-a');
+
+        // generamos el albarán con las dos líneas completas
+        $generator = new BusinessDocumentGenerator();
+        $this->assertTrue($generator->generate(
+            $order,
+            'AlbaranCliente',
+            [$orderLineA, $orderLineB],
+            [$orderLineA->id() => 10, $orderLineB->id() => 5]
+        ), 'delivery-note-cant-generate');
+        $deliveryNote = $generator->getLastDocs()[0];
+
+        // albarán generado: ya no queda nada reservado del producto A
+        $stockA->loadWhereEq('referencia', $productA->referencia);
+        $this->assertEquals(0, $stockA->reservada, 'delivery-note-bad-reserved-a');
+
+        // eliminamos solo la línea del producto A del albarán
+        foreach ($deliveryNote->getLines() as $line) {
+            if ($line->referencia === $productA->referencia) {
+                $this->assertTrue($line->delete(), 'delivery-line-a-cant-delete');
+            }
+        }
+
+        // el producto A vuelve a estar reservado y su línea del pedido pendiente de servir
+        $stockA->loadWhereEq('referencia', $productA->referencia);
+        $this->assertEquals(10, $stockA->reservada, 'bad-reserved-a-after-delete');
+
+        $reloadedLineA = new LineaPedidoCliente();
+        $reloadedLineA->loadFromCode($orderLineA->id());
+        $this->assertEquals(0, $reloadedLineA->servido, 'bad-served-a-after-delete');
+
+        // la línea del producto B no ha cambiado
+        $reloadedLineB = new LineaPedidoCliente();
+        $reloadedLineB->loadFromCode($orderLineB->id());
+        $this->assertEquals(5, $reloadedLineB->servido, 'bad-served-b-after-delete');
+
+        // limpieza: cada entidad por separado para que un fallo no impida borrar el resto
+        foreach ([$deliveryNote, $order, $subject->getDefaultAddress(), $subject, $productA, $productB] as $model) {
+            try {
+                $model->delete();
+            } catch (\Throwable $e) {
+            }
+        }
     }
 }
