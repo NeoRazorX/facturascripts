@@ -63,6 +63,35 @@ final class AppKeyTest extends TestCase
         }
     }
 
+    public function testSaveToConfig(): void
+    {
+        $file = Tools::folder('MyFiles', 'Tmp', 'config-' . mt_rand() . '.php');
+        Tools::folderCheckOrCreate(dirname($file));
+        $original = "<?php\ndefine('FS_TEST_CONST', 'test');\n?>\n";
+        file_put_contents($file, $original);
+
+        // añade la clave tras la etiqueta de apertura y conserva el resto
+        $key = AppKey::saveToConfig($file);
+        $this->assertNotNull($key, 'key-not-saved');
+        $this->assertGreaterThanOrEqual(AppKey::KEY_BYTES, strlen($key), 'saved-key-too-short');
+        $expected = "<?php\ndefine('FS_APP_KEY', '" . $key . "');\ndefine('FS_TEST_CONST', 'test');\n?>\n";
+        $this->assertEquals($expected, file_get_contents($file), 'bad-config-content');
+        $this->assertEmpty(glob($file . '.*.tmp'), 'tmp-file-not-removed');
+
+        // si ya menciona la clave, no lo modifica
+        $this->assertNull(AppKey::saveToConfig($file), 'key-saved-twice');
+        $this->assertEquals($expected, file_get_contents($file), 'config-modified-twice');
+
+        // ni si no empieza por la etiqueta de apertura
+        file_put_contents($file, "<html><?php define('FS_TEST_CONST', 'test');");
+        $this->assertNull(AppKey::saveToConfig($file), 'key-saved-in-bad-config');
+        unlink($file);
+
+        // ni si no existe
+        $this->assertNull(AppKey::saveToConfig($file), 'key-saved-in-missing-config');
+        $this->assertFileDoesNotExist($file, 'missing-config-created');
+    }
+
     public function testSignAndVerify(): void
     {
         $signature = AppKey::sign('test', 'data');

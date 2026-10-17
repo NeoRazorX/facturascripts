@@ -65,6 +65,56 @@ final class AppKey
     }
 
     /**
+     * Añade FS_APP_KEY al config.php de una instalación que no la tiene y devuelve la clave añadida,
+     * o null si no se ha podido: no existe el archivo, no se puede escribir o ya define la constante.
+     */
+    public static function saveToConfig(string $configFile = ''): ?string
+    {
+        $configFile = empty($configFile) ? FS_FOLDER . DIRECTORY_SEPARATOR . 'config.php' : $configFile;
+        if (false === is_writable($configFile) || false === is_writable(dirname($configFile))) {
+            return null;
+        }
+
+        // solo modificamos un config.php normal que no mencione ya la clave
+        $content = file_get_contents($configFile);
+        if (false === is_string($content) || strpos($content, '<?php') !== 0) {
+            return null;
+        } elseif (strpos($content, 'FS_APP_KEY') !== false) {
+            return null;
+        }
+
+        // usamos la clave de la variable de entorno, como el instalador, si es válida
+        $key = (string)Tools::env('FS_APP_KEY', '');
+        if (strlen($key) < self::KEY_BYTES) {
+            $key = self::generate();
+        }
+        $line = "define('FS_APP_KEY', '" . str_replace(['\\', "'"], ['\\\\', "\\'"], $key) . "');";
+
+        // la añadimos justo tras la etiqueta de apertura, por si el archivo tiene etiqueta de cierre
+        $newContent = '<?php' . "\n" . $line . substr($content, strlen('<?php'));
+
+        // escribimos en un temporal y lo renombramos, para no dejar nunca un config.php a medias
+        $tmpFile = $configFile . '.' . bin2hex(random_bytes(4)) . '.tmp';
+        if (false === file_put_contents($tmpFile, $newContent)) {
+            @unlink($tmpFile);
+            return null;
+        }
+
+        @chmod($tmpFile, fileperms($configFile) & 0777);
+        if (false === rename($tmpFile, $configFile)) {
+            @unlink($tmpFile);
+            return null;
+        }
+
+        // sin esto, opcache podría seguir sirviendo el config.php anterior
+        if (function_exists('opcache_invalidate')) {
+            @opcache_invalidate($configFile, true);
+        }
+
+        return $key;
+    }
+
+    /**
      * Firma los datos con HMAC-SHA256. El propósito separa las firmas de cada tipo de token,
      * para que un token de un tipo no sirva como token de otro.
      */
