@@ -16,6 +16,71 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Estado de la espera de respuesta del servidor mientras el aviso de procesando está activo.
+ *
+ * @type {{token: string, timer: number|null}}
+ */
+var spinnerSignal = {token: '', timer: null};
+
+/**
+ * Devuelve el valor de una cookie del navegador, o una cadena vacía si no existe.
+ *
+ * @param {string} name Nombre de la cookie.
+ * @returns {string}
+ */
+function getCookieValue(name) {
+    const prefix = name + '=';
+    const found = document.cookie.split('; ').find(function (item) {
+        return item.indexOf(prefix) === 0;
+    });
+    return found ? decodeURIComponent(found.substring(prefix.length)) : '';
+}
+
+/**
+ * Elimina una cookie del navegador.
+ *
+ * @param {string} name Nombre de la cookie.
+ */
+function deleteCookie(name) {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax';
+}
+
+/**
+ * Empieza a esperar la señal del servidor que indica que la respuesta no es una página
+ * (por ejemplo, la descarga de un fichero), porque en ese caso la página no se recarga
+ * y el aviso de procesando no se quitaría solo. El servidor devuelve en la cookie
+ * fsSpinnerDone el identificador que el navegador le envía en la cookie fsSpinner.
+ */
+function startSpinnerSignal() {
+    stopSpinnerSignal();
+
+    spinnerSignal.token = Date.now().toString(36) + Math.random().toString(36).substring(2, 10);
+    document.cookie = 'fsSpinner=' + spinnerSignal.token + '; path=/; SameSite=Lax';
+    spinnerSignal.timer = setInterval(function () {
+        if (getCookieValue('fsSpinnerDone') === spinnerSignal.token) {
+            animateSpinner('remove');
+        }
+    }, 500);
+}
+
+/**
+ * Deja de esperar la señal del servidor y elimina las cookies usadas.
+ */
+function stopSpinnerSignal() {
+    if (spinnerSignal.timer !== null) {
+        clearInterval(spinnerSignal.timer);
+        spinnerSignal.timer = null;
+    }
+
+    spinnerSignal.token = '';
+    deleteCookie('fsSpinner');
+    deleteCookie('fsSpinnerDone');
+}
+
+// al cargar cualquier página descartamos las cookies de una espera anterior
+stopSpinnerSignal();
+
 function animateSpinner(animation, result = null) {
     if (animation === 'add') {
         // añadimos la propiedad disabled al botón para evitar que se pueda pulsar varias veces
@@ -23,10 +88,13 @@ function animateSpinner(animation, result = null) {
         $("a.btn-spin-action").addClass('disabled').attr('aria-disabled', true);
 
         setToast('', 'spinner', '', 0);
+        startSpinnerSignal();
         return;
     }
 
     if (animation === 'remove') {
+        stopSpinnerSignal();
+
         // eliminamos la propiedad disabled al botón para que se pueda pulsar de nuevo
         $("button.btn-spin-action").removeAttr('disabled');
         $("a.btn-spin-action").removeClass('disabled').attr('aria-disabled', false);
