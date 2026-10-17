@@ -22,6 +22,8 @@ namespace FacturaScripts\Test\Core\Model\Base;
 use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\PresupuestoCliente;
+use FacturaScripts\Core\Model\Retencion;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -114,5 +116,63 @@ final class BusinessDocumentLineTest extends TestCase
         $this->assertTrue($doc->delete(), 'document-cant-delete');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'address-cant-delete');
         $this->assertTrue($subject->delete(), 'customer-cant-delete');
+    }
+
+    public function testSetRetention(): void
+    {
+        // creamos una retención de prueba
+        $retencion = new Retencion();
+        $retencion->codretencion = 'T' . Tools::randomString(5);
+        $retencion->descripcion = 'Retención de prueba';
+        $retencion->porcentaje = 7;
+        $this->assertTrue($retencion->save(), 'retention-cant-save');
+
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'customer-cant-save');
+
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setSubject($subject), 'document-cant-set-subject');
+        $this->assertTrue($doc->save(), 'document-cant-save');
+
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->descripcion = 'Linea con retención';
+        $line->pvpunitario = 100;
+
+        // asignamos la retención de prueba y comprobamos codretencion e irpf
+        $line->setRetention($retencion->codretencion);
+        $this->assertEquals($retencion->codretencion, $line->codretencion, 'bad-codretencion');
+        $this->assertEquals((float)$retencion->porcentaje, $line->irpf, 'bad-irpf');
+
+        // quitamos la retención pasando null
+        $line->setRetention(null);
+        $this->assertNull($line->codretencion, 'codretencion-should-be-null');
+        $this->assertEquals(0.0, $line->irpf, 'irpf-should-be-zero');
+
+        // volvemos a asignarla y luego probamos con cadena vacía
+        $line->setRetention($retencion->codretencion);
+        $line->setRetention('');
+        $this->assertNull($line->codretencion, 'codretencion-should-be-null-with-empty-string');
+        $this->assertEquals(0.0, $line->irpf, 'irpf-should-be-zero-with-empty-string');
+
+        // probamos con un código de retención que no existe
+        $line->setRetention($retencion->codretencion);
+        $line->setRetention('CODIGO-NO-EXISTE');
+        $this->assertNull($line->codretencion, 'codretencion-should-be-null-with-unknown-code');
+        $this->assertEquals(0.0, $line->irpf, 'irpf-should-be-zero-with-unknown-code');
+
+        // guardamos la línea con la retención asignada y comprobamos que persiste
+        $line->setRetention($retencion->codretencion);
+        $this->assertTrue($line->save(), 'line-cant-save');
+
+        $loadedLine = $doc->getLines()[0];
+        $this->assertEquals($retencion->codretencion, $loadedLine->codretencion, 'bad-persisted-codretencion');
+        $this->assertEquals((float)$retencion->porcentaje, $loadedLine->irpf, 'bad-persisted-irpf');
+
+        // limpiamos
+        $this->assertTrue($doc->delete(), 'document-cant-delete');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'address-cant-delete');
+        $this->assertTrue($subject->delete(), 'customer-cant-delete');
+        $this->assertTrue($retencion->delete(), 'retention-cant-delete');
     }
 }
