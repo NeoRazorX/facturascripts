@@ -192,7 +192,7 @@ class ListView extends BaseView
             foreach ($this->totalAmounts as $key => $value) {
                 $total[$key] = $value['total'];
             }
-            $exportManager->addTablePage(array_keys($total), [$total]);
+            $exportManager->addTablePage(array_keys($total), [$total], [], Tools::trans('totals'));
         }
 
         return true;
