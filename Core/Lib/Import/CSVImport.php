@@ -24,7 +24,12 @@ use FacturaScripts\Core\Tools;
 use ParseCsv\Csv;
 
 /**
- * Common CSV import actions.
+ * Genera el SQL necesario para volcar en una tabla los datos iniciales que el núcleo y
+ * los plugins distribuyen en archivos CSV. Localiza el archivo correspondiente buscando
+ * primero en los datos del país configurado, después en los del idioma activo y, como
+ * último recurso, en los del español. Puede producir tanto inserciones simples como
+ * sentencias que actualizan los registros ya existentes, adaptando la sintaxis a MySQL
+ * o PostgreSQL. Se utiliza sobre todo desde el método install() de los modelos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

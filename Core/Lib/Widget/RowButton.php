@@ -22,7 +22,12 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of RowButton
+ * Representa un botón definido dentro de una fila de acciones de un XMLView.
+ * Guarda la acción a ejecutar, el tipo (envío del formulario, enlace, modal o
+ * llamada JavaScript), el icono, el color, el texto y el nivel de seguridad
+ * necesario. Se encarga de generar su HTML, ya sea como botón normal, como botón
+ * de la parte superior o como elemento de un desplegable, pidiendo confirmación
+ * al usuario cuando así se indica.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */

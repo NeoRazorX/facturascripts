@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of WidgetTextarea
+ * Widget para campos de texto largo, declarado con type="textarea" en las vistas XMLView.
+ * Amplía WidgetText sustituyendo el input por un textarea, cuyo alto se controla con el
+ * atributo rows, que por defecto son tres líneas.
+ * En las celdas de las listas el texto se recorta a sesenta caracteres y el contenido
+ * completo queda disponible en el título de la celda.
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>

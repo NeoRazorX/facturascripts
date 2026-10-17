@@ -20,7 +20,10 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * Prevents brute force attacks through a list of IP addresses and their counters failed attempts.
+ * Previene ataques de fuerza bruta manteniendo una lista de direcciones IP con el
+ * número de intentos fallidos de cada una. Cuando una IP supera el máximo de intentos
+ * permitidos queda bloqueada durante un tiempo determinado. La lista se guarda en el
+ * archivo MyFiles/Cache/ip.list y las entradas caducadas se descartan al leerlo.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

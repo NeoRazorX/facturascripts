@@ -38,7 +38,13 @@ use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
 /**
- * Description of SalesModalHTML
+ * Genera el HTML de las ventanas modales del formulario de los documentos de
+ * venta: la búsqueda de clientes, la creación rápida de un cliente nuevo y la
+ * búsqueda de productos con sus filtros de familia, fabricante, almacén y
+ * atributos. En el listado de productos muestra stock, precio y, si procede, el
+ * último precio de venta al cliente del documento.
+ * Los plugins pueden añadir o modificar campos y filtros mediante mods que
+ * implementen SalesModalInterface y se registren con addMod().
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

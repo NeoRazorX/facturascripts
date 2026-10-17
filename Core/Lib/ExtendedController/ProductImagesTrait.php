@@ -26,7 +26,11 @@ use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\ProductoImagen;
 
 /**
- * Auxiliar Method for images of the product.
+ * Añade a un controlador la pestaña de imágenes del producto, con las acciones
+ * para subir y eliminar imágenes. Cada fichero se valida como imagen, se guarda
+ * en MyFiles como AttachedFile y se relaciona con el producto o la variante
+ * mediante el modelo ProductoImagen, además de crear la correspondiente
+ * AttachedFileRelation.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
