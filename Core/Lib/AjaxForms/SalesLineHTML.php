@@ -186,13 +186,18 @@ class SalesLineHTML
         $line->dtopor = (float)$formData['dtopor_' . $id];
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
-        $line->excepcioniva = $formData['excepcioniva_' . $id] ?? null;
         $line->irpf = (float)($formData['irpf_' . $id] ?? '0');
         $line->mostrar_cantidad = (bool)($formData['mostrar_cantidad_' . $id] ?? '0');
         $line->mostrar_precio = (bool)($formData['mostrar_precio_' . $id] ?? '0');
         $line->salto_pagina = (bool)($formData['salto_pagina_' . $id] ?? '0');
         $line->suplido = (bool)($formData['suplido_' . $id] ?? '0');
         $line->pvpunitario = (float)$formData['pvpunitario_' . $id];
+
+        foreach (['excepcioniva'] as $key) {
+            if (isset($formData[$key . '_' . $id])) {
+                $line->{$key} = empty($formData[$key . '_' . $id]) ? null : $formData[$key . '_' . $id];
+            }
+        }
 
         // ¿Cambio de impuesto?
         if (isset($formData['codimpuesto_' . $id]) && $formData['codimpuesto_' . $id] !== $line->codimpuesto) {
