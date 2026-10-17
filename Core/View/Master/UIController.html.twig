@@ -1,0 +1,15 @@
+{% extends "Master/MenuTemplate.html.twig" %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div class="container-fluid mt-3">
+        {{ fsc.ui().render()|raw }}
+    </div>
+
+    {# contenedor de modales server-rendered (fragmento 'ui-modals') #}
+    <div id="ui-modals"></div>
+
+    {# contenedor global de toasts para los notices AJAX #}
+    <div id="ui-toasts" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+{% endblock %}
