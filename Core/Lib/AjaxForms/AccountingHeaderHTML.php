@@ -23,12 +23,9 @@ use FacturaScripts\Core\Contract\AccountingModInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\CodePatterns;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\ConceptoPartida;
 use FacturaScripts\Dinamic\Model\Diario;
-use FacturaScripts\Dinamic\Model\FacturaCliente;
-use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
 /**
  * Description of AccountingHeaderHTML
@@ -140,19 +137,12 @@ class AccountingHeaderHTML
             return '';
         }
 
+        // el documento original puede ser una factura de venta/compra o, en los
+        // pagos, el recibo. getDoc() lo resuelve a partir del idasiento.
         $link = '';
-        $facturaCliente = new FacturaCliente();
-        $where = [
-            Where::eq('codigo', $model->documento),
-            Where::eq('idasiento', $model->idasiento),
-        ];
-        if ($facturaCliente->loadWhere($where)) {
-            $link = $facturaCliente->url();
-        } else {
-            $facturaProveedor = new FacturaProveedor();
-            if ($facturaProveedor->loadWhere($where)) {
-                $link = $facturaProveedor->url();
-            }
+        $doc = $model->getDoc();
+        if ($doc !== null && method_exists($doc, 'url')) {
+            $link = $doc->url();
         }
 
         if ($link) {

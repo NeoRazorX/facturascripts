@@ -108,6 +108,47 @@ class Asiento extends ModelClass
         $this->operacion = self::OPERATION_GENERAL;
     }
 
+    /**
+     * Devuelve el documento original que generó este asiento (factura de venta o
+     * compra, o el recibo en el caso de los pagos) o null si no se puede localizar.
+     *
+     * En FacturaScripts cada documento guarda su idasiento, así que resolvemos el
+     * enlace al revés: buscamos qué documento apunta a este asiento. En los pagos
+     * devolvemos el recibo, que es el documento con el que se relaciona el asiento.
+     *
+     * @return mixed|null
+     */
+    public function getDoc()
+    {
+        if (empty($this->idasiento)) {
+            return null;
+        }
+
+        $models = ['FacturaCliente', 'FacturaProveedor', 'PagoCliente', 'PagoProveedor'];
+        foreach ($models as $model) {
+            $class = '\\FacturaScripts\\Dinamic\\Model\\' . $model;
+            if (false === class_exists($class)) {
+                continue;
+            }
+
+            $docs = (new $class())->all([Where::eq('idasiento', $this->idasiento)], [], 0, 1);
+            if (empty($docs)) {
+                continue;
+            }
+
+            $doc = $docs[0];
+
+            // en los pagos el documento relacionado con el asiento es el recibo
+            if (in_array($doc->modelClassName(), ['PagoCliente', 'PagoProveedor'], true)) {
+                return $doc->getReceipt();
+            }
+
+            return $doc;
+        }
+
+        return null;
+    }
+
     public function delete(): bool
     {
         if (false === $this->editable()) {
