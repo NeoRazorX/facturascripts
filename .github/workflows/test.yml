@@ -29,6 +29,9 @@ jobs:
           - type: postgresql
             version: '13'
             port: 5432
+          - type: sqlite
+            version: '3'
+            port: 0
       fail-fast: false
 
     name: PHP ${{ matrix.php-version }} - ${{ matrix.database.type }} ${{ matrix.database.version }}
@@ -83,7 +86,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: bcmath, curl, gd, iconv, mysqli, pdo_mysql, pdo_pgsql, pgsql, soap, zip, fileinfo, openssl, simplexml, mbstring, intl
+          extensions: bcmath, curl, gd, iconv, mysqli, pdo_mysql, pdo_pgsql, pdo_sqlite, pgsql, soap, zip, fileinfo, openssl, simplexml, mbstring, intl
           coverage: xdebug
           tools: composer:v2
         env:
@@ -109,10 +112,13 @@ jobs:
             echo "Testing ${{ matrix.database.type }} ${{ matrix.database.version }} connection..."
             mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SHOW DATABASES;"
             mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SELECT VERSION();"
-          else
+          elif [ "${{ matrix.database.type }}" = "postgresql" ]; then
             echo "Testing PostgreSQL ${{ matrix.database.version }} connection..."
             PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "\l"
             PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "SELECT version();"
+          else
+            echo "Testing SQLite ${{ matrix.database.version }} support..."
+            php -r 'exit(in_array("sqlite", PDO::getAvailableDrivers(), true) ? 0 : 1);'
           fi
 
       - name: Create application config
@@ -139,7 +145,7 @@ jobs:
           define('FS_DISABLE_ADD_PLUGINS', false);
           define('FS_DISABLE_RM_PLUGINS', false);
           EOF
-          else
+          elif [ "${{ matrix.database.type }}" = "postgresql" ]; then
             cat > config.php << 'EOF'
           <?php
           define('FS_COOKIES_EXPIRE', 31536000);
@@ -150,6 +156,26 @@ jobs:
           define('FS_DB_NAME', '${{ env.DB_NAME }}');
           define('FS_DB_USER', '${{ env.DB_USER }}');
           define('FS_DB_PASS', '${{ env.DB_PASS }}');
+          define('FS_DB_FOREIGN_KEYS', true);
+          define('FS_DB_TYPE_CHECK', true);
+          define('FS_LANG', 'es_ES');
+          define('FS_TIMEZONE', 'Europe/Madrid');
+          define('FS_HIDDEN_PLUGINS', '');
+          define('FS_DEBUG', true);
+          define('FS_DISABLE_ADD_PLUGINS', false);
+          define('FS_DISABLE_RM_PLUGINS', false);
+          EOF
+          else
+            cat > config.php << 'EOF'
+          <?php
+          define('FS_COOKIES_EXPIRE', 31536000);
+          define('FS_ROUTE', '');
+          define('FS_DB_TYPE', 'sqlite');
+          define('FS_DB_HOST', '');
+          define('FS_DB_PORT', 0);
+          define('FS_DB_NAME', 'MyFiles/facturascripts_test.sqlite');
+          define('FS_DB_USER', '');
+          define('FS_DB_PASS', '');
           define('FS_DB_FOREIGN_KEYS', true);
           define('FS_DB_TYPE_CHECK', true);
           define('FS_LANG', 'es_ES');

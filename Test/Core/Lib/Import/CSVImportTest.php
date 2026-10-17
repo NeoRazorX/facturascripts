@@ -137,7 +137,7 @@ final class CSVImportTest extends TestCase
         $dbType = Tools::config('db_type');
         if ($dbType === 'mysql') {
             $this->assertStringContainsString('ON DUPLICATE KEY UPDATE', strtoupper($sql), 'Debería contener ON DUPLICATE KEY UPDATE para MySQL');
-        } elseif ($dbType === 'postgresql') {
+        } elseif (in_array($dbType, ['postgresql', 'sqlite'], true)) {
             $this->assertStringContainsString('ON CONFLICT', strtoupper($sql), 'Debería contener ON CONFLICT para PostgreSQL');
         }
     }
@@ -193,7 +193,7 @@ final class CSVImportTest extends TestCase
         $dbType = Tools::config('db_type');
         if ($dbType === 'mysql') {
             $this->assertStringContainsString('ON DUPLICATE KEY UPDATE', strtoupper($sql));
-        } elseif ($dbType === 'postgresql') {
+        } elseif (in_array($dbType, ['postgresql', 'sqlite'], true)) {
             $this->assertStringContainsString('ON CONFLICT', strtoupper($sql));
         }
     }
