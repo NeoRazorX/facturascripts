@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025  Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026  Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\PedidoProveedor as DinPedidoProveedor;
 
 /**
- * Supplier order line.
+ * Línea de un pedido de proveedor, almacenada en la tabla lineaspedidosprov.
+ * Guarda el producto o servicio solicitado junto con su cantidad, precio,
+ * descuentos e impuestos, y se relaciona con el pedido mediante idpedido.
+ * Al cambiar el pedido a un estado que genera documento, es el propio documento
+ * (TransformerDocument) quien copia las líneas, solo con la cantidad pendiente
+ * (cantidad - servido).
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

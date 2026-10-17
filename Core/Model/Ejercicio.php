@@ -28,7 +28,14 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
 /**
- * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes, etc.
+ * Ejercicio contable. Es el periodo, normalmente un año natural, en el que se agrupan los
+ * asientos, facturas, albaranes y demás documentos de una empresa. Define las fechas de
+ * inicio y fin, la longitud de las subcuentas del plan contable y su estado (abierto o
+ * cerrado), además de los asientos de apertura, pérdidas y ganancias y cierre. Al insertar un
+ * ejercicio se comprueba que sus fechas de inicio o fin no caigan dentro de otro ejercicio
+ * de la misma empresa (no se detecta un rango contenido por completo dentro de otro).
+ * loadFromDate() permite obtener el ejercicio correspondiente a una fecha, y solo lo crea
+ * si no existe cuando el parámetro $create es true.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -39,34 +46,34 @@ class Ejercicio extends ModelClass
     const EXERCISE_STATUS_OPEN = 'ABIERTO';
     const EXERCISE_STATUS_CLOSED = 'CERRADO';
 
-    /** Clave primaria. Varchar(4). */
+    /** @var string Clave primaria del ejercicio (máximo 4 caracteres). */
     public $codejercicio;
 
-    /** Estado del ejercicio: ABIERTO|CERRADO */
+    /** @var string Estado del ejercicio: ABIERTO|CERRADO. */
     public $estado;
 
-    /** Fecha de fin del ejercicio. */
+    /** @var string Fecha de fin del ejercicio. */
     public $fechafin;
 
-    /** Fecha de inicio del ejercicio. */
+    /** @var string Fecha de inicio del ejercicio. */
     public $fechainicio;
 
-    /** ID del asiento de cierre. */
+    /** @var int ID del asiento de cierre. */
     public $idasientocierre;
 
-    /** ID del asiento de pérdidas y ganancias. */
+    /** @var int ID del asiento de pérdidas y ganancias. */
     public $idasientopyg;
 
-    /** ID del asiento de apertura. */
+    /** @var int ID del asiento de apertura. */
     public $idasientoapertura;
 
-    /** Clave ajena de la tabla Empresas. */
+    /** @var int Clave ajena de la tabla empresas. */
     public $idempresa;
 
-    /** Longitud en caracteres de las subcuentas asignadas. */
+    /** @var int Longitud en caracteres de las subcuentas asignadas. */
     public $longsubcuenta;
 
-    /** Nombre del ejercicio. */
+    /** @var string Nombre del ejercicio. */
     public $nombre;
 
     public function clear(): void
@@ -144,7 +151,7 @@ class Ejercicio extends ModelClass
         return $this->estado === self::EXERCISE_STATUS_OPEN;
     }
 
-    /** Carga el ejercicio para la fecha indicada. Si no existe, lo crea. Requiere idempresa informado. */
+    /** Carga el ejercicio para la fecha indicada. Si no existe y $create es true, lo crea. Requiere idempresa informado. */
     public function loadFromDate(string $date, bool $onlyOpened = true, bool $create = true): bool
     {
         // guardamos estos datos porque loadFromCode() hace un clear()

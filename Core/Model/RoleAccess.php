@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,12 @@ use FacturaScripts\Dinamic\Model\Role as DinRole;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 
 /**
- * Defines the individual permissions for each page within a user role.
+ * Define los permisos que un rol tiene sobre una página concreta: si puede
+ * modificar, eliminar, importar o exportar datos, y si solo puede ver los
+ * registros de los que es propietario.
+ * La simple existencia del registro concede el acceso a la página, y el resto
+ * de permisos se consultan con el método can(). Los usuarios obtienen estos
+ * permisos a través de los roles que tengan asignados en RoleUser.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Joe Nilson           <joenilson@gmail.com>

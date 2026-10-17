@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Element of the menu of InvoiceScripts, each corresponds to a controller.
+ * Página de FacturaScripts, almacenada en la tabla pages. Cada registro se
+ * corresponde con un controlador de la aplicación y define cómo se muestra en
+ * el menú: título, icono, menú y submenú donde aparece, orden de colocación y
+ * si debe mostrarse o permanecer oculta. Las páginas se registran
+ * al desplegar el núcleo y los plugins (PluginsDeploy), y sobre ellas se
+ * asignan los permisos de los roles de usuario (RoleAccess.pagename).
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

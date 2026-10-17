@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A currency with its symbol and its conversion rate with respect to the euro.
+ * Divisa o moneda con la que se pueden emitir documentos de compra y venta.
+ * Guarda el código ISO, el símbolo y las tasas de conversión respecto a la moneda
+ * de referencia (el euro), diferenciando la tasa aplicada en ventas (tasaconv) de la
+ * aplicada en compras (tasaconvcompra). La divisa predeterminada, definida en el ajuste
+ * global default/coddivisa, no se puede eliminar.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

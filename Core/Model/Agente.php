@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,8 +33,16 @@ use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
 /**
- * Un agente es una persona física o jurídica que actúa como comercial
- * y se le puede dar una comisión.
+ * Un agente es la persona que actúa como comercial de la empresa. Se guarda en la tabla
+ * `agentes` y se identifica con un código alfanumérico de hasta 10 caracteres (`codagente`)
+ * que se genera automáticamente si no se indica.
+ *
+ * El agente tiene sus propios datos fiscales (`cifnif`), de correo y teléfonos. Además lleva
+ * asociado un `Contacto`: si no tiene `idcontacto`, al guardar se crea uno copiando nombre,
+ * `cifnif`, email y teléfonos del agente. Del contacto solo se lee el país en `checkVies()`.
+ * Puede vincularse a clientes y a documentos de venta mediante `codagente`, y admite relación
+ * con productos mediante `ProductRelationTrait`. Dar de baja un agente consiste en rellenar
+ * `fechabaja`, que a su vez activa el indicador `debaja`.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa    <jcuello@artextrading.com>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Visual configuration of the FacturaScripts views,
- * each PageOption corresponds to a view or tab.
+ * Personalización de la configuración visual de una vista de FacturaScripts,
+ * almacenada en la tabla pages_options. Guarda los grupos y columnas, los
+ * formularios modales y el tratamiento especial de las filas, y se superpone a
+ * la estructura cargada desde el XMLView. Puede ser global (nick vacío) o de un
+ * usuario concreto mediante el campo nick. Estas definiciones se guardan
+ * codificadas en JSON y se decodifican a array al cargarlas.
  *
  * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>

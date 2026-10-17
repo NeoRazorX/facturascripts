@@ -32,7 +32,12 @@ use FacturaScripts\Dinamic\Model\PagoProveedor as DinPagoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 
 /**
- * Description of ReciboProveedor
+ * Cada uno de los vencimientos en que se divide el pago de una factura de
+ * proveedor. Guarda el importe, la forma de pago, la fecha de vencimiento y el
+ * estado de pago, junto con el campo liquidado.
+ * Cualquier cambio del campo pagado genera un PagoProveedor (con importe negativo
+ * si se desmarca). Al darlo de alta la factura solo se actualiza si el recibo ya
+ * está pagado; al modificarlo o borrarlo siempre se actualiza.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -72,7 +77,7 @@ class ReciboProveedor extends ModelClass
     /** @var float Importe total del recibo. */
     public $importe;
 
-    /** @var float Importe del recibo que ya ha sido pagado. */
+    /** @var float Importe liquidado del recibo (el core solo lo inicializa a 0 en clear(), no lo actualiza). */
     public $liquidado;
 
     /** @var string Nombre del usuario que creó el recibo. */
