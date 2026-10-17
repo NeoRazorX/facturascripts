@@ -67,6 +67,14 @@ class InvoiceToAccounting extends AccountingClass
     protected $subtotals;
 
     /**
+     * Total del documento expresado en la moneda de la empresa, que es la que
+     * usa la contabilidad.
+     *
+     * @var float
+     */
+    protected $documentTotal;
+
+    /**
      * Método para lanzar el proceso de contabilización
      *
      * @param FacturaCliente|FacturaProveedor $model
@@ -117,7 +125,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $this->counterpart = $subAccount;
-        return $this->addBasicLine($entry, $subAccount, true);
+        return $this->addBasicLine($entry, $subAccount, true, $this->documentTotal);
     }
 
     /**
@@ -143,7 +151,9 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $tool = new PurchasesDocLineAccount();
-        $totals = $tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta ?? '');
+        $totals = $this->toCompanyCurrencyTotals(
+            $tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta ?? '')
+        );
         return $this->addLinesFromTotals(
             $entry,
             $totals,
@@ -177,7 +187,9 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $tool = new SalesDocLineAccount();
-        $totals = $tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta ?? '');
+        $totals = $this->toCompanyCurrencyTotals(
+            $tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta ?? '')
+        );
         return $this->addLinesFromTotals(
             $entry,
             $totals,
@@ -215,7 +227,9 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $tool = new PurchasesDocIrpfAccount();
-        $totals = $tool->getTotalsForDocument($this->document, $account->codsubcuenta ?? '', $this->subtotals['irpf']);
+        $totals = $this->toCompanyCurrencyTotals(
+            $tool->getTotalsForDocument($this->document, $account->codsubcuenta ?? '', $this->subtotals['irpf'])
+        );
         return $this->addLinesFromTotals(
             $entry,
             $totals,
@@ -243,7 +257,7 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        return $this->addBasicLine($entry, $subAccount, true, $this->document->totalsuplidos);
+        return $this->addBasicLine($entry, $subAccount, true, $this->toCompanyCurrency($this->document->totalsuplidos));
     }
 
     /**
@@ -373,7 +387,7 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        return $this->addBasicLine($entry, $subAccount, false, $this->document->totalsuplidos);
+        return $this->addBasicLine($entry, $subAccount, false, $this->toCompanyCurrency($this->document->totalsuplidos));
     }
 
     /**
@@ -476,7 +490,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $this->counterpart = $subAccount;
-        return $this->addBasicLine($entry, $subAccount, false);
+        return $this->addBasicLine($entry, $subAccount, false, $this->documentTotal);
     }
 
     /**
@@ -525,7 +539,76 @@ class InvoiceToAccounting extends AccountingClass
     protected function loadSubtotals(): bool
     {
         $this->subtotals = Calculator::getSubtotals($this->document, $this->document->getLines());
+        $this->documentTotal = $this->toCompanyCurrency($this->document->total);
+
+        // Calculator devuelve los subtotales en la moneda del documento. La
+        // contabilidad se lleva en la moneda de la empresa, así que se
+        // convierten aquí una sola vez y el resto de la clase ya trabaja en ella.
+        if ($this->needsCurrencyConversion()) {
+            $amountFields = [
+                'neto', 'netosindto', 'totalbeneficio', 'totalcoste',
+                'totalirpf', 'totaliva', 'totalrecargo', 'totalsuplidos'
+            ];
+            foreach ($amountFields as $field) {
+                if (isset($this->subtotals[$field])) {
+                    $this->subtotals[$field] = $this->toCompanyCurrency($this->subtotals[$field]);
+                }
+            }
+
+            // dentro de 'iva', las claves 'iva' y 'recargo' son porcentajes
+            foreach ($this->subtotals['iva'] as $key => $value) {
+                foreach (['neto', 'netosindto', 'totaliva', 'totalrecargo'] as $field) {
+                    if (isset($value[$field])) {
+                        $this->subtotals['iva'][$key][$field] = $this->toCompanyCurrency($value[$field]);
+                    }
+                }
+            }
+        }
+
         return !empty($this->document->total);
+    }
+
+    /**
+     * Indica si el documento está en una moneda distinta a la de la empresa.
+     *
+     * @return bool
+     */
+    protected function needsCurrencyConversion(): bool
+    {
+        return !empty($this->document->tasaconv) && abs($this->document->tasaconv - 1.0) > 0.00000001;
+    }
+
+    /**
+     * Convierte un importe de la moneda del documento a la de la empresa.
+     *
+     * @param float $amount
+     *
+     * @return float
+     */
+    protected function toCompanyCurrency(float $amount): float
+    {
+        return $this->needsCurrencyConversion()
+            ? round($amount / $this->document->tasaconv, 2)
+            : $amount;
+    }
+
+    /**
+     * Convierte a la moneda de la empresa un array de importes indexado por subcuenta.
+     *
+     * @param array $totals
+     *
+     * @return array
+     */
+    protected function toCompanyCurrencyTotals(array $totals): array
+    {
+        if (false === $this->needsCurrencyConversion()) {
+            return $totals;
+        }
+
+        foreach ($totals as $code => $amount) {
+            $totals[$code] = $this->toCompanyCurrency((float)$amount);
+        }
+        return $totals;
     }
 
     /**
@@ -680,7 +763,7 @@ class InvoiceToAccounting extends AccountingClass
         $entry->documento = $this->document->codigo;
         $entry->fecha = $this->document->fechadevengo ?? $this->document->fecha;
         $entry->idempresa = $this->document->idempresa;
-        $entry->importe = $this->document->total;
+        $entry->importe = $this->documentTotal;
 
         $serie = new Serie();
         $serie->load($this->document->codserie);
