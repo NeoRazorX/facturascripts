@@ -25,6 +25,7 @@ use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Core\Model\PageOption;
 use FacturaScripts\Core\Model\Pais;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -47,6 +48,36 @@ class BaseViewTest extends TestCase
         $base_view->settings['itemLimit'] = 0;
 
         $this->assertEmpty($base_view->getPagination());
+    }
+
+    public function testExportAddsTotalsPageWithTitle(): void
+    {
+        $view = new ListView(self::VIEW_NAME, 'countries', Pais::class, 'fa-solid fa-globe');
+        $view->loadPageOptions();
+        $view->count = 1;
+        $view->totalAmounts = ['total' => ['title' => 'total', 'total' => 10]];
+
+        // capturamos las páginas que añade la vista al exportar
+        $exportManager = new class {
+            public $tables = [];
+
+            public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
+            {
+                return true;
+            }
+
+            public function addTablePage($headers, $rows, $options = [], $title = ''): bool
+            {
+                $this->tables[] = ['headers' => $headers, 'rows' => $rows, 'title' => $title];
+                return true;
+            }
+        };
+
+        $this->assertTrue($view->export($exportManager, []));
+        $this->assertCount(1, $exportManager->tables);
+        $this->assertSame(['total'], $exportManager->tables[0]['headers']);
+        $this->assertSame([['total' => 10]], $exportManager->tables[0]['rows']);
+        $this->assertSame(Tools::trans('totals'), $exportManager->tables[0]['title']);
     }
 
     public function testHasButtonYHasButtonGroup(): void

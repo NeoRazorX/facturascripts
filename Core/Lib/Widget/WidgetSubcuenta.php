@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
@@ -105,12 +106,9 @@ class WidgetSubcuenta extends WidgetText
         $list = [];
         $where = [];
 
-        // si no se especifica ejercicio, usamos el primero (filtrado por empresa si la conocemos)
+        // si no se especifica ejercicio, usamos el mismo que se selecciona por defecto en el filtro
         if (empty($codejercicio)) {
-            $ejercicios = Ejercicios::byEmpresa($this->idempresa);
-            if (!empty($ejercicios)) {
-                $codejercicio = $ejercicios[0]->codejercicio;
-            }
+            $codejercicio = $this->defaultExercise();
         }
 
         // cargamos y añadimos la subcuenta seleccionada
@@ -207,6 +205,20 @@ class WidgetSubcuenta extends WidgetText
         AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSubcuenta.js');
     }
 
+    /**
+     * Devuelve el último ejercicio de la empresa del modelo o, si no la conocemos,
+     * el de la empresa predeterminada.
+     */
+    protected function defaultExercise(): string
+    {
+        $ejercicios = Ejercicios::byEmpresa($this->idempresa ?? Empresas::default()->idempresa);
+        if (empty($ejercicios)) {
+            $ejercicios = Ejercicios::byEmpresa($this->idempresa);
+        }
+
+        return empty($ejercicios) ? '' : (string)$ejercicios[0]->codejercicio;
+    }
+
     protected function renderModal(string $icon, string $label): string
     {
         return '<div class="modal fade widget-subaccount-modal" id="modal_' . $this->id . '" data-widget-subaccount-id="'
@@ -243,18 +255,37 @@ class WidgetSubcuenta extends WidgetText
     protected function renderExerciseFilter(): string
     {
         $options = [];
-        $ejercicios = Ejercicios::byEmpresa($this->idempresa);
-        $first = true;
+        $selected = $this->defaultExercise();
 
-        foreach ($ejercicios as $item) {
-            $selected = $first ? ' selected' : '';
-            $options[] = '<option value="' . $this->escapeHtml($item->codejercicio) . '"' . $selected . '>' . $this->escapeHtml($item->nombre) . '</option>';
-            $first = false;
+        if (!empty($this->idempresa) || Empresas::count() <= 1) {
+            foreach (Ejercicios::byEmpresa($this->idempresa) as $item) {
+                $options[] = $this->renderExerciseOption($item, $selected);
+            }
+        } else {
+            // sin empresa conocida, agrupamos los ejercicios por empresa
+            foreach (Empresas::all() as $company) {
+                $group = [];
+                foreach (Ejercicios::byEmpresa($company->idempresa) as $item) {
+                    $group[] = $this->renderExerciseOption($item, $selected);
+                }
+
+                if (!empty($group)) {
+                    $options[] = '<optgroup label="' . $this->escapeHtml($company->nombrecorto) . '">'
+                        . implode('', $group) . '</optgroup>';
+                }
+            }
         }
 
         return '<select class="form-select mb-2" id="modal_' . $this->id . '_ej" onchange="widgetSubaccountSearch(\'' . $this->id . '\');" required>'
             . implode('', $options)
             . '</select>';
+    }
+
+    protected function renderExerciseOption($ejercicio, string $selected): string
+    {
+        $attr = $ejercicio->codejercicio === $selected ? ' selected' : '';
+        return '<option value="' . $this->escapeHtml($ejercicio->codejercicio) . '"' . $attr . '>'
+            . $this->escapeHtml($ejercicio->nombre) . '</option>';
     }
 
     protected function renderQueryFilter(): string
