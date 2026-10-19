@@ -959,7 +959,7 @@
     "incomes": "Ingressos",
     "incompatible-document": "Document incompatible: %code%. Per poder agrupar documents heu de tenir el mateix client o proveïdor, sèrie, magatzem, divisa i descomptes globals.",
     "incompatible-plugins": "Plugins incompatibles",
-    "incompatible-with-facturascripts": "Incompatible amb la versió %versio% de FacturaScripts",
+    "incompatible-with-facturascripts": "Incompatible amb la versió %version% de FacturaScripts",
     "incorrect-accounting-amount": "L'import del assentament és incorrecte.",
     "info": "Info",
     "infostate-component-title": "Informació d'Estat",

@@ -1848,7 +1848,7 @@
     "sub-account": "Sous-compte",
     "sub-type": "Sous-type",
     "subaccount": "Sous-comptes",
-    "subaccount-bad-codcuenta": "Le sous-compte %codsubaccount% a un compte incorrect qui lui a été attribué.",
+    "subaccount-bad-codcuenta": "Le sous-compte %codsubcuenta% a un compte incorrect qui lui a été attribué.",
     "subaccount-belongs-other-year": "Le sous-compte %subAccountCode% appartient à un autre exercice.",
     "subaccount-irpf": "Compte pour les déductions",
     "subaccount-irpf-creditor": "Sous-compte créditeur pour l'IRPP",

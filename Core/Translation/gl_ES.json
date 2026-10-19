@@ -1184,7 +1184,7 @@
     "may": "Maio",
     "media-whatsapp-not-upload": "Erro ao subir o arquivo multimedia ao servidor de WhatsApp: %file%",
     "mega-search": "MegaProcurador",
-    "memcache": "Memcache %s",
+    "memcache": "Memcache",
     "memcache-clear": "Memcache eliminado.",
     "memcache-delete-key-item": "Eliminouse o elemento '%item%' de Memcache.",
     "memcache-get-key-item": "Obtido elemento '%item%' de Memcache.",
