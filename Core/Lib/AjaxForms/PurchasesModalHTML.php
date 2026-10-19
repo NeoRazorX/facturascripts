@@ -138,7 +138,8 @@ class PurchasesModalHTML
             $providerReference = static::html($row['refproveedor']);
             $label = empty($row['refproveedor']) || $row['refproveedor'] === $row['referencia'] ?
                 '<b>' . $reference . '</b>' :
-                '<b>' . $reference . '</b> <span class="badge bg-light">' . $providerReference . '</span>';
+                '<b>' . $reference . '</b> <span class="badge bg-light text-dark border" title="'
+                . Tools::trans('supplier-reference') . '">' . $providerReference . '</span>';
             $description = Tools::textBreak($row['descripcion'], 120)
                 . static::idatributovalor($row['idatributovalor1'])
                 . static::idatributovalor($row['idatributovalor2'])
@@ -220,7 +221,7 @@ class PurchasesModalHTML
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
             . ' LEFT JOIN stocks s ON v.referencia = s.referencia'
             . ' AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
-            . ' LEFT JOIN productosprov pp ON pp.referencia = p.referencia'
+            . ' LEFT JOIN productosprov pp ON pp.referencia = v.referencia'
             . ' AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor)
             . ' AND pp.coddivisa = ' . $dataBase->var2str(self::$coddivisa)
             . ' WHERE p.secompra = true AND p.bloqueado = false';

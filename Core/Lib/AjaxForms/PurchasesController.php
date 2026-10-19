@@ -28,6 +28,7 @@ use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
+use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
@@ -115,16 +116,25 @@ abstract class PurchasesController extends PanelController
     {
         $this->setTemplate(false);
 
-        $list = [];
-        $variante = new Variante();
         $query = (string)$this->request->queryOrInput('term');
+        $codproveedor = (string)$this->request->input('codproveedor', '');
+
+        // primero las coincidencias con la referencia del proveedor
+        $list = $this->autocompleteSupplierReference($query, $codproveedor);
+
+        $variante = new Variante();
         $where = [
             Where::eq('p.bloqueado', 0),
             Where::eq('p.secompra', 1)
         ];
         foreach ($variante->codeModelSearch($query, 'referencia', $where) as $value) {
-            $list[] = [
-                'key' => Tools::fixHtml($value->code),
+            $key = Tools::fixHtml($value->code);
+            if (isset($list[$key])) {
+                continue;
+            }
+
+            $list[$key] = [
+                'key' => $key,
                 'value' => Tools::fixHtml($value->description)
             ];
         }
@@ -133,8 +143,59 @@ abstract class PurchasesController extends PanelController
             $list[] = ['key' => null, 'value' => Tools::trans('no-data')];
         }
 
-        $this->response->json($list);
+        $this->response->json(array_values($list));
         return false;
+    }
+
+    /**
+     * Devuelve las variantes cuya referencia del proveedor coincide con la búsqueda,
+     * indexadas por la referencia de la variante.
+     */
+    protected function autocompleteSupplierReference(string $query, string $codproveedor): array
+    {
+        $find = Tools::noHtml(mb_strtolower(trim($query), 'UTF8'));
+        if ($find === '') {
+            return [];
+        }
+
+        $where = [
+            Where::like('LOWER(pp.refproveedor)', $find),
+            Where::eq('p.bloqueado', 0),
+            Where::eq('p.secompra', 1)
+        ];
+        if ($codproveedor !== '') {
+            $where[] = Where::eq('pp.codproveedor', $codproveedor);
+        }
+
+        $sql = 'SELECT DISTINCT pp.referencia, pp.refproveedor'
+            . ' FROM productosprov pp'
+            . ' INNER JOIN variantes v ON v.referencia = pp.referencia'
+            . ' INNER JOIN productos p ON p.idproducto = v.idproducto'
+            . Where::multiSqlLegacy($where)
+            . ' ORDER BY pp.refproveedor ASC';
+
+        $list = [];
+        foreach ($this->dataBase->selectLimit($sql, CodeModel::getLimit()) as $row) {
+            $key = Tools::fixHtml($row['referencia']);
+            if (isset($list[$key])) {
+                continue;
+            }
+
+            $variante = new Variante();
+            if (false === $variante->loadWhereEq('referencia', $row['referencia'])) {
+                continue;
+            }
+
+            $description = Tools::fixHtml($variante->description());
+            $list[$key] = [
+                'key' => $key,
+                'value' => $row['refproveedor'] === $row['referencia'] ?
+                    $description :
+                    Tools::fixHtml($row['refproveedor']) . ' | ' . $description
+            ];
+        }
+
+        return $list;
     }
 
     protected function createViews()

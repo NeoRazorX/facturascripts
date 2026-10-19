@@ -37,7 +37,11 @@
                 $.ajax({
                     method: "POST",
                     url: '{{ fsc.url() }}',
-                    data: {action: 'autocomplete-product', term: request.term},
+                    data: {
+                        action: 'autocomplete-product',
+                        codproveedor: document.forms['purchasesForm']['codproveedor']?.value ?? '',
+                        term: request.term
+                    },
                     dataType: "json",
                     success: function (results) {
                         let values = [];
