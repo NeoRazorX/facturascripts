@@ -449,7 +449,7 @@
     "customer-invoice-deleted-successfully": "Fatura de venda %docCode% foi excluída com sucesso.",
     "customer-invoices": "Faturas de Cliente",
     "customer-line-error": "Erro na linha do cliente",
-    "customer-not-found": "Cliente não encontrado",
+    "customer-not-found": "Cliente %customer% não encontrado",
     "customer-order": "Encomenda de Cliente",
     "customer-orders": "Pedidos de clientes",
     "customer-payment-bank-line-error": "Erro na linha bancária do pagamento do cliente",

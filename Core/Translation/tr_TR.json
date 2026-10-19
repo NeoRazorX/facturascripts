@@ -449,7 +449,7 @@
     "customer-invoice-deleted-successfully": "%docCode% numaralı satış faturası başarıyla silindi.",
     "customer-invoices": "Müşteri faturaları",
     "customer-line-error": "Müşteri satırında hata",
-    "customer-not-found": "Müşteri bulunamadı",
+    "customer-not-found": "%customer% müşterisi bulunamadı",
     "customer-order": "Müşteri Siparişi",
     "customer-orders": "Müşteri siparişleri",
     "customer-payment-bank-line-error": "Müşteri tahsilatına ait banka satırında hata oluştu",

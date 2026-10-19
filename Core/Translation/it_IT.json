@@ -449,7 +449,7 @@
     "customer-invoice-deleted-successfully": "Fattura di vendita 0 cancellata con successo.",
     "customer-invoices": "Fatture dei clienti",
     "customer-line-error": "Errore nella riga del cliente",
-    "customer-not-found": "Cliente non trovato",
+    "customer-not-found": "Cliente %customer% non trovato",
     "customer-order": "Ordine del cliente",
     "customer-orders": "Ordini del cliente",
     "customer-payment-bank-line-error": "Errore nella riga bancaria dell'incasso del cliente",

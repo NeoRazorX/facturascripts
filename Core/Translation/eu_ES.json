@@ -449,7 +449,7 @@
     "customer-invoice-deleted-successfully": "%docCode% salmenta faktura ondo ezabatu da.",
     "customer-invoices": "Bezeroen fakturak",
     "customer-line-error": "Bezero-lerroko errorea",
-    "customer-not-found": "Bezero ez aurkitua",
+    "customer-not-found": "%customer% bezeroa ez da aurkitu",
     "customer-order": "Bezero eskaera",
     "customer-orders": "Bezeroen eskaerak",
     "customer-payment-bank-line-error": "Bezeroaren kobrantzako banku-lerroan errorea",

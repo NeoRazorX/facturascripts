@@ -449,7 +449,7 @@
     "customer-invoice-deleted-successfully": "La factura de venda %docCode% s'ha eliminat correctament.",
     "customer-invoices": "Factures de client",
     "customer-line-error": "Error en la línia de client",
-    "customer-not-found": "No s'ha trobat el client",
+    "customer-not-found": "No s'ha trobat el client %customer%",
     "customer-order": "Comanda de Client",
     "customer-orders": "Comandes de clients",
     "customer-payment-bank-line-error": "Error en la línia bancària del cobrament del client",

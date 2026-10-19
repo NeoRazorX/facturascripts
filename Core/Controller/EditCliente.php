@@ -392,7 +392,7 @@ class EditCliente extends ComercialContactController
         $cliente = new Cliente();
         $codcliente = $this->request->input('codcliente');
         if (false === $cliente->load($codcliente)) {
-            Tools::log()->error('customer-not-found');
+            Tools::log()->error('customer-not-found', ['%customer%' => $codcliente]);
             return false;
         }
 

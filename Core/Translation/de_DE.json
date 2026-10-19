@@ -449,7 +449,7 @@
     "customer-invoice-deleted-successfully": "Verkaufsrechnung 0 wurde erfolgreich gelöscht.",
     "customer-invoices": "Rechnungen des Kunden",
     "customer-line-error": "Fehler in der Kundenzeile",
-    "customer-not-found": "Kunde nicht gefunden",
+    "customer-not-found": "Kunde %customer% nicht gefunden",
     "customer-order": "Bestellung des Kunden",
     "customer-orders": "Kundenbestellungen",
     "customer-payment-bank-line-error": "Fehler in der Bankzeile der Kundenzahlung",

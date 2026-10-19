@@ -246,7 +246,7 @@ class EditTarifa extends EditController
         $customer = new Cliente();
         $code = $this->request->input('setcustomerrate');
         if (empty($code) || false === $customer->load($code)) {
-            Tools::log()->warning('customer-not-found');
+            Tools::log()->warning('customer-not-found', ['%customer%' => $code]);
             return;
         }
 

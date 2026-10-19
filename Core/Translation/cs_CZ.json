@@ -449,7 +449,7 @@
     "customer-invoice-deleted-successfully": "Prodejní faktura %docCode% byla úspěšně odstraněna.",
     "customer-invoices": "Faktury zákazníků",
     "customer-line-error": "Chyba v řádku zákazníka",
-    "customer-not-found": "Cliente no encontrado",
+    "customer-not-found": "Zákazník %customer% nebyl nalezen",
     "customer-order": "Objednávka zákazníka",
     "customer-orders": "Objednávky zákazníků",
     "customer-payment-bank-line-error": "Chyba v bankovním řádku inkasa zákazníka",

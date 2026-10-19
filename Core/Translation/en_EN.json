@@ -449,7 +449,7 @@
     "customer-invoice-deleted-successfully": "Invoice of sale %docCode% deleted successfully.",
     "customer-invoices": "Customer invoices",
     "customer-line-error": "Error in customer line",
-    "customer-not-found": "Customer not found",
+    "customer-not-found": "Customer %customer% not found",
     "customer-order": "Customer order",
     "customer-orders": "Customer orders",
     "customer-payment-bank-line-error": "Error in customer payment bank line",
