@@ -109,6 +109,28 @@ final class PurchasesProductSearchTest extends TestCase
         $this->assertStringContainsString($title, $html);
     }
 
+    public function testPriceColumns(): void
+    {
+        $this->variant->coste = 7;
+        $this->variant->precio = 15;
+        $this->assertTrue($this->variant->save(), 'variant-cant-save');
+
+        // solo la variante principal tiene precio de este proveedor
+        $this->createSupplierProduct($this->product->referencia, 'PRV-PRICE-' . mt_rand(1, 99999));
+
+        $html = $this->findProducts($this->product->referencia);
+        $mainRow = $this->getRow($html, $this->product->referencia);
+        $variantRow = $this->getRow($html, $this->variant->referencia);
+
+        // precio proveedor, coste y precio de venta (el coste de la principal depende de la política de costes)
+        $this->assertStringContainsString('</td>' . $this->moneyCell(10) . '<td class="text-end d-none d-md-table-cell">', $mainRow);
+        $this->assertStringContainsString(
+            '<td class="text-end"><span class="text-muted">-</span></td>'
+            . $this->moneyCell(7, ' d-none d-md-table-cell') . $this->moneyCell(15),
+            $variantRow
+        );
+    }
+
     protected function tearDown(): void
     {
         $this->product->delete();
@@ -123,6 +145,18 @@ final class PurchasesProductSearchTest extends TestCase
         $method = new ReflectionMethod(EditPedidoProveedor::class, 'autocompleteSupplierReference');
         $method->setAccessible(true);
         return $method->invoke($controller, $query, $codproveedor);
+    }
+
+    private function getRow(string $html, string $referencia): string
+    {
+        $pattern = '/<tr[^>]*data-reference="' . preg_quote($referencia, '/') . '".*?<\/tr>/s';
+        $this->assertSame(1, preg_match($pattern, $html, $matches), 'row-not-found: ' . $referencia);
+        return $matches[0];
+    }
+
+    private function moneyCell(float $value, string $cssClass = ''): string
+    {
+        return '<td class="text-end' . $cssClass . '">' . str_replace(' ', '&nbsp;', Tools::money($value)) . '</td>';
     }
 
     private function createSupplierProduct(string $referencia, string $refproveedor): void

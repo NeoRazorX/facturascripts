@@ -133,7 +133,10 @@ class PurchasesModalHTML
         $tbody = '';
         foreach (static::getProducts() as $row) {
             $cssClass = $row['nostock'] ? 'table-info clickableRow' : ($row['disponible'] > 0 ? 'clickableRow' : 'table-warning clickableRow');
-            $cost = $row['neto'] ?? $row['coste'];
+            // el precio del proveedor está en la divisa del documento; el coste y el precio de venta, en la de la empresa
+            $supplierPrice = $row['neto'] === null ?
+                '<span class="text-muted">-</span>' :
+                str_replace(' ', '&nbsp;', Tools::money($row['neto'], self::$coddivisa));
             $reference = static::html($row['referencia']);
             $providerReference = static::html($row['refproveedor']);
             $label = empty($row['refproveedor']) || $row['refproveedor'] === $row['referencia'] ?
@@ -149,7 +152,8 @@ class PurchasesModalHTML
                 . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return purchasesFormAction(\'add-product\', this.dataset.reference);">'
                 . '<td>' . $label . ' ' . $description . '</td>'
-                . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($cost)) . '</td>'
+                . '<td class="text-end">' . $supplierPrice . '</td>'
+                . '<td class="text-end d-none d-md-table-cell">' . str_replace(' ', '&nbsp;', Tools::money($row['coste'])) . '</td>'
                 . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
                 . self::renderNewProduct($row)
                 . '<td class="text-end">' . $row['disponible'] . '</td>'
@@ -157,15 +161,17 @@ class PurchasesModalHTML
         }
 
         if (empty($tbody)) {
-            $tbody .= '<tr class="table-warning"><td colspan="4">' . Tools::trans('no-data') . '</td></tr>';
+            $colspan = 5 + count(self::newProductFields());
+            $tbody .= '<tr class="table-warning"><td colspan="' . $colspan . '">' . Tools::trans('no-data') . '</td></tr>';
         }
 
         return '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
             . '<th>' . Tools::trans('product') . '</th>'
-            . '<th class="text-end">' . Tools::trans('cost-price') . '</th>'
-            . '<th class="text-end">' . Tools::trans('price') . '</th>'
+            . '<th class="text-end">' . Tools::trans('supplier-price') . '</th>'
+            . '<th class="text-end d-none d-md-table-cell">' . Tools::trans('cost') . '</th>'
+            . '<th class="text-end">' . Tools::trans('sale-price') . '</th>'
             . self::renderNewProductHeads()
             . '<th class="text-end">' . Tools::trans('stock') . '</th>'
             . '</tr>'
@@ -463,7 +469,7 @@ class PurchasesModalHTML
             . '<option value="">------</option>'
             . '<option value="ref_asc">' . Tools::trans('reference') . '</option>'
             . '<option value="desc_asc">' . Tools::trans('description') . '</option>'
-            . '<option value="price_desc">' . Tools::trans('price') . '</option>'
+            . '<option value="price_desc">' . Tools::trans('sale-price') . '</option>'
             . '<option value="stock_desc">' . Tools::trans('stock') . '</option>'
             . '</select>'
             . '</div>';
