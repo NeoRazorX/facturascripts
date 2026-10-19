@@ -1977,7 +1977,6 @@
     "total-sales": "Toplam satışlar",
     "total-value-error": "%docType% %docCode% toplam değeri yanlış (%docTotal%). Doğru değer: %calcTotal%",
     "total-with-taxes": "Toplam + vergiler",
-    "totalirpf-value-error": "%docType% %docCode% için IRPF toplam değeri hatalı (%docTotalIRPF%). Doğru değer: %calcTotalIRPF%",
     "totals": "Toplamlar",
     "totp-secret-key-not-set": "Kullanıcı %nick% için bir TOTP gizli anahtarı ayarlanmamış",
     "town": "Nüfus",

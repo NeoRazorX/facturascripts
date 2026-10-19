@@ -1977,7 +1977,6 @@
     "total-sales": "Salmenta totala",
     "total-value-error": "%docType% %docCode% (%docTotal%) totala ez da zuzena. Total zuzena: %calcTotal%",
     "total-with-taxes": "Totala + zergak",
-    "totalirpf-value-error": "PFEZ kopurua %docType% %docCode% ez zuzena (%docTotalIRPF%). Zenbateko zuzena: %calcTotalIRPF%",
     "totals": "Totala",
     "totp-secret-key-not-set": "Erabiltzaileak %nick% TOTP gako sekreturik ez du ezarrita",
     "town": "Herria",

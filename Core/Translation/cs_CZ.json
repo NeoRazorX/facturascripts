@@ -1977,7 +1977,6 @@
     "total-sales": "Celkem prodeje",
     "total-value-error": "Celková hodnota %docType% %docCode% je nesprávná (%docTotal%). Správná hodnota: %calcTotal%",
     "total-with-taxes": "Celkem + daně",
-    "totalirpf-value-error": "Celková hodnota IRPF %docType% %docCode% je nesprávná (%docTotalIRPF%). Správná hodnota: %calcTotalIRPF%",
     "totals": "Součty",
     "totp-secret-key-not-set": "Uživatel %nick% nemá nastavený tajný klíč TOTP",
     "town": "Obec",

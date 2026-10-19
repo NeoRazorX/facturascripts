@@ -1977,7 +1977,6 @@
     "total-sales": "Total des ventes",
     "total-value-error": "Montant total de %docType% %docCode% incorrect (%docTotal%). Montant correct: %calcTotal%",
     "total-with-taxes": "Total TTC",
-    "totalirpf-value-error": "Montant total IRPF de %docType% %docCode% incorrect (%docTotalIRPF%). Montant correct: %calcTotalIRPF%",
     "totals": "totaux",
     "totp-secret-key-not-set": "L'utilisateur %nick% n'a pas de clé secrète TOTP configurée",
     "town": "Ville",

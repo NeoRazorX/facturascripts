@@ -1977,7 +1977,6 @@
     "total-sales": "Gesamtverkäufe",
     "total-value-error": "Gesamtmenge von 0 1 falsch (2). Richtige Menge: 3",
     "total-with-taxes": "Gesamt mit Steuern",
-    "totalirpf-value-error": "Gesamt-IRPF-Betrag von 0 1 falsch (2). Richtige Menge: 3",
     "totals": "Summen",
     "totp-secret-key-not-set": "Der Benutzer %nick% hat keinen TOTP-Geheimschlüssel konfiguriert.",
     "town": "Stadt, Dorf",

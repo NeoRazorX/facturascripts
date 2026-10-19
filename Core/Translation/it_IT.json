@@ -1977,7 +1977,6 @@
     "total-sales": "Vendite totali",
     "total-value-error": "Quantità totale di 0 1 non corretta (2). Importo corretto: 3",
     "total-with-taxes": "Totale + tasse",
-    "totalirpf-value-error": "Quantità totale IRPF pari a 0 1 non corretta (2). Importo corretto: 3",
     "totals": "Totali",
     "totp-secret-key-not-set": "L'utente %nick% non ha configurato una chiave segreta TOTP",
     "town": "Cittadina",
