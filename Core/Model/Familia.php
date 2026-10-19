@@ -217,13 +217,19 @@ class Familia extends ModelClass
         }
         if (false === empty($this->codsubcuentairpfcom)) {
             if (false === $subAccount->loadWhereEq('codsubcuenta', $this->codsubcuentairpfcom)) {
-                Tools::log()->warning('irpf-subaccount-not-found');
+                Tools::log()->warning('family-irpf-subaccount-not-found', [
+                    '%family%' => $this->codfamilia,
+                    '%subaccount%' => $this->codsubcuentairpfcom
+                ]);
                 return false;
             }
         }
         if (false === empty($this->codsubcuentaven)) {
             if (false === $subAccount->loadWhereEq('codsubcuenta', $this->codsubcuentaven)) {
-                Tools::log()->warning('sales-subaccount-not-found');
+                Tools::log()->warning('family-sales-subaccount-not-found', [
+                    '%family%' => $this->codfamilia,
+                    '%subaccount%' => $this->codsubcuentaven
+                ]);
                 return false;
             }
         }
