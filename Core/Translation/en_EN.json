@@ -1885,7 +1885,7 @@
     "supplier-delivery-notes": "Supplier delivery notes",
     "supplier-estimation": "Supplier estimation",
     "supplier-estimations": "Supplier estimations",
-    "supplier-have-no-iban": "The supplier %%supplier has no IBAN (bank account)",
+    "supplier-have-no-iban": "The supplier %supplier% has no IBAN (bank account)",
     "supplier-iban-changed": "The IBAN of the bank account of supplier %codproveedor% has been changed. It was %old% and now it is %new%.",
     "supplier-invoice": "Supplier invoice",
     "supplier-invoice-deleted-successfully": "Purchase invoice %docCode% deleted successfully.",

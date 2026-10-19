@@ -1885,7 +1885,7 @@
     "supplier-delivery-notes": "Dokumenty dostawy od dostawców",
     "supplier-estimation": "Szacowanie dostawcy",
     "supplier-estimations": "Kosztorysy dostawców",
-    "supplier-have-no-iban": "Dostawca %%supplier nie posiada IBAN (numer konta bankowego)",
+    "supplier-have-no-iban": "Dostawca %supplier% nie posiada IBAN (numer konta bankowego)",
     "supplier-iban-changed": "Zmieniono IBAN konta bankowego dostawcy %codproveedor%. Wcześniej to było %old%, a teraz jest %new%",
     "supplier-invoice": "Faktura dostawcy",
     "supplier-invoice-deleted-successfully": "Faktura zakupu %docCode% została pomyślnie usunięta.",

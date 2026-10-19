@@ -1885,7 +1885,7 @@
     "supplier-delivery-notes": "Albarans de proveïdor",
     "supplier-estimation": "Pressupost de Proveïdor",
     "supplier-estimations": "Estimacions del proveïdor",
-    "supplier-have-no-iban": "El proveïdor %%supplier no té IBAN (compte bancari)",
+    "supplier-have-no-iban": "El proveïdor %supplier% no té IBAN (compte bancari)",
     "supplier-iban-changed": "S'ha canviat el IBAN del compte bancari del proveïdor %codproveedor%. Abans era %old% i ara és %new%",
     "supplier-invoice": "Factura de Proveïdor",
     "supplier-invoice-deleted-successfully": "S'ha eliminat correctament la factura de compra %docCode%.",
