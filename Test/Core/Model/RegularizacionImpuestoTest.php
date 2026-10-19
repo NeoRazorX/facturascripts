@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\RegularizacionImpuesto;
@@ -112,7 +113,8 @@ final class RegularizacionImpuestoTest extends TestCase
 
         // creamos un ejercicio para la empresa
         $ejercicio = new Ejercicio();
-        $ejercicio->codejercicio = $ejercicio->nombre = 'T002';
+        $ejercicio->codejercicio = 'T002';
+        $ejercicio->nombre = 'Test closed exercise';
         $ejercicio->idempresa = $empresa->idempresa;
         $this->assertTrue($ejercicio->save());
 
@@ -124,7 +126,14 @@ final class RegularizacionImpuestoTest extends TestCase
         $reg = new RegularizacionImpuesto();
         $reg->codejercicio = $ejercicio->codejercicio;
         $reg->idempresa = $empresa->idempresa;
+        MiniLog::clear();
         $this->assertFalse($reg->save());
+
+        // el aviso indica el nombre del ejercicio
+        $messages = array_column(MiniLog::read('', ['warning']), 'message');
+        $this->assertNotEmpty(array_filter($messages, function (string $message) use ($ejercicio) {
+            return str_contains($message, $ejercicio->nombre);
+        }), 'closed-exercise-without-name');
 
         // eliminamos
         $this->assertTrue($reg->delete());

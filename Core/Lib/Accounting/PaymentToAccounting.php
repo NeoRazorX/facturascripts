@@ -72,8 +72,12 @@ class PaymentToAccounting
                 }
                 $this->exercise->idempresa = $this->receipt->idempresa;
                 if (false === $this->exercise->loadFromDate($this->payment->fecha)) {
+                    // buscamos el ejercicio de la fecha, aunque esté cerrado, para indicar su nombre
+                    $closed = new Ejercicio();
+                    $closed->idempresa = $this->receipt->idempresa;
+                    $closed->loadFromDate($this->payment->fecha, false, false);
                     Tools::log()->warning('closed-exercise', [
-                        '%exerciseName%' => $this->exercise->codejercicio
+                        '%exerciseName%' => $closed->nombre ?? date('Y', strtotime($this->payment->fecha))
                     ]);
                     return false;
                 }
