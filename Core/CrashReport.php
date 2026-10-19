@@ -124,6 +124,21 @@ final class CrashReport
         register_shutdown_function('FacturaScripts\Core\CrashReport::shutdown');
     }
 
+    /**
+     * Indica si un error de PHP es fatal y debe mostrar la pantalla de error.
+     * Los avisos, notificaciones y deprecaciones (también los de usuario, como los que lanzan
+     * Twig o symfony/deprecation-contracts con trigger_error) no detienen la ejecución.
+     */
+    public static function isFatalError(int $type): bool
+    {
+        $nonFatal = [
+            E_WARNING, E_NOTICE, E_DEPRECATED, E_CORE_ERROR, E_CORE_WARNING,
+            E_USER_WARNING, E_USER_NOTICE, E_USER_DEPRECATED,
+        ];
+
+        return false === in_array($type, $nonFatal, true);
+    }
+
     public static function newToken(): string
     {
         return AppKey::sign('crash-report', date('Y-m-d H'));
@@ -152,7 +167,7 @@ final class CrashReport
     public static function shutdown(): void
     {
         $error = error_get_last();
-        if (!isset($error) || in_array($error['type'], [E_WARNING, E_NOTICE, E_DEPRECATED, E_CORE_ERROR, E_CORE_WARNING])) {
+        if (!isset($error) || false === self::isFatalError($error['type'])) {
             return;
         }
 
