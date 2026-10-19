@@ -167,7 +167,9 @@ abstract class PurchasesController extends PanelController
             $where[] = Where::eq('pp.codproveedor', $codproveedor);
         }
 
-        $sql = 'SELECT DISTINCT pp.referencia, pp.refproveedor'
+        // traemos la descripción y los atributos en la misma consulta para no cargar cada variante
+        $sql = 'SELECT DISTINCT pp.referencia, pp.refproveedor, p.descripcion,'
+            . ' v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4'
             . ' FROM productosprov pp'
             . ' INNER JOIN variantes v ON v.referencia = pp.referencia'
             . ' INNER JOIN productos p ON p.idproducto = v.idproducto'
@@ -181,12 +183,10 @@ abstract class PurchasesController extends PanelController
                 continue;
             }
 
-            $variante = new Variante();
-            if (false === $variante->loadWhereEq('referencia', $row['referencia'])) {
-                continue;
-            }
-
-            $description = Tools::fixHtml($variante->description());
+            // igual que Variante::description(), pero sin consultar el producto
+            $variante = new Variante($row);
+            $attributes = $variante->description(true);
+            $description = Tools::fixHtml(empty($attributes) ? $row['descripcion'] : $row['descripcion'] . "\n" . $attributes);
             $list[$key] = [
                 'key' => $key,
                 'value' => $row['refproveedor'] === $row['referencia'] ?

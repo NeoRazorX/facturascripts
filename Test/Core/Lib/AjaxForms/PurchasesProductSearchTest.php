@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Controller\EditPedidoProveedor;
 use FacturaScripts\Core\Lib\AjaxForms\PurchasesModalHTML;
+use FacturaScripts\Core\Model\Atributo;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\ProductoProveedor;
@@ -74,15 +75,31 @@ final class PurchasesProductSearchTest extends TestCase
 
     public function testAutocompleteBySupplierReference(): void
     {
+        // la variante tiene un atributo, que debe aparecer en la descripción
+        $attribute = new Atributo();
+        $attribute->nombre = 'Color ' . mt_rand(1, 99999);
+        $this->assertTrue($attribute->save(), 'attribute-cant-save');
+        $attValue = $attribute->getNewValue('rojo');
+        $this->assertTrue($attValue->save(), 'attribute-value-cant-save');
+        $this->variant->idatributovalor1 = $attValue->id;
+        $this->assertTrue($this->variant->save(), 'variant-cant-save');
+
         $supplierRef = 'PRV-AUTO-' . mt_rand(1, 99999);
         $this->createSupplierProduct($this->variant->referencia, $supplierRef);
 
         $list = $this->autocomplete(strtolower($supplierRef), $this->supplier->codproveedor);
         $this->assertSame([$this->variant->referencia], array_keys($list));
-        $this->assertStringStartsWith($supplierRef . ' | ', $list[$this->variant->referencia]['value']);
+        $this->assertSame(
+            $supplierRef . ' | ' . Tools::fixHtml($this->variant->description()),
+            $list[$this->variant->referencia]['value']
+        );
+        $this->assertStringContainsString('rojo', $list[$this->variant->referencia]['value']);
 
         // las referencias de otro proveedor no se muestran
         $this->assertEmpty($this->autocomplete($supplierRef, 'NOEXISTE'));
+
+        $this->assertTrue($this->product->delete(), 'product-cant-delete');
+        $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
     }
 
     public function testFindByMainVariantSupplierReference(): void
