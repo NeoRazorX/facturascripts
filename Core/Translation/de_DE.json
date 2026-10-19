@@ -979,7 +979,7 @@
     "invalid-admin-username": "Der Administrator-Benutzername ist ungültig: Er muss zwischen 3 und 50 Zeichen lang sein und darf keine Leerzeichen enthalten.",
     "invalid-alphanumeric-code": "Ungültiger alphanumerischer Code",
     "invalid-column-lenght": "%column% muss zwischen %min% und %max% Zeichen haben.",
-    "invalid-date": "Datum %1$s ungültig.",
+    "invalid-date": "Ungültiges Datum %date%.",
     "invalid-date-there-are-invoices-after": "Ungültiges Datum, es gibt Rechnungen danach",
     "invalid-date-there-are-invoices-before": "Ungültiges Datum: %date%. Die Rechnung %other% liegt davor und hat dennoch ein späteres Datum: %other-date%. Jede Rechnung muss ein früheres oder gleiches Datum haben wie die folgende.",
     "invalid-email-bcc": "Ungültige BCC-E-Mail-Adresse: '%email%'",

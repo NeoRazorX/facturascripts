@@ -979,7 +979,7 @@
     "invalid-admin-username": "Il nome utente dell'amministratore non è valido: deve contenere tra 3 e 50 caratteri, senza spazi.",
     "invalid-alphanumeric-code": "Il codice inserito (%value%) non è valido. (%column%) deve contenere tra %min% e %max% numeri o lettere, senza spazi, accenti o altri caratteri.",
     "invalid-column-lenght": "%column% deve contenere tra %min% e %max% caratteri.",
-    "invalid-date": "Data% 1 $ s non è valida.",
+    "invalid-date": "Data %date% non valida.",
     "invalid-date-there-are-invoices-after": "Data non valida: %date%. La fattura %other% è successiva eppure ha data precedente: %other-date%. Ogni fattura deve avere data precedente o uguale a quella successiva.",
     "invalid-date-there-are-invoices-before": "Data non valida: %date%. La fattura %other% è antecedente eppure ha una data successiva: %other-date%. Ogni fattura deve avere una data anteriore o uguale alla seguente.",
     "invalid-email-bcc": "Indirizzo email Ccn non valido: '%email%'",

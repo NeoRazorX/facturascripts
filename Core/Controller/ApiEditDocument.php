@@ -491,7 +491,7 @@ class ApiEditDocument extends ApiController
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
                 ->json([
                     'status' => 'error',
-                    'message' => Tools::trans('invalid-date'),
+                    'message' => Tools::trans('invalid-date', ['%date%' => $fecha]),
                 ]);
             return false;
         }

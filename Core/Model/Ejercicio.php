@@ -214,8 +214,8 @@ class Ejercicio extends ModelClass
             );
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             Tools::log()->warning('start-date-later-end-date', [
-                '%endDate%' => $this->fechainicio,
-                '%startDate%' => $this->fechafin
+                '%endDate%' => $this->fechafin,
+                '%startDate%' => $this->fechainicio
             ]);
         } elseif (strtotime($this->fechainicio) < 1) {
             Tools::log()->warning('invalid-date', ['%date%' => $this->fechainicio]);

@@ -979,7 +979,7 @@
     "invalid-admin-username": "O nome de utilizador do administrador não é válido: deve ter entre 3 e 50 caracteres, sem espaços.",
     "invalid-alphanumeric-code": "O código introduzido (%value%) não é válido. (%column%) deve ter entre %min% e %max% números ou letras, sem espaços, acentos ou outros caracteres.",
     "invalid-column-lenght": "%column% deve ter entre %min% e %max% caracteres.",
-    "invalid-date": "Data inválida 0.",
+    "invalid-date": "Data %date% inválida.",
     "invalid-date-there-are-invoices-after": "Data inválida: %date%. A fatura %other% é posterior e mesmo assim tem data anterior: %other-date%. Toda fatura deve ter data anterior ou igual à seguinte.",
     "invalid-date-there-are-invoices-before": "Data inválida: %date%. A fatura %other% é anterior a esta e no entanto tem data posterior: %other-date%. Toda a fatura deve ter uma data anterior ou igual à seguinte.",
     "invalid-email-bcc": "Endereço de e-mail CCO inválido: '%email%'",
