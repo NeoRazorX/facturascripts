@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "Plan kont musi mieć co najmniej 2 poziomy: konta i podkonta.",
     "accounting-possible-duplicated": "Możliwe, że to zapis księgowy jest zduplikowany z innym. Jeśli nie, aby uniknąć tego komunikatu, po prostu zmień koncepcję.",
     "accounting-reports": "Raporty księgowe",
-    "accounting-within-regularization": "W tym okresie już istnieje regulacja podatkowa. Nie można wprowadzać zmian.",
+    "accounting-within-regularization": "Dla okresu %period% (od %startDate% do %endDate%) istnieje już regulacja podatkowa. Nie można wprowadzać zmian.",
     "accounts": "Konta",
     "accrual-date": "Data naliczenia",
     "action": "Działanie",

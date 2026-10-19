@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "O plan contable debe ter polo menos 2 niveis: contas e subcontas.",
     "accounting-possible-duplicated": "O asento contable posiblemente está duplicado con este outro. Se non é así, para evitar esta mensaxe, simplemente cambie o concepto.",
     "accounting-reports": "Informes de contabilidade",
-    "accounting-within-regularization": "O asento pertence a unha regularización do imposto %tax%. Non pode ser borrado.",
+    "accounting-within-regularization": "Xa hai unha regularización de impostos para o período %period% (do %startDate% ao %endDate%). Non se poden facer cambios.",
     "accounts": "Contas",
     "accrual-date": "Data devengo",
     "action": "Acción",

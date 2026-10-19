@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\RegularizacionImpuesto;
@@ -286,7 +287,16 @@ final class AsientoTest extends TestCase
         $asiento->codejercicio = $exercise->codejercicio;
         $asiento->fecha = $exercise->fechafin;
         $asiento->idempresa = $exercise->idempresa;
+        MiniLog::clear();
         $this->assertFalse($asiento->save(), 'asiento-can-save-on-regularization');
+
+        // el aviso indica el periodo y las fechas de la regularización
+        $messages = array_column(MiniLog::read('', ['warning']), 'message');
+        $this->assertNotEmpty(array_filter($messages, function (string $message) use ($regularization) {
+            return str_contains($message, 'T4')
+                && str_contains($message, $regularization->fechainicio)
+                && str_contains($message, $regularization->fechafin);
+        }), 'regularization-warning-without-period');
 
         // eliminamos
         $this->assertTrue($regularization->delete(), 'regularization-cant-delete');

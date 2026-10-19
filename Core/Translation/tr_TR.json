@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "Muhasebe planı en az 2 seviyeye sahip olmalıdır: hesaplar ve alt hesaplar.",
     "accounting-possible-duplicated": "Muhasebe kaydı muhtemelen bu diğeriyle çakışıyor. Değilse, bu mesajı önlemek için kavramı değiştirin.",
     "accounting-reports": "Muhasebe raporları",
-    "accounting-within-regularization": "Bu dönemde zaten bir vergi düzenlemesi var. Değişiklik yapılamaz.",
+    "accounting-within-regularization": "%period% dönemi için (%startDate% - %endDate%) zaten bir vergi düzenlemesi var. Değişiklik yapılamaz.",
     "accounts": "Hesaplar",
     "accrual-date": "Gelir tarihi",
     "action": "Eylem",

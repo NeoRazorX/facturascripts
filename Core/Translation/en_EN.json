@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "The accounting plan must have at least 2 levels: accounts and subaccounts.",
     "accounting-possible-duplicated": "Accounting entry possible duplicated of this other. If there isn't, to avoid this message, simply change the concept.",
     "accounting-reports": "Accounting reports",
-    "accounting-within-regularization": "There is already a tax regularization in this period. No changes can be made.",
+    "accounting-within-regularization": "There is already a tax regularization for period %period% (from %startDate% to %endDate%). No changes can be made.",
     "accounts": "Accounts",
     "accrual-date": "Accrual date",
     "action": "Action",

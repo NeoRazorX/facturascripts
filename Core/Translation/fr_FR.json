@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "Le plan comptable doit comporter au moins deux niveaux : comptes et sous-comptes.",
     "accounting-possible-duplicated": "Entrée comptable possible dupliquée de cet autre. Si ce n'est pas le cas, pour éviter ce message, changez simplement le concept.",
     "accounting-reports": "Rapports de comptabilité",
-    "accounting-within-regularization": "L'entrée comptable est dans une régularisation de %taxe%. Elle ne peut pas être supprimée.",
+    "accounting-within-regularization": "Il existe déjà une régularisation des taxes pour la période %period% (du %startDate% au %endDate%). Aucune modification n'est possible.",
     "accounts": "Comptes",
     "accrual-date": "Date de régularisation",
     "action": "Action",

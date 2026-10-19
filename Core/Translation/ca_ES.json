@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "El pla comptable ha de tenir com a mínim 2 nivells: comptes i subcomptes.",
     "accounting-possible-duplicated": "L'assentament comptable possiblement està duplicat amb aquest altre. Si no és així, per evitar aquest missatge, simplement canviï el concepte.",
     "accounting-reports": "Informes comptables",
-    "accounting-within-regularization": "Ja hi ha una regularització d'impostos en aquest període. No es poden fer canvis.",
+    "accounting-within-regularization": "Ja hi ha una regularització d'impostos per al període %period% (del %startDate% al %endDate%). No es poden fer canvis.",
     "accounts": "Comptes",
     "accrual-date": "Data meritació",
     "action": "Acció",

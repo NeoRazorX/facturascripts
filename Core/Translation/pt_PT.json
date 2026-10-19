@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "O plano contabilístico deve ter pelo menos 2 níveis: contas e subcontas.",
     "accounting-possible-duplicated": "Possível registo contábil duplicado deste outro. Se não houver, para evitar esta mensagem, basta alterar o conceito.",
     "accounting-reports": "Relatórios de contabilidade",
-    "accounting-within-regularization": "O registo contábil está dentro de uma regularização de %tax%. Não pode ser excluído.",
+    "accounting-within-regularization": "Já existe uma regularização de impostos para o período %period% (de %startDate% a %endDate%). Não é possível fazer alterações.",
     "accounts": "Contas",
     "accrual-date": "Data de vencimento",
     "action": "Ação",

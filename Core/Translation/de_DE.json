@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "Der Kontenplan muss mindestens zwei Ebenen haben: Konten und Unterkonten.",
     "accounting-possible-duplicated": "Der Buchhaltungseintrag ist möglicherweise mit diesem anderen dupliziert. Wenn nicht, ändern Sie einfach das Konzept, um diese Meldung zu vermeiden.",
     "accounting-reports": "Buchhaltungsberichte",
-    "accounting-within-regularization": "In diesem Zeitraum gibt es bereits eine steuerliche Regularisierung. Es können keine Änderungen vorgenommen werden.",
+    "accounting-within-regularization": "Für den Zeitraum %period% (vom %startDate% bis zum %endDate%) gibt es bereits eine Steuerregularisierung. Es können keine Änderungen vorgenommen werden.",
     "accounts": "Konten",
     "accrual-date": "Abgrenzungsdatum",
     "action": "Aktion",

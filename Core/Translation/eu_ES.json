@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "Kontu-planak gutxienez 2 maila izan behar ditu: kontuak eta azpikontuak.",
     "accounting-possible-duplicated": "Kontabilitate idazpena beste honekin bikoiztua dago seguru aski. Horrela ez bada, mezu hau saihesteko, besterik gabe kontzeptua aldatu.",
     "accounting-reports": "Kontabilitate txostenak",
-    "accounting-within-regularization": "Zergen erregularizazio bat ba dago denboraldi honetarako. Ezin dira aldaketak egin.",
+    "accounting-within-regularization": "Dagoeneko badago zergen erregularizazio bat %period% aldirako (%startDate% - %endDate%). Ezin da aldaketarik egin.",
     "accounts": "Kontuak",
     "accrual-date": "Sortzapen-data",
     "action": "Ekintza",

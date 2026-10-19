@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "Účetní plán musí mít alespoň 2 úrovně: účty a podúčty.",
     "accounting-possible-duplicated": "Účetní zápis je pravděpodobně duplicitní s tímto jiným zápisem. Pokud tomu tak není, změňte jednoduše popis, aby se tato zpráva nezobrazovala.",
     "accounting-reports": "Účetní výkazy",
-    "accounting-within-regularization": "V tomto období již existuje daňové vyrovnání. Nelze provádět změny.",
+    "accounting-within-regularization": "Pro období %period% (od %startDate% do %endDate%) již existuje daňové vyrovnání. Nelze provádět změny.",
     "accounts": "Účty",
     "accrual-date": "Data přistoupení",
     "action": "Akce",

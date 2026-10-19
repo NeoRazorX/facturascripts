@@ -47,7 +47,7 @@
     "accounting-plan-must-have-at-least-2-levels": "Il piano contabile deve avere almeno 2 livelli: conti e sottoconti.",
     "accounting-possible-duplicated": "Eventuale registrazione contabile duplicata di quest'altra. Se non c'è, per evitare questo messaggio, cambia semplicemente il concetto.",
     "accounting-reports": "Rapporti contabili",
-    "accounting-within-regularization": "La registrazione contabile rientra in una regolarizzazione del % IVA %. Non può essere eliminato.",
+    "accounting-within-regularization": "Esiste già una regolarizzazione delle imposte per il periodo %period% (dal %startDate% al %endDate%). Non è possibile apportare modifiche.",
     "accounts": "conti",
     "accrual-date": "Data di maturazione",
     "action": "Azione",
