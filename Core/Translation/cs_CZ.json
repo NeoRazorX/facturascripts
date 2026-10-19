@@ -784,7 +784,7 @@
     "file-move-error": "Chyba při přesunu souboru %fileName%",
     "file-name": "Název souboru",
     "file-not-exists": "Soubor neexistuje: %fileName%",
-    "file-not-found": "Archivo %fileName% no encontrado.",
+    "file-not-found": "Soubor %fileName% nebyl nalezen.",
     "file-not-supported": "Nepodporovaný soubor",
     "file-size-error": "Chyba při odesílání souboru %fileName% protože přesahuje maximální povolenou velikost %maxSize% MB",
     "file-too-big": "Soubor je příliš velký ke zpracování",

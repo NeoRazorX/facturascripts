@@ -784,7 +784,7 @@
     "file-move-error": "Fehler beim Verschieben der Datei %fileName%",
     "file-name": "Dateiname",
     "file-not-exists": "Datei existiert nicht: %fileName%",
-    "file-not-found": "Die Datei %1$s nicht gefunden.",
+    "file-not-found": "Datei %fileName% nicht gefunden.",
     "file-not-supported": "Datei wird nicht unterstützt",
     "file-size-error": "Fehler beim Senden der Datei %fileName%, da die maximale Größe von %maxSize% MB überschritten wird",
     "file-too-big": "Datei zu groß zum Verarbeiten",

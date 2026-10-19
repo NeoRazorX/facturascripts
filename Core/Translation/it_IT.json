@@ -784,7 +784,7 @@
     "file-move-error": "Errore nel trasferimento del file %fileName%",
     "file-name": "Nome del file",
     "file-not-exists": "Il file non esiste: %fileName%",
-    "file-not-found": "File %1$s non trovato.",
+    "file-not-found": "File %fileName% non trovato.",
     "file-not-supported": "File non supportato",
     "file-size-error": "Errore durante l'invio del file %fileName% perché supera la dimensione massima consentita di %maxSize% MB",
     "file-too-big": "File troppo grande per essere elaborato",

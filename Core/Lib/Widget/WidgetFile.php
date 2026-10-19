@@ -99,7 +99,7 @@ class WidgetFile extends BaseWidget
                 continue;
             }
 
-            Tools::log()->error('file-not-found');
+            Tools::log()->error('file-move-error', ['%fileName%' => $uploadFile->getClientOriginalName()]);
         }
     }
 

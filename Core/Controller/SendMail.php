@@ -471,7 +471,7 @@ class SendMail extends Controller
 
             $this->newMail->addAttachment($filePath, $attachName);
         } elseif (false === empty($fileName)) {
-            Tools::log()->warning('file-not-found', ['%origName%' => htmlspecialchars($fileName)]);
+            Tools::log()->warning('file-not-found', ['%fileName%' => htmlspecialchars($fileName)]);
         }
 
         foreach ($this->request->files->getArray('uploads') as $file) {
