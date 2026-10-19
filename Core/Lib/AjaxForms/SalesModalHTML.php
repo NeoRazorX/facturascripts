@@ -278,13 +278,11 @@ class SalesModalHTML
             if (count($words) === 1) {
                 $sql .= " AND (LOWER(v.codbarras) = " . $dataBase->var2str(self::$query)
                     . " OR LOWER(v.referencia) LIKE '%" . self::$query . "%'"
-                    . " OR LOWER(p.descripcion) LIKE '%" . self::$query . "%')";
+                    . " OR " . static::wordFilter(self::$query) . ")";
             } elseif (count($words) > 1) {
                 $sql .= " AND (LOWER(v.referencia) LIKE '%" . self::$query . "%' OR (";
                 foreach ($words as $wc => $word) {
-                    $sql .= $wc > 0 ?
-                        " AND LOWER(p.descripcion) LIKE '%" . $word . "%'" :
-                        "LOWER(p.descripcion) LIKE '%" . $word . "%'";
+                    $sql .= $wc > 0 ? ' AND ' . static::wordFilter($word) : static::wordFilter($word);
                 }
                 $sql .= "))";
             }
@@ -545,6 +543,19 @@ class SalesModalHTML
             // no hay facturas, asignamos el último precio de venta
             $items[$key]['ultimo_precio'] = $item['precio'];
         }
+    }
+
+    /**
+     * Condición para que la palabra aparezca en la descripción del producto
+     * o en alguno de los valores de atributo de la variante.
+     */
+    protected static function wordFilter(string $word): string
+    {
+        $like = "LIKE '%" . $word . "%'";
+        return "(LOWER(p.descripcion) " . $like
+            . " OR EXISTS (SELECT 1 FROM atributos_valores av"
+            . " WHERE av.id IN (v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4)"
+            . " AND LOWER(av.descripcion) " . $like . "))";
     }
 
     /**

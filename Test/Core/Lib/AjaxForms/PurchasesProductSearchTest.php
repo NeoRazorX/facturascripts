@@ -76,13 +76,7 @@ final class PurchasesProductSearchTest extends TestCase
     public function testAutocompleteBySupplierReference(): void
     {
         // la variante tiene un atributo, que debe aparecer en la descripción
-        $attribute = new Atributo();
-        $attribute->nombre = 'Color ' . mt_rand(1, 99999);
-        $this->assertTrue($attribute->save(), 'attribute-cant-save');
-        $attValue = $attribute->getNewValue('rojo');
-        $this->assertTrue($attValue->save(), 'attribute-value-cant-save');
-        $this->variant->idatributovalor1 = $attValue->id;
-        $this->assertTrue($this->variant->save(), 'variant-cant-save');
+        $attribute = $this->createAttributeValue($this->variant, 'Color', 'rojo');
 
         $supplierRef = 'PRV-AUTO-' . mt_rand(1, 99999);
         $this->createSupplierProduct($this->variant->referencia, $supplierRef);
@@ -97,6 +91,25 @@ final class PurchasesProductSearchTest extends TestCase
 
         // las referencias de otro proveedor no se muestran
         $this->assertEmpty($this->autocomplete($supplierRef, 'NOEXISTE'));
+
+        $this->assertTrue($this->product->delete(), 'product-cant-delete');
+        $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
+    }
+
+    public function testFindByAttributeValue(): void
+    {
+        $attribute = $this->createAttributeValue($this->variant, 'Color', 'granate' . mt_rand(1, 99999));
+        $value = $attribute->getValues()[0]->valor;
+
+        // una sola palabra: el valor del atributo
+        $html = $this->findProducts($value);
+        $this->assertStringContainsString('data-reference="' . $this->variant->referencia . '"', $html);
+        $this->assertStringNotContainsString('data-reference="' . $this->product->referencia . '"', $html);
+
+        // varias palabras: descripción del producto y valor del atributo
+        $html = $this->findProducts($this->product->descripcion . ' ' . $value);
+        $this->assertStringContainsString('data-reference="' . $this->variant->referencia . '"', $html);
+        $this->assertStringNotContainsString('data-reference="' . $this->product->referencia . '"', $html);
 
         $this->assertTrue($this->product->delete(), 'product-cant-delete');
         $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
@@ -164,16 +177,18 @@ final class PurchasesProductSearchTest extends TestCase
         return $method->invoke($controller, $query, $codproveedor);
     }
 
-    private function getRow(string $html, string $referencia): string
+    private function createAttributeValue(Variante $variant, string $name, string $value): Atributo
     {
-        $pattern = '/<tr[^>]*data-reference="' . preg_quote($referencia, '/') . '".*?<\/tr>/s';
-        $this->assertSame(1, preg_match($pattern, $html, $matches), 'row-not-found: ' . $referencia);
-        return $matches[0];
-    }
+        $attribute = new Atributo();
+        $attribute->nombre = $name . ' ' . mt_rand(1, 99999);
+        $this->assertTrue($attribute->save(), 'attribute-cant-save');
 
-    private function moneyCell(float $value, string $cssClass = ''): string
-    {
-        return '<td class="text-end' . $cssClass . '">' . str_replace(' ', '&nbsp;', Tools::money($value)) . '</td>';
+        $attValue = $attribute->getNewValue($value);
+        $this->assertTrue($attValue->save(), 'attribute-value-cant-save');
+
+        $variant->idatributovalor1 = $attValue->id;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+        return $attribute;
     }
 
     private function createSupplierProduct(string $referencia, string $refproveedor): void
@@ -193,5 +208,17 @@ final class PurchasesProductSearchTest extends TestCase
 
         PurchasesModalHTML::apply($doc, ['fp_query' => $query]);
         return PurchasesModalHTML::renderProductList();
+    }
+
+    private function getRow(string $html, string $referencia): string
+    {
+        $pattern = '/<tr[^>]*data-reference="' . preg_quote($referencia, '/') . '".*?<\/tr>/s';
+        $this->assertSame(1, preg_match($pattern, $html, $matches), 'row-not-found: ' . $referencia);
+        return $matches[0];
+    }
+
+    private function moneyCell(float $value, string $cssClass = ''): string
+    {
+        return '<td class="text-end' . $cssClass . '">' . str_replace(' ', '&nbsp;', Tools::money($value)) . '</td>';
     }
 }

@@ -22,11 +22,13 @@ namespace FacturaScripts\Test\Core\Lib\AjaxForms;
 use FacturaScripts\Core\Lib\AjaxForms\SalesModalHTML;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ProductType;
+use FacturaScripts\Core\Model\Atributo;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -77,6 +79,35 @@ final class SalesModalHTMLTest extends TestCase
         // con «vendido anteriormente» se añade la columna del último precio
         $html = $this->findProducts('no-existe-' . mt_rand(1, 99999), true);
         $this->assertStringContainsString('<td colspan="5">', $html);
+    }
+
+    public function testFindByAttributeValue(): void
+    {
+        // segunda variante con un atributo; la principal no tiene
+        $attribute = new Atributo();
+        $attribute->nombre = 'Talla ' . mt_rand(1, 99999);
+        $this->assertTrue($attribute->save(), 'attribute-cant-save');
+        $attValue = $attribute->getNewValue('xxl' . mt_rand(1, 99999));
+        $this->assertTrue($attValue->save(), 'attribute-value-cant-save');
+
+        $variant = new Variante();
+        $variant->idproducto = $this->product->idproducto;
+        $variant->referencia = $this->product->referencia . '-B';
+        $variant->idatributovalor1 = $attValue->id;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        // una sola palabra: el valor del atributo
+        $html = $this->findProducts($attValue->valor, false);
+        $this->assertStringContainsString('data-reference="' . $variant->referencia . '"', $html);
+        $this->assertStringNotContainsString('data-reference="' . $this->product->referencia . '"', $html);
+
+        // varias palabras: descripción del producto y valor del atributo
+        $html = $this->findProducts($this->product->descripcion . ' ' . $attValue->valor, false);
+        $this->assertStringContainsString('data-reference="' . $variant->referencia . '"', $html);
+        $this->assertStringNotContainsString('data-reference="' . $this->product->referencia . '"', $html);
+
+        $this->assertTrue($this->product->delete(), 'product-cant-delete');
+        $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
     }
 
     public function testLastPriceUsesLatestInvoiceOfTheDay(): void
