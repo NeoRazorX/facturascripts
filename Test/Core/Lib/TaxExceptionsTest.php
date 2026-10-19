@@ -138,10 +138,7 @@ final class TaxExceptionsTest extends TestCase
     public function testIntraCommunityValidSales(): void
     {
         $op = InvoiceOperation::INTRA_COMMUNITY;
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_22, 'sales'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_23_24, 'sales'));
         $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_25, 'sales'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_68_70, 'sales'));
     }
 
     public function testIntraCommunityInvalidSales(): void
@@ -150,14 +147,17 @@ final class TaxExceptionsTest extends TestCase
         $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_20, 'sales'));
         $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_84, 'sales'));
         $this->assertFalse(TaxExceptions::isValidCombination($op, null, 'sales'));
+
+        // CalculatorModSpain pone siempre ES_25 en las líneas, así que el cliente no puede tener otra
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_22, 'sales'));
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_23_24, 'sales'));
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_68_70, 'sales'));
     }
 
     public function testIntraCommunityValidPurchases(): void
     {
         $op = InvoiceOperation::INTRA_COMMUNITY;
         $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_84, 'purchases'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_7, 'purchases'));
-        $this->assertTrue(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_68_70, 'purchases'));
     }
 
     public function testIntraCommunityInvalidPurchases(): void
@@ -165,6 +165,10 @@ final class TaxExceptionsTest extends TestCase
         $op = InvoiceOperation::INTRA_COMMUNITY;
         $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_25, 'purchases'));
         $this->assertFalse(TaxExceptions::isValidCombination($op, null, 'purchases'));
+
+        // CalculatorModSpain pone siempre ES_84 en las líneas, así que el proveedor no puede tener otra
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_7, 'purchases'));
+        $this->assertFalse(TaxExceptions::isValidCombination($op, TaxExceptions::ES_TAX_EXCEPTION_68_70, 'purchases'));
     }
 
     // isValidCombination: intracomunitaria servicios

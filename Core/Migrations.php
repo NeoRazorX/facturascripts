@@ -85,7 +85,8 @@ final class Migrations
     {
         $migrations = [
             'clearLogs', 'fixSeries', 'fixAgentes', 'fixApiKeysUsers', 'fixAgenciasTransporte', 'fixFormasPago',
-            'fixRectifiedInvoices', 'fixClientesOperationFromVatException', 'fixTaxException'
+            'fixRectifiedInvoices', 'fixClientesOperationFromVatException', 'fixTaxException',
+            'fixClientesIntraCommunityVatException', 'fixProveedoresIntraCommunityVatException'
         ];
 
         foreach ($migrations as $name) {
@@ -247,13 +248,43 @@ final class Migrations
     }
 
     /**
+     * Ajusta los clientes intracomunitarios cuya excepción de IVA no es la que pone CalculatorModSpain.
+     *
+     * Versión 2026.71, fecha 19-10-2026. En las ventas intracomunitarias el cálculo pone siempre ES_25
+     * en las líneas, y ahora es la única excepción válida con esa operación:
+     * - ES_22 o ES_23_24: la operación la asignó `fixClientesOperationFromVatException` a partir de la
+     *   excepción, que es lo que eligió el usuario. Se quita la operación y se mantiene la excepción,
+     *   que ahora es válida sin operación y deja las líneas sin IVA.
+     * - ES_68_70: indica una venta de servicios a empresarios de la UE, así que pasan a `intracom-servicios`.
+     */
+    private static function fixClientesIntraCommunityVatException(): void
+    {
+        // forzamos la comprobación de la tabla
+        new Cliente();
+
+        $intraCommunity = self::db()->var2str(InvoiceOperation::INTRA_COMMUNITY);
+
+        self::exec("UPDATE clientes SET operacion = NULL"
+            . " WHERE operacion = " . $intraCommunity
+            . " AND excepcioniva IN (" . self::db()->var2str(TaxExceptions::ES_TAX_EXCEPTION_22)
+            . ", " . self::db()->var2str(TaxExceptions::ES_TAX_EXCEPTION_23_24) . ");");
+
+        self::exec("UPDATE clientes SET operacion = " . self::db()->var2str(InvoiceOperation::INTRA_COMMUNITY_SERVICES)
+            . " WHERE operacion = " . $intraCommunity
+            . " AND excepcioniva = " . self::db()->var2str(TaxExceptions::ES_TAX_EXCEPTION_68_70) . ";");
+    }
+
+    /**
      * Rellena `clientes.operacion` a partir de `clientes.excepcioniva` cuando viene vacía.
      *
      * Versión 2026.01, fecha 06-03-2026. Con la nueva validación, ciertas excepciones de IVA
-     * (exportaciones y operaciones intracomunitarias) requieren que el cliente tenga informada
+     * (exportaciones y entregas intracomunitarias) requieren que el cliente tenga informada
      * la operación. Para no romper a clientes ya existentes, esta migración mapea las excepciones
      * conocidas a su operación correspondiente, pero sólo cuando la columna `operacion` está NULL
      * (no se sobrescriben valores ya configurados manualmente).
+     *
+     * ES_22 y ES_23_24 ya no se mapean: son válidas sin operación y no implican una entrega
+     * intracomunitaria. Los clientes que ya se cambiaron los corrige `fixClientesIntraCommunityVatException`.
      */
     private static function fixClientesOperationFromVatException(): void
     {
@@ -269,8 +300,6 @@ final class Migrations
         // compatibilidad: con la nueva validación, estos casos requieren operación informada
         $updates = [
             TaxExceptions::ES_TAX_EXCEPTION_21 => InvoiceOperation::EXPORT,
-            TaxExceptions::ES_TAX_EXCEPTION_22 => InvoiceOperation::INTRA_COMMUNITY,
-            TaxExceptions::ES_TAX_EXCEPTION_23_24 => InvoiceOperation::INTRA_COMMUNITY,
             TaxExceptions::ES_TAX_EXCEPTION_25 => InvoiceOperation::INTRA_COMMUNITY,
         ];
 
@@ -347,6 +376,27 @@ final class Migrations
                 self::exec($sql);
             }
         }
+    }
+
+    /**
+     * Cambia a ES_84 la excepción de IVA de los proveedores intracomunitarios que tengan ES_68_70 o ES_7.
+     *
+     * Versión 2026.71, fecha 19-10-2026. En las compras intracomunitarias, de bienes o de servicios,
+     * el comprador autorepercute el IVA y CalculatorModSpain ya ponía ES_84 en las líneas, así que es
+     * la única excepción válida con esas operaciones. Sin esta migración, esos proveedores no podrían
+     * volver a guardarse. Se ejecuta después de `fixTaxException` para cubrir también los códigos
+     * heredados ya renombrados (`ES_LOCATION_RULES`, `ES_N1`...).
+     */
+    private static function fixProveedoresIntraCommunityVatException(): void
+    {
+        // forzamos la comprobación de la tabla
+        new Proveedor();
+
+        self::exec("UPDATE proveedores SET excepcioniva = " . self::db()->var2str(TaxExceptions::ES_TAX_EXCEPTION_84)
+            . " WHERE operacion IN (" . self::db()->var2str(InvoiceOperation::INTRA_COMMUNITY)
+            . ", " . self::db()->var2str(InvoiceOperation::INTRA_COMMUNITY_SERVICES) . ")"
+            . " AND excepcioniva IN (" . self::db()->var2str(TaxExceptions::ES_TAX_EXCEPTION_68_70)
+            . ", " . self::db()->var2str(TaxExceptions::ES_TAX_EXCEPTION_7) . ");");
     }
 
     /**

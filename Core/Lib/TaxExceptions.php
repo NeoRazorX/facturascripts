@@ -84,6 +84,9 @@ class TaxExceptions
     /**
      * Checks if the operation and VAT exception combination is valid.
      *
+     * Las operaciones especiales solo admiten la excepción que CalculatorModSpain pone en las líneas,
+     * para que lo que se guarda en el cliente o proveedor sea lo que sale en los documentos.
+     *
      * @param string|null $operation InvoiceOperation value (intracomunitaria, exportacion, importacion, null...)
      * @param string|null $exception VAT exception value (ES_20, ES_25, ES_PASSIVE_SUBJECT, null...)
      * @param string $context 'sales' or 'purchases'
@@ -92,8 +95,8 @@ class TaxExceptions
     {
         $validMap = [
             InvoiceOperation::INTRA_COMMUNITY => [
-                'sales' => [self::ES_TAX_EXCEPTION_22, self::ES_TAX_EXCEPTION_23_24, self::ES_TAX_EXCEPTION_25, self::ES_TAX_EXCEPTION_68_70],
-                'purchases' => [self::ES_TAX_EXCEPTION_84, self::ES_TAX_EXCEPTION_7, self::ES_TAX_EXCEPTION_68_70],
+                'sales' => [self::ES_TAX_EXCEPTION_25],
+                'purchases' => [self::ES_TAX_EXCEPTION_84],
             ],
             InvoiceOperation::INTRA_COMMUNITY_SERVICES => [
                 'sales' => [self::ES_TAX_EXCEPTION_68_70],

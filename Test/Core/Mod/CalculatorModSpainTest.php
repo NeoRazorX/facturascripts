@@ -1016,4 +1016,44 @@ final class CalculatorModSpainTest extends TestCase
         $this->assertEquals(0.0, $purchase->totaliva, 'bad-purchase-totaliva');
         $this->assertEquals(100.0, $purchase->total, 'bad-purchase-total');
     }
+
+    public function testValidCombinationsAreKeptByCalculator(): void
+    {
+        // toda combinación de operación y excepción que admite la ficha del cliente o proveedor
+        // debe mantenerse en las líneas tras el cálculo, si no el usuario la cambia y vuelve a otra
+        $operations = [
+            null,
+            InvoiceOperation::INTRA_COMMUNITY,
+            InvoiceOperation::INTRA_COMMUNITY_SERVICES,
+            InvoiceOperation::REVERSE_CHARGE,
+            InvoiceOperation::EXPORT,
+            InvoiceOperation::IMPORT,
+        ];
+        $exceptions = array_merge([null], array_keys(TaxExceptions::all()));
+
+        foreach (['sales', 'purchases'] as $context) {
+            foreach ($operations as $operation) {
+                foreach ($exceptions as $exception) {
+                    if (false === TaxExceptions::isValidCombination($operation, $exception, $context)) {
+                        continue;
+                    }
+
+                    $doc = $context === 'sales' ? new PresupuestoCliente() : new PresupuestoProveedor();
+                    $doc->operacion = $operation;
+
+                    $line = $doc->getNewLine();
+                    $line->cantidad = 1;
+                    $line->pvpunitario = 100;
+                    $line->iva = 21;
+                    $line->excepcioniva = $exception;
+
+                    $lines = [$line];
+                    $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+                    $label = $context . '|' . ($operation ?? 'null') . '|' . ($exception ?? 'null');
+                    $this->assertSame($exception, $lines[0]->excepcioniva, 'calculator-changes-valid-combination: ' . $label);
+                }
+            }
+        }
+    }
 }
