@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Test\Core\Lib\AjaxForms;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Contract\AccountingLineModInterface;
+use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Lib\AjaxForms\AccountingLineHTML;
 use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\Partida;
@@ -94,6 +96,28 @@ final class AccountingLineHTMLTest extends TestCase
         $this->assertSame(175.0, $model->debe);
         $this->assertSame(25.0, $model->haber);
         $this->assertSame(175.0, $model->importe);
+    }
+
+    public function testNewLineWithMissingSubaccount(): void
+    {
+        $model = new DinamicAsiento();
+        $model->codejercicio = Ejercicios::all()[0]->codejercicio ?? '';
+        $lines = [];
+        $formData = [
+            'action' => 'new-line',
+            'new_subaccount' => '999999999',
+        ];
+
+        MiniLog::clear();
+        AccountingLineHTML::apply($model, $lines, $formData);
+        $this->assertEmpty($lines, 'line-added-with-missing-subaccount');
+
+        // el error indica el código de la subcuenta
+        $messages = array_column(MiniLog::read('', ['error']), 'message');
+        $this->assertNotEmpty(array_filter($messages, function (string $message) {
+            return str_contains($message, '999999999');
+        }), 'subaccount-not-found-without-code');
+        MiniLog::clear();
     }
 
     private function resetMods(): void

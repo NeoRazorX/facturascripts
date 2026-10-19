@@ -1852,7 +1852,7 @@
     "subaccount-belongs-other-year": "El subcompte %subAccountCode% pertany a un altre exercici.",
     "subaccount-irpf": "Subcompte de retencions de vendes",
     "subaccount-irpf-creditor": "Subcompte de retencions de compres",
-    "subaccount-not-found": "Subcompte '%subAccountCode%' no trobat.",
+    "subaccount-not-found": "Subcompte '%code%' no trobat.",
     "subaccount-purchases": "Compte per a compres",
     "subaccount-pyg-not-found": "Subcompte de pèrdues i guanys no trobada",
     "subaccount-sales": "Compte per a vendes",

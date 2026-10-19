@@ -1852,7 +1852,7 @@
     "subaccount-belongs-other-year": "A subconta %subAccountCode% pertence a outro ano fiscal.",
     "subaccount-irpf": "Subconta de retencións para ventas",
     "subaccount-irpf-creditor": "Subconta de retencións para compras",
-    "subaccount-not-found": "A subconta %subAccountCode% non está bloqueada.",
+    "subaccount-not-found": "Subconta %code% non atopada.",
     "subaccount-purchases": "Contas para compras",
     "subaccount-pyg-not-found": "Subconta de pérdidas e ganancias non atopada",
     "subaccount-sales": "Conta para vendas",
