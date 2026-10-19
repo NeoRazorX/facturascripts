@@ -310,7 +310,7 @@
     "close-without-generating": "Pechar sen xerar",
     "close-without-generating-p": "Pecha os documentos seleccionados cambiando o seu estado. Non se xera ningún documento novo.",
     "closed": "Pechado",
-    "closed-exercise": "O exercicio  %exerciseName% está pechado.",
+    "closed-exercise": "O exercicio %exerciseName% está pechado.",
     "closed-exercise-cant-change-date": "O exercicio %exerciseName% está pechado. Non podes cambiar a data.",
     "closing-accounting-completed": "Exercicio pechado correctamente",
     "closing-closing-concept": "Asento de peche do exercicio %exercise%",
