@@ -151,7 +151,8 @@ class SalesModalHTML
         }
 
         if (empty($tbody)) {
-            $tbody .= '<tr class="table-warning"><td colspan="4">' . Tools::trans('no-data') . '</td></tr>';
+            $colspan = 3 + count(self::newProductFields()) + (self::$vendido ? 1 : 0);
+            $tbody .= '<tr class="table-warning"><td colspan="' . $colspan . '">' . Tools::trans('no-data') . '</td></tr>';
         }
 
         $extraTh = self::$vendido ?
@@ -513,7 +514,7 @@ class SalesModalHTML
                 . ' LEFT JOIN facturascli f ON f.idfactura = l.idfactura'
                 . ' WHERE f.codcliente = ' . $db->var2str(self::$codcliente)
                 . ' AND l.referencia = ' . $db->var2str($item['referencia'])
-                . ' ORDER BY f.fecha DESC';
+                . ' ORDER BY f.fecha DESC, f.hora DESC, f.idfactura DESC';
             foreach ($db->selectLimit($sql, 1) as $row) {
                 $items[$key]['ultimo_precio'] = $row['pvpunitario'];
                 continue 2;
