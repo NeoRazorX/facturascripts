@@ -1111,7 +1111,7 @@
     "like-than": "Igual que",
     "limits": "Límites",
     "line": "Línea",
-    "line-save-error": "Error al guardar la línea del pedido.",
+    "line-save-error": "Error al guardar la línea %num%",
     "lines": "Líneas",
     "link-document": "Vincular...",
     "linux": "Linux",
