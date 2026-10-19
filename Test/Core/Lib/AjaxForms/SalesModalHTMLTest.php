@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Lib\AjaxForms\SalesModalHTML;
 use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\PresupuestoCliente;
@@ -71,11 +72,11 @@ final class SalesModalHTMLTest extends TestCase
     public function testEmptyListSpansAllColumns(): void
     {
         $html = $this->findProducts('no-existe-' . mt_rand(1, 99999), false);
-        $this->assertStringContainsString('<td colspan="3">', $html);
+        $this->assertStringContainsString('<td colspan="4">', $html);
 
         // con «vendido anteriormente» se añade la columna del último precio
         $html = $this->findProducts('no-existe-' . mt_rand(1, 99999), true);
-        $this->assertStringContainsString('<td colspan="4">', $html);
+        $this->assertStringContainsString('<td colspan="5">', $html);
     }
 
     public function testLastPriceUsesLatestInvoiceOfTheDay(): void
@@ -87,6 +88,32 @@ final class SalesModalHTMLTest extends TestCase
         $html = $this->findProducts($this->product->referencia, true);
         $lastPrice = '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money(20)) . '</td>';
         $this->assertStringContainsString($lastPrice, $html);
+    }
+
+    public function testPriceWithTax(): void
+    {
+        $variant = $this->product->getVariants()[0];
+        $variant->precio = 100;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        $html = $this->findProducts($this->product->referencia, false);
+        $this->assertStringContainsString($this->moneyCell(100) . $this->moneyCell($variant->priceWithTax()), $html);
+    }
+
+    public function testSecondHandPriceWithTax(): void
+    {
+        $this->product->tipo = ProductType::SECOND_HAND;
+        $this->assertTrue($this->product->save(), 'product-cant-save');
+
+        $variant = $this->product->getVariants()[0];
+        $variant->coste = 60;
+        $variant->precio = 100;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        // el impuesto solo se aplica sobre el margen
+        $html = $this->findProducts($this->product->referencia, false);
+        $this->assertNotEquals(100 * (100 + $this->product->getTax()->iva) / 100, $variant->priceWithTax());
+        $this->assertStringContainsString($this->moneyCell(100) . $this->moneyCell($variant->priceWithTax()), $html);
     }
 
     protected function tearDown(): void
@@ -125,5 +152,10 @@ final class SalesModalHTMLTest extends TestCase
 
         SalesModalHTML::apply($doc, ['fp_query' => $query, 'fp_vendido' => $vendido]);
         return SalesModalHTML::renderProductList();
+    }
+
+    private function moneyCell(float $value): string
+    {
+        return '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($value)) . '</td>';
     }
 }

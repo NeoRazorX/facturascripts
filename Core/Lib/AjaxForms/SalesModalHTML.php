@@ -26,15 +26,18 @@ use FacturaScripts\Core\Contract\SalesModalInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Fabricantes;
 use FacturaScripts\Core\DataSrc\Familias;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Lib\ProductType;
 use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Familia;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
 /**
@@ -140,6 +143,7 @@ class SalesModalHTML
                 . ' return salesFormAction(\'add-product\', this.dataset.reference);">'
                 . '<td><b>' . $reference . '</b> ' . $description . '</td>'
                 . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
+                . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money(static::priceWithTax($row))) . '</td>'
                 . self::renderNewProduct($row);
 
             if (self::$vendido) {
@@ -151,7 +155,7 @@ class SalesModalHTML
         }
 
         if (empty($tbody)) {
-            $colspan = 3 + count(self::newProductFields()) + (self::$vendido ? 1 : 0);
+            $colspan = 4 + count(self::newProductFields()) + (self::$vendido ? 1 : 0);
             $tbody .= '<tr class="table-warning"><td colspan="' . $colspan . '">' . Tools::trans('no-data') . '</td></tr>';
         }
 
@@ -163,6 +167,7 @@ class SalesModalHTML
             . '<tr>'
             . '<th>' . Tools::trans('product') . '</th>'
             . '<th class="text-end">' . Tools::trans('price') . '</th>'
+            . '<th class="text-end">' . Tools::trans('price-with-tax') . '</th>'
             . self::renderNewProductHeads()
             . $extraTh
             . '<th class="text-end">' . Tools::trans('stock') . '</th>'
@@ -504,6 +509,23 @@ class SalesModalHTML
             . '<option value="stock_desc">' . Tools::trans('stock') . '</option>'
             . '</select>'
             . '</div>';
+    }
+
+    /**
+     * Precio de venta con el impuesto del producto, igual que Variante::priceWithTax(),
+     * pero a partir de los datos de la fila para no consultar cada producto.
+     */
+    protected static function priceWithTax(array $row): float
+    {
+        $iva = (float)Impuestos::get($row['codimpuesto'])->iva;
+
+        // en los productos de segunda mano el impuesto se aplica solo sobre el margen
+        if ($row['tipo'] === ProductType::SECOND_HAND) {
+            $diff = $row['precio'] - $row['coste'];
+            return round($row['precio'] + ($diff * $iva / 100), Producto::ROUND_DECIMALS);
+        }
+
+        return round($row['precio'] * (100 + $iva) / 100, Producto::ROUND_DECIMALS);
     }
 
     protected static function setProductsLastPrice(DataBase $db, array &$items): void
