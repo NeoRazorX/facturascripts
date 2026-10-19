@@ -34,7 +34,7 @@
     "accounting-entry": "Buchhaltungseintrag",
     "accounting-entry-date": "Buchungsdatum",
     "accounting-entry-error": "Fehler während des Buchhaltungsprozesses",
-    "accounting-entry-macros-text": "<p> Sie können spezielle Schlüsselwörter (Makros) verwenden, um Informationen im Beschreibungsfeld automatisch auszufüllen: <\/p> <dl> <dt> Dokumentname <\/dt> <dd> Typ <strong>% document% < \/ strong > um die Dokumentkennung hinzuzufügen. <\/dd> <dt> Aktuelles Datum <\/dt> <dd> Geben Sie <strong>% date% <\/strong> ein, um das aktuelle Datum hinzuzufügen. <\/dd> <dt> Eingabedatum < \/dt> <dd> Geben Sie <strong>% date-entry% <\/strong> ein, um das Datum des Buchhaltungseintrags hinzuzufügen. <\/dd> <dt> Monat <\/dt> <dd> Geben Sie <strong> %month% ein <\/strong> um den Namen des Monats des Buchungsdatums hinzuzufügen. <\/dd> <\/dl>",
+    "accounting-entry-macros-text": "<p> Sie können spezielle Schlüsselwörter (Makros) verwenden, um Informationen im Beschreibungsfeld automatisch auszufüllen: <\/p> <dl> <dt> Dokumentname <\/dt> <dd> Typ <strong>%document% < \/ strong > um die Dokumentkennung hinzuzufügen. <\/dd> <dt> Aktuelles Datum <\/dt> <dd> Geben Sie <strong>%date% <\/strong> ein, um das aktuelle Datum hinzuzufügen. <\/dd> <dt> Eingabedatum < \/dt> <dd> Geben Sie <strong>%date-entry% <\/strong> ein, um das Datum des Buchhaltungseintrags hinzuzufügen. <\/dd> <dt> Monat <\/dt> <dd> Geben Sie <strong> %month% ein <\/strong> um den Namen des Monats des Buchungsdatums hinzuzufügen. <\/dd> <\/dl>",
     "accounting-entry-macros-title": "Verwenden Sie Makros in der Feldbeschreibung",
     "accounting-exercise-not-found": "Geschäftsjahr nicht gefunden.",
     "accounting-file": "Kontoarchiv",
