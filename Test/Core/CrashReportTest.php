@@ -35,27 +35,6 @@ final class CrashReportTest extends TestCase
     /** @var array */
     private $server;
 
-    public function testDeprecationDoesNotCrash(): void
-    {
-        // como hace symfony/deprecation-contracts: un aviso silenciado que queda en error_get_last()
-        // dejamos que lo procese el manejador de PHP y no el de PHPUnit
-        error_clear_last();
-        set_error_handler(static function (): bool {
-            return false;
-        });
-        @trigger_error('Not passing a value for the "parent" argument of macro "showMenu" is deprecated.', E_USER_DEPRECATED);
-        restore_error_handler();
-        $this->assertSame(E_USER_DEPRECATED, error_get_last()['type'] ?? null, 'deprecation-not-registered');
-
-        // shutdown() no debe mostrar la pantalla de error
-        ob_start();
-        CrashReport::shutdown();
-        $output = ob_get_clean();
-        error_clear_last();
-
-        $this->assertSame('', $output, 'deprecation-shows-crash-report');
-    }
-
     public function testDeployButtonsForAdminSession(): void
     {
         $this->skipIfDeployActionsDisabled();
@@ -102,6 +81,27 @@ final class CrashReportTest extends TestCase
         // si pasa por un proxy, la petición no es local aunque REMOTE_ADDR sea 127.0.0.1
         $_SERVER['HTTP_X_FORWARDED_FOR'] = '203.0.113.7';
         $this->assertFalse(CrashReport::canShowDeployButtons(), 'proxied-request-with-buttons');
+    }
+
+    public function testDeprecationDoesNotCrash(): void
+    {
+        // como hace symfony/deprecation-contracts: un aviso silenciado que queda en error_get_last()
+        // dejamos que lo procese el manejador de PHP y no el de PHPUnit
+        error_clear_last();
+        set_error_handler(static function (): bool {
+            return false;
+        });
+        @trigger_error('Not passing a value for the "parent" argument of macro "showMenu" is deprecated.', E_USER_DEPRECATED);
+        restore_error_handler();
+        $this->assertSame(E_USER_DEPRECATED, error_get_last()['type'] ?? null, 'deprecation-not-registered');
+
+        // shutdown() no debe mostrar la pantalla de error
+        ob_start();
+        CrashReport::shutdown();
+        $output = ob_get_clean();
+        error_clear_last();
+
+        $this->assertSame('', $output, 'deprecation-shows-crash-report');
     }
 
     public function testFatalErrorTypes(): void
