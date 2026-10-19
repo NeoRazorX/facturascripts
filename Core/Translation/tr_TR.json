@@ -802,7 +802,7 @@
     "finalize": "Tamamla",
     "find-problems": "Sorunları bul",
     "finished": "Tamamlandı",
-    "finished-cron": "Cron çalıştırılması sona erdi. Tü consumed zaman: %timeNeeded% saniye, Bellek: %memoryUsed%",
+    "finished-cron": "Cron çalıştırması tamamlandı. Geçen süre: %timeNeeded% saniye, bellek: %memoryUsed%",
     "first-quarter": "1. çeyrek",
     "first-steps": "İlk adımlar",
     "first-trimester": "Birinci üç aylık dönem",

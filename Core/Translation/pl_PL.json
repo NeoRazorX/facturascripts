@@ -1841,7 +1841,7 @@
     "stockmax": "Max zapasów",
     "stockmin": "Minimalny stan magazynowy",
     "storage": "Lokalizacja",
-    "storage-limit-almost": "Niemal osiągnięto limit przechowywania (%limit%). Pozostało %free%",
+    "storage-limit-almost": "Limit przechowywania (%limit%) prawie osiągnięty (%used%). Pozostało %free%",
     "storage-limit-reached": "Osiągnięto limit przechowywania",
     "stripe": "Stripe",
     "structured-data-csv": "Plik CSV",
