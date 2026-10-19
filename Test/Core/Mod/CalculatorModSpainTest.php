@@ -967,4 +967,53 @@ final class CalculatorModSpainTest extends TestCase
         $this->assertEquals(150.0, $doc->total, 'bad-total');
         $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
     }
+
+    public function testDestinationExemptionWithoutOperation(): void
+    {
+        // venta sin operación con una línea exenta por el art. 22 (asimilada a exportación)
+        $doc = new PresupuestoCliente();
+
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 1;
+        $line1->pvpunitario = 100;
+        $line1->iva = 21;
+        $line1->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_22;
+
+        // y otra línea sin excepción
+        $line2 = $doc->getNewLine();
+        $line2->cantidad = 1;
+        $line2->pvpunitario = 50;
+        $line2->iva = 21;
+
+        $lines = [$line1, $line2];
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+        // la línea exenta mantiene la excepción y no lleva IVA
+        $this->assertEquals(0.0, $lines[0]->iva, 'bad-line1-iva');
+        $this->assertEquals(Impuestos::get('IVA0')->codimpuesto, $lines[0]->codimpuesto, 'bad-line1-codimpuesto');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_22, $lines[0]->excepcioniva, 'bad-line1-excepcioniva');
+
+        // la otra línea mantiene su IVA
+        $this->assertEquals(21.0, $lines[1]->iva, 'bad-line2-iva');
+        $this->assertEquals(150.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(10.5, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(160.5, $doc->total, 'bad-total');
+
+        // compra sin operación con excepción de los arts. 23-24 (zona franca o depósito)
+        $purchase = new PresupuestoProveedor();
+
+        $purchaseLine = $purchase->getNewLine();
+        $purchaseLine->cantidad = 1;
+        $purchaseLine->pvpunitario = 100;
+        $purchaseLine->iva = 21;
+        $purchaseLine->excepcioniva = TaxExceptions::ES_TAX_EXCEPTION_23_24;
+
+        $purchaseLines = [$purchaseLine];
+        $this->assertTrue(Calculator::calculate($purchase, $purchaseLines, false));
+
+        $this->assertEquals(0.0, $purchaseLines[0]->iva, 'bad-purchase-line-iva');
+        $this->assertEquals(TaxExceptions::ES_TAX_EXCEPTION_23_24, $purchaseLines[0]->excepcioniva, 'bad-purchase-line-excepcioniva');
+        $this->assertEquals(0.0, $purchase->totaliva, 'bad-purchase-totaliva');
+        $this->assertEquals(100.0, $purchase->total, 'bad-purchase-total');
+    }
 }

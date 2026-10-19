@@ -115,13 +115,21 @@ final class TaxExceptionsTest extends TestCase
         $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_7, 'purchases'));
         $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_68_70, 'purchases'));
         $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_84, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_22, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_22, 'purchases'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_23_24, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_23_24, 'purchases'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_OTHER_NOT_SUBJECT, 'sales'));
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_OTHER_NOT_SUBJECT, 'purchases'));
+
+        // adquisiciones intracomunitarias no sujetas: solo en compras
+        $this->assertTrue(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_14, 'purchases'));
+        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_14, 'sales'));
     }
 
     public function testNoOperationRejectsSpecificExceptions(): void
     {
         $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_21, 'sales'));
-        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_22, 'purchases'));
-        $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_23_24, 'sales'));
         $this->assertFalse(TaxExceptions::isValidCombination(null, TaxExceptions::ES_TAX_EXCEPTION_25, 'purchases'));
     }
 

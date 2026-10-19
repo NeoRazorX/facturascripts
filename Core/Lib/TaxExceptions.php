@@ -115,7 +115,23 @@ class TaxExceptions
 
         // without operation: generic exceptions or null are allowed
         if (empty($operation)) {
-            $allowed = [null, self::ES_TAX_EXCEPTION_20, self::ES_TAX_EXCEPTION_OTHER, self::ES_TAX_EXCEPTION_7, self::ES_TAX_EXCEPTION_68_70, self::ES_TAX_EXCEPTION_84];
+            $allowed = [
+                null,
+                self::ES_TAX_EXCEPTION_7,
+                self::ES_TAX_EXCEPTION_20,
+                self::ES_TAX_EXCEPTION_22,
+                self::ES_TAX_EXCEPTION_23_24,
+                self::ES_TAX_EXCEPTION_68_70,
+                self::ES_TAX_EXCEPTION_84,
+                self::ES_TAX_EXCEPTION_OTHER,
+                self::ES_OTHER_NOT_SUBJECT,
+            ];
+
+            // las adquisiciones intracomunitarias no sujetas (art. 14) solo existen en compras
+            if ($context === 'purchases') {
+                $allowed[] = self::ES_TAX_EXCEPTION_14;
+            }
+
             return in_array($exception, $allowed);
         }
 
