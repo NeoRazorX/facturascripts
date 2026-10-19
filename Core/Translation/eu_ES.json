@@ -845,7 +845,7 @@
     "from-subaccount": "Azpikontutik",
     "full-access": "Erabateko sarbidea",
     "full-path": "Bide-izen osoa",
-    "gap-found": "Hutsune bat aurkitu da %number%, egun %date%, %codeseries% eta enpresa %idcompany%",
+    "gap-found": "%numero% zenbakirako, %fecha% egunerako, %codserie% eta %idempresa% enpresarako hutsunea aurkitu da.",
     "gap-found-not-fillable": "%numero% zenbakirako, %fecha% egunerako, %codserie% eta %idempresa% enpresarako hutsunea aurkitu da; hala ere, ez da beteko.",
     "gaps-out-of-range": "%count% hutsune aurkitu dira; azkenetik 1000 zenbakiz gora daudenez ezin izango dira bete.",
     "general": "Orokorra",

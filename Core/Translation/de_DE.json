@@ -845,7 +845,7 @@
     "from-subaccount": "von Unterkonto",
     "full-access": "voller Zugriff",
     "full-path": "vollständigen Pfad",
-    "gap-found": "L",
+    "gap-found": "Für die Nummer %numero%, den Tag %fecha%, %codserie% und das Unternehmen %idempresa% wurde eine Lücke gefunden.",
     "gap-found-not-fillable": "Für die Nummer %numero%, den Tag %fecha%, %codserie% und das Unternehmen %idempresa% wurde eine Lücke gefunden; sie wird jedoch nicht ausgefüllt.",
     "gaps-out-of-range": "Es wurden %count% Lücken gefunden, die nicht gefüllt werden können, weil sie mehr als 1000 Nummern vom letzten entfernt liegen.",
     "general": "Allgemeines",

@@ -845,7 +845,7 @@
     "from-subaccount": "Dende subconta",
     "full-access": "Acceso completo",
     "full-path": "Ruta completa",
-    "gap-found": "Oco atopado para o número %numero%, día %data%, %codserie% e empresa %idempresa%",
+    "gap-found": "Oco atopado para o número %numero%, día %fecha%, %codserie% e empresa %idempresa%",
     "gap-found-not-fillable": "Oco atopado para o número %numero%, día %fecha%, %codserie% e empresa %idempresa%, non obstante non se vai encher.",
     "gaps-out-of-range": "Atopáronse %count% ocos que non se poderán encher por estar a máis de 1000 números do último.",
     "general": "Xeral",
