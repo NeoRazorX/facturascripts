@@ -1886,7 +1886,7 @@
     "supplier-estimation": "Nabídka dodavatele",
     "supplier-estimations": "Nabídky dodavatelů",
     "supplier-have-no-iban": "Dodavatel %%supplier nemá IBAN (bankovní účet)",
-    "supplier-iban-changed": "Byl změněn IBAN bankovního účtu dodavatele %codprovezor%. Předtím to bylo %old% a nyní je to %new%",
+    "supplier-iban-changed": "Byl změněn IBAN bankovního účtu dodavatele %codproveedor%. Předtím to bylo %old% a nyní je to %new%",
     "supplier-invoice": "Faktura dodavatele",
     "supplier-invoice-deleted-successfully": "Nákupní faktura %docCode% byla úspěšně odstraněna.",
     "supplier-invoices": "Faktury dodavatelů",
