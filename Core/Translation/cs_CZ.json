@@ -1891,7 +1891,7 @@
     "supplier-invoice-deleted-successfully": "Nákupní faktura %docCode% byla úspěšně odstraněna.",
     "supplier-invoices": "Faktury dodavatelů",
     "supplier-line-error": "Chyba v řádku dodavatele",
-    "supplier-not-found": "Proveedor no encontrado",
+    "supplier-not-found": "Dodavatel %supplier% nebyl nalezen",
     "supplier-order": "Objednávka dodavateli",
     "supplier-orders": "Objednávky dodavatelům",
     "supplier-payment-bank-line-error": "Chyba v bankovním řádku platby dodavateli",
