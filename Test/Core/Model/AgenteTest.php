@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Tools;
@@ -65,6 +66,25 @@ final class AgenteTest extends TestCase
         $this->assertTrue($agent->save(), 'agent-cant-save');
         $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'agent-cant-delete');
+    }
+
+    public function testContactNotFound(): void
+    {
+        // agente con un contacto que no existe
+        $agent = new Agente();
+        $agent->codagente = 'Test';
+        $agent->nombre = 'Test Agent';
+        $agent->idcontacto = 99999999;
+
+        MiniLog::clear();
+        $this->assertFalse($agent->save(), 'agent-can-save-with-missing-contact');
+        $this->assertNull($agent->idcontacto, 'missing-contact-not-cleared');
+
+        // el error indica el id del contacto
+        $messages = array_column(MiniLog::read('', ['error']), 'message');
+        $this->assertNotEmpty(array_filter($messages, function (string $message) {
+            return str_contains($message, '99999999');
+        }), 'contact-not-found-without-id');
     }
 
     public function testNotNullFields(): void

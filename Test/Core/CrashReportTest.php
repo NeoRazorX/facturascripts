@@ -37,6 +37,8 @@ final class CrashReportTest extends TestCase
 
     public function testDeployButtonsForAdminSession(): void
     {
+        $this->skipIfDeployActionsDisabled();
+
         $user = new User();
         $user->nick = 'test_crash_' . mt_rand(1, 9999);
         $this->assertTrue($user->setPassword('test-crash-1234'), 'can-not-set-password');
@@ -69,6 +71,8 @@ final class CrashReportTest extends TestCase
 
     public function testDeployButtonsForLocalRequest(): void
     {
+        $this->skipIfDeployActionsDisabled();
+
         foreach (['127.0.0.1', '::1'] as $ip) {
             $_SERVER['REMOTE_ADDR'] = $ip;
             $this->assertTrue(CrashReport::canShowDeployButtons(), 'local-request-without-buttons: ' . $ip);
@@ -79,8 +83,48 @@ final class CrashReportTest extends TestCase
         $this->assertFalse(CrashReport::canShowDeployButtons(), 'proxied-request-with-buttons');
     }
 
+    public function testDeprecationDoesNotCrash(): void
+    {
+        // como hace symfony/deprecation-contracts: un aviso silenciado que queda en error_get_last()
+        // dejamos que lo procese el manejador de PHP y no el de PHPUnit
+        error_clear_last();
+        set_error_handler(static function (): bool {
+            return false;
+        });
+        @trigger_error('Not passing a value for the "parent" argument of macro "showMenu" is deprecated.', E_USER_DEPRECATED);
+        restore_error_handler();
+        $this->assertSame(E_USER_DEPRECATED, error_get_last()['type'] ?? null, 'deprecation-not-registered');
+
+        // shutdown() no debe mostrar la pantalla de error
+        ob_start();
+        CrashReport::shutdown();
+        $output = ob_get_clean();
+        error_clear_last();
+
+        $this->assertSame('', $output, 'deprecation-shows-crash-report');
+    }
+
+    public function testFatalErrorTypes(): void
+    {
+        // los errores fatales muestran la pantalla de error
+        foreach ([E_ERROR, E_PARSE, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR] as $type) {
+            $this->assertTrue(CrashReport::isFatalError($type), 'not-fatal-error-type: ' . $type);
+        }
+
+        // los avisos y deprecaciones no, tampoco los de usuario (trigger_error)
+        $types = [
+            E_WARNING, E_NOTICE, E_DEPRECATED, E_CORE_WARNING,
+            E_USER_WARNING, E_USER_NOTICE, E_USER_DEPRECATED,
+        ];
+        foreach ($types as $type) {
+            $this->assertFalse(CrashReport::isFatalError($type), 'fatal-error-type: ' . $type);
+        }
+    }
+
     public function testNoDeployButtonsForAttacker(): void
     {
+        $this->skipIfDeployActionsDisabled();
+
         // cookies de login inventadas
         $_COOKIE = ['fsNick' => 'admin', 'fsLogkey' => 'fake'];
         $this->assertFalse(CrashReport::canShowDeployButtons(), 'fake-cookies-with-buttons');
@@ -97,10 +141,6 @@ final class CrashReportTest extends TestCase
 
     protected function setUp(): void
     {
-        if (Tools::config('disable_deploy_actions', false)) {
-            $this->markTestSkipped('deploy-actions-disabled');
-        }
-
         $this->cookies = $_COOKIE;
         $this->server = $_SERVER;
 
@@ -116,5 +156,12 @@ final class CrashReportTest extends TestCase
         $_SERVER = $this->server ?? $_SERVER;
 
         $this->logErrors();
+    }
+
+    private function skipIfDeployActionsDisabled(): void
+    {
+        if (Tools::config('disable_deploy_actions', false)) {
+            $this->markTestSkipped('deploy-actions-disabled');
+        }
     }
 }

@@ -128,18 +128,17 @@ class Updater extends Controller
 
         $this->telemetryManager = new Telemetry();
 
-        // avisamos si falta la clave de la instalación en el config.php, proponiendo una nueva
+        $action = $this->request->get('action', '');
+
+        // si falta la clave de la instalación en el config.php, la añadimos
         if (AppKey::isDerived()) {
-            Tools::log()->warning('app-key-missing', [
-                '%line%' => "define('FS_APP_KEY', '" . AppKey::generate() . "');"
-            ]);
+            $this->saveAppKey($action);
         }
 
         // avisamos de las extensiones de PHP que faltan
         PhpExtensions::warnMissing();
 
         // sin la extensión zip no se pueden instalar las actualizaciones
-        $action = $this->request->get('action', '');
         if (in_array($action, ['download', 'update']) && PhpExtensions::missing(['zip'])) {
             return;
         }
@@ -481,6 +480,28 @@ class Updater extends Controller
 
         // informamos a la telemetría de la nueva versión del core y de la lista de plugins
         $this->telemetryManager->update(true);
+    }
+
+    /**
+     * Añade FS_APP_KEY al config.php. Si no se puede escribir, avisa con la línea a añadir.
+     */
+    private function saveAppKey(string $action): void
+    {
+        // los formularios enviados vienen firmados con la clave derivada: esperamos a una visita normal
+        if ('' !== $action) {
+            return;
+        }
+
+        $key = defined('FS_APP_KEY') ? null : AppKey::saveToConfig();
+        if (null !== $key) {
+            // la usamos ya en esta petición, para que los formularios de la página sigan siendo válidos
+            define('FS_APP_KEY', $key);
+            return;
+        }
+
+        Tools::log()->warning('app-key-missing', [
+            '%line%' => "define('FS_APP_KEY', '" . AppKey::generate() . "');"
+        ]);
     }
 
     private function setCoreWarnings(): void

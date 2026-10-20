@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\Familia;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -118,6 +119,26 @@ final class FamiliaTest extends TestCase
         $family->codsubcuentairpfcom = '0000000000';
         $family->codsubcuentaven = '0000000000';
         $this->assertFalse($family->save(), 'family-can-save');
+    }
+
+    public function testMissingSubaccountShowsCodes(): void
+    {
+        // una subcuenta de IRPF o de ventas que no existe
+        foreach (['codsubcuentairpfcom' => '9999999991', 'codsubcuentaven' => '9999999992'] as $field => $code) {
+            $family = new Familia();
+            $family->codfamilia = 'TestSub';
+            $family->descripcion = 'Test missing subaccount';
+            $family->{$field} = $code;
+
+            MiniLog::clear();
+            $this->assertFalse($family->save(), 'family-can-save-with-missing-subaccount: ' . $field);
+
+            // el aviso indica la familia y la subcuenta
+            $messages = array_column(MiniLog::read('', ['warning']), 'message');
+            $this->assertNotEmpty(array_filter($messages, function (string $message) use ($code) {
+                return str_contains($message, 'TestSub') && str_contains($message, $code);
+            }), 'missing-subaccount-without-codes: ' . $field);
+        }
     }
 
     protected function tearDown(): void

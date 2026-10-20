@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -205,6 +206,23 @@ final class AttachedFileTest extends TestCase
         $model->path = $name;
         $this->assertTrue($model->save(), 'can-not-save-file');
         return $model;
+    }
+
+    public function testMissingFileShowsName(): void
+    {
+        // un adjunto cuyo archivo no está en MyFiles
+        $name = 'test_missing_file_' . mt_rand(1, 999999) . '.pdf';
+        $model = new AttachedFile();
+        $model->path = $name;
+
+        MiniLog::clear();
+        $this->assertFalse($model->save(), 'can-save-missing-file');
+
+        // el error indica el nombre del archivo
+        $messages = array_column(MiniLog::read('', ['error']), 'message');
+        $this->assertNotEmpty(array_filter($messages, function (string $message) use ($name) {
+            return str_contains($message, $name);
+        }), 'file-not-found-without-name');
     }
 
     protected function tearDown(): void

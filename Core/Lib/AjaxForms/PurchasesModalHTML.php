@@ -133,12 +133,16 @@ class PurchasesModalHTML
         $tbody = '';
         foreach (static::getProducts() as $row) {
             $cssClass = $row['nostock'] ? 'table-info clickableRow' : ($row['disponible'] > 0 ? 'clickableRow' : 'table-warning clickableRow');
-            $cost = $row['neto'] ?? $row['coste'];
+            // el precio del proveedor está en la divisa del documento; el coste y el precio de venta, en la de la empresa
+            $supplierPrice = $row['neto'] === null ?
+                '<span class="text-muted">-</span>' :
+                str_replace(' ', '&nbsp;', Tools::money($row['neto'], self::$coddivisa));
             $reference = static::html($row['referencia']);
             $providerReference = static::html($row['refproveedor']);
             $label = empty($row['refproveedor']) || $row['refproveedor'] === $row['referencia'] ?
                 '<b>' . $reference . '</b>' :
-                '<b>' . $reference . '</b> <span class="badge bg-light">' . $providerReference . '</span>';
+                '<b>' . $reference . '</b> <span class="badge bg-light text-dark border" title="'
+                . Tools::trans('supplier-reference') . '">' . $providerReference . '</span>';
             $description = Tools::textBreak($row['descripcion'], 120)
                 . static::idatributovalor($row['idatributovalor1'])
                 . static::idatributovalor($row['idatributovalor2'])
@@ -148,7 +152,8 @@ class PurchasesModalHTML
                 . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return purchasesFormAction(\'add-product\', this.dataset.reference);">'
                 . '<td>' . $label . ' ' . $description . '</td>'
-                . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($cost)) . '</td>'
+                . '<td class="text-end">' . $supplierPrice . '</td>'
+                . '<td class="text-end d-none d-md-table-cell">' . str_replace(' ', '&nbsp;', Tools::money($row['coste'])) . '</td>'
                 . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
                 . self::renderNewProduct($row)
                 . '<td class="text-end">' . $row['disponible'] . '</td>'
@@ -156,15 +161,17 @@ class PurchasesModalHTML
         }
 
         if (empty($tbody)) {
-            $tbody .= '<tr class="table-warning"><td colspan="4">' . Tools::trans('no-data') . '</td></tr>';
+            $colspan = 5 + count(self::newProductFields());
+            $tbody .= '<tr class="table-warning"><td colspan="' . $colspan . '">' . Tools::trans('no-data') . '</td></tr>';
         }
 
         return '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
             . '<th>' . Tools::trans('product') . '</th>'
-            . '<th class="text-end">' . Tools::trans('cost-price') . '</th>'
-            . '<th class="text-end">' . Tools::trans('price') . '</th>'
+            . '<th class="text-end">' . Tools::trans('supplier-price') . '</th>'
+            . '<th class="text-end d-none d-md-table-cell">' . Tools::trans('cost') . '</th>'
+            . '<th class="text-end">' . Tools::trans('sale-price') . '</th>'
             . self::renderNewProductHeads()
             . '<th class="text-end">' . Tools::trans('stock') . '</th>'
             . '</tr>'
@@ -220,7 +227,7 @@ class PurchasesModalHTML
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
             . ' LEFT JOIN stocks s ON v.referencia = s.referencia'
             . ' AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
-            . ' LEFT JOIN productosprov pp ON pp.referencia = p.referencia'
+            . ' LEFT JOIN productosprov pp ON pp.referencia = v.referencia'
             . ' AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor)
             . ' AND pp.coddivisa = ' . $dataBase->var2str(self::$coddivisa)
             . ' WHERE p.secompra = true AND p.bloqueado = false';
@@ -253,14 +260,12 @@ class PurchasesModalHTML
                 $sql .= " AND (LOWER(v.codbarras) = " . $dataBase->var2str(self::$query)
                     . " OR LOWER(v.referencia) LIKE '%" . self::$query . "%'"
                     . " OR LOWER(pp.refproveedor) LIKE '%" . self::$query . "%'"
-                    . " OR LOWER(p.descripcion) LIKE '%" . self::$query . "%')";
+                    . " OR " . static::wordFilter(self::$query) . ")";
             } elseif (count($words) > 1) {
                 $sql .= " AND (LOWER(v.referencia) LIKE '%" . self::$query . "%'"
                     . " OR LOWER(pp.refproveedor) LIKE '%" . self::$query . "%' OR (";
                 foreach ($words as $wc => $word) {
-                    $sql .= $wc > 0 ?
-                        " AND LOWER(p.descripcion) LIKE '%" . $word . "%'" :
-                        "LOWER(p.descripcion) LIKE '%" . $word . "%'";
+                    $sql .= $wc > 0 ? ' AND ' . static::wordFilter($word) : static::wordFilter($word);
                 }
                 $sql .= "))";
             }
@@ -462,10 +467,23 @@ class PurchasesModalHTML
             . '<option value="">------</option>'
             . '<option value="ref_asc">' . Tools::trans('reference') . '</option>'
             . '<option value="desc_asc">' . Tools::trans('description') . '</option>'
-            . '<option value="price_desc">' . Tools::trans('price') . '</option>'
+            . '<option value="price_desc">' . Tools::trans('sale-price') . '</option>'
             . '<option value="stock_desc">' . Tools::trans('stock') . '</option>'
             . '</select>'
             . '</div>';
+    }
+
+    /**
+     * Condición para que la palabra aparezca en la descripción del producto
+     * o en alguno de los valores de atributo de la variante.
+     */
+    protected static function wordFilter(string $word): string
+    {
+        $like = "LIKE '%" . $word . "%'";
+        return "(LOWER(p.descripcion) " . $like
+            . " OR EXISTS (SELECT 1 FROM atributos_valores av"
+            . " WHERE av.id IN (v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4)"
+            . " AND LOWER(av.descripcion) " . $like . "))";
     }
 
     /**

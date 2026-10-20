@@ -63,7 +63,7 @@ trait DocFilesTrait
 
             // move the file to the MyFiles folder
             if (false === $uploadFile->move($destiny, $destinyName)) {
-                Tools::log()->error(Tools::trans('file-not-found'));
+                Tools::log()->error('file-move-error', ['%fileName%' => $uploadFile->getClientOriginalName()]);
                 continue;
             }
 

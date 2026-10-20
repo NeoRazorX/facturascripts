@@ -333,6 +333,28 @@ final class ApiCreateDocumentTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
 
+    public function testInvalidDateIsRejected(): void
+    {
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        // una fecha sin ejercicio posible
+        $result = $this->callCreate('crearAlbaranCliente', [
+            'codcliente' => $subject->codcliente,
+            'fecha' => '01-01-1900',
+            'lineas' => json_encode([
+                ['descripcion' => 'línea', 'cantidad' => 1, 'pvpunitario' => 100],
+            ]),
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'invalid-date-bad-code');
+
+        // el mensaje indica la fecha
+        $this->assertStringContainsString('01-01-1900', $result['body']['message'] ?? '', 'invalid-date-without-date');
+
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
     public function testInvalidLineStructuresAreRejected(): void
     {
         $subject = $this->getRandomCustomer();

@@ -86,7 +86,7 @@ class AccountingLineHTML
         if ($formData['action'] === 'new-line' && !empty($formData['new_subaccount'])) {
             $subcuenta = static::getSubcuenta($formData['new_subaccount'], $model);
             if (false === $subcuenta->exists()) {
-                Tools::log()->error('subaccount-not-found', ['%subAccountCode%' => $formData['new_subaccount']]);
+                Tools::log()->error('subaccount-not-found', ['%code%' => $formData['new_subaccount']]);
                 return;
             }
 
