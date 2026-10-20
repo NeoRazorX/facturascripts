@@ -53,6 +53,18 @@ final class UpdaterTest extends TestCase
         $this->assertSame($nextVersion + 2, $items[0]['version']);
     }
 
+    public function testDeploysPendingCoreUpdate(): void
+    {
+        // tras sustituir el núcleo queda pendiente reconstruir Dinamic en la siguiente petición
+        $pendingFile = Tools::folder('MyFiles', Updater::DEPLOY_PENDING_FILE);
+        file_put_contents($pendingFile, Tools::dateTime());
+
+        new Updater('Updater');
+
+        $this->assertFileDoesNotExist($pendingFile);
+        $this->assertFileExists(Tools::folder('Dinamic', 'Model', 'Empresa.php'));
+    }
+
     public function testUpdateRootFilesSeparatesRestoreFileTime(): void
     {
         $origin = Tools::folder('MyFiles', 'Tmp', 'UpdaterTest', 'origin');

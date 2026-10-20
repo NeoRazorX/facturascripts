@@ -63,6 +63,12 @@ if ($url !== '/deploy' && '' !== Tools::config('db_name', '')) {
 // ejecutamos el controlador
 Kernel::run($url);
 
+// si la petición ha sustituido archivos (actualización del núcleo o de un plugin), no ejecutamos nada más:
+// las clases nuevas del disco se mezclarían con las antiguas que ya están cargadas en memoria
+if (Kernel::codeReplaced()) {
+    return;
+}
+
 $db = new DataBase();
 if ($db->connected()) {
     // ejecutamos la cola de trabajos

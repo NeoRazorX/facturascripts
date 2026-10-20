@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Where;
 
 /**
  * @deprecated Usar FacturaScripts\Core\Where en su lugar.
@@ -267,24 +266,27 @@ class DataBaseWhere
     }
 
     /**
-     * @param string $column
-     *
-     * @return string
-     */
-    /**
      * Devuelve el conector normalizado (AND u OR), ya que se concatena directamente en el SQL.
+     *
+     * No usa Where::isValidOperation(): al actualizar el núcleo, esta clase se puede cargar ya
+     * nueva mientras en memoria sigue la clase Where de la versión anterior, sin ese método.
      *
      * @throws Exception
      */
     private function checkOperation($operation): string
     {
-        if (false === Where::isValidOperation($operation)) {
+        if (false === is_string($operation) || false === in_array(strtoupper(trim($operation)), ['AND', 'OR'], true)) {
             throw new Exception('Invalid where operation: ' . (is_string($operation) ? $operation : gettype($operation)));
         }
 
         return strtoupper(trim($operation));
     }
 
+    /**
+     * @param string $column
+     *
+     * @return string
+     */
     private function escapeColumn(string $column): string
     {
         $exclude = ['.', 'CAST('];
