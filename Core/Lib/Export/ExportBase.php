@@ -75,6 +75,10 @@ abstract class ExportBase
      */
     abstract public function newDoc(string $title, int $idformat, string $langcode);
 
+    public function newPage(string $orientation = '', bool $forceNewPage = false)
+    {
+    }
+
     /**
      * Sets default orientation.
      */
