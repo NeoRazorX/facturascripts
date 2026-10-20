@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Where;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 final class WhereTest extends TestCase
 {
@@ -365,6 +366,24 @@ final class WhereTest extends TestCase
             $this->fail('tampered-legacy-operation-accepted');
         } catch (Exception $exc) {
             $this->assertStringContainsString('Invalid where operation', $exc->getMessage());
+        }
+    }
+
+    public function testDataBaseWhereDoesNotDependOnWhere(): void
+    {
+        // al actualizar el núcleo, DataBaseWhere se puede cargar ya nueva mientras en memoria
+        // sigue la clase Where de la versión anterior: no puede llamar a sus métodos
+        $file = (new ReflectionClass(DataBaseWhere::class))->getFileName();
+        foreach (token_get_all(file_get_contents($file)) as $token) {
+            if (false === is_array($token) || in_array($token[0], [T_COMMENT, T_DOC_COMMENT], true)) {
+                continue;
+            }
+
+            $name = ltrim($token[1], '\\');
+            $this->assertFalse(
+                $name === 'Where' || str_ends_with($name, '\\Where'),
+                'DataBaseWhere uses Where on line ' . $token[2]
+            );
         }
     }
 

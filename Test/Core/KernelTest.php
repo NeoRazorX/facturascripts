@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,21 @@ final class KernelTest extends TestCase
     {
         // Limpiar rutas después de cada test para evitar interferencias
         Kernel::clearRoutes();
+        Kernel::markCodeReplaced(false);
         parent::tearDown();
+    }
+
+    public function testCodeReplaced(): void
+    {
+        // por defecto, la petición no ha sustituido archivos
+        $this->assertFalse(Kernel::codeReplaced());
+
+        // el actualizador lo marca tras sustituir el núcleo o un plugin
+        Kernel::markCodeReplaced();
+        $this->assertTrue(Kernel::codeReplaced());
+
+        Kernel::markCodeReplaced(false);
+        $this->assertFalse(Kernel::codeReplaced());
     }
 
     public function testVersion(): void

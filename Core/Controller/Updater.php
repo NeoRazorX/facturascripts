@@ -45,6 +45,7 @@ use ZipArchive;
 class Updater extends Controller
 {
     const CORE_ZIP_FOLDER = 'facturascripts';
+    const DEPLOY_PENDING_FILE = 'update_deploy_pending';
     const UPDATE_CORE_URL = 'https://facturascripts.com/DownloadBuild';
 
     /** @var array */
@@ -61,9 +62,14 @@ class Updater extends Controller
 
     public function __construct(string $className, string $uri = '')
     {
-        // si no existe el archivo Empresa en Dinamic, reconstruimos
-        if (!file_exists(Tools::folder('Dinamic', 'Model', 'Empresa.php'))) {
+        // si no existe el archivo Empresa en Dinamic, o acabamos de actualizar el núcleo, reconstruimos
+        // antes de nada, para que Dinamic tenga las clases de la nueva versión
+        $pendingFile = Tools::folder('MyFiles', self::DEPLOY_PENDING_FILE);
+        if (file_exists($pendingFile) || !file_exists(Tools::folder('Dinamic', 'Model', 'Empresa.php'))) {
             Plugins::deploy(true, false);
+            if (file_exists($pendingFile)) {
+                unlink($pendingFile);
+            }
         }
 
         parent::__construct($className, $uri);
@@ -583,7 +589,17 @@ class Updater extends Controller
             $this->updatePlugin($zip, $fileName);
 
         if ($done) {
-            Plugins::deploy(true, false);
+            // a partir de aquí no ejecutamos nada más en esta petición: las clases cargadas en memoria
+            // son de la versión anterior y se mezclarían con las nuevas del disco.
+            // Dinamic se reconstruye al empezar la siguiente petición (post-update)
+            Kernel::markCodeReplaced();
+            if ($idItem == Forja::CORE_PROJECT_ID) {
+                file_put_contents(Tools::folder('MyFiles', self::DEPLOY_PENDING_FILE), Tools::dateTime());
+            }
+            if (function_exists('opcache_reset')) {
+                @opcache_reset();
+            }
+
             Cache::clear();
             $this->setTemplate(false);
             $this->response->setContent('reloading...');
