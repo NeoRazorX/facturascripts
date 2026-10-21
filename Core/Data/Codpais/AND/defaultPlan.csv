@@ -434,7 +434,7 @@
 "57";"Tesorería";""
 "570";"Caja, euros";"CAJA"
 "571";"Caja, moneda extranjera";""
-"572";"Bancos e instituciones de crédito c/c vista, euros";""
+"572";"Bancos e instituciones de crédito c/c vista, euros";"BANCO"
 "573";"Bancos e instituciones de crédito c/c vista, moneda extranjera";""
 "574";"Bancos e instituciones de crédito, cuentas de ahorro, euros";""
 "575";"Bancos e instituciones de crédito, cuentas de ahorro, moneda extranjera";""

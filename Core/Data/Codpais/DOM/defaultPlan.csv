@@ -1,6 +1,6 @@
 "cuenta";"descripcion";"cuentaesp"
 "01";"Activos";
-"0101";"Efectivo caja y banco";
+"0101";"Efectivo caja y banco";"BANCO"
 "010101";"Banco Popular";
 "010102";"Banreservas";
 "010103";"Banco BHDLeon";

@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Data;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Cuenta;
+use FacturaScripts\Core\Model\CuentaEspecial;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Subcuenta;
 use FacturaScripts\Core\Tools;
@@ -93,6 +94,37 @@ final class AccountImportTest extends TestCase
         ];
         $this->assertTrue($account->loadWhere($where3), 'account-10-not-found');
         $this->assertEquals('1', $account->parent_codcuenta, 'account-10-parent-error');
+
+        // eliminamos
+        $this->assertTrue($exercise->delete(), 'can-not-delete-exercise');
+    }
+
+    public function countryPlanProvider(): array
+    {
+        $plans = [];
+        foreach (glob(FS_FOLDER . '/Core/Data/Codpais/*/defaultPlan.csv') as $filePath) {
+            $plans[basename(dirname($filePath))] = [$filePath];
+        }
+        return $plans;
+    }
+
+    /**
+     * @dataProvider countryPlanProvider
+     */
+    public function testCountryPlanHasCashAndBankAccounts(string $filePath)
+    {
+        $exercise = $this->getTestExercise();
+
+        // importamos el plan contable del país
+        $planImport = new AccountingPlanImport();
+        $this->assertTrue($planImport->importCSV($filePath, $exercise->codejercicio), 'accounting-plan-import-fail');
+
+        // las cuentas especiales de caja y bancos deben estar asignadas
+        foreach (['CAJA', 'BANCO'] as $code) {
+            $special = new CuentaEspecial();
+            $this->assertTrue($special->load($code), 'special-account-not-found-' . $code);
+            $this->assertNotEmpty($special->getCuenta($exercise->codejercicio)->codcuenta, 'special-account-not-assigned-' . $code);
+        }
 
         // eliminamos
         $this->assertTrue($exercise->delete(), 'can-not-delete-exercise');
