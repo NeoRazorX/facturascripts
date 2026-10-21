@@ -173,7 +173,6 @@ final class PurchasesProductSearchTest extends TestCase
     {
         $controller = new EditPedidoProveedor('EditPedidoProveedor', '/EditPedidoProveedor');
         $method = new ReflectionMethod(EditPedidoProveedor::class, 'autocompleteSupplierReference');
-        $method->setAccessible(true);
         return $method->invoke($controller, $query, $codproveedor);
     }
 

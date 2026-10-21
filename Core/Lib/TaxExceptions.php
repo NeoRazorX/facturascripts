@@ -77,6 +77,10 @@ class TaxExceptions
 
     public static function get(?string $key): ?string
     {
+        if ($key === null) {
+            return null;
+        }
+
         $values = self::all();
         return $values[$key] ?? null;
     }

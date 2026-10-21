@@ -56,6 +56,13 @@ final class TaxExceptionsTest extends TestCase
         $this->assertArrayNotHasKey('custom-exc', TaxExceptions::all());
     }
 
+    public function testGet(): void
+    {
+        $this->assertEquals('es-tax-exception-20', TaxExceptions::get(TaxExceptions::ES_TAX_EXCEPTION_20));
+        $this->assertNull(TaxExceptions::get('unknown'));
+        $this->assertNull(TaxExceptions::get(null));
+    }
+
     public function testAddOverridesExistingLabel(): void
     {
         $original = TaxExceptions::all()[TaxExceptions::ES_TAX_EXCEPTION_20];
