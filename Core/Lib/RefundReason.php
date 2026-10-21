@@ -86,6 +86,10 @@ class RefundReason
      */
     public static function get(?string $key): ?string
     {
+        if ($key === null) {
+            return null;
+        }
+
         return self::all()[$key] ?? null;
     }
 
