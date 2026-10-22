@@ -20,11 +20,21 @@ if (php_sapi_name() !== "cli") {
     die("Please use command line: php updater.php");
 }
 
-// scan json files
+// get the language list from facturascripts.com, or use the fixed list if it is not available
 chdir(__DIR__);
 $files = [];
-$langs = 'ca_ES,cs_CZ,de_DE,en_EN,es_AR,es_CL,es_CO,es_CR,es_DO,es_EC,es_ES,es_GT,es_MX,es_PA,es_PE,es_UY,eu_ES,fr_FR,gl_ES,it_IT,pl_PL,pt_BR,pt_PT,tr_TR,va_ES';
-foreach (explode(',', $langs) as $lang) {
+$langs = explode(',', 'ca_ES,cs_CZ,de_DE,en_EN,es_AR,es_CL,es_CO,es_CR,es_DO,es_EC,es_ES,es_GT,es_MX,es_PA,es_PE,es_UY,eu_ES,fr_FR,gl_ES,it_IT,pl_PL,pt_BR,pt_PT,tr_TR,va_ES');
+$remoteLangs = json_decode((string)@file_get_contents('https://facturascripts.com/traducciones?action=json-languages'), true);
+if (is_array($remoteLangs) && false === empty($remoteLangs)) {
+    $langs = array_filter(array_keys($remoteLangs), function ($code) {
+        return 1 === preg_match('/^[a-zA-Z0-9_\-]{2,8}$/', (string)$code);
+    });
+} else {
+    echo "Error downloading the language list, using the fixed list\n";
+}
+
+// scan json files
+foreach ($langs as $lang) {
     $files[] = $lang . '.json';
 }
 foreach (scandir(__DIR__, SCANDIR_SORT_ASCENDING) as $filename) {
