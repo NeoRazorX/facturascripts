@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,13 +19,25 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Model\CuentaBanco;
+use FacturaScripts\Core\Model\CuentaEspecial;
 use FacturaScripts\Core\Model\FormaPago;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class FormaPagoTest extends TestCase
 {
+    use DefaultSettingsTrait;
     use LogErrorsTrait;
+    use RandomDataTrait;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::setDefaultSettings();
+        self::installAccountingPlan();
+    }
 
     public function testDataInstalled(): void
     {
@@ -85,6 +97,72 @@ final class FormaPagoTest extends TestCase
                 break;
             }
         }
+    }
+
+    public function testSubaccountWithBankAccountUsesBank(): void
+    {
+        $exercise = $this->getRandomExercise();
+
+        // creamos una cuenta bancaria sin subcuenta asignada
+        $bank = new CuentaBanco();
+        $bank->descripcion = 'Test bank';
+        $this->assertTrue($bank->save(), 'bank-account-cant-save');
+
+        // creamos una forma de pago con esa cuenta bancaria
+        $payment = new FormaPago();
+        $payment->codpago = 'TestB';
+        $payment->descripcion = 'Test bank payment';
+        $payment->codcuentabanco = $bank->codcuenta;
+        $this->assertTrue($payment->save(), 'payment-method-cant-save');
+
+        // debe usar la subcuenta especial de bancos, o la de caja si el plan no define bancos
+        $expected = $this->getSpecialSubaccountCode(['BANCO', 'CAJA'], $exercise->codejercicio);
+        $subcuenta = $payment->getSubcuenta($exercise->codejercicio, true);
+        $this->assertEquals($expected, $subcuenta->codsubcuenta, 'payment-subaccount-not-bank');
+
+        // eliminamos
+        $this->assertTrue($payment->delete(), 'payment-method-cant-delete');
+        $this->assertTrue($bank->delete(), 'bank-account-cant-delete');
+    }
+
+    public function testSubaccountWithoutBankAccountUsesCash(): void
+    {
+        $exercise = $this->getRandomExercise();
+
+        // creamos una forma de pago sin cuenta bancaria
+        $payment = new FormaPago();
+        $payment->codpago = 'TestC';
+        $payment->descripcion = 'Test cash payment';
+        $this->assertTrue($payment->save(), 'payment-method-cant-save');
+
+        // debe usar la subcuenta especial de caja, o la de bancos si el plan no define caja
+        $expected = $this->getSpecialSubaccountCode(['CAJA', 'BANCO'], $exercise->codejercicio);
+        $subcuenta = $payment->getSubcuenta($exercise->codejercicio, true);
+        $this->assertEquals($expected, $subcuenta->codsubcuenta, 'payment-subaccount-not-cash');
+
+        // eliminamos
+        $this->assertTrue($payment->delete(), 'payment-method-cant-delete');
+    }
+
+    /**
+     * Devuelve el código de la primera subcuenta especial que encuentre en el ejercicio,
+     * siguiendo el orden indicado. Omite el test si el plan contable no define ninguna.
+     */
+    private function getSpecialSubaccountCode(array $codes, string $codejercicio): string
+    {
+        foreach ($codes as $code) {
+            $especial = new CuentaEspecial();
+            if (false === $especial->load($code)) {
+                continue;
+            }
+
+            $subcuenta = $especial->getSubcuenta($codejercicio);
+            if (!empty($subcuenta->codsubcuenta)) {
+                return $subcuenta->codsubcuenta;
+            }
+        }
+
+        $this->markTestSkipped('accounting-plan-without-special-subaccounts: ' . implode(', ', $codes));
     }
 
     protected function tearDown(): void
