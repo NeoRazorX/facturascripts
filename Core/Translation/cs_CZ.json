@@ -549,6 +549,8 @@
     "desc-provider-business-name": "Popis názvu společnosti dodavatele",
     "desc-provider-name": "Název, pod kterým je dodavatel znám. Pro interní použití.",
     "desc-rate-code": "Kód sazby pro interní použití.",
+    "desc-tax-purchases-accounting": "Opcional. Subcuentas del impuesto soportado a usar en los asientos de las facturas de compra con este impuesto, en lugar de las predeterminadas.",
+    "desc-tax-sales-accounting": "Opcional. Subcuentas del impuesto repercutido a usar en los asientos de las facturas de venta con este impuesto, en lugar de las predeterminadas.",
     "desc-vat-document": "Identifikátor dokumentu, na který se daň uplatňuje",
     "description": "Popis",
     "description-1": "Popis 1",

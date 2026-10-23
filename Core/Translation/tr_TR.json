@@ -549,6 +549,8 @@
     "desc-provider-business-name": "Tedarikçi şirket adı açıklaması",
     "desc-provider-name": "Tedarikçinin bilindiği ad. Dahili kullanım için.",
     "desc-rate-code": "Tarife için dahili kullanım kodu.",
+    "desc-tax-purchases-accounting": "Opcional. Subcuentas del impuesto soportado a usar en los asientos de las facturas de compra con este impuesto, en lugar de las predeterminadas.",
+    "desc-tax-sales-accounting": "Opcional. Subcuentas del impuesto repercutido a usar en los asientos de las facturas de venta con este impuesto, en lugar de las predeterminadas.",
     "desc-vat-document": "Verginin uygulandığı belgenin tanımlayıcısı",
     "description": "Açıklama",
     "description-1": "Açıklama 1",

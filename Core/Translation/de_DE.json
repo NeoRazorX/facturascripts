@@ -549,6 +549,8 @@
     "desc-provider-business-name": "Descriptio Anbieter Unternehmensname",
     "desc-provider-name": "Name des Anbieters",
     "desc-rate-code": "Code für die interne Verwendung der Rate.",
+    "desc-tax-purchases-accounting": "Opcional. Subcuentas del impuesto soportado a usar en los asientos de las facturas de compra con este impuesto, en lugar de las predeterminadas.",
+    "desc-tax-sales-accounting": "Opcional. Subcuentas del impuesto repercutido a usar en los asientos de las facturas de venta con este impuesto, en lugar de las predeterminadas.",
     "desc-vat-document": "Kennung des Dokuments, auf das die Steuer erhoben wird",
     "description": "Beschreibung",
     "description-1": "Beschreibung 1",

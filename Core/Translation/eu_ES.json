@@ -549,6 +549,8 @@
     "desc-provider-business-name": "Hornitzailearen enpresa izen deskribapena",
     "desc-provider-name": "Hornitzailearen izen deskribapena. Barne erabilerarentzat.",
     "desc-rate-code": "Tarifaren barne erabilerarako kodea.",
+    "desc-tax-purchases-accounting": "Opcional. Subcuentas del impuesto soportado a usar en los asientos de las facturas de compra con este impuesto, en lugar de las predeterminadas.",
+    "desc-tax-sales-accounting": "Opcional. Subcuentas del impuesto repercutido a usar en los asientos de las facturas de venta con este impuesto, en lugar de las predeterminadas.",
     "desc-vat-document": "Zerga aplikatzen zaion dokumentuaren identifikatzailea",
     "description": "Deskribapena",
     "description-1": "1. Deskribapena",
