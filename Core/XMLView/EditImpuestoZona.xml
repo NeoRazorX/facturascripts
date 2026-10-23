@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,8 +36,8 @@
                 </widget>
             </column>
             <column name="province" titleurl="ListPais?activetab=ListProvincia" order="130">
-                <widget type="autocomplete" fieldname="codisopro">
-                    <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia" />
+                <widget type="select" fieldname="codisopro" parent="codpais">
+                    <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia" fieldfilter="codpais" />
                 </widget>
             </column>
             <column name="applied-tax" order="140">
