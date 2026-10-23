@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Where;
 use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Core\Template\ModelClass as NewModelClass;
 use FacturaScripts\Core\Tools;
@@ -30,6 +31,7 @@ use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\FormaPago;
+use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\User;
 
@@ -308,6 +310,40 @@ abstract class BusinessDocument extends NewModelClass
         }
 
         return $eud;
+    }
+
+    /**
+     * Devuelve la retención que corresponde a un porcentaje de IRPF del documento:
+     * la del cliente/proveedor o la predeterminada si su porcentaje coincide;
+     * en otro caso, la primera retención con ese porcentaje.
+     *
+     * @param float $percentage
+     *
+     * @return Retencion|null
+     */
+    public function getRetentionFromPercentage(float $percentage): ?Retencion
+    {
+        if (empty($percentage)) {
+            return null;
+        }
+
+        $codes = [
+            $this->getSubject()->codretencion,
+            Tools::settings('default', 'codretencion'),
+        ];
+        foreach ($codes as $code) {
+            if (empty($code)) {
+                continue;
+            }
+
+            $retention = Retenciones::get($code);
+            if ($retention->exists() && Tools::floatCmp($retention->porcentaje, $percentage, 4, true)) {
+                return $retention;
+            }
+        }
+
+        $retention = new Retencion();
+        return $retention->loadFromPercentage($percentage) ? $retention : null;
     }
 
     /**

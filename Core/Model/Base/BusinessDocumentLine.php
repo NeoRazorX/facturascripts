@@ -19,12 +19,14 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Template\ModelClass as NewModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
@@ -50,6 +52,13 @@ abstract class BusinessDocumentLine extends NewModelClass
      * @var float|int
      */
     public $cantidad;
+
+    /**
+     * Código de la retención aplicada a la línea.
+     *
+     * @var string
+     */
+    public $codretencion;
 
     /**
      * Descripción de la línea.
@@ -340,6 +349,7 @@ abstract class BusinessDocumentLine extends NewModelClass
         // dependencias necesarias
         new Impuesto();
         new Producto();
+        new Retencion();
 
         return parent::install();
     }
@@ -362,6 +372,25 @@ abstract class BusinessDocumentLine extends NewModelClass
     {
         $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
         $this->pvpunitario = round($newPrice, Producto::ROUND_DECIMALS);
+    }
+
+    /**
+     * Asigna la retención a la línea y su porcentaje de IRPF. Si la retención está vacía
+     * o no existe, la línea se queda sin retención.
+     *
+     * @param string|null $codretencion
+     */
+    public function setRetention(?string $codretencion): void
+    {
+        $retention = empty($codretencion) ? null : Retenciones::get($codretencion);
+        if (null === $retention || false === $retention->exists()) {
+            $this->codretencion = null;
+            $this->irpf = 0.0;
+            return;
+        }
+
+        $this->codretencion = $retention->codretencion;
+        $this->irpf = (float)$retention->porcentaje;
     }
 
     public function setTax(?string $codimpuesto): void
@@ -435,6 +464,12 @@ abstract class BusinessDocumentLine extends NewModelClass
             $this->codimpuesto = null;
             $this->iva = 0.0;
             $this->recargo = 0.0;
+        }
+
+        // la retención debe corresponder al porcentaje de IRPF de la línea
+        $retention = empty($this->codretencion) ? null : Retenciones::get($this->codretencion);
+        if (null === $retention || false === Tools::floatCmp($retention->porcentaje, $this->irpf, 4, true)) {
+            $this->codretencion = null;
         }
 
         if ($this->servido < 0 && $this->cantidad >= 0) {

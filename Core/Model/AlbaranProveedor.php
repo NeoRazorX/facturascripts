@@ -64,6 +64,7 @@ class AlbaranProveedor extends PurchaseDocument
         $newLine->excepcioniva = $this->getSubject()->excepcioniva;
         $newLine->idalbaran = $this->idalbaran;
         $newLine->irpf = $this->irpf;
+        $newLine->codretencion = $this->getRetentionFromPercentage($this->irpf)?->codretencion;
         $newLine->loadFromData($data, $exclude);
 
         // si no viene de getNewProductLine(), calculamos la línea

@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\PDF;
 
 use Exception;
+use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Template\ExtensionsTrait;
@@ -240,10 +241,14 @@ abstract class PDFDocument extends PDFCore
                 continue;
             }
 
-            $key = 'irpf_' . $line->irpf;
+            // agrupamos por retención, para distinguir las que tienen el mismo porcentaje
+            $key = 'irpf_' . $line->codretencion . '|' . $line->irpf;
             if (!isset($subtotals[$key])) {
+                $retention = empty($line->codretencion) ? null : Retenciones::get($line->codretencion);
                 $subtotals[$key] = [
-                    'tax' => $this->i18n->trans('irpf') . ' ' . $line->irpf . '%',
+                    'tax' => $retention && $retention->exists() ?
+                        $retention->descripcion :
+                        $this->i18n->trans('irpf') . ' ' . $line->irpf . '%',
                     'taxbase' => 0,
                     'taxp' => $line->irpf . '%',
                     'taxamount' => 0,
