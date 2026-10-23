@@ -94,7 +94,7 @@ class EditFamilia extends EditController
 
     protected function createViewFamilies(string $viewName = 'ListFamilia'): void
     {
-        $this->addListView($viewName, 'Familia', 'subfamilies', 'fa-solid fa-sitemap')
+        $this->addListView($viewName, 'Familia', 'subfamilies', 'fa-solid fa-folder-tree')
             ->addSearchFields(['descripcion', 'codfamilia'])
             ->addOrderBy(['codfamilia'], 'code')
             ->addOrderBy(['numproductos'], 'products')
