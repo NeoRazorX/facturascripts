@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -173,6 +173,57 @@ final class DbUpdaterTest extends TestCase
         // eliminamos
         $dropped = DbUpdater::dropTable($table_name);
         $this->assertTrue($dropped, 'test-table-not-dropped');
+    }
+
+    public function testCanUseMysqlTypes(): void
+    {
+        $table_name = 'test_table_mysql_types';
+
+        try {
+            // creamos la tabla con tipos propios de MySQL (mediumtext, longtext, datetime...)
+            $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
+            $structure = DbUpdater::readTableXml($file_path);
+            $created = DbUpdater::createTable($table_name, $structure);
+            $this->assertTrue($created, 'test-table-not-created');
+
+            // comprobamos las columnas
+            $columns = $this->db()->getColumns($table_name);
+            $this->assertCount(8, $columns, 'missing-columns');
+
+            // los tipos de la base de datos deben coincidir con los del XML, para no modificar la tabla en cada comprobación
+            $checkTypes = ['creado', 'cuerpo', 'importe', 'notas', 'resumen'];
+            if (strtolower(Tools::config('db_type')) === 'postgresql') {
+                // en MySQL algunas versiones añaden el ancho a los enteros (tinyint(4)), así que solo lo comprobamos en PostgreSQL
+                $checkTypes = array_merge($checkTypes, ['cantidad', 'nivel']);
+            }
+            foreach ($checkTypes as $name) {
+                $this->assertTrue(
+                    $this->db()->getEngine()->compareDataTypes($columns[$name]['type'], $structure['columns'][$name]['type']),
+                    'column-' . $name . '-bad-type: ' . $columns[$name]['type']
+                );
+            }
+
+            // guardamos un texto de más de 64 KB, que no cabe en un campo text de MySQL
+            $body = str_repeat('a', 70000);
+            $sql = 'INSERT INTO ' . $table_name . ' (cantidad, creado, cuerpo, importe, nivel, notas, resumen) VALUES ('
+                . '1000, ' . $this->db()->var2str('2026-01-01 10:00:00') . ', ' . $this->db()->var2str($body) . ', '
+                . '12.5, 3, ' . $this->db()->var2str($body) . ', ' . $this->db()->var2str('resumen') . ');';
+            $this->assertTrue($this->db()->exec($sql), 'insert-mysql-types-failed');
+
+            $rows = $this->db()->select('SELECT cuerpo, notas FROM ' . $table_name . ';');
+            $this->assertCount(1, $rows, 'row-not-found');
+            $this->assertSame(70000, strlen($rows[0]['cuerpo']), 'cuerpo-truncated');
+            $this->assertSame(70000, strlen($rows[0]['notas']), 'notas-truncated');
+
+            // volvemos a comprobar la tabla con el mismo XML
+            DbUpdater::rebuild();
+            $updated = DbUpdater::updateTable($table_name, $structure);
+            $this->assertTrue($updated, 'test-table-not-updated');
+        } finally {
+            if ($this->db()->tableExists($table_name)) {
+                DbUpdater::dropTable($table_name);
+            }
+        }
     }
 
     public function testCanRenameColumns(): void
