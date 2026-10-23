@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\PostgresqlQueries;
 use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -188,17 +189,12 @@ final class DbUpdaterTest extends TestCase
 
             // comprobamos las columnas
             $columns = $this->db()->getColumns($table_name);
-            $this->assertCount(8, $columns, 'missing-columns');
+            $this->assertCount(11, $columns, 'missing-columns');
 
             // los tipos de la base de datos deben coincidir con los del XML, para no modificar la tabla en cada comprobación
-            $checkTypes = ['creado', 'cuerpo', 'importe', 'notas', 'resumen'];
-            if (strtolower(Tools::config('db_type')) === 'postgresql') {
-                // en MySQL algunas versiones añaden el ancho a los enteros (tinyint(4)), así que solo lo comprobamos en PostgreSQL
-                $checkTypes = array_merge($checkTypes, ['cantidad', 'nivel']);
-            }
-            foreach ($checkTypes as $name) {
+            foreach ($structure['columns'] as $name => $xmlColumn) {
                 $this->assertTrue(
-                    $this->db()->getEngine()->compareDataTypes($columns[$name]['type'], $structure['columns'][$name]['type']),
+                    $this->db()->getEngine()->compareDataTypes($columns[$name]['type'], $xmlColumn['type']),
                     'column-' . $name . '-bad-type: ' . $columns[$name]['type']
                 );
             }
@@ -215,14 +211,47 @@ final class DbUpdaterTest extends TestCase
             $this->assertSame(70000, strlen($rows[0]['cuerpo']), 'cuerpo-truncated');
             $this->assertSame(70000, strlen($rows[0]['notas']), 'notas-truncated');
 
-            // volvemos a comprobar la tabla con el mismo XML
+            // volvemos a comprobar la tabla con el mismo XML, sin que haya que modificarla
             DbUpdater::rebuild();
+            $changes = $this->countChangeLog();
             $updated = DbUpdater::updateTable($table_name, $structure);
             $this->assertTrue($updated, 'test-table-not-updated');
+            $this->assertSame($changes, $this->countChangeLog(), 'test-table-modified-again');
         } finally {
             if ($this->db()->tableExists($table_name)) {
                 DbUpdater::dropTable($table_name);
             }
+        }
+    }
+
+    public function testPostgresqlTranslatesMysqlTypes(): void
+    {
+        $sqlTool = new PostgresqlQueries();
+        $types = [
+            'datetime' => 'timestamp',
+            'datetime(0)' => 'timestamp(0)',
+            'datetime(6)' => 'timestamp(6)',
+            'double' => 'double precision',
+            'double(10,2)' => 'double precision',
+            'longtext' => 'text',
+            'mediumint' => 'integer',
+            'mediumint(9) unsigned' => 'integer',
+            'mediumtext' => 'text',
+            'tinyint' => 'smallint',
+            'tinyint(1)' => 'smallint',
+            'tinyint unsigned zerofill' => 'smallint',
+            'tinytext' => 'text',
+            // los tipos que no son propios de MySQL no se modifican
+            'boolean' => 'boolean',
+            'character varying(50)' => 'character varying(50)',
+            'double precision' => 'double precision',
+            'integer' => 'integer',
+            'numeric(10,2)' => 'numeric(10,2)',
+            'serial' => 'serial',
+            'timestamp' => 'timestamp',
+        ];
+        foreach ($types as $type => $expected) {
+            $this->assertSame($expected, $sqlTool->sqlColumnType($type), 'bad-translation-' . $type);
         }
     }
 
@@ -358,6 +387,16 @@ final class DbUpdaterTest extends TestCase
                 DbUpdater::dropTable($table_name);
             }
         }
+    }
+
+    private function countChangeLog(): int
+    {
+        $file = Tools::folder('MyFiles', DbUpdater::CHANGELOG_FILE);
+        if (false === file_exists($file)) {
+            return 0;
+        }
+
+        return count(json_decode(file_get_contents($file), true) ?? []);
     }
 
     private function db(): DataBase

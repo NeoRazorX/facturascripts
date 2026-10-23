@@ -159,6 +159,12 @@ class MysqlEngine extends DataBaseEngine
             return true;
         }
 
+        // enteros con ancho: MariaDB lo añade (tinyint(4), mediumint(9)...) y MySQL 8 no
+        $intWidth = '/^((tiny|small|medium|big)?int)\(\d+\)/';
+        if (preg_replace($intWidth, '$1', $dbType) === preg_replace($intWidth, '$1', $xmlType)) {
+            return true;
+        }
+
         // int
         if (str_starts_with($dbType, 'int') && str_starts_with($xmlType, 'int')) {
             return true;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -164,6 +164,7 @@ class PostgresqlQueries implements DataBaseQueries
     /**
      * Devuelve el tipo de columna válido en PostgreSQL para el tipo indicado en el XML de la tabla.
      * Los tipos propios de MySQL (mediumtext, longtext, datetime...) se traducen a su equivalente,
+     * también con parámetros o unsigned (tinyint(1), datetime(6), double(10,2), mediumint unsigned...),
      * el resto se devuelve sin cambios.
      *
      * @param string $type
@@ -172,7 +173,18 @@ class PostgresqlQueries implements DataBaseQueries
      */
     public function sqlColumnType(string $type): string
     {
-        return self::MYSQL_TYPES[strtolower(trim($type))] ?? $type;
+        // separamos el nombre del tipo de sus parámetros y de unsigned o zerofill
+        $pattern = '/^([a-z]+)\s*(?:\((\d+)(?:\s*,\s*\d+)?\))?(?:\s+unsigned)?(?:\s+zerofill)?$/';
+        if (1 !== preg_match($pattern, $type, $matches) || false === isset(self::MYSQL_TYPES[$matches[1]])) {
+            return $type;
+        }
+
+        // datetime(6) conserva la precisión de las fracciones de segundo
+        if ($matches[1] === 'datetime' && ($matches[2] ?? '') !== '') {
+            return 'timestamp(' . $matches[2] . ')';
+        }
+
+        return self::MYSQL_TYPES[$matches[1]];
     }
 
     /**
