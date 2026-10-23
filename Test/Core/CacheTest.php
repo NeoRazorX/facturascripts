@@ -226,6 +226,22 @@ final class CacheTest extends TestCase
         $this->assertEquals(['x', 'y'], $cacheValue, 'remember-should-recompute-on-corrupted-cache');
     }
 
+    public function testSetReplacesFileWithoutLeavingTemporaryFiles(): void
+    {
+        Cache::clear();
+
+        $key = 'test-atomic-key';
+        Cache::set($key, ['first']);
+        Cache::set($key, ['second']);
+        $this->assertEquals(['second'], Cache::get($key), 'cache-value-not-replaced');
+
+        // la escritura usa un fichero temporal que se renombra, no debe quedar ninguno
+        $leftovers = glob(FS_FOLDER . Cache::FILE_PATH . '/' . $key . '.cache.*');
+        $this->assertEmpty($leftovers, 'temporary-cache-files-left');
+
+        Cache::delete($key);
+    }
+
     public function testWithMemoryReturnsInstance(): void
     {
         $instance = Cache::withMemory();

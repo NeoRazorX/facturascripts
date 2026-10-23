@@ -24,11 +24,15 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\User;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
 final class LoginTest extends TestCase
 {
+    use RandomDataTrait;
+
     /** @var Login */
     private $controller;
 
@@ -178,6 +182,81 @@ final class LoginTest extends TestCase
         $this->assertFalse($this->controller->userHasManyIncidents($ip, $user));
     }
 
+    public function testReservedAttemptsCountWhileInFlight(): void
+    {
+        // los intentos simultáneos se reservan antes de verificar la contraseña,
+        // así que los que siguen en curso ya cuentan para el umbral
+        $ip = $this->getRandomIp();
+        for ($i = 0; $i < Login::MAX_INCIDENT_COUNT; $i++) {
+            $this->assertNotNull($this->controller->reserveAttempt($ip, 'user' . $i));
+        }
+
+        // el siguiente intento se bloquea, aunque ninguno de los anteriores haya terminado
+        $this->assertNull($this->controller->reserveAttempt($ip, 'another-user'));
+        $this->assertTrue($this->controller->userHasManyIncidents($ip));
+    }
+
+    public function testReleaseAttemptOnlyRemovesThatAttempt(): void
+    {
+        // dejamos la IP y el usuario a un incidente del umbral
+        $ip = $this->getRandomIp();
+        $user = 'dave';
+        for ($i = 0; $i < Login::MAX_INCIDENT_COUNT - 1; $i++) {
+            $this->controller->saveIncident($ip, $user);
+        }
+
+        // el intento reservado alcanza el umbral
+        $attempt = $this->controller->reserveAttempt($ip, $user);
+        $this->assertNotNull($attempt);
+        $this->assertTrue($this->controller->userHasManyIncidents($ip, $user));
+
+        // al liberarlo, los incidentes anteriores se mantienen
+        $this->controller->releaseAttempt($attempt);
+        $this->assertFalse($this->controller->userHasManyIncidents($ip, $user));
+
+        // un identificador vacío no libera los incidentes sin reserva
+        $this->controller->releaseAttempt('');
+        $this->controller->saveIncident($ip, $user);
+        $this->assertTrue($this->controller->userHasManyIncidents($ip, $user));
+    }
+
+    public function testLoginOnlyCountsFailedAttempts(): void
+    {
+        // usuario con 2FA, para que el login correcto termine sin redirigir
+        $password = 'test-password-' . bin2hex(random_bytes(4));
+        $user = $this->getRandomUser();
+        $user->setPassword($password);
+        $user->enableTwoFactor('ABCDEFGHIJKLMNOP');
+        $this->assertTrue($user->save());
+
+        $previousIp = $_SERVER['REMOTE_ADDR'] ?? null;
+        $ip = $this->getRandomIp();
+        $_SERVER['REMOTE_ADDR'] = $ip;
+
+        try {
+            // los logins correctos liberan el intento reservado y no cuentan como incidentes
+            for ($i = 0; $i < Login::MAX_INCIDENT_COUNT; $i++) {
+                $this->login($user->nick, $password);
+            }
+            $this->assertFalse($this->controller->userHasManyIncidents($ip, $user->nick));
+            $this->assertSame($user->nick, $this->controller->two_factor_user);
+
+            // los fallidos sí cuentan, hasta bloquear la IP y el usuario
+            for ($i = 0; $i < Login::MAX_INCIDENT_COUNT; $i++) {
+                $this->login($user->nick, 'wrong-password');
+            }
+            $this->assertTrue($this->controller->userHasManyIncidents($ip));
+            $this->assertTrue($this->controller->userHasManyIncidents($this->getRandomIp(), $user->nick));
+        } finally {
+            if (null === $previousIp) {
+                unset($_SERVER['REMOTE_ADDR']);
+            } else {
+                $_SERVER['REMOTE_ADDR'] = $previousIp;
+            }
+            $user->delete();
+        }
+    }
+
     public function testTitleBeforeAndAfterWizard(): void
     {
         $homepage = Tools::settings('default', 'homepage');
@@ -235,6 +314,18 @@ final class LoginTest extends TestCase
     private function invoke(string $method, array $args)
     {
         return (new ReflectionMethod(Login::class, $method))->invokeArgs($this->controller, $args);
+    }
+
+    private function login(string $nick, string $password): void
+    {
+        $request = new Request([
+            'request' => [
+                'fsNick' => $nick,
+                'fsPassword' => $password,
+                'multireqtoken' => $this->newToken(''),
+            ],
+        ]);
+        $this->invoke('loginAction', [$request]);
     }
 
     private function newToken(string $seed): string
