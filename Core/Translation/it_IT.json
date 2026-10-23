@@ -549,6 +549,7 @@
     "desc-provider-business-name": "Nome commerciale del provider Descriptio",
     "desc-provider-name": "Descrizione nome provider",
     "desc-rate-code": "Codice per uso interno della tariffa.",
+    "desc-retention-accounting": "Opcional. Subcuentas a usar en los asientos de las facturas con esta retención, en lugar de las predeterminadas.",
     "desc-tax-purchases-accounting": "Opcional. Subcuentas del impuesto soportado a usar en los asientos de las facturas de compra con este impuesto, en lugar de las predeterminadas.",
     "desc-tax-sales-accounting": "Opcional. Subcuentas del impuesto repercutido a usar en los asientos de las facturas de venta con este impuesto, en lugar de las predeterminadas.",
     "desc-vat-document": "Identificatore del documento dov'è applicata la tassa",
