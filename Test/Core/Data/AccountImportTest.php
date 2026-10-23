@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Data;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\CuentaEspecial;
@@ -125,6 +126,91 @@ final class AccountImportTest extends TestCase
             $this->assertTrue($special->load($code), 'special-account-not-found-' . $code);
             $this->assertNotEmpty($special->getCuenta($exercise->codejercicio)->codcuenta, 'special-account-not-assigned-' . $code);
         }
+
+        // eliminamos
+        $this->assertTrue($exercise->delete(), 'can-not-delete-exercise');
+    }
+
+    public function testExportedPlanCanBeImported()
+    {
+        $exercise = $this->getTestExercise();
+
+        // importamos el plan por defecto y lo exportamos, como desde EditEjercicio
+        $planImport = new AccountingPlanImport();
+        $filePath = FS_FOLDER . '/Core/Data/Codpais/ESP/defaultPlan.csv';
+        $this->assertTrue($planImport->importCSV($filePath, $exercise->codejercicio), 'accounting-plan-import-fail');
+        $content = (new AccountingPlanExport())->exportCSV($exercise->codejercicio);
+        $this->assertStringStartsWith("\xEF\xBB\xBF", $content, 'exported-csv-without-bom');
+        $this->assertTrue($exercise->delete(), 'can-not-delete-exercise');
+
+        // importamos el CSV exportado en un ejercicio vacío
+        $exportPath = FS_FOLDER . '/MyFiles/Tmp/test-exported-plan.csv';
+        Tools::folderCheckOrCreate(dirname($exportPath));
+        file_put_contents($exportPath, $content);
+        $exercise = $this->getTestExercise();
+        $this->assertTrue($planImport->importCSV($exportPath, $exercise->codejercicio), 'exported-plan-import-fail');
+        unlink($exportPath);
+
+        // los textos acentuados se conservan
+        $account = new Cuenta();
+        $where = [
+            Where::eq('codejercicio', $exercise->codejercicio),
+            Where::eq('codcuenta', '1'),
+        ];
+        $this->assertTrue($account->loadWhere($where), 'account-1-not-found');
+        $this->assertEquals('Financiación básica', $account->descripcion, 'account-1-description-error');
+        $this->assertEquals(self::TOTAL_ACCOUNT, $account->count([Where::eq('codejercicio', $exercise->codejercicio)]), 'account-count-error');
+
+        // eliminamos
+        $this->assertTrue($exercise->delete(), 'can-not-delete-exercise');
+    }
+
+    public function encodingProvider(): array
+    {
+        $csv = "cuenta;descripcion;cuentaesp\n"
+            . "1;Financiación básica;\n"
+            . "10;Capital;\n"
+            . "100;Capital social;\n"
+            . "1000000000;Capital social, Peña y Muñoz;\n";
+
+        return [
+            'utf8-bom' => ["\xEF\xBB\xBF" . $csv],
+            'utf8' => [$csv],
+            'windows-1252' => [mb_convert_encoding($csv, 'Windows-1252', 'UTF-8')],
+        ];
+    }
+
+    /**
+     * @dataProvider encodingProvider
+     */
+    public function testImportCSVEncodings(string $content)
+    {
+        $exercise = $this->getTestExercise();
+
+        $filePath = FS_FOLDER . '/MyFiles/Tmp/test-plan-encoding.csv';
+        Tools::folderCheckOrCreate(dirname($filePath));
+        file_put_contents($filePath, $content);
+
+        $planImport = new AccountingPlanImport();
+        $this->assertTrue($planImport->importCSV($filePath, $exercise->codejercicio), 'accounting-plan-import-fail');
+        unlink($filePath);
+
+        // las descripciones se guardan en UTF-8, sea cual sea la codificación del fichero
+        $account = new Cuenta();
+        $where = [
+            Where::eq('codejercicio', $exercise->codejercicio),
+            Where::eq('codcuenta', '1'),
+        ];
+        $this->assertTrue($account->loadWhere($where), 'account-1-not-found');
+        $this->assertEquals('Financiación básica', $account->descripcion, 'account-1-description-error');
+
+        $subaccount = new Subcuenta();
+        $where = [
+            Where::eq('codejercicio', $exercise->codejercicio),
+            Where::eq('codsubcuenta', '1000000000'),
+        ];
+        $this->assertTrue($subaccount->loadWhere($where), 'subaccount-1000000000-not-found');
+        $this->assertEquals('Capital social, Peña y Muñoz', $subaccount->descripcion, 'subaccount-description-error');
 
         // eliminamos
         $this->assertTrue($exercise->delete(), 'can-not-delete-exercise');
