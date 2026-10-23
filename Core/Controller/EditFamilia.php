@@ -87,9 +87,9 @@ class EditFamilia extends EditController
         parent::createViews();
 
         // más pestañas
+        $this->createViewFamilies();
         $this->createViewProducts();
         $this->createViewNewProducts();
-        $this->createViewFamilies();
     }
 
     protected function createViewFamilies(string $viewName = 'ListFamilia'): void
@@ -105,7 +105,8 @@ class EditFamilia extends EditController
 
     protected function createViewNewProducts(string $viewName = 'ListProducto-new'): void
     {
-        $this->addListView($viewName, 'Producto', 'add', 'fa-solid fa-folder-plus');
+        $this->addListView($viewName, 'Producto', 'add', 'fa-solid fa-folder-plus')
+            ->setSettings('group', 'products');
         $this->createViewProductsCommon($viewName);
 
         // botón añadir producto
@@ -119,7 +120,8 @@ class EditFamilia extends EditController
 
     protected function createViewProducts(string $viewName = 'ListProducto'): void
     {
-        $this->addListView($viewName, 'Producto', 'products', 'fa-solid fa-cubes');
+        $this->addListView($viewName, 'Producto', 'products', 'fa-solid fa-cubes')
+            ->setSettings('group', 'products');
         $this->createViewProductsCommon($viewName);
 
         // botón quitar producto
