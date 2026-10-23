@@ -1859,7 +1859,7 @@
     "subaccount": "Subcuenta",
     "subaccount-bad-codcuenta": "La subcuenta %codsubcuenta% tiene asignada una cuenta incorrecta.",
     "subaccount-belongs-other-year": "La subcuenta %subAccountCode% pertenece a otro ejercicio.",
-    "subaccount-irpf": "Cuenta retenciones ventas",
+    "subaccount-irpf": "Subcuenta de retenciones para ventas",
     "subaccount-irpf-creditor": "Subcuenta de retenciones para compras",
     "subaccount-not-found": "Subcuenta %code% no encontrada.",
     "subaccount-purchases": "Cuenta para compras",

@@ -51,7 +51,7 @@
                     order="110">
                 <widget type="subcuenta" fieldname="codsubcuentaven"/>
             </column>
-            <column name="codsubcuentairpcomf" title="subaccount-irpf" titleurl="ListCuenta" description="optional"
+            <column name="codsubcuentairpcomf" title="subaccount-irpf-creditor" titleurl="ListCuenta" description="optional"
                     numcolumns="5" order="120">
                 <widget type="subcuenta" fieldname="codsubcuentairpfcom"/>
             </column>
