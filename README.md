@@ -13,6 +13,7 @@
   <a href="https://opensource.org/licenses/LGPL"><img src="https://img.shields.io/badge/license-LGPL-green.svg?color=2670c9&style=for-the-badge&label=License&logoColor=000000&labelColor=ececec" alt="License: LGPL"></a>
   <a href="https://github.com/NeoRazorX/facturascripts/releases/latest"><img src="https://img.shields.io/github/v/release/NeoRazorX/facturascripts?style=for-the-badge&logo=github&logoColor=white" alt="Latest Release"></a>
   <a href="https://github.com/NeoRazorX/facturascripts/releases"><img src="https://img.shields.io/github/downloads/NeoRazorX/facturascripts/total?style=for-the-badge&logo=github&logoColor=white" alt="Total Downloads"></a>
+  <a href="https://app.codecov.io/gh/NeoRazorX/facturascripts"><img src="https://img.shields.io/codecov/c/github/NeoRazorX/facturascripts/master?style=for-the-badge&logo=codecov&logoColor=white" alt="Code Coverage"></a>
   <a href="https://github.com/NeoRazorX/facturascripts/pulls"><img alt="PRs Welcome" src="https://img.shields.io/badge/PRs_Welcome-brightgreen?style=for-the-badge"></a>
 </p>
 
