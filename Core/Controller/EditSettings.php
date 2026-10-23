@@ -148,8 +148,10 @@ class EditSettings extends PanelController
             }
         }
 
-        // Añadimos el resto de pestañas
-        $this->createViewsApiKeys();
+        // Añadimos el resto de pestañas. Las claves de la API solo las ven los administradores
+        if ($this->user->admin) {
+            $this->createViewsApiKeys();
+        }
         $this->createViewsIdFiscal();
         $this->createViewSequences();
         $this->createViewStates();
