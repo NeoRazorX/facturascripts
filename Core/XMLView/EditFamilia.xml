@@ -42,7 +42,7 @@
                 <widget type="number" fieldname="numproductos" readonly="true"/>
             </column>
         </group>
-        <group name="accounting" title="accounting" numcolumns="12">
+        <group name="accounting" title="accounting" description="desc-family-accounting" numcolumns="12">
             <column name="codsubcuentacom" title="subaccount-purchases" titleurl="ListCuenta" description="optional"
                     order="100">
                 <widget type="subcuenta" fieldname="codsubcuentacom"/>
