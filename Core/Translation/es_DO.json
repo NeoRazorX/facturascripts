@@ -541,6 +541,7 @@
     "desc-business-name": "Nombre oficial del cliente, para las facturas y otros documentos.",
     "desc-business-name-2": "Nombre fiscal o razón social legalmente registrado del cliente",
     "desc-customer-name": "Nombre por el cual el cliente es conocido. Para uso interno.",
+    "desc-family-accounting": "Opcional. Subcuentas a usar en los asientos de las facturas con productos de esta familia, en lugar de las predeterminadas.",
     "desc-parent-family": "Indica si la familia está agrupada en otro nivel superior.",
     "desc-payment-days": "Ejemplo: 1,15,31",
     "desc-provicer-business-name-2": "Descripción nombre de empresa de proveedor 2",
