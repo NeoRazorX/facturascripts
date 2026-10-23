@@ -85,7 +85,6 @@ class EditFamilia extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->setTabsPosition('bottom');
 
         // más pestañas
         $this->createViewProducts();
