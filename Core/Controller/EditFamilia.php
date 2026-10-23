@@ -95,7 +95,9 @@ class EditFamilia extends EditController
     protected function createViewFamilies(string $viewName = 'ListFamilia'): void
     {
         $this->addListView($viewName, 'Familia', 'subfamilies', 'fa-solid fa-sitemap')
+            ->addSearchFields(['descripcion', 'codfamilia'])
             ->addOrderBy(['codfamilia'], 'code')
+            ->addOrderBy(['numproductos'], 'products')
             // desactivamos la columna de familia padre y el botón de eliminar
             ->disableColumn('parent')
             ->setSettings('btnDelete', false);
