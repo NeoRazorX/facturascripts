@@ -544,6 +544,7 @@
     "desc-family-accounting": "Opcional. Subcuentas a usar en los asientos de las facturas con productos de esta familia, en lugar de las predeterminadas.",
     "desc-parent-family": "Wskaż, czy rodzina jest zgrupowana na wyższym poziomie.",
     "desc-payment-days": "Przykład: 1,15,31",
+    "desc-product-accounting": "Opcional. Subcuentas a usar en los asientos de las facturas con este producto, en lugar de las de su familia o las predeterminadas.",
     "desc-provicer-business-name-2": "Opis nazwy firmy dostawcy 2",
     "desc-provider-business-name": "Opis nazwy firmy dostawcy",
     "desc-provider-name": "Nazwa, pod którą znany jest dostawca. Do użytku wewnętrznego.",

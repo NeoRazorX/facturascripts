@@ -544,6 +544,7 @@
     "desc-family-accounting": "Opcional. Subcuentas a usar en los asientos de las facturas con productos de esta familia, en lugar de las predeterminadas.",
     "desc-parent-family": "Určuje, zda je rodina seskupena do jiné nadřazené úrovně.",
     "desc-payment-days": "Příklad: 1,15,31",
+    "desc-product-accounting": "Opcional. Subcuentas a usar en los asientos de las facturas con este producto, en lugar de las de su familia o las predeterminadas.",
     "desc-provicer-business-name-2": "Popis názvu společnosti dodavatele 2",
     "desc-provider-business-name": "Popis názvu společnosti dodavatele",
     "desc-provider-name": "Název, pod kterým je dodavatel znám. Pro interní použití.",
