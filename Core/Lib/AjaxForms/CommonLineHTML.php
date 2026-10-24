@@ -179,20 +179,22 @@ trait CommonLineHTML
 
     private static function irpf(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
-        $options = ['<option value="">------</option>'];
+        // las líneas antiguas no tienen código de retención, así que buscamos la de su porcentaje
+        $selected = $line->codretencion ?? $model->getRetentionFromPercentage((float)$line->irpf)?->codretencion;
+
+        $options = ['<option value="" data-irpf="0">------</option>'];
         foreach (Retenciones::all() as $ret) {
             // si la retención no está activa o seleccionada, la saltamos
-            if (!$ret->activa && $line->irpf != $ret->porcentaje) {
+            if (!$ret->activa && $selected !== $ret->codretencion) {
                 continue;
             }
 
-            $options[] = $line->irpf === $ret->porcentaje ?
-                '<option value="' . $ret->porcentaje . '" selected>' . $ret->descripcion . '</option>' :
-                '<option value="' . $ret->porcentaje . '">' . $ret->descripcion . '</option>';
+            $options[] = '<option value="' . $ret->codretencion . '" data-irpf="' . $ret->porcentaje . '"'
+                . ($selected === $ret->codretencion ? ' selected' : '') . '>' . $ret->descripcion . '</option>';
         }
 
         $attributes = $model->editable && false === $line->suplido ?
-            'name="irpf_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
+            'name="codretencion_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
             . '<div class="mb-2"><a href="ListImpuesto?activetab=ListRetencion">' . Tools::trans('retention') . '</a>'

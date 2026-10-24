@@ -76,13 +76,13 @@ class CSVImport
      */
     public static function importFileSQL(string $table, string $filePath, bool $update = false): string
     {
-        $csv = new Csv();
-        $csv->auto($filePath);
+        $csv = static::readFile($filePath);
 
         // si no se ha detectado el delimitador, forzamos ;
         if (empty($csv->delimiter)) {
             $csv->delimiter = ';';
-            $csv->parseFile($filePath);
+            $csv->loadDataString(static::fileContentUtf8($filePath));
+            $csv->parseFile();
         }
 
         $dataBase = new DataBase();
@@ -123,6 +123,25 @@ class CSVImport
     }
 
     /**
+     * Lee un fichero CSV, detectando el delimitador, y devuelve el lector con los datos
+     * en UTF-8. ParseCsv convierte a ISO-8859-1 los ficheros con BOM UTF-8, como los que
+     * genera CSVExport, así que la codificación se normaliza antes de pasarle el contenido.
+     *
+     * @param string $filePath
+     *
+     * @return Csv
+     */
+    public static function readFile(string $filePath): Csv
+    {
+        $csv = new Csv();
+        if ($csv->loadDataString(static::fileContentUtf8($filePath))) {
+            $csv->auto();
+        }
+
+        return $csv;
+    }
+
+    /**
      * @param string $table
      *
      * @return string
@@ -131,6 +150,32 @@ class CSVImport
     {
         $filePath = static::getTableFilePath($table);
         return empty($filePath) ? '' : static::importFileSQL($table, $filePath, true);
+    }
+
+    /**
+     * Devuelve el contenido del fichero en UTF-8 y sin BOM. Si no tiene BOM y no es UTF-8
+     * válido, se interpreta como Windows-1252 (el ANSI de Excel, que incluye ISO-8859-1).
+     * Igual que ParseCsv al leer el fichero, se quitan los saltos de línea finales, porque
+     * una línea vacía al final impide detectar el delimitador.
+     *
+     * @param string $filePath
+     *
+     * @return string
+     */
+    private static function fileContentUtf8(string $filePath): string
+    {
+        $content = is_file($filePath) ? (string)file_get_contents($filePath) : '';
+        if (str_starts_with($content, "\xEF\xBB\xBF")) {
+            $content = substr($content, 3);
+        } elseif (str_starts_with($content, "\xFF\xFE")) {
+            $content = (string)mb_convert_encoding(substr($content, 2), 'UTF-8', 'UTF-16LE');
+        } elseif (str_starts_with($content, "\xFE\xFF")) {
+            $content = (string)mb_convert_encoding(substr($content, 2), 'UTF-8', 'UTF-16BE');
+        } elseif (false === mb_check_encoding($content, 'UTF-8')) {
+            $content = (string)mb_convert_encoding($content, 'UTF-8', 'Windows-1252');
+        }
+
+        return rtrim($content, "\r\n");
     }
 
     /**

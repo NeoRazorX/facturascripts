@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\PostgresqlQueries;
 use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -183,6 +184,85 @@ final class DbUpdaterTest extends TestCase
         $this->assertTrue($dropped, 'test-table-not-dropped');
     }
 
+    public function testCanUseMysqlTypes(): void
+    {
+        $table_name = 'test_table_mysql_types';
+
+        try {
+            // creamos la tabla con tipos propios de MySQL (mediumtext, longtext, datetime...)
+            $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
+            $structure = DbUpdater::readTableXml($file_path);
+            $created = DbUpdater::createTable($table_name, $structure);
+            $this->assertTrue($created, 'test-table-not-created');
+
+            // comprobamos las columnas
+            $columns = $this->db()->getColumns($table_name);
+            $this->assertCount(11, $columns, 'missing-columns');
+
+            // los tipos de la base de datos deben coincidir con los del XML, para no modificar la tabla en cada comprobación
+            foreach ($structure['columns'] as $name => $xmlColumn) {
+                $this->assertTrue(
+                    $this->db()->getEngine()->compareDataTypes($columns[$name]['type'], $xmlColumn['type']),
+                    'column-' . $name . '-bad-type: ' . $columns[$name]['type']
+                );
+            }
+
+            // guardamos un texto de más de 64 KB, que no cabe en un campo text de MySQL
+            $body = str_repeat('a', 70000);
+            $sql = 'INSERT INTO ' . $table_name . ' (cantidad, creado, cuerpo, importe, nivel, notas, resumen) VALUES ('
+                . '1000, ' . $this->db()->var2str('2026-01-01 10:00:00') . ', ' . $this->db()->var2str($body) . ', '
+                . '12.5, 3, ' . $this->db()->var2str($body) . ', ' . $this->db()->var2str('resumen') . ');';
+            $this->assertTrue($this->db()->exec($sql), 'insert-mysql-types-failed');
+
+            $rows = $this->db()->select('SELECT cuerpo, notas FROM ' . $table_name . ';');
+            $this->assertCount(1, $rows, 'row-not-found');
+            $this->assertSame(70000, strlen($rows[0]['cuerpo']), 'cuerpo-truncated');
+            $this->assertSame(70000, strlen($rows[0]['notas']), 'notas-truncated');
+
+            // volvemos a comprobar la tabla con el mismo XML, sin que haya que modificarla
+            DbUpdater::rebuild();
+            $changes = $this->countChangeLog();
+            $updated = DbUpdater::updateTable($table_name, $structure);
+            $this->assertTrue($updated, 'test-table-not-updated');
+            $this->assertSame($changes, $this->countChangeLog(), 'test-table-modified-again');
+        } finally {
+            if ($this->db()->tableExists($table_name)) {
+                DbUpdater::dropTable($table_name);
+            }
+        }
+    }
+
+    public function testPostgresqlTranslatesMysqlTypes(): void
+    {
+        $sqlTool = new PostgresqlQueries();
+        $types = [
+            'datetime' => 'timestamp',
+            'datetime(0)' => 'timestamp(0)',
+            'datetime(6)' => 'timestamp(6)',
+            'double' => 'double precision',
+            'double(10,2)' => 'double precision',
+            'longtext' => 'text',
+            'mediumint' => 'integer',
+            'mediumint(9) unsigned' => 'integer',
+            'mediumtext' => 'text',
+            'tinyint' => 'smallint',
+            'tinyint(1)' => 'smallint',
+            'tinyint unsigned zerofill' => 'smallint',
+            'tinytext' => 'text',
+            // los tipos que no son propios de MySQL no se modifican
+            'boolean' => 'boolean',
+            'character varying(50)' => 'character varying(50)',
+            'double precision' => 'double precision',
+            'integer' => 'integer',
+            'numeric(10,2)' => 'numeric(10,2)',
+            'serial' => 'serial',
+            'timestamp' => 'timestamp',
+        ];
+        foreach ($types as $type => $expected) {
+            $this->assertSame($expected, $sqlTool->sqlColumnType($type), 'bad-translation-' . $type);
+        }
+    }
+
     public function testCanRenameColumns(): void
     {
         // creamos la tabla
@@ -315,6 +395,16 @@ final class DbUpdaterTest extends TestCase
                 DbUpdater::dropTable($table_name);
             }
         }
+    }
+
+    private function countChangeLog(): int
+    {
+        $file = Tools::folder('MyFiles', DbUpdater::CHANGELOG_FILE);
+        if (false === file_exists($file)) {
+            return 0;
+        }
+
+        return count(json_decode(file_get_contents($file), true) ?? []);
     }
 
     private function db(): DataBase

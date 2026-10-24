@@ -198,11 +198,62 @@ final class CSVImportTest extends TestCase
         }
     }
 
+    public function encodingProvider(): array
+    {
+        $csv = "codigo;descripcion\n1;Financiación básica\n2;Peña € Muñoz\n";
+
+        return [
+            'utf8-bom' => ["\xEF\xBB\xBF" . $csv],
+            'utf8' => [$csv],
+            'windows-1252' => [mb_convert_encoding($csv, 'Windows-1252', 'UTF-8')],
+            'utf16le-bom' => ["\xFF\xFE" . mb_convert_encoding($csv, 'UTF-16LE', 'UTF-8')],
+            'utf16be-bom' => ["\xFE\xFF" . mb_convert_encoding($csv, 'UTF-16BE', 'UTF-8')],
+        ];
+    }
+
+    /**
+     * @dataProvider encodingProvider
+     */
+    public function testReadFileEncodings(string $content): void
+    {
+        $filePath = $this->writeTmpFile($content);
+        $csv = CSVImport::readFile($filePath);
+        unlink($filePath);
+
+        // los datos se devuelven en UTF-8 y sin BOM en el título de la primera columna
+        $this->assertEquals(['codigo', 'descripcion'], $csv->titles);
+        $this->assertEquals('Financiación básica', $csv->data[0]['descripcion']);
+        $this->assertEquals('Peña € Muñoz', $csv->data[1]['descripcion']);
+    }
+
+    public function testReadFileMissing(): void
+    {
+        $csv = CSVImport::readFile(FS_FOLDER . '/MyFiles/Tmp/no-existe-xyz123.csv');
+        $this->assertEmpty($csv->titles);
+        $this->assertEmpty($csv->data);
+    }
+
+    public function testImportFileSQLWithBom(): void
+    {
+        // un CSV con BOM, como los que genera CSVExport, debe generar SQL en UTF-8
+        $filePath = $this->writeTmpFile("\xEF\xBB\xBFname;subject\ntest;Notificación\n");
+        $sql = CSVImport::importFileSQL('test_table', $filePath);
+        unlink($filePath);
+
+        $this->assertStringContainsString('Notificación', $sql);
+        $this->assertTrue(mb_check_encoding($sql, 'UTF-8'), 'El SQL debería estar en UTF-8');
+    }
+
     private function parseCsv(string $filePath): Csv
     {
-        $csv = new Csv();
-        $csv->auto($filePath);
+        return CSVImport::readFile($filePath);
+    }
 
-        return $csv;
+    private function writeTmpFile(string $content): string
+    {
+        $filePath = FS_FOLDER . '/MyFiles/Tmp/test-csv-import-' . mt_rand(1, 99999) . '.csv';
+        Tools::folderCheckOrCreate(dirname($filePath));
+        file_put_contents($filePath, $content);
+        return $filePath;
     }
 }

@@ -54,7 +54,7 @@
                 <widget type="checkbox" fieldname="activo"/>
             </column>
         </group>
-        <group name="accounting" title="sales" icon="fa-solid fa-store" numcolumns="12">
+        <group name="accounting" title="sales" description="desc-tax-sales-accounting" icon="fa-solid fa-store" numcolumns="12">
             <column name="impacted-tax-subaccount" description="optional" numcolumns="4" order="160">
                 <widget type="subcuenta" fieldname="codsubcuentarep"/>
             </column>
@@ -65,7 +65,7 @@
                 <widget type="subcuenta" fieldname="codsubcuentarepintra"/>
             </column>
         </group>
-        <group name="accounting-purchases" title="purchases" icon="fa-solid fa-shopping-cart" numcolumns="12">
+        <group name="accounting-purchases" title="purchases" description="desc-tax-purchases-accounting" icon="fa-solid fa-shopping-cart" numcolumns="12">
             <column name="supported-tax-subaccount" description="optional" numcolumns="4" order="180">
                 <widget type="subcuenta" fieldname="codsubcuentasop"/>
             </column>

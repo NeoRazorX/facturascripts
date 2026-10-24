@@ -221,6 +221,53 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
     }
 
+    public function testRetentionSubtotals(): void
+    {
+        $doc = new PresupuestoCliente();
+
+        // dos retenciones con el mismo porcentaje, una línea sin código, un suplido y una línea sin retención
+        $data = [
+            ['RA', 19, 100, false],
+            ['RB', 19, 33.33, false],
+            [null, 15, 10, false],
+            ['RA', 19, 50, true],
+            [null, 0, 20, false],
+        ];
+        $lines = [];
+        foreach ($data as [$code, $irpf, $price, $supplied]) {
+            $line = $doc->getNewLine();
+            $line->codretencion = $code;
+            $line->irpf = $irpf;
+            $line->pvpunitario = $price;
+            $line->suplido = $supplied;
+            $lines[] = $line;
+        }
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+        $this->assertEquals(26.83, $doc->totalirpf, 'bad-totalirpf');
+
+        // cada retención tiene su base y su importe
+        $subtotals = Calculator::getSubtotals($doc, $lines);
+        $this->assertEquals([
+            'RA|19' => ['codretencion' => 'RA', 'irpf' => 19, 'neto' => 100.0, 'totalirpf' => 19.0],
+            'RB|19' => ['codretencion' => 'RB', 'irpf' => 19, 'neto' => 33.33, 'totalirpf' => 6.33],
+            '|15' => ['codretencion' => null, 'irpf' => 15, 'neto' => 10.0, 'totalirpf' => 1.5],
+        ], $subtotals['retenciones'], 'bad-retentions');
+
+        // los céntimos del redondeo se ajustan para que la suma coincida con el total de IRPF
+        $lines = [];
+        foreach (['RA', 'RB', 'RC'] as $code) {
+            $line = $doc->getNewLine();
+            $line->codretencion = $code;
+            $line->irpf = 15;
+            $line->pvpunitario = 0.03;
+            $lines[] = $line;
+        }
+        $this->assertTrue(Calculator::calculate($doc, $lines, false));
+        $subtotals = Calculator::getSubtotals($doc, $lines);
+        $this->assertEquals(0.01, $subtotals['totalirpf'], 'bad-rounded-totalirpf');
+        $this->assertEquals(0.01, array_sum(array_column($subtotals['retenciones'], 'totalirpf')), 'bad-rounded-retentions');
+    }
+
     public function testCustomerRe(): void
     {
         // creamos un cliente con recargo de equivalencia

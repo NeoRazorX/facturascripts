@@ -1,0 +1,6 @@
+# Solo queremos el informe de cobertura en codecov.io:
+# sin comentarios ni anotaciones en las pull requests.
+comment: false
+
+github_checks:
+  annotations: false

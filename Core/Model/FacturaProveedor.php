@@ -77,6 +77,7 @@ class FacturaProveedor extends PurchaseDocument
         $newLine->excepcioniva = $this->getSubject()->excepcioniva;
         $newLine->idfactura = $this->idfactura;
         $newLine->irpf = $this->irpf;
+        $newLine->codretencion = $this->getRetentionFromPercentage($this->irpf)?->codretencion;
         $newLine->loadFromData($data, $exclude);
 
         // si no viene de getNewProductLine(), calculamos la línea

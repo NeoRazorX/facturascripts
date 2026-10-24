@@ -67,10 +67,12 @@ trait ApiBusinessDocumentTrait
         $line->dtopor = (float)($data['dtopor'] ?? $line->dtopor);
         $line->dtopor2 = (float)($data['dtopor2'] ?? $line->dtopor2);
 
-        // el IRPF solo se sobrescribe si viene en los datos, para no perder
-        // el porcentaje heredado de la cabecera (retención del cliente o
-        // proveedor) ni el de una línea que ya existe.
-        if (isset($data['irpf'])) {
+        // la retención solo se sobrescribe si viene en los datos, para no perder
+        // la heredada de la cabecera (retención del cliente o proveedor) ni la
+        // de una línea que ya existe. Se puede indicar por código o por porcentaje.
+        if (isset($data['codretencion'])) {
+            $line->setRetention($data['codretencion'] === 'null' ? null : $data['codretencion']);
+        } elseif (isset($data['irpf'])) {
             $line->irpf = (float)$data['irpf'];
         }
 

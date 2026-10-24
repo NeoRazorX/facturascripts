@@ -29,8 +29,11 @@ use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\Retencion;
 use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Core\Model\Subcuenta;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -398,6 +401,65 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
         $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
+    }
+
+    public function testInvoiceRetentionsWithSameRate(): void
+    {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
+        // dos retenciones con el mismo porcentaje y distinta subcuenta: el cliente usa la segunda
+        $percentage = round(30 + mt_rand(1, 60000) / 1000, 3);
+        $retention1 = $this->createRetention('A', $percentage, '4730000097');
+        $retention2 = $this->createRetention('B', $percentage, '4730000098');
+        $customer = $this->getRandomCustomer();
+        $customer->codretencion = $retention2->codretencion;
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // la primera línea lleva la retención del cliente y la segunda, la otra
+        $line1 = $invoice->getNewLine();
+        $line1->pvpunitario = 100;
+        $this->assertTrue($line1->save(), 'cant-save-line-1');
+
+        $line2 = $invoice->getNewLine();
+        $line2->setRetention($retention1->codretencion);
+        $line2->pvpunitario = 50;
+        $this->assertTrue($line2->save(), 'cant-save-line-2');
+
+        // una línea sin código de retención (anterior a guardarlo) se contabiliza con la del cliente
+        $line3 = $invoice->getNewLine();
+        $line3->codretencion = null;
+        $line3->pvpunitario = 10;
+        $this->assertTrue($line3->save(), 'cant-save-line-3');
+
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // cada retención va a su subcuenta
+        $entry = $invoice->getAccountingEntry();
+        $this->assertTrue($entry->exists(), 'accounting-entry-not-found');
+        $amounts = ['4730000097' => 0.0, '4730000098' => 0.0];
+        foreach ($entry->getLines() as $line) {
+            if (isset($amounts[$line->codsubcuenta])) {
+                $amounts[$line->codsubcuenta] += $line->debe;
+            }
+        }
+        $this->assertEqualsWithDelta(110 * $percentage / 100, $amounts['4730000098'], 0.011, 'bad-subject-retention-amount');
+        $this->assertEqualsWithDelta(50 * $percentage / 100, $amounts['4730000097'], 0.011, 'bad-other-retention-amount');
+        $this->assertEqualsWithDelta($invoice->totalirpf, array_sum($amounts), 0.001, 'bad-total-retention');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->deleteRetention($retention1, '4730000097', $invoice->codejercicio);
+        $this->deleteRetention($retention2, '4730000098', $invoice->codejercicio);
     }
 
     public function testCreateInvoiceWithSurcharge(): void
@@ -1074,6 +1136,29 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    private function createRetention(string $letter, float $percentage, string $codsubcuenta): Retencion
+    {
+        $retention = new Retencion();
+        $retention->codretencion = 'TR' . $letter . Tools::randomString(6);
+        $retention->codsubcuentaret = $codsubcuenta;
+        $retention->descripcion = 'Test ' . $letter;
+        $retention->porcentaje = $percentage;
+        $this->assertTrue($retention->save(), 'cant-save-retention');
+
+        return $retention;
+    }
+
+    private function deleteRetention(Retencion $retention, string $codsubcuenta, string $codejercicio): void
+    {
+        $subaccount = new Subcuenta();
+        $where = [Where::eq('codejercicio', $codejercicio), Where::eq('codsubcuenta', $codsubcuenta)];
+        if ($subaccount->loadWhere($where)) {
+            $this->assertTrue($subaccount->delete(), 'cant-delete-subaccount');
+        }
+
+        $this->assertTrue($retention->delete(), 'cant-delete-retention');
     }
 
     protected function tearDown(): void

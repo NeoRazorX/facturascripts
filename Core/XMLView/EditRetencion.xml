@@ -31,16 +31,18 @@
             <column name="percentage" numcolumns="2" order="120">
                 <widget type="percentage" decimal="2" fieldname="porcentaje" required="true"/>
             </column>
-            <column name="subaccount-irpf" description="optional" numcolumns="3" order="130">
-                <widget type="subcuenta" fieldname="codsubcuentaret"/>
-            </column>
-            <column name="subaccount-irpf-creditor" description="optional" numcolumns="3" order="140">
-                <widget type="subcuenta" fieldname="codsubcuentaacr"/>
-            </column>
         </group>
         <group name="extra" numcolumns="12">
             <column name="active" order="200">
                 <widget type="checkbox" fieldname="activa"/>
+            </column>
+        </group>
+        <group name="accounting" title="accounting" description="desc-retention-accounting" numcolumns="12">
+            <column name="subaccount-irpf" description="optional" numcolumns="3" order="100">
+                <widget type="subcuenta" fieldname="codsubcuentaret"/>
+            </column>
+            <column name="subaccount-irpf-creditor" description="optional" numcolumns="3" order="110">
+                <widget type="subcuenta" fieldname="codsubcuentaacr"/>
             </column>
         </group>
     </columns>

@@ -34,7 +34,7 @@ class PostgresqlEngine extends DataBaseEngine
     /**
      * Link to the SQL statements for the connected database
      *
-     * @var DataBaseQueries
+     * @var PostgresqlQueries
      */
     private $utilsSQL;
 
@@ -102,6 +102,20 @@ class PostgresqlEngine extends DataBaseEngine
         }
 
         return $colData;
+    }
+
+    /**
+     * Compara el tipo de una columna de la base de datos con el del XML de la tabla,
+     * traduciendo antes los tipos propios de MySQL a su equivalente en PostgreSQL.
+     *
+     * @param string $dbType
+     * @param string $xmlType
+     *
+     * @return bool
+     */
+    public function compareDataTypes($dbType, $xmlType): bool
+    {
+        return parent::compareDataTypes($dbType, $this->utilsSQL->sqlColumnType($xmlType));
     }
 
     /**

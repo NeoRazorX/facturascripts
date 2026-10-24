@@ -28,14 +28,16 @@ use FacturaScripts\Dinamic\Model\Familia;
 /**
  * Modelo auxiliar para obtener las subcuentas de IRPF de los documentos de compra.
  * Agrupa las líneas de la factura de proveedor (excluyendo suplidos) por la subcuenta
- * de IRPF del producto y por familia, para poder repartir la retención entre las
- * subcuentas correspondientes al generar el asiento contable.
+ * de IRPF del producto, por familia y por retención, para poder repartir la retención
+ * entre las subcuentas correspondientes al generar el asiento contable.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  *
  * @property string $codfamilia
+ * @property string|null $codretencion
  * @property string $codsubcuenta
+ * @property float $irpf
  * @property float $total
  */
 class PurchasesDocIrpfAccount extends JoinModel
@@ -103,6 +105,8 @@ class PurchasesDocIrpfAccount extends JoinModel
             'idfactura' => 'lineasfacturasprov.idfactura',
             'codsubcuenta' => "COALESCE(productos.codsubcuentairpfcom, '')",
             'codfamilia' => "COALESCE(productos.codfamilia, '')",
+            'codretencion' => 'lineasfacturasprov.codretencion',
+            'irpf' => 'lineasfacturasprov.irpf',
             'total' => 'SUM(lineasfacturasprov.pvptotal)'
         ];
     }
@@ -111,7 +115,9 @@ class PurchasesDocIrpfAccount extends JoinModel
     {
         return 'lineasfacturasprov.idfactura,'
             . "COALESCE(productos.codsubcuentairpfcom, ''),"
-            . "COALESCE(productos.codfamilia, '')";
+            . "COALESCE(productos.codfamilia, ''),"
+            . 'lineasfacturasprov.codretencion,'
+            . 'lineasfacturasprov.irpf';
     }
 
     protected function getSQLFrom(): string

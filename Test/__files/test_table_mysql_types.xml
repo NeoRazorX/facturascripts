@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table>
+    <column>
+        <name>activo</name>
+        <type>tinyint(1)</type>
+    </column>
+    <column>
+        <name>cantidad</name>
+        <type>mediumint</type>
+    </column>
+    <column>
+        <name>creado</name>
+        <type>datetime</type>
+    </column>
+    <column>
+        <name>cuerpo</name>
+        <type>mediumtext</type>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+    </column>
+    <column>
+        <name>importe</name>
+        <type>double</type>
+    </column>
+    <column>
+        <name>modificado</name>
+        <type>datetime(6)</type>
+    </column>
+    <column>
+        <name>nivel</name>
+        <type>tinyint</type>
+    </column>
+    <column>
+        <name>notas</name>
+        <type>longtext</type>
+    </column>
+    <column>
+        <name>puntos</name>
+        <type>mediumint unsigned</type>
+    </column>
+    <column>
+        <name>resumen</name>
+        <type>tinytext</type>
+    </column>
+    <constraint>
+        <name>test_table_mysql_types_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+</table>

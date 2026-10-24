@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
@@ -66,6 +67,20 @@ class EditApiKey extends EditController
         $data['title'] = 'api-key';
         $data['icon'] = 'fa-solid fa-key';
         return $data;
+    }
+
+    /**
+     * Las claves de la API no heredan los permisos de quien las crea: una clave de acceso total,
+     * o con escritura sobre los usuarios, equivale a un administrador. Por eso solo los
+     * administradores pueden gestionarlas, aunque un rol dé acceso a esta página.
+     */
+    public function privateCore(&$response, $user, $permissions)
+    {
+        if (false === $user->admin) {
+            throw new KernelException('AccessDenied', Tools::trans('access-denied'));
+        }
+
+        parent::privateCore($response, $user, $permissions);
     }
 
     /**

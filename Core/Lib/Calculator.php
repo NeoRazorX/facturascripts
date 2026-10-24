@@ -177,6 +177,7 @@ class Calculator
             'iva' => [],
             'neto' => 0.0,
             'netosindto' => 0.0,
+            'retenciones' => [],
             'totalbeneficio' => 0.0,
             'totalcoste' => 0.0,
             'totalirpf' => 0.0,
@@ -210,6 +211,11 @@ class Calculator
         if (!$done) {
             // Solo ejecutamos el acumulado interno si ningún mod ha respondido STOP_MODS.
             $subtotals = self::accumulate($subtotals, $doc, $lines);
+        }
+
+        // desglosamos las retenciones, si ningún mod lo ha hecho ya
+        if (empty($subtotals['retenciones'])) {
+            $subtotals['retenciones'] = self::getRetentions($doc, $lines);
         }
 
         // turno para que los mods apliquen cambios
@@ -257,6 +263,7 @@ class Calculator
         $subtotals['totaliva'] = Tools::round($subtotals['totaliva']);
         $subtotals['totalrecargo'] = Tools::round($subtotals['totalrecargo']);
         $subtotals['totalsuplidos'] = Tools::round($subtotals['totalsuplidos']);
+        $subtotals['retenciones'] = self::roundRetentions($subtotals['retenciones'], $subtotals['totalirpf']);
 
         // calculamos el beneficio
         $subtotals['totalbeneficio'] = Tools::round($subtotals['neto'] - $subtotals['totalcoste']);
@@ -480,6 +487,77 @@ class Calculator
         }
 
         return true;
+    }
+
+    /**
+     * Agrupa la base y el importe de IRPF de las líneas por retención (código y porcentaje),
+     * para distinguir las retenciones que tienen el mismo porcentaje.
+     *
+     * @param BusinessDocument $doc
+     * @param BusinessDocumentLine[] $lines
+     *
+     * @return array
+     */
+    private static function getRetentions(BusinessDocument $doc, array $lines): array
+    {
+        $retentions = [];
+        foreach ($lines as $line) {
+            // los suplidos no tienen IRPF
+            if (empty($line->pvptotal) || empty($line->irpf) || $line->suplido) {
+                continue;
+            }
+
+            $key = $line->codretencion . '|' . $line->irpf;
+            if (false === array_key_exists($key, $retentions)) {
+                $retentions[$key] = [
+                    'codretencion' => $line->codretencion,
+                    'irpf' => $line->irpf,
+                    'neto' => 0.0,
+                    'totalirpf' => 0.0
+                ];
+            }
+
+            $pvpTotal = $line->pvptotal * $doc->getEUDiscount();
+            $retentions[$key]['neto'] += $pvpTotal;
+            $retentions[$key]['totalirpf'] += $pvpTotal * $line->irpf / 100;
+        }
+
+        return $retentions;
+    }
+
+    /**
+     * Redondea las retenciones y ajusta los céntimos de diferencia en la de mayor importe,
+     * para que la suma coincida con el total de IRPF del documento.
+     *
+     * @param array $retentions
+     * @param float $totalIrpf
+     *
+     * @return array
+     */
+    private static function roundRetentions(array $retentions, float $totalIrpf): array
+    {
+        if (empty($totalIrpf)) {
+            return [];
+        }
+
+        $sum = 0.0;
+        $maxKey = null;
+        foreach ($retentions as $key => $value) {
+            $retentions[$key]['neto'] = Tools::round($value['neto']);
+            $retentions[$key]['totalirpf'] = Tools::round($value['totalirpf']);
+            $sum += $retentions[$key]['totalirpf'];
+
+            if (null === $maxKey || abs($retentions[$key]['totalirpf']) > abs($retentions[$maxKey]['totalirpf'])) {
+                $maxKey = $key;
+            }
+        }
+
+        $diff = Tools::round($totalIrpf - $sum);
+        if (null !== $maxKey && false === empty($diff)) {
+            $retentions[$maxKey]['totalirpf'] = Tools::round($retentions[$maxKey]['totalirpf'] + $diff);
+        }
+
+        return $retentions;
     }
 
     /**

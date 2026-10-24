@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Controller\AdminPlugins;
+use FacturaScripts\Core\Controller\EditApiKey;
 use FacturaScripts\Core\Controller\Updater;
 use FacturaScripts\Core\Controller\Wizard;
 use FacturaScripts\Core\KernelException;
@@ -44,6 +45,7 @@ final class AdminOnlyControllersTest extends TestCase
     {
         return [
             'AdminPlugins' => [AdminPlugins::class],
+            'EditApiKey' => [EditApiKey::class],
             'Updater' => [Updater::class],
             'Wizard' => [Wizard::class],
         ];

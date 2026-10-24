@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,6 +29,21 @@ use FacturaScripts\Core\Tools;
  */
 class PostgresqlQueries implements DataBaseQueries
 {
+    /**
+     * Tipos propios de MySQL que se pueden usar en los XML de las tablas, con su equivalente en PostgreSQL.
+     *
+     * @var array<string, string>
+     */
+    const MYSQL_TYPES = [
+        'datetime' => 'timestamp',
+        'double' => 'double precision',
+        'longtext' => 'text',
+        'mediumint' => 'integer',
+        'mediumtext' => 'text',
+        'tinyint' => 'smallint',
+        'tinytext' => 'text',
+    ];
+
     /**
      * Returns the needed SQL to convert a column to integer
      *
@@ -68,7 +83,7 @@ class PostgresqlQueries implements DataBaseQueries
      */
     public function sqlAlterAddColumn(string $tableName, array $colData): string
     {
-        $sql = 'ALTER TABLE ' . $tableName . ' ADD COLUMN ' . $colData['name'] . ' ' . $colData['type'];
+        $sql = 'ALTER TABLE ' . $tableName . ' ADD COLUMN ' . $colData['name'] . ' ' . $this->sqlColumnType($colData['type']);
 
         if ($colData['type'] === 'serial') {
             $sql .= " DEFAULT nextval('" . $tableName . "_" . $colData['name'] . "_seq'::regclass)";
@@ -143,7 +158,33 @@ class PostgresqlQueries implements DataBaseQueries
      */
     public function sqlAlterModifyColumn(string $tableName, array $colData): string
     {
-        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . ' TYPE ' . $colData['type'] . ';';
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . ' TYPE ' . $this->sqlColumnType($colData['type']) . ';';
+    }
+
+    /**
+     * Devuelve el tipo de columna válido en PostgreSQL para el tipo indicado en el XML de la tabla.
+     * Los tipos propios de MySQL (mediumtext, longtext, datetime...) se traducen a su equivalente,
+     * también con parámetros o unsigned (tinyint(1), datetime(6), double(10,2), mediumint unsigned...),
+     * el resto se devuelve sin cambios.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function sqlColumnType(string $type): string
+    {
+        // separamos el nombre del tipo de sus parámetros y de unsigned o zerofill
+        $pattern = '/^([a-z]+)\s*(?:\((\d+)(?:\s*,\s*\d+)?\))?(?:\s+unsigned)?(?:\s+zerofill)?$/';
+        if (1 !== preg_match($pattern, $type, $matches) || false === isset(self::MYSQL_TYPES[$matches[1]])) {
+            return $type;
+        }
+
+        // datetime(6) conserva la precisión de las fracciones de segundo
+        if ($matches[1] === 'datetime' && ($matches[2] ?? '') !== '') {
+            return 'timestamp(' . $matches[2] . ')';
+        }
+
+        return self::MYSQL_TYPES[$matches[1]];
     }
 
     /**
@@ -226,7 +267,7 @@ class PostgresqlQueries implements DataBaseQueries
         $serials = ['serial', 'bigserial'];
         $fields = '';
         foreach ($columns as $col) {
-            $fields .= ', "' . $col['name'] . '" ' . $col['type'];
+            $fields .= ', "' . $col['name'] . '" ' . $this->sqlColumnType($col['type']);
 
             if (isset($col['null']) && $col['null'] === 'NO') {
                 $fields .= ' NOT NULL';

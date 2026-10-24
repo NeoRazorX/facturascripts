@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,7 +75,7 @@
         <column name="subaccount-purchases" display="none" order="240">
             <widget type="text" fieldname="codsubcuentacom"/>
         </column>
-        <column name="subaccount-irpf" display="none" order="250">
+        <column name="subaccount-irpf" title="subaccount-irpf-creditor" display="none" order="250">
             <widget type="text" fieldname="codsubcuentairpfcom"/>
         </column>
         <column name="subaccount-sales" display="none" order="260">
