@@ -92,6 +92,11 @@ class SalesLineHTML
             }
         } elseif ($formData['action'] === 'new-line') {
             $lines[] = $model->getNewLine();
+        } elseif ($formData['action'] === 'new-text-line') {
+            $text_line = $model->getNewLine();
+            $text_line->mostrar_cantidad = false;
+            $text_line->mostrar_precio = false;
+            $lines[] = $text_line;
         }
 
         // mods
