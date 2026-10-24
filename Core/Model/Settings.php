@@ -24,7 +24,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of Settings
+ * Guarda la configuración de la aplicación agrupada por bloques, donde cada
+ * registro es un grupo (default, email, etc.) cuyos valores se almacenan en la
+ * columna properties como un JSON de pares clave-valor.
+ * Los valores se leen y escriben como si fueran propiedades del modelo gracias
+ * a los métodos mágicos, y normalmente se consultan de forma indirecta con
+ * Tools::settings(). En la API se oculta siempre la clave properties.password.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>

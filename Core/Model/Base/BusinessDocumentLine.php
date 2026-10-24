@@ -31,7 +31,12 @@ use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Linea de documento de negocio.
+ * Clase base abstracta para las líneas de cualquier documento de negocio.
+ * Contiene los campos comunes a todas las líneas (producto, cantidad,
+ * precio, descuentos, impuesto y totales) y la lógica compartida para
+ * actualizar el stock del producto según actualizastock y consultar las
+ * líneas padre e hijas mediante DocTransformation. El cálculo de importes
+ * no se hace aquí, lo realiza Calculator.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Model to persist data from logs.
+ * Mensaje del registro de actividad de la aplicación, almacenado en la tabla
+ * logs. Guarda el canal, el nivel de severidad, el texto del mensaje y el
+ * contexto en JSON, junto con el usuario, la IP y la URI desde la que se
+ * generó, pudiendo además referenciar el modelo y el registro afectados.
+ * Los mensajes del canal de auditoría no se pueden modificar ni eliminar.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>

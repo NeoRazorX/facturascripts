@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\FacturaProveedor as DinFacturaProveedor;
 
 /**
- * Line of a supplier invoice.
+ * Línea de una factura de proveedor, almacenada en la tabla lineasfacturasprov.
+ * Guarda el producto o servicio comprado junto con su cantidad, precio,
+ * descuentos e impuestos, y se relaciona con la factura mediante idfactura.
+ * En las facturas rectificativas, idlinearect apunta a la línea original que
+ * se está rectificando.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

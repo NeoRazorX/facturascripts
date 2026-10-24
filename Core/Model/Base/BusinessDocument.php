@@ -36,7 +36,12 @@ use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Documento de negocio base (presupuestos, pedidos, albaranes, facturas).
+ * Clase base abstracta para todos los documentos de negocio (presupuestos,
+ * pedidos, albaranes y facturas, tanto de venta como de compra). Reúne los
+ * campos y comportamientos comunes a cualquier documento: empresa, ejercicio,
+ * divisa, forma de pago, serie y operación intracomunitaria, además del
+ * cifnif del cliente o proveedor. Los datos de dirección están en
+ * SalesDocument y PurchaseDocument.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

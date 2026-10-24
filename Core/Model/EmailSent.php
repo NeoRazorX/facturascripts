@@ -27,7 +27,13 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 
 /**
- * Model EmailSent
+ * Registro histórico de los correos electrónicos enviados desde FacturaScripts.
+ * Guarda el remitente, el destinatario, el asunto, el cuerpo (en texto y en HTML), la fecha
+ * y el usuario que realizó el envío, así como la notificación que lo originó, si procede.
+ * Los archivos adjuntos se almacenan en disco en una carpeta identificada por el uuid del
+ * correo, y se eliminan junto al registro. El método estático verify() marca opened a true para el
+ * verificode indicado; ese código se incluye en los enlaces de los botones del correo, por lo
+ * que refleja un clic del destinatario y no que haya abierto el mensaje.
  *
  * @author Raul Jimenez         <raljopa@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
@@ -60,7 +66,7 @@ class EmailSent extends ModelClass
     /** @var string Nombre del usuario que envió el correo. */
     public $nick;
 
-    /** @var bool Indica si el destinatario ha abierto o verificado el correo. */
+    /** @var bool Indica si se ha verificado el verificode (clic en un enlace del correo); no implica apertura del mensaje. */
     public $opened;
 
     /** @var string|null Nombre de la notificación que originó el correo. */
@@ -72,7 +78,7 @@ class EmailSent extends ModelClass
     /** @var string Identificador utilizado para agrupar el correo y sus archivos adjuntos. */
     public $uuid;
 
-    /** @var string Código utilizado para verificar la interacción del destinatario. */
+    /** @var string Código incluido en los enlaces de los botones del correo para verificar el clic del destinatario. */
     public $verificode;
 
     public function clear(): void

@@ -35,7 +35,12 @@ use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 
 /**
- * This class stores the main data of the company.
+ * Empresa emisora de los documentos. Almacena los datos fiscales y de contacto (razón social,
+ * identificador fiscal, dirección, teléfonos, email, web, logotipo y régimen de IVA) que se
+ * utilizan en facturas, presupuestos y demás documentos. FacturaScripts es multiempresa, de
+ * modo que almacenes, ejercicios, cuentas bancarias y formas de pago se asocian a una empresa
+ * concreta. Al crear una empresa se generan automáticamente su almacén y su forma de pago
+ * predeterminados, y la empresa marcada como predeterminada no se puede eliminar.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

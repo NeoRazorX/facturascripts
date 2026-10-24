@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,13 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A predefined concept for a line item (the line of an accounting entry).
+ * Concepto predefinido para los asientos contables.
+ * Se guarda en la tabla `conceptos_partidas` y se identifica con un código
+ * (`codconcepto`) que se genera automáticamente si no se indica.
+ *
+ * Sirve para reutilizar textos habituales y evitar tener que escribir una y otra vez la
+ * misma descripción; sus descripciones se ofrecen como sugerencias en el concepto de la
+ * cabecera del asiento (`AccountingHeaderHTML`). Se gestiona desde una pestaña de `ListAsiento`.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

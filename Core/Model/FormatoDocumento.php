@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Model to personalize the print format of sales and buy documents.
+ * Formato de impresión de los documentos de compra y venta. Permite personalizar el título,
+ * el logotipo y el texto adicional que aparecen al imprimir o generar el PDF, y limitar su
+ * uso a un tipo de documento (tipodoc), a una serie (codserie) y a una empresa concretos.
+ * Si el campo autoaplicar está activo, el formato se selecciona automáticamente al imprimir
+ * los documentos que coinciden con esos criterios.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>

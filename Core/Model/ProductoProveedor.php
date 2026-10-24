@@ -31,7 +31,13 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
 /**
- * Description of ProductoProveedor
+ * Relaciona una variante de producto con un proveedor, guardando la referencia
+ * que este utiliza, su precio, los dos descuentos aplicables, la divisa y el
+ * stock que declara tener. A partir del precio y los descuentos se calcula el
+ * neto y su equivalente en la divisa base (neto / tasaconvcompra). Al crear o
+ * eliminar un registro, o al cambiar su neto, se actualiza el coste de la
+ * variante (no del producto), solo si hay una política de precio de coste
+ * configurada (costpricepolicy, CostPriceTools), y usando únicamente el neto.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -61,7 +67,7 @@ class ProductoProveedor extends ModelClass
     /** @var float Precio neto tras aplicar los descuentos. */
     public $neto;
 
-    /** @var float Precio neto convertido a euros. */
+    /** @var float Precio neto en la divisa base (neto / tasaconvcompra de la divisa). */
     public $netoeuros;
 
     /** @var float Precio del producto indicado por el proveedor antes de descuentos. */
