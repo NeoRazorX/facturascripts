@@ -34,6 +34,7 @@ use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
@@ -300,6 +301,14 @@ class Proveedor extends ModelClass
         return parent::test() && $this->testEmailAndPhones() && $this->testFiscalNumber();
     }
 
+    public function createSubaccount(string $codejercicio): Subcuenta
+    {
+        $specialAccount = $this->acreedor ?
+            static::SPECIAL_CREDITOR_ACCOUNT :
+            static::SPECIAL_ACCOUNT;
+        return $this->createSubcuenta($codejercicio, $specialAccount);
+    }
+
     protected function createSubcuenta(string $codejercicio, string $specialAccount): Subcuenta
     {
         // buscamos la cuenta especial
@@ -356,7 +365,17 @@ class Proveedor extends ModelClass
             $contact->tipoidfiscal = $this->tipoidfiscal;
             if ($contact->save()) {
                 $this->idcontacto = $contact->idcontacto;
-                return $this->save();
+                $return = $this->save();
+            }
+        }
+
+        // si no tiene subcuenta asignada, intentamos crearla si hay plan contable activo
+        if ($return && empty($this->codsubcuenta)) {
+            $ejercicio = new DinEjercicio();
+            $ejercicio->idempresa = Tools::settings('default', 'idempresa');
+            if ($ejercicio->loadFromDate(Tools::date(), true, false)) {
+                $specialAccount = $this->acreedor ? static::SPECIAL_CREDITOR_ACCOUNT : static::SPECIAL_ACCOUNT;
+                $this->createSubcuenta($ejercicio->codejercicio, $specialAccount);
             }
         }
 
