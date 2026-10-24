@@ -21,7 +21,11 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Request;
 
 /**
- * Description of WidgetTime
+ * Widget para campos de hora, declarado con type="time" en las vistas XMLView.
+ * Genera un input time de HTML5 con los atributos min, max y step indicados en la vista.
+ * El paso determina la precisión mostrada: con valores inferiores a sesenta segundos la hora
+ * se presenta como H:i:s y en caso contrario como H:i, sin segundos.
+ * Cuando el campo es obligatorio y no tiene valor, se rellena a partir del mínimo definido.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

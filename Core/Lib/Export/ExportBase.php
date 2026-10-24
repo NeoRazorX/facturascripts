@@ -34,7 +34,13 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 
 /**
- * Export interface.
+ * Clase base de la que heredan todos los motores de exportación, como CSV, XLS o PDF.
+ * Define los métodos que cada formato debe implementar para añadir páginas con un
+ * modelo, un listado, una tabla o un documento de compra y venta, y para volcar el
+ * resultado en la respuesta. Además ofrece utilidades comunes para obtener los
+ * títulos, alineaciones y valores de las columnas a partir de sus widgets, localizar
+ * el formato de documento aplicable y evitar la inyección de fórmulas en las hojas
+ * de cálculo.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

@@ -20,8 +20,11 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 /**
- * Selection filter of options where each option has a Core\Where
- * associated for data filtering
+ * Filtro de listado en forma de desplegable en el que cada opción lleva asociado su
+ * propio conjunto de condiciones Where, en lugar de filtrar por un único campo. Resulta
+ * útil para ofrecer criterios compuestos, como mostrar solamente los documentos
+ * pendientes o los de un estado concreto. La primera opción del array actúa como valor
+ * neutro y hace las veces de texto orientativo del desplegable.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

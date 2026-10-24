@@ -26,7 +26,12 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento as DinSecuenciaDocumento;
 
 /**
- * Description of BusinessDocumentCode
+ * Asigna el número y el código a los documentos de compra y de venta a partir de
+ * la secuencia (SecuenciaDocumento) que corresponde a su empresa, serie,
+ * ejercicio y tipo de documento, creándola con un patrón por defecto si aún no
+ * existe. Cuando la secuencia tiene activado el uso de huecos, busca hacia atrás
+ * los números libres para reutilizarlos, con el límite que marca GAP_LIMIT.
+ * El código final se compone aplicando el patrón de la secuencia con CodePatterns.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Juan José Prieto Dzul    <juanjoseprieto88@gmail.com>

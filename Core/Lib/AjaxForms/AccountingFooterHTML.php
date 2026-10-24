@@ -24,7 +24,11 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 
 /**
- * Description of AccountingFooterHTML
+ * Genera el pie del formulario de edición de asientos contables, con el buscador para
+ * añadir nuevas subcuentas, el importe del asiento, el aviso de descuadre y los botones
+ * de guardar, bloquear y eliminar. También recoge los datos enviados por el formulario
+ * y los aplica sobre el modelo Asiento. Los plugins pueden añadir campos y botones
+ * propios registrando sus mods con addMod(), que implementan AccountingModInterface.
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

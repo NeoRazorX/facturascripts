@@ -25,6 +25,12 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
+ * Widget de botones de opción, declarado con type="radio" en las vistas XMLView.
+ * Presenta como radios excluyentes una lista de valores, que puede definirse en la propia
+ * vista, generarse a partir de un rango o cargarse de un modelo mediante CodeModel.
+ * Con el atributo images se sustituyen los radios por imágenes seleccionables, buscadas en
+ * la ruta indicada en el atributo path y nombradas según el título de cada opción.
+ *
  * @author Daniel Fernández Giménez <contacto@danielfg.es>
  */
 class WidgetRadio extends BaseWidget

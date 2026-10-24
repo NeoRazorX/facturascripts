@@ -20,7 +20,12 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * This class centralizes all common method for VAT Regime.
+ * Centraliza los regímenes de IVA aplicables a clientes, proveedores y documentos
+ * (general, exento, recargo de equivalencia, criterio de caja, agencias de viaje,
+ * bienes usados, OSS/IOSS, etc.). Los plugins pueden añadir o quitar regímenes con
+ * add() y remove(), y all() devuelve el listado resultante con su etiqueta de
+ * traducción. Las constantes y métodos relativos a excepciones de IVA se mantienen
+ * aquí sólo por compatibilidad: su sustituto es la clase TaxExceptions.
  *
  * @author          Carlos García Gómez         <carlos@facturascripts.com>
  * @collaborator    Daniel Fernández Giménez    <contacto@danielfg.es>

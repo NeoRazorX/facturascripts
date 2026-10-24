@@ -25,7 +25,11 @@ use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Set of tools for the management of accounting sub-accounts
+ * Conjunto de utilidades para el manejo de subcuentas contables. Ofrece la
+ * búsqueda con autocompletado de subcuentas dentro de un ejercicio concreto y
+ * métodos de apoyo para trabajar con las cuentas especiales de impuestos,
+ * distinguiendo entre IVA soportado, repercutido o ambos mediante las constantes
+ * SPECIAL_GROUP_TAX_*.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>

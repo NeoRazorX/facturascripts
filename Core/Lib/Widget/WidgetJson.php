@@ -22,6 +22,14 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
+/**
+ * Widget para mostrar el contenido de un campo con datos en formato JSON, declarado con
+ * type="json" en las vistas XMLView.
+ * Si el valor se puede decodificar en un array, lo representa de forma recursiva como pares
+ * clave-valor, ajustando el ancho de las columnas según el número de elementos.
+ * Cuando el campo está vacío o el contenido no es un JSON válido, se comporta como el
+ * WidgetTextarea del que hereda.
+ */
 class WidgetJson extends WidgetTextarea
 {
     protected function assets(): void

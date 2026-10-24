@@ -19,7 +19,9 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 /**
- * Description of RowHeader
+ * Representa la fila que se muestra sobre el contenido de una vista de un XMLView.
+ * Comparte por completo el comportamiento de RowFooter, del que hereda, y sólo se
+ * diferencia en la posición que ocupa dentro de la vista.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */

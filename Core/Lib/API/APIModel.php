@@ -27,7 +27,13 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
- * APIModel is the class for any API Model Resource in Dinamic/Model folder.
+ * Recurso genérico de la API que expone automáticamente todos los modelos de la
+ * carpeta Dinamic/Model, publicando cada uno con su nombre en plural y admitiendo
+ * las operaciones GET (listado, ficha y esquema), POST, PUT/PATCH y DELETE.
+ * Traduce los parámetros filter, operation, sort, limit y offset de la petición a
+ * cláusulas Where del modelo, validando que las columnas existan y no estén ocultas.
+ * Los modelos que no deban publicarse se descartan con excludeModel(), que los plugins
+ * pueden invocar desde su Init::init().
  *
  * @author Carlos García Gómez   <carlos@facturascripts.com>
  * @author Rafael San José Tovar <rsanjoseo@gmail.com>

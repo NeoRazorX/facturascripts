@@ -22,7 +22,9 @@ namespace FacturaScripts\Core\Lib\Email;
 use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
- * Description of BoxBlock
+ * Bloque contenedor de un email. Agrupa otros bloques dentro de un div y los dibuja
+ * en orden, de forma que se pueden aplicar clases CSS o estilos comunes a todo el
+ * conjunto. Si no se indican clases propias utiliza las de bloque por defecto.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>
