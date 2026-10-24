@@ -1,0 +1,18 @@
+<div id="{{ c.domId() }}" data-ui-path="{{ c.path() }}" class="{{ c.colClass() }} d-flex align-items-end">
+    {% if c.mode() == 'link' %}
+        <a href="{{ c.getUrl() }}" class="btn btn-{{ c.getColor() }} mb-3">
+            {% if c.getIcon() %}<i class="{{ c.getIcon() }} fa-fw me-1"></i>{% endif %}
+            {{ c.labelText() }}
+        </a>
+    {% else %}
+        <button type="{{ c.isPageScope() ? 'button' : 'submit' }}"
+                {% if not c.isPageScope() %}name="_ui_event" value="{{ c.eventId() }}"{% endif %}
+                class="btn btn-{{ c.getColor() }} mb-3"
+                data-ui-on="click" data-ui-event="{{ c.eventId() }}"
+                {% if c.isPageScope() %}data-ui-scope="none"{% endif %}
+                {% if c.getConfirm() %}data-ui-confirm="{{ c.getConfirm() }}"{% endif %}>
+            {% if c.getIcon() %}<i class="{{ c.getIcon() }} fa-fw me-1"></i>{% endif %}
+            {{ c.labelText() }}
+        </button>
+    {% endif %}
+</div>

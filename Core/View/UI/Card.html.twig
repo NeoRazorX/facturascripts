@@ -1,0 +1,15 @@
+<div id="{{ c.domId() }}" data-ui-path="{{ c.path() }}" class="card shadow-sm mb-3">
+    {% if c.titleText() %}
+        <div class="card-header py-2">
+            <span class="fw-semibold">
+                {% if c.getIcon() %}<i class="{{ c.getIcon() }} fa-fw me-1"></i>{% endif %}
+                {{ c.titleText() }}
+            </span>
+        </div>
+    {% endif %}
+    <div class="card-body{{ c.children()|length == 1 and (c.children()|first).template() == 'UI/Tabs.html.twig' ? ' p-0' : '' }}">
+        {% for child in c.children() %}
+            {{ child.render()|raw }}
+        {% endfor %}
+    </div>
+</div>

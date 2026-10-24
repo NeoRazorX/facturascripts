@@ -1,0 +1,20 @@
+<div id="{{ c.domId() }}" data-ui-path="{{ c.path() }}">
+    <div class="modal fade" id="{{ c.domId() }}-modal" tabindex="-1" aria-hidden="true">
+        <div class="{{ c.dialogClass() }}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        {% if c.getIcon() %}<i class="{{ c.getIcon() }} fa-fw me-1"></i>{% endif %}
+                        {{ c.titleText() }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% for child in c.children() %}
+                        {{ child.render()|raw }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
