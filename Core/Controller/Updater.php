@@ -601,6 +601,7 @@ class Updater extends Controller
             }
 
             Cache::clear();
+            $this->telemetryManager->setNullLastUpdate();
             $this->setTemplate(false);
             $this->response->setContent('reloading...');
             $this->redirect($this->getClassName() . '?action=post-update&init=' . $init, 3);
