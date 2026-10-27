@@ -26,9 +26,10 @@ use FacturaScripts\Dinamic\Model\Pais;
 
 final class Paises implements DataSrcInterface
 {
+    /** Códigos ISO de los países de la Unión Europea (el Reino Unido salió el 31/01/2020). */
     const MIEMBROS_UE = [
         'DE', 'AT', 'BE', 'BG', 'CZ', 'CY', 'HR', 'DK', 'SK', 'SI', 'EE', 'FI', 'FR', 'GR', 'HU', 'IE', 'IT', 'LV',
-        'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'GB', 'ES'
+        'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'ES'
     ];
 
     /** @var Pais[] */
