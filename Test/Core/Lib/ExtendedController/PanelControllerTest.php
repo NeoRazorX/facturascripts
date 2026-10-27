@@ -120,7 +120,9 @@ final class PanelControllerTest extends TestCase
         [$first, $second] = $this->createSubaccounts(2);
         $request = [
             'codejercicio' => $first->codejercicio,
-            'query' => $first->codcuenta,
+            // buscamos por la descripción única de estas subcuentas: el código de la cuenta (9999) también puede
+            // aparecer en la descripción de otras subcuentas del ejercicio, como las de los clientes aleatorios
+            'query' => $first->descripcion,
             'sort' => 'cod-desc',
         ];
 
@@ -154,12 +156,13 @@ final class PanelControllerTest extends TestCase
         $this->created[] = $account;
 
         $list = [];
+        $description = 'Test ' . uniqid();
         for ($num = 1; $num <= $count; $num++) {
             $subaccount = new Subcuenta();
             $subaccount->codcuenta = $account->codcuenta;
             $subaccount->codejercicio = $exercise->codejercicio;
             $subaccount->codsubcuenta = $account->codcuenta . '.' . $num;
-            $subaccount->descripcion = 'Test';
+            $subaccount->descripcion = $description;
             $this->assertTrue($subaccount->save());
             $this->created[] = $subaccount;
             $list[] = $subaccount;
