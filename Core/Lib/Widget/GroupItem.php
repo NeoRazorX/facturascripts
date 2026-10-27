@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -105,8 +105,14 @@ class GroupItem extends VisualItem
         $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
         $rowClass = $this->css('row g-2') . ' ' . $this->valign();
 
+        // si no hay ninguna columna visible no se pinta el título ni el hueco del grupo,
+        // pero sí los campos ocultos para que se sigan enviando en el formulario
+        if (false === $this->hasVisibleColumns()) {
+            $divClass .= ' d-none';
+        }
+
         $html = '<div' . $divId . ' class="' . $divClass . '"><div class="' . $rowClass . '">';
-        if ($this->title) {
+        if ($this->title && $this->hasVisibleColumns()) {
             $html .= $this->legend();
         }
 
@@ -118,6 +124,22 @@ class GroupItem extends VisualItem
         }
 
         return $html . '</div></div>';
+    }
+
+    /**
+     * Indica si el grupo tiene alguna columna visible (ni oculta con display="none" ni de un nivel superior al del usuario).
+     *
+     * @return bool
+     */
+    public function hasVisibleColumns(): bool
+    {
+        foreach ($this->columns as $col) {
+            if (false === $col->hidden()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
