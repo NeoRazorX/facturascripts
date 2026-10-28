@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -450,20 +451,7 @@ class EditSettings extends PanelController
      */
     private function getTabGroupFromXMLView(string $viewName): string
     {
-        $fileName = FS_FOLDER . '/Dinamic/XMLView/' . $viewName . '.xml';
-        if (FS_DEBUG && false === file_exists($fileName)) {
-            $fileName = FS_FOLDER . '/Core/XMLView/' . $viewName . '.xml';
-        }
-
-        if (false === file_exists($fileName)) {
-            return '';
-        }
-
-        $xml = simplexml_load_string(file_get_contents($fileName));
-        if ($xml === false) {
-            return '';
-        }
-
-        return trim((string)$xml['group']);
+        $xml = VisualItemLoadEngine::loadXMLView($viewName);
+        return null === $xml ? '' : trim((string)$xml['group']);
     }
 }
