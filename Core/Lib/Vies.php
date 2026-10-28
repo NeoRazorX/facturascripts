@@ -203,12 +203,9 @@ class Vies
     {
         $cifnif = FiscalNumberValidator::normalize($cifnif);
 
-        $iso = array_search($codiso, self::VAT_PREFIXES, true);
-        $prefixes = array_unique([$codiso, self::vatPrefix($codiso), false === $iso ? $codiso : $iso]);
-        foreach ($prefixes as $prefix) {
-            if ($prefix !== '' && substr($cifnif, 0, 2) === $prefix) {
-                return substr($cifnif, 2);
-            }
+        // comparamos los prefijos de NIF-IVA, así en Grecia se acepta tanto GR como EL
+        if (self::vatPrefix(substr($cifnif, 0, 2)) === self::vatPrefix($codiso)) {
+            $cifnif = substr($cifnif, 2);
         }
 
         return $cifnif;
