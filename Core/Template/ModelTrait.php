@@ -230,6 +230,21 @@ trait ModelTrait
         return $model->save() ? $model : null;
     }
 
+    /**
+     * Descarta la lista de campos del modelo, en memoria y en caché, para que
+     * se vuelva a leer de la base de datos (por ejemplo, tras actualizar la tabla).
+     */
+    protected function clearModelFields(): void
+    {
+        static::$fields = [];
+        Cache::delete('model-fields-' . $this->modelClassName());
+    }
+
+    /**
+     * Carga la lista de campos del modelo desde la memoria, la caché o la base de datos.
+     * Solo se guarda en caché si la tabla ya está comprobada, porque si su comprobación
+     * se ha omitido (transacción abierta) la estructura todavía puede cambiar.
+     */
     protected function loadModelFields(): void
     {
         if (static::$fields) {
@@ -249,8 +264,10 @@ trait ModelTrait
             return;
         }
 
-        // obtenemos de la base de datos y guardamos en la caché
+        // obtenemos de la base de datos y guardamos en la caché si la tabla ya está comprobada
         static::$fields = $this->db()->getColumns(static::tableName());
-        Cache::set($key, static::$fields);
+        if (DbUpdater::isTableChecked(static::tableName())) {
+            Cache::set($key, static::$fields);
+        }
     }
 }
