@@ -41,18 +41,19 @@ final class AppKey
     const KEY_BYTES = 32;
 
     /**
-     * Indica si se pueden cifrar secretos: hace falta FS_APP_KEY en el config.php. Con la clave derivada
-     * no se cifra, porque cambiaría al cambiar los datos de conexión y no se podría descifrar lo guardado.
+     * Indica si se pueden cifrar secretos: hace falta la extensión openssl y FS_APP_KEY en el config.php. Con
+     * la clave derivada no se cifra, porque cambiaría al cambiar los datos de conexión y no se podría
+     * descifrar lo guardado.
      */
     public static function canEncrypt(): bool
     {
-        return false === self::isDerived();
+        return extension_loaded('openssl') && false === self::isDerived();
     }
 
     /**
-     * Descifra un valor de encrypt() con el mismo propósito y el mismo contexto. Devuelve null si no hay
-     * FS_APP_KEY, el valor no tiene el formato esperado, ha cambiado FS_APP_KEY, se ha modificado el valor
-     * o el propósito o el contexto no coinciden.
+     * Descifra un valor de encrypt() con el mismo propósito y el mismo contexto. Devuelve null si no se puede
+     * cifrar (ver canEncrypt()), el valor no tiene el formato esperado, ha cambiado FS_APP_KEY, se ha
+     * modificado el valor o el propósito o el contexto no coinciden.
      */
     public static function decrypt(string $purpose, ?string $value, string $context = ''): ?string
     {
@@ -79,8 +80,8 @@ final class AppKey
     }
 
     /**
-     * Cifra un secreto con AES-256-GCM para guardarlo. Devuelve null si no hay FS_APP_KEY (ver canEncrypt())
-     * o si falla el cifrado.
+     * Cifra un secreto con AES-256-GCM para guardarlo. Devuelve null si falta la extensión openssl o
+     * FS_APP_KEY (ver canEncrypt()) o si falla el cifrado.
      *
      * La clave es una subclave de FS_APP_KEY derivada con HKDF-SHA256 y el propósito, así que lo cifrado
      * para un uso no se descifra en otro. El contexto (por ejemplo, el id de la fila) se autentica sin

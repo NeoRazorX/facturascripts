@@ -28,9 +28,10 @@ final class AppKeyTest extends TestCase
 {
     public function testCanEncrypt(): void
     {
-        // sin FS_APP_KEY no se cifra: la clave derivada cambia con los datos de conexión
-        $this->assertEquals(false === AppKey::isDerived(), AppKey::canEncrypt(), 'bad-can-encrypt');
-        if (AppKey::isDerived()) {
+        // sin la extensión openssl o sin FS_APP_KEY no se cifra: la clave derivada cambia con los datos de conexión
+        $expected = extension_loaded('openssl') && false === AppKey::isDerived();
+        $this->assertEquals($expected, AppKey::canEncrypt(), 'bad-can-encrypt');
+        if (false === $expected) {
             $this->assertNull(AppKey::encrypt('test', 'secret'), 'encrypted-without-app-key');
             $this->assertNull(AppKey::decrypt('test', 'v1:' . base64_encode(str_repeat('a', 40))), 'decrypted-without-app-key');
         }
