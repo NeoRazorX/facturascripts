@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use chillerlan\QRCode\QRCode;
@@ -53,6 +54,8 @@ class QrImage
      * @param int    $quietZone margen en blanco alrededor del código, en módulos (0 = sin margen)
      *
      * @return string
+     *
+     * @throws \Exception si los datos están vacíos o no caben en un código QR
      */
     public static function png(string $data, string $eccLevel = self::ECC_M, int $scale = 5, int $quietZone = 4): string
     {
@@ -77,6 +80,8 @@ class QrImage
      * @param string $eccLevel nivel de corrección de errores (constantes ECC_*); otro valor se toma como M
      *
      * @return int
+     *
+     * @throws \Exception si los datos están vacíos o no caben en un código QR
      */
     public static function size(string $data, string $eccLevel = self::ECC_M): int
     {
