@@ -63,6 +63,33 @@ final class EditSettingsTest extends TestCase
         }
     }
 
+    public function testTabGroupFromXMLView(): void
+    {
+        // un XMLView de ajustes que declara el grupo de su pestaña en la raíz
+        $fileName = FS_FOLDER . '/Dinamic/XMLView/SettingsTestGroup.xml';
+        file_put_contents($fileName, '<?xml version="1.0" encoding="UTF-8"?>'
+            . '<view group="test-group"><columns><group name="data" numcolumns="12">'
+            . '<column name="name" display="none" order="0"><widget type="text" fieldname="name" readonly="true"/></column>'
+            . '</group></columns></view>');
+
+        $user = $this->getRandomUser();
+        $user->admin = true;
+        $this->assertTrue($user->save());
+
+        try {
+            $controller = $this->runController($user);
+            $this->assertArrayHasKey('SettingsTestGroup', $controller->views);
+            $this->assertSame('test-group', $controller->views['SettingsTestGroup']->settings['group'] ?? '');
+
+            // las pestañas cuyo XML no declara grupo siguen sin él
+            $this->assertEmpty($controller->views['SettingsDefault']->settings['group'] ?? '');
+            $this->assertArrayHasKey('test-group', $controller->getTabGroups());
+        } finally {
+            unlink($fileName);
+            $user->delete();
+        }
+    }
+
     protected function setUp(): void
     {
         MiniLog::clear();

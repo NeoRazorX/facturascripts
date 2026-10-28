@@ -193,6 +193,9 @@ class EditSettings extends PanelController
     /**
      * Add a view settings.
      *
+     * El XML puede declarar el grupo de la pestaña en la raíz, por ejemplo <view group="sales">,
+     * igual que setTabGroup() desde PHP.
+     *
      * @param string $name
      * @param string $model
      * @param string $icon
@@ -201,6 +204,12 @@ class EditSettings extends PanelController
     {
         $title = $this->getKeyFromViewName($name);
         $this->addEditView($name, $model, $title, $icon);
+
+        // grupo de la pestaña declarado en el XML
+        $group = $this->getTabGroupFromXMLView($name);
+        if (false === empty($group)) {
+            $this->setTabGroup($name, $group);
+        }
 
         // change icon
         $view = $this->tab($name);
@@ -429,5 +438,32 @@ class EditSettings extends PanelController
     private function getKeyFromViewName(string $viewName): string
     {
         return strtolower(substr($viewName, strlen(self::KEY_SETTINGS)));
+    }
+
+    /**
+     * Devuelve el grupo de la pestaña declarado en el atributo group de la raíz del XMLView,
+     * o una cadena vacía si no lo declara.
+     *
+     * @param string $viewName
+     *
+     * @return string
+     */
+    private function getTabGroupFromXMLView(string $viewName): string
+    {
+        $fileName = FS_FOLDER . '/Dinamic/XMLView/' . $viewName . '.xml';
+        if (FS_DEBUG && false === file_exists($fileName)) {
+            $fileName = FS_FOLDER . '/Core/XMLView/' . $viewName . '.xml';
+        }
+
+        if (false === file_exists($fileName)) {
+            return '';
+        }
+
+        $xml = simplexml_load_string(file_get_contents($fileName));
+        if ($xml === false) {
+            return '';
+        }
+
+        return trim((string)$xml['group']);
     }
 }
