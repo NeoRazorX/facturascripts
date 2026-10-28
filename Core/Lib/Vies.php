@@ -41,11 +41,17 @@ use SoapClient;
  */
 class Vies
 {
-    /** Códigos ISO aceptados por VIES (UE + XI para Irlanda del Norte tras el Brexit). */
+    /**
+     * Prefijos de NIF-IVA aceptados por VIES (UE + XI para Irlanda del Norte tras el Brexit). Coinciden con
+     * el código ISO del país salvo en Grecia, que usa EL (ver vatPrefix()).
+     */
     const EU_COUNTRIES = [
         'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'EL', 'ES', 'FI', 'FR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU',
         'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK', 'XI',
     ];
+
+    /** Prefijos de NIF-IVA distintos del código ISO del país: ISO => prefijo. */
+    const VAT_PREFIXES = ['GR' => 'EL'];
 
     const VIES_URL = "https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl";
 
@@ -98,7 +104,7 @@ class Vies
      * que admite indistintamente "B12345678", "ES-B12345678" o "es b12345678".
      *
      * @param string $cifnif número de IVA (con o sin prefijo ISO)
-     * @param string $codiso código ISO de país en mayúsculas y dos caracteres
+     * @param string $codiso código ISO de país en mayúsculas y dos caracteres (GR o EL para Grecia)
      * @param bool   $msg    si true, registra warnings en el log ante errores de validación
      *
      * @return int uno de Vies::RESULT_VALID, Vies::RESULT_INVALID o Vies::RESULT_ERROR
@@ -109,6 +115,7 @@ class Vies
             return self::$simulatedResponse;
         }
 
+        $codiso = self::vatPrefix($codiso);
         $vatNumber = self::prepare($cifnif, $codiso, $msg);
         if ($vatNumber === null) {
             return self::RESULT_ERROR;
@@ -123,7 +130,7 @@ class Vies
      * publica (varios estados miembros las devuelven vacías por privacidad).
      *
      * @param string $cifnif número de IVA (con o sin prefijo ISO)
-     * @param string $codiso código ISO de país en mayúsculas y dos caracteres
+     * @param string $codiso código ISO de país en mayúsculas y dos caracteres (GR o EL para Grecia)
      * @param bool   $msg    si true, registra warnings en el log ante errores de validación
      *
      * @return array|null array con claves `valid` (bool), `name` (string), `address` (string),
@@ -135,6 +142,7 @@ class Vies
             return self::$simulatedFetchResponse;
         }
 
+        $codiso = self::vatPrefix($codiso);
         $vatNumber = self::prepare($cifnif, $codiso, $msg);
         if ($vatNumber === null) {
             return null;
@@ -180,13 +188,14 @@ class Vies
 
     /**
      * Normaliza un cifnif para enviarlo a VIES y, si el resultado empieza por
-     * el código ISO indicado, elimina también dicho prefijo.
+     * el código ISO indicado o por su prefijo de NIF-IVA, elimina también dicho
+     * prefijo. En Grecia se quitan tanto GR como EL.
      *
      * El codiso debe llegar ya en mayúsculas; si no, no se reconocerá como
      * prefijo y se enviará tal cual a VIES.
      *
      * @param string $cifnif valor original tal como lo introduce el usuario
-     * @param string $codiso código ISO de país en mayúsculas
+     * @param string $codiso código ISO de país (o prefijo de NIF-IVA) en mayúsculas
      *
      * @return string cifnif normalizado, sin prefijo ISO
      */
@@ -194,11 +203,28 @@ class Vies
     {
         $cifnif = FiscalNumberValidator::normalize($cifnif);
 
-        if (substr($cifnif, 0, 2) === $codiso) {
-            $cifnif = substr($cifnif, 2);
+        $iso = array_search($codiso, self::VAT_PREFIXES, true);
+        $prefixes = array_unique([$codiso, self::vatPrefix($codiso), false === $iso ? $codiso : $iso]);
+        foreach ($prefixes as $prefix) {
+            if ($prefix !== '' && substr($cifnif, 0, 2) === $prefix) {
+                return substr($cifnif, 2);
+            }
         }
 
         return $cifnif;
+    }
+
+    /**
+     * Prefijo del NIF-IVA de un país a partir de su código ISO en mayúsculas: EL para Grecia (GR) y el
+     * propio código para el resto. Es el código de país que espera VIES.
+     *
+     * @param string $codiso código ISO de país en mayúsculas
+     *
+     * @return string prefijo del NIF-IVA
+     */
+    public static function vatPrefix(string $codiso): string
+    {
+        return self::VAT_PREFIXES[$codiso] ?? $codiso;
     }
 
     /**

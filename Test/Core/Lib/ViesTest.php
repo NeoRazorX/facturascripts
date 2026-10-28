@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Lib;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Lib\Vies;
 use PHPUnit\Framework\TestCase;
 
@@ -134,7 +135,36 @@ final class ViesTest extends TestCase
             'cadena vacía'                 => ['', '', 'ES'],
             'sólo prefijo'                 => ['', 'ES', 'ES'],
             'XI con prefijo'               => ['123456789', 'XI123456789', 'XI'],
+            'GR con prefijo EL'            => ['123456789', 'EL123456789', 'GR'],
+            'GR con prefijo GR'            => ['123456789', 'GR123456789', 'GR'],
+            'EL con prefijo GR'            => ['123456789', 'GR123456789', 'EL'],
+            'EL con prefijo EL'            => ['123456789', 'EL123456789', 'EL'],
         ];
+    }
+
+    public function testVatPrefix(): void
+    {
+        // Grecia usa EL en el NIF-IVA y en VIES, aunque su código ISO sea GR
+        $this->assertSame('EL', Vies::vatPrefix('GR'));
+        $this->assertSame('EL', Vies::vatPrefix('EL'));
+        $this->assertSame('ES', Vies::vatPrefix('ES'));
+        $this->assertSame('XI', Vies::vatPrefix('XI'));
+        $this->assertContains(Vies::vatPrefix('GR'), Vies::EU_COUNTRIES);
+    }
+
+    public function testGreeceIsEu(): void
+    {
+        if (false === extension_loaded('soap')) {
+            $this->markTestSkipped('soap-extension-not-installed');
+        }
+
+        // con el código ISO de Grecia (GR) no corta por "país fuera de la UE", sino por el número corto
+        MiniLog::clear();
+        $this->assertSame(Vies::RESULT_ERROR, Vies::check('12', 'GR'));
+        $messages = array_column(MiniLog::read(), 'original');
+        $this->assertNotContains('country-not-in-eu', $messages);
+        $this->assertContains('vat-number-is-short', $messages);
+        MiniLog::clear();
     }
 
     public function testNorthernIrelandIsEu(): void
@@ -180,6 +210,8 @@ final class ViesTest extends TestCase
             'PT válido 1'            => [Vies::RESULT_VALID, '514356480', 'PT'],
             'PT válido 2'            => [Vies::RESULT_VALID, '513969144', 'PT'],
             'PT inválido'            => [Vies::RESULT_INVALID, '513967144', 'PT'],
+            'GR inválido'            => [Vies::RESULT_INVALID, '123456789', 'GR'],
+            'GR inválido con prefijo' => [Vies::RESULT_INVALID, 'EL123456789', 'GR'],
         ];
     }
 
