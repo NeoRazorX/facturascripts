@@ -107,12 +107,13 @@ class GroupItem extends VisualItem
 
         // si no hay ninguna columna visible no se pinta el título ni el hueco del grupo,
         // pero sí los campos ocultos para que se sigan enviando en el formulario
-        if (false === $this->hasVisibleColumns()) {
+        $visible = $this->hasVisibleColumns();
+        if (false === $visible) {
             $divClass .= ' d-none';
         }
 
         $html = '<div' . $divId . ' class="' . $divClass . '"><div class="' . $rowClass . '">';
-        if ($this->title && $this->hasVisibleColumns()) {
+        if ($this->title && $visible) {
             $html .= $this->legend();
         }
 
