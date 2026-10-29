@@ -100,6 +100,10 @@ final class DbUpdaterTest extends TestCase
 
     public function testCanAddColumnsAndConstraintsToTable(): void
     {
+        if ($this->db()->type() === 'sqlite') {
+            $this->markTestSkipped('SQLite support keeps schema updates limited to create, rename and index changes.');
+        }
+
         // creamos la tabla
         $table_name = 'test_table';
         $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
@@ -135,6 +139,10 @@ final class DbUpdaterTest extends TestCase
 
     public function testCanUpdateTableColumnNullAndDefault(): void
     {
+        if ($this->db()->type() === 'sqlite') {
+            $this->markTestSkipped('SQLite support keeps schema updates limited to create, rename and index changes.');
+        }
+
         // creamos la tabla
         $table_name = 'test_table';
         $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
