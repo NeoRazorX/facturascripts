@@ -104,6 +104,62 @@ final class CrashReportTest extends TestCase
         $this->assertSame('', $output, 'deprecation-shows-crash-report');
     }
 
+    public function testErrorHashIgnoresStackTrace(): void
+    {
+        $file = FS_FOLDER . '/Core/Base/DataBase/MysqlEngine.php';
+        $message = 'Connection refused';
+        $info1 = CrashReport::getErrorInfo(2002, $message . "\nStack trace:\n#0 " . FS_FOLDER
+            . "/Core/Kernel.php(267): FacturaScripts\\Core\\Kernel::runController('/')\n#1 {main}", $file, 201);
+        $info2 = CrashReport::getErrorInfo(2002, $message . "\r\nStack trace:\r\n#0 " . FS_FOLDER
+            . "/index.php(49): FacturaScripts\\Core\\Kernel::init()\r\n#1 {main}", $file, 201);
+        $this->assertSame($info1['hash'], $info2['hash'], 'stack-trace-changes-hash');
+
+        // pero sí cambia con el mensaje, el código, el archivo o la línea
+        $hashes = [
+            $info1['hash'],
+            CrashReport::getErrorInfo(2002, 'Too many connections', $file, 201)['hash'],
+            CrashReport::getErrorInfo(1, $message, $file, 201)['hash'],
+            CrashReport::getErrorInfo(2002, $message, FS_FOLDER . '/Core/Base/DataBase.php', 201)['hash'],
+            CrashReport::getErrorInfo(2002, $message, $file, 202)['hash'],
+        ];
+        $this->assertSame($hashes, array_unique($hashes), 'different-errors-same-hash');
+    }
+
+    public function testErrorInfoNormalizesWindowsPaths(): void
+    {
+        $folder = FS_FOLDER;
+        $winFolder = str_replace('/', '\\', FS_FOLDER);
+        $message = "Uncaught Error: Class \"FacturaScripts\\Dinamic\\Model\\User\" not found in %s:375\n"
+            . "Stack trace:\n#0 %s(632): FacturaScripts\\Core\\Base\\Controller->auth()\n#1 {main}\n  thrown";
+
+        $linux = CrashReport::getErrorInfo(1, sprintf(
+            $message,
+            $folder . '/Core/Base/Controller.php',
+            $folder . '/Core/Kernel.php'
+        ), $folder . '/Core/Base/Controller.php', 375);
+        $windows = CrashReport::getErrorInfo(1, sprintf(
+            $message,
+            $winFolder . '\\Core\\Base\\Controller.php',
+            $winFolder . '\\Core\\Kernel.php'
+        ), $winFolder . '\\Core\\Base\\Controller.php', 375);
+
+        // las rutas quedan relativas y con /, pero los namespaces no cambian
+        $this->assertSame('/Core/Base/Controller.php', $windows['file'], 'windows-file-not-normalized');
+        $this->assertSame($linux['message'], $windows['message'], 'windows-message-not-normalized');
+        $this->assertStringContainsString('in /Core/Base/Controller.php:375', $windows['message']);
+        $this->assertStringContainsString('#0 /Core/Kernel.php(632)', $windows['message']);
+        $this->assertStringContainsString('"FacturaScripts\\Dinamic\\Model\\User"', $windows['message']);
+        $this->assertSame($linux['hash'], $windows['hash'], 'windows-path-changes-hash');
+
+        // con separadores mezclados, como las plantillas de Twig en Windows
+        $mixed = CrashReport::getErrorInfo(0, 'Template error', $winFolder . '/Dinamic/View/Test.html.twig', 23);
+        $this->assertSame('/Dinamic/View/Test.html.twig', $mixed['file'], 'mixed-file-not-normalized');
+
+        // las rutas de fuera de la instalación no se tocan
+        $outside = CrashReport::getErrorInfo(1, 'Error', $folder . '-other/Core/Test.php', 1);
+        $this->assertSame($folder . '-other/Core/Test.php', $outside['file'], 'outside-file-changed');
+    }
+
     public function testFatalErrorTypes(): void
     {
         // los errores fatales muestran la pantalla de error

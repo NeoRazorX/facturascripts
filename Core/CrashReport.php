@@ -80,11 +80,12 @@ final class CrashReport
 
     public static function getErrorInfo($code, string $message, string $file, int $line): array
     {
-        // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
         $errorUrl = parse_url($_SERVER["REQUEST_URI"] ?? '', PHP_URL_PATH);
         $errorMessage = self::formatErrorMessage($message);
-        $errorFile = str_replace(FS_FOLDER, '', $file);
-        $errorHash = md5($code . $errorFile . $line . $errorMessage);
+        $errorFile = self::removeFolder($file);
+
+        // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
+        $errorHash = md5($code . $errorFile . $line . self::getHashMessage($message));
         $reportUrl = 'https://facturascripts.com/errores/' . $errorHash;
         $reportQr = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($reportUrl);
 
@@ -213,7 +214,7 @@ final class CrashReport
     private static function formatErrorMessage(string $message): string
     {
         // quitamos el folder de las rutas
-        $message = str_replace(FS_FOLDER, '', $message);
+        $message = self::removeFolder($message);
 
         // partimos por la traza
         $messageParts = explode("Stack trace:", $message);
@@ -265,6 +266,13 @@ final class CrashReport
         $html .= '</div>';
 
         return $html;
+    }
+
+    private static function getHashMessage(string $message): string
+    {
+        // descartamos la traza: cambia según desde dónde se llegue al error y lleva datos de cada instalación
+        $messageParts = explode('Stack trace:', str_replace("\r\n", "\n", self::removeFolder($message)));
+        return trim($messageParts[0]);
     }
 
     private static function getLogCard(): string
@@ -368,6 +376,24 @@ final class CrashReport
         }
 
         return in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true);
+    }
+
+    private static function removeFolder(string $text): string
+    {
+        if (trim(FS_FOLDER, '\\/') === '') {
+            return $text;
+        }
+
+        // en Windows, FS_FOLDER y las rutas pueden mezclar ambos separadores
+        $folderParts = preg_split('#[\\\\/]+#', rtrim(FS_FOLDER, '\\/'));
+        $folderPattern = implode('[\\\\/]+', array_map(function ($part) {
+            return preg_quote($part, '#');
+        }, $folderParts));
+
+        // quitamos el folder y usamos / en la ruta relativa, para que el error sea igual en todos los sistemas
+        return preg_replace_callback('#' . $folderPattern . '((?:[\\\\/][\w.\-]+)+)#i', function ($matches) {
+            return str_replace('\\', '/', $matches[1]);
+        }, $text) ?? $text;
     }
 
     private static function showCliError(array $info, array $error): void
