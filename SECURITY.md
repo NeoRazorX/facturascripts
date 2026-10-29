@@ -47,9 +47,11 @@ closed without action:
 2. **Any finding whose PoC requires the attacker to already have an
    administrator account**, including but not limited to: installing or
    uploading plugins, editing settings, importing data, or using any other
-   page restricted to administrators. This does not cover attacks in which
-   the administrator is the victim (see *In scope*), nor non-administrator
-   users who were granted access to a page through their role.
+   page restricted to administrators, or an API key that an administrator
+   made administrator-equivalent (see *API keys* below). This does not
+   cover attacks in which the administrator is the victim (see *In scope*),
+   nor non-administrator users who were granted access to a page through
+   their role.
 
 3. **Self-XSS** (the attacker injects a payload into their own session).
 
@@ -77,6 +79,27 @@ closed without action:
 
 10. **Social engineering, physical attacks, and attacks against
     FacturaScripts infrastructure** (our hosting, email, accounts).
+
+### API keys
+
+This is the most frequently reported non-issue. Please read it before
+reporting anything about the REST API (`/api/3/...`).
+
+- API keys are not users and do not inherit any user's permissions. A key
+  can do exactly what an administrator granted it: full access, or
+  GET/POST/PUT/DELETE on specific resources.
+- Only administrators can create, edit or grant access to API keys.
+- A key with full access, or with write access to `users`, `apikeys` or
+  `apiaccess`, is **administrator-equivalent by design**. Using such a key
+  to set `admin`, change passwords, enable or disable users, or grant
+  itself more access is not privilege escalation, and neither is mass
+  assignment through it.
+- A `403` on some other resource does not make a key "low-privilege" for
+  the resources it was granted.
+
+API findings are in scope when they bypass these grants: a key reaching a
+resource or method it was not granted, reading fields the API hides, or
+affecting data outside the resource it can access.
 
 ## Acknowledgements
 
