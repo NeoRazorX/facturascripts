@@ -70,18 +70,8 @@ class VisualItemLoadEngine
     {
         $model->name = htmlspecialchars($name);
 
-        $fileName = FS_FOLDER . '/Dinamic/XMLView/' . $model->name . '.xml';
-        if (FS_DEBUG && !file_exists($fileName)) {
-            $fileName = FS_FOLDER . '/Core/XMLView/' . $model->name . '.xml';
-        }
-
-        if (!file_exists($fileName)) {
-            Tools::log()->error('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $model->name . '.xml']);
-            return false;
-        }
-
-        $xml = simplexml_load_string(file_get_contents($fileName));
-        if ($xml === false) {
+        $xml = static::loadXMLView($model->name);
+        if (null === $xml) {
             Tools::log()->error('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $model->name . '.xml']);
             return false;
         }
@@ -137,6 +127,29 @@ class VisualItemLoadEngine
             $rowItem = new $className([]);
             $rows['actions'] = $rowItem;
         }
+    }
+
+    /**
+     * Carga un XMLView: el de Dinamic/XMLView o, con FS_DEBUG, el de Core/XMLView.
+     * Devuelve null si no existe o no se puede procesar.
+     *
+     * @param string $name
+     *
+     * @return SimpleXMLElement|null
+     */
+    public static function loadXMLView(string $name): ?SimpleXMLElement
+    {
+        $fileName = FS_FOLDER . '/Dinamic/XMLView/' . $name . '.xml';
+        if (FS_DEBUG && !file_exists($fileName)) {
+            $fileName = FS_FOLDER . '/Core/XMLView/' . $name . '.xml';
+        }
+
+        if (!file_exists($fileName)) {
+            return null;
+        }
+
+        $xml = simplexml_load_string(file_get_contents($fileName));
+        return $xml === false ? null : $xml;
     }
 
     /**

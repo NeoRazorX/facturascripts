@@ -125,10 +125,10 @@ final class DbQuery
     {
         $this->fields = 'AVG(' . self::db()->escapeColumn($field) . ') as _avg';
 
-        $row = $this->first();
+        $avg = $this->first()['_avg'] ?? 0;
         return is_null($decimals) ?
-            (float)$row['_avg'] :
-            round((float)$row['_avg'], $decimals);
+            (float)$avg :
+            round((float)$avg, $decimals);
     }
 
     /** Devuelve la media de `$field` agrupada por `$groupByKey`, en formato `clave => media`. */
@@ -339,11 +339,11 @@ final class DbQuery
             round((float)$max, $decimals);
     }
 
-    /** Devuelve el valor MAX de `$field` como string, útil para columnas no numéricas (fechas, textos). */
+    /** Devuelve el valor MAX de `$field` como string, útil para columnas no numéricas (fechas, textos). Sin filas devuelve ''. */
     public function maxString(string $field): string
     {
         $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ') as _max';
-        return $this->first()['_max'];
+        return (string)($this->first()['_max'] ?? '');
     }
 
     /** Devuelve el MAX de `$field` agrupado por `$groupByKey`, en formato `clave => max`. */
@@ -363,11 +363,11 @@ final class DbQuery
             round((float)$min, $decimals);
     }
 
-    /** Devuelve el valor MIN de `$field` como string, útil para columnas no numéricas. */
+    /** Devuelve el valor MIN de `$field` como string, útil para columnas no numéricas. Sin filas devuelve ''. */
     public function minString(string $field): string
     {
         $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ') as _min';
-        return $this->first()['_min'];
+        return (string)($this->first()['_min'] ?? '');
     }
 
     /** Devuelve el MIN de `$field` agrupado por `$groupByKey`, en formato `clave => min`. */
@@ -541,10 +541,10 @@ final class DbQuery
     {
         $this->fields = 'SUM(' . self::db()->escapeColumn($field) . ') as _sum';
 
-        $row = $this->first();
+        $sum = $this->first()['_sum'] ?? 0;
         return is_null($decimals) ?
-            (float)$row['_sum'] :
-            round((float)$row['_sum'], $decimals);
+            (float)$sum :
+            round((float)$sum, $decimals);
     }
 
     /** Devuelve la suma de `$field` agrupada por `$groupByKey`, en formato `clave => suma`. */

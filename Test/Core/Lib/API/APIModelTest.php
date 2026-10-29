@@ -21,6 +21,8 @@ namespace FacturaScripts\Test\Core\Lib\API;
 
 use FacturaScripts\Core\Lib\API\APIModel;
 use FacturaScripts\Core\Model\ApiKey;
+use FacturaScripts\Core\Model\Base\ModelClass as BaseModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait as BaseModelTrait;
 use FacturaScripts\Core\Model\Divisa;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Request;
@@ -28,6 +30,7 @@ use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use ReflectionProperty;
 
 final class APIModelTest extends TestCase
@@ -219,6 +222,81 @@ final class APIModelTest extends TestCase
         $this->assertTrue($user->delete());
     }
 
+    public function testListRejectsInjectedSortDirection(): void
+    {
+        $user = $this->createUser();
+
+        // la dirección del orden no puede llevar SQL
+        $response = new Response();
+        $body = $this->callApi('User', 'GET', [], [], [
+            'filter' => ['nick' => $user->nick],
+            'sort' => ['nick' => 'ASC,(SELECT 1)'],
+        ], $response);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'injected-sort-not-rejected');
+        $this->assertStringContainsString('fields not allowed: nick', $body['error'] ?? '');
+
+        // ASC y DESC siguen funcionando, sin distinguir mayúsculas
+        $body = $this->callApi('User', 'GET', [], [], [
+            'filter' => ['nick' => $user->nick],
+            'sort' => ['nick' => 'desc'],
+        ]);
+        $this->assertEquals([$user->nick], array_column($body, 'nick'), 'desc-sort-not-applied');
+
+        $this->assertTrue($user->delete());
+    }
+
+    public function testListSortDirectionReachesLegacyModelNormalized(): void
+    {
+        // los modelos que extienden Core/Model/Base/ModelClass concatenan la dirección en el SQL
+        $model = new class extends BaseModelClass {
+            use BaseModelTrait;
+
+            /** @var array */
+            public static $lastOrder;
+
+            public function __construct(array $data = [])
+            {
+            }
+
+            public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
+            {
+                static::$lastOrder = $order;
+                return [];
+            }
+
+            public function count(array $where = []): int
+            {
+                return 0;
+            }
+
+            public function getModelFields(): array
+            {
+                return ['coddivisa' => [], 'descripcion' => []];
+            }
+
+            public static function primaryColumn(): string
+            {
+                return 'coddivisa';
+            }
+
+            public static function tableName(): string
+            {
+                return 'divisas';
+            }
+        };
+
+        // valor inyectado: se rechaza y no llega al modelo
+        $model::$lastOrder = null;
+        $response = $this->callListAll($model, ['sort' => ['descripcion' => 'ASC,(SELECT 1)']]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'injected-sort-not-rejected');
+        $this->assertNull($model::$lastOrder, 'injected-sort-reached-model');
+
+        // un valor válido llega normalizado
+        $response = $this->callListAll($model, ['sort' => ['descripcion' => ' desc', 'coddivisa' => 'Asc']]);
+        $this->assertEquals(Response::HTTP_OK, $response->getHttpCode());
+        $this->assertSame(['descripcion' => 'DESC', 'coddivisa' => 'ASC'], $model::$lastOrder);
+    }
+
     public function testModelWithoutHiddenFieldsExposesAll(): void
     {
         // Divisa no oculta nada: comprobamos que su schema sigue devolviendo todos los campos.
@@ -274,6 +352,21 @@ final class APIModelTest extends TestCase
 
         $decoded = json_decode($response->getContent(), true);
         return is_array($decoded) ? $decoded : [];
+    }
+
+    private function callListAll(object $model, array $queryData): Response
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+
+        $request = new Request(['query' => $queryData]);
+        $response = new Response();
+        $response->disableSend(true);
+
+        $api = new APIModel($response, $request, []);
+        (new ReflectionProperty(APIModel::class, 'model'))->setValue($api, $model);
+        (new ReflectionMethod(APIModel::class, 'listAll'))->invoke($api);
+
+        return $response;
     }
 
     private function createUser(): User

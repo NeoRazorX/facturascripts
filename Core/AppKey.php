@@ -20,12 +20,98 @@
 namespace FacturaScripts\Core;
 
 /**
- * Clave secreta de la instalación (FS_APP_KEY) con la que se firman los tokens.
+ * Clave secreta de la instalación (FS_APP_KEY) con la que se firman los tokens y se cifran los secretos
+ * que hay que guardar (contraseñas de certificados, de buzones de correo, etc.).
  * Se genera aleatoriamente al instalar y se guarda en el config.php.
  */
 final class AppKey
 {
+    /** Algoritmo de cifrado de encrypt(). */
+    const CIPHER = 'aes-256-gcm';
+
+    /** Longitud del vector de inicialización de AES-GCM, en bytes. */
+    const CIPHER_IV_BYTES = 12;
+
+    /** Prefijo del formato de los valores cifrados, por si algún día cambia el formato. */
+    const CIPHER_PREFIX = 'v1:';
+
+    /** Longitud de la etiqueta de autenticación de AES-GCM, en bytes. */
+    const CIPHER_TAG_BYTES = 16;
+
     const KEY_BYTES = 32;
+
+    /**
+     * Indica si se pueden cifrar secretos: hace falta la extensión openssl y FS_APP_KEY en el config.php. Con
+     * la clave derivada no se cifra, porque cambiaría al cambiar los datos de conexión y no se podría
+     * descifrar lo guardado.
+     */
+    public static function canEncrypt(): bool
+    {
+        return extension_loaded('openssl') && false === self::isDerived();
+    }
+
+    /**
+     * Descifra un valor de encrypt() con el mismo propósito y el mismo contexto. Devuelve null si no se puede
+     * cifrar (ver canEncrypt()), el valor no tiene el formato esperado, ha cambiado FS_APP_KEY, se ha
+     * modificado el valor o el propósito o el contexto no coinciden.
+     */
+    public static function decrypt(string $purpose, ?string $value, string $context = ''): ?string
+    {
+        if (empty($value) || false === str_starts_with($value, self::CIPHER_PREFIX) || false === self::canEncrypt()) {
+            return null;
+        }
+
+        $data = base64_decode(substr($value, strlen(self::CIPHER_PREFIX)), true);
+        if (false === $data || strlen($data) < self::CIPHER_IV_BYTES + self::CIPHER_TAG_BYTES) {
+            return null;
+        }
+
+        $plain = openssl_decrypt(
+            substr($data, self::CIPHER_IV_BYTES + self::CIPHER_TAG_BYTES),
+            self::CIPHER,
+            self::cipherKey($purpose),
+            OPENSSL_RAW_DATA,
+            substr($data, 0, self::CIPHER_IV_BYTES),
+            substr($data, self::CIPHER_IV_BYTES, self::CIPHER_TAG_BYTES),
+            $context
+        );
+
+        return false === $plain ? null : $plain;
+    }
+
+    /**
+     * Cifra un secreto con AES-256-GCM para guardarlo. Devuelve null si falta la extensión openssl o
+     * FS_APP_KEY (ver canEncrypt()) o si falla el cifrado.
+     *
+     * La clave es una subclave de FS_APP_KEY derivada con HKDF-SHA256 y el propósito, así que lo cifrado
+     * para un uso no se descifra en otro. El contexto (por ejemplo, el id de la fila) se autentica sin
+     * cifrarlo: impide copiar el valor cifrado de una fila a otra. El formato es "v1:" y el base64 del
+     * vector de inicialización (12 bytes), la etiqueta (16 bytes) y el texto cifrado.
+     */
+    public static function encrypt(string $purpose, string $plain, string $context = ''): ?string
+    {
+        if (false === self::canEncrypt()) {
+            return null;
+        }
+
+        $iv = random_bytes(self::CIPHER_IV_BYTES);
+        $tag = '';
+        $cipher = openssl_encrypt(
+            $plain,
+            self::CIPHER,
+            self::cipherKey($purpose),
+            OPENSSL_RAW_DATA,
+            $iv,
+            $tag,
+            $context,
+            self::CIPHER_TAG_BYTES
+        );
+        if (false === $cipher) {
+            return null;
+        }
+
+        return self::CIPHER_PREFIX . base64_encode($iv . $tag . $cipher);
+    }
 
     /**
      * Genera una clave aleatoria nueva, en hexadecimal.
@@ -133,5 +219,14 @@ final class AppKey
     public static function verify(string $purpose, string $data, string $signature): bool
     {
         return hash_equals(self::sign($purpose, $data), $signature);
+    }
+
+    /**
+     * Subclave de 32 bytes para cifrar con ese propósito, derivada de FS_APP_KEY con HKDF-SHA256.
+     * Nunca se cifra con FS_APP_KEY tal cual, que también firma los tokens.
+     */
+    private static function cipherKey(string $purpose): string
+    {
+        return hash_hkdf('sha256', self::get(), 32, $purpose);
     }
 }

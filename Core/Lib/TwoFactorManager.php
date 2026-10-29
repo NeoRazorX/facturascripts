@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Lib;
 
-use chillerlan\QRCode\QRCode;
-use chillerlan\QRCode\QROptions;
 use PragmaRX\Google2FA\Google2FA;
 use Exception;
 use FacturaScripts\Core\Tools;
@@ -82,16 +80,7 @@ class TwoFactorManager
     public static function getQRCodeImage(string $url): string
     {
         try {
-            $options = new QROptions([
-                'version' => QRCode::VERSION_AUTO,
-                'outputType' => QRCode::OUTPUT_IMAGE_PNG,
-                'eccLevel' => QRCode::ECC_L,
-                'scale' => 10,
-                'imageBase64' => true,
-            ]);
-
-            $qrcode = new QRCode($options);
-            return $qrcode->render($url);
+            return QrImage::png($url, QrImage::ECC_L, 10);
         } catch (Exception $e) {
             Tools::log()->error('error-generating-qr-code', [
                 '%message%' => $e->getMessage(),

@@ -68,7 +68,7 @@ final class WorkQueueTest extends TestCase
 
         // comprobamos que se ha guardado el evento
         $model = new WorkEvent();
-        $events = $model->all([], [], 0, 0);
+        $events = $model->all([], ['id' => 'ASC'], 0, 0);
         $this->assertCount(1, $events);
         $this->assertEquals('test-event', $events[0]->name);
         $this->assertEquals('test-value', $events[0]->value);
@@ -94,7 +94,7 @@ final class WorkQueueTest extends TestCase
 
         // comprobamos que se ha guardado el evento
         $model = new WorkEvent();
-        $events = $model->all([], [], 0, 0);
+        $events = $model->all([], ['id' => 'ASC'], 0, 0);
         $this->assertCount(1, $events);
         $this->assertEquals('test-event', $events[0]->name);
         $this->assertEquals('test-value', $events[0]->value);
@@ -122,7 +122,7 @@ final class WorkQueueTest extends TestCase
 
         // comprobamos que se ha guardado el evento
         $model = new WorkEvent();
-        $events = $model->all([], [], 0, 0);
+        $events = $model->all([], ['id' => 'ASC'], 0, 0);
         $this->assertCount(1, $events);
         $this->assertEquals('test-event', $events[0]->name);
         $this->assertEquals('test-value', $events[0]->value);
@@ -165,7 +165,7 @@ final class WorkQueueTest extends TestCase
 
         // comprobamos que se han guardado los eventos
         $model = new WorkEvent();
-        $events = $model->all([], [], 0, 0);
+        $events = $model->all([], ['id' => 'ASC'], 0, 0);
         $this->assertCount(2, $events);
         $this->assertEquals('test-event', $events[0]->name);
         $this->assertEquals('test-event-2', $events[1]->name);
@@ -192,7 +192,7 @@ final class WorkQueueTest extends TestCase
 
         // comprobamos que se han guardado los 2 eventos
         $model = new WorkEvent();
-        $events = $model->all([], [], 0, 0);
+        $events = $model->all([], ['id' => 'ASC'], 0, 0);
         $this->assertCount(2, $events);
         $this->assertEquals('Model.Asiento.Save', $events[0]->name);
         $this->assertEquals('Model.Asiento.Delete', $events[1]->name);
@@ -219,7 +219,7 @@ final class WorkQueueTest extends TestCase
 
         // comprobamos que se han guardado los 2 eventos
         $model = new WorkEvent();
-        $events = $model->all([], [], 0, 0);
+        $events = $model->all([], ['id' => 'ASC'], 0, 0);
         $this->assertCount(2, $events);
         $this->assertEquals('Model.Asiento.Save', $events[0]->name);
         $this->assertEquals('Model.Producto.Save', $events[1]->name);
@@ -263,7 +263,7 @@ final class WorkQueueTest extends TestCase
         // comprobamos que el evento se ha guardado como realizado
         $model = new WorkEvent();
         $where = [Where::eq('name', 'test-event-worker')];
-        $events = $model->all($where, [], 0, 0);
+        $events = $model->all($where, ['id' => 'ASC'], 0, 0);
         $this->assertCount(1, $events);
         $this->assertTrue($events[0]->done);
         $this->assertNotNull($events[0]->done_date);

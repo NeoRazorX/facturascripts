@@ -122,7 +122,7 @@ We welcome contributions! Please check our [contribution guidelines](https://fac
 
 ### 🔒 Security Vulnerabilities
 
-Please report security vulnerabilities **privately** using GitHub's [Report a vulnerability](https://github.com/FacturaScripts/facturascripts/security/advisories/new) button. Do not open public issues for security matters. See [SECURITY.md](SECURITY.md) for full details.
+Please report security vulnerabilities **privately** using GitHub's [Report a vulnerability](https://github.com/NeoRazorX/facturascripts/security/advisories/new) button. Do not open public issues for security matters. See [SECURITY.md](SECURITY.md) for full details.
 
 ## 🔗 Useful Resources
 

@@ -551,6 +551,33 @@ final class DbQueryTest extends TestCase
         $this->assertTrue($done);
     }
 
+    public function testAggregatesWithoutRows(): void
+    {
+        // si no existe la tabla de impuestos, saltamos el test
+        if (false === $this->db()->tableExists('impuestos')) {
+            $this->markTestSkipped('Table impuestos does not exist.');
+        }
+
+        // sin filas, MAX y MIN devuelven NULL en la base de datos
+        $query = DbQuery::table('impuestos')->where([Where::eq('codimpuesto', 'test-no-existe')]);
+        $this->assertSame('', (clone $query)->maxString('codimpuesto'));
+        $this->assertSame('', (clone $query)->minString('codimpuesto'));
+        $this->assertSame(0.0, (clone $query)->max('iva'));
+        $this->assertSame(0.0, (clone $query)->min('iva', 2));
+        $this->assertSame(0.0, (clone $query)->avg('iva'));
+        $this->assertSame(0.0, (clone $query)->sum('iva', 2));
+        $this->assertSame(0, (clone $query)->count());
+
+        // con groupBy y sin filas, la consulta no devuelve ninguna fila
+        $grouped = DbQuery::table('impuestos')
+            ->where([Where::eq('codimpuesto', 'test-no-existe')])
+            ->groupBy('codimpuesto');
+        $this->assertSame('', (clone $grouped)->maxString('codimpuesto'));
+        $this->assertSame('', (clone $grouped)->minString('codimpuesto'));
+        $this->assertSame(0.0, (clone $grouped)->avg('iva'));
+        $this->assertSame(0.0, (clone $grouped)->sum('iva'));
+    }
+
     public function testDelete(): void
     {
         // si no existe la tabla de impuestos, saltamos el test

@@ -26,6 +26,17 @@ use PHPUnit\Framework\TestCase;
 
 final class AppKeyTest extends TestCase
 {
+    public function testCanEncrypt(): void
+    {
+        // sin la extensión openssl o sin FS_APP_KEY no se cifra: la clave derivada cambia con los datos de conexión
+        $expected = extension_loaded('openssl') && false === AppKey::isDerived();
+        $this->assertEquals($expected, AppKey::canEncrypt(), 'bad-can-encrypt');
+        if (false === $expected) {
+            $this->assertNull(AppKey::encrypt('test', 'secret'), 'encrypted-without-app-key');
+            $this->assertNull(AppKey::decrypt('test', 'v1:' . base64_encode(str_repeat('a', 40))), 'decrypted-without-app-key');
+        }
+    }
+
     public function testCrashReportToken(): void
     {
         $token = CrashReport::newToken();
@@ -40,6 +51,53 @@ final class AppKeyTest extends TestCase
         // el token de otro tipo no sirve como token de CrashReport
         $otherToken = AppKey::sign('other', date('Y-m-d H'));
         $this->assertFalse(CrashReport::validateToken($otherToken), 'other-purpose-token-valid');
+    }
+
+    public function testEncryptAndDecrypt(): void
+    {
+        self::defineAppKey();
+
+        // ida y vuelta, también con un secreto vacío o con caracteres especiales
+        foreach (['secret', '', 'ñ€ "<>&\' con espacios '] as $plain) {
+            $value = AppKey::encrypt('test', $plain, '1|abc');
+            $this->assertNotNull($value, 'not-encrypted');
+            $this->assertStringStartsWith(AppKey::CIPHER_PREFIX, $value, 'bad-encrypted-prefix');
+            if ($plain !== '') {
+                $this->assertStringNotContainsString($plain, $value, 'plain-in-encrypted-value');
+            }
+            $this->assertSame($plain, AppKey::decrypt('test', $value, '1|abc'), 'not-decrypted');
+        }
+
+        // el vector de inicialización es aleatorio: cifrar dos veces lo mismo da valores distintos
+        $value = AppKey::encrypt('test', 'secret', '1|abc');
+        $this->assertNotEquals($value, AppKey::encrypt('test', 'secret', '1|abc'), 'repeated-encrypted-value');
+
+        // con otro propósito u otro contexto no se descifra
+        $this->assertNull(AppKey::decrypt('other', $value, '1|abc'), 'decrypted-with-other-purpose');
+        $this->assertNull(AppKey::decrypt('test', $value, '2|abc'), 'decrypted-with-other-context');
+        $this->assertNull(AppKey::decrypt('test', $value), 'decrypted-without-context');
+
+        // los valores modificados, sin prefijo, cortos o vacíos no se descifran
+        $data = base64_decode(substr($value, strlen(AppKey::CIPHER_PREFIX)));
+        $data[strlen($data) - 1] = chr(ord($data[strlen($data) - 1]) ^ 1);
+        $this->assertNull(AppKey::decrypt('test', AppKey::CIPHER_PREFIX . base64_encode($data), '1|abc'), 'modified-value-decrypted');
+        $this->assertNull(AppKey::decrypt('test', substr($value, strlen(AppKey::CIPHER_PREFIX)), '1|abc'), 'value-without-prefix-decrypted');
+        $this->assertNull(AppKey::decrypt('test', AppKey::CIPHER_PREFIX . 'short', '1|abc'), 'short-value-decrypted');
+        $this->assertNull(AppKey::decrypt('test', '', '1|abc'), 'empty-value-decrypted');
+        $this->assertNull(AppKey::decrypt('test', null, '1|abc'), 'null-value-decrypted');
+    }
+
+    public function testEncryptFormat(): void
+    {
+        self::defineAppKey();
+
+        // el formato no puede cambiar sin cambiar el prefijo: lo guardado tiene que seguir descifrándose
+        $iv = random_bytes(AppKey::CIPHER_IV_BYTES);
+        $tag = '';
+        $key = hash_hkdf('sha256', AppKey::get(), 32, 'test');
+        $cipher = openssl_encrypt('secret', 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag, '1|abc', 16);
+        $value = 'v1:' . base64_encode($iv . $tag . $cipher);
+        $this->assertSame('secret', AppKey::decrypt('test', $value, '1|abc'), 'format-changed');
     }
 
     public function testGenerate(): void
@@ -115,5 +173,15 @@ final class AppKeyTest extends TestCase
         $this->assertFalse(AppKey::verify('other', 'data', $signature), 'signature-valid-with-other-purpose');
         $this->assertFalse(AppKey::verify('test', 'data', ''), 'empty-signature-valid');
         $this->assertFalse(AppKey::verify('test', 'data', substr($signature, 0, -1)), 'short-signature-valid');
+    }
+
+    /**
+     * El config.php de los tests no trae FS_APP_KEY y sin ella no se cifra.
+     */
+    private static function defineAppKey(): void
+    {
+        if (false === defined('FS_APP_KEY')) {
+            define('FS_APP_KEY', AppKey::generate());
+        }
     }
 }

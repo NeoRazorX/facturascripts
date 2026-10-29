@@ -41,11 +41,17 @@ use SoapClient;
  */
 class Vies
 {
-    /** Códigos ISO aceptados por VIES (UE + XI para Irlanda del Norte tras el Brexit). */
+    /**
+     * Prefijos de NIF-IVA aceptados por VIES (UE + XI para Irlanda del Norte tras el Brexit). Coinciden con
+     * el código ISO del país salvo en Grecia, que usa EL (ver vatPrefix()).
+     */
     const EU_COUNTRIES = [
         'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'EL', 'ES', 'FI', 'FR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU',
         'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK', 'XI',
     ];
+
+    /** Prefijos de NIF-IVA distintos del código ISO del país: ISO => prefijo. */
+    const VAT_PREFIXES = ['GR' => 'EL'];
 
     const VIES_URL = "https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl";
 
@@ -71,34 +77,12 @@ class Vies
     private static $simulatedFetchResponse = null;
 
     /**
-     * Fija una respuesta fija que {@see check()} devolverá sin tocar la red.
-     * Pensado exclusivamente para tests; pasar null para restaurar el comportamiento real.
-     *
-     * @param int|null $response uno de los Vies::RESULT_* o null para desactivar la simulación
-     */
-    public static function simulateViesResponse(?int $response): void
-    {
-        self::$simulatedResponse = $response;
-    }
-
-    /**
-     * Fija una respuesta fija que {@see fetch()} devolverá sin tocar la red.
-     * Pensado exclusivamente para tests; pasar null para restaurar el comportamiento real.
-     *
-     * @param array|null $response array con claves valid/name/address (o null en errores), o null para desactivar
-     */
-    public static function simulateFetchResponse(?array $response): void
-    {
-        self::$simulatedFetchResponse = $response;
-    }
-
-    /**
      * Comprueba contra VIES si un número de IVA es válido en el país indicado.
      * El cifnif se normaliza antes de enviarlo (ver {@see normalize()}), por lo
      * que admite indistintamente "B12345678", "ES-B12345678" o "es b12345678".
      *
      * @param string $cifnif número de IVA (con o sin prefijo ISO)
-     * @param string $codiso código ISO de país en mayúsculas y dos caracteres
+     * @param string $codiso código ISO de país en mayúsculas y dos caracteres (GR o EL para Grecia)
      * @param bool   $msg    si true, registra warnings en el log ante errores de validación
      *
      * @return int uno de Vies::RESULT_VALID, Vies::RESULT_INVALID o Vies::RESULT_ERROR
@@ -109,6 +93,7 @@ class Vies
             return self::$simulatedResponse;
         }
 
+        $codiso = self::vatPrefix($codiso);
         $vatNumber = self::prepare($cifnif, $codiso, $msg);
         if ($vatNumber === null) {
             return self::RESULT_ERROR;
@@ -123,7 +108,7 @@ class Vies
      * publica (varios estados miembros las devuelven vacías por privacidad).
      *
      * @param string $cifnif número de IVA (con o sin prefijo ISO)
-     * @param string $codiso código ISO de país en mayúsculas y dos caracteres
+     * @param string $codiso código ISO de país en mayúsculas y dos caracteres (GR o EL para Grecia)
      * @param bool   $msg    si true, registra warnings en el log ante errores de validación
      *
      * @return array|null array con claves `valid` (bool), `name` (string), `address` (string),
@@ -135,6 +120,7 @@ class Vies
             return self::$simulatedFetchResponse;
         }
 
+        $codiso = self::vatPrefix($codiso);
         $vatNumber = self::prepare($cifnif, $codiso, $msg);
         if ($vatNumber === null) {
             return null;
@@ -144,49 +130,24 @@ class Vies
     }
 
     /**
-     * Aplica las validaciones previas comunes a {@see check()} y {@see fetch()}:
-     * extensión SOAP disponible, código ISO con formato correcto y perteneciente
-     * a la UE, y longitud mínima del cifnif tras normalizar.
-     *
-     * @return string|null cifnif normalizado listo para enviar a VIES, o null si alguna validación falla
+     * Devuelve el mensaje de la última excepción capturada al hablar con VIES,
+     * o cadena vacía si la última llamada no produjo error de transporte/SOAP.
      */
-    private static function prepare(string $cifnif, string $codiso, bool $msg): ?string
+    public static function getLastError(): string
     {
-        if (false === extension_loaded('soap')) {
-            static::setMessage($msg, 'soap-extension-not-installed');
-            return null;
-        }
-
-        if (empty($codiso) || strlen($codiso) !== 2) {
-            static::setMessage($msg, 'invalid-iso-code', ['%iso-code%' => $codiso]);
-            return null;
-        }
-
-        if (!in_array($codiso, self::EU_COUNTRIES)) {
-            static::setMessage($msg, 'country-not-in-eu', ['%codiso%' => $codiso]);
-            return null;
-        }
-
-        $cifnif = self::normalize($cifnif, $codiso);
-
-        // longitud mínima razonable de un VAT comunitario tras quitar el prefijo ISO
-        if (strlen($cifnif) < 5) {
-            static::setMessage($msg, 'vat-number-is-short', ['%vat-number%' => $cifnif]);
-            return null;
-        }
-
-        return $cifnif;
+        return self::$lastError;
     }
 
     /**
      * Normaliza un cifnif para enviarlo a VIES y, si el resultado empieza por
-     * el código ISO indicado, elimina también dicho prefijo.
+     * el código ISO indicado o por su prefijo de NIF-IVA, elimina también dicho
+     * prefijo. En Grecia se quitan tanto GR como EL.
      *
      * El codiso debe llegar ya en mayúsculas; si no, no se reconocerá como
      * prefijo y se enviará tal cual a VIES.
      *
      * @param string $cifnif valor original tal como lo introduce el usuario
-     * @param string $codiso código ISO de país en mayúsculas
+     * @param string $codiso código ISO de país (o prefijo de NIF-IVA) en mayúsculas
      *
      * @return string cifnif normalizado, sin prefijo ISO
      */
@@ -194,7 +155,8 @@ class Vies
     {
         $cifnif = FiscalNumberValidator::normalize($cifnif);
 
-        if (substr($cifnif, 0, 2) === $codiso) {
+        // comparamos los prefijos de NIF-IVA, así en Grecia se acepta tanto GR como EL
+        if (self::vatPrefix(substr($cifnif, 0, 2)) === self::vatPrefix($codiso)) {
             $cifnif = substr($cifnif, 2);
         }
 
@@ -202,12 +164,81 @@ class Vies
     }
 
     /**
-     * Devuelve el mensaje de la última excepción capturada al hablar con VIES,
-     * o cadena vacía si la última llamada no produjo error de transporte/SOAP.
+     * Fija una respuesta fija que {@see fetch()} devolverá sin tocar la red.
+     * Pensado exclusivamente para tests; pasar null para restaurar el comportamiento real.
+     *
+     * @param array|null $response array con claves valid/name/address (o null en errores), o null para desactivar
      */
-    public static function getLastError(): string
+    public static function simulateFetchResponse(?array $response): void
     {
-        return self::$lastError;
+        self::$simulatedFetchResponse = $response;
+    }
+
+    /**
+     * Fija una respuesta fija que {@see check()} devolverá sin tocar la red.
+     * Pensado exclusivamente para tests; pasar null para restaurar el comportamiento real.
+     *
+     * @param int|null $response uno de los Vies::RESULT_* o null para desactivar la simulación
+     */
+    public static function simulateViesResponse(?int $response): void
+    {
+        self::$simulatedResponse = $response;
+    }
+
+    /**
+     * Prefijo del NIF-IVA de un país a partir de su código ISO en mayúsculas: EL para Grecia (GR) y el
+     * propio código para el resto. Es el código de país que espera VIES.
+     *
+     * @param string $codiso código ISO de país en mayúsculas
+     *
+     * @return string prefijo del NIF-IVA
+     */
+    public static function vatPrefix(string $codiso): string
+    {
+        return self::VAT_PREFIXES[$codiso] ?? $codiso;
+    }
+
+    /**
+     * Llama a VIES y devuelve un array con `valid`, `name` y `address`.
+     * Devuelve null sólo si la llamada SOAP falla; un NIF con formato correcto
+     * pero inexistente devuelve `['valid' => false, ...]`, no null.
+     */
+    private static function fetchViesInfo(string $vatNumber, string $codiso, bool $msg): ?array
+    {
+        self::$lastError = '';
+
+        try {
+            $context = stream_context_create([
+                'http' => ['timeout' => self::VIES_TIMEOUT],
+            ]);
+            $client = new SoapClient(self::VIES_URL, [
+                'exceptions' => true,
+                'connection_timeout' => self::VIES_TIMEOUT,
+                'cache_wsdl' => WSDL_CACHE_BOTH,
+                'stream_context' => $context,
+            ]);
+            $response = $client->checkVat([
+                'countryCode' => $codiso,
+                'vatNumber' => $vatNumber,
+            ]);
+
+            return [
+                'valid' => !empty($response->valid),
+                'name' => isset($response->name) ? (string)$response->name : '',
+                'address' => isset($response->address) ? (string)$response->address : '',
+            ];
+        } catch (Exception $ex) {
+            Tools::log('VatInfoFinder')->error($ex->getCode() . ' - ' . $ex->getMessage());
+            self::$lastError = $ex->getMessage();
+
+            // INVALID_INPUT: NIF mal formado. Reportamos como inválido sin nombre/dirección.
+            if ($ex->getMessage() == 'INVALID_INPUT') {
+                return ['valid' => false, 'name' => '', 'address' => ''];
+            }
+        }
+
+        static::setMessage($msg, 'error-checking-vat-number', ['%vat-number%' => $vatNumber]);
+        return null;
     }
 
     private static function getViesInfo(string $vatNumber, string $codiso, bool $msg): int
@@ -254,46 +285,38 @@ class Vies
     }
 
     /**
-     * Llama a VIES y devuelve un array con `valid`, `name` y `address`.
-     * Devuelve null sólo si la llamada SOAP falla; un NIF con formato correcto
-     * pero inexistente devuelve `['valid' => false, ...]`, no null.
+     * Aplica las validaciones previas comunes a {@see check()} y {@see fetch()}:
+     * extensión SOAP disponible, código ISO con formato correcto y perteneciente
+     * a la UE, y longitud mínima del cifnif tras normalizar.
+     *
+     * @return string|null cifnif normalizado listo para enviar a VIES, o null si alguna validación falla
      */
-    private static function fetchViesInfo(string $vatNumber, string $codiso, bool $msg): ?array
+    private static function prepare(string $cifnif, string $codiso, bool $msg): ?string
     {
-        self::$lastError = '';
-
-        try {
-            $context = stream_context_create([
-                'http' => ['timeout' => self::VIES_TIMEOUT],
-            ]);
-            $client = new SoapClient(self::VIES_URL, [
-                'exceptions' => true,
-                'connection_timeout' => self::VIES_TIMEOUT,
-                'cache_wsdl' => WSDL_CACHE_BOTH,
-                'stream_context' => $context,
-            ]);
-            $response = $client->checkVat([
-                'countryCode' => $codiso,
-                'vatNumber' => $vatNumber,
-            ]);
-
-            return [
-                'valid' => !empty($response->valid),
-                'name' => isset($response->name) ? (string)$response->name : '',
-                'address' => isset($response->address) ? (string)$response->address : '',
-            ];
-        } catch (Exception $ex) {
-            Tools::log('VatInfoFinder')->error($ex->getCode() . ' - ' . $ex->getMessage());
-            self::$lastError = $ex->getMessage();
-
-            // INVALID_INPUT: NIF mal formado. Reportamos como inválido sin nombre/dirección.
-            if ($ex->getMessage() == 'INVALID_INPUT') {
-                return ['valid' => false, 'name' => '', 'address' => ''];
-            }
+        if (false === extension_loaded('soap')) {
+            static::setMessage($msg, 'soap-extension-not-installed');
+            return null;
         }
 
-        static::setMessage($msg, 'error-checking-vat-number', ['%vat-number%' => $vatNumber]);
-        return null;
+        if (empty($codiso) || strlen($codiso) !== 2) {
+            static::setMessage($msg, 'invalid-iso-code', ['%iso-code%' => $codiso]);
+            return null;
+        }
+
+        if (!in_array($codiso, self::EU_COUNTRIES)) {
+            static::setMessage($msg, 'country-not-in-eu', ['%codiso%' => $codiso]);
+            return null;
+        }
+
+        $cifnif = self::normalize($cifnif, $codiso);
+
+        // longitud mínima razonable de un VAT comunitario tras quitar el prefijo ISO
+        if (strlen($cifnif) < 5) {
+            static::setMessage($msg, 'vat-number-is-short', ['%vat-number%' => $cifnif]);
+            return null;
+        }
+
+        return $cifnif;
     }
 
     private static function setMessage(bool $msg, string $txt, array $context = []): void

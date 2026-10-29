@@ -122,7 +122,7 @@ vendor/bin/phpstan analyse Core
 
 ### 🔒 Vulnerabilidades de Seguridad
 
-Por favor, reporta las vulnerabilidades de seguridad de forma **privada** usando el botón [Report a vulnerability](https://github.com/FacturaScripts/facturascripts/security/advisories/new) de GitHub. No abras issues públicas para asuntos de seguridad. Consulta [SECURITY.md](SECURITY.md) para más detalles.
+Por favor, reporta las vulnerabilidades de seguridad de forma **privada** usando el botón [Report a vulnerability](https://github.com/NeoRazorX/facturascripts/security/advisories/new) de GitHub. No abras issues públicas para asuntos de seguridad. Consulta [SECURITY.md](SECURITY.md) para más detalles.
 
 ## 🔗 Recursos Útiles
 

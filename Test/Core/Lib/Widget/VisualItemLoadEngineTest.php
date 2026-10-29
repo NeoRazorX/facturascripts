@@ -26,6 +26,18 @@ use ReflectionClass;
 
 final class VisualItemLoadEngineTest extends TestCase
 {
+    public function testLoadXMLView(): void
+    {
+        // carga el XMLView desde Dinamic, con su raíz y sus hijos
+        $xml = VisualItemLoadEngine::loadXMLView('EditCliente');
+        $this->assertNotNull($xml);
+        $this->assertSame('view', $xml->getName());
+        $this->assertTrue(isset($xml->columns));
+
+        // si no existe, devuelve null
+        $this->assertNull(VisualItemLoadEngine::loadXMLView('XMLViewQueNoExiste'));
+    }
+
     public function testMergeCustomizationIgnoresColumnsMissingFromXml(): void
     {
         $xmlColumns = [

@@ -442,7 +442,14 @@ class APIModel extends APIResourceClass
                 continue;
             }
 
-            $result[$key] = $value;
+            // la dirección se concatena en el SQL de los modelos de Core/Model/Base: solo aceptamos ASC o DESC
+            $direction = is_string($value) ? strtoupper(trim($value)) : '';
+            if (!in_array($direction, ['ASC', 'DESC'], true)) {
+                $badFields[] = $key;
+                continue;
+            }
+
+            $result[$key] = $direction;
         }
         return $result;
     }
