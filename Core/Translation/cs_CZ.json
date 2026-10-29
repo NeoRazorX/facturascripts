@@ -1718,6 +1718,7 @@
     "sections": "Sekce",
     "security-warning": "Bezpečnostní upozornění",
     "select": "Vybrat",
+    "select-agent": "Vyberte agenta",
     "select-all": "Vybrat vše",
     "select-content-for": "Vyberte obsah pro %content%",
     "select-file-to-add": "Odtud můžete přidat soubor — vyberte jej a nahrajte ze svého počítače. Stiskněte tlačítko 'Žádný', pokud chcete nevybrat žádnou možnost.",

@@ -1718,6 +1718,7 @@
     "sections": "Sekcje",
     "security-warning": "Ostrzeżenie o bezpieczeństwie",
     "select": "Wybierz",
+    "select-agent": "Wybierz agenta",
     "select-all": "Zaznacz wszystko",
     "select-content-for": "Wybierz zawartość dla %content%",
     "select-file-to-add": "Możesz dodać plik stąd, wybierz go i prześlij z komputera. Naciśnij przycisk 'Brak', jeśli chcesz nie wybierać żadnego pliku.",

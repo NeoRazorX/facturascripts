@@ -1718,6 +1718,7 @@
     "sections": "Sections",
     "security-warning": "Security warning",
     "select": "Select",
+    "select-agent": "Select an agent",
     "select-all": "Select all",
     "select-content-for": "Select content for %content%",
     "select-file-to-add": "You can add a file here: select it and upload it from your computer. Click the 'None' button to select no file.",

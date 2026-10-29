@@ -1718,6 +1718,7 @@
     "sections": "Abschnitte",
     "security-warning": "Sicherheitswarnung",
     "select": "Auswählen",
+    "select-agent": "Agent auswählen",
     "select-all": "Alle auswählen",
     "select-content-for": "Wählen Sie Inhalt für %content% aus.",
     "select-file-to-add": "Sie können hier eine Datei hinzufügen, wählen Sie diese aus und laden Sie sie von Ihrem Computer hoch. Drücken Sie die Schaltfläche \"Keine\", wenn Sie keine auswählen möchten.",

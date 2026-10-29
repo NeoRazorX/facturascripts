@@ -1718,6 +1718,7 @@
     "sections": "Bölümler",
     "security-warning": "Güvenlik uyarısı",
     "select": "Seç",
+    "select-agent": "Temsilci seçin",
     "select-all": "Tümü Seç",
     "select-content-for": "%content% için içerik seçin",
     "select-file-to-add": "Buradan bir dosya ekleyebilirsiniz; bilgisayarınızdan seçip yükleyin. Hiçbirini seçmek istiyorsanız 'Hiçbiri' düğmesine basın.",

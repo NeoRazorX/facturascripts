@@ -1718,6 +1718,7 @@
     "sections": "Atalak",
     "security-warning": "Segurtasun ohartarazpena",
     "select": "Aukeratu",
+    "select-agent": "Hautatu agente bat",
     "select-all": "Guztiak hautatu",
     "select-content-for": "%content%-erako eduki hautatu",
     "select-file-to-add": "Fitxategi bat gehi dezakezu hemen; aukeratu eta zure ordenagailutik igo ezazu. 'Ninguno' botoia sakatu ezazu, ezer aukeratu nahi ez baduzu.",
