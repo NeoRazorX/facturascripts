@@ -279,6 +279,93 @@ final class WorkQueueTest extends TestCase
         WorkQueue::clear();
     }
 
+    /**
+     * Comprueba que un worker de cron marca el evento como solo cron, que run() lo ignora
+     * fuera del cron y que run(true) lo procesa.
+     */
+    public function testCronWorker(): void
+    {
+        // establecemos el valor inicial de caché
+        Cache::set('test-worker-name', '-');
+        Cache::set('test-worker-value', -1);
+
+        // añadimos el worker de cron y lanzamos el evento
+        WorkQueue::addCronWorker('TestWorker', 'test-event-cron');
+        $this->assertTrue(WorkQueue::send('test-event-cron', '654321'));
+
+        // el evento se guarda marcado como solo cron
+        $model = new WorkEvent();
+        $where = [Where::eq('name', 'test-event-cron')];
+        $events = $model->all($where, [], 0, 0);
+        $this->assertCount(1, $events);
+        $this->assertTrue($events[0]->cron);
+        $this->assertFalse($events[0]->done);
+
+        // fuera del cron no se procesa
+        $this->assertFalse(WorkQueue::run());
+        $this->assertEquals('-', Cache::get('test-worker-name'));
+        $this->assertEquals(-1, Cache::get('test-worker-value'));
+
+        // desde el cron sí se procesa
+        $this->assertTrue(WorkQueue::run(true));
+        $this->assertEquals('test-event-cron', Cache::get('test-worker-name'));
+        $this->assertEquals('654321', Cache::get('test-worker-value'));
+
+        // comprobamos que el evento se ha guardado como realizado
+        $events = $model->all($where, [], 0, 0);
+        $this->assertCount(1, $events);
+        $this->assertTrue($events[0]->done);
+
+        // eliminamos el evento y el worker
+        $this->assertTrue($events[0]->delete());
+        WorkQueue::clear();
+    }
+
+    /**
+     * Comprueba que un evento normal no se marca como solo cron y se procesa en ambos modos.
+     */
+    public function testNormalWorkerIsNotCron(): void
+    {
+        WorkQueue::addWorker('TestWorker', 'test-event-normal');
+        $this->assertTrue(WorkQueue::send('test-event-normal', 'value'));
+
+        $model = new WorkEvent();
+        $where = [Where::eq('name', 'test-event-normal')];
+        $events = $model->all($where, [], 0, 0);
+        $this->assertCount(1, $events);
+        $this->assertFalse($events[0]->cron);
+
+        // fuera del cron se procesa
+        $this->assertTrue(WorkQueue::run());
+
+        $events = $model->all($where, [], 0, 0);
+        $this->assertTrue($events[0]->done);
+
+        // eliminamos el evento y el worker
+        $this->assertTrue($events[0]->delete());
+        WorkQueue::clear();
+    }
+
+    /**
+     * Comprueba que si coinciden un worker normal y uno de cron, el evento entero va al cron.
+     */
+    public function testMixedWorkersGoToCron(): void
+    {
+        WorkQueue::addWorker('TestWorker', 'test-event-mixed');
+        WorkQueue::addCronWorker('TestWorker', 'test-event-mixed');
+        $this->assertTrue(WorkQueue::send('test-event-mixed', 'value'));
+
+        $model = new WorkEvent();
+        $where = [Where::eq('name', 'test-event-mixed')];
+        $events = $model->all($where, [], 0, 0);
+        $this->assertCount(1, $events);
+        $this->assertTrue($events[0]->cron);
+
+        // eliminamos el evento y los workers
+        $this->assertTrue($events[0]->delete());
+        WorkQueue::clear();
+    }
+
     public function testModelEvent(): void
     {
         // eliminamos todos los eventos de la tabla

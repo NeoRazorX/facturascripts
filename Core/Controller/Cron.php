@@ -326,7 +326,7 @@ END;
         ob_flush();
 
         while ($max > 0) {
-            if (false === WorkQueue::run()) {
+            if (false === WorkQueue::run(true)) {
                 break;
             }
 

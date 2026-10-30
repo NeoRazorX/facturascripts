@@ -6,6 +6,11 @@
         <null>NO</null>
     </column>
     <column>
+        <name>cron</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>done</name>
         <type>boolean</type>
         <default>false</default>
