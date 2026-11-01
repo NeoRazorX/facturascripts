@@ -205,7 +205,7 @@ class Updater extends Controller
         $files = glob(Tools::folder('MyFiles') . DIRECTORY_SEPARATOR . 'crash_*.json') ?: [];
         foreach ($files as $file) {
             $info = json_decode(file_get_contents($file), true);
-            if (empty($info['hash']) || !is_array($info['hash'])) {
+            if (empty($info['hash']) || !is_string($info['hash'])) {
                 continue;
             }
 

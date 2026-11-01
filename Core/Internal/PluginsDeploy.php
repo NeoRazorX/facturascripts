@@ -116,8 +116,12 @@ final class PluginsDeploy
             }
         }
 
-        // cambiamos la versión de los assets para que los navegadores no usen los de su caché
-        AssetManager::updateVersion();
+        // cambiamos la versión de los assets para que los navegadores no usen los de su caché.
+        // Al actualizar desde una versión anterior, el Updater antiguo despliega en la misma petición
+        // y puede tener cargado en memoria el AssetManager antiguo, que no tiene este método
+        if (method_exists(AssetManager::class, 'updateVersion')) {
+            AssetManager::updateVersion();
+        }
 
         // recargamos las traducciones
         Translator::deploy();
