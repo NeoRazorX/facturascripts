@@ -458,17 +458,21 @@ abstract class ModelClass
     public function isDirty(?string $key = null): bool
     {
         if ($key === null) {
-            $current = [];
-            foreach (array_keys($this->getModelFields()) as $key) {
-                $current[$key] = $this->{$key};
-            }
-            return $current !== $this->original;
+            // sin valores originales (modelo nuevo) se considera modificado
+            return empty($this->original) || !empty($this->getDirty());
         }
 
         $current = $this->{$key} ?? null;
         $original = $this->original[$key] ?? null;
 
-        return $current !== $original;
+        // comparamos los valores convertidos al tipo del campo, igual que en loadFromData(),
+        // para no marcar como modificado un '5' frente a un 5, o una fecha en otro formato
+        $field = $this->getModelFields()[$key] ?? null;
+        if ($field === null || !is_scalar($current ?? '') || !is_scalar($original ?? '')) {
+            return $current !== $original;
+        }
+
+        return $this->getValueForField($field, $current) !== $this->getValueForField($field, $original);
     }
 
     /**
@@ -548,20 +552,7 @@ abstract class ModelClass
                 continue;
             }
 
-            // comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
-            $field = $fields[$key];
-            $type = !str_contains($field['type'], '(') ?
-                $field['type'] :
-                substr($field['type'], 0, strpos($field['type'], '('));
-
-            $this->{$key} = match ($type) {
-                'tinyint', 'boolean' => $this->getBoolValueForField($field, $value),
-                'integer', 'int' => $this->getIntegerValueForField($field, $value),
-                'decimal', 'double', 'double precision', 'float' => $this->getFloatValueForField($field, $value),
-                'date' => empty($value) ? null : Tools::date($value),
-                'datetime', 'timestamp' => empty($value) ? null : Tools::dateTime($value),
-                default => ($value === null && $field['is_nullable'] === 'NO') ? '' : $value,
-            };
+            $this->{$key} = $this->getValueForField($fields[$key], $value);
         }
 
         if ($sync) {
@@ -1023,6 +1014,30 @@ abstract class ModelClass
         }
 
         return $field['is_nullable'] === 'NO' ? 0.0 : null;
+    }
+
+    /**
+     * Convierte un valor al tipo de dato definido por el campo.
+     *
+     * @param array $field
+     * @param mixed $value
+     * @return mixed
+     */
+    private function getValueForField(array $field, $value)
+    {
+        // comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
+        $type = !str_contains($field['type'], '(') ?
+            $field['type'] :
+            substr($field['type'], 0, strpos($field['type'], '('));
+
+        return match ($type) {
+            'tinyint', 'boolean' => $this->getBoolValueForField($field, $value),
+            'integer', 'int' => $this->getIntegerValueForField($field, $value),
+            'decimal', 'double', 'double precision', 'float' => $this->getFloatValueForField($field, $value),
+            'date' => empty($value) ? null : Tools::date($value),
+            'datetime', 'timestamp' => empty($value) ? null : Tools::dateTime($value),
+            default => ($value === null && $field['is_nullable'] === 'NO') ? '' : $value,
+        };
     }
 
     /**
