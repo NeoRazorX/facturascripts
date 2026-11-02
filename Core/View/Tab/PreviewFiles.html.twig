@@ -19,6 +19,17 @@
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 #}
+{#
+  Pestaña de archivos adjuntos con vista previa. Alternativa a Tab/DocFiles: mismas
+  acciones del DocFilesTrait (add-file, edit-file, unlink-file, delete-file y sort-files)
+  y mismas extensiones (formAddBody y formEditBody de DocFiles), pero muestra un archivo
+  por fila con la vista previa de imágenes, vídeos y PDF.
+
+  Uso en un EditController con DocFilesTrait:
+  $this->createViewDocFiles('docfiles', 'Tab/PreviewFiles');
+
+  Documentación: https://facturascripts.com/publicaciones/anadir-una-pestana-de-archivos-a-un-editcontroller
+#}
 {% set firstView = fsc.views | first %}
 {% set doc = firstView.model %}
 {% set currentView = fsc.getCurrentView() %}
