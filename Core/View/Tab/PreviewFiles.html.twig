@@ -1,10 +1,20 @@
 {#
 /**
- * This file is part of HumanResources plugin for FacturaScripts.
- * FacturaScripts Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
- * HumanResources Copyright (C) 2018-2021 Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * This file is part of FacturaScripts
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
- * This program and its files are under the terms of the license specified in the LICENSE file.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
@@ -14,125 +24,214 @@
 {% set currentView = fsc.getCurrentView() %}
 
 <div class="container-fluid">
-    {# -- New form -- #}
     <div class="row">
-        <div class="col">
-            <form id="{{ 'form' ~ currentView.getViewName() ~ '0' }}" action="{{ doc.url() }}" method="post" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
-                {{ formToken() }}
-                <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}" />
-                <input type="hidden" name="action" value="add-file" />
-                <div class="card border-success shadow mb-2">
-                    <div class="card-body p-2">
-                        <button class="btn btn-sm btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#NewFileCollapse" aria-expanded="false">
-                            <i class="fa-solid fa-plus-square fa-fw" aria-hidden="true"></i>
-                            {{ trans('add') }}
-                        </button>
-                        &nbsp;
-                        {{ currentView.title }}
-                    </div>
-                    <div class="collapse" id="NewFileCollapse">
-                        <div class="card-body border-top">
-                            {{ _self.inputTextArea('') }}
+        <div class="col-sm-12">
+            {% if fsc.permissions.allowUpdate %}
+                <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
+                      onsubmit="animateSpinner('add')">
+                    {{ formToken() }}
+                    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                    <input type="hidden" name="action" value="add-file"/>
+                    <div class="card border-success shadow mb-3">
+                        <div class="card-body p-3">
+                            <h5 class="card-title">
+                                <i class="fa-solid fa-folder-plus fa-fw"></i> {{ trans('add') }}
+                            </h5>
+                            <div class="mb-3">
+                                <textarea name="observations" class="form-control"
+                                          placeholder="{{ trans('observations') }}"></textarea>
+                            </div>
+                            {% for includeView in getIncludeViews('DocFiles', 'formAddBody') %}
+                                {% include includeView['path'] %}
+                            {% endfor %}
                             <div class="row align-items-end">
                                 <div class="col">
-                                    <input type="file" name="new-files[]" class="form-control-file" required multiple/>
-                                    <p class="text-muted mb-0">{{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}</p>
+                                    <p class="text-muted mb-2">
+                                        {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
+                                    </p>
+                                    <input type="file" name="new-files[]" class="form-control" multiple required/>
                                 </div>
-                                <div class="col text-end">
-                                    <button type="submit" class="btn btn-sm btn-success">
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-success">
                                         <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    {# -- Attached files -- #}
-    <div class="row">
-        <div class="col">
-            {% for counter, docfile in currentView.cursor %}
-                {% set formName = currentView.getViewName() ~ (counter + 1) %}
-                {% set file = docfile.getFile() %}
-                {% set urlDownload = file.url('download') %}
-                <form id="{{ 'form' ~ formName }}" action="{{ doc.url() }}" method="post" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
-                    {{ formToken() }}
-                    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}" />
-                    <input type="hidden" name="id" value="{{ docfile.id }}" />
-                    <input type="hidden" name="action" value="edit-file"/>
-                    <div class="card shadow mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-9">
-                                    <h5 class="card-title"><i class="fa-regular fa-file-image mb-3"></i> &nbsp;{{ file.filename }}</h5>
-                                    {{ _self.inputTextArea(docfile.observations) }}
-                                    <div class="row">
-                                        <div class="col">
-                                            {{ _self.buttonDelete(formName) }}
+                </form>
+            {% endif %}
+
+            <div id="preview-docs-container">
+                {% for docfile in currentView.cursor %}
+                    {% set file = docfile.getFile() %}
+                    {% if file %}
+                    <div data-doc-id="{{ docfile.id }}">
+                        <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
+                              onsubmit="animateSpinner('add')">
+                            {{ formToken() }}
+                            <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                            <input type="hidden" name="id" value="{{ docfile.id }}"/>
+                            <input type="hidden" name="action" value=""/>
+                            <div class="card shadow mb-3">
+                                <div class="row g-0">
+                                    <div class="col-md-8 col-lg-9 d-flex flex-column">
+                                        <div class="card-body p-3">
+                                            <h5 class="card-title text-break">
+                                                <a href="{{ asset(file.url('download-permanent')) }}" target="_blank">
+                                                    {% if file.isImage() %}
+                                                        <i class="fa-regular fa-file-image fa-fw" aria-hidden="true"></i>
+                                                    {% elseif file.isPdf() %}
+                                                        <i class="fa-regular fa-file-pdf fa-fw" aria-hidden="true"></i>
+                                                    {% elseif file.isVideo() %}
+                                                        <i class="fa-regular fa-file-video fa-fw" aria-hidden="true"></i>
+                                                    {% elseif file.isArchive() %}
+                                                        <i class="fa-regular fa-file-archive fa-fw" aria-hidden="true"></i>
+                                                    {% else %}
+                                                        <i class="fa-regular fa-file fa-fw" aria-hidden="true"></i>
+                                                    {% endif %}
+                                                    {{ file.filename | raw }}
+                                                </a>
+                                            </h5>
+                                            <div class="mb-3">
+                                                <label for="preview-observations-{{ docfile.id }}" class="visually-hidden">{{ trans('observations') }}</label>
+                                                <textarea name="observations" id="preview-observations-{{ docfile.id }}" class="form-control"
+                                                          rows="4" placeholder="{{ trans('observations') }}">{{ docfile.observations | raw }}</textarea>
+                                            </div>
+                                            {% for includeView in getIncludeViews('DocFiles', 'formEditBody') %}
+                                                {% include includeView['path'] %}
+                                            {% endfor %}
+                                            <p class="card-text text-muted small mb-0">
+                                                {% if docfile.nick %}
+                                                    <i class="fa-solid fa-user" aria-hidden="true"></i> {{ docfile.nick }}
+                                                {% endif %}
+                                                <i class="fa-solid fa-calendar-alt ms-3" aria-hidden="true"></i> {{ docfile.creationdate }}
+                                                <i class="fa-solid fa-hard-drive ms-3" aria-hidden="true"></i> {{ bytes(file.size) }}
+                                            </p>
                                         </div>
-                                        <div class="col text-center">
-                                            <small>
-                                                <i class="fa-solid fa-user"></i> {{ docfile.nick }} &nbsp;
-                                                <i class="fa-solid fa-calendar-alt"></i> {{ docfile.creationdate }}
-                                            </small>
-                                        </div>
-                                        <div class="col text-end">
-                                            <a class="btn btn-sm btn-outline-info" target="_blank" href="{{ asset(urlDownload) }}">
-                                                <i class="fa-solid fa-cloud-download-alt"></i>
-                                                <span class="d-none d-sm-inline-block">{{ trans('download') }}</span>
-                                            </a>
-                                            <button class="btn btn-sm btn-primary" type="submit" name="action" value="edit-file">
-                                                <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
-                                                <span class="d-none d-sm-inline-block">{{ trans('save') }}</span>
-                                            </button>
+                                        <div class="card-footer p-2 mt-auto" style="cursor: move;">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                {% if fsc.permissions.allowDelete %}
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-outline-danger dropdown-toggle" type="button"
+                                                                data-bs-toggle="dropdown" aria-expanded="false"
+                                                                aria-label="{{ trans('delete') }}">
+                                                            <i class="fa-solid fa-trash-alt" aria-hidden="true"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <button type="button"
+                                                                        onclick="this.form.action.value='unlink-file';this.form.onsubmit();this.form.submit();"
+                                                                        class="dropdown-item">
+                                                                    <i class="fa-solid fa-unlink fa-fw" aria-hidden="true"></i> {{ trans('unlink-file') }}
+                                                                </button>
+                                                            </li>
+                                                            <li><hr class="dropdown-divider"></li>
+                                                            <li>
+                                                                <button type="button"
+                                                                        onclick="if(confirm('{{ trans('confirm-delete') }}')) { this.form.action.value='delete-file';this.form.submit(); }"
+                                                                        class="dropdown-item text-danger">
+                                                                    <i class="fa-regular fa-trash-alt fa-fw" aria-hidden="true"></i> {{ trans('delete-file') }}
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                {% endif %}
+                                                {% if fsc.permissions.allowUpdate %}
+                                                    <button type="button" class="btn btn-sm btn-primary ms-auto"
+                                                            onclick="this.form.action.value='edit-file';this.form.onsubmit();this.form.submit();">
+                                                        <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+                                                    </button>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3 text-center">
-                                    {{ _self.previewFile(urlDownload, file.filename, file.getExtension()) }}
+                                    <div class="col-md-4 col-lg-3 order-first order-md-last preview-file-col d-flex align-items-center justify-content-center p-2">
+                                        {% if file.isImage() %}
+                                            <a href="{{ asset(file.url('download-permanent')) }}" target="_blank">
+                                                <img src="{{ asset(file.url('download')) }}" class="img-fluid rounded preview-file"
+                                                     alt="{{ file.filename }}" loading="lazy">
+                                            </a>
+                                        {% elseif file.isVideo() %}
+                                            <video class="w-100 preview-file" controls preload="metadata">
+                                                <source src="{{ asset(file.url('download')) }}" type="{{ file.mimetype }}"/>
+                                            </video>
+                                        {% elseif file.isPdf() %}
+                                            <embed class="w-100 preview-file preview-file-pdf" src="{{ asset(file.url('download')) }}"
+                                                   type="application/pdf">
+                                        {% else %}
+                                            <p class="text-muted text-center my-3">
+                                                <i class="fa-regular fa-file fa-3x mb-2" aria-hidden="true"></i><br/>
+                                                {{ trans('preview-not-available') }}
+                                            </p>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                </form>
-            {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
 
-{% macro inputTextArea(text) %}
-    <div class="mb-3">
-        <textarea name="observations" class="form-control col-12" rows="4" placeholder="{{ trans('observations') }}">{{ text }}</textarea>
-    </div>
-{% endmacro %}
+<style>
+    #preview-docs-container .preview-file-col {
+        border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+    }
 
-{% macro previewFile(url, filename, extFile) %}
-    <style>
-        .preview-fit { width: inherit; height: 200px; max-width: 100%; max-height: 100%; object-fit: contain; }
-    </style>
-    {% if extFile in ['gif','jpg', 'jpeg','png', 'svg', 'webp'] %}
-        <img src="{{ asset(url) }}" class="preview-fit img-thumbnail border-info" alt="{{ filename }}">
-    {% elseif extFile in ['mp4', 'ogg', 'webm'] %}
-        <div class="embed-responsive embed-responsive-16by9">
-            <video class="preview-fit" controls><source src="{{ asset(url) }}" type="video/{{ extFile }}" /></video>
-        </div>
-    {% elseif extFile == 'pdf' %}
-        <embed class="preview-fit" src="{{ asset(url) }}" type="application/pdf">
-    {% else %}
-        <p class="card-text">{{ trans('preview-file-type-not-soported') }}</p>
-    {% endif %}
-{% endmacro %}
+    @media (min-width: 768px) {
+        #preview-docs-container .preview-file-col {
+            border-bottom: 0;
+            border-left: var(--bs-border-width) solid var(--bs-border-color);
+        }
+    }
 
-{% macro buttonDelete(formName) %}
-    {% set label = trans('delete-file') %}
-    {% set text = trans('are-you-sure') %}
-    {% set cancel = trans('cancel') %}
-    {% set confirm = trans('confirm') %}
-    <button type="button" class="btn btn-sm btn-danger"
-            onclick="confirmAction('{{ formName }}','delete-file','{{ label }}','{{ text }}','{{ cancel }}','{{ confirm }}','fa-solid fa-trash-alt');">
-        <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
-        <span class="d-none d-sm-inline-block">{{ trans('delete') }}</span>
-    </button>
-{% endmacro %}
+    #preview-docs-container .preview-file {
+        max-height: 240px;
+        object-fit: contain;
+    }
+
+    #preview-docs-container .preview-file-pdf {
+        height: 240px;
+    }
+</style>
+
+{% if fsc.permissions.allowUpdate %}
+<script>
+    $(document).ready(function () {
+        $('#preview-docs-container').sortable({
+            cursor: "move",
+            tolerance: "pointer",
+            opacity: 0.65,
+            stop: (event, ui) => {
+
+                const orden = Array.from(event.target.children).map(doc => doc.dataset.docId);
+
+                if (orden.length > 0) {
+
+                    const url = new URL(window.location.href);
+                    url.searchParams.append('action', 'sort-files');
+
+                    $.ajax({
+                        method: "POST",
+                        url,
+                        data: {orden},
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.status !== 'ok') {
+                                alert(data.message);
+                            }
+                        },
+                        error: function (msg) {
+                            alert(msg.status + " " + msg.responseText);
+                        }
+                    });
+                }
+            },
+        });
+    });
+</script>
+{% endif %}
