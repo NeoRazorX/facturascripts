@@ -230,6 +230,12 @@ trait ModelTrait
         return $model->save() ? $model : null;
     }
 
+    protected function clearModelFields(): void
+    {
+        static::$fields = [];
+        Cache::delete('model-fields-' . $this->modelClassName());
+    }
+
     protected function loadModelFields(): void
     {
         if (static::$fields) {
