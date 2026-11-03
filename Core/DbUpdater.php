@@ -21,6 +21,7 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseQueries;
+use FacturaScripts\Core\Template\TableClass;
 
 /**
  * Actualiza la estructura de la base de datos.
@@ -76,8 +77,7 @@ final class DbUpdater
         }
 
         if (empty($structure)) {
-            $file_path = self::getTableXmlLocation($table_name);
-            $structure = self::readTableXml($file_path);
+            $structure = self::getStructure($table_name);
         }
 
         if (false === self::validateStructure($table_name, $structure)) {
@@ -127,6 +127,23 @@ final class DbUpdater
     public static function getLastError(): string
     {
         return self::$last_error;
+    }
+
+    /**
+     * Devuelve la estructura (columns, constraints, indexes) de una tabla.
+     * Si existe la clase Table\<TablaEnCuestion> (implementacion de TableClass)
+     * se usa su define() y el XML se ignora; si no, se lee el XML de Table/.
+     * Se debe nombra con PascalCase según el nombre de tabla que se desea crear, ejemplos:
+     * 'agenciastrans' -> Table\Agenciastrans, 'attached_files' -> Table\AttachedFiles.
+     */
+    public static function getStructure(string $table_name): array
+    {
+        $class = 'FacturaScripts\\Dinamic\\Table\\' . str_replace(' ', '', ucwords(str_replace('_', ' ', $table_name)));
+        if (class_exists($class) && is_subclass_of($class, TableClass::class)) {
+            return (new $class())->structure($table_name);
+        }
+
+        return self::readTableXml(self::getTableXmlLocation($table_name));
     }
 
     public static function getTableXmlLocation(string $table_name): string
@@ -239,8 +256,7 @@ final class DbUpdater
         }
 
         if (empty($structure)) {
-            $file_path = self::getTableXmlLocation($table_name);
-            $structure = self::readTableXml($file_path);
+            $structure = self::getStructure($table_name);
         }
 
         if (false === self::validateStructure($table_name, $structure)) {
