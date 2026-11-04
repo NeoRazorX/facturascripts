@@ -35,7 +35,10 @@ use FacturaScripts\Dinamic\Model\User;
  */
 class MegaSearch extends Controller
 {
-    /** URL por defecto del buscador de documentación. Los plugins pueden cambiarla con la extensión docsSearchUrl. */
+    /**
+     * URL por defecto del buscador de documentación. Los plugins pueden cambiarla con la extensión docsSearchUrl,
+     * o desactivar la búsqueda en la documentación devolviendo false.
+     */
     const DOCS_SEARCH_URL = 'https://facturascripts.com/MegaSearchDocs';
 
     /** Número máximo de resultados de documentación a mostrar. */
@@ -116,13 +119,17 @@ class MegaSearch extends Controller
     }
 
     /**
-     * Devuelve la URL del buscador de documentación.
+     * Devuelve la URL del buscador de documentación, o una cadena vacía si algún plugin la ha desactivado.
      *
      * @return string
      */
     public function docsSearchUrl(): string
     {
         $url = $this->pipe('docsSearchUrl');
+        if ($url === false) {
+            return '';
+        }
+
         return is_string($url) && $url !== '' ? $url : static::DOCS_SEARCH_URL;
     }
 
@@ -174,7 +181,13 @@ class MegaSearch extends Controller
             return;
         }
 
+        // algún plugin ha desactivado la búsqueda en la documentación
         $url = $this->docsSearchUrl();
+        if ($url === '') {
+            $this->response->json([]);
+            return;
+        }
+
         $lang = Tools::lang()->getLang();
         $cacheKey = 'megasearch-docs-' . md5($url . '|' . $lang . '|' . $this->query);
         $json = Cache::get($cacheKey);
@@ -234,8 +247,8 @@ class MegaSearch extends Controller
     {
         $this->pageSearch();
 
-        // buscamos también en la documentación
-        if (mb_strlen($this->query) >= 3) {
+        // buscamos también en la documentación, salvo que algún plugin la haya desactivado
+        if (mb_strlen($this->query) >= 3 && $this->docsSearchUrl() !== '') {
             $this->sections['docs'] = $this->url() . '?action=docs&query=' . urlencode($this->query);
         }
     }
