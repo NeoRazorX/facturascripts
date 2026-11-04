@@ -282,10 +282,13 @@ class Contacto extends ModelClass
             return false;
         }
 
+        // si no hay descripción, la generamos a partir del nombre o la dirección,
+        // recortada a la longitud de la columna (100), que es menor que la de ambos campos
         if (empty($this->descripcion)) {
-            $this->descripcion = empty($this->codcliente) && empty($this->codproveedor) ?
+            $description = empty($this->codcliente) && empty($this->codproveedor) ?
                 $this->fullName() :
                 $this->direccion;
+            $this->descripcion = Tools::textBreak($description, 100);
         }
 
         $this->apartado = Tools::noHtml($this->apartado) ?? '';
