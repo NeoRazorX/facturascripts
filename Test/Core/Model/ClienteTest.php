@@ -241,6 +241,50 @@ final class ClienteTest extends TestCase
         $this->assertFalse($cliente->hasColumn(''), 'cliente-should-not-have-empty-column');
     }
 
+    public function testIsDirtyWithFormValues(): void
+    {
+        // creamos un cliente
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test Dirty';
+        $cliente->cifnif = '12345678A';
+        $cliente->riesgomax = 100;
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        // lo cargamos de nuevo
+        $cliente2 = new Cliente();
+        $this->assertTrue($cliente2->load($cliente->id()), 'cliente-cant-load');
+        $this->assertFalse($cliente2->isDirty(), 'cliente-is-dirty-after-load');
+
+        // asignamos los mismos valores tal y como llegan desde un formulario
+        $cliente2->idcontactofact = (string)$cliente2->idcontactofact;
+        $cliente2->riesgomax = '100';
+        $cliente2->debaja = '0';
+        $cliente2->fechaalta = date('Y-m-d', strtotime($cliente2->fechaalta));
+        $cliente2->fechabaja = '';
+
+        // no debe estar modificado
+        $this->assertFalse($cliente2->isDirty(), 'cliente-is-dirty-with-form-values');
+        $this->assertEmpty($cliente2->getDirty(), 'cliente-getdirty-not-empty-with-form-values');
+
+        // un entero asignado como decimal tampoco es un cambio
+        $cliente2->idcontactofact = (float)$cliente2->idcontactofact;
+        $this->assertFalse($cliente2->isDirty('idcontactofact'), 'cliente-idcontactofact-is-dirty-as-float');
+
+        // modificamos el riesgo máximo y la fecha de alta
+        $cliente2->riesgomax = '150';
+        $cliente2->fechaalta = '2020-01-15';
+        $this->assertTrue($cliente2->isDirty(), 'cliente-is-not-dirty-after-modify');
+        $this->assertTrue($cliente2->isDirty('riesgomax'), 'cliente-riesgomax-is-not-dirty');
+        $this->assertTrue($cliente2->isDirty('fechaalta'), 'cliente-fechaalta-is-not-dirty');
+        $dirty = array_keys($cliente2->getDirty());
+        sort($dirty);
+        $this->assertEquals(['fechaalta', 'riesgomax'], $dirty, 'cliente-getdirty-bad-fields');
+
+        // eliminamos
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

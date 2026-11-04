@@ -112,6 +112,44 @@ final class ContactoTest extends TestCase
         $this->assertTrue($supplier->delete(), 'supplier-cant-delete');
     }
 
+    public function testLongAddressWithoutDescription(): void
+    {
+        // creamos un cliente
+        $customer = $this->getRandomCustomer('ContactoTest');
+        $this->assertTrue($customer->save(), 'customer-cant-save');
+
+        // creamos una dirección de más de 100 caracteres sin descripción
+        $contact = new Contacto();
+        $contact->codcliente = $customer->codcliente;
+        $contact->direccion = str_repeat('Calle muy larga ', 12);
+        $this->assertGreaterThan(100, mb_strlen($contact->direccion));
+        $this->assertTrue($contact->save(), 'contact-long-address-cant-save');
+
+        // la descripción se recorta y la dirección se conserva
+        $this->assertLessThanOrEqual(100, mb_strlen($contact->descripcion));
+        $this->assertNotEmpty($contact->descripcion);
+        $this->assertEquals(trim(str_repeat('Calle muy larga ', 12)), trim($contact->direccion));
+
+        // eliminamos
+        $this->assertTrue($contact->delete(), 'contact-cant-delete');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($customer->delete(), 'customer-cant-delete');
+    }
+
+    public function testLongNameWithoutDescription(): void
+    {
+        // nombre (100) + apellidos (150) superan los 100 caracteres de la descripción
+        $contact = new Contacto();
+        $contact->nombre = str_repeat('Nombre ', 14);
+        $contact->apellidos = str_repeat('Apellido ', 16);
+        $this->assertTrue($contact->save(), 'contact-long-name-cant-save');
+        $this->assertLessThanOrEqual(100, mb_strlen($contact->descripcion));
+        $this->assertNotEmpty($contact->descripcion);
+
+        // eliminamos
+        $this->assertTrue($contact->delete(), 'contact-cant-delete');
+    }
+
     public function testDeleteUnlinksCustomersAndSuppliers(): void
     {
         // creamos un contacto

@@ -91,4 +91,27 @@ final class MegaSearchTest extends TestCase
 
         $this->assertSame(CoreMegaSearch::DOCS_SEARCH_URL, $controller->docsSearchUrl());
     }
+
+    public function testDocsSearchUrlDisabled(): void
+    {
+        $controller = new MegaSearch('MegaSearch', '/MegaSearch');
+
+        // un plugin puede desactivar la búsqueda en la documentación devolviendo false
+        MegaSearch::addExtension(new class {
+            public function docsSearchUrl(): Closure
+            {
+                return function () {
+                    return false;
+                };
+            }
+        });
+
+        try {
+            $this->assertSame('', $controller->docsSearchUrl());
+        } finally {
+            MegaSearch::removeExtension('docsSearchUrl');
+        }
+
+        $this->assertSame(CoreMegaSearch::DOCS_SEARCH_URL, $controller->docsSearchUrl());
+    }
 }

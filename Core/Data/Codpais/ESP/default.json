@@ -7,8 +7,7 @@
     "codserierec": "R",
     "tipoidfiscal": "NIF",
     "updatesupplierprices": true,
-    "validate_iban": true,
-    "regimeniva": "General"
+    "validate_iban": true
   },
   "email": {
     "enc": "ssl",
