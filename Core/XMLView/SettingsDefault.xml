@@ -76,9 +76,6 @@
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="vat-regime" numcolumns="3" order="200">
-                <widget type="select" fieldname="regimeniva"/>
-            </column>
             <column name="validate-iban" order="300">
                 <widget type="checkbox" fieldname="validate_iban"/>
             </column>
