@@ -54,6 +54,9 @@ class Updater extends Controller
     /** @var bool */
     public $justRegistered = false;
 
+    /** @var Plugin[] */
+    public $obsoletePlugins = [];
+
     /** @var Telemetry */
     public $telemetryManager;
 
@@ -87,6 +90,18 @@ class Updater extends Controller
     public static function getCoreVersion(): float
     {
         return Kernel::version();
+    }
+
+    /**
+     * Devuelve los plugins instalados que están marcados como obsoletos en la forja.
+     *
+     * @return Plugin[]
+     */
+    public static function getObsoletePlugins(): array
+    {
+        return array_values(array_filter(Plugins::list(), static function (Plugin $plugin): bool {
+            return $plugin->isObsolete();
+        }));
     }
 
     public static function getUpdateItems(): array
@@ -160,6 +175,7 @@ class Updater extends Controller
             }
         }
 
+        $this->obsoletePlugins = self::getObsoletePlugins();
         $this->execAction($action);
     }
 
@@ -246,6 +262,25 @@ class Updater extends Controller
     }
 
     /**
+     * Desactiva un plugin obsoleto. Solo admite plugins marcados como obsoletos en la forja.
+     */
+    private function disableObsoletePluginAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $pluginName = $this->request->input('plugin', '');
+        foreach ($this->obsoletePlugins as $plugin) {
+            if ($plugin->name === $pluginName && $plugin->enabled) {
+                Plugins::disable($plugin->name);
+                Cache::clear();
+                return;
+            }
+        }
+    }
+
+    /**
      * Download selected update.
      */
     private function downloadAction(): void
@@ -309,6 +344,10 @@ class Updater extends Controller
             case 'disable-beta':
                 $this->disableBetaUpdatesAction();
                 return;
+
+            case 'disable-obsolete':
+                $this->disableObsoletePluginAction();
+                break;
 
             case 'download':
                 $this->downloadAction();
@@ -391,6 +430,11 @@ class Updater extends Controller
 
     private static function getUpdateItemsPlugin(Plugin $plugin): array
     {
+        // los plugins obsoletos no se actualizan
+        if ($plugin->isObsolete()) {
+            return [];
+        }
+
         $id = $plugin->forja('idplugin', 0);
         $fileName = 'update-' . $id . '.zip';
         $coreVersion = self::getCoreVersion();
@@ -536,8 +580,8 @@ class Updater extends Controller
                 continue;
             }
 
-            // ¿Hay actualización para el nuevo core?
-            if ($plugin->forja('maxcore', 0) >= $newCore) {
+            // ¿Hay actualización para el nuevo core? Los obsoletos no se actualizan
+            if (false === $plugin->isObsolete() && $plugin->forja('maxcore', 0) >= $newCore) {
                 $this->coreUpdateWarnings[$plugin->name] = Tools::trans('plugin-need-update', [
                     '%plugin%' => $plugin->name
                 ]);

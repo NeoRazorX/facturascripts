@@ -208,6 +208,11 @@ final class Plugin
 
     public function hasUpdate(): bool
     {
+        // los plugins obsoletos no se actualizan
+        if ($this->isObsolete()) {
+            return false;
+        }
+
         $coreVersion = Kernel::version();
 
         // obtenemos los builds disponibles para este plugin
@@ -292,12 +297,29 @@ final class Plugin
     }
 
     /**
+     * Indica si el plugin está marcado como obsoleto en la lista de builds de la forja.
+     */
+    public function isObsolete(): bool
+    {
+        return true === ($this->forjaProject()['obsolete'] ?? false);
+    }
+
+    /**
      * El nombre del plugin se usa para construir rutas y namespaces,
      * así que solo admitimos letras, números, guiones y guiones bajos.
      */
     public static function isValidName(string $name): bool
     {
         return 1 === preg_match('/^[A-Za-z0-9_-]+$/', $name);
+    }
+
+    /**
+     * Devuelve el plugin que reemplaza a este, según la lista de builds de la forja, o un texto vacío.
+     */
+    public function replacement(): string
+    {
+        $replacement = $this->forjaProject()['replacement'] ?? '';
+        return is_string($replacement) ? trim($replacement) : '';
     }
 
     private function checkCompatibility(): void
@@ -334,6 +356,21 @@ final class Plugin
         }
 
         $this->compatible = true;
+    }
+
+    /**
+     * Devuelve los datos del plugin en la lista de builds de la forja, o un array vacío.
+     * No usamos forja() porque la lista pública de plugins no incluye obsolete ni replacement.
+     */
+    private function forjaProject(): array
+    {
+        foreach (Forja::builds() as $project) {
+            if ($project['name'] === $this->name) {
+                return $project;
+            }
+        }
+
+        return [];
     }
 
     private function hidden(): bool
