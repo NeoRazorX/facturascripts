@@ -305,8 +305,14 @@ class ReciboCliente extends ModelClass
                 Tools::log()->warning('non-editable-columns', ['%columns%' => 'idfactura']);
                 return false;
 
+            case 'gastos':
             case 'importe':
-                return !$this->getOriginal('pagado');
+                // el pago ya se generó con estos valores: hay que desmarcar el recibo antes de cambiarlos
+                if ($this->getOriginal('pagado')) {
+                    Tools::log()->warning('non-editable-columns', ['%columns%' => $field]);
+                    return false;
+                }
+                return true;
 
             case 'pagado':
                 $this->newPayment();

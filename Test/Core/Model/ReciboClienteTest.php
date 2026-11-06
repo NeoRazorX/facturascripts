@@ -613,6 +613,51 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
+    public function testPaidReceiptFeesCanNotChange(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // marcamos el recibo como pagado con gastos bancarios
+        $receipt = $invoice->getReceipts()[0];
+        $receipt->gastos = 10.0;
+        $receipt->pagado = true;
+        $this->assertTrue($receipt->save(), 'can-not-set-paid-receipt');
+
+        // no se pueden cambiar los gastos de un recibo pagado
+        $receipt->gastos = 0.0;
+        $this->assertFalse($receipt->save(), 'paid-receipt-fees-changed');
+
+        // tampoco cambiándolos a la vez que se desmarca el recibo
+        $receipt->pagado = false;
+        $this->assertFalse($receipt->save(), 'paid-receipt-fees-changed-on-unpay');
+
+        // el recibo sigue pagado, con los gastos originales y un único pago
+        $fresh = new ReciboCliente();
+        $this->assertTrue($fresh->load($receipt->idrecibo), 'can-not-load-receipt');
+        $this->assertTrue($fresh->pagado, 'receipt-should-be-paid');
+        $this->assertEqualsWithDelta(10.0, $fresh->gastos, 0.001, 'bad-receipt-fees');
+        $this->assertCount(1, $fresh->getPayments(), 'should-have-one-payment');
+
+        // desmarcado, ya se pueden cambiar los gastos
+        $fresh->pagado = false;
+        $this->assertTrue($fresh->save(), 'can-not-set-unpaid-receipt');
+        $fresh->gastos = 5.0;
+        $this->assertTrue($fresh->save(), 'can-not-change-unpaid-receipt-fees');
+        $this->assertCount(2, $fresh->getPayments(), 'should-have-two-payments');
+
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
