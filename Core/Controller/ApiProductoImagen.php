@@ -100,18 +100,18 @@ class ApiProductoImagen extends ApiController
             return;
         }
 
-        // recorremos los archivos recibidos
-        foreach ($this->request->files->all() as $file) {
-            if (!$file->isValid()) {
-                continue;
-            }
+        // el registro guarda un único archivo: usamos la primera imagen válida.
+        // Un campo con varios archivos (files[]) llega como array
+        foreach ($this->request->files->all() as $item) {
+            foreach (is_array($item) ? $item : [$item] as $file) {
+                if (!$file->isValid() || !$file->isValidImage()) {
+                    continue;
+                }
 
-            if (!$file->isValidImage()) {
-                continue;
+                $file->move('MyFiles', $file->getClientOriginalName());
+                $this->model->path = $file->getClientOriginalName();
+                break 2;
             }
-
-            $file->move('MyFiles', $file->getClientOriginalName());
-            $this->model->path = $file->getClientOriginalName();
         }
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
