@@ -179,7 +179,7 @@ class PaymentToAccounting
             return false;
         }
 
-        $amount = $this->payment->importe - abs($this->payment->gastos);
+        $amount = $this->payment->importe - $this->payment->gastos;
 
         $newLine = $entry->getNewLine($account);
         $newLine->debe = max($amount, 0);
@@ -189,7 +189,8 @@ class PaymentToAccounting
 
     /**
      * Añade la línea de gastos bancarios del pago, cargando la subcuenta de gastos
-     * configurada en la forma de pago. Si el pago no tiene gastos, no hace nada.
+     * configurada en la forma de pago (o abonándola si los gastos son negativos, como en
+     * el pago que anula un cobro). Si el pago no tiene gastos, no hace nada.
      */
     protected function customerPaymentExpenseLine(Asiento &$entry): bool
     {
@@ -209,7 +210,8 @@ class PaymentToAccounting
 
         $expLine = $entry->getNewLine($account);
         $expLine->concepto = Tools::trans('receipt-expense-account', ['%document%' => $entry->documento]);
-        $expLine->debe = abs($this->payment->gastos);
+        $expLine->debe = max($this->payment->gastos, 0);
+        $expLine->haber = $this->payment->gastos < 0 ? abs($this->payment->gastos) : 0;
         return $expLine->save();
     }
 

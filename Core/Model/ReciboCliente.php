@@ -279,7 +279,8 @@ class ReciboCliente extends ModelClass
         $pago = new DinPagoCliente();
         $pago->codpago = $this->codpago;
         $pago->fecha = $this->fechapago ?? $pago->fecha;
-        $pago->gastos = $this->gastos;
+        // al desmarcar el recibo, el pago de anulación revierte también los gastos bancarios
+        $pago->gastos = $this->pagado ? abs($this->gastos) : 0 - abs($this->gastos);
         $pago->idrecibo = $this->idrecibo;
         $pago->importe = $this->pagado ? $this->importe : 0 - $this->importe;
         $pago->nick = $this->nick;
