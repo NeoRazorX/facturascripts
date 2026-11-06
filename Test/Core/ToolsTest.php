@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Test\Core;
 
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -226,6 +228,60 @@ final class ToolsTest extends TestCase
 
         // comprobamos que vuelve a ser el valor original
         $this->assertEquals($value, Tools::settings('default', 'codpais'));
+    }
+
+    public function testSettingsEmptyCacheIsIgnored(): void
+    {
+        // nos aseguramos de que la fila default existe en la base de datos
+        Tools::settingsClear();
+        Tools::settingsSet('default', 'codpais', Tools::settings('default', 'codpais', 'ESP'));
+        $this->assertTrue(Tools::settingsSave());
+
+        Tools::settingsClear();
+        $value = Tools::settings('default', 'codpais');
+        $this->assertNotEmpty($value);
+
+        // simulamos la caché que deja una lectura fallida de la tabla settings
+        Tools::settingsClear();
+        Cache::set('tools-settings', []);
+
+        // la configuración se vuelve a leer de la base de datos en lugar de usar la caché vacía
+        $this->assertEquals($value, Tools::settings('default', 'codpais'));
+    }
+
+    public function testSettingsSaveAfterFailedRead(): void
+    {
+        // nos aseguramos de que la fila default existe y la guardamos tal como está
+        Tools::settingsClear();
+        Tools::settingsSet('default', 'codpais', Tools::settings('default', 'codpais', 'ESP'));
+        $this->assertTrue(Tools::settingsSave());
+
+        $settings = new Settings();
+        $this->assertTrue($settings->load('default'));
+        $original = $settings->getProperties();
+
+        // la lectura de la configuración falla porque no hay conexión con la base de datos
+        $db = new DataBase();
+        Tools::settingsClear();
+        $db->close();
+        Tools::settings('default', 'codpais', 'ESP');
+        $this->assertTrue($db->connect());
+
+        // la lectura fallida no se ha cacheado
+        $this->assertNull(Cache::get('tools-settings'));
+
+        // y no se guarda la configuración incompleta que hay en memoria
+        Tools::settingsSet('test-failed-read', 'key', 'value');
+        $this->assertFalse(Tools::settingsSave());
+
+        // la fila default sigue intacta y el grupo nuevo no se ha creado
+        $this->assertTrue($settings->load('default'));
+        $this->assertEquals($original, $settings->getProperties());
+        $this->assertFalse($settings->load('test-failed-read'));
+
+        // al limpiar, se vuelve a leer de la base de datos
+        Tools::settingsClear();
+        $this->assertEquals($original['codpais'], Tools::settings('default', 'codpais'));
     }
 
     public function testKebab(): void

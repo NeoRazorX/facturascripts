@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Model\Settings;
@@ -47,6 +48,9 @@ class Tools
 
     /** @var array */
     private static $settings;
+
+    /** @var bool true si la última carga de la configuración no pudo leer la tabla settings */
+    private static $settingsLoadFailed = false;
 
     /** @var Translator */
     private static $translator;
@@ -650,6 +654,7 @@ class Tools
     {
         Cache::delete('tools-settings');
         self::$settings = null;
+        self::$settingsLoadFailed = false;
     }
 
     /**
@@ -665,10 +670,18 @@ class Tools
     /**
      * Guarda la configuración actual en la base de datos.
      *
+     * No guarda nada si en esta petición no se pudo leer la configuración de la base de datos: lo que hay en memoria
+     * estaría incompleto y reescribiría los grupos existentes con solo las claves leídas después.
+     *
      * @return bool `true` si todos los grupos de configuración se guardan correctamente, `false` en caso contrario.
      */
     public static function settingsSave(): bool
     {
+        if (self::$settingsLoadFailed) {
+            self::log()->error('record-save-error');
+            return false;
+        }
+
         foreach (self::$settings as $key => $properties) {
             $model = new Settings();
             $model->name = $key;
@@ -845,19 +858,34 @@ class Tools
 
     private static function settingsLoad(): void
     {
+        self::$settingsLoadFailed = false;
+
         if ('' === Tools::config('db_name', '')) {
             self::$settings = [];
             return;
         }
 
-        self::$settings = Cache::remember('tools-settings', function () {
-            $settings = [];
+        $cached = Cache::get('tools-settings');
+        if (is_array($cached) && !empty($cached)) {
+            self::$settings = $cached;
+            return;
+        }
 
-            foreach (Settings::all([], [], 0, 0) as $item) {
-                $settings[$item->name] = $item->getProperties();
-            }
+        $settings = [];
+        foreach (Settings::all([], [], 0, 0) as $item) {
+            $settings[$item->name] = $item->getProperties();
+        }
 
-            return $settings;
-        });
+        // una lectura vacía es una instalación nueva o un fallo de la base de datos: no se cachea,
+        // para que un fallo puntual no deje la configuración vacía durante toda la vida de la caché
+        if (empty($settings)) {
+            $db = new DataBase();
+            self::$settingsLoadFailed = false === $db->connected() || Settings::count() > 0;
+            self::$settings = [];
+            return;
+        }
+
+        Cache::set('tools-settings', $settings);
+        self::$settings = $settings;
     }
 }
