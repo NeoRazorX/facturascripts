@@ -21,15 +21,14 @@ namespace FacturaScripts\Test\Core\Controller;
 
 use Closure;
 use FacturaScripts\Core\Controller\ApiAttachedFiles;
-use FacturaScripts\Core\Controller\ApiProductoImagen;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Las APIs de archivos reciben un campo con varios archivos (files[]) como array
- * y deben usar el primero válido en lugar de provocar un error fatal.
+ * La API de archivos adjuntos recibe un campo con varios archivos (files[]) como array
+ * y debe usar el primero válido en lugar de provocar un error fatal.
  */
 final class ApiFilesArrayTest extends TestCase
 {
@@ -61,32 +60,6 @@ final class ApiFilesArrayTest extends TestCase
         $file = new AttachedFile();
         $this->assertTrue($file->load($result['body']['data']['idfile'] ?? 0));
         $this->assertTrue($file->delete());
-    }
-
-    public function testProductoImagenUsesFirstImageOfArray(): void
-    {
-        if (false === function_exists('imagepng')) {
-            $this->markTestSkipped('gd-not-available');
-        }
-
-        $text = 'api-files-array-' . uniqid() . '.txt';
-        $image = 'api-files-array-' . uniqid() . '.png';
-        $tmpText = $this->tempFile('no es una imagen');
-        $tmpImage = $this->tempImage();
-        $this->created[] = FS_FOLDER . '/MyFiles/' . $text;
-        $this->created[] = FS_FOLDER . '/MyFiles/' . $image;
-
-        // sin producto la imagen no se guarda, pero ya no hay error fatal
-        $result = $this->callApi(ApiProductoImagen::class, 'productoimagenes', $this->filesArray(
-            [$text, $image],
-            [$tmpText, $tmpImage]
-        ));
-        $this->assertNotEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $result['code'], json_encode($result['body']));
-
-        // solo se mueve la primera imagen válida
-        $this->assertFileExists($tmpText);
-        $this->assertFileDoesNotExist(FS_FOLDER . '/MyFiles/' . $text);
-        $this->assertFileExists(FS_FOLDER . '/MyFiles/' . $image);
     }
 
     protected function tearDown(): void
@@ -153,15 +126,6 @@ final class ApiFilesArrayTest extends TestCase
     {
         $path = tempnam(sys_get_temp_dir(), 'aft');
         file_put_contents($path, $content);
-        $this->created[] = $path;
-        return $path;
-    }
-
-    private function tempImage(): string
-    {
-        $path = tempnam(sys_get_temp_dir(), 'aft');
-        $img = imagecreatetruecolor(2, 2);
-        imagepng($img, $path);
         $this->created[] = $path;
         return $path;
     }

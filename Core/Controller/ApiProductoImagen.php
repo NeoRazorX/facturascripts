@@ -23,7 +23,10 @@ use Exception;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\AttachedFile;
+use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\ProductoImagen;
 
 /**
@@ -100,24 +103,37 @@ class ApiProductoImagen extends ApiController
             return;
         }
 
-        // el registro guarda un único archivo: usamos la primera imagen válida.
-        // Un campo con varios archivos (files[]) llega como array
-        foreach ($this->request->files->all() as $item) {
-            foreach (is_array($item) ? $item : [$item] as $file) {
-                if (!$file->isValid() || !$file->isValidImage()) {
-                    continue;
-                }
-
-                $file->move('MyFiles', $file->getClientOriginalName());
-                $this->model->path = $file->getClientOriginalName();
-                break 2;
-            }
-        }
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
 
-        $this->saveResource();
+        // si se envía una imagen, la guardamos como archivo adjunto y la usamos en el registro
+        $attachedFile = null;
+        if (!empty($files)) {
+            $uploadFile = $this->getUploadedImage();
+            if (null === $uploadFile) {
+                $this->setError(Tools::lang()->trans('not-valid-image'));
+                return;
+            }
+
+            $attachedFile = $this->createAttachedFile($uploadFile);
+            if (null === $attachedFile) {
+                $this->setError($this->getSaveErrorMessage());
+                return;
+            }
+
+            $this->model->idfile = $attachedFile->idfile;
+        }
+
+        if (false === $this->saveResource()) {
+            // no dejamos el archivo subido sin imagen de producto
+            $attachedFile?->delete();
+            return;
+        }
+
+        if ($attachedFile) {
+            $this->createFileRelation($attachedFile);
+        }
     }
 
     public function doPUT(): void
@@ -158,6 +174,75 @@ class ApiProductoImagen extends ApiController
 
         // devolvemos todas las miniaturas existentes del archivo
         return $item->getThumbnails();
+    }
+
+    private function createAttachedFile(UploadedFile $uploadFile): ?AttachedFile
+    {
+        // movemos el archivo a MyFiles sin sobrescribir otro con el mismo nombre
+        $folder = Tools::folder('MyFiles');
+        Tools::folderCheckOrCreate($folder);
+        $name = $uploadFile->getClientOriginalName();
+        if (file_exists($folder . DIRECTORY_SEPARATOR . $name)) {
+            $name = mt_rand(1, 999999) . '_' . $name;
+        }
+
+        if (false === $uploadFile->move($folder, $name)) {
+            Tools::log()->error('file-move-error', ['%fileName%' => $uploadFile->getClientOriginalName()]);
+            return null;
+        }
+
+        // al guardarlo, el archivo se mueve a MyFiles/año/mes
+        $attachedFile = new AttachedFile();
+        $attachedFile->path = $name;
+        if ($attachedFile->save()) {
+            return $attachedFile;
+        }
+
+        if (file_exists($folder . DIRECTORY_SEPARATOR . $name)) {
+            unlink($folder . DIRECTORY_SEPARATOR . $name);
+        }
+
+        return null;
+    }
+
+    private function createFileRelation(AttachedFile $attachedFile): void
+    {
+        // la relación hace que la imagen aparezca también en los adjuntos del producto
+        $relation = new AttachedFileRelation();
+        $relation->idfile = $attachedFile->idfile;
+        $relation->model = 'Producto';
+        $relation->modelid = $this->model->idproducto;
+        $relation->modelcode = (string)$this->model->idproducto;
+        $relation->nick = empty($this->apiKey->nick) ? null : $this->apiKey->nick;
+        if (false === $relation->save()) {
+            Tools::log('api')->warning('api: can not link file ' . $attachedFile->idfile . ' to product ' . $this->model->idproducto);
+        }
+    }
+
+    private function getSaveErrorMessage(): string
+    {
+        $message = Tools::lang()->trans('record-save-error');
+        foreach (Tools::log()->read('', ['critical', 'error', 'info', 'notice', 'warning']) as $log) {
+            $message .= ' - ' . $log['message'];
+        }
+
+        return $message;
+    }
+
+    /**
+     * Devuelve la primera imagen válida recibida. Un campo con varios archivos (files[]) llega como array.
+     */
+    private function getUploadedImage(): ?UploadedFile
+    {
+        foreach ($this->request->files->all() as $item) {
+            foreach (is_array($item) ? $item : [$item] as $file) {
+                if ($file->isValid() && $file->isValidImage()) {
+                    return $file;
+                }
+            }
+        }
+
+        return null;
     }
 
     private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
@@ -283,20 +368,20 @@ class ApiProductoImagen extends ApiController
             switch ($this->request->method()) {
                 case 'DELETE':
                     $this->doDELETE();
-                    break;
+                    return;
 
                 case 'GET':
                     $this->doGET();
-                    break;
+                    return;
 
                 case 'PATCH':
                 case 'PUT':
                     $this->doPUT();
-                    break;
+                    return;
 
                 case 'POST':
                     $this->doPOST();
-                    break;
+                    return;
             }
         } catch (Exception $exc) {
             $this->setError('API-ERROR: ' . $exc->getMessage(), null, Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -310,19 +395,15 @@ class ApiProductoImagen extends ApiController
             ]);
     }
 
-    private function saveResource(): void
+    private function saveResource(): bool
     {
         if ($this->model->save()) {
             $this->setOk(Tools::lang()->trans('record-updated-correctly'), $this->model->toArray());
-            return;
+            return true;
         }
 
-        $message = Tools::lang()->trans('record-save-error');
-        foreach (Tools::log()->read('', ['critical', 'error', 'info', 'notice', 'warning']) as $log) {
-            $message .= ' - ' . $log['message'];
-        }
-
-        $this->setError($message, $this->model->toArray());
+        $this->setError($this->getSaveErrorMessage(), $this->model->toArray());
+        return false;
     }
 
     protected function setError(string $message, ?array $data = null, int $status = Response::HTTP_BAD_REQUEST): void
