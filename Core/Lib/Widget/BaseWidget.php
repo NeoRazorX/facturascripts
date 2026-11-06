@@ -140,7 +140,7 @@ class BaseWidget extends VisualItem
     public function inputHidden($model)
     {
         $this->setValue($model);
-        return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>';
+        return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value) . '"/>';
     }
 
     /**
@@ -223,7 +223,7 @@ class BaseWidget extends VisualItem
     protected function inputHtml($type = 'text', $extraClass = '')
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
-        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
+        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value)
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
 

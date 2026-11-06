@@ -63,8 +63,8 @@ class WidgetFile extends BaseWidget
             $class = $this->combineClasses($this->css('form-control'), $this->class);
             return '<div class="mb-3">'
                 . '<label class="mb-0">' . $this->onclickHtml(Tools::trans($title), $titleurl) . '</label>'
-                . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-                . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>'
+                . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value) . '"/>'
+                . '<input type="text" value="' . $this->escapeHtml($this->show()) . '" class="' . $class . '" readonly=""/>'
                 . '</div>';
         }
 
@@ -124,11 +124,11 @@ class WidgetFile extends BaseWidget
         $class = empty($extraClass) ? $this->css('form-control') : $this->css('form-control') . ' ' . $extraClass;
 
         if ($this->multiple) {
-            return '<input type="' . $type . '" name="' . $this->fieldname . '[]" value="' . $this->value
+            return '<input type="' . $type . '" name="' . $this->fieldname . '[]" value="' . $this->escapeHtml($this->value)
                 . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . ' multiple/>';
         }
 
-        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
+        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value)
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
 

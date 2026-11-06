@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -96,6 +96,6 @@ class WidgetTextarea extends WidgetText
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
         return '<textarea rows="' . $this->rows . '" name="' . $this->fieldname . '" class="' . $class . '"'
-            . $this->inputHtmlExtraParams() . '>' . $this->value . '</textarea>';
+            . $this->inputHtmlExtraParams() . '>' . $this->escapeHtml($this->value) . '</textarea>';
     }
 }

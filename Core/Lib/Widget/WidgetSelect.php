@@ -340,7 +340,7 @@ class WidgetSelect extends BaseWidget
         $html = '';
         $name = '';
         if ($this->readonly()) {
-            $html .= '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '">';
+            $html .= '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value) . '">';
         } else {
             $name = $this->multiple
                 ? ' name="' . $this->fieldname . '[]"'
@@ -353,7 +353,7 @@ class WidgetSelect extends BaseWidget
             . ' class="' . $class . '"'
             . $this->inputHtmlExtraParams()
             . ' parent="' . $this->parent . '"'
-            . ' value="' . $this->value . '"'
+            . ' value="' . $this->escapeHtml($this->value) . '"'
             . ' data-field="' . $this->fieldname . '"'
             . ' data-source="' . $this->source . '"'
             . ' data-fieldcode="' . $this->fieldcode . '"'
@@ -432,8 +432,8 @@ class WidgetSelect extends BaseWidget
         // value not found?
         // don't use strict comparison (===)
         if (!$this->multiple && !$found && $this->value != '' && !empty($this->source)) {
-            $html .= '<option value="' . $this->value . '" selected>'
-                . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
+            $html .= '<option value="' . $this->escapeHtml($this->value) . '" selected>'
+                . $this->escapeHtml(static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle))
                 . '</option>';
         }
 
@@ -464,8 +464,8 @@ class WidgetSelect extends BaseWidget
 
         // value not found?
         if (!$this->multiple && !$found && $this->value != '' && !empty($this->source)) {
-            return '<option value="' . $this->value . '" selected>'
-                . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
+            return '<option value="' . $this->escapeHtml($this->value) . '" selected>'
+                . $this->escapeHtml(static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle))
                 . '</option>';
         }
 
