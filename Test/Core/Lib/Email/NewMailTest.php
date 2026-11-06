@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,10 +26,24 @@ use FacturaScripts\Core\Lib\Email\NewMail;
 use FacturaScripts\Core\Lib\Email\SpaceBlock;
 use FacturaScripts\Core\Lib\Email\TextBlock;
 use FacturaScripts\Core\Lib\Email\TitleBlock;
+use FacturaScripts\Core\Model\EmailSent;
+use FacturaScripts\Core\Tools;
+use PHPMailer\PHPMailer\PHPMailer;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+use ReflectionProperty;
 
 final class NewMailTest extends TestCase
 {
+    /** PNG de 1x1 píxeles, su contenido decodificado incluye bytes nulos */
+    const PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+
+    /** @var string */
+    private $address;
+
+    /** @var string */
+    private $fromEmail;
+
     public function testCreate(): void
     {
         $mailer = NewMail::create()
@@ -127,5 +141,71 @@ final class NewMailTest extends TestCase
         $blocks = NewMail::create()->getMainBlocks();
 
         $this->assertEmpty($blocks, 'Hay bloques cuando no debería haber ninguno');
+    }
+
+    public function testSaveMailSentIgnoresEmbeddedImages(): void
+    {
+        $mail = $this->getMailToSave();
+
+        // PHPMailer convierte la imagen en base64 en un adjunto incrustado con el contenido en memoria
+        $phpMailer = $this->getPhpMailer($mail);
+        $phpMailer->msgHTML('<p>Firma</p><img src="data:image/png;base64,' . self::PNG_BASE64 . '">');
+        $this->assertCount(1, $phpMailer->getAttachments());
+
+        (new ReflectionMethod($mail, 'saveMailSent'))->invoke($mail);
+
+        $emails = EmailSent::allWhereEq('addressee', $this->address);
+        $this->assertCount(1, $emails);
+        $this->assertFalse((bool)$emails[0]->attachment, 'La imagen incrustada no debe contar como adjunto');
+        $this->assertDirectoryDoesNotExist(FS_FOLDER . '/' . NewMail::getAttachmentPath($this->fromEmail, 'Sent'));
+    }
+
+    public function testSaveMailSentStoresStringAttachments(): void
+    {
+        $mail = $this->getMailToSave();
+        $this->getPhpMailer($mail)->addStringAttachment('contenido del informe', 'informe.txt');
+
+        (new ReflectionMethod($mail, 'saveMailSent'))->invoke($mail);
+
+        $emails = EmailSent::allWhereEq('addressee', $this->address);
+        $this->assertCount(1, $emails);
+        $this->assertTrue((bool)$emails[0]->attachment);
+
+        $files = glob(FS_FOLDER . '/' . NewMail::getAttachmentPath($this->fromEmail, 'Sent') . '*/informe.txt');
+        $this->assertCount(1, $files);
+        $this->assertSame('contenido del informe', file_get_contents($files[0]));
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->address) {
+            foreach (EmailSent::allWhereEq('addressee', $this->address) as $email) {
+                $email->delete();
+            }
+            $this->address = null;
+        }
+
+        if ($this->fromEmail) {
+            Tools::folderDelete(Tools::folder('MyFiles', 'Email', $this->fromEmail));
+            $this->fromEmail = null;
+        }
+    }
+
+    private function getMailToSave(): NewMail
+    {
+        $this->address = 'test-to-' . Tools::randomString(10) . '@example.com';
+        $this->fromEmail = 'test-from-' . Tools::randomString(10) . '@example.com';
+
+        $mail = NewMail::create()
+            ->to($this->address)
+            ->subject('test subject')
+            ->body('test body');
+        $mail->fromEmail = $this->fromEmail;
+        return $mail;
+    }
+
+    private function getPhpMailer(NewMail $mail): PHPMailer
+    {
+        return (new ReflectionProperty($mail, 'mail'))->getValue($mail);
     }
 }
