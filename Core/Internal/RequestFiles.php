@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,7 +33,11 @@ final class RequestFiles
             if (false === isset($value['size'])) {
                 continue;
             } elseif (is_array($value['size'])) {
-                $files[$key] = $this->convertArrayFiles($value);
+                // descartamos el campo si no se ha seleccionado ningún archivo
+                $arrayFiles = $this->convertArrayFiles($value);
+                if (!empty($arrayFiles)) {
+                    $files[$key] = array_values($arrayFiles);
+                }
             } elseif ($value['size'] > 0) {
                 $files[$key] = $value;
             }

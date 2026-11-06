@@ -77,30 +77,30 @@ class WidgetFile extends BaseWidget
      */
     public function processFormData(&$model, $request)
     {
-        // get file uploads
-        foreach ($request->files->all() as $key => $uploadFile) {
-            if ($key != $this->fieldname || is_null($uploadFile)) {
-                continue;
-            } elseif (false === $uploadFile->isValid()) {
-                Tools::log()->error($uploadFile->getErrorMessage());
-                continue;
-            }
-
-            // check if the file already exists
-            $destiny = FS_FOLDER . '/MyFiles/';
-            $destinyName = $uploadFile->getClientOriginalName();
-            if (file_exists($destiny . $destinyName)) {
-                $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
-            }
-
-            // move the file to the MyFiles folder
-            if ($uploadFile->move($destiny, $destinyName)) {
-                $model->{$this->fieldname} = $destinyName;
-                continue;
-            }
-
-            Tools::log()->error('file-move-error', ['%fileName%' => $uploadFile->getClientOriginalName()]);
+        // con multiple="true" se reciben varios archivos y get() devuelve null:
+        // el campo solo puede guardar un nombre, así que los procesa el plugin
+        $uploadFile = $request->files->get($this->fieldname);
+        if (null === $uploadFile) {
+            return;
+        } elseif (false === $uploadFile->isValid()) {
+            Tools::log()->error($uploadFile->getErrorMessage());
+            return;
         }
+
+        // check if the file already exists
+        $destiny = FS_FOLDER . '/MyFiles/';
+        $destinyName = $uploadFile->getClientOriginalName();
+        if (file_exists($destiny . $destinyName)) {
+            $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
+        }
+
+        // move the file to the MyFiles folder
+        if ($uploadFile->move($destiny, $destinyName)) {
+            $model->{$this->fieldname} = $destinyName;
+            return;
+        }
+
+        Tools::log()->error('file-move-error', ['%fileName%' => $uploadFile->getClientOriginalName()]);
     }
 
     /**
@@ -136,7 +136,7 @@ class WidgetFile extends BaseWidget
     {
         $html = parent::inputHtmlExtraParams();
         if (!empty($this->accept)) {
-            $html .= ' accept="' . $this->accept . '"';
+            $html .= ' accept="' . $this->escapeHtml($this->accept) . '"';
         }
 
         return $html;
