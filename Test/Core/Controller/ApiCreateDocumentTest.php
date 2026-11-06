@@ -23,6 +23,7 @@ use FacturaScripts\Core\Controller\ApiCreateDocument;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Model\AlbaranCliente;
 use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
@@ -375,6 +376,85 @@ final class ApiCreateDocumentTest extends TestCase
 
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
+    public function testExistingPurchaseInvoiceIsNotOverwritten(): void
+    {
+        $invoice = $this->getRandomSupplierInvoice();
+        $subject = $invoice->getSubject();
+
+        $result = $this->callCreate('crearFacturaProveedor', [
+            'codproveedor' => $invoice->codproveedor,
+            'idfactura' => $invoice->idfactura,
+            'codigo' => 'OVERWRITTEN',
+            'observaciones' => 'overwritten',
+            'lineas' => json_encode([
+                ['descripcion' => 'línea nueva', 'cantidad' => 1, 'pvpunitario' => 999],
+            ]),
+        ]);
+        $this->assertEquals(Response::HTTP_CONFLICT, $result['code'], 'overwrite-purchase-bad-code');
+        $this->assertDocumentUnchanged($invoice, 1);
+
+        // limpiamos
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-supplier');
+    }
+
+    public function testExistingSaleInvoiceIsNotOverwritten(): void
+    {
+        $invoice = $this->getRandomCustomerInvoice();
+        $subject = $invoice->getSubject();
+
+        // la clave primaria de una factura existente, por POST y por PUT
+        foreach (['POST', 'PUT'] as $method) {
+            $result = $this->callCreate('crearFacturaCliente', [
+                'codcliente' => $invoice->codcliente,
+                'idfactura' => $invoice->idfactura,
+                'codigo' => 'OVERWRITTEN',
+                'observaciones' => 'overwritten',
+                'editable' => 1,
+                'lineas' => json_encode([
+                    ['descripcion' => 'línea nueva', 'cantidad' => 1, 'pvpunitario' => 999],
+                ]),
+            ], $method);
+            $this->assertEquals(Response::HTTP_CONFLICT, $result['code'], 'overwrite-sale-bad-code-' . $method);
+            $this->assertDocumentUnchanged($invoice, 1);
+        }
+
+        // sin clave primaria se sigue creando una factura nueva
+        $result = $this->callCreate('crearFacturaCliente', [
+            'codcliente' => $invoice->codcliente,
+            'lineas' => json_encode([
+                ['descripcion' => 'línea nueva', 'cantidad' => 1, 'pvpunitario' => 999],
+            ]),
+        ]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'create-sale-bad-code');
+        $newInvoice = new FacturaCliente();
+        $this->assertTrue($newInvoice->load($result['body']['doc']['idfactura'] ?? 0), 'can-not-load-new-invoice');
+        $this->assertNotEquals($invoice->idfactura, $newInvoice->idfactura, 'new-invoice-same-id');
+
+        // limpiamos
+        $this->assertTrue($newInvoice->delete(), 'can-not-delete-new-invoice');
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
+    /**
+     * Comprueba que el documento guardado conserva la cabecera y las líneas que tenía.
+     *
+     * @param FacturaCliente|FacturaProveedor $invoice
+     * @param int $lineCount
+     */
+    private function assertDocumentUnchanged($invoice, int $lineCount): void
+    {
+        $stored = new $invoice();
+        $this->assertTrue($stored->load($invoice->id()), 'can-not-reload-invoice');
+        $this->assertEquals($invoice->codigo, $stored->codigo, 'codigo-overwritten');
+        $this->assertEquals($invoice->observaciones, $stored->observaciones, 'observaciones-overwritten');
+        $this->assertEquals($invoice->total, $stored->total, 'total-overwritten');
+        $this->assertCount($lineCount, $stored->getLines(), 'lines-overwritten');
     }
 
     /**

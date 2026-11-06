@@ -42,6 +42,35 @@ class ApiCreateDocument extends ApiController
     /** @var string */
     protected $sales_model;
 
+    /**
+     * Este recurso solo crea documentos: si la petición trae la clave primaria de un
+     * documento existente, save() lo actualizaría saltándose sus bloqueos.
+     *
+     * @param BusinessDocument $doc
+     *
+     * @return bool
+     */
+    protected function checkNewDocument($doc): bool
+    {
+        $code = $this->request->input($doc->primaryColumn());
+        if (empty($code)) {
+            return true;
+        }
+
+        $existing = new $doc();
+        if (false === $existing->load($code)) {
+            return true;
+        }
+
+        $this->response
+            ->setHttpCode(Response::HTTP_CONFLICT)
+            ->json([
+                'status' => 'error',
+                'message' => Tools::trans('duplicate-record'),
+            ]);
+        return false;
+    }
+
     protected function createPurchase(): void
     {
         // cargamos el proveedor
@@ -69,6 +98,9 @@ class ApiCreateDocument extends ApiController
         // creamos el documento
         $class = '\\FacturaScripts\\Dinamic\\Model\\' . $this->purchases_model;
         $doc = new $class();
+        if (false === $this->checkNewDocument($doc)) {
+            return;
+        }
 
         // asignamos el sujeto
         if (false === $doc->setSubject($proveedor)) {
@@ -186,6 +218,9 @@ class ApiCreateDocument extends ApiController
         // creamos el documento
         $class = '\\FacturaScripts\\Dinamic\\Model\\' . $this->sales_model;
         $doc = new $class();
+        if (false === $this->checkNewDocument($doc)) {
+            return;
+        }
 
         // asignamos el sujeto
         if (false === $doc->setSubject($cliente)) {
