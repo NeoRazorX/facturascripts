@@ -85,10 +85,11 @@ class Myfiles implements ControllerInterface
     {
         $parts = explode('.', $filePath);
         $safe = [
-            '7z', 'accdb', 'ai', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'dxf', 'dwg', 'eot', 'gif', 'gz', 'html',
-            'ico', 'ics', 'jfif', 'jpeg', 'jpg', 'js', 'json', 'lbx', 'map', 'md', 'mdb', 'mkv', 'mov', 'mp3', 'mp4', 'ndg',
-            'ods', 'odt', 'ogg', 'pdf', 'png', 'pptx', 'rar', 'sql', 'step', 'svg', 'ttf', 'txt', 'webm', 'webp',
-            'woff', 'woff2', 'xls', 'xlsm', 'xlsx', 'xml', 'xsig', 'zip'
+            '7z', 'accdb', 'ai', 'avi', 'bmp', 'cdr', 'css', 'csv', 'doc', 'docx', 'dwg', 'dxf', 'eml', 'eot', 'gif',
+            'gz', 'heic', 'heif', 'html', 'ico', 'ics', 'jfif', 'jpeg', 'jpg', 'js', 'json', 'lbx', 'm4a', 'map', 'md',
+            'mdb', 'mkv', 'mov', 'mp3', 'mp4', 'msg', 'ndg', 'odp', 'ods', 'odt', 'ogg', 'pdf', 'png', 'pps', 'ppsx',
+            'ppt', 'pptx', 'rar', 'rtf', 'sql', 'step', 'svg', 'tar', 'tif', 'tiff', 'ttf', 'txt', 'wav', 'webm',
+            'webp', 'woff', 'woff2', 'xls', 'xlsm', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         $extension = strtolower(end($parts));
         return empty($parts) || count($parts) === 1 || in_array($extension, $safe, true);
@@ -108,7 +109,7 @@ class Myfiles implements ControllerInterface
             ob_end_clean();
         }
 
-        // forzamos la descarga de archivos svg, xml y html para evitar ataques XSS, y de csv para evitar que se muestren como texto
+        // forzamos la descarga de archivos svg, xml, html y eml para evitar ataques XSS, y de csv para evitar que se muestren como texto
         if ($this->shouldForceDownload($this->filePath)) {
             header('Content-Disposition: attachment; filename="' . basename($this->filePath) . '"');
         }
@@ -141,7 +142,7 @@ class Myfiles implements ControllerInterface
         $info = pathinfo($filePath);
         if (isset($info['extension'])) {
             $extension = strtolower($info['extension']);
-            $dangerousExtensions = ['svg', 'xml', 'xsig', 'html', 'htm', 'xhtml'];
+            $dangerousExtensions = ['eml', 'svg', 'xml', 'xsig', 'html', 'htm', 'xhtml'];
             if (in_array($extension, $dangerousExtensions, true)) {
                 return true;
             }
@@ -154,7 +155,9 @@ class Myfiles implements ControllerInterface
 
         // verificar MIME type detectado (por si el archivo está renombrado)
         $mime = $this->getMime($filePath);
-        $dangerousMimes = ['text/html', 'text/xml', 'application/xml', 'image/svg+xml', 'application/xhtml+xml'];
+        $dangerousMimes = [
+            'text/html', 'text/xml', 'application/xml', 'image/svg+xml', 'application/xhtml+xml', 'message/rfc822'
+        ];
         foreach ($dangerousMimes as $dangerousMime) {
             if (strpos($mime, $dangerousMime) !== false) {
                 return true;
