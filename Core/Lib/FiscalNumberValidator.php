@@ -30,6 +30,62 @@ use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
 class FiscalNumberValidator
 {
     /**
+     * Estructura del número de IVA intracomunitario (NIF-IVA) de cada Estado miembro, sin el prefijo del
+     * país: tabla de la Comisión Europea (ayuda de VIES) que también publica la AEAT. Grecia usa el prefijo
+     * EL e Irlanda del Norte, XI. Solo mayúsculas.
+     */
+    const EU_VAT_FORMATS = [
+        'AT' => '[A-Z0-9]{9}',
+        'BE' => '[0-9]{10}',
+        'BG' => '[0-9]{9,10}',
+        'CY' => '[A-Z0-9]{9}',
+        'CZ' => '[0-9]{8,10}',
+        'DE' => '[0-9]{9}',
+        'DK' => '[0-9]{8}',
+        'EE' => '[0-9]{9}',
+        'EL' => '[0-9]{9}',
+        'ES' => '[A-Z0-9][0-9]{7}[A-Z0-9]',
+        'FI' => '[0-9]{8}',
+        'FR' => '[A-Z0-9]{11}',
+        'HR' => '[0-9]{11}',
+        'HU' => '[0-9]{8}',
+        'IE' => '[A-Z0-9]{8,9}',
+        'IT' => '[0-9]{11}',
+        'LT' => '([0-9]{9}|[0-9]{12})',
+        'LU' => '[0-9]{8}',
+        'LV' => '[0-9]{11}',
+        'MT' => '[0-9]{8}',
+        'NL' => '[A-Z0-9]{12}',
+        'PL' => '[0-9]{10}',
+        'PT' => '[0-9]{9}',
+        'RO' => '[1-9][0-9]{1,9}',
+        'SE' => '[0-9]{12}',
+        'SI' => '[0-9]{8}',
+        'SK' => '[0-9]{10}',
+        'XI' => '([A-Z0-9]{5}|[A-Z0-9]{9}|[A-Z0-9]{12})',
+    ];
+
+    /**
+     * Comprueba que el número de IVA intracomunitario (con el prefijo del país, por ejemplo DE123456789)
+     * tiene la estructura de su Estado miembro. Solo comprueba la forma, no que exista: eso lo hace VIES.
+     * Se normaliza antes (mayúsculas, sin espacios ni guiones).
+     *
+     * @param ?string $number
+     *
+     * @return bool
+     */
+    public static function isValidEuVat(?string $number): bool
+    {
+        $number = static::normalize($number);
+        $prefix = substr($number, 0, 2);
+        if (false === isset(self::EU_VAT_FORMATS[$prefix])) {
+            return false;
+        }
+
+        return 1 === preg_match('/^' . self::EU_VAT_FORMATS[$prefix] . '$/', substr($number, 2));
+    }
+
+    /**
      * @param ?string $number
      *
      * @return bool
@@ -219,6 +275,11 @@ class FiscalNumberValidator
                 return ValidadorEcuador::validarRucNatural($upperNumber)
                     || ValidadorEcuador::validarRucPrivada($upperNumber)
                     || ValidadorEcuador::validarRucPublica($upperNumber);
+
+            case 'vat':
+                // solo se puede comprobar el de un Estado miembro con su prefijo; el resto se acepta
+                $vat = static::normalize($number);
+                return false === isset(self::EU_VAT_FORMATS[substr($vat, 0, 2)]) || static::isValidEuVat($vat);
         }
 
         return true;
