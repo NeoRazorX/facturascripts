@@ -287,6 +287,13 @@ class ExportManager
         }
     }
 
+    public function newPage(): void
+    {
+        if (!empty(static::$engine)) {
+            static::$engine->newPage('', true);
+        }
+    }
+
     /**
      * returns options to export.
      *
