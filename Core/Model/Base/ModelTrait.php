@@ -81,6 +81,12 @@ trait ModelTrait
         return get_class($this);
     }
 
+    protected function clearModelFields(): void
+    {
+        static::$fields = [];
+        Cache::delete('model-fields-' . $this->modelClassName());
+    }
+
     /**
      * Loads table fields if is necessary.
      *

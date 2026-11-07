@@ -104,6 +104,9 @@ abstract class ModelClass
     /** Comprueba si el modelo tiene registrada la extensión indicada. */
     abstract public function hasExtension($extension): bool;
 
+    /** Descarta la definición de los campos del modelo (memoria y caché). */
+    abstract protected function clearModelFields(): void;
+
     /** Carga la definición de los campos del modelo. */
     abstract protected function loadModelFields(): void;
 
@@ -153,6 +156,9 @@ abstract class ModelClass
                 Tools::log()->critical(DbUpdater::getLastError());
             }
             $this->clearCache();
+
+            // la estructura de la tabla puede haber cambiado, descartamos los campos cacheados
+            $this->clearModelFields();
         }
 
         $this->loadModelFields();
