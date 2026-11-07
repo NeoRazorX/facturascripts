@@ -77,6 +77,9 @@ abstract class ModelClass
     /** Devuelve los registros cuyo campo coincide con el valor indicado. */
     abstract public static function allWhereEq(string $field, $value, array $order = []): array;
 
+    /** Descarta la definición de los campos del modelo, en memoria y en caché, para que se vuelva a cargar. */
+    abstract protected function clearModelFields(): void;
+
     /** Cuenta los registros que cumplen las condiciones especificadas. */
     abstract public static function count(array $where = []): int;
 
@@ -153,6 +156,12 @@ abstract class ModelClass
                 Tools::log()->critical(DbUpdater::getLastError());
             }
             $this->clearCache();
+
+            // si se ha comprobado la tabla, su estructura puede haber cambiado: descartamos la lista de campos
+            // cargada antes. Si se ha omitido (transacción abierta), se descartará cuando se compruebe.
+            if (DbUpdater::isTableChecked(static::tableName())) {
+                $this->clearModelFields();
+            }
         }
 
         $this->loadModelFields();
