@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,14 +38,29 @@ final class WorkQueue
     /** @var array */
     private static $workers_list = [];
 
+    /**
+     * Añade un worker que solo se ejecutará desde el cron. Los eventos que coincidan
+     * con este worker se marcan para que únicamente los procese el cron.
+     *
+     * @param string $worker_name Nombre de la clase del worker.
+     * @param string $event Evento que dispara el worker, admite comodín *.
+     * @param int $position Posición de ejecución del worker.
+     */
+    public static function addCronWorker(string $worker_name, string $event = '*', int $position = 0): void
+    {
+        self::addWorkerToList($worker_name, $event, $position, true);
+    }
+
+    /**
+     * Añade un worker a la cola de trabajos.
+     *
+     * @param string $worker_name Nombre de la clase del worker.
+     * @param string $event Evento que dispara el worker, admite comodín *.
+     * @param int $position Posición de ejecución del worker.
+     */
     public static function addWorker(string $worker_name, string $event = '*', int $position = 0): void
     {
-        self::$workers_list[] = [
-            'class' => self::getWorkerClass($worker_name),
-            'event' => $event,
-            'name' => $worker_name,
-            'position' => $position,
-        ];
+        self::addWorkerToList($worker_name, $event, $position, false);
     }
 
     public static function clear(): void
@@ -80,7 +95,12 @@ final class WorkQueue
         self::$prevent_new_events = $event_names;
     }
 
-    public static function run(): bool
+    /**
+     * Procesa el siguiente evento pendiente de la cola.
+     *
+     * @param bool $cron Indica si se ejecuta desde el cron. Si es false, se ignoran los eventos marcados solo para el cron.
+     */
+    public static function run(bool $cron = false): bool
     {
         // creamos un bloqueo para evitar que se ejecute el mismo evento varias veces
         if (false === Kernel::lock('work-queue')) {
@@ -94,6 +114,12 @@ final class WorkQueue
             new DataBaseWhere('creation_date', Tools::dateTime(), '<='),
             new DataBaseWhere('done', false)
         ];
+
+        // fuera del cron, excluimos los eventos que solo se procesan en el cron
+        if (false === $cron) {
+            $where[] = new DataBaseWhere('cron', false);
+        }
+
         $orderBy = ['id' => 'ASC'];
         foreach (WorkEvent::all($where, $orderBy, 0, 1) as $event) {
             self::preventDuplicated($event);
@@ -126,34 +152,55 @@ final class WorkQueue
             return false;
         }
 
-        // recorremos los workers
-        foreach (self::$workers_list as $info) {
-            // si no es el evento que buscamos, pasamos al siguiente
-            if (!self::matchEvent($info['event'], $event)) {
-                continue;
-            }
+        // buscamos los workers que coinciden con el evento
+        $matches = array_filter(self::$workers_list, function ($info) use ($event) {
+            return self::matchEvent($info['event'], $event);
+        });
+        if (empty($matches)) {
+            return false;
+        }
 
-            // worker encontrado, guardamos el evento
-            $work_event = new WorkEvent();
-            $work_event->creation_date = Tools::dateTime('+ ' . $delay . ' seconds');
-            $work_event->name = $event;
-            $work_event->value = $value;
-            $work_event->setParams($params);
+        // si algún worker es de cron, el evento entero se procesa en el cron
+        $cron = in_array(true, array_column($matches, 'cron'), true);
 
-            if (self::isDuplicated($work_event)) {
-                // devolvemos true porque ya se había enviado el evento
-                return true;
-            }
+        // worker encontrado, guardamos el evento
+        $work_event = new WorkEvent();
+        $work_event->creation_date = Tools::dateTime('+ ' . $delay . ' seconds');
+        $work_event->cron = $cron;
+        $work_event->name = $event;
+        $work_event->value = $value;
+        $work_event->setParams($params);
 
-            if (false === $work_event->save()) {
-                return false;
-            }
-
-            self::preventDuplicated($work_event);
+        if (self::isDuplicated($work_event)) {
+            // devolvemos true porque ya se había enviado el evento
             return true;
         }
 
-        return false;
+        if (false === $work_event->save()) {
+            return false;
+        }
+
+        self::preventDuplicated($work_event);
+        return true;
+    }
+
+    /**
+     * Añade un worker a la lista de workers.
+     *
+     * @param string $worker_name Nombre de la clase del worker.
+     * @param string $event Evento que dispara el worker, admite comodín *.
+     * @param int $position Posición de ejecución del worker.
+     * @param bool $cron Indica si el worker solo se ejecuta desde el cron.
+     */
+    private static function addWorkerToList(string $worker_name, string $event, int $position, bool $cron): void
+    {
+        self::$workers_list[] = [
+            'class' => self::getWorkerClass($worker_name),
+            'cron' => $cron,
+            'event' => $event,
+            'name' => $worker_name,
+            'position' => $position,
+        ];
     }
 
     private static function getWorkerClass(string $worker_name): string
