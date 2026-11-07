@@ -23,7 +23,11 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
- * Description of WidgetPassword
+ * Widget para campos de contraseña, declarado con type="password" en las vistas XMLView.
+ * Muestra el contenido oculto y añade un icono con forma de ojo que permite alternar entre
+ * ver y ocultar el valor, tanto en el formulario de edición como en las celdas de las listas.
+ * El ocultado se realiza por CSS y JavaScript, por lo que el valor viaja en claro al
+ * navegador y este widget no debe usarse para contraseñas que deban permanecer secretas.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */

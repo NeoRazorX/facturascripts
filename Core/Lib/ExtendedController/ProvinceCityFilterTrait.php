@@ -23,12 +23,15 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Provincia;
 
 /**
- * Provides the cascading autocomplete used by the "provincias" and "ciudades"
- * filters: provinces are filtered by the selected country (filtercountry) and
- * cities by the selected province (filterprovincia).
+ * Trait que implementa el autocompletado en cascada de los filtros
+ * "provincias" y "ciudades": las provincias se filtran por el país
+ * seleccionado (filtercountry) y las ciudades por la provincia
+ * seleccionada (filterprovincia).
  *
- * The using class must be a controller with requestGet(), the codeModel and
- * request properties, and a parent autocompleteAction() to fall back to.
+ * La clase que use este trait debe ser un controlador con el método
+ * requestGet(), las propiedades codeModel y request, y un
+ * autocompleteAction() del padre al que recurrir si el origen no
+ * coincide con "provincias" ni "ciudades".
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

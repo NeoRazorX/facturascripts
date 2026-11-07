@@ -28,6 +28,15 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 
+/**
+ * Renumera las facturas de proveedor de un ejercicio, asignando números y códigos
+ * correlativos según la fecha y hora de cada factura y de forma independiente para
+ * cada serie. Toma el número inicial de la secuencia de documentos correspondiente
+ * y actualiza también los recibos, el asiento contable y sus partidas para que
+ * mantengan la referencia al nuevo código. Todo el proceso se ejecuta dentro de una
+ * transacción y se procesa por bloques, por lo que solamente funciona sobre
+ * ejercicios abiertos.
+ */
 class FacturaProveedorRenumber
 {
     const RENUMBER_LIMIT = 1000;

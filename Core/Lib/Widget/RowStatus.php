@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of RowStatus
+ * Fila de estado de un XMLView. Define las reglas que dan color y título a las
+ * filas de una tabla en función del valor de un campo del modelo, comparándolo
+ * con las opciones declaradas mediante distintos operadores. También genera la
+ * leyenda que explica al usuario el significado de cada color, y admite
+ * marcadores del tipo field:campo para insertar valores del modelo en los textos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

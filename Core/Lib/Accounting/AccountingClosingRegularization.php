@@ -25,7 +25,11 @@ use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 
 /**
- * Perform regularization of account balances for the exercise.
+ * Genera el asiento de regularización del ejercicio, que salda las subcuentas de gastos
+ * e ingresos de los grupos 6 y 7 y lleva la diferencia a la subcuenta especial de
+ * pérdidas y ganancias, indicando así el resultado del ejercicio. Si no encuentra esa
+ * subcuenta especial el proceso se detiene con un error. Antes de crear el asiento
+ * elimina el de regularización anterior, y es el primer paso del cierre contable.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

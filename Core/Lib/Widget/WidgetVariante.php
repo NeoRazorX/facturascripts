@@ -31,7 +31,13 @@ use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Widget para seleccionar una variante de producto desde un modal con búsqueda.
+ * Widget para seleccionar una variante de producto, declarado con type="variante" en las
+ * vistas XMLView. Muestra un botón que abre una ventana modal donde se pueden buscar las
+ * variantes por referencia o descripción, filtrarlas por fabricante y familia, y ordenarlas
+ * por referencia, precio o stock. Solo se ofrecen variantes de productos no bloqueados.
+ * El campo del modelo guarda el valor de la columna indicada en el atributo match, que por
+ * defecto es referencia. Cuando el onclick apunta a EditProducto, la etiqueta y la celda de
+ * la lista enlazan con la ficha del producto correspondiente.
  */
 class WidgetVariante extends WidgetText
 {

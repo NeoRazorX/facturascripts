@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib\ListFilter;
 use FacturaScripts\Core\Translator;
 
 /**
- * PeriodTools give us some basic and common methods for periods.
+ * Utilidades para trabajar con periodos de tiempo relativos a la fecha actual. A partir
+ * del nombre de un periodo (hoy, ayer, esta semana, mes pasado, trimestre actual, año
+ * anterior, etc.) calcula las fechas de inicio y fin correspondientes, y también devuelve
+ * el listado de periodos disponibles ya traducido para usarlo como opciones de un
+ * desplegable. La emplea principalmente PeriodFilter en los filtros de los listados.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>

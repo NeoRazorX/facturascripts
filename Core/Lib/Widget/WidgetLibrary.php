@@ -26,6 +26,14 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
+/**
+ * Widget para seleccionar un archivo de la biblioteca, declarado con type="library" en las
+ * vistas XMLView. Guarda en el campo del modelo el identificador de un AttachedFile.
+ * Abre una ventana modal donde se pueden buscar y ordenar los archivos ya existentes,
+ * previsualizar las imágenes o subir uno nuevo, que se mueve a la carpeta MyFiles y se
+ * registra como AttachedFile.
+ * Con el atributo accept se limitan las extensiones de archivo que se muestran y se admiten.
+ */
 class WidgetLibrary extends BaseWidget
 {
     /** @var string */

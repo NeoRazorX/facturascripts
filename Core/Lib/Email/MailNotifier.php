@@ -28,7 +28,11 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 /**
- * Description of MailNotifier
+ * Envía los emails de notificación del sistema. A partir del nombre de una
+ * notificación carga el modelo EmailNotification correspondiente, comprueba que
+ * exista y esté activada, sustituye en el asunto y el cuerpo los parámetros
+ * indicados entre llaves y delega el envío en NewMail, al que también puede
+ * añadir bloques adicionales y archivos adjuntos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
