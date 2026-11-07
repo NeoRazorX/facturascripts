@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,9 @@
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Línea de documento de venta.
+ * Clase base abstracta para las líneas de los documentos de venta. Añade a
+ * BusinessDocumentLine el coste del producto en el momento de la venta y
+ * opciones de impresión específicas de las líneas de venta.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -41,7 +43,7 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
     public $mostrar_cantidad;
 
     /**
-     * Indica si se deben mostrar las columnas de precio, descuento, impuesto y total al imprimir.
+     * Indica si se deben mostrar las columnas de precio, descuentos, impuestos y total de la línea al imprimir.
      *
      * @var bool
      */

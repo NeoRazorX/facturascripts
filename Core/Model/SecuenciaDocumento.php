@@ -24,7 +24,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Personalize the numeration and code of sale and purchase documents.
+ * Personaliza la numeración y el código de los documentos de compra y venta.
+ * Cada secuencia se define para una combinación de tipo de documento, empresa,
+ * ejercicio y serie, e indica el número inicial, el siguiente número libre y un
+ * patrón con marcas como {EJE}, {SERIE} o {0NUM} con el que se compone el código.
+ * Puede reutilizar los huecos que queden en la numeración y, salvo en facturas,
+ * mantener la fecha original del documento al rellenar uno de esos huecos.
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>

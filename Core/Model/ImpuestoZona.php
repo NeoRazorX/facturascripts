@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A tax (VAT) that can be associated to tax, country, province, and.
+ * Regla de sustitución de impuestos por zona geográfica. Solo se aplica a documentos de
+ * venta (SalesDocument): si el país (codpais) y la provincia (codisopro) del documento coinciden
+ * con la regla, el impuesto codimpuesto de la línea se sustituye por codimpuestosel y se
+ * sobrescribe excepcioniva con el valor de la regla. Las reglas se evalúan por prioridad
+ * descendente y se aplica la primera cuyo codimpuesto coincide con el de la línea. Una regla
+ * sin provincia se aplica a todo el país.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>

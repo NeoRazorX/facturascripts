@@ -25,7 +25,12 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Where;
 
 /**
- * A model to manage the transformations of documents. For example aprove order to delivery note.
+ * Registra las transformaciones entre documentos de compra o venta, por ejemplo el paso
+ * de un pedido a un albarán o de un albarán a una factura. Cada registro enlaza una línea
+ * del documento de origen (model1, iddoc1, idlinea1) con la línea del documento generado
+ * (model2, iddoc2, idlinea2), guardando la cantidad trasladada. Gracias a estos datos se
+ * conoce lo que queda pendiente de servir y, al eliminar la transformación, se descuenta
+ * automáticamente la cantidad del campo servido de la línea de origen.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>

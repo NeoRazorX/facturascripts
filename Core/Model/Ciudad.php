@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,15 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Ciudad
+ * Ciudad o población. Se guarda en la tabla `ciudades` y pertenece a una `Provincia` a
+ * través de `idprovincia`, completando así la jerarquía geográfica país - provincia -
+ * ciudad.
+ *
+ * Además del nombre admite un alias, un código geográfico (`codeid`) y las coordenadas de
+ * latitud y longitud, y puede tener puntos de interés asociados (`PuntoInteresCiudad`).
+ * Se registra automáticamente quién creó el registro y quién lo modificó por última vez,
+ * junto con sus fechas. Se gestiona desde las pestañas de ciudades de `ListPais` y de la
+ * ficha de la provincia (`EditProvincia`); `EditPais` solo muestra provincias.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Frank Aguirre        <faguirre@soenac.com>

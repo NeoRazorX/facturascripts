@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,12 @@ use FacturaScripts\Dinamic\Lib\Accounting\PaymentToAccounting;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
 
 /**
- * Description of PagoCliente
+ * Pago realizado por un cliente sobre un recibo, almacenado en la tabla
+ * pagoscli. Registra la fecha, la hora, el importe, los gastos bancarios y la
+ * forma de pago empleada, y se relaciona con el recibo mediante idrecibo.
+ * Al insertarlo, si no tiene idasiento, genera el asiento contable
+ * correspondiente (PaymentToAccounting), salvo que se desactive con
+ * disableAccountingGeneration(). Al eliminarlo se borra también dicho asiento.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

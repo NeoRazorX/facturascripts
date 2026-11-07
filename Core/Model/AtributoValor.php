@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,15 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Atributo as DinAtributo;
 
 /**
- * A Value for an article attribute.
+ * Valor concreto de un atributo de artículo: por ejemplo «rojo» para el atributo «color».
+ * Se guarda en la tabla `atributos_valores` y pertenece a un `Atributo` a través de
+ * `codatributo`. Las variantes de producto referencian estos valores para describir en qué
+ * se diferencian entre sí.
+ *
+ * Al guardar, el campo `descripcion` se recalcula uniendo el nombre del atributo y el valor,
+ * de modo que sea legible en los desplegables. El campo `orden` ordena los valores dentro de
+ * su atributo, y `codeModelAll()` los devuelve ordenados por atributo y por ese orden. Su
+ * `url()` apunta a la ficha del atributo padre (`EditAtributo`).
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -42,7 +50,7 @@ class AtributoValor extends ModelClass
     /** @var int Identificador único del valor del atributo. */
     public $id;
 
-    /** @var int Posición utilizada para mostrar e imprimir el valor. */
+    /** @var int Orden del valor dentro de su atributo. */
     public $orden;
 
     /** @var string Valor asignado al atributo. */

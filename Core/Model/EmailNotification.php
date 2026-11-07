@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of EmailNotification
+ * Plantilla de notificación por email. Almacena el asunto y el cuerpo de los correos
+ * que se prerrellenan al enviar documentos por email (el core incluye las plantillas
+ * sendmail-*), identificadas por su nombre, que actúa como clave primaria.
+ * Cada notificación tiene un campo enabled; en SendMail, si está desactivada, solo deja de
+ * prerrellenarse el asunto y el cuerpo, pero el correo se envía igualmente.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

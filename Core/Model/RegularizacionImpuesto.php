@@ -31,7 +31,13 @@ use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * Tax regularization.
+ * Regularización de IVA de un periodo (mensual, trimestral o anual) dentro de
+ * un ejercicio contable. Delimita las fechas de inicio y fin del periodo a
+ * partir del código indicado y guarda las subcuentas deudora y acreedora, que
+ * por defecto se toman de las cuentas especiales IVADEU e IVAACR.
+ * No genera ningún asiento: solo lo enlaza mediante idasiento (AccEntryRelationTrait)
+ * y lo elimina al borrar la regularización. Con bloquear activo, los asientos
+ * con fecha dentro del periodo no son editables (Asiento::editable()).
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>

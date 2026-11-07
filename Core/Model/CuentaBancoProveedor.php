@@ -26,7 +26,12 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 
 /**
- * A bank account of a provider.
+ * Cuenta bancaria de un proveedor. Se guarda en la tabla `cuentasbcopro` y pertenece a un
+ * `Proveedor` a través de `codproveedor`. Guarda el IBAN, que valida `IbanTrait`, y el
+ * SWIFT o BIC de la entidad.
+ *
+ * Un mismo proveedor puede tener varias cuentas, pero solo una marcada como principal: al
+ * guardar una cuenta con `principal` activo se desmarcan automáticamente las demás.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

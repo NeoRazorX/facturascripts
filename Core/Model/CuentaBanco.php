@@ -30,7 +30,21 @@ use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * A bank account of the company itself.
+ * Cuenta bancaria de la propia empresa. Se guarda en la tabla `cuentasbanco`, pertenece a
+ * una empresa (`idempresa`) y guarda el IBAN validado por `IbanTrait`, el SWIFT o BIC y el
+ * sufijo de acreedor que se utiliza en los ficheros SEPA.
+ *
+ * Es la cuenta que se asocia a las formas de pago (`codcuentabanco`) y, en el plano contable,
+ * enlaza con la contabilidad mediante `codsubcuenta`, para los movimientos de tesorería, y
+ * `codsubcuentagasto`, para los gastos bancarios. Los métodos `getSubcuenta()` y
+ * `getSubcuentaGastos()` buscan esas subcuentas en el ejercicio indicado; si el campo está
+ * vacío no crean nada y devuelven la subcuenta de la cuenta especial `BANCO` (o `CAJA` si
+ * no hay). Si el código está informado pero la subcuenta no existe, solo la crean cuando se
+ * les pide, colgándola de la cuenta especial `BANCO` o, si no está mapeada en ese ejercicio,
+ * de `CAJA`.
+ *
+ * Cualquier cambio del IBAN de una cuenta existente queda registrado en el canal de
+ * auditoría del log.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

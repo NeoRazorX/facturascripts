@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,12 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
 
+/**
+ * Trait que añade los campos de correo electrónico y teléfonos de contacto,
+ * junto con la validación y el saneado de estos datos antes de guardarlos.
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
 trait EmailAndPhonesTrait
 {
     /** @var string Dirección de correo electrónico principal. */
@@ -33,6 +39,11 @@ trait EmailAndPhonesTrait
     /** @var string Número de teléfono secundario. */
     public $telefono2;
 
+    /**
+     * Sanea email (en minúsculas) y teléfonos, y valida el email; si no es válido lo vacía y devuelve false.
+     *
+     * @return bool
+     */
     protected function testEmailAndPhones(): bool
     {
         if ($this->email !== null) {

@@ -26,7 +26,17 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 
 /**
- * A bank account of a client.
+ * Cuenta bancaria de un cliente. Se guarda en la tabla `cuentasbcocli` y pertenece a un
+ * `Cliente` a través de `codcliente`. Guarda el IBAN, que valida `IbanTrait`, y el SWIFT o
+ * BIC de la entidad.
+ *
+ * Incluye los datos del mandato SEPA para domiciliaciones: la referencia (`mandato`), que
+ * al guardar se genera automáticamente (a partir del código de cuenta, o del siguiente
+ * código disponible) si no se indica, y su fecha de firma (`fmandato`).
+ *
+ * Un cliente puede tener varias cuentas, pero solo una marcada como principal: al guardar
+ * una cuenta con `principal` activo se desmarcan automáticamente las demás del mismo
+ * cliente.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

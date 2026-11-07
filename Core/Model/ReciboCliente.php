@@ -33,7 +33,14 @@ use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\PagoCliente as DinPagoCliente;
 
 /**
- * Description of ReciboCliente
+ * Cada uno de los vencimientos en que se divide el cobro de una factura de
+ * cliente. Guarda el importe, la forma de pago, la fecha de vencimiento y el
+ * estado de cobro. El vencimiento solo se ajusta a los días de pago del
+ * cliente al llamar a setExpiration() o setPaymentMethod().
+ * Cualquier cambio del campo pagado genera un PagoCliente (con importe negativo
+ * si se desmarca). Al darlo de alta se recalcula el riesgo alcanzado del cliente
+ * y la factura solo se actualiza si el recibo ya está pagado; al modificarlo o
+ * borrarlo se actualizan ambos.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -76,7 +83,7 @@ class ReciboCliente extends ModelClass
     /** @var float Importe total del recibo. */
     public $importe;
 
-    /** @var float Importe del recibo que ya ha sido pagado. */
+    /** @var float Importe liquidado del recibo (el core solo lo inicializa a 0 en clear(), no lo actualiza). */
     public $liquidado;
 
     /** @var string Nombre del usuario que creó el recibo. */

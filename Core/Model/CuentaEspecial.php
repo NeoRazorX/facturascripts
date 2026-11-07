@@ -27,8 +27,12 @@ use FacturaScripts\Dinamic\Model\Cuenta as DinCuenta;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * Allows to relate special accounts (SALES, for example)
- * with the real account or subaccount.
+ * Cuenta especial. Permite relacionar un concepto contable genérico (VENTAS, CLIENT, IVAREP,
+ * ANTCLI, etc.) con la cuenta o subcuenta real que le corresponde en cada ejercicio.
+ * De esta forma el código puede localizar la cuenta o subcuenta con `getCuenta()` y
+ * `getSubcuenta()` sin depender de códigos contables concretos. Se relaciona con Cuenta y
+ * Subcuenta mediante el campo codcuentaesp; si no hay ninguna en el ejercicio, devuelven un
+ * objeto vacío.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

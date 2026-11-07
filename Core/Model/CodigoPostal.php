@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,15 @@ use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Código postal. Se guarda en la tabla `codigos_postales` y relaciona un número postal
+ * (`number`) con el país, la provincia y la ciudad a los que corresponde. El core no
+ * lo utiliza para completar direcciones automáticamente.
+ *
+ * El país se inicializa con el configurado por defecto en la aplicación. Se registra
+ * automáticamente quién creó el registro y quién lo modificó por última vez, junto con sus
+ * fechas. Se gestiona solo desde la pestaña de códigos postales de `ListPais`.
+ */
 class CodigoPostal extends ModelClass
 {
     use ModelTrait;
