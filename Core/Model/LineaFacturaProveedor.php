@@ -84,7 +84,7 @@ class LineaFacturaProveedor extends BusinessDocumentLine
         // servido will always be 0 to prevent stock problems when removing rectified invoices
         $this->servido = 0.0;
 
-        return parent::test();
+        return parent::test() && $this->testRefundQuantity();
     }
 
     public function url(string $type = 'auto', string $list = 'List'): string

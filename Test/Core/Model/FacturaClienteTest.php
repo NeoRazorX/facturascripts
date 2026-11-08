@@ -1138,6 +1138,93 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
+    public function testRefundLineCannotExceedInvoicedQuantity(): void
+    {
+        // creamos una factura con una línea de 3 unidades
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+        $line = $invoice->getLines()[0];
+        $line->cantidad = 3;
+        $this->assertTrue($line->save(), 'can-not-save-line');
+
+        // creamos una rectificativa de 2 unidades
+        $refund = new FacturaCliente();
+        $refund->setSubject($invoice->getSubject());
+        $refund->codigorect = $invoice->codigo;
+        $refund->idfacturarect = $invoice->idfactura;
+        $this->assertTrue($refund->save(), 'can-not-create-refund');
+        $refundLine = $refund->getNewLine($line->toArray());
+        $refundLine->cantidad = -2;
+        $refundLine->idlinearect = $line->idlinea;
+        $this->assertTrue($refundLine->save(), 'can-not-save-refund-line');
+
+        // la línea de la rectificativa no puede superar lo facturado ni cambiar de signo
+        $refundLine->cantidad = -4;
+        $this->assertFalse($refundLine->save(), 'refund-line-above-invoiced-saved');
+        $refundLine->cantidad = 2;
+        $this->assertFalse($refundLine->save(), 'refund-line-with-other-sign-saved');
+        $refundLine->cantidad = -3;
+        $this->assertTrue($refundLine->save(), 'can-not-refund-all');
+
+        // otra línea de rectificativa sobre la misma línea ya no cabe
+        $refund2 = new FacturaCliente();
+        $refund2->setSubject($invoice->getSubject());
+        $refund2->codigorect = $invoice->codigo;
+        $refund2->idfacturarect = $invoice->idfactura;
+        $this->assertTrue($refund2->save(), 'can-not-create-refund-2');
+        $refundLine2 = $refund2->getNewLine($line->toArray());
+        $refundLine2->cantidad = -1;
+        $refundLine2->idlinearect = $line->idlinea;
+        $this->assertFalse($refundLine2->save(), 'refund-line-above-pending-saved');
+
+        // eliminamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($refund2->delete(), 'can-not-delete-refund-2');
+        $this->assertTrue($refund->delete(), 'can-not-delete-refund');
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testRefundLineAboveInvoicedCanBeSavedUnchanged(): void
+    {
+        // creamos una factura con una línea de 3 unidades y una rectificativa de 2
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+        $line = $invoice->getLines()[0];
+        $line->cantidad = 3;
+        $this->assertTrue($line->save(), 'can-not-save-line');
+        $refund = new FacturaCliente();
+        $refund->setSubject($invoice->getSubject());
+        $refund->codigorect = $invoice->codigo;
+        $refund->idfacturarect = $invoice->idfactura;
+        $this->assertTrue($refund->save(), 'can-not-create-refund');
+        $refundLine = $refund->getNewLine($line->toArray());
+        $refundLine->cantidad = -2;
+        $refundLine->idlinearect = $line->idlinea;
+        $this->assertTrue($refundLine->save(), 'can-not-save-refund-line');
+
+        // la línea original baja a 1 unidad: la rectificativa queda por encima de lo facturado
+        $line->cantidad = 1;
+        $this->assertTrue($line->save(), 'can-not-save-line');
+
+        // la línea de la rectificativa se puede volver a guardar si no cambia su cantidad
+        $refundLine = $refund->getLines()[0];
+        $refundLine->descripcion = 'test';
+        $this->assertTrue($refundLine->save(), 'can-not-save-unchanged-refund-line');
+
+        // pero no se puede cambiar su cantidad por encima de lo facturado
+        $refundLine->cantidad = -1.5;
+        $this->assertFalse($refundLine->save(), 'refund-line-above-invoiced-saved');
+
+        // eliminamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($refund->delete(), 'can-not-delete-refund');
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
     private function createRetention(string $letter, float $percentage, string $codsubcuenta): Retencion
     {
         $retention = new Retencion();

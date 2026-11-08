@@ -310,9 +310,20 @@ class EditFacturaCliente extends SalesController
         $lines = [];
         foreach ($invoice->getLines() as $line) {
             $quantity = (float)$this->request->input('refund_' . $line->id(), '0');
-            if (!empty($quantity)) {
-                $lines[] = $line;
+            if (empty($quantity)) {
+                continue;
             }
+
+            // no se puede rectificar más de lo facturado y aún no rectificado
+            if (false === $line->canRefundQuantity($quantity)) {
+                Tools::log()->warning('invalid-refund-quantity', [
+                    '%line%' => $line->referencia ?: Tools::textBreak($line->descripcion),
+                    '%quantity%' => Tools::number($line->refundableQuantity()),
+                ]);
+                return true;
+            }
+
+            $lines[] = $line;
         }
         if (empty($lines)) {
             Tools::log()->warning('no-selected-item');

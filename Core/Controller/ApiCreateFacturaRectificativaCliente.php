@@ -91,6 +91,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         }
 
         $lines = [];
+        $quantities = [];
         $invoiceLines = $invoice->getLines();
 
         // cada refund_X debe corresponder al idlinea de una línea de la factura,
@@ -113,15 +114,43 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
 
         foreach ($invoiceLines as $line) {
             $quantity = (float)$this->request->input('refund_' . $line->id(), '0');
-            if (!empty($quantity)) {
-                $lines[] = $line;
+            if (empty($quantity)) {
+                continue;
             }
+
+            // no se puede rectificar más de lo facturado y aún no rectificado
+            if (false === $line->canRefundQuantity($quantity)) {
+                $this->sendError('invalid-refund-quantity', Response::HTTP_BAD_REQUEST, [
+                    '%line%' => $line->referencia ?: Tools::textBreak($line->descripcion),
+                    '%quantity%' => Tools::number($line->refundableQuantity()),
+                ]);
+                return null;
+            }
+
+            $lines[] = $line;
+            $quantities[$line->idlinea] = $quantity;
         }
 
         // si no se especifican cantidades de las lineas,
-        // incluimos todas las lineas en la factura rectificativa.
+        // incluimos todas las lineas con la cantidad pendiente de rectificar.
         if (empty($lines)) {
-            $lines = $invoiceLines;
+            $pending = false;
+            foreach ($invoiceLines as $line) {
+                $quantity = $line->refundableQuantity();
+                if (empty($line->cantidad)) {
+                    $lines[] = $line;
+                    $quantities[$line->idlinea] = 0.0;
+                } elseif (!empty($quantity)) {
+                    $lines[] = $line;
+                    $quantities[$line->idlinea] = $quantity;
+                    $pending = true;
+                }
+            }
+
+            if (false === $pending) {
+                $this->sendError('no-pending-refund-quantity', Response::HTTP_BAD_REQUEST);
+                return null;
+            }
         }
 
         $this->db()->beginTransaction();
@@ -168,7 +197,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
 
         foreach ($lines as $line) {
             $newLine = $newRefund->getNewLine($line->toArray());
-            $newLine->cantidad = 0 - (float)$this->request->input('refund_' . $line->id(), $line->cantidad);
+            $newLine->cantidad = 0 - $quantities[$line->idlinea];
             $newLine->idlinearect = $line->idlinea;
             if (false === $newLine->save()) {
                 $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);

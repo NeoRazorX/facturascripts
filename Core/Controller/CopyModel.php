@@ -312,7 +312,10 @@ class CopyModel extends Controller
 
         // copiamos las líneas del documento
         foreach ($this->model->getLines() as $line) {
-            $newLine = $newDoc->getNewLine($line->toArray());
+            // la copia no es una rectificativa: no copiamos el enlace con la línea rectificada
+            $data = $line->toArray();
+            unset($data['idlinearect']);
+            $newLine = $newDoc->getNewLine($data);
 
             if (false === $this->pipeFalse('beforeSavePurchaseLine', $newLine)) {
                 $this->dataBase->rollback();
@@ -376,7 +379,10 @@ class CopyModel extends Controller
 
         // copiamos las líneas del documento
         foreach ($this->model->getLines() as $line) {
-            $newLine = $newDoc->getNewLine($line->toArray());
+            // la copia no es una rectificativa: no copiamos el enlace con la línea rectificada
+            $data = $line->toArray();
+            unset($data['idlinearect']);
+            $newLine = $newDoc->getNewLine($data);
 
             if (false === $this->pipeFalse('beforeSaveSalesLine', $newLine)) {
                 $this->dataBase->rollback();

@@ -935,6 +935,60 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
+    public function testRefundableQuantity(): void
+    {
+        // creamos una factura con una línea de 3 unidades y otra de -1
+        $invoice = $this->getRandomSupplierInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+        $lines = $invoice->getLines();
+        $this->assertCount(1, $lines, 'bad-invoice-lines-count');
+        $line = $lines[0];
+        $line->cantidad = 3;
+        $this->assertTrue($line->save(), 'can-not-save-line');
+        $negLine = $invoice->getNewLine();
+        $negLine->cantidad = -1;
+        $negLine->pvpunitario = 5;
+        $this->assertTrue($negLine->save(), 'can-not-save-negative-line');
+
+        // sin rectificativas se puede rectificar todo, con el signo de la línea
+        $this->assertEquals(3, $line->refundableQuantity(), 'bad-refundable-quantity');
+        $this->assertTrue($line->canRefundQuantity(3), 'can-not-refund-all');
+        $this->assertFalse($line->canRefundQuantity(4), 'can-refund-more-than-invoiced');
+        $this->assertFalse($line->canRefundQuantity(-1), 'can-refund-with-other-sign');
+        $this->assertEquals(-1, $negLine->refundableQuantity(), 'bad-negative-refundable-quantity');
+        $this->assertTrue($negLine->canRefundQuantity(-1), 'can-not-refund-negative-line');
+        $this->assertFalse($negLine->canRefundQuantity(1), 'can-refund-negative-line-with-other-sign');
+
+        // creamos una rectificativa de 2 unidades de la primera línea
+        $refund = new FacturaProveedor();
+        $refund->setSubject($invoice->getSubject());
+        $refund->codigorect = $invoice->codigo;
+        $refund->idfacturarect = $invoice->idfactura;
+        $this->assertTrue($refund->save(), 'can-not-create-refund');
+        $refundLine = $refund->getNewLine($line->toArray());
+        $refundLine->cantidad = -2;
+        $refundLine->idlinearect = $line->idlinea;
+        $this->assertTrue($refundLine->save(), 'can-not-save-refund-line');
+
+        // la línea de la rectificativa no puede superar lo facturado
+        $refundLine->cantidad = -4;
+        $this->assertFalse($refundLine->save(), 'refund-line-above-invoiced-saved');
+        $refundLine->cantidad = -2;
+
+        // ahora solo queda 1 unidad pendiente
+        $lines = $invoice->getLines();
+        $this->assertEquals(1, $lines[0]->refundableQuantity(), 'bad-pending-quantity');
+        $this->assertTrue($lines[0]->canRefundQuantity(1), 'can-not-refund-pending');
+        $this->assertFalse($lines[0]->canRefundQuantity(2), 'can-refund-more-than-pending');
+
+        // eliminamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($refund->delete(), 'can-not-delete-refund');
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
     public function testRemovedRefundReasonDoesNotBlockSave(): void
     {
         // creamos una rectificativa con un motivo añadido por un plugin
