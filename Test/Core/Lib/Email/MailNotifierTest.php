@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -80,6 +80,35 @@ class MailNotifierTest extends TestCase
         self::$notification->save();
     }
 
+    public function testNoPuedeEnviarConCopiasSiNoExisteNotificacion()
+    {
+        $response = MailNotifier::sendWithCopies(
+            'nombre-de-notificacion-erroneo',
+            'test@test.com',
+            ['copia@test.com'],
+            ['oculta@test.com']
+        );
+
+        $this->assertFalse($response);
+    }
+
+    public function testNoPuedeEnviarConCopiasSiLaNotificacionNoEstaActiva()
+    {
+        self::$notification->enabled = false;
+        self::$notification->save();
+
+        $response = MailNotifier::sendWithCopies(
+            'sendmail-EmailTest',
+            'test@test.com',
+            ['copia@test.com']
+        );
+
+        $this->assertFalse($response);
+
+        self::$notification->enabled = true;
+        self::$notification->save();
+    }
+
     public function testNoPuedeEnviarEmailSiNoEstaConfigurado()
     {
         Tools::settingsSet('email', 'email', null);
@@ -94,6 +123,16 @@ class MailNotifierTest extends TestCase
         $response = MailNotifier::send(
             'sendmail-EmailTest',
             'test@test.com'
+        );
+
+        $this->assertFalse($response);
+
+        // con copias no válidas, vacías o nulas tampoco falla
+        $response = MailNotifier::sendWithCopies(
+            'sendmail-EmailTest',
+            'test@test.com',
+            ['copia@test.com', '', 'no-es-un-email', null],
+            [' oculta@test.com ']
         );
 
         $this->assertFalse($response);

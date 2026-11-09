@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Email;
 
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\Email\NewMail as DinNewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use PHPMailer\PHPMailer\Exception;
@@ -53,6 +54,24 @@ class MailNotifier
      */
     public static function send(string $notificationName, string $email, string $name = '', array $params = [], array $attach = [], array $mainBlocks = [], array $footerBlocks = []): bool
     {
+        return static::sendWithCopies($notificationName, $email, [], [], $name, $params, $attach, $mainBlocks, $footerBlocks);
+    }
+
+    /**
+     * Envía la notificación en un único correo al destinatario indicado,
+     * añadiendo en copia ($cc) y en copia oculta ($bcc) las direcciones recibidas.
+     * Las direcciones vacías o no válidas se descartan.
+     *
+     * @param string[] $cc
+     * @param string[] $bcc
+     *
+     * @throws Exception
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public static function sendWithCopies(string $notificationName, string $email, array $cc, array $bcc = [], string $name = '', array $params = [], array $attach = [], array $mainBlocks = [], array $footerBlocks = []): bool
+    {
         // ¿La notificación existe?
         $notification = new EmailNotification();
         if (false === $notification->load($notificationName)) {
@@ -82,6 +101,21 @@ class MailNotifier
 
         $newMail->notification($notificationName);
         $newMail->to($email, $name);
+
+        foreach ($cc as $address) {
+            $address = trim((string)$address);
+            if (Validator::email($address)) {
+                $newMail->cc($address);
+            }
+        }
+
+        foreach ($bcc as $address) {
+            $address = trim((string)$address);
+            if (Validator::email($address)) {
+                $newMail->bcc($address);
+            }
+        }
+
         $newMail->title = static::getText($notification->subject, $params);
         $newMail->text = static::getText($notification->body, $params);
 
