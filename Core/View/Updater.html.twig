@@ -133,6 +133,31 @@
                                     </td>
                                 </tr>
                             {% endfor %}
+                            {% for plugin in fsc.obsoletePlugins %}
+                                <tr class="{{ plugin.enabled ? 'table-danger' : 'table-secondary' }}">
+                                    <td>{{ plugin.name }}</td>
+                                    <td>
+                                        {{ trans('plugin-obsolete', {'%pluginName%': plugin.name}) }}
+                                        {% if plugin.replacement() %}
+                                            {{ trans('plugin-obsolete-replacement', {'%replacement%': plugin.replacement()}) }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">
+                                        {% if plugin.enabled %}
+                                            <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                                                {{ formToken() }}
+                                                <input type="hidden" name="action" value="disable-obsolete"/>
+                                                <input type="hidden" name="plugin" value="{{ plugin.name }}"/>
+                                                <button type="submit" class="btn btn-sm btn-danger btn-spin-action">
+                                                    <i class="fa-solid fa-power-off fa-fw me-1" aria-hidden="true"></i>{{ trans('disable') }}
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ trans('inactive') }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>

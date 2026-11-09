@@ -816,6 +816,55 @@ final class RequestTest extends TestCase
         $this->assertIsString($request->getContent());
     }
 
+    public function testFilesArray(): void
+    {
+        $tmp = ['/tmp/php1', '/tmp/php2'];
+
+        // un archivo
+        $request = $this->createRequest(['files' => [
+            'doc' => ['name' => 'a.pdf', 'type' => 'application/pdf', 'tmp_name' => $tmp[0], 'error' => UPLOAD_ERR_OK, 'size' => 10],
+        ]]);
+        $this->assertSame('a.pdf', $request->file('doc')->name);
+        $this->assertSame([], $request->files->getArray('doc'));
+
+        // varios archivos: file() devuelve null y getArray() los devuelve todos
+        $request = $this->createRequest(['files' => [
+            'docs' => [
+                'name' => ['a.pdf', 'b.pdf'],
+                'type' => ['application/pdf', 'application/pdf'],
+                'tmp_name' => $tmp,
+                'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+                'size' => [10, 20],
+            ],
+        ]]);
+        $this->assertNull($request->file('docs'));
+        $files = $request->files->getArray('docs');
+        $this->assertCount(2, $files);
+        $this->assertSame('b.pdf', $files[1]->name);
+
+        // campo múltiple sin archivos seleccionados: no se crea un archivo vacío
+        $request = $this->createRequest(['files' => [
+            'docs' => ['name' => [''], 'type' => [''], 'tmp_name' => [''], 'error' => [UPLOAD_ERR_NO_FILE], 'size' => [0]],
+        ]]);
+        $this->assertFalse($request->files->has('docs'));
+        $this->assertNull($request->file('docs'));
+        $this->assertSame([], $request->files->getArray('docs'));
+
+        // si se descarta el primero, el resto sigue disponible como lista
+        $request = $this->createRequest(['files' => [
+            'docs' => [
+                'name' => ['', 'b.pdf'],
+                'type' => ['', 'application/pdf'],
+                'tmp_name' => ['', $tmp[1]],
+                'error' => [UPLOAD_ERR_NO_FILE, UPLOAD_ERR_OK],
+                'size' => [0, 20],
+            ],
+        ]]);
+        $files = $request->files->getArray('docs');
+        $this->assertCount(1, $files);
+        $this->assertSame('b.pdf', $files[0]->name);
+    }
+
     public function testConstants(): void
     {
         $this->assertEquals('GET', Request::METHOD_GET);

@@ -563,6 +563,101 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
+    public function testUnpayReceiptWithBankFeesReversesAccounting(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // obtenemos el recibo impagado
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+
+        // marcamos el recibo como pagado con gastos bancarios
+        $receipts[0]->gastos = 10.0;
+        $receipts[0]->pagado = true;
+        $this->assertTrue($receipts[0]->save(), 'can-not-set-paid-receipt');
+
+        // desmarcamos el recibo como pagado
+        $receipts[0]->pagado = false;
+        $this->assertTrue($receipts[0]->save(), 'can-not-set-unpaid-receipt');
+
+        // debe haber dos pagos: el cobro y su anulación
+        $payments = $receipts[0]->getPayments();
+        $this->assertCount(2, $payments, 'should-have-two-payments');
+
+        // la anulación debe deshacer el cobro: el saldo de cada subcuenta en los dos asientos es cero
+        $balances = [];
+        foreach ($payments as $payment) {
+            $this->assertNotEmpty($payment->idasiento, 'payment-should-have-accounting-entry');
+
+            $entry = new Asiento();
+            $this->assertTrue($entry->load($payment->idasiento), 'can-not-load-accounting-entry');
+            $this->assertTrue($entry->isBalanced(), 'accounting-entry-not-balanced');
+            foreach ($entry->getLines() as $line) {
+                $balances[$line->codsubcuenta] = ($balances[$line->codsubcuenta] ?? 0.0) + $line->debe - $line->haber;
+            }
+        }
+        foreach ($balances as $code => $balance) {
+            $this->assertEqualsWithDelta(0.0, $balance, 0.001, 'bad-balance-after-unpay-' . $code);
+        }
+
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testPaidReceiptFeesCanNotChange(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // marcamos el recibo como pagado con gastos bancarios
+        $receipt = $invoice->getReceipts()[0];
+        $receipt->gastos = 10.0;
+        $receipt->pagado = true;
+        $this->assertTrue($receipt->save(), 'can-not-set-paid-receipt');
+
+        // no se pueden cambiar los gastos de un recibo pagado
+        $receipt->gastos = 0.0;
+        $this->assertFalse($receipt->save(), 'paid-receipt-fees-changed');
+
+        // tampoco cambiándolos a la vez que se desmarca el recibo
+        $receipt->pagado = false;
+        $this->assertFalse($receipt->save(), 'paid-receipt-fees-changed-on-unpay');
+
+        // el recibo sigue pagado, con los gastos originales y un único pago
+        $fresh = new ReciboCliente();
+        $this->assertTrue($fresh->load($receipt->idrecibo), 'can-not-load-receipt');
+        $this->assertTrue($fresh->pagado, 'receipt-should-be-paid');
+        $this->assertEqualsWithDelta(10.0, $fresh->gastos, 0.001, 'bad-receipt-fees');
+        $this->assertCount(1, $fresh->getPayments(), 'should-have-one-payment');
+
+        // desmarcado, ya se pueden cambiar los gastos
+        $fresh->pagado = false;
+        $this->assertTrue($fresh->save(), 'can-not-set-unpaid-receipt');
+        $fresh->gastos = 5.0;
+        $this->assertTrue($fresh->save(), 'can-not-change-unpaid-receipt-fees');
+        $this->assertCount(2, $fresh->getPayments(), 'should-have-two-payments');
+
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

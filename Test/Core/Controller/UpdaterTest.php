@@ -21,16 +21,19 @@ namespace FacturaScripts\Test\Core\Controller;
 
 use FacturaScripts\Core\Controller\Updater;
 use FacturaScripts\Core\Internal\Forja;
+use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use ReflectionProperty;
 
 final class UpdaterTest extends TestCase
 {
     protected function tearDown(): void
     {
         Forja::$builds = null;
+        $this->setForjaPluginList(null);
     }
 
     public function testCoreUpdateSkipsBuildsRequiringNewerPhp(): void
@@ -63,6 +66,30 @@ final class UpdaterTest extends TestCase
 
         $this->assertFileDoesNotExist($pendingFile);
         $this->assertFileExists(Tools::folder('Dinamic', 'Model', 'Empresa.php'));
+    }
+
+    public function testObsoletePluginIsNotUpdated(): void
+    {
+        // sin lista pública de plugins, el id se toma de la lista de builds
+        $this->setForjaPluginList([]);
+        Forja::$builds = [[
+            'project' => 999999,
+            'idplugin' => 999999,
+            'name' => 'UpdaterTestPlugin',
+            'obsolete' => false,
+            'replacement' => '',
+            'builds' => [$this->build(2.0, null)],
+        ]];
+
+        $plugin = new Plugin(['name' => 'UpdaterTestPlugin']);
+        $plugin->version = 1.0;
+        $method = new ReflectionMethod(Updater::class, 'getUpdateItemsPlugin');
+        $item = $method->invoke(null, $plugin);
+        $this->assertSame(2.0, $item['version']);
+
+        // una vez marcado como obsoleto, ya no se ofrece la actualización
+        Forja::$builds[0]['obsolete'] = true;
+        $this->assertSame([], $method->invoke(null, $plugin));
     }
 
     public function testUpdateRootFilesSeparatesRestoreFileTime(): void
@@ -112,5 +139,11 @@ final class UpdaterTest extends TestCase
         return array_values(array_filter(Updater::getUpdateItems(), static function (array $item): bool {
             return $item['id'] === Forja::CORE_PROJECT_ID;
         }));
+    }
+
+    private function setForjaPluginList($value): void
+    {
+        $property = new ReflectionProperty(Forja::class, 'pluginList');
+        $property->setValue(null, $value);
     }
 }

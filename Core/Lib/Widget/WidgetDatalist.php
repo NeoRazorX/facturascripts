@@ -80,7 +80,7 @@ class WidgetDatalist extends WidgetSelect
             $this->listId = $this->fieldname . '-list-' . $this->getUniqueId();
         }
 
-        $html = '<input type="text" name="' . $this->fieldname . '" value="' . $this->value . '"'
+        $html = '<input type="text" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value) . '"'
             . ' class="' . $class . '"'
             . ' list="' . $this->listId . '"'
             . $this->inputHtmlExtraParams()

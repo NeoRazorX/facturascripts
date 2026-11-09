@@ -58,7 +58,7 @@ class WidgetLibrary extends BaseWidget
 
         if ($this->readonly()) {
             return '<div class="mb-3">'
-                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value) . '">'
                 . $labelHtml
                 . '<a href="' . $file->url() . '" class="btn w-100 btn-outline-secondary">'
                 . '<i class="' . $icon . ' fa-fw"></i> ' . ($file->filename ? $file->shortFileName() : Tools::trans('select'))
@@ -68,7 +68,7 @@ class WidgetLibrary extends BaseWidget
         }
 
         return '<div class="mb-3" id="' . $this->id . '">'
-            . '<input type="hidden" class="input-hidden" name="' . $this->fieldname . '" value="' . $this->value . '">'
+            . '<input type="hidden" class="input-hidden" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value) . '">'
             . $labelHtml
             . '<a href="#" class="btn w-100 btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '

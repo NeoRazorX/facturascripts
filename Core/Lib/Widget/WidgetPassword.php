@@ -72,7 +72,7 @@ class WidgetPassword extends WidgetText
     protected function inputHtml($type = 'password', $extraClass = '')
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
-        return '<input type="text" name="' . $this->fieldname . '" value="' . $this->value
+        return '<input type="text" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value)
             . '" class="fs-psw ' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
 

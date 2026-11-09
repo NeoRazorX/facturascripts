@@ -75,7 +75,7 @@ class WidgetAutocomplete extends WidgetSelect
         $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::trans($title), $titleurl) . '</label>';
 
         if ('' === $this->value || null === $this->value) {
-            return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
+            return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value) . '"/>'
                 . '<div class="mb-3">'
                 . $labelHtml
                 . '<div class="input-group">'
@@ -86,7 +86,7 @@ class WidgetAutocomplete extends WidgetSelect
                 . '</div>';
         }
 
-        return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
+        return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value) . '"/>'
             . '<div class="mb-3">'
             . $labelHtml
             . '<div class="input-group">'
@@ -152,7 +152,7 @@ class WidgetAutocomplete extends WidgetSelect
     protected function inputHtml($type = 'text', $extraClass = 'widget-autocomplete')
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
-        return '<input type="' . $type . '" value="' . $this->getSelected() . '" class="' . $class . '"'
+        return '<input type="' . $type . '" value="' . $this->escapeHtml($this->getSelected()) . '" class="' . $class . '"'
             . ' data-field="' . $this->fieldname . '"'
             . ' data-source="' . $this->source . '"'
             . ' data-fieldcode="' . $this->fieldcode . '"'

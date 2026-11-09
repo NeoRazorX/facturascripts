@@ -48,6 +48,9 @@ class Tools
     /** @var array */
     private static $settings;
 
+    /** @var array claves asignadas con settingsSet() desde la última carga, agrupadas por grupo */
+    private static $settingsChanged = [];
+
     /** @var Translator */
     private static $translator;
 
@@ -650,6 +653,7 @@ class Tools
     {
         Cache::delete('tools-settings');
         self::$settings = null;
+        self::$settingsChanged = [];
     }
 
     /**
@@ -665,14 +669,33 @@ class Tools
     /**
      * Guarda la configuración actual en la base de datos.
      *
+     * Los valores asignados con settingsSet() sustituyen a los guardados, y las claves leídas que no existían
+     * se añaden con su valor predeterminado. El resto de claves guardadas se conservan, aunque la configuración
+     * en memoria esté incompleta porque su lectura de la base de datos falló.
+     *
      * @return bool `true` si todos los grupos de configuración se guardan correctamente, `false` en caso contrario.
      */
     public static function settingsSave(): bool
     {
-        foreach (self::$settings as $key => $properties) {
+        // guardar un grupo limpia la configuración en memoria, así que trabajamos con una copia
+        $settings = self::$settings ?? [];
+        $changed = self::$settingsChanged;
+
+        foreach ($settings as $group => $properties) {
             $model = new Settings();
-            $model->name = $key;
-            $model->setProperties($properties);
+            $exists = $model->load($group);
+            if (false === $exists) {
+                $model->name = $group;
+            }
+
+            // lo guardado, más las claves nuevas, más los valores asignados con settingsSet()
+            $saved = $model->getProperties();
+            $newProperties = array_replace($saved + $properties, array_intersect_key($properties, $changed[$group] ?? []));
+            if ($exists && $newProperties === $saved) {
+                continue;
+            }
+
+            $model->setProperties($newProperties);
             if (false === $model->save()) {
                 return false;
             }
@@ -696,8 +719,9 @@ class Tools
             self::settingsLoad();
         }
 
-        // asignamos el valor
+        // asignamos el valor y lo marcamos para que settingsSave() sustituya el valor guardado
         self::$settings[$group][$key] = $value;
+        self::$settingsChanged[$group][$key] = true;
     }
 
     /**
@@ -850,14 +874,21 @@ class Tools
             return;
         }
 
-        self::$settings = Cache::remember('tools-settings', function () {
-            $settings = [];
+        $cached = Cache::get('tools-settings');
+        if (is_array($cached) && !empty($cached)) {
+            self::$settings = $cached;
+            return;
+        }
 
-            foreach (Settings::all([], [], 0, 0) as $item) {
-                $settings[$item->name] = $item->getProperties();
-            }
+        self::$settings = [];
+        foreach (Settings::all() as $item) {
+            self::$settings[$item->name] = $item->getProperties();
+        }
 
-            return $settings;
-        });
+        // no cacheamos una lectura vacía: es una instalación nueva o un fallo de la base de datos,
+        // y un fallo puntual dejaría la configuración vacía hasta que caducase la caché
+        if (!empty(self::$settings)) {
+            Cache::set('tools-settings', self::$settings);
+        }
     }
 }

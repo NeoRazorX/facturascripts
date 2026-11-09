@@ -19,10 +19,13 @@
 
 namespace FacturaScripts\Test\Core;
 
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Divisa;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 
 final class ToolsTest extends TestCase
 {
@@ -228,6 +231,91 @@ final class ToolsTest extends TestCase
         $this->assertEquals($value, Tools::settings('default', 'codpais'));
     }
 
+    public function testSettingsEmptyCacheIsIgnored(): void
+    {
+        $value = $this->getStoredCodpais();
+
+        // simulamos la caché que dejaba una lectura fallida de la tabla settings
+        Tools::settingsClear();
+        Cache::set('tools-settings', []);
+
+        // la configuración se vuelve a leer de la base de datos en lugar de usar la caché vacía
+        $this->assertEquals($value, Tools::settings('default', 'codpais'));
+        $this->assertNotEmpty(Cache::get('tools-settings'));
+    }
+
+    public function testSettingsFailedReadIsNotCached(): void
+    {
+        $value = $this->getStoredCodpais();
+
+        // la lectura de la configuración falla porque no hay conexión con la base de datos
+        $db = new DataBase();
+        Tools::settingsClear();
+        $db->close();
+        $this->assertEquals('test-default', Tools::settings('default', 'codpais', 'test-default'));
+        $this->assertTrue($db->connect());
+
+        // la lectura fallida no se ha cacheado y, al limpiar, se vuelve a leer de la base de datos
+        $this->assertNull(Cache::get('tools-settings'));
+        Tools::settingsClear();
+        $this->assertEquals($value, Tools::settings('default', 'codpais'));
+    }
+
+    public function testSettingsSaveAddsMissingKeys(): void
+    {
+        $group = 'test-settings-' . Tools::randomString(8);
+
+        // una clave leída con valor predeterminado se guarda si no existía
+        $this->assertEquals('first', Tools::settings($group, 'key', 'first'));
+        $this->assertTrue(Tools::settingsSave());
+
+        $settings = new Settings();
+        $this->assertTrue($settings->load($group));
+        $this->assertEquals('first', $settings->getProperty('key'));
+
+        // pero otro valor predeterminado no sustituye al guardado
+        Tools::settingsClear();
+        $this->assertEquals('first', Tools::settings($group, 'key', 'second'));
+        $this->assertTrue(Tools::settingsSave());
+        $this->assertTrue($settings->load($group));
+        $this->assertEquals('first', $settings->getProperty('key'));
+
+        $this->assertTrue($settings->delete());
+        Tools::settingsClear();
+    }
+
+    public function testSettingsSaveKeepsStoredKeys(): void
+    {
+        $value = $this->getStoredCodpais();
+        $settings = new Settings();
+        $this->assertTrue($settings->load('default'));
+        $original = $settings->getProperties();
+
+        try {
+            // simulamos la configuración incompleta que queda en memoria tras una lectura fallida,
+            // con un valor predeterminado distinto del guardado
+            Tools::settingsClear();
+            $property = new ReflectionProperty(Tools::class, 'settings');
+            $property->setValue(null, ['default' => ['codpais' => 'test-default']]);
+
+            Tools::settingsSet('default', 'test_saved_key', 'test-value');
+            $this->assertTrue(Tools::settingsSave());
+
+            // se conservan todas las claves guardadas, incluido el valor de codpais, y se añade la nueva
+            $this->assertTrue($settings->load('default'));
+            $expected = $original;
+            $expected['test_saved_key'] = 'test-value';
+            $this->assertEquals($expected, $settings->getProperties());
+            $this->assertEquals($value, $settings->getProperty('codpais'));
+        } finally {
+            // restauramos la fila default aunque falle el test
+            $settings->name = 'default';
+            $settings->setProperties($original);
+            $settings->save();
+            Tools::settingsClear();
+        }
+    }
+
     public function testKebab(): void
     {
         // casos básicos
@@ -408,5 +496,18 @@ final class ToolsTest extends TestCase
 
         // restauramos el valor original
         Tools::settingsSet('default', 'decimals', $originalDecimals);
+    }
+
+    private function getStoredCodpais(): string
+    {
+        // nos aseguramos de que la fila default existe en la base de datos
+        Tools::settingsClear();
+        Tools::settingsSet('default', 'codpais', Tools::settings('default', 'codpais', 'ESP'));
+        $this->assertTrue(Tools::settingsSave());
+
+        Tools::settingsClear();
+        $value = Tools::settings('default', 'codpais');
+        $this->assertNotEmpty($value);
+        return $value;
     }
 }

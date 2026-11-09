@@ -121,6 +121,40 @@ final class ForjaTest extends TestCase
         $this->assertTrue($plugin->hasUpdate());
     }
 
+    public function testPluginObsoleteAndReplacement(): void
+    {
+        $plugin = new Plugin(['name' => 'ForjaTestPlugin']);
+        $plugin->version = 1.0;
+
+        // sin datos en la forja no es obsoleto ni tiene reemplazo
+        Forja::$builds = [];
+        $this->assertFalse($plugin->isObsolete());
+        $this->assertSame('', $plugin->replacement());
+
+        // proyecto antiguo, sin los campos obsolete ni replacement
+        Forja::$builds = [[
+            'project' => 999999,
+            'name' => 'ForjaTestPlugin',
+            'builds' => [$this->build(2.0, '8.0')],
+        ]];
+        $this->assertFalse($plugin->isObsolete());
+        $this->assertSame('', $plugin->replacement());
+        $this->assertTrue($plugin->hasUpdate());
+
+        // obsoleto con reemplazo: no se ofrece la actualización
+        Forja::$builds[0]['obsolete'] = true;
+        Forja::$builds[0]['replacement'] = ' NewTestPlugin ';
+        $this->assertTrue($plugin->isObsolete());
+        $this->assertSame('NewTestPlugin', $plugin->replacement());
+        $this->assertFalse($plugin->hasUpdate());
+
+        // valores no válidos se ignoran
+        Forja::$builds[0]['obsolete'] = 1;
+        Forja::$builds[0]['replacement'] = ['NewTestPlugin'];
+        $this->assertFalse($plugin->isObsolete());
+        $this->assertSame('', $plugin->replacement());
+    }
+
     public function testPluginsDiscardInvalidItems(): void
     {
         $this->setPluginList([

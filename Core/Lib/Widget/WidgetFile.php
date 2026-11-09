@@ -63,8 +63,8 @@ class WidgetFile extends BaseWidget
             $class = $this->combineClasses($this->css('form-control'), $this->class);
             return '<div class="mb-3">'
                 . '<label class="mb-0">' . $this->onclickHtml(Tools::trans($title), $titleurl) . '</label>'
-                . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-                . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>'
+                . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value) . '"/>'
+                . '<input type="text" value="' . $this->escapeHtml($this->show()) . '" class="' . $class . '" readonly=""/>'
                 . '</div>';
         }
 
@@ -77,30 +77,30 @@ class WidgetFile extends BaseWidget
      */
     public function processFormData(&$model, $request)
     {
-        // get file uploads
-        foreach ($request->files->all() as $key => $uploadFile) {
-            if ($key != $this->fieldname || is_null($uploadFile)) {
-                continue;
-            } elseif (false === $uploadFile->isValid()) {
-                Tools::log()->error($uploadFile->getErrorMessage());
-                continue;
-            }
-
-            // check if the file already exists
-            $destiny = FS_FOLDER . '/MyFiles/';
-            $destinyName = $uploadFile->getClientOriginalName();
-            if (file_exists($destiny . $destinyName)) {
-                $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
-            }
-
-            // move the file to the MyFiles folder
-            if ($uploadFile->move($destiny, $destinyName)) {
-                $model->{$this->fieldname} = $destinyName;
-                continue;
-            }
-
-            Tools::log()->error('file-move-error', ['%fileName%' => $uploadFile->getClientOriginalName()]);
+        // con multiple="true" se reciben varios archivos y get() devuelve null:
+        // el campo solo puede guardar un nombre, así que los procesa el plugin
+        $uploadFile = $request->files->get($this->fieldname);
+        if (null === $uploadFile) {
+            return;
+        } elseif (false === $uploadFile->isValid()) {
+            Tools::log()->error($uploadFile->getErrorMessage());
+            return;
         }
+
+        // check if the file already exists
+        $destiny = FS_FOLDER . '/MyFiles/';
+        $destinyName = $uploadFile->getClientOriginalName();
+        if (file_exists($destiny . $destinyName)) {
+            $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
+        }
+
+        // move the file to the MyFiles folder
+        if ($uploadFile->move($destiny, $destinyName)) {
+            $model->{$this->fieldname} = $destinyName;
+            return;
+        }
+
+        Tools::log()->error('file-move-error', ['%fileName%' => $uploadFile->getClientOriginalName()]);
     }
 
     /**
@@ -124,11 +124,11 @@ class WidgetFile extends BaseWidget
         $class = empty($extraClass) ? $this->css('form-control') : $this->css('form-control') . ' ' . $extraClass;
 
         if ($this->multiple) {
-            return '<input type="' . $type . '" name="' . $this->fieldname . '[]" value="' . $this->value
+            return '<input type="' . $type . '" name="' . $this->fieldname . '[]" value="' . $this->escapeHtml($this->value)
                 . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . ' multiple/>';
         }
 
-        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
+        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->escapeHtml($this->value)
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
 
@@ -136,7 +136,7 @@ class WidgetFile extends BaseWidget
     {
         $html = parent::inputHtmlExtraParams();
         if (!empty($this->accept)) {
-            $html .= ' accept="' . $this->accept . '"';
+            $html .= ' accept="' . $this->escapeHtml($this->accept) . '"';
         }
 
         return $html;

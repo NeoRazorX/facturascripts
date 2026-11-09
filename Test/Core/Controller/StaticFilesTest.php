@@ -105,6 +105,32 @@ final class StaticFilesTest extends TestCase
         new Myfiles('Myfiles', '/MyFiles/Public/' . self::$testFolder . '/public.pdf');
     }
 
+    public function testMyfilesAllowsCommonOfficeFiles(): void
+    {
+        // tipos habituales que antes se podían subir pero no descargar
+        foreach (['bmp', 'eml', 'heic', 'heif', 'm4a', 'msg', 'odp', 'pps', 'ppsx', 'ppt', 'rtf', 'tar', 'tif', 'TIFF', 'wav'] as $ext) {
+            $this->assertTrue(Myfiles::isFileSafe('MyFiles/2026/11/archivo.' . $ext), $ext);
+        }
+
+        // los ejecutables y las credenciales siguen sin servirse
+        foreach (['exe', 'msi', 'bat', 'sh', 'php', 'p12', 'pfx', 'pem', 'key'] as $ext) {
+            $this->assertFalse(Myfiles::isFileSafe('MyFiles/2026/11/archivo.' . $ext), $ext);
+        }
+    }
+
+    public function testMyfilesControllerForcesDownloadOfEmails(): void
+    {
+        $this->createFile('MyFiles', 'Public', self::$testFolder, 'mail.eml');
+        $this->createFile('MyFiles', 'Public', self::$testFolder, 'photo.heic');
+
+        $method = new ReflectionMethod(Myfiles::class, 'shouldForceDownload');
+
+        $controller = new Myfiles('Myfiles');
+        $folder = Tools::folder('MyFiles', 'Public', self::$testFolder);
+        $this->assertTrue($method->invoke($controller, $folder . DIRECTORY_SEPARATOR . 'mail.eml'));
+        $this->assertFalse($method->invoke($controller, $folder . DIRECTORY_SEPARATOR . 'photo.heic'));
+    }
+
     public function testMyfilesControllerForcesDownloadOfCsvFiles(): void
     {
         $this->createFile('MyFiles', 'Public', self::$testFolder, 'data.csv');
