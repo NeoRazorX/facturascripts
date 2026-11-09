@@ -21,9 +21,11 @@ namespace FacturaScripts\Test\Core\Lib\Email;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Lib\Email\MailNotifier;
+use FacturaScripts\Core\Lib\Email\NewMail;
 use FacturaScripts\Core\Model\EmailNotification;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 class MailNotifierTest extends TestCase
 {
@@ -109,6 +111,60 @@ class MailNotifierTest extends TestCase
         self::$notification->save();
     }
 
+    public function testElCorreoIncluyeLasCopiasValidas()
+    {
+        $newMail = $this->newMail(
+            'sendmail-EmailTest',
+            'test@test.com',
+            ['copia@test.com', '', 'no-es-un-email', null],
+            [' oculta@test.com '],
+            'Nombre de pruebas'
+        );
+
+        $this->assertNotNull($newMail);
+        $this->assertEquals(['test@test.com'], $newMail->getToAddresses());
+        $this->assertContains('copia@test.com', $newMail->getCCAddresses());
+        $this->assertNotContains('no-es-un-email', $newMail->getCCAddresses());
+        $this->assertNotContains('', $newMail->getCCAddresses());
+        $this->assertContains('oculta@test.com', $newMail->getBCCAddresses());
+        $this->assertNotContains('oculta@test.com', $newMail->getCCAddresses());
+        $this->assertNotContains('copia@test.com', $newMail->getBCCAddresses());
+    }
+
+    public function testElCorreoSustituyeLosParametros()
+    {
+        $subject = self::$notification->subject;
+        $body = self::$notification->body;
+        self::$notification->subject = 'Hola {name}';
+        self::$notification->body = 'Email: {email}. Dato: {dato}. Código: {verificode}.';
+        self::$notification->save();
+
+        $newMail = $this->newMail(
+            'sendmail-EmailTest',
+            'test@test.com',
+            [],
+            [],
+            'Nombre de pruebas',
+            ['dato' => 123]
+        );
+
+        self::$notification->subject = $subject;
+        self::$notification->body = $body;
+        self::$notification->save();
+
+        $this->assertNotNull($newMail);
+        $this->assertEquals('Hola Nombre de pruebas', $newMail->title);
+        $this->assertEquals(
+            'Email: test@test.com. Dato: 123. Código: ' . $newMail->verificode . '.',
+            $newMail->text
+        );
+    }
+
+    public function testNoHayCorreoSiNoExisteNotificacion()
+    {
+        $this->assertNull($this->newMail('nombre-de-notificacion-erroneo', 'test@test.com'));
+    }
+
     public function testNoPuedeEnviarEmailSiNoEstaConfigurado()
     {
         Tools::settingsSet('email', 'email', null);
@@ -136,5 +192,12 @@ class MailNotifierTest extends TestCase
         );
 
         $this->assertFalse($response);
+    }
+
+    private function newMail(string $notificationName, string $email, array $cc = [], array $bcc = [], string $name = '', array $params = []): ?NewMail
+    {
+        $method = new ReflectionMethod(MailNotifier::class, 'newMail');
+
+        return $method->invoke(null, $notificationName, $email, $cc, $bcc, $name, $params, [], [], []);
     }
 }

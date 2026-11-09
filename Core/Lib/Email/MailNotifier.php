@@ -72,17 +72,28 @@ class MailNotifier
      */
     public static function sendWithCopies(string $notificationName, string $email, array $cc, array $bcc = [], string $name = '', array $params = [], array $attach = [], array $mainBlocks = [], array $footerBlocks = []): bool
     {
+        $newMail = static::newMail($notificationName, $email, $cc, $bcc, $name, $params, $attach, $mainBlocks, $footerBlocks);
+
+        return $newMail ? $newMail->send() : false;
+    }
+
+    /**
+     * Devuelve el correo de la notificación listo para enviar,
+     * o null si la notificación no existe o está desactivada.
+     */
+    protected static function newMail(string $notificationName, string $email, array $cc, array $bcc, string $name, array $params, array $attach, array $mainBlocks, array $footerBlocks): ?DinNewMail
+    {
         // ¿La notificación existe?
         $notification = new EmailNotification();
         if (false === $notification->load($notificationName)) {
             Tools::log()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
-            return false;
+            return null;
         }
 
         // ¿Está desactivada?
         if (false === $notification->enabled) {
             Tools::log()->warning('email-notification-disabled', ['%name%' => $notificationName]);
-            return false;
+            return null;
         }
 
         // cargamos la clase NewMail
@@ -131,6 +142,6 @@ class MailNotifier
             $newMail->addAttachment($adjunto, basename($adjunto));
         }
 
-        return $newMail->send();
+        return $newMail;
     }
 }
