@@ -312,6 +312,9 @@
                 }
                 window.location.replace(data.newurl);
             } else {
+                if (typeof data.multireqtoken === 'string') {
+                    document.forms['purchasesForm']['multireqtoken'].value = data.multireqtoken;
+                }
                 animateSpinner('remove', true);
             }
         }).catch(function (error) {
