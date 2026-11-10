@@ -429,6 +429,7 @@
     "credit": "Credit",
     "crm": "CRM",
     "cron-job": "Scheduled Task",
+    "cron-maintenance-mode": "The cron has stopped because an update is being installed. Pending jobs will run on the next cron execution.",
     "cron-max-execution-time-reached": "The maximum execution time for the cron job has been reached (%seconds% seconds). Pending jobs will be executed in the next cron job.",
     "cron-timeout": "The cron has stopped to prevent exceeding the maximum PHP execution time. Please run the cron from the terminal to avoid this limit.",
     "crons": "Crons",

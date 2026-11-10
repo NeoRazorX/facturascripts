@@ -429,6 +429,7 @@
     "credit": "Haver",
     "crm": "CRM",
     "cron-job": "Tasca programada",
+    "cron-maintenance-mode": "El cron se ha detenido porque se está instalando una actualización. Las tareas pendientes se ejecutarán en la siguiente ejecución del cron.",
     "cron-max-execution-time-reached": "S'ha arribat al temps límit d'execució del cron (%seconds% segons). Les tasques pendents es realitzaran durant la següent execució del cron.",
     "cron-timeout": "El cron s'ha aturat per no superar el temps màxim d'execució de PHP. Si us plau, executa el cron des de terminal per evitar aquest límit.",
     "crons": "Crons",

@@ -429,6 +429,7 @@
     "credit": "Hartzekoa",
     "crm": "CRM",
     "cron-job": "Zeregin programatua",
+    "cron-maintenance-mode": "El cron se ha detenido porque se está instalando una actualización. Las tareas pendientes se ejecutarán en la siguiente ejecución del cron.",
     "cron-max-execution-time-reached": "Cronaren gehieneko exekuzio-denbora (%seconds% segundo) iritsi da. Zain dauden lanak cronaren hurrengo exekuzioan exekutatuko dira.",
     "cron-timeout": "Kronoa gelditu da PHP-ren exekuzio denbora maksimoa gainditu ez dadin. Mesedez, exekutatu kronoa terminaletik, mugarik hau saihesteko.",
     "crons": "Krons",

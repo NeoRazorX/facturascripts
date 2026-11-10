@@ -429,6 +429,7 @@
     "credit": "Crédito",
     "crm": "CRM",
     "cron-job": "Tarefa programada",
+    "cron-maintenance-mode": "El cron se ha detenido porque se está instalando una actualización. Las tareas pendientes se ejecutarán en la siguiente ejecución del cron.",
     "cron-max-execution-time-reached": "Foi atingido o tempo máximo de execução do cron (%seconds% segundos). Os trabalhos pendentes serão executados na próxima execução do cron.",
     "cron-timeout": "O cron parou para não ultrapassar o tempo máximo de execução do PHP. Por favor, execute o cron a partir do terminal para evitar este limite.",
     "crons": "Cronós",

@@ -429,6 +429,7 @@
     "credit": "Dal",
     "crm": "CRM",
     "cron-job": "Naplánovaná úloha",
+    "cron-maintenance-mode": "El cron se ha detenido porque se está instalando una actualización. Las tareas pendientes se ejecutarán en la siguiente ejecución del cron.",
     "cron-max-execution-time-reached": "Byl dosažen maximální čas spuštění cronu (%seconds% sekund). Čekající úlohy budou provedeny při dalším spuštění cronu.",
     "cron-timeout": "Časový limit cronu byl dosažen, aby nedošlo k překročení maximálního běhového limitu PHP. Pro vyhnutí se této limitaci spusťte cron z terminálu.",
     "crons": "Stroje",

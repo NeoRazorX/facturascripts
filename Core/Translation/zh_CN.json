@@ -429,6 +429,7 @@
     "credit": "贷方",
     "crm": "CRM",
     "cron-job": "定时任务",
+    "cron-maintenance-mode": "El cron se ha detenido porque se está instalando una actualización. Las tareas pendientes se ejecutarán en la siguiente ejecución del cron.",
     "cron-max-execution-time-reached": "已达到 cron 的最大执行时间（%seconds% 秒）。待处理的任务将在下次执行 cron 时运行。",
     "cron-timeout": "cron 已停止，以免超过 PHP 的最大执行时间。请从终端运行 cron 以避免此限制。",
     "crons": "定时任务",
