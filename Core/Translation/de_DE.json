@@ -122,6 +122,7 @@
     "api-disabled": "API deaktiviert. Sie können es in den Anwendungseinstellungen aktivieren.",
     "api-key": "API key",
     "api-keys": "API Keys",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "Ungültige API-Ressource",
     "api-version-invalid": "Ungültige API-Version",
     "api-version-not-found": "API-Version nicht gefunden",

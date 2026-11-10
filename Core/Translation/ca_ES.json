@@ -122,6 +122,7 @@
     "api-disabled": "API desactivada. Podeu activar-la des del tauler de control",
     "api-key": "Clau d'API",
     "api-keys": "Claus d'API",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "Recurs de la API no vàlid",
     "api-version-invalid": "Versió de la API no vàlida",
     "api-version-not-found": "Versió de API no trobada",

@@ -122,6 +122,7 @@
     "api-disabled": "API disabled. You can activate it from application preferences.",
     "api-key": "API key",
     "api-keys": "API Keys",
+    "api-rate-limit-exceeded": "You have exceeded the API requests per minute limit. Please try again in a few seconds.",
     "api-resource-invalid": "Invalid API resource",
     "api-version-invalid": "Invalid API version",
     "api-version-not-found": "API version not found",

@@ -122,6 +122,7 @@
     "api-disabled": "API désactivée",
     "api-key": "Clé API",
     "api-keys": "Clés de l'API",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "Ressource d'API non valide",
     "api-version-invalid": "Version de l'API non valide",
     "api-version-not-found": "Version d'API non trouvée",

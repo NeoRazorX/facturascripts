@@ -122,6 +122,7 @@
     "api-disabled": "API gedeactiveerd. Je kunt deze activeren via het configuratiescherm",
     "api-key": "API-sleutel",
     "api-keys": "API-sleutels",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "Ongeldige API-resource",
     "api-version-invalid": "Ongeldige API-versie",
     "api-version-not-found": "API-versie niet gevonden",

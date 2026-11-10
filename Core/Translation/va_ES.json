@@ -122,6 +122,7 @@
     "api-disabled": "La API està deshabilitada. La pots habilitar des de les preferències de l'aplicació.",
     "api-key": "API key",
     "api-keys": "API Keys",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "Recurs d'API no vàlid",
     "api-version-invalid": "Versió de l'API no vàlida",
     "api-version-not-found": "Versió de API no trobada",

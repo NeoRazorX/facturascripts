@@ -122,6 +122,7 @@
     "api-disabled": "API devre dışı. Kontrol panelinden etkinleştirebilirsiniz",
     "api-key": "API anahtarı",
     "api-keys": "API Anahtarları",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "Geçersiz API kaynağı",
     "api-version-invalid": "Geçersiz API sürümü",
     "api-version-not-found": "API sürümü bulunamadı",

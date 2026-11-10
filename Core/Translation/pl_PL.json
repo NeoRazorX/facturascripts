@@ -122,6 +122,7 @@
     "api-disabled": "API wyłączone. Możesz je włączyć w preferencjach aplikacji.",
     "api-key": "Klucz API",
     "api-keys": "Klucze API",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "Nieprawidłowy zasób API",
     "api-version-invalid": "Nieprawidłowa wersja API",
     "api-version-not-found": "Nie znaleziono wersji API",

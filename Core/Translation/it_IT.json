@@ -122,6 +122,7 @@
     "api-disabled": "api-disabilitato",
     "api-key": "Chiave API",
     "api-keys": "Chiavi API",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "Risorsa API non valida",
     "api-version-invalid": "Versione API non valida",
     "api-version-not-found": "Versione API non trovata",

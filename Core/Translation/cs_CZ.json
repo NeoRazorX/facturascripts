@@ -122,6 +122,7 @@
     "api-disabled": "API deaktivováno. Můžete jej povolit v nastavení aplikace.",
     "api-key": "API key",
     "api-keys": "API Keys",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "Neplatný zdroj API",
     "api-version-invalid": "Neplatná verze API",
     "api-version-not-found": "Verze API nebyla nalezena",

@@ -122,6 +122,7 @@
     "api-disabled": "API desativada. Pode ativá-la a partir do painel de controle.",
     "api-key": "API key",
     "api-keys": "API Keys",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "Recurso da API inválido",
     "api-version-invalid": "Versão da API inválida",
     "api-version-not-found": "Versão da API não encontrada",

@@ -122,6 +122,7 @@
     "api-disabled": "API desgaitua. Panelaren hobespenetatik gaitu dezakezu",
     "api-key": "API key",
     "api-keys": "API Keys",
+    "api-rate-limit-exceeded": "Ha superado el límite de peticiones por minuto de la API. Inténtelo de nuevo en unos segundos.",
     "api-resource-invalid": "API baliabidea baliogabea",
     "api-version-invalid": "APIaren bertsioa baliogabea",
     "api-version-not-found": "Ez da aurkitu API bertsioa",
