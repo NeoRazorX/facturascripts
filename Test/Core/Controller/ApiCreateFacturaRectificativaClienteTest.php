@@ -219,6 +219,77 @@ final class ApiCreateFacturaRectificativaClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
 
+    public function testRefundCannotExceedInvoicedQuantity(): void
+    {
+        // creamos una factura con una línea de 3 unidades
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+        $lines = $invoice->getLines();
+        $this->assertCount(1, $lines, 'bad-invoice-lines-count');
+        $lines[0]->cantidad = 3;
+        $this->assertTrue($lines[0]->save(), 'can-not-save-line');
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'can-not-calculate-invoice');
+
+        // rectificar más unidades de las facturadas se rechaza sin crear nada
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'refund_' . $lines[0]->idlinea => 5,
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'over-refund-should-fail');
+        $this->assertCount(0, FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]), 'over-refund-created');
+
+        // una cantidad negativa en una línea positiva también se rechaza
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'refund_' . $lines[0]->idlinea => -1,
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'negative-refund-should-fail');
+        $this->assertCount(0, FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]), 'negative-refund-created');
+
+        // rectificamos 2 unidades
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'refund_' . $lines[0]->idlinea => 2,
+        ]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'partial-refund-failed');
+
+        // ya solo queda 1 unidad: pedir 2 más se rechaza
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'refund_' . $lines[0]->idlinea => 2,
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'second-over-refund-should-fail');
+        $this->assertCount(1, FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]), 'second-over-refund-created');
+
+        // sin cantidades, se rectifica solo lo que queda pendiente
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date()]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'pending-refund-failed');
+        $refunds = FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)], ['idfactura' => 'ASC']);
+        $this->assertCount(2, $refunds, 'pending-refund-not-created');
+        $refundLines = $refunds[1]->getLines();
+        $this->assertCount(1, $refundLines, 'bad-pending-refund-lines-count');
+        $this->assertEquals(-1, $refundLines[0]->cantidad, 'bad-pending-refund-quantity');
+
+        // con todo rectificado, otra rectificativa completa se rechaza
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date()]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'full-refund-again-should-fail');
+        $this->assertCount(2, FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]), 'full-refund-again-created');
+
+        // limpiamos (primero las rectificativas, luego la original)
+        foreach (array_reverse($refunds) as $refund) {
+            $this->deleteRefund($refund);
+        }
+        $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
+        $subject = $invoice->getSubject();
+        $this->deleteRefund($invoice);
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
     public function testRefundWithoutHour(): void
     {
         // creamos una factura con una línea
