@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
 use Closure;
 use Error;
 use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Maintenance;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -400,6 +401,11 @@ class CronJob extends ModelClass
      */
     public function isReady(): bool
     {
+        // en modo mantenimiento no se ejecuta ningún job: el código puede estar a medio sustituir
+        if (Maintenance::isActive()) {
+            return false;
+        }
+
         if (self::isMaxExecutionTimeReached()) {
             return false;
         }

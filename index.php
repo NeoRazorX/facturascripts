@@ -26,6 +26,66 @@ use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\WorkQueue;
 
+// modo mantenimiento (ver Core/Maintenance.php): lo comprobamos antes de cargar nada, con PHP puro,
+// porque durante una actualización las carpetas Core y vendor pueden estar a medio sustituir
+(static function (): void {
+    $file = __DIR__ . '/MyFiles/maintenance';
+    if (false === file_exists($file)) {
+        return;
+    }
+
+    // un archivo vacío o ilegible es un mantenimiento activado a mano: sin caducidad ni token
+    $data = json_decode((string)@file_get_contents($file), true);
+    $expires = is_array($data) ? (int)($data['expires'] ?? 0) : 0;
+    $token = is_array($data) ? (string)($data['token'] ?? '') : '';
+    if ($expires > 0 && $expires <= time()) {
+        return;
+    }
+
+    // la petición que continúa la actualización trae el token en la url
+    $given = $_GET['maintenance'] ?? '';
+    if ('' !== $token && is_string($given) && hash_equals($token, $given)) {
+        return;
+    }
+
+    $spanish = 'es' === substr((string)($_COOKIE['fsLang'] ?? ''), 0, 2);
+    $title = $spanish ? 'Actualización en curso' : 'Update in progress';
+    $message = $spanish ?
+        'Estamos instalando una actualización. Vuelva a intentarlo en unos segundos.' :
+        'An update is being installed. Please try again in a few seconds.';
+
+    // desde la línea de comandos (cron) solo avisamos
+    if (PHP_SAPI === 'cli') {
+        echo $message . PHP_EOL;
+        exit(0);
+    }
+
+    http_response_code(503);
+    header('Retry-After: 30');
+    header('Cache-Control: no-store');
+
+    $path = (string)parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    if (1 === preg_match('#/api(/|$)#', $path)) {
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => $message]);
+        exit(0);
+    }
+
+    if ('/cron' === substr($path, -5)) {
+        header('Content-Type: text/plain; charset=UTF-8');
+        echo $message . PHP_EOL;
+        exit(0);
+    }
+
+    header('Content-Type: text/html; charset=UTF-8');
+    echo '<!doctype html><html lang="' . ($spanish ? 'es' : 'en') . '"><head><meta charset="UTF-8">'
+        . '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        . '<meta http-equiv="refresh" content="15"><title>' . $title . '</title></head>'
+        . '<body style="font-family: sans-serif; text-align: center; margin-top: 15vh;">'
+        . '<h1>' . $title . '</h1><p>' . $message . '</p></body></html>';
+    exit(0);
+})();
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 // cargamos la configuración

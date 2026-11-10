@@ -29,6 +29,7 @@ use FacturaScripts\Core\Internal\PhpExtensions;
 use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Maintenance;
 use FacturaScripts\Core\Migrations;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
@@ -387,6 +388,17 @@ class Updater extends Controller
         $this->setCoreWarnings();
     }
 
+    /**
+     * Desactiva el modo mantenimiento que activó la acción update, si esta petición es su continuación.
+     */
+    private function finishMaintenance(): void
+    {
+        // si la petición trae el token y ha llegado hasta aquí, index.php ya lo ha validado
+        if ('' !== $this->request->get(Maintenance::URL_PARAM, '')) {
+            Maintenance::disable();
+        }
+    }
+
     private static function getUpdateItemsCore(): array
     {
         $fileName = 'update-' . Forja::CORE_PROJECT_ID . '.zip';
@@ -522,11 +534,13 @@ class Updater extends Controller
         $plugName = $this->request->get('init', '');
         if ($plugName) {
             Plugins::deploy(true, true);
+            $this->finishMaintenance();
             return;
         }
 
         Migrations::run();
         Plugins::deploy(true, true);
+        $this->finishMaintenance();
 
         // informamos a la telemetría de la nueva versión del core y de la lista de plugins
         $this->telemetryManager->update(true);
@@ -627,10 +641,19 @@ class Updater extends Controller
             }
         }
 
+        // activamos el modo mantenimiento hasta que termine el post-update, para que el resto
+        // de peticiones, el cron y la cola de trabajos no ejecuten código a medio sustituir
+        $maintenance = Maintenance::enable();
+        $maintenanceToken = Maintenance::token();
+
         // extract core/plugin zip file
         $done = ($idItem == Forja::CORE_PROJECT_ID) ?
             $this->updateCore($zip, $fileName) :
             $this->updatePlugin($zip, $fileName);
+
+        if (false === $done && $maintenance) {
+            Maintenance::disable();
+        }
 
         if ($done) {
             // a partir de aquí no ejecutamos nada más en esta petición: las clases cargadas en memoria
@@ -647,7 +670,13 @@ class Updater extends Controller
             Cache::clear();
             $this->setTemplate(false);
             $this->response->setContent('reloading...');
-            $this->redirect($this->getClassName() . '?action=post-update&init=' . $init, 3);
+
+            // el post-update lleva el token para atravesar el modo mantenimiento
+            $url = $this->getClassName() . '?action=post-update&init=' . $init;
+            if ($maintenanceToken) {
+                $url .= '&' . Maintenance::URL_PARAM . '=' . $maintenanceToken;
+            }
+            $this->redirect($url, 3);
         }
     }
 
