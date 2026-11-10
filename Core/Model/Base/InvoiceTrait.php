@@ -145,9 +145,13 @@ trait InvoiceTrait
             || $this->getSerie()->tipo === 'R';
     }
 
+    /**
+     * Indica si la factura está pagada. Una factura con la columna pagada a NULL
+     * (facturas antiguas o importadas) se considera no pagada.
+     */
     public function paid(): bool
     {
-        return $this->pagada;
+        return (bool)$this->pagada;
     }
 
     /**

@@ -969,6 +969,20 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
+    public function testPaidWithNullValue(): void
+    {
+        // una factura con la columna pagada a NULL (facturas antiguas o importadas) no debe lanzar TypeError
+        $invoice = new FacturaProveedor();
+        $invoice->pagada = null;
+        $this->assertFalse($invoice->paid(), 'paid-null-is-not-false');
+
+        // los valores normales se comportan igual
+        $invoice->pagada = false;
+        $this->assertFalse($invoice->paid(), 'paid-false-is-not-false');
+        $invoice->pagada = true;
+        $this->assertTrue($invoice->paid(), 'paid-true-is-not-true');
+    }
+
     private function createRetention(string $letter, float $percentage, string $codsubcuenta): Retencion
     {
         $retention = new Retencion();
