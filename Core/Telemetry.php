@@ -238,6 +238,7 @@ final class Telemetry
         if (false === $minimum) {
             $data['dbengine'] = $this->getDatabaseEngine();
             $data['fingerprints'] = $this->collectFingerprints();
+            $data['langusers'] = $this->collectLangUsers();
             $data['os'] = PHP_OS;
             $data['pluginlist'] = implode(',', Plugins::enabled());
             $data['url'] = $this->url();
@@ -259,6 +260,37 @@ final class Telemetry
             }
         }
         return implode(',', $fingerprints);
+    }
+
+    /**
+     * Devuelve el número de usuarios activos por idioma con el formato "ca_ES:1,es_ES:4".
+     * Los usuarios sin idioma usan el de la instalación.
+     */
+    private function collectLangUsers(): string
+    {
+        try {
+            $rows = DbQuery::table('users')
+                ->selectRaw('langcode, COUNT(*) AS total')
+                ->whereEq('enabled', true)
+                ->groupBy('langcode')
+                ->get();
+        } catch (Exception $e) {
+            return '';
+        }
+
+        $counts = [];
+        $defaultLang = Tools::config('lang');
+        foreach ($rows as $row) {
+            $lang = empty($row['langcode']) ? $defaultLang : $row['langcode'];
+            $counts[$lang] = ($counts[$lang] ?? 0) + (int)$row['total'];
+        }
+        ksort($counts);
+
+        $list = [];
+        foreach ($counts as $lang => $total) {
+            $list[] = $lang . ':' . $total;
+        }
+        return implode(',', $list);
     }
 
     private function getDatabaseEngine(): string
