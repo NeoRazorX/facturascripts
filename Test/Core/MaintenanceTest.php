@@ -148,7 +148,7 @@ final class MaintenanceTest extends TestCase
         foreach ($model->all([], [], 0, 0) as $event) {
             $event->delete();
         }
-        WorkQueue::clear();
+        $workers = WorkQueue::getWorkersList();
         WorkQueue::addWorker('TestWorker', 'test-maintenance');
         $this->assertTrue(WorkQueue::send('test-maintenance', 'test-value'));
 
@@ -160,7 +160,13 @@ final class MaintenanceTest extends TestCase
         $this->assertFalse($events[0]->done);
 
         $this->assertTrue($events[0]->delete());
+
+        // dejamos los workers como estaban: el resto de tests los necesitan
         WorkQueue::clear();
+        foreach ($workers as $worker) {
+            WorkQueue::addWorker($worker['name'], $worker['event'], $worker['position']);
+        }
+        $this->assertSame($workers, WorkQueue::getWorkersList());
     }
 
     public function testDeployReleasesItsOwnMaintenance(): void
