@@ -65,7 +65,7 @@ class SecuenciaDocumento extends ModelClass
     public $patron;
 
     /** @var bool Indica si debe validarse la composición del patrón. */
-    private static $pattern_test = false;
+    private static $pattern_test = true;
 
     /** @var string Tipo de documento al que se aplica la secuencia. */
     public $tipodoc;
