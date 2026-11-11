@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use Closure;
 use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\AttachedFile;
@@ -44,6 +45,9 @@ use PHPUnit\Framework\TestCase;
 final class ProductoTest extends TestCase
 {
     use LogErrorsTrait;
+
+    /** @var int|null */
+    public static $blockedId;
 
     const TEST_REFERENCE = 'Test';
 
@@ -811,6 +815,53 @@ final class ProductoTest extends TestCase
         $supplier->cifnif = $num . '345678A';
 
         return $supplier;
+    }
+
+    public function testDeleteBeforeExtensionKeepsImages(): void
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // copiamos una imagen y la guardamos
+        $original = 'xss_img_src_onerror_alert(123).jpeg';
+        $originalPath = FS_FOLDER . '/Test/__files/' . $original;
+        $this->assertTrue(copy($originalPath, FS_FOLDER . '/MyFiles/' . $original), 'File not copied');
+        $file = new AttachedFile();
+        $file->path = $original;
+        $this->assertTrue($file->save(), 'can-not-save-file');
+
+        // añadimos la imagen al producto
+        $image = new ProductoImagen();
+        $image->idproducto = $product->idproducto;
+        $image->idfile = $file->idfile;
+        $this->assertTrue($image->save(), 'can-not-save-image-producto');
+
+        // añadimos una extensión que impide eliminar este producto
+        self::$blockedId = $product->idproducto;
+        Producto::addExtension(new class {
+            public function deleteBefore(): Closure
+            {
+                return function () {
+                    if ($this instanceof Producto && $this->idproducto == ProductoTest::$blockedId) {
+                        return false;
+                    }
+                };
+            }
+        });
+
+        // el producto no se puede eliminar y conserva su imagen
+        $this->assertFalse($product->delete(), 'product-should-not-be-deleted');
+        $this->assertTrue($product->exists(), 'product-should-exist');
+        $this->assertTrue($image->exists(), 'product-image-should-not-be-deleted');
+
+        // retiramos el bloqueo
+        self::$blockedId = null;
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($image->exists(), 'product-image-not-deleted');
+        $this->assertTrue($file->delete(), 'can-not-delete-file');
     }
 
     protected function tearDown(): void

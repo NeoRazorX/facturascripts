@@ -154,14 +154,7 @@ class Producto extends ModelClass
             }
         }
 
-        // eliminamos las imágenes del producto
-        foreach ($this->getImages() as $image) {
-            if (false === $image->delete()) {
-                return false;
-            }
-        }
-
-        // eliminamos el resto de la base de datos
+        // las imágenes se eliminan en onDeleteBefore()
         return parent::delete();
     }
 
@@ -346,6 +339,19 @@ class Producto extends ModelClass
             $this->referencia = $newReferencia;
             $this->save();
         }
+    }
+
+    protected function onDeleteBefore(): bool
+    {
+        // eliminamos las imágenes del producto aquí, y no en delete(),
+        // para que se ejecuten antes las extensiones deleteBefore
+        foreach ($this->getImages() as $image) {
+            if (false === $image->delete()) {
+                return false;
+            }
+        }
+
+        return parent::onDeleteBefore();
     }
 
     protected function saveInsert(): bool
