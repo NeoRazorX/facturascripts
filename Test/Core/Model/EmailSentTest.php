@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use Closure;
 use FacturaScripts\Core\Lib\Email\NewMail;
 use FacturaScripts\Core\Model\EmailSent;
 use FacturaScripts\Core\Tools;
@@ -29,6 +30,9 @@ use PHPUnit\Framework\TestCase;
 final class EmailSentTest extends TestCase
 {
     use LogErrorsTrait;
+
+    /** @var int|null */
+    public static $blockedId;
 
     public function testCreate(): void
     {
@@ -170,6 +174,48 @@ final class EmailSentTest extends TestCase
 
         // eliminamos
         $this->assertTrue($emailSent->delete());
+    }
+
+    public function testDeleteBeforeExtensionKeepsAttachments(): void
+    {
+        // creamos un email enviado con un adjunto
+        $emailSent = new EmailSent();
+        $emailSent->addressee = 'test@example.com';
+        $emailSent->attachment = true;
+        $emailSent->body = 'Test body content';
+        $emailSent->email_from = 'sender@example.com';
+        $emailSent->subject = 'Test Subject';
+        $emailSent->uuid = uniqid();
+        $this->assertTrue($emailSent->save());
+
+        $folder = FS_FOLDER . '/' . NewMail::getAttachmentPath($emailSent->email_from, 'Sent') . $emailSent->uuid;
+        $this->assertTrue(Tools::folderCheckOrCreate($folder));
+        $this->assertNotFalse(file_put_contents($folder . '/test.txt', 'test'));
+
+        // añadimos una extensión que impide eliminar este email
+        self::$blockedId = $emailSent->id;
+        EmailSent::addExtension(new class {
+            public function deleteBefore(): Closure
+            {
+                return function () {
+                    if ($this instanceof EmailSent && $this->id == EmailSentTest::$blockedId) {
+                        return false;
+                    }
+                };
+            }
+        });
+
+        // el email no se puede eliminar y conserva su adjunto
+        $this->assertFalse($emailSent->delete());
+        $this->assertTrue($emailSent->exists());
+        $this->assertTrue(file_exists($folder . '/test.txt'));
+
+        // retiramos el bloqueo
+        self::$blockedId = null;
+
+        // eliminamos: también se elimina la carpeta de adjuntos
+        $this->assertTrue($emailSent->delete());
+        $this->assertFalse(is_dir($folder));
     }
 
     protected function tearDown(): void
