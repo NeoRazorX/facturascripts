@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,19 +69,6 @@ class PagoProveedor extends ModelClass
         $this->nick = Session::user()->nick;
     }
 
-    public function delete(): bool
-    {
-        // si no podemos eliminar el asiento, no eliminamos el pago
-        $entry = $this->getAccountingEntry();
-        $entry->editable = true;
-        if ($entry->exists() && false === $entry->delete()) {
-            Tools::log()->warning('cant-remove-accounting-entry');
-            return false;
-        }
-
-        return parent::delete();
-    }
-
     public function disableAccountingGeneration(bool $value = true): void
     {
         $this->disable_accounting_generation = $value;
@@ -116,6 +103,20 @@ class PagoProveedor extends ModelClass
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         return empty($this->idasiento) ? $this->getReceipt()->url() : $this->getAccountingEntry()->url();
+    }
+
+    protected function onDeleteBefore(): bool
+    {
+        // si no podemos eliminar el asiento, no eliminamos el pago. Lo hacemos aquí,
+        // y no en delete(), para que se ejecuten antes las extensiones deleteBefore
+        $entry = $this->getAccountingEntry();
+        $entry->editable = true;
+        if ($entry->exists() && false === $entry->delete()) {
+            Tools::log()->warning('cant-remove-accounting-entry');
+            return false;
+        }
+
+        return parent::onDeleteBefore();
     }
 
     protected function saveInsert(): bool
