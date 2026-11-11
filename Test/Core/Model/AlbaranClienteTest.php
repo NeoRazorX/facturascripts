@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use Closure;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\AlbaranCliente;
@@ -36,6 +37,12 @@ final class AlbaranClienteTest extends TestCase
     use DefaultSettingsTrait;
     use LogErrorsTrait;
     use RandomDataTrait;
+
+    /** @var int|null */
+    public static $blockedId;
+
+    /** @var int|null */
+    public static $linesOnDeleteBefore;
 
     public static function setUpBeforeClass(): void
     {
@@ -398,6 +405,50 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
+    }
+
+    public function testDeleteBeforeExtensionRunsBeforeDeletingLines(): void
+    {
+        // creamos un cliente y un albarán con una línea
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+        $doc = new AlbaranCliente();
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save(), 'can-not-create-albaran-cliente');
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save(), 'can-not-save-line');
+
+        // añadimos una extensión que impide eliminar este albarán y anota las líneas que tiene en ese momento
+        self::$blockedId = $doc->idalbaran;
+        self::$linesOnDeleteBefore = null;
+        AlbaranCliente::addExtension(new class {
+            public function deleteBefore(): Closure
+            {
+                return function () {
+                    if ($this instanceof AlbaranCliente && $this->idalbaran === AlbaranClienteTest::$blockedId) {
+                        AlbaranClienteTest::$linesOnDeleteBefore = count($this->getLines());
+                        return false;
+                    }
+                };
+            }
+        });
+
+        // el albarán no se puede eliminar: la extensión se ejecuta con las líneas intactas y se conservan
+        $this->assertFalse($doc->delete(), 'albaran-cliente-should-not-be-deleted');
+        $this->assertSame(1, self::$linesOnDeleteBefore, 'lines-deleted-before-extension');
+        $this->assertTrue($doc->exists(), 'albaran-cliente-should-exist');
+        $this->assertTrue($line->exists(), 'line-should-not-be-deleted');
+
+        // retiramos el bloqueo
+        self::$blockedId = null;
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-albaran-cliente');
+        $this->assertFalse($line->exists(), 'linea-albaran-cliente-still-exists');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-cliente');
     }
 
     protected function tearDown(): void
