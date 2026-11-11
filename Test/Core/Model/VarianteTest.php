@@ -19,10 +19,13 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use Closure;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\Atributo;
+use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -31,6 +34,9 @@ use PHPUnit\Framework\TestCase;
 final class VarianteTest extends TestCase
 {
     use LogErrorsTrait;
+
+    /** @var int|null */
+    public static $blockedId;
 
     public function testNotAllowNullValues(): void
     {
@@ -252,6 +258,61 @@ final class VarianteTest extends TestCase
             $this->assertNotEquals($id, (int)$row->code, 'variant-found-by-' . $case);
         }
         $this->assertTrue(true);
+    }
+
+    public function testDeleteBeforeExtensionKeepsImages(): void
+    {
+        // creamos un producto y le añadimos una variante
+        $product = new Producto();
+        $product->referencia = 'test-variant-images';
+        $product->descripcion = 'Test Product';
+        $this->assertTrue($product->save(), 'product-cant-save');
+        $variant = new Variante();
+        $variant->idproducto = $product->idproducto;
+        $variant->referencia = 'test-variant-images-2';
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        // copiamos una imagen y la guardamos
+        $original = 'xss_img_src_onerror_alert(123).jpeg';
+        $originalPath = FS_FOLDER . '/Test/__files/' . $original;
+        $this->assertTrue(copy($originalPath, FS_FOLDER . '/MyFiles/' . $original), 'File not copied');
+        $file = new AttachedFile();
+        $file->path = $original;
+        $this->assertTrue($file->save(), 'can-not-save-file');
+
+        // añadimos la imagen a la variante
+        $image = new ProductoImagen();
+        $image->idproducto = $product->idproducto;
+        $image->referencia = $variant->referencia;
+        $image->idfile = $file->idfile;
+        $this->assertTrue($image->save(), 'can-not-save-image-variante');
+
+        // añadimos una extensión que impide eliminar esta variante
+        self::$blockedId = $variant->idvariante;
+        Variante::addExtension(new class {
+            public function deleteBefore(): Closure
+            {
+                return function () {
+                    if ($this instanceof Variante && $this->idvariante == VarianteTest::$blockedId) {
+                        return false;
+                    }
+                };
+            }
+        });
+
+        // la variante no se puede eliminar y conserva su imagen
+        $this->assertFalse($variant->delete(), 'variant-should-not-be-deleted');
+        $this->assertTrue($variant->exists(), 'variant-should-exist');
+        $this->assertTrue($image->exists(), 'variant-image-should-not-be-deleted');
+
+        // retiramos el bloqueo
+        self::$blockedId = null;
+
+        // eliminamos
+        $this->assertTrue($variant->delete(), 'variant-cant-delete');
+        $this->assertFalse($image->exists(), 'variant-image-not-deleted');
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($file->delete(), 'can-not-delete-file');
     }
 
     protected function tearDown(): void
