@@ -83,23 +83,7 @@ trait InvoiceTrait
             return false;
         }
 
-        // eliminamos los recibos
-        foreach ($this->getReceipts() as $receipt) {
-            $receipt->disableInvoiceUpdate(true);
-            if (false === $receipt->delete()) {
-                Tools::log()->warning('cant-remove-receipt');
-                return false;
-            }
-        }
-
-        // eliminamos la contabilidad
-        $acEntry = $this->getAccountingEntry();
-        $acEntry->editable = true;
-        if ($acEntry->exists() && false === $acEntry->delete()) {
-            Tools::log()->warning('cant-remove-accounting-entry');
-            return false;
-        }
-
+        // los recibos y la contabilidad se eliminan en onDeleteBefore()
         return parent::delete();
     }
 
@@ -225,6 +209,29 @@ trait InvoiceTrait
         }
 
         return true;
+    }
+
+    protected function onDeleteBefore(): bool
+    {
+        // eliminamos los recibos y la contabilidad aquí, y no en delete(),
+        // para que se ejecuten antes las extensiones deleteBefore
+        foreach ($this->getReceipts() as $receipt) {
+            $receipt->disableInvoiceUpdate(true);
+            if (false === $receipt->delete()) {
+                Tools::log()->warning('cant-remove-receipt');
+                return false;
+            }
+        }
+
+        // eliminamos la contabilidad
+        $acEntry = $this->getAccountingEntry();
+        $acEntry->editable = true;
+        if ($acEntry->exists() && false === $acEntry->delete()) {
+            Tools::log()->warning('cant-remove-accounting-entry');
+            return false;
+        }
+
+        return parent::onDeleteBefore();
     }
 
     protected function onChangeTotal(): bool
