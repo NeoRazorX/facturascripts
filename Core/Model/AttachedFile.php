@@ -70,19 +70,8 @@ class AttachedFile extends ModelClass
 
     public function delete(): bool
     {
-        // eliminamos el archivo, solo si está dentro de MyFiles
-        $fullPath = $this->getFullPath();
-        if (file_exists($fullPath) && $this->isInsideMyFiles($fullPath) && false === unlink($fullPath)) {
-            Tools::log()->warning('cant-delete-file', ['%fileName%' => $this->path]);
-            return false;
-        }
-
-        // eliminamos las relaciones con los productos
-        foreach (ProductoImagen::allWhereEq('idfile', $this->idfile) as $productoImage) {
-            $productoImage->delete();
-        }
-
-        // eliminamos el registro de la base de datos
+        // eliminamos el registro de la base de datos. El archivo y las relaciones
+        // con los productos se eliminan en onDeleteBefore()
         if (false === parent::delete()) {
             return false;
         }
@@ -267,6 +256,24 @@ class AttachedFile extends ModelClass
             default:
                 return parent::onChange($field);
         }
+    }
+
+    protected function onDeleteBefore(): bool
+    {
+        // eliminamos las relaciones con los productos
+        foreach (ProductoImagen::allWhereEq('idfile', $this->idfile) as $productoImage) {
+            $productoImage->delete();
+        }
+
+        // eliminamos el archivo, solo si está dentro de MyFiles. Lo dejamos para el final
+        // porque es lo único que no se puede deshacer si algo impide la eliminación
+        $fullPath = $this->getFullPath();
+        if (file_exists($fullPath) && $this->isInsideMyFiles($fullPath) && false === unlink($fullPath)) {
+            Tools::log()->warning('cant-delete-file', ['%fileName%' => $this->path]);
+            return false;
+        }
+
+        return parent::onDeleteBefore();
     }
 
     /**
