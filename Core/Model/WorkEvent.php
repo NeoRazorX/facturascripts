@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -71,17 +71,6 @@ class WorkEvent extends ModelClass
         $this->worker_list = '';
     }
 
-    public function delete(): bool
-    {
-        // si existe un archivo con los parámetros, lo eliminamos
-        $filePath = Tools::folder('MyFiles', 'Tmp', 'work-event-' . $this->id . '-params.json');
-        if (file_exists($filePath)) {
-            unlink($filePath);
-        }
-
-        return parent::delete();
-    }
-
     public function getHash(): string
     {
         return md5($this->name . $this->value . json_encode($this->params()));
@@ -147,6 +136,17 @@ class WorkEvent extends ModelClass
     public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    protected function onDelete(): void
+    {
+        // si existe un archivo con los parámetros, lo eliminamos una vez eliminado el registro
+        $filePath = Tools::folder('MyFiles', 'Tmp', 'work-event-' . $this->id . '-params.json');
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        parent::onDelete();
     }
 
     private function saveParamsToFile(): bool

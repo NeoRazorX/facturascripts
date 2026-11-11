@@ -19,9 +19,11 @@
 
 namespace FacturaScripts\Test\Core;
 
+use Closure;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\WorkEvent;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -30,6 +32,9 @@ use PHPUnit\Framework\TestCase;
 final class WorkQueueTest extends TestCase
 {
     use LogErrorsTrait;
+
+    /** @var int|null */
+    public static $blockedId;
 
     public static function setUpBeforeClass(): void
     {
@@ -352,6 +357,46 @@ final class WorkQueueTest extends TestCase
 
         // eliminamos el evento
         $this->assertTrue($event->delete());
+    }
+
+    public function testDeleteBeforeExtensionKeepsParamsFile(): void
+    {
+        // creamos un evento y le asignamos parámetros grandes, que se guardan en un archivo
+        $event = new WorkEvent();
+        $event->name = 'test-event';
+        $event->value = 'test-value';
+        $event->setParams([]);
+        $this->assertTrue($event->save());
+        $this->assertTrue(Tools::folderCheckOrCreate(Tools::folder('MyFiles', 'Tmp')));
+        $event->setParams(['data' => str_repeat('a', 6000)]);
+        $this->assertTrue($event->save());
+        $filePath = Tools::folder('MyFiles', 'Tmp', 'work-event-' . $event->id . '-params.json');
+        $this->assertTrue(file_exists($filePath));
+
+        // añadimos una extensión que impide eliminar este evento
+        self::$blockedId = $event->id;
+        WorkEvent::addExtension(new class {
+            public function deleteBefore(): Closure
+            {
+                return function () {
+                    if ($this instanceof WorkEvent && $this->id == WorkQueueTest::$blockedId) {
+                        return false;
+                    }
+                };
+            }
+        });
+
+        // el evento no se puede eliminar y conserva el archivo de parámetros
+        $this->assertFalse($event->delete());
+        $this->assertTrue($event->exists());
+        $this->assertTrue(file_exists($filePath));
+
+        // retiramos el bloqueo
+        self::$blockedId = null;
+
+        // eliminamos: también se elimina el archivo
+        $this->assertTrue($event->delete());
+        $this->assertFalse(file_exists($filePath));
     }
 
     protected function tearDown(): void
