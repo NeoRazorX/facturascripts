@@ -212,6 +212,7 @@
     <column>
         <name>vencida</name>
         <type>boolean</type>
+        <null>NO</null>
         <default>false</default>
     </column>
     <constraint>

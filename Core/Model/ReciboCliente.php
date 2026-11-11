@@ -236,6 +236,9 @@ class ReciboCliente extends ModelClass
             $this->codigofactura = $this->getInvoice()->codigo;
         }
 
+        // pagado no admite nulos: un valor nulo equivale a no pagado
+        $this->pagado = (bool)$this->pagado;
+
         // comprobamos la fecha de pago
         if ($this->pagado === false) {
             $this->fechapago = null;

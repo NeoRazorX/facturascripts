@@ -247,6 +247,29 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
+    public function testReceiptWithNullPaid(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // la columna pagado no admite nulos: un recibo con pagado nulo se guarda como no pagado
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $receipt = $receipts[0];
+        $receipt->pagado = null;
+        $this->assertTrue($receipt->save(), 'can-not-save-receipt-with-null-paid');
+        $this->assertTrue($receipt->reload(), 'can-not-reload-receipt');
+        $this->assertFalse($receipt->pagado, 'receipt-paid');
+        $this->assertNull($receipt->fechapago, 'receipt-with-payment-date');
+
+        // eliminamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
     public function testReceiptsTotalGreaterThanInvoice(): void
     {
         // creamos una factura
