@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -168,6 +168,84 @@ final class CodigoPostalTest extends TestCase
         // Eliminar
         $this->assertTrue($codigoPostal1->delete(), 'first-codigo-postal-cant-delete');
         $this->assertTrue($codigoPostal2->delete(), 'second-codigo-postal-cant-delete');
+    }
+
+    public function testKeepsLeadingZeros(): void
+    {
+        // creamos un código postal con ceros a la izquierda
+        $codigoPostal = new CodigoPostal();
+        $codigoPostal->number = '08001';
+        $codigoPostal->idciudad = self::$ciudad->idciudad;
+        $codigoPostal->idprovincia = self::$provincia->idprovincia;
+        $codigoPostal->codpais = self::$pais->codpais;
+        $this->assertTrue($codigoPostal->save(), 'codigo-postal-cant-save');
+
+        // al volver a cargarlo conserva los ceros
+        $loaded = new CodigoPostal();
+        $this->assertTrue($loaded->load($codigoPostal->id), 'codigo-postal-cant-load');
+        $this->assertSame('08001', $loaded->number, 'codigo-postal-lost-leading-zeros');
+
+        // eliminamos
+        $this->assertTrue($codigoPostal->delete(), 'codigo-postal-cant-delete');
+    }
+
+    public function testAlphanumeric(): void
+    {
+        // creamos un código postal con letras y espacios exteriores
+        $codigoPostal = new CodigoPostal();
+        $codigoPostal->number = '  SW1A 1AA ';
+        $codigoPostal->idciudad = self::$ciudad->idciudad;
+        $codigoPostal->idprovincia = self::$provincia->idprovincia;
+        $codigoPostal->codpais = self::$pais->codpais;
+        $this->assertTrue($codigoPostal->save(), 'codigo-postal-cant-save');
+        $this->assertSame('SW1A 1AA', $codigoPostal->number, 'codigo-postal-not-trimmed');
+
+        // al volver a cargarlo conserva el valor
+        $loaded = new CodigoPostal();
+        $this->assertTrue($loaded->load($codigoPostal->id), 'codigo-postal-cant-load');
+        $this->assertSame('SW1A 1AA', $loaded->number, 'codigo-postal-alphanumeric-changed');
+
+        // eliminamos
+        $this->assertTrue($codigoPostal->delete(), 'codigo-postal-cant-delete');
+    }
+
+    public function testNumericValueIsStoredAsText(): void
+    {
+        // un entero, como los que puede enviar la API, se guarda como texto
+        $codigoPostal = new CodigoPostal();
+        $codigoPostal->number = 28010;
+        $codigoPostal->idciudad = self::$ciudad->idciudad;
+        $codigoPostal->idprovincia = self::$provincia->idprovincia;
+        $codigoPostal->codpais = self::$pais->codpais;
+        $this->assertTrue($codigoPostal->save(), 'codigo-postal-cant-save');
+        $this->assertSame('28010', $codigoPostal->number, 'codigo-postal-not-text');
+
+        // eliminamos
+        $this->assertTrue($codigoPostal->delete(), 'codigo-postal-cant-delete');
+    }
+
+    public function testCantSaveEmptyOrTooLong(): void
+    {
+        $codigoPostal = new CodigoPostal();
+        $codigoPostal->idciudad = self::$ciudad->idciudad;
+        $codigoPostal->idprovincia = self::$provincia->idprovincia;
+        $codigoPostal->codpais = self::$pais->codpais;
+
+        // vacío
+        $codigoPostal->number = '';
+        $this->assertFalse($codigoPostal->save(), 'empty-codigo-postal-saved');
+
+        // solo espacios
+        $codigoPostal->number = '   ';
+        $this->assertFalse($codigoPostal->save(), 'blank-codigo-postal-saved');
+
+        // más de 10 caracteres
+        $codigoPostal->number = '12345678901';
+        $this->assertFalse($codigoPostal->save(), 'too-long-codigo-postal-saved');
+
+        // el html escapado también puede superar los 10 caracteres
+        $codigoPostal->number = '<b>28001';
+        $this->assertFalse($codigoPostal->save(), 'html-codigo-postal-saved');
     }
 
     protected function tearDown(): void

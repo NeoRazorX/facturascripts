@@ -21,7 +21,7 @@
                 </widget>
             </column>
             <column name="number" order="140">
-                <widget type="number" fieldname="number" min="0" step="1" required="true"/>
+                <widget type="text" fieldname="number" maxlength="10" required="true"/>
             </column>
         </group>
         <group name="logs" numcolumns="12">

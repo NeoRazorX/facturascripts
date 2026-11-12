@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,7 +52,7 @@ class CodigoPostal extends ModelClass
     /** @var string Nombre del usuario que creó el código postal. */
     public $nick;
 
-    /** @var int Número del código postal. */
+    /** @var string Número del código postal. Es texto para conservar los ceros a la izquierda y admitir letras. */
     public $number;
 
     public function clear(): void
@@ -70,6 +70,10 @@ class CodigoPostal extends ModelClass
     {
         $this->creation_date = $this->creation_date ?? Tools::dateTime();
         $this->nick = $this->nick ?? Session::user()->nick;
+
+        // el código postal es texto: quitamos espacios y html, y si queda vacío lo dejamos a null
+        $number = Tools::noHtml(trim((string)$this->number));
+        $this->number = '' === $number ? null : $number;
 
         return parent::test();
     }
