@@ -132,6 +132,10 @@ Please report security vulnerabilities **privately** using GitHub's [Report a vu
 - [🖨️ Ticket Printing](https://facturascripts.com/remote-printer)
 - [📹 Old YouTube Course (Spanish)](https://www.youtube.com/watch?v=rGopZA3ErzE&list=PLNxcJ5CWZ8V6nfeVu6vieKI_d8a_ObLfY)
 
+## 🗺️ Data Attribution
+
+- The Spanish postal codes (`Core/Data/Codpais/ESP/codigos_postales.csv`) come from [GeoNames](https://www.geonames.org), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), and have been adapted to link them to the project's municipalities.
+
 ---
 
 <p align="center">

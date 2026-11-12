@@ -19,17 +19,22 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Model\Ciudad;
 use FacturaScripts\Core\Model\CodigoPostal;
 use FacturaScripts\Core\Model\Pais;
 use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CodigoPostalTest extends TestCase
 {
     use LogErrorsTrait;
+
+    private const SPAIN_DATA = FS_FOLDER . '/Core/Data/Codpais/ESP/';
 
     private static $ciudad;
     private static $pais;
@@ -246,6 +251,64 @@ final class CodigoPostalTest extends TestCase
         // el html escapado también puede superar los 10 caracteres
         $codigoPostal->number = '<b>28001';
         $this->assertFalse($codigoPostal->save(), 'html-codigo-postal-saved');
+    }
+
+    public function testSpainDataFile(): void
+    {
+        // cargamos las ciudades de España del archivo de datos
+        $cities = [];
+        foreach (CSVImport::readFile(self::SPAIN_DATA . 'ciudades.csv')->data as $row) {
+            $cities[$row['idciudad']] = $row['idprovincia'];
+        }
+        $this->assertNotEmpty($cities, 'spain-cities-file-empty');
+
+        // cada código postal debe apuntar a una ciudad del archivo y a su provincia
+        $keys = [];
+        $rows = CSVImport::readFile(self::SPAIN_DATA . 'codigos_postales.csv')->data;
+        $this->assertNotEmpty($rows, 'spain-zip-codes-file-empty');
+        foreach ($rows as $row) {
+            $this->assertEquals('ESP', $row['codpais'], 'zip-code-bad-country');
+            $this->assertMatchesRegularExpression('/^[0-9]{5}$/', $row['number'], 'zip-code-bad-number');
+            $this->assertArrayHasKey($row['idciudad'], $cities, 'zip-code-city-not-found: ' . $row['number']);
+            $this->assertEquals(
+                $cities[$row['idciudad']],
+                $row['idprovincia'],
+                'zip-code-bad-province: ' . $row['number']
+            );
+            $keys[$row['idprovincia'] . '|' . $row['idciudad'] . '|' . $row['number']] = true;
+        }
+
+        // no puede haber filas repetidas, la tabla tiene una restricción única
+        $this->assertCount(count($rows), $keys, 'zip-code-duplicated-rows');
+    }
+
+    public function testSpainDataFileCanBeImported(): void
+    {
+        // necesitamos las ciudades de España instaladas y la tabla de códigos postales vacía
+        $db = new DataBase();
+        $cities = Ciudad::table()
+            ->whereEq('ciudad', 'Zurgena')
+            ->whereEq('idciudad', 8140)
+            ->count();
+        if ($cities !== 1 || CodigoPostal::count() > 0) {
+            $this->markTestSkipped('Spain cities are not installed or there are zip codes.');
+        }
+
+        // importamos el archivo dentro de una transacción para no dejar datos
+        $sql = CSVImport::importFileSQL(CodigoPostal::tableName(), self::SPAIN_DATA . 'codigos_postales.csv');
+        $this->assertNotEmpty($sql, 'spain-zip-codes-empty-sql');
+
+        $db->beginTransaction();
+        $imported = $db->exec($sql);
+        $total = CodigoPostal::count();
+        $barcelona = CodigoPostal::findWhere([Where::eq('number', '08001')]);
+        $db->rollback();
+
+        $this->assertTrue($imported, 'spain-zip-codes-cant-import');
+        $this->assertGreaterThan(10000, $total, 'spain-zip-codes-not-imported');
+        $this->assertNotNull($barcelona, 'zip-code-08001-not-found');
+        $this->assertSame('08001', $barcelona->number, 'zip-code-lost-leading-zeros');
+        $this->assertEquals(0, CodigoPostal::count(), 'spain-zip-codes-not-rolled-back');
     }
 
     protected function tearDown(): void
