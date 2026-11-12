@@ -1861,6 +1861,7 @@
     "status-value-is-number": "El camp estat ha de ser numèric.",
     "status-with-generadoc-cant-update-stock": "Un estat que genera un altre document no pot actualitzar l'estoc. L'estoc l'actualitzarà el document destí.",
     "stock": "Estoc",
+    "stock-already-exists": "Ya existe un registro de stock de la referencia %reference% en el almacén %warehouse%. Modifica esa fila en lugar de añadir una nueva.",
     "stock-count": "Conteo d'estoc",
     "stock-counts": "Recomptes",
     "stock-transfer": "Transferència d'existències",

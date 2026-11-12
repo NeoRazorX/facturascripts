@@ -1861,6 +1861,7 @@
     "status-value-is-number": "Het veld status moet numeriek zijn.",
     "status-with-generadoc-cant-update-stock": "Een status die een ander document genereert, kan de voorraad niet bijwerken. De voorraad wordt bijgewerkt door het doeldocument.",
     "stock": "Voorraad",
+    "stock-already-exists": "Ya existe un registro de stock de la referencia %reference% en el almacén %warehouse%. Modifica esa fila en lugar de añadir una nueva.",
     "stock-count": "Voorraadtelling",
     "stock-counts": "Tellingen",
     "stock-transfer": "Voorraadtransfer",

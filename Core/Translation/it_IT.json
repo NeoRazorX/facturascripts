@@ -1861,6 +1861,7 @@
     "status-value-is-number": "Il campo è stato sereno.",
     "status-with-generadoc-cant-update-stock": "Uno stato che genera un altro documento non può aggiornare lo stock. Lo stock verrà aggiornato dal documento di destinazione.",
     "stock": "Azione",
+    "stock-already-exists": "Ya existe un registro de stock de la referencia %reference% en el almacén %warehouse%. Modifica esa fila en lugar de añadir una nueva.",
     "stock-count": "Conteggio dello stock",
     "stock-counts": "conteggi di magazzino",
     "stock-transfer": "trasferimento di magazzino",

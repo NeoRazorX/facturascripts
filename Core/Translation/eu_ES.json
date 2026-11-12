@@ -1861,6 +1861,7 @@
     "status-value-is-number": "Egoera eremua zenbakia izan behar du.",
     "status-with-generadoc-cant-update-stock": "Beste dokumentu bat sortzen duen egoera batek ezin du stocka eguneratu. Stocka helmuga-dokumentuak eguneratuko du.",
     "stock": "Stocka",
+    "stock-already-exists": "Ya existe un registro de stock de la referencia %reference% en el almacén %warehouse%. Modifica esa fila en lugar de añadir una nueva.",
     "stock-count": "Stock kopurua",
     "stock-counts": "Zenbaketak",
     "stock-transfer": "Stock transferentzia",

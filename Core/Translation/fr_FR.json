@@ -1861,6 +1861,7 @@
     "status-value-is-number": "L'état du champ doit être un nombre.",
     "status-with-generadoc-cant-update-stock": "Un état qui génère un autre document ne peut pas mettre à jour le stock. Le stock sera mis à jour par le document de destination.",
     "stock": "Stock",
+    "stock-already-exists": "Ya existe un registro de stock de la referencia %reference% en el almacén %warehouse%. Modifica esa fila en lugar de añadir una nueva.",
     "stock-count": "Inventaire",
     "stock-counts": "Inventaires",
     "stock-transfer": "Transfert de stock",

@@ -1861,6 +1861,7 @@
     "status-value-is-number": "Pole stav musí být číselné.",
     "status-with-generadoc-cant-update-stock": "Stav, který generuje jiný dokument, nemůže aktualizovat zásoby. Zásoby aktualizuje cílový dokument.",
     "stock": "Zásoby",
+    "stock-already-exists": "Ya existe un registro de stock de la referencia %reference% en el almacén %warehouse%. Modifica esa fila en lugar de añadir una nueva.",
     "stock-count": "Inventura zásob",
     "stock-counts": "Inventury",
     "stock-transfer": "Převod zásob",

@@ -1861,6 +1861,7 @@
     "status-value-is-number": "Das Feld Status muss numerisch sein.",
     "status-with-generadoc-cant-update-stock": "Ein Status, der ein anderes Dokument erzeugt, kann den Lagerbestand nicht aktualisieren. Der Lagerbestand wird vom Zieldokument aktualisiert.",
     "stock": "Stock",
+    "stock-already-exists": "Ya existe un registro de stock de la referencia %reference% en el almacén %warehouse%. Modifica esa fila en lugar de añadir una nueva.",
     "stock-count": "Bestandszählung",
     "stock-counts": "Bestandszählungen",
     "stock-transfer": "Bestandsübertragung",

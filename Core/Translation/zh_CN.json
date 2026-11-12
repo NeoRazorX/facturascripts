@@ -1861,6 +1861,7 @@
     "status-value-is-number": "状态字段必须为数字。",
     "status-with-generadoc-cant-update-stock": "生成其他单据的状态不能更新库存，库存将由目标单据更新。",
     "stock": "库存",
+    "stock-already-exists": "Ya existe un registro de stock de la referencia %reference% en el almacén %warehouse%. Modifica esa fila en lugar de añadir una nueva.",
     "stock-count": "库存盘点",
     "stock-counts": "盘点",
     "stock-transfer": "库存调拨",

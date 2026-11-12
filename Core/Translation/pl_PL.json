@@ -1861,6 +1861,7 @@
     "status-value-is-number": "Pole statusu musi być liczbą.",
     "status-with-generadoc-cant-update-stock": "Status generujący inny dokument nie może aktualizować stanu magazynowego. Stan magazynowy zostanie zaktualizowany przez dokument docelowy.",
     "stock": "Zapas",
+    "stock-already-exists": "Ya existe un registro de stock de la referencia %reference% en el almacén %warehouse%. Modifica esa fila en lugar de añadir una nueva.",
     "stock-count": "Liczba produktów na magazynie",
     "stock-counts": "Liczba zapasów",
     "stock-transfer": "Transfer towarów",
