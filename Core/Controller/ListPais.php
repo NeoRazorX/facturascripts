@@ -47,8 +47,8 @@ class ListPais extends ListController
         $this->createViewsCountries();
         $this->createViewsProvinces();
         $this->createViewsCities();
-        $this->createViewsPOIs();
         $this->createViewsZipCodes();
+        $this->createViewsPOIs();
         $this->createViewsDivisas();
     }
 
