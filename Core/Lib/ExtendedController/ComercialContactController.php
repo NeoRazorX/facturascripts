@@ -31,7 +31,9 @@ use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Model\CodigoPostal;
 
 /**
  * Controller for editing models that are related and show
@@ -212,6 +214,9 @@ abstract class ComercialContactController extends EditController
      */
     protected function createContactsView(string $viewName = 'EditDireccionContacto'): EditListView
     {
+        // rellena la ciudad y la provincia a partir del código postal
+        AssetManager::addJs(Tools::config('route') . '/Dinamic/Assets/JS/ZipCodeAutofill.js');
+
         return $this->addEditListView($viewName, 'Contacto', 'addresses-and-contacts', 'fa-solid fa-address-book');
     }
 
@@ -382,6 +387,9 @@ abstract class ComercialContactController extends EditController
             case 'edit-file':
                 return $this->editFileAction();
 
+            case 'find-zip-code':
+                return $this->findZipCodeAction();
+
             case 'generate-accounting-entries':
                 return $this->generateAccountingEntriesAction($model, $allowUpdate, $this->dataBase);
 
@@ -405,6 +413,20 @@ abstract class ComercialContactController extends EditController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    /**
+     * Devuelve, en json, las ciudades y provincias del código postal indicado.
+     */
+    protected function findZipCodeAction(): bool
+    {
+        $this->setTemplate(false);
+        $this->response->json(CodigoPostal::findPlaces(
+            (string)$this->request->input('codpostal', ''),
+            (string)$this->request->input('codpais', '')
+        ));
+
+        return false;
     }
 
     /**
