@@ -56,6 +56,51 @@ final class StockTest extends TestCase
         $this->assertFalse($stock->save(), 'stock-can-not-create-without-product');
     }
 
+    public function testCantDuplicateReferenceAndWarehouse(): void
+    {
+        // creamos un producto
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // creamos un almacén adicional
+        $warehouse = $this->getRandomWarehouse();
+        $this->assertTrue($warehouse->save(), 'warehouse-cant-save');
+
+        // añadimos stock al producto
+        $stock = new Stock();
+        $stock->idproducto = $product->idproducto;
+        $stock->referencia = $product->referencia;
+        $stock->cantidad = 10;
+        $this->assertTrue($stock->save(), 'stock-cant-save');
+
+        // no podemos añadir otro stock para la misma referencia y almacén
+        $duplicated = new Stock();
+        $duplicated->idproducto = $product->idproducto;
+        $duplicated->referencia = $product->referencia;
+        $duplicated->cantidad = 5;
+        $this->assertFalse($duplicated->save(), 'duplicated-stock-can-be-saved');
+
+        // el stock original se puede seguir modificando
+        $stock->cantidad = 7;
+        $this->assertTrue($stock->save(), 'stock-cant-update');
+
+        // en otro almacén sí podemos añadir stock
+        $other = new Stock();
+        $other->codalmacen = $warehouse->codalmacen;
+        $other->idproducto = $product->idproducto;
+        $other->referencia = $product->referencia;
+        $other->cantidad = 5;
+        $this->assertTrue($other->save(), 'stock-cant-save-in-other-warehouse');
+
+        // pero no podemos moverlo al almacén donde ya hay stock
+        $other->codalmacen = $stock->codalmacen;
+        $this->assertFalse($other->save(), 'stock-can-be-moved-to-duplicated-warehouse');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($warehouse->delete(), 'warehouse-cant-delete');
+    }
+
     public function testStockChangesProduct(): void
     {
         // creamos un producto

@@ -171,6 +171,22 @@ class Stock extends ModelClass
             }
         }
 
+        // no puede haber dos registros de stock para la misma referencia y almacén
+        $where = [
+            Where::eq('codalmacen', $this->codalmacen),
+            Where::eq('referencia', $this->referencia)
+        ];
+        if (!empty($this->idstock)) {
+            $where[] = Where::notEq('idstock', $this->idstock);
+        }
+        if (static::count($where) > 0) {
+            Tools::log()->warning('stock-already-exists', [
+                '%reference%' => $this->referencia,
+                '%warehouse%' => $this->codalmacen
+            ]);
+            return false;
+        }
+
         return parent::test();
     }
 

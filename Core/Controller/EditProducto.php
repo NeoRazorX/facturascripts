@@ -30,6 +30,7 @@ use FacturaScripts\Core\Lib\TaxExceptions;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Atributo;
 use FacturaScripts\Dinamic\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\Variante;
 
 /**
  * Controlador para editar un único elemento del modelo Producto
@@ -319,6 +320,11 @@ class EditProducto extends EditController
 
             case 'EditStock':
                 $view->loadData('', $where, ['idstock' => 'DESC']);
+                // si ya hay stock para todas las variantes y almacenes, ocultamos el formulario de nuevo
+                $maxStocks = Variante::count($where) * Almacenes::count();
+                if ($view->count >= $maxStocks) {
+                    $this->setSettings($viewName, 'btnNew', false);
+                }
                 break;
 
             case 'EditProductoProveedor':
