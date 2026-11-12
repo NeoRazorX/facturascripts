@@ -6,17 +6,17 @@
                 <widget type="text" fieldname="id" readonly="true"/>
             </column>
             <column name="country" order="110">
-                <widget type="select" fieldname="codpais" required="true">
+                <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="province" order="120">
-                <widget type="select" fieldname="idprovincia" parent="codpais" required="true">
+                <widget type="select" fieldname="idprovincia" parent="codpais" onclick="EditProvincia" required="true">
                     <values source="provincias" fieldcode="idprovincia" fieldfilter="codpais" fieldtitle="provincia" />
                 </widget>
             </column>
             <column name="city" order="130">
-                <widget type="select" fieldname="idciudad" parent="idprovincia" required="true">
+                <widget type="select" fieldname="idciudad" parent="idprovincia" onclick="EditCiudad" required="true">
                     <values source="ciudades" fieldcode="idciudad" fieldfilter="idprovincia" fieldtitle="ciudad" />
                 </widget>
             </column>

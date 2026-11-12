@@ -300,6 +300,29 @@ final class CodigoPostalTest extends TestCase
         $this->assertTrue($ciudad2->delete(), 'city-cant-delete');
     }
 
+    public function testUrl(): void
+    {
+        $codigoPostal = new CodigoPostal();
+        $codigoPostal->number = '09910';
+        $codigoPostal->idciudad = self::$ciudad->idciudad;
+        $codigoPostal->idprovincia = self::$provincia->idprovincia;
+        $codigoPostal->codpais = self::$pais->codpais;
+
+        // sin guardar, el listado es el de países
+        $this->assertEquals('ListPais?activetab=ListCodigoPostal', $codigoPostal->url('list'));
+
+        // una vez guardado, el listado es la pestaña de códigos postales de su ciudad
+        $this->assertTrue($codigoPostal->save(), 'codigo-postal-cant-save');
+        $this->assertEquals(
+            'EditCiudad?code=' . self::$ciudad->idciudad . '&activetab=ListCodigoPostal',
+            $codigoPostal->url('list')
+        );
+        $this->assertEquals('EditCodigoPostal?code=' . $codigoPostal->id, $codigoPostal->url());
+
+        // eliminamos
+        $this->assertTrue($codigoPostal->delete(), 'codigo-postal-cant-delete');
+    }
+
     public function testSpainDataFile(): void
     {
         // cargamos las ciudades de España del archivo de datos
