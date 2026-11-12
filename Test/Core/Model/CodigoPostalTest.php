@@ -358,6 +358,47 @@ final class CodigoPostalTest extends TestCase
         $this->assertEquals(0, CodigoPostal::count(), 'spain-zip-codes-not-rolled-back');
     }
 
+    public function testRestoreFromDataFile(): void
+    {
+        // necesitamos las ciudades de España instaladas y la tabla de códigos postales vacía
+        $db = new DataBase();
+        $cities = Ciudad::table()
+            ->whereEq('ciudad', 'Zurgena')
+            ->whereEq('idciudad', 8140)
+            ->count();
+        if ($cities !== 1 || CodigoPostal::count() > 0 || Tools::settings('default', 'codpais') !== 'ESP') {
+            $this->markTestSkipped('Spain cities are not installed or there are zip codes.');
+        }
+
+        $total = count(CSVImport::readFile(self::SPAIN_DATA . 'codigos_postales.csv')->data);
+
+        // lo hacemos dentro de una transacción para no dejar datos
+        $db->beginTransaction();
+
+        // cambiamos de provincia la primera ciudad: sus códigos postales se deben descartar
+        $db->exec('UPDATE ' . Ciudad::tableName() . ' SET idprovincia = 1 WHERE idciudad = 1');
+
+        $first = CodigoPostal::restoreFromDataFile();
+        $count = CodigoPostal::count();
+        $wrongCity = CodigoPostal::count([Where::eq('idciudad', 1)]);
+
+        // al repetir no se añade nada, porque ya existen
+        $second = CodigoPostal::restoreFromDataFile();
+        $countAfter = CodigoPostal::count();
+
+        $db->rollback();
+
+        $this->assertIsArray($first, 'zip-codes-data-file-not-found');
+        $this->assertGreaterThan(0, $first['discarded'], 'zip-codes-wrong-city-not-discarded');
+        $this->assertEquals($total, $first['added'] + $first['discarded'], 'zip-codes-bad-totals');
+        $this->assertEquals($first['added'], $count, 'zip-codes-bad-count');
+        $this->assertEquals(0, $wrongCity, 'zip-codes-added-to-wrong-city');
+        $this->assertEquals(0, $second['added'], 'zip-codes-added-twice');
+        $this->assertEquals($first['discarded'], $second['discarded'], 'zip-codes-bad-discarded');
+        $this->assertEquals($count, $countAfter, 'zip-codes-duplicated');
+        $this->assertEquals(0, CodigoPostal::count(), 'zip-codes-not-rolled-back');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

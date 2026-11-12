@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
@@ -109,6 +110,84 @@ class CodigoPostal extends ModelClass
         new Ciudad();
 
         return parent::install();
+    }
+
+    /**
+     * Añade los códigos postales del archivo de datos del país predeterminado que todavía
+     * no existen. No modifica ni elimina los existentes. Se descartan los códigos cuya
+     * ciudad no existe o no pertenece a la provincia indicada en el archivo, porque en esa
+     * instalación los identificadores de las ciudades no coinciden con los del archivo.
+     *
+     * @return array|null ['added' => int, 'discarded' => int], o null si no hay archivo de datos
+     */
+    public static function restoreFromDataFile(): ?array
+    {
+        $filePath = CSVImport::getTableFilePath(static::tableName());
+        if (empty($filePath)) {
+            return null;
+        }
+
+        // provincia de cada ciudad instalada
+        $provinces = [];
+        $sqlCities = 'SELECT idciudad, idprovincia FROM ' . Ciudad::tableName();
+        foreach (self::db()->select($sqlCities) as $row) {
+            $provinces[(int)$row['idciudad']] = (int)$row['idprovincia'];
+        }
+
+        // países instalados
+        $countries = [];
+        foreach (Pais::all() as $country) {
+            $countries[$country->codpais] = true;
+        }
+
+        $values = [];
+        $discarded = 0;
+        foreach (CSVImport::readFile($filePath)->data as $row) {
+            $idciudad = (int)($row['idciudad'] ?? 0);
+            $idprovincia = (int)($row['idprovincia'] ?? 0);
+            $codpais = $row['codpais'] ?? '';
+            $number = trim($row['number'] ?? '');
+            if (
+                '' === $number
+                || false === isset($countries[$codpais])
+                || false === isset($provinces[$idciudad])
+                || $provinces[$idciudad] !== $idprovincia
+            ) {
+                $discarded++;
+                continue;
+            }
+
+            $values[] = '(' . self::db()->var2str($codpais)
+                . ',' . self::db()->var2str($idprovincia)
+                . ',' . self::db()->var2str($idciudad)
+                . ',' . self::db()->var2str($number)
+                . ',' . self::db()->var2str(Tools::dateTime()) . ')';
+        }
+
+        // insertamos por bloques, ignorando los que ya existen
+        $columns = implode(',', array_map(function (string $name): string {
+            return self::db()->escapeColumn($name);
+        }, ['codpais', 'idprovincia', 'idciudad', 'number', 'creation_date']));
+        $isPostgres = 'postgresql' === Tools::config('db_type');
+        $insert = ($isPostgres ? 'INSERT INTO ' : 'INSERT IGNORE INTO ') . static::tableName()
+            . ' (' . $columns . ') VALUES ';
+        $suffix = $isPostgres ? ' ON CONFLICT DO NOTHING;' : ';';
+
+        $before = static::count();
+        $newTransaction = false === self::db()->inTransaction() && self::db()->beginTransaction();
+        foreach (array_chunk($values, 1000) as $chunk) {
+            if (false === self::db()->exec($insert . implode(',', $chunk) . $suffix)) {
+                if ($newTransaction) {
+                    self::db()->rollback();
+                }
+                return ['added' => 0, 'discarded' => $discarded + count($values)];
+            }
+        }
+        if ($newTransaction) {
+            self::db()->commit();
+        }
+
+        return ['added' => static::count() - $before, 'discarded' => $discarded];
     }
 
     public static function tableName(): string

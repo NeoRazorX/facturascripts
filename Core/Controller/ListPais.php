@@ -20,6 +20,10 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\Import\CSVImport;
+use FacturaScripts\Dinamic\Model\CodigoPostal;
 
 /**
  * Controlador para listar los elementos del modelo Pais
@@ -107,5 +111,54 @@ class ListPais extends ListController
             ->addFilterAutocomplete('codpais', 'country', 'codpais', 'paises', 'codpais', 'nombre')
             ->addFilterAutocomplete('idprovincia', 'province', 'idprovincia', 'provincias', 'idprovincia', 'provincia')
             ->addFilterAutocomplete('idciudad', 'city', 'idciudad', 'ciudades', 'idciudad', 'ciudad');
+
+        // botón para añadir los códigos postales del archivo de datos, si lo hay para el país predeterminado
+        if ($this->user->admin && false === empty(CSVImport::getTableFilePath(CodigoPostal::tableName()))) {
+            $this->tab($viewName)->addButton([
+                'action' => 'restore-zip-codes',
+                'color' => 'warning',
+                'confirm' => true,
+                'icon' => 'fa-solid fa-trash-restore',
+                'label' => 'restore'
+            ]);
+        }
+    }
+
+    /**
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        if ($action === 'restore-zip-codes') {
+            $this->restoreZipCodesAction();
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    protected function restoreZipCodesAction(): void
+    {
+        if (false === $this->user->admin) {
+            Tools::log()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->request->isMethod(Request::METHOD_POST)) {
+            Tools::log()->warning('invalid-request');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $result = CodigoPostal::restoreFromDataFile();
+        if (null === $result) {
+            Tools::log()->warning('no-data');
+            return;
+        }
+
+        Tools::log()->notice('items-added-correctly', ['%num%' => $result['added']]);
+        if ($result['discarded'] > 0) {
+            Tools::log()->warning('zip-codes-discarded', ['%num%' => $result['discarded']]);
+        }
     }
 }
