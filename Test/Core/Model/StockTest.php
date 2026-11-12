@@ -129,12 +129,21 @@ final class StockTest extends TestCase
         $product->load($product->idproducto);
         $this->assertEquals(7, $product->stockfis, 'product-stock-not-update');
 
-        // borramos el stock
-        $this->assertTrue($stock->delete(), 'stock-cant-delete');
+        // no podemos borrar el stock mientras tenga cantidad
+        $this->assertFalse($stock->delete(), 'stock-with-quantity-can-be-deleted');
+        $this->assertTrue($stock->exists(), 'stock-with-quantity-deleted');
+
+        // lo ponemos a cero
+        $stock->cantidad = 0;
+        $this->assertTrue($stock->save(), 'stock-can-not-update');
 
         // refrescamos producto
         $product->load($product->idproducto);
         $this->assertEquals(0, $product->stockfis, 'stock-not-update');
+
+        // ahora sí podemos borrar el stock
+        $this->assertTrue($stock->delete(), 'stock-cant-delete');
+        $this->assertFalse($stock->exists(), 'stock-not-deleted');
 
         // borramos el producto
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -245,8 +254,8 @@ final class StockTest extends TestCase
         $this->assertEquals(5, $stock->disponible, 'stock-disponible-bad');
 
         // eliminamos
-        $this->assertTrue($stock->delete(), 'stock-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($stock->exists(), 'stock-not-removed-when-delete-product');
     }
 
     public function testNegativeQuantity(): void
@@ -266,8 +275,8 @@ final class StockTest extends TestCase
         $this->assertEquals(-10, $stock->cantidad, 'stock-quantity-changed');
 
         // eliminamos
-        $this->assertTrue($stock->delete(), 'stock-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($stock->exists(), 'stock-not-removed-when-delete-product');
     }
 
     public function testNegativeAvailable(): void
@@ -288,8 +297,8 @@ final class StockTest extends TestCase
         $this->assertEquals(0, $stock->disponible, 'stock-disponible-no-puede-ser-negativo');
 
         // eliminamos
-        $this->assertTrue($stock->delete(), 'stock-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($stock->exists(), 'stock-not-removed-when-delete-product');
     }
 
     protected function tearDown(): void

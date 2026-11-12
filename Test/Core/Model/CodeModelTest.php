@@ -510,7 +510,6 @@ final class CodeModelTest extends TestCase
         $empty = $codeModel->get('Join\\StockProducto', '', $product->referencia, 'descripcion');
         $this->assertEquals('', $empty->code);
 
-        $this->assertTrue($stock->delete());
         $this->assertTrue($product->delete());
         $this->assertTrue($warehouse->delete());
     }
@@ -542,7 +541,6 @@ final class CodeModelTest extends TestCase
             }
         }
 
-        $this->assertTrue($stock->delete());
         $this->assertTrue($product->delete());
         $this->assertTrue($warehouse->delete());
     }
@@ -568,7 +566,6 @@ final class CodeModelTest extends TestCase
         $codes = array_map(fn($r) => $r->code, $result);
         $this->assertContains($product->referencia, $codes);
 
-        $this->assertTrue($stock->delete());
         $this->assertTrue($product->delete());
         $this->assertTrue($warehouse->delete());
     }
