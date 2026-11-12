@@ -23,6 +23,7 @@ use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 class CodigoPostal extends ModelClass
 {
@@ -59,6 +60,47 @@ class CodigoPostal extends ModelClass
     {
         parent::clear();
         $this->codpais = Tools::settings('default', 'codpais', 'ESP');
+    }
+
+    /**
+     * Devuelve las ciudades, con su provincia, que tienen asignado el código postal indicado.
+     *
+     * @param string $number código postal a buscar
+     * @param string $codpais país en el que buscar; vacío para buscar en todos
+     *
+     * @return array lista de ['ciudad' => string, 'provincia' => string], ordenada por ciudad
+     */
+    public static function findPlaces(string $number, string $codpais = ''): array
+    {
+        $number = trim($number);
+        if ('' === $number) {
+            return [];
+        }
+
+        $where = [Where::eq('number', $number)];
+        if ('' !== $codpais) {
+            $where[] = Where::eq('codpais', $codpais);
+        }
+
+        $places = [];
+        foreach (static::all($where, [], 0, 50) as $zipCode) {
+            $city = Ciudad::find($zipCode->idciudad);
+            $province = Provincia::find($zipCode->idprovincia);
+            if (null === $city || null === $province) {
+                continue;
+            }
+
+            $places[] = [
+                'ciudad' => (string)Tools::fixHtml($city->ciudad),
+                'provincia' => (string)Tools::fixHtml($province->provincia)
+            ];
+        }
+
+        usort($places, function (array $a, array $b): int {
+            return strcmp($a['ciudad'], $b['ciudad']);
+        });
+
+        return $places;
     }
 
     public function install(): string

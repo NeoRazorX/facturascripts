@@ -253,6 +253,53 @@ final class CodigoPostalTest extends TestCase
         $this->assertFalse($codigoPostal->save(), 'html-codigo-postal-saved');
     }
 
+    public function testFindPlaces(): void
+    {
+        // creamos una segunda ciudad, con html en el nombre, en la misma provincia
+        $ciudad2 = new Ciudad();
+        $ciudad2->ciudad = "A d'Test " . mt_rand(1, 9999);
+        $ciudad2->idprovincia = self::$provincia->idprovincia;
+        $this->assertTrue($ciudad2->save(), 'city-cant-save');
+
+        // el mismo código postal para las dos ciudades y otro distinto solo para la primera
+        $zipCodes = [];
+        foreach ([[self::$ciudad, '09901'], [$ciudad2, '09901'], [self::$ciudad, '09902']] as [$ciudad, $number]) {
+            $zipCode = new CodigoPostal();
+            $zipCode->number = $number;
+            $zipCode->idciudad = $ciudad->idciudad;
+            $zipCode->idprovincia = self::$provincia->idprovincia;
+            $zipCode->codpais = self::$pais->codpais;
+            $this->assertTrue($zipCode->save(), 'codigo-postal-cant-save');
+            $zipCodes[] = $zipCode;
+        }
+
+        // un código con una sola ciudad
+        $places = CodigoPostal::findPlaces(' 09902 ', self::$pais->codpais);
+        $this->assertCount(1, $places, 'zip-code-places-not-found');
+        $this->assertEquals(self::$ciudad->ciudad, $places[0]['ciudad']);
+        $this->assertEquals(self::$provincia->provincia, $places[0]['provincia']);
+
+        // un código con dos ciudades: vienen ordenadas y sin html escapado
+        $places = CodigoPostal::findPlaces('09901', self::$pais->codpais);
+        $this->assertCount(2, $places, 'zip-code-places-bad-count');
+        $this->assertStringStartsWith("A d'Test ", $places[0]['ciudad'], 'zip-code-places-html-not-fixed');
+        $this->assertEquals(self::$ciudad->ciudad, $places[1]['ciudad']);
+
+        // sin país busca en todos
+        $this->assertCount(2, CodigoPostal::findPlaces('09901'), 'zip-code-places-without-country');
+
+        // otro país, un código que no existe o vacío no devuelven nada
+        $this->assertSame([], CodigoPostal::findPlaces('09901', 'XXX'));
+        $this->assertSame([], CodigoPostal::findPlaces('09903', self::$pais->codpais));
+        $this->assertSame([], CodigoPostal::findPlaces('   '));
+
+        // eliminamos
+        foreach ($zipCodes as $zipCode) {
+            $this->assertTrue($zipCode->delete(), 'codigo-postal-cant-delete');
+        }
+        $this->assertTrue($ciudad2->delete(), 'city-cant-delete');
+    }
+
     public function testSpainDataFile(): void
     {
         // cargamos las ciudades de España del archivo de datos

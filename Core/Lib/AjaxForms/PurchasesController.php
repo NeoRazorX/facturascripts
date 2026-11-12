@@ -32,6 +32,7 @@ use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Model\CodigoPostal;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Variante;
 use Throwable;
@@ -352,6 +353,9 @@ abstract class PurchasesController extends PanelController
             case 'find-product':
                 return $this->findProductAction();
 
+            case 'find-zip-code':
+                return $this->findZipCodeAction();
+
             case 'recalculate-line':
                 return $this->recalculateAction(false);
 
@@ -552,6 +556,20 @@ abstract class PurchasesController extends PanelController
             'products' => PurchasesModalHTML::renderProductList()
         ];
         $this->sendJsonWithLogs($content);
+        return false;
+    }
+
+    /**
+     * Devuelve las ciudades y provincias del código postal indicado,
+     * para rellenar la dirección al crear un proveedor.
+     */
+    protected function findZipCodeAction(): bool
+    {
+        $this->setTemplate(false);
+        $this->response->json(CodigoPostal::findPlaces(
+            (string)$this->request->queryOrInput('codpostal', ''),
+            (string)$this->request->queryOrInput('codpais', '')
+        ));
         return false;
     }
 
