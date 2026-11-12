@@ -246,6 +246,7 @@
     "cant-delete-default-warehouse": "无法删除默认仓库",
     "cant-delete-file": "无法删除文件 '%fileName%'",
     "cant-delete-last-user": "无法删除最后一个用户",
+    "cant-delete-stock-with-quantity": "No puedes eliminar el stock de la referencia %reference% en el almacén %warehouse% porque tiene existencias, reservas o cantidad pendiente de recibir. Si quieres dejarlo a cero, modifica la cantidad.",
     "cant-delete-variant-with-documents": "无法删除产品或规格 %reference%，因为它已被采购或销售过。但您可以将其锁定。",
     "cant-load-controller": "无法加载控制器 '%controllerName%'。",
     "cant-lock-next-code": "无法锁定下一个代码",

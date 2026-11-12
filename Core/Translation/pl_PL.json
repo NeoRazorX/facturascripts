@@ -246,6 +246,7 @@
     "cant-delete-default-warehouse": "Nie można usunąć domyślnego magazynu",
     "cant-delete-file": "Nie można usunąć pliku '%fileName%'",
     "cant-delete-last-user": "Nie można usunąć ostatniego użytkownika",
+    "cant-delete-stock-with-quantity": "No puedes eliminar el stock de la referencia %reference% en el almacén %warehouse% porque tiene existencias, reservas o cantidad pendiente de recibir. Si quieres dejarlo a cero, modifica la cantidad.",
     "cant-delete-variant-with-documents": "Nie można usunąć produktu lub wariantu %reference%, ponieważ został już zakupiony lub sprzedany. Możesz go jednak zablokować, jeśli chcesz.",
     "cant-load-controller": "Nie można załadować kontrolera '%controllerName%'.",
     "cant-lock-next-code": "Nie można zablokować następnego kodu",

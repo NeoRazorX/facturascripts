@@ -246,6 +246,7 @@
     "cant-delete-default-warehouse": "Nelze odstranit výchozí sklad",
     "cant-delete-file": "Nelze odstranit soubor '%fileName%'",
     "cant-delete-last-user": "Nelze odstranit posledního uživatele",
+    "cant-delete-stock-with-quantity": "No puedes eliminar el stock de la referencia %reference% en el almacén %warehouse% porque tiene existencias, reservas o cantidad pendiente de recibir. Si quieres dejarlo a cero, modifica la cantidad.",
     "cant-delete-variant-with-documents": "Produkt nebo varianta %reference% nelze smazat, protože již byl zakoupen nebo prodán. Ale můžete jej zablokovat, pokud chcete.",
     "cant-load-controller": "Nelze načíst kontrolér '%controllerName%'.",
     "cant-lock-next-code": "Nelze zablokovat následující kód",

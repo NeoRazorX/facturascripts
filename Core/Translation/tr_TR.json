@@ -246,6 +246,7 @@
     "cant-delete-default-warehouse": "Varsayılan depoyu silmek mümkün değil",
     "cant-delete-file": "'%fileName%' dosyası silinemiyor",
     "cant-delete-last-user": "Son kullanıcının silinmesi mümkün değil.",
+    "cant-delete-stock-with-quantity": "No puedes eliminar el stock de la referencia %reference% en el almacén %warehouse% porque tiene existencias, reservas o cantidad pendiente de recibir. Si quieres dejarlo a cero, modifica la cantidad.",
     "cant-delete-variant-with-documents": "%reference% ürün veya varyantını silmek mümkün değil çünkü zaten satın alındı veya satıldı. Ancak isterseniz engelleyebilirsiniz.",
     "cant-load-controller": "'%controllerName%' denetleyicisi yüklenemiyor.",
     "cant-lock-next-code": "Bir sonraki kod kilitlenemiyor",

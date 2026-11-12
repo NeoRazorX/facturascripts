@@ -246,6 +246,7 @@
     "cant-delete-default-warehouse": "Can't delete default warehouse",
     "cant-delete-file": "Cannot delete file '%fileName%'",
     "cant-delete-last-user": "You can't delete the last user",
+    "cant-delete-stock-with-quantity": "No puedes eliminar el stock de la referencia %reference% en el almacén %warehouse% porque tiene existencias, reservas o cantidad pendiente de recibir. Si quieres dejarlo a cero, modifica la cantidad.",
     "cant-delete-variant-with-documents": "Product or variant %reference% cannot be deleted because it has already been purchased or sold. But you can block it if you want.",
     "cant-load-controller": "Can't load controller '%controllerName%'.",
     "cant-lock-next-code": "Cannot lock the next code",

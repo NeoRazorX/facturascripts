@@ -246,6 +246,7 @@
     "cant-delete-default-warehouse": "Het standaardmagazijn kan niet worden verwijderd",
     "cant-delete-file": "Het bestand '%fileName%' kan niet worden verwijderd",
     "cant-delete-last-user": "De laatste gebruiker kan niet worden verwijderd",
+    "cant-delete-stock-with-quantity": "No puedes eliminar el stock de la referencia %reference% en el almacén %warehouse% porque tiene existencias, reservas o cantidad pendiente de recibir. Si quieres dejarlo a cero, modifica la cantidad.",
     "cant-delete-variant-with-documents": "Het product of de variant %reference% kan niet worden verwijderd omdat deze al is gekocht of verkocht. U kunt deze desgewenst wel blokkeren.",
     "cant-load-controller": "De controller '%controllerName%' kan niet worden geladen.",
     "cant-lock-next-code": "De volgende code kan niet worden vergrendeld",

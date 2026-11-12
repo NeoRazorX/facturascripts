@@ -246,6 +246,7 @@
     "cant-delete-default-warehouse": "L'entrepôt par défaut ne peut être supprimé",
     "cant-delete-file": "Impossible de supprimer le fichier '%fileName%'",
     "cant-delete-last-user": "Le dernier utilisateur ne peut être supprimé",
+    "cant-delete-stock-with-quantity": "No puedes eliminar el stock de la referencia %reference% en el almacén %warehouse% porque tiene existencias, reservas o cantidad pendiente de recibir. Si quieres dejarlo a cero, modifica la cantidad.",
     "cant-delete-variant-with-documents": "Vous ne pouvez pas supprimer le produit ou la variante %reference% car il a déjà été acheté ou vendu. Mais vous pouvez le bloquer si vous le souhaitez.",
     "cant-load-controller": "Impossible de charger le contrôleur '%controllerName%'.",
     "cant-lock-next-code": "Impossible de verrouiller le code suivant",

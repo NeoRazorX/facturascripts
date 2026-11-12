@@ -246,6 +246,7 @@
     "cant-delete-default-warehouse": "Sie können den Standardslager löschen",
     "cant-delete-file": "Die Datei '%fileName%' kann nicht gelöscht werden",
     "cant-delete-last-user": "Der letzte Benutzer kann nicht gelöscht werden",
+    "cant-delete-stock-with-quantity": "No puedes eliminar el stock de la referencia %reference% en el almacén %warehouse% porque tiene existencias, reservas o cantidad pendiente de recibir. Si quieres dejarlo a cero, modifica la cantidad.",
     "cant-delete-variant-with-documents": "Das Produkt oder die Variante %reference% kann nicht gelöscht werden, da es bereits gekauft oder verkauft wurde. Sie können es jedoch sperren, wenn Sie möchten.",
     "cant-load-controller": "Controller '%controllerName%' kann nicht geladen werden.",
     "cant-lock-next-code": "Der nächste Code kann nicht gesperrt werden",

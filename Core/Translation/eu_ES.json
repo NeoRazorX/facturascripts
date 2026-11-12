@@ -246,6 +246,7 @@
     "cant-delete-default-warehouse": "Ezin da biltegi lehenetsia ezabatu",
     "cant-delete-file": "Ezin da '%fileName%' fitxategia ezabatu",
     "cant-delete-last-user": "Ezin da azkenengo erabiltzailea ezabatu",
+    "cant-delete-stock-with-quantity": "No puedes eliminar el stock de la referencia %reference% en el almacén %warehouse% porque tiene existencias, reservas o cantidad pendiente de recibir. Si quieres dejarlo a cero, modifica la cantidad.",
     "cant-delete-variant-with-documents": "%reference% produktua edo aldaketarekin ezin da ezabatu dokumentuekin erosita edo salduta delako. Blokeatu dezakezu, baina.",
     "cant-load-controller": "Ezin da  '%controllerName%' kontroladorea kargatu.",
     "cant-lock-next-code": "Hurrengo kodea ezin da blokeatu",

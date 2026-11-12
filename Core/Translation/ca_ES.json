@@ -246,6 +246,7 @@
     "cant-delete-default-warehouse": "No es pot eliminar el magatzem per defecte",
     "cant-delete-file": "No es pot eliminar l'arxiu '%fileName%'",
     "cant-delete-last-user": "No es pot eliminar a l'últim usuari",
+    "cant-delete-stock-with-quantity": "No puedes eliminar el stock de la referencia %reference% en el almacén %warehouse% porque tiene existencias, reservas o cantidad pendiente de recibir. Si quieres dejarlo a cero, modifica la cantidad.",
     "cant-delete-variant-with-documents": "No es pot eliminar el producte o variant %reference% perquè ja ha estat comprat o venut. Però pot bloquejar-ho si ho desitja.",
     "cant-load-controller": "No es pot carregar el controlador '%controllerName%'.",
     "cant-lock-next-code": "No es pot bloquejar el següent codi",
