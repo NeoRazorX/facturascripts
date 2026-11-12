@@ -2200,6 +2200,7 @@
     "your": "Ihr",
     "zip-code": "Postleitzahl",
     "zip-codes": "Postleitzahlen",
+    "zip-codes-discarded": "%num% códigos postales descartados porque su ciudad no existe o no coincide con la provincia del archivo.",
     "zip-error-wrong-structure": "zip Fehler falsche Struktur",
     "zone": "Zone",
     "zones": "Zonen"

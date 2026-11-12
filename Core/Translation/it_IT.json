@@ -2200,6 +2200,7 @@
     "your": "Il tuo",
     "zip-code": "Cap",
     "zip-codes": "Codici postali",
+    "zip-codes-discarded": "%num% códigos postales descartados porque su ciudad no existe o no coincide con la provincia del archivo.",
     "zip-error-wrong-structure": "La struttura del file ZIP è incorretta. Può contenere solamente la cartella del plugin e solamente un plugin.",
     "zone": "Zona",
     "zones": "Zone"

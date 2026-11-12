@@ -2200,6 +2200,7 @@
     "your": "Zure",
     "zip-code": "Posta Kodea",
     "zip-codes": "Posta kodeak",
+    "zip-codes-discarded": "%num% códigos postales descartados porque su ciudad no existe o no coincide con la provincia del archivo.",
     "zip-error-wrong-structure": "Zip-aren egitura okerra da. Pluginaren karpeta eta plugin bakarra izan behar ditu.",
     "zone": "Eremua",
     "zones": "Eremuak"

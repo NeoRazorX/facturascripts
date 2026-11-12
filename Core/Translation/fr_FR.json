@@ -2200,6 +2200,7 @@
     "your": "Votre",
     "zip-code": "Code postal",
     "zip-codes": "Codes postaux",
+    "zip-codes-discarded": "%num% códigos postales descartados porque su ciudad no existe o no coincide con la provincia del archivo.",
     "zip-error-wrong-structure": "Erreur dans la structure du fichier ZIP. Il doit contenir le dossier du module externe, et un seul module.",
     "zone": "Zone",
     "zones": "Zones"

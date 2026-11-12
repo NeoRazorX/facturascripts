@@ -2200,6 +2200,7 @@
     "your": "El vostre",
     "zip-code": "Codi Postal",
     "zip-codes": "Codis postals",
+    "zip-codes-discarded": "%num% códigos postales descartados porque su ciudad no existe o no coincide con la provincia del archivo.",
     "zip-error-wrong-structure": "L'estructura del zip és incorrecta. Ha de contenir la carpeta del plugin i solament un plugin.",
     "zone": "Zona",
     "zones": "Zones"

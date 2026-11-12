@@ -2200,6 +2200,7 @@
     "your": "Twój",
     "zip-code": "Kod pocztowy",
     "zip-codes": "Kody pocztowe",
+    "zip-codes-discarded": "%num% códigos postales descartados porque su ciudad no existe o no coincide con la provincia del archivo.",
     "zip-error-wrong-structure": "Błędna struktura pliku zip. Musi zawierać folder pluginu i tylko jeden plugin.",
     "zone": "Strefa",
     "zones": "Strefy"
