@@ -58,6 +58,9 @@ trait InvoiceTrait
     /** @var bool Indica si la factura está completamente pagada. */
     public $pagada;
 
+    /** @var array|null Recibos cargados antes de abrir la transacción del borrado. */
+    private $receiptsToDelete;
+
     /** @var array Facturas rectificativas asociadas, almacenadas temporalmente. */
     private $refunds;
 
@@ -83,7 +86,14 @@ trait InvoiceTrait
             return false;
         }
 
-        // los recibos y la contabilidad se eliminan en onDeleteBefore()
+        // obtenemos los recibos y sus pagos antes de abrir la transacción para que la comprobación de sus tablas
+        // ocurra fuera, ya que dentro no se pueden crear. Los recibos y la contabilidad se eliminan en
+        // onDeleteBefore(), después de las extensiones deleteBefore
+        $this->receiptsToDelete = $this->getReceipts();
+        foreach ($this->receiptsToDelete as $receipt) {
+            $receipt->getPayments();
+        }
+
         return parent::delete();
     }
 
@@ -215,7 +225,9 @@ trait InvoiceTrait
     {
         // eliminamos los recibos y la contabilidad aquí, y no en delete(),
         // para que se ejecuten antes las extensiones deleteBefore
-        foreach ($this->getReceipts() as $receipt) {
+        $receipts = $this->receiptsToDelete ?? $this->getReceipts();
+        $this->receiptsToDelete = null;
+        foreach ($receipts as $receipt) {
             $receipt->disableInvoiceUpdate(true);
             if (false === $receipt->delete()) {
                 Tools::log()->warning('cant-remove-receipt');

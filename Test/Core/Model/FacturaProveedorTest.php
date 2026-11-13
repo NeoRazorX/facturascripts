@@ -20,8 +20,10 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use Closure;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
 use FacturaScripts\Core\Lib\InvoiceOperation;
@@ -30,6 +32,7 @@ use FacturaScripts\Core\Lib\RefundReason;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\FacturaProveedor;
+use FacturaScripts\Core\Model\PagoProveedor;
 use FacturaScripts\Core\Model\ReciboProveedor;
 use FacturaScripts\Core\Model\Retencion;
 use FacturaScripts\Core\Model\Subcuenta;
@@ -1102,6 +1105,35 @@ final class FacturaProveedorTest extends TestCase
         // eliminamos
         $subject = $invoice->getSubject();
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testDeleteInvoiceWithReceiptWithoutPaymentsTable(): void
+    {
+        // creamos una factura con un recibo sin pagar
+        $invoice = $this->getRandomSupplierInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+
+        // eliminamos la tabla de pagos, si existe, como en una instalación que todavía no ha registrado ningún pago
+        $db = new DataBase();
+        if ($db->tableExists(PagoProveedor::tableName())) {
+            $this->assertTrue(DbUpdater::dropTable(PagoProveedor::tableName()), 'can-not-drop-payments-table');
+        }
+        $this->assertFalse($db->tableExists(PagoProveedor::tableName()), 'payments-table-should-not-exist');
+
+        // la factura se elimina con su recibo, sin dejar la transacción abierta,
+        // y la tabla de pagos se crea fuera de la transacción
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertFalse($db->inTransaction(), 'delete-should-not-leave-transaction-open');
+        $this->assertFalse($invoice->exists(), 'invoice-should-not-exist');
+        $this->assertFalse($receipts[0]->exists(), 'receipt-should-not-exist');
+        $this->assertTrue($db->tableExists(PagoProveedor::tableName()), 'payments-table-should-exist');
+
+        // eliminamos
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }

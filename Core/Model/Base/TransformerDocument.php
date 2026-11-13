@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\EstadosDocumentos;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
+use Throwable;
 
 /**
  * Documento transformable en otro tipo de documento.
@@ -136,9 +137,11 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
-     * Elimina este documento de la base de datos.
+     * Elimina este documento de la base de datos. Si algo lanza una excepción durante el borrado,
+     * deshace la transacción que haya abierto antes de relanzarla.
      *
      * @return bool
+     * @throws Throwable
      */
     public function delete(): bool
     {
@@ -158,48 +161,56 @@ abstract class TransformerDocument extends BusinessDocument
         // comprobamos si ya hay una transacción abierta para no romperla
         $newTransaction = false === static::db()->inTransaction() && self::db()->beginTransaction();
 
-        // eliminamos este modelo
-        if (false === parent::delete()) {
-            if ($newTransaction) {
-                self::db()->rollback();
-            }
-            return false;
-        }
-
-        // eliminamos las relaciones y actualizamos la columna servido
-        $parents = $this->parentDocuments();
-        $docTransformation = new DocTransformation();
-        $docTransformation->deleteFrom($this->modelClassName(), $this->id());
-
-        // cambiamos el estado del documento padre
-        foreach ($parents as $parent) {
-            $previousStatus = $parent->getPreviousStatus();
-            if ($previousStatus && empty($previousStatus->generadoc)) {
-                $parent->idestado = $previousStatus->idestado;
-                $parent->save();
-                continue;
+        try {
+            // eliminamos este modelo
+            if (false === parent::delete()) {
+                if ($newTransaction) {
+                    self::db()->rollback();
+                }
+                return false;
             }
 
-            foreach ($parent->getAvailableStatus() as $status) {
-                if (!$status->predeterminado) {
+            // eliminamos las relaciones y actualizamos la columna servido
+            $parents = $this->parentDocuments();
+            $docTransformation = new DocTransformation();
+            $docTransformation->deleteFrom($this->modelClassName(), $this->id());
+
+            // cambiamos el estado del documento padre
+            foreach ($parents as $parent) {
+                $previousStatus = $parent->getPreviousStatus();
+                if ($previousStatus && empty($previousStatus->generadoc)) {
+                    $parent->idestado = $previousStatus->idestado;
+                    $parent->save();
                     continue;
                 }
 
-                $parent->idestado = $status->idestado;
-                $parent->save();
-                break;
-            }
-        }
+                foreach ($parent->getAvailableStatus() as $status) {
+                    if (!$status->predeterminado) {
+                        continue;
+                    }
 
-        // añadimos el log de auditoría
-        Tools::log($this->getAuditChannel())->warning('deleted-model', [
-            '%model%' => $this->modelClassName(),
-            '%key%' => $this->id(),
-            '%desc%' => $this->primaryDescription(),
-            'model-class' => $this->modelClassName(),
-            'model-code' => $this->id(),
-            'model-data' => $this->toArray()
-        ]);
+                    $parent->idestado = $status->idestado;
+                    $parent->save();
+                    break;
+                }
+            }
+
+            // añadimos el log de auditoría
+            Tools::log($this->getAuditChannel())->warning('deleted-model', [
+                '%model%' => $this->modelClassName(),
+                '%key%' => $this->id(),
+                '%desc%' => $this->primaryDescription(),
+                'model-class' => $this->modelClassName(),
+                'model-code' => $this->id(),
+                'model-data' => $this->toArray()
+            ]);
+        } catch (Throwable $exception) {
+            // deshacemos la transacción para no dejarla abierta al resto del proceso
+            if ($newTransaction) {
+                self::db()->rollback();
+            }
+            throw $exception;
+        }
 
         if ($newTransaction) {
             self::db()->commit();

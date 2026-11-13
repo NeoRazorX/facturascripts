@@ -78,6 +78,9 @@ class ReciboProveedor extends ModelClass
     /** @var string Nombre del usuario que creó el recibo. */
     public $nick;
 
+    /** @var DinPagoProveedor[]|null Pagos cargados antes de abrir la transacción del borrado. */
+    private $paymentsToDelete;
+
     /** @var int Número de vencimiento del recibo dentro de la factura. */
     public $numero;
 
@@ -106,6 +109,24 @@ class ReciboProveedor extends ModelClass
         $this->nick = Session::user()->nick;
         $this->pagado = false;
         $this->vencido = false;
+    }
+
+    /**
+     * Elimina el recibo y sus pagos.
+     *
+     * @return bool
+     */
+    public function delete(): bool
+    {
+        if (null === $this->id()) {
+            return true;
+        }
+
+        // obtenemos los pagos antes de abrir la transacción para que la comprobación de su tabla ocurra fuera,
+        // ya que dentro no se puede crear. Se eliminan en onDeleteBefore(), después de las extensiones deleteBefore
+        $this->paymentsToDelete = $this->getPayments();
+
+        return parent::delete();
     }
 
     public function disableInvoiceUpdate(bool $disable = true): void
@@ -283,7 +304,9 @@ class ReciboProveedor extends ModelClass
     protected function onDeleteBefore(): bool
     {
         // eliminamos los pagos aquí, y no en delete(), para que se ejecuten antes las extensiones deleteBefore
-        foreach ($this->getPayments() as $pay) {
+        $payments = $this->paymentsToDelete ?? $this->getPayments();
+        $this->paymentsToDelete = null;
+        foreach ($payments as $pay) {
             if (false === $pay->delete()) {
                 Tools::log()->warning('cant-remove-payment');
                 return false;

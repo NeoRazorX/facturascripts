@@ -20,8 +20,10 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use Closure;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
@@ -30,6 +32,7 @@ use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\PagoCliente;
 use FacturaScripts\Core\Model\ReciboCliente;
 use FacturaScripts\Core\Model\Retencion;
 use FacturaScripts\Core\Model\Stock;
@@ -40,6 +43,7 @@ use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 final class FacturaClienteTest extends TestCase
 {
@@ -49,6 +53,9 @@ final class FacturaClienteTest extends TestCase
 
     /** @var int|null */
     public static $blockedId;
+
+    /** @var int|null Factura cuya eliminación lanza una excepción desde una extensión. */
+    public static $throwOnDeleteId;
 
     const INVOICE_NOTES = 'Test, 2, 3.';
     const INVOICE_REF = 'J567-987';
@@ -1271,6 +1278,85 @@ final class FacturaClienteTest extends TestCase
         // eliminamos
         $subject = $invoice->getSubject();
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testDeleteRollsBackTransactionOnException(): void
+    {
+        // creamos una factura con un recibo
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+        $this->assertCount(1, $invoice->getReceipts(), 'bad-invoice-receipts-count');
+
+        // añadimos una extensión que lanza una excepción al terminar de eliminar esta factura,
+        // cuando la transacción del borrado todavía está abierta
+        self::$throwOnDeleteId = $invoice->idfactura;
+        FacturaCliente::addExtension(new class {
+            public function delete(): Closure
+            {
+                return function () {
+                    if ($this instanceof FacturaCliente && $this->idfactura === FacturaClienteTest::$throwOnDeleteId) {
+                        throw new RuntimeException('test-delete-exception');
+                    }
+                };
+            }
+        });
+
+        $exception = null;
+        try {
+            $invoice->delete();
+        } catch (RuntimeException $ex) {
+            $exception = $ex;
+        }
+        self::$throwOnDeleteId = null;
+
+        // si la transacción ha quedado abierta, la cerramos para no arrastrarla al resto de tests
+        $db = new DataBase();
+        $inTransaction = $db->inTransaction();
+        if ($inTransaction) {
+            $db->rollback();
+        }
+
+        $this->assertNotNull($exception, 'delete-should-throw-exception');
+        $this->assertFalse($inTransaction, 'delete-should-not-leave-transaction-open');
+
+        // el borrado se ha deshecho: la factura conserva su recibo
+        $this->assertTrue($invoice->exists(), 'invoice-should-exist');
+        $this->assertCount(1, $invoice->getReceipts(), 'receipt-should-not-be-deleted');
+
+        // eliminamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testDeleteInvoiceWithReceiptWithoutPaymentsTable(): void
+    {
+        // creamos una factura con un recibo sin pagar
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+
+        // eliminamos la tabla de pagos, si existe, como en una instalación que todavía no ha registrado ningún pago
+        $db = new DataBase();
+        if ($db->tableExists(PagoCliente::tableName())) {
+            $this->assertTrue(DbUpdater::dropTable(PagoCliente::tableName()), 'can-not-drop-payments-table');
+        }
+        $this->assertFalse($db->tableExists(PagoCliente::tableName()), 'payments-table-should-not-exist');
+
+        // la factura se elimina con su recibo, sin dejar la transacción abierta,
+        // y la tabla de pagos se crea fuera de la transacción
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertFalse($db->inTransaction(), 'delete-should-not-leave-transaction-open');
+        $this->assertFalse($invoice->exists(), 'invoice-should-not-exist');
+        $this->assertFalse($receipts[0]->exists(), 'receipt-should-not-exist');
+        $this->assertTrue($db->tableExists(PagoCliente::tableName()), 'payments-table-should-exist');
+
+        // eliminamos
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
