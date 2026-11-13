@@ -485,6 +485,14 @@ final class ToolsTest extends TestCase
         $this->assertSame(INF, Tools::round(INF));
         $this->assertTrue(is_nan(Tools::round(NAN)));
 
+        // con un locale de coma decimal el resultado es el mismo (si el sistema tiene alguno instalado)
+        $locale = setlocale(LC_NUMERIC, '0');
+        if (false !== setlocale(LC_NUMERIC, 'es_ES.UTF-8', 'es_ES', 'de_DE.UTF-8', 'fr_FR.UTF-8')) {
+            $this->assertSame(11.78, Tools::round(3.925 + 7.85));
+            $this->assertSame(1234.57, Tools::round(1234.5678));
+        }
+        setlocale(LC_NUMERIC, $locale);
+
         // probamos con 0 decimales
         Tools::settingsSet('default', 'decimals', 0);
         $this->assertEquals(1.0, Tools::round(1.234));
