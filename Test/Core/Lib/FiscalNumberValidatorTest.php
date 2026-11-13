@@ -29,7 +29,7 @@ class FiscalNumberValidatorTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         // Creamos los identificadores fiscales necesarios para los tests
-        $tipos = ['CIF', 'DNI', 'NIF', 'NIE', 'CI', 'RUC'];
+        $tipos = ['CIF', 'DNI', 'NIF', 'NIE', 'CI', 'RUC', 'VAT'];
         foreach ($tipos as $tipo) {
             $identificador = new IdentificadorFiscal();
             $identificador->tipoidfiscal = $tipo;
@@ -66,7 +66,15 @@ class FiscalNumberValidatorTest extends TestCase
             ['type' => 'RUC', 'number' => '2560001234001', 'expected' => false],
             //RUC sociedad privada
             ['type' => 'RUC', 'number' => '0190000001001', 'expected' => true],
-            ['type' => 'RUC', 'number' => '2598765432001', 'expected' => false]
+            ['type' => 'RUC', 'number' => '2598765432001', 'expected' => false],
+            // VAT: solo se comprueba la estructura si lleva el prefijo de un Estado miembro
+            ['type' => 'VAT', 'number' => 'DE123456789', 'expected' => true],
+            ['type' => 'VAT', 'number' => 'de-123 456 789', 'expected' => true],
+            ['type' => 'VAT', 'number' => 'DE12345678', 'expected' => false],
+            ['type' => 'VAT', 'number' => 'EL123456789', 'expected' => true],
+            ['type' => 'VAT', 'number' => 'GB123456789', 'expected' => true],
+            ['type' => 'VAT', 'number' => 'CHE123456789', 'expected' => true],
+            ['type' => 'VAT', 'number' => '123456789', 'expected' => true]
         ];
 
         foreach ($results as $item) {
@@ -76,6 +84,42 @@ class FiscalNumberValidatorTest extends TestCase
                 sprintf('Error validating %s %s', $item['type'], $item['number'])
             );
         }
+    }
+
+    /**
+     * @dataProvider euVatProvider
+     */
+    public function testIsValidEuVat(bool $expected, ?string $number): void
+    {
+        $this->assertSame($expected, FiscalNumberValidator::isValidEuVat($number), 'Error validating ' . $number);
+    }
+
+    public function euVatProvider(): array
+    {
+        return [
+            'alemania' => [true, 'DE123456789'],
+            'alemania corto' => [false, 'DE12345678'],
+            'alemania con letras' => [false, 'DE12345678A'],
+            'austria' => [true, 'ATU12345678'],
+            'españa' => [true, 'ESB12345678'],
+            'españa persona física' => [true, 'ES12345678Z'],
+            'españa con letras en medio' => [false, 'ESB1234567A8'],
+            'francia' => [true, 'FRXX123456789'],
+            'grecia' => [true, 'EL123456789'],
+            'grecia con el código iso' => [false, 'GR123456789'],
+            'croacia' => [true, 'HR12345678901'],
+            'irlanda del norte' => [true, 'XI123456789'],
+            'irlanda del norte de 5' => [true, 'XIGD123'],
+            'lituania de 12' => [true, 'LT123456789012'],
+            'lituania de 10' => [false, 'LT1234567890'],
+            'rumanía' => [true, 'RO12'],
+            'rumanía con cero inicial' => [false, 'RO0123'],
+            'normaliza' => [true, ' de-123.456.789 '],
+            'reino unido' => [false, 'GB123456789'],
+            'sin prefijo' => [false, '123456789'],
+            'vacío' => [false, ''],
+            'nulo' => [false, null],
+        ];
     }
 
     /**
