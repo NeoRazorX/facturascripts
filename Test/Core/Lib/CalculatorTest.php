@@ -116,6 +116,35 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(20.0, $lines[1]->pvptotal, 'bad-line2-pvptotal');
     }
 
+    public function testFloatSumRounding(): void
+    {
+        // líneas cuya suma cae en medio céntimo: en coma flotante queda justo por debajo (11,774999999999999) y,
+        // desde PHP 8.4, round() ya no lo corrige; el documento tiene que dar lo mismo con cualquier versión de PHP
+        $cases = [
+            [[[50, 0.0785], [50, 0.157]], 11.78, 2.47, 14.25],
+            [[[2, 0.35122], [2, 1.44628]], 3.6, 0.75, 4.35],
+            [[[-50, 0.0785], [-50, 0.157]], -11.78, -2.47, -14.25],
+            [[[250, -1.944], [500, -1.269], [1000, -0.93], [250, -1.75716], [500, -1.14765], [1000, -0.82368]], -3887.3, -816.33, -4703.63],
+        ];
+        foreach ($cases as [$data, $neto, $totaliva, $total]) {
+            $doc = new PresupuestoCliente();
+            $lines = [];
+            foreach ($data as [$cantidad, $pvpunitario]) {
+                $line = $doc->getNewLine();
+                $line->cantidad = $cantidad;
+                $line->pvpunitario = $pvpunitario;
+                $line->iva = 21;
+                $lines[] = $line;
+            }
+            $this->assertTrue(Calculator::calculate($doc, $lines, false));
+
+            $this->assertEquals($neto, $doc->neto, 'bad-neto');
+            $this->assertEquals($neto, $doc->netosindto, 'bad-netosindto');
+            $this->assertEquals($totaliva, $doc->totaliva, 'bad-totaliva');
+            $this->assertEquals($total, $doc->total, 'bad-total');
+        }
+    }
+
     public function testDiscounts(): void
     {
         $doc = new PresupuestoCliente();
