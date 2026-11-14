@@ -25,6 +25,14 @@ use FacturaScripts\Core\Tools;
 use stdClass;
 use Throwable;
 
+/**
+ * Cliente para la API de OpenAI. A partir de una API Key permite generar respuestas de
+ * chat en texto o en JSON estructurado, sintetizar y transcribir audio, y crear imágenes,
+ * además de gestionar asistentes, hilos de conversación, archivos y almacenes vectoriales.
+ * Las peticiones se realizan con la clase Http del núcleo y los errores se registran en el
+ * log en lugar de lanzar excepciones, devolviendo un resultado vacío. Lleva la cuenta de
+ * los tokens consumidos, que puede consultarse con getTotalTokens().
+ */
 class OpenAi
 {
     const ASSISTANTS_URL = 'https://api.openai.com/v1/assistants';

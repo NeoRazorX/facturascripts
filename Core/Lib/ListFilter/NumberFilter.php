@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib\ListFilter;
 use FacturaScripts\Core\Where;
 
 /**
- * Description of NumberFilter
+ * Filtro de listado para valores numéricos. Muestra una caja de texto precedida por el
+ * operador de comparación configurado, que por defecto es mayor o igual, y añade la
+ * condición correspondiente sobre el campo indicado. Al asignar el valor sustituye las
+ * comas por puntos, de manera que el usuario puede escribir los decimales con el
+ * separador al que esté acostumbrado.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

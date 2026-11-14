@@ -26,7 +26,13 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 
 /**
- * Contains common utilities for grouping and collecting documents.
+ * Añade a los controladores de listado de documentos de compra y venta los
+ * botones y las acciones masivas habituales sobre los registros seleccionados:
+ * aprobar documentos, agruparlos o dividirlos con DocumentStitcher, bloquear
+ * facturas, marcarlas como pagadas junto con sus recibos y generar los asientos
+ * contables pendientes. Todas las acciones se ejecutan dentro de una
+ * transacción y comprueban permisos, token del formulario y propiedad de cada
+ * registro antes de modificarlo.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */

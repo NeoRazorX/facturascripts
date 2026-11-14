@@ -24,7 +24,12 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator;
 
 /**
- * Description of BaseFilter
+ * Clase base de la que heredan todos los filtros de los listados. Guarda la clave del
+ * filtro, el campo de la base de datos sobre el que actúa, la etiqueta a mostrar y el
+ * valor seleccionado, que se sanea automáticamente al asignarlo. Las clases hijas deben
+ * implementar render(), que devuelve el HTML del control, y getDataBaseWhere(), que añade
+ * las condiciones de búsqueda correspondientes. También permite cargar assets propios y
+ * enviar el formulario automáticamente cuando el filtro cambia.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

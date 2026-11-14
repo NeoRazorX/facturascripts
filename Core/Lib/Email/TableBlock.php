@@ -22,7 +22,10 @@ namespace FacturaScripts\Core\Lib\Email;
 use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
- * Description of TableBlock
+ * Bloque de email que dibuja una tabla HTML a partir de un array de cabeceras y otro
+ * de filas. Cada fila es a su vez un array cuyos elementos se convierten en celdas.
+ * Admite clases CSS y estilos propios, y utiliza los de la plantilla por defecto si
+ * no se indica ninguno.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>

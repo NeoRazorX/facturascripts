@@ -38,7 +38,12 @@ use FacturaScripts\Dinamic\Model\Variante;
 use Throwable;
 
 /**
- * Description of SalesController
+ * Controlador base de los documentos de venta (presupuestos, pedidos, albaranes
+ * y facturas de cliente). Monta el formulario mediante AJAX combinando
+ * SalesHeaderHTML, SalesLineHTML, SalesFooterHTML y SalesModalHTML, y atiende
+ * las peticiones de autocompletado de clientes y productos, el recálculo de
+ * líneas con Calculator y el guardado del documento.
+ * Las clases hijas solo deben indicar el modelo con getModelClassName().
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
