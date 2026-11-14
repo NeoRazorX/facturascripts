@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,11 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of IdentificadorFiscal
+ * Tipo de identificador fiscal (NIF, CIF, NIE, pasaporte, etc.) que se puede asignar a
+ * clientes, proveedores y empresas mediante el campo tipoidfiscal. Guarda el código oficial
+ * equivalente (codeid), utilizado en exportaciones y comunicaciones telemáticas, y el
+ * indicador validar, que determina si FacturaScripts debe comprobar el formato del número
+ * fiscal introducido.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

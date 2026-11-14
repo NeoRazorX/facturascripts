@@ -24,7 +24,9 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A division of accounting entries in different journals
+ * Diario contable. Permite dividir los asientos en distintos libros o diarios
+ * (ventas, compras, caja, etc.) para poder clasificarlos y consultarlos por separado.
+ * Cada asiento puede asociarse opcionalmente a un diario a través del campo iddiario.
  *
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
  * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>

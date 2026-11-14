@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,13 @@ use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Un punto de interés dentro de una ciudad: un polígono industrial, un barrio,
+ * una estación, etc. Guarda su nombre, un alias alternativo y las coordenadas
+ * geográficas que permiten situarlo en el mapa.
+ * Depende de una ciudad (idciudad) y registra además quién lo creó y quién lo
+ * modificó por última vez.
+ */
 class PuntoInteresCiudad extends ModelClass
 {
     use ModelTrait;

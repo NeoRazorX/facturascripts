@@ -35,7 +35,12 @@ use FacturaScripts\Dinamic\Model\RoleUser as DinRoleUser;
 use FacturaScripts\Dinamic\Model\Serie as DinSerie;
 
 /**
- * Usuario de FacturaScripts.
+ * Usuario de FacturaScripts. Guarda las credenciales de acceso, la clave de
+ * sesión, los datos de la última actividad y las preferencias personales:
+ * idioma, empresa, almacén, serie, agente asociado y página de inicio.
+ * Los permisos se obtienen de los roles asignados, salvo que sea administrador,
+ * en cuyo caso tiene acceso a todas las páginas. Admite además autenticación en
+ * dos pasos mediante códigos TOTP.
  *
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @collaborator Daniel Fernández Giménez <contacto@danielfg.es>

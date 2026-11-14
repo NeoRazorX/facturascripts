@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,10 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 
 /**
- * Class to manage the data of retenciones table
+ * Una retención de IRPF, con su porcentaje, su descripción y las subcuentas
+ * contables en las que se registra el importe retenido.
+ * Se asigna a clientes, proveedores, grupos de clientes y líneas de documentos
+ * de compra y venta, y su porcentaje se usa como IRPF en los cálculos.
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
@@ -36,7 +39,7 @@ class Retencion extends ModelClass
 {
     use ModelTrait;
 
-    /** @var bool Indica si la retención está activa. */
+    /** @var bool Indicador de retención activa (en el modelo no se usa para filtrar). */
     public $activa;
 
     /** @var string Código identificativo de la retención. */

@@ -24,7 +24,14 @@ use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
- * A fee for the products.
+ * Tarifa de precios que se aplica a los productos para obtener un precio de
+ * venta distinto del habitual. Puede asignarse a un grupo de clientes o
+ * directamente a un cliente (Cliente::codtarifa); la tarifa propia del cliente
+ * tiene prioridad sobre la de su grupo.
+ * El precio se calcula a partir del coste (sumando un porcentaje valorx y un
+ * importe fijo valory) o del precio de venta de la variante (restándolos).
+ * Opcionalmente puede limitarse el resultado para que no supere el precio de
+ * venta (maxpvp) ni quede por debajo del coste (mincoste, que tiene prioridad).
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,7 +25,15 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ApiKey as DinApiKey;
 
 /**
- * Defines the individual permissions for each resource within an api key.
+ * Define los permisos individuales de cada recurso dentro de una clave de API. Se guarda en
+ * la tabla `api_access` y cada fila relaciona una `ApiKey` (`idapikey`) con el nombre de un
+ * recurso (`resource`), indicando qué métodos HTTP se permiten mediante los indicadores
+ * `allowget`, `allowpost`, `allowput` y `allowdelete`.
+ *
+ * `ApiController::isAllowed()` consulta estos registros para autorizar cada petición de
+ * una clave que no tenga `fullaccess`. Una entrada nueva concede por defecto los cuatro
+ * permisos, mientras que `addResourcesToApiKey()` da de alta varios recursos de golpe con el
+ * estado que se indique (por defecto, denegado), sin duplicar los que ya existan.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,9 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
 /**
+ * Trait que añade la relación con la forma de pago (FormaPago) a partir de
+ * codpago, permitiendo obtener la forma de pago asociada al documento.
+ *
  * @author Oscar G. Villa <ogvilla@gmail.com>
  */
 trait PaymentRelationTrait
@@ -30,6 +33,11 @@ trait PaymentRelationTrait
     /** @var string Código de la forma de pago asociada. */
     public $codpago;
 
+    /**
+     * Devuelve la forma de pago según codpago.
+     *
+     * @return FormaPago
+     */
     public function getPaymentMethod(): FormaPago
     {
         return FormasPago::get($this->codpago);
