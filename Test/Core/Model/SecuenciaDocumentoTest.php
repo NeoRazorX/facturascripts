@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Ejercicio;
@@ -869,12 +870,70 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertTrue($company->delete(), 'company-cant-delete');
     }
 
+    public function testGapsWarningUsesCompanyCountry(): void
+    {
+        // el país predeterminado no es España
+        $defaultCountry = Tools::settings('default', 'codpais');
+        Tools::settingsSet('default', 'codpais', 'PRT');
+
+        // creamos una empresa española y otra portuguesa
+        $companyEsp = $this->getRandomCompany();
+        $companyEsp->codpais = 'ESP';
+        $this->assertTrue($companyEsp->save(), 'company-cant-save');
+
+        $companyPrt = $this->getRandomCompany();
+        $companyPrt->codpais = 'PRT';
+        $this->assertTrue($companyPrt->save(), 'company-cant-save');
+
+        // creamos una serie
+        $serie = $this->getRandomSerie();
+        $this->assertTrue($serie->save(), 'serie-cant-save');
+
+        // secuencia de facturas sin huecos en la empresa española: debe avisar
+        $sequence = new SecuenciaDocumento();
+        $sequence->codserie = $serie->codserie;
+        $sequence->idempresa = $companyEsp->idempresa;
+        $sequence->longnumero = 6;
+        $sequence->numero = 1;
+        $sequence->patron = 'FAC{EJE}{SERIE}{0NUM}';
+        $sequence->tipodoc = 'FacturaCliente';
+        $sequence->usarhuecos = false;
+        MiniLog::clear();
+        $this->assertTrue($sequence->save(), 'document-sequence-cant-save');
+        $this->assertTrue($this->hasGapsWarning(), 'gaps-warning-not-shown-for-spanish-company');
+
+        // en la empresa portuguesa no debe avisar, aunque el país predeterminado sea España
+        Tools::settingsSet('default', 'codpais', 'ESP');
+        $sequence->idempresa = $companyPrt->idempresa;
+        MiniLog::clear();
+        $this->assertTrue($sequence->save(), 'document-sequence-cant-save');
+        $this->assertFalse($this->hasGapsWarning(), 'gaps-warning-shown-for-foreign-company');
+
+        // eliminamos
+        Tools::settingsSet('default', 'codpais', $defaultCountry);
+        $this->assertTrue($sequence->delete(), 'document-sequence-cant-delete');
+        $this->assertTrue($serie->delete(), 'serie-cant-delete');
+        $this->assertTrue($companyEsp->delete(), 'company-cant-delete');
+        $this->assertTrue($companyPrt->delete(), 'company-cant-delete');
+    }
+
     private function deleteSequences(SecuenciaDocumento $sequence): void
     {
         $where = [Where::eq('tipodoc', 'PresupuestoCliente')];
         foreach ($sequence->all($where, [], 0, 0) as $sec) {
             $this->assertTrue($sec->delete(), 'document-sequence-cant-delete');
         }
+    }
+
+    private function hasGapsWarning(): bool
+    {
+        foreach (MiniLog::read('master', ['error']) as $item) {
+            if ($item['original'] === 'use-holes-invoices-esp') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function tearDown(): void

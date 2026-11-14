@@ -184,6 +184,48 @@ final class DbUpdaterTest extends TestCase
         $this->assertTrue($dropped, 'test-table-not-dropped');
     }
 
+    public function testCanSetNotNullOnColumnWithNullValues(): void
+    {
+        // creamos la tabla
+        $table_name = 'test_table';
+        $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
+        $structure = DbUpdater::readTableXml($file_path);
+        $created = DbUpdater::createTable($table_name, $structure);
+        $this->assertTrue($created, 'test-table-not-created');
+
+        // añadimos una fila con debaja a NULL y otra con debaja a true
+        $sql = 'INSERT INTO ' . $table_name . ' (debaja, numero) VALUES (NULL, 1);'
+            . 'INSERT INTO ' . $table_name . ' (debaja, numero) VALUES (true, 2);';
+        $this->assertTrue($this->db()->exec($sql), 'test-rows-not-inserted');
+
+        // actualizamos la tabla para que debaja no admita nulos
+        DbUpdater::rebuild();
+        $new_file_path = Tools::folder('Test', '__files', $table_name . '_update_5.xml');
+        $new_structure = DbUpdater::readTableXml($new_file_path);
+        $updated = DbUpdater::updateTable($table_name, $new_structure);
+        $this->assertTrue($updated, 'test-table-not-updated');
+
+        // comprobamos la columna debaja
+        $columns = $this->db()->getColumns($table_name);
+        $this->assertArrayHasKey('debaja', $columns, 'column-debaja-not-found');
+        $this->assertEquals('NO', $columns['debaja']['is_nullable'], 'column-debaja-bad-nullable');
+
+        // la fila con NULL ha tomado el valor por defecto y la otra conserva su valor
+        $sql = 'SELECT numero FROM ' . $table_name . ' WHERE debaja = false;';
+        $rows = $this->db()->select($sql);
+        $this->assertCount(1, $rows, 'null-row-without-default-value');
+        $this->assertEquals(1, $rows[0]['numero'], 'bad-row-with-default-value');
+
+        $sql = 'SELECT numero FROM ' . $table_name . ' WHERE debaja = true;';
+        $rows = $this->db()->select($sql);
+        $this->assertCount(1, $rows, 'true-row-modified');
+        $this->assertEquals(2, $rows[0]['numero'], 'bad-row-with-true-value');
+
+        // eliminamos
+        $dropped = DbUpdater::dropTable($table_name);
+        $this->assertTrue($dropped, 'test-table-not-dropped');
+    }
+
     public function testCanUseMysqlTypes(): void
     {
         $table_name = 'test_table_mysql_types';

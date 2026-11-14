@@ -20,7 +20,7 @@
             </widget>
         </column>
         <column name="number" order="140">
-            <widget type="number" fieldname="number"/>
+            <widget type="text" fieldname="number"/>
         </column>
     </columns>
 </view>

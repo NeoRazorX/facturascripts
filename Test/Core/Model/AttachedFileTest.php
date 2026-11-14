@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use Closure;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Tools;
@@ -28,6 +29,9 @@ use PHPUnit\Framework\TestCase;
 final class AttachedFileTest extends TestCase
 {
     use LogErrorsTrait;
+
+    /** @var int|null */
+    public static $blockedId;
 
     public function testSaveFile(): void
     {
@@ -223,6 +227,43 @@ final class AttachedFileTest extends TestCase
         $this->assertNotEmpty(array_filter($messages, function (string $message) use ($name) {
             return str_contains($message, $name);
         }), 'file-not-found-without-name');
+    }
+
+    public function testDeleteBeforeExtensionKeepsFile(): void
+    {
+        // copiamos una imagen y la guardamos
+        $original = 'xss_img_src_onerror_alert(123).jpeg';
+        $originalPath = FS_FOLDER . '/Test/__files/' . $original;
+        $this->assertTrue(copy($originalPath, FS_FOLDER . '/MyFiles/' . $original), 'File not copied');
+        $file = new AttachedFile();
+        $file->path = $original;
+        $this->assertTrue($file->save(), 'can-not-save-file');
+        $this->assertTrue(file_exists($file->getFullPath()), 'file-not-found');
+
+        // añadimos una extensión que impide eliminar este archivo
+        self::$blockedId = $file->idfile;
+        AttachedFile::addExtension(new class {
+            public function deleteBefore(): Closure
+            {
+                return function () {
+                    if ($this instanceof AttachedFile && $this->idfile == AttachedFileTest::$blockedId) {
+                        return false;
+                    }
+                };
+            }
+        });
+
+        // el registro no se puede eliminar y el archivo sigue en el disco
+        $this->assertFalse($file->delete(), 'file-should-not-be-deleted');
+        $this->assertTrue($file->exists(), 'file-record-should-exist');
+        $this->assertTrue(file_exists($file->getFullPath()), 'file-should-not-be-removed');
+
+        // retiramos el bloqueo
+        self::$blockedId = null;
+
+        // eliminamos
+        $this->assertTrue($file->delete(), 'can-not-delete-file');
+        $this->assertFalse(file_exists($file->getFullPath()), 'file-not-removed');
     }
 
     protected function tearDown(): void

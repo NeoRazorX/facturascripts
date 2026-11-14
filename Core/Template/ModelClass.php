@@ -29,6 +29,7 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
+use Throwable;
 
 /**
  * Clase base de la que heredan todos los modelos. Se encarga de la conexión
@@ -285,18 +286,40 @@ abstract class ModelClass
             return true;
         }
 
+        // las extensiones pueden impedir la eliminación antes de que se modifique nada
         if (false === $this->pipeFalse('deleteBefore')) {
             return false;
         }
 
-        $deleted = static::table()
-            ->whereEq(static::primaryColumn(), $this->id())
-            ->delete();
+        // abrimos una transacción, salvo que ya haya una abierta, para no dejar
+        // datos relacionados a medio eliminar si algo falla
+        $newTransaction = false === static::db()->inTransaction() && static::db()->beginTransaction();
+
+        try {
+            $deleted = $this->onDeleteBefore() && static::table()
+                    ->whereEq(static::primaryColumn(), $this->id())
+                    ->delete();
+            if ($deleted) {
+                $this->onDelete();
+            }
+        } catch (Throwable $exception) {
+            if ($newTransaction) {
+                static::db()->rollback();
+            }
+            throw $exception;
+        }
+
         if (false === $deleted) {
+            if ($newTransaction) {
+                static::db()->rollback();
+            }
             return false;
         }
 
-        $this->onDelete();
+        if ($newTransaction) {
+            static::db()->commit();
+        }
+
         $this->syncOriginal();
         $this->clearCache();
 
@@ -1120,6 +1143,15 @@ abstract class ModelClass
     protected function onDelete(): void
     {
         $this->pipe('onDelete');
+    }
+
+    /**
+     * Este método se llama antes de eliminar el registro, después de las extensiones deleteBefore.
+     * Es el lugar para eliminar los datos relacionados. Si devuelve false, se cancela la eliminación.
+     */
+    protected function onDeleteBefore(): bool
+    {
+        return true;
     }
 
     /**

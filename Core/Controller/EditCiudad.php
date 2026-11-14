@@ -50,6 +50,7 @@ class EditCiudad extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
+        $this->createViewsZipCodes();
         $this->createViewsPOI();
     }
 
@@ -63,6 +64,14 @@ class EditCiudad extends EditController
             ->disableColumn('city');
     }
 
+    protected function createViewsZipCodes(string $viewName = 'ListCodigoPostal'): void
+    {
+        $this->addListView($viewName, 'CodigoPostal', 'zip-codes', 'fa-solid fa-map-pin')
+            ->addOrderBy(['number'], 'number')
+            ->addSearchFields(['number'])
+            ->disableColumn('city');
+    }
+
     /**
      * @param string $viewName
      * @param BaseView $view
@@ -70,6 +79,19 @@ class EditCiudad extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
+            case 'ListCodigoPostal':
+                // filtramos también por provincia y país para que el botón nuevo los lleve ya rellenos
+                $where = [
+                    Where::eq('idciudad', $this->mainTabModelValue('idciudad')),
+                    Where::eq('idprovincia', $this->mainTabModelValue('idprovincia'))
+                ];
+                $province = $this->getModel()->getProvince();
+                if ($province) {
+                    $where[] = Where::eq('codpais', $province->codpais);
+                }
+                $view->loadData('', $where);
+                break;
+
             case 'ListPuntoInteresCiudad':
                 $id_ciudad = $this->mainTabModelValue('idciudad');
                 $where = [Where::eq('idciudad', $id_ciudad)];

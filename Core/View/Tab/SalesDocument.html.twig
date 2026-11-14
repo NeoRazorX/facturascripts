@@ -92,7 +92,75 @@
         }
 
         event.preventDefault();
+
+        // si se acaba de escribir el código postal, primero buscamos su ciudad y provincia
+        if (event.target.id === 'newCustomerPostalCode' && event.target.dataset.pending === '1') {
+            newCustomerZipCode();
+            return false;
+        }
+
         createCustomerFromSales();
+        return false;
+    }
+
+    function newCustomerZipCode() {
+        // busca el código postal y, si está en la lista, rellena la ciudad y la provincia del nuevo cliente
+        const form = document.forms['salesForm'];
+        const zipInput = form['newcustomer_codpostal'];
+        const zipCode = zipInput.value.trim();
+        delete zipInput.dataset.pending;
+        if (zipCode === '') {
+            return false;
+        }
+
+        let data = new FormData();
+        data.append('action', 'find-zip-code');
+        data.append('codpostal', zipCode);
+        data.append('codpais', form['newcustomer_codpais'].value);
+
+        fetch('{{ fsc.url() }}', {
+            method: 'POST',
+            body: data
+        }).then(function (response) {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(function (places) {
+            // sin resultados, o si el código ha cambiado mientras tanto, no tocamos nada
+            if (false === Array.isArray(places) || places.length === 0 || zipInput.value.trim() !== zipCode) {
+                return;
+            }
+
+            // las ciudades encontradas se ofrecen como sugerencias
+            const cityList = document.getElementById('newCustomerCityList');
+            cityList.innerHTML = '';
+            places.forEach(function (place) {
+                const option = document.createElement('option');
+                option.value = place.ciudad;
+                cityList.appendChild(option);
+            });
+
+            // la provincia solo se rellena si es la misma para todas las ciudades
+            const sameProvince = places.every(function (place) {
+                return place.provincia === places[0].provincia;
+            });
+            if (sameProvince) {
+                form['newcustomer_provincia'].value = places[0].provincia;
+            }
+
+            // con una única ciudad la rellenamos; con varias, se elige entre las sugerencias
+            const cityInput = form['newcustomer_ciudad'];
+            const cityFound = places.some(function (place) {
+                return place.ciudad === cityInput.value;
+            });
+            if (places.length === 1) {
+                cityInput.value = places[0].ciudad;
+            } else if (false === cityFound) {
+                cityInput.value = '';
+                cityInput.focus();
+            }
+        }).catch(function (error) {
+            console.error(error);
+        });
+
         return false;
     }
 
@@ -157,6 +225,8 @@
                 document.getElementById('newCustomerName').closest('.modal-body').querySelectorAll('input').forEach(function (input) {
                     input.value = input.defaultValue;
                 });
+                document.getElementById('newCustomerCityList').innerHTML = '';
+                delete document.getElementById('newCustomerPostalCode').dataset.pending;
             }
             if (data.header !== '') {
                 document.getElementById("salesFormHeader").innerHTML = data.header;

@@ -19,11 +19,13 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use Closure;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ReceiptGenerator;
 use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Model\FormaPago;
+use FacturaScripts\Core\Model\PagoProveedor;
 use FacturaScripts\Core\Model\ReciboProveedor;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -35,6 +37,12 @@ class ReciboProveedorTest extends TestCase
     use DefaultSettingsTrait;
     use LogErrorsTrait;
     use RandomDataTrait;
+
+    /** @var int|null */
+    public static $blockedPayment;
+
+    /** @var int|null */
+    public static $blockedReceipt;
 
     public static function setUpBeforeClass(): void
     {
@@ -237,6 +245,29 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'can-not-delete-supplier');
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
+    }
+
+    public function testReceiptWithNullPaid(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomSupplierInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // la columna pagado no admite nulos: un recibo con pagado nulo se guarda como no pagado
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $receipt = $receipts[0];
+        $receipt->pagado = null;
+        $this->assertTrue($receipt->save(), 'can-not-save-receipt-with-null-paid');
+        $this->assertTrue($receipt->reload(), 'can-not-reload-receipt');
+        $this->assertFalse($receipt->pagado, 'receipt-paid');
+        $this->assertNull($receipt->fechapago, 'receipt-with-payment-date');
+
+        // eliminamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
     public function testReceiptsTotalGreaterThanInvoice(): void
@@ -451,6 +482,95 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
 
         // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testDeleteBeforeExtensionKeepsPayments(): void
+    {
+        // creamos una factura y marcamos su recibo como pagado
+        $invoice = $this->getRandomSupplierInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $receipts[0]->pagado = true;
+        $this->assertTrue($receipts[0]->save(), 'can-not-set-paid-receipt');
+        $payments = $receipts[0]->getPayments();
+        $this->assertCount(1, $payments, 'should-have-one-payment');
+        $this->assertNotEmpty($payments[0]->idasiento, 'payment-should-have-accounting-entry');
+
+        // añadimos una extensión que impide eliminar este recibo, como hacen algunos plugins
+        self::$blockedReceipt = $receipts[0]->idrecibo;
+        ReciboProveedor::addExtension(new class {
+            public function deleteBefore(): Closure
+            {
+                return function () {
+                    if ($this instanceof ReciboProveedor && $this->idrecibo === ReciboProveedorTest::$blockedReceipt) {
+                        return false;
+                    }
+                };
+            }
+        });
+
+        // el recibo no se puede eliminar y conserva su pago y el asiento del pago
+        $this->assertFalse($receipts[0]->delete(), 'receipt-should-not-be-deleted');
+        $this->assertTrue($receipts[0]->exists(), 'receipt-should-exist');
+        $this->assertCount(1, $receipts[0]->getPayments(), 'payment-should-not-be-deleted');
+        $this->assertTrue($payments[0]->getAccountingEntry()->exists(), 'payment-entry-should-not-be-deleted');
+
+        // retiramos el bloqueo
+        self::$blockedReceipt = null;
+
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertFalse($payments[0]->exists(), 'payment-should-be-deleted');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testPaymentDeleteBeforeExtensionKeepsAccountingEntry(): void
+    {
+        // creamos una factura y marcamos su recibo como pagado
+        $invoice = $this->getRandomSupplierInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $receipts[0]->pagado = true;
+        $this->assertTrue($receipts[0]->save(), 'can-not-set-paid-receipt');
+        $payments = $receipts[0]->getPayments();
+        $this->assertCount(1, $payments, 'should-have-one-payment');
+        $this->assertTrue($payments[0]->getAccountingEntry()->exists(), 'payment-should-have-accounting-entry');
+
+        // añadimos una extensión que impide eliminar este pago
+        self::$blockedPayment = $payments[0]->idpago;
+        PagoProveedor::addExtension(new class {
+            public function deleteBefore(): Closure
+            {
+                return function () {
+                    if ($this instanceof PagoProveedor && $this->idpago == ReciboProveedorTest::$blockedPayment) {
+                        return false;
+                    }
+                };
+            }
+        });
+
+        // el pago no se puede eliminar y conserva su asiento
+        $this->assertFalse($payments[0]->delete(), 'payment-should-not-be-deleted');
+        $this->assertTrue($payments[0]->exists(), 'payment-should-exist');
+        $this->assertTrue($payments[0]->getAccountingEntry()->exists(), 'payment-entry-should-not-be-deleted');
+
+        // retiramos el bloqueo
+        self::$blockedPayment = null;
+
+        // eliminamos
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertFalse($payments[0]->exists(), 'payment-should-be-deleted');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }

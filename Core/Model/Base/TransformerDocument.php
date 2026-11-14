@@ -64,6 +64,9 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @var array
      */
+    /** @var BusinessDocumentLine[]|null Líneas a eliminar junto con el documento, almacenadas temporalmente. */
+    private $linesToDelete;
+
     private static $unlocked_fields = ['femail', 'idestado', 'idestado_ant', 'numdocs', 'pagada'];
 
     /**
@@ -148,22 +151,12 @@ abstract class TransformerDocument extends BusinessDocument
             return false;
         }
 
-        // obtenemos las líneas antes de abrir la transacción para que la comprobación de tablas ocurra fuera
-        $lines = $this->getLines();
+        // obtenemos las líneas antes de abrir la transacción para que la comprobación de tablas ocurra fuera.
+        // Se eliminan en onDeleteBefore(), después de las extensiones deleteBefore
+        $this->linesToDelete = $this->getLines();
 
         // comprobamos si ya hay una transacción abierta para no romperla
         $newTransaction = false === static::db()->inTransaction() && self::db()->beginTransaction();
-
-        // eliminamos las líneas para actualizar el stock
-        foreach ($lines as $line) {
-            if ($line->delete()) {
-                continue;
-            }
-            if ($newTransaction) {
-                self::db()->rollback();
-            }
-            return false;
-        }
 
         // eliminamos este modelo
         if (false === parent::delete()) {
@@ -394,5 +387,24 @@ abstract class TransformerDocument extends BusinessDocument
 
         // no hay líneas pendientes para generar un nuevo documento
         return true;
+    }
+
+    /**
+     * Elimina las líneas del documento, para actualizar el stock, antes de eliminar el documento.
+     *
+     * @return bool
+     */
+    protected function onDeleteBefore(): bool
+    {
+        $lines = $this->linesToDelete ?? $this->getLines();
+        $this->linesToDelete = null;
+
+        foreach ($lines as $line) {
+            if (false === $line->delete()) {
+                return false;
+            }
+        }
+
+        return parent::onDeleteBefore();
     }
 }

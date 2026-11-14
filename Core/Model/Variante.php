@@ -156,12 +156,7 @@ class Variante extends ModelClass
             return false;
         }
 
-        // eliminamos las imágenes de la variante
-        foreach ($this->getImages(false) as $image) {
-            $image->delete();
-        }
-
-        // eliminamos el registro de la base de datos
+        // las imágenes se eliminan en onDeleteBefore()
         return parent::delete();
     }
 
@@ -347,6 +342,17 @@ class Variante extends ModelClass
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getProducto()->url($type);
+    }
+
+    protected function onDeleteBefore(): bool
+    {
+        // eliminamos las imágenes de la variante aquí, y no en delete(),
+        // para que se ejecuten antes las extensiones deleteBefore
+        foreach ($this->getImages(false) as $image) {
+            $image->delete();
+        }
+
+        return parent::onDeleteBefore();
     }
 
     protected function saveInsert(): bool

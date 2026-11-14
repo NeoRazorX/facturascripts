@@ -82,18 +82,6 @@ class Stock extends ModelClass
         $this->stockmin = 0.0;
     }
 
-    public function delete(): bool
-    {
-        if (false === parent::delete()) {
-            return false;
-        }
-
-        $this->cantidad = 0.0;
-        $this->updateProductStock();
-
-        return true;
-    }
-
     public function install(): string
     {
         // needed dependencies
@@ -171,6 +159,22 @@ class Stock extends ModelClass
             }
         }
 
+        // no puede haber dos registros de stock para la misma referencia y almacén
+        $where = [
+            Where::eq('codalmacen', $this->codalmacen),
+            Where::eq('referencia', $this->referencia)
+        ];
+        if (!empty($this->idstock)) {
+            $where[] = Where::notEq('idstock', $this->idstock);
+        }
+        if (static::count($where) > 0) {
+            Tools::log()->warning('stock-already-exists', [
+                '%reference%' => $this->referencia,
+                '%warehouse%' => $this->codalmacen
+            ]);
+            return false;
+        }
+
         return parent::test();
     }
 
@@ -198,6 +202,39 @@ class Stock extends ModelClass
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getProducto()->url($type);
+    }
+
+    protected function onDelete(): void
+    {
+        // añadimos el log de auditoría
+        Tools::log(LogMessage::AUDIT_CHANNEL)->warning('deleted-model', [
+            '%model%' => $this->modelClassName(),
+            '%key%' => $this->id(),
+            '%desc%' => $this->referencia . ' / ' . $this->codalmacen,
+            'model-class' => $this->modelClassName(),
+            'model-code' => $this->id(),
+            'model-data' => $this->toArray()
+        ]);
+
+        // actualizamos el stock del producto y de la variante
+        $this->cantidad = 0.0;
+        $this->updateProductStock();
+
+        parent::onDelete();
+    }
+
+    protected function onDeleteBefore(): bool
+    {
+        // el stock es un acumulado: si lo eliminamos con cantidades, se descuadra respecto a los documentos
+        if ($this->cantidad != 0 || $this->reservada != 0 || $this->pterecibir != 0) {
+            Tools::log()->warning('cant-delete-stock-with-quantity', [
+                '%reference%' => $this->referencia,
+                '%warehouse%' => $this->codalmacen
+            ]);
+            return false;
+        }
+
+        return parent::onDeleteBefore();
     }
 
     protected function updateProductStock(): bool

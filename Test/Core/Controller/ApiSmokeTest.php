@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Controller;
 
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
+use FacturaScripts\Core\Internal\RateLimiter;
 use FacturaScripts\Core\Model\ApiKey;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
@@ -31,6 +32,80 @@ use PHPUnit\Framework\TestCase;
 final class ApiSmokeTest extends TestCase
 {
     use LogErrorsTrait;
+
+    public function testApiRateLimitRespondsThroughHttp(): void
+    {
+        $previousApiEnabled = Tools::settings('default', 'enable_api', false);
+        $apiKey = new ApiKey();
+        $pipes = [];
+        $process = null;
+
+        // el límite se define con una constante, así que usamos un router que la define antes del index.php
+        $router = Tools::folder('MyFiles', 'api-rate-limit-router.php');
+        $code = "<?php define('FS_API_RATE_LIMIT', 1); require " . var_export(FS_FOLDER . '/index.php', true) . ';';
+        file_put_contents($router, $code);
+
+        try {
+            Tools::settingsSet('default', 'enable_api', true);
+            Tools::settingsSave();
+            Cache::deleteMulti(ApiController::IP_LIST);
+
+            $apiKey->description = 'api-rate-limit-test';
+            $apiKey->fullaccess = true;
+            $this->assertTrue($apiKey->save(), 'can-not-create-api-key');
+
+            $port = $this->getFreePort();
+            $process = $this->startServer($port, $pipes, $router);
+            $url = 'http://127.0.0.1:' . $port . '/api/3';
+
+            // con 1 petición por minuto, la segunda petición debe ser rechazada
+            $statuses = [];
+            $limited = null;
+            for ($attempt = 0; $attempt < 30; $attempt++) {
+                $request = Http::get($url)
+                    ->setToken($apiKey->apikey)
+                    ->setTimeout(2)
+                    ->setCurlOption(CURLOPT_CONNECTTIMEOUT_MS, 200);
+                $status = $request->status();
+                if ($status === 0) {
+                    // el servidor todavía está arrancando
+                    usleep(100000);
+                    continue;
+                }
+
+                $statuses[] = $status;
+                if ($status === 429) {
+                    $limited = $request;
+                    break;
+                }
+            }
+
+            $diagnostic = implode(',', $statuses) . PHP_EOL . $this->getServerOutput($pipes);
+            $this->assertNotNull($limited, 'rate-limit-not-applied: ' . $diagnostic);
+            $this->assertSame(Response::HTTP_OK, $statuses[0], 'first-request-must-be-allowed: ' . $diagnostic);
+            $this->assertSame([Response::HTTP_OK, 429], $statuses, 'second-request-must-be-blocked');
+            $this->assertGreaterThanOrEqual(1, (int)$limited->header('Retry-After'));
+            $this->assertLessThanOrEqual(ApiController::RATE_LIMIT_WINDOW, (int)$limited->header('Retry-After'));
+            $this->assertStringStartsWith('application/json', $limited->header('Content-Type'));
+
+            $data = json_decode($limited->body(), true);
+            $this->assertIsArray($data, 'api-error-response-is-not-json');
+            $this->assertSame('error', $data['status'] ?? null);
+            $this->assertNotEmpty($data['message'] ?? '');
+        } finally {
+            $this->stopServer($process, $pipes);
+            unlink($router);
+
+            if ($apiKey->exists()) {
+                RateLimiter::clear(ApiController::RATE_LIMIT_PREFIX . 'key-' . $apiKey->id);
+                $apiKey->delete();
+            }
+
+            Tools::settingsSet('default', 'enable_api', $previousApiEnabled);
+            Tools::settingsSave();
+            Cache::deleteMulti(ApiController::IP_LIST);
+        }
+    }
 
     public function testApiRootAndAuthenticationRespondThroughHttp(): void
     {
@@ -139,7 +214,7 @@ final class ApiSmokeTest extends TestCase
         return $output;
     }
 
-    private function startServer(int $port, array &$pipes)
+    private function startServer(int $port, array &$pipes, string $router = FS_FOLDER . '/index.php')
     {
         $command = [
             PHP_BINARY,
@@ -147,7 +222,7 @@ final class ApiSmokeTest extends TestCase
             '127.0.0.1:' . $port,
             '-t',
             FS_FOLDER,
-            FS_FOLDER . '/index.php'
+            $router
         ];
         $descriptors = [
             0 => ['pipe', 'r'],

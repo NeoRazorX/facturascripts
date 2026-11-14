@@ -132,6 +132,10 @@ Por favor, reporta las vulnerabilidades de seguridad de forma **privada** usando
 - [🖨️ Programa para imprimir tickets](https://facturascripts.com/remote-printer)
 - [📹 Curso viejo de YouTube](https://www.youtube.com/watch?v=rGopZA3ErzE&list=PLNxcJ5CWZ8V6nfeVu6vieKI_d8a_ObLfY)
 
+## 🗺️ Atribución de Datos
+
+- Los códigos postales de España (`Core/Data/Codpais/ESP/codigos_postales.csv`) proceden de [GeoNames](https://www.geonames.org), con licencia [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), y se han adaptado para enlazarlos con los municipios del proyecto.
+
 ---
 
 <p align="center">

@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Template;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
+use FacturaScripts\Core\Internal\RateLimiter;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
@@ -37,6 +38,8 @@ abstract class ApiController implements ControllerInterface
     const INCIDENT_EXPIRATION_TIME = 600;
     const IP_LIST = 'api-ip-list';
     const MAX_INCIDENT_COUNT = 5;
+    const RATE_LIMIT_PREFIX = 'api-';
+    const RATE_LIMIT_WINDOW = 60;
 
     /** @var ApiKey */
     protected $apiKey;
@@ -101,6 +104,9 @@ abstract class ApiController implements ControllerInterface
             throw new KernelException('InvalidApiToken', Tools::trans('auth-token-invalid'));
         }
 
+        // comprobamos el límite de peticiones por minuto
+        $this->checkRateLimit();
+
         // actualizamos la última actividad de la API key
         if ($this->apiKey->id && false === $this->apiKey->fullaccess) {
             $this->apiKey->updateActivity(Session::getClientIp());
@@ -140,6 +146,32 @@ abstract class ApiController implements ControllerInterface
         }
 
         return $this->dataBase;
+    }
+
+    /**
+     * Lanza el error ApiRateLimitExceeded si la API key ha superado el máximo de peticiones
+     * por minuto definido en la constante FS_API_RATE_LIMIT del config.php. Sin constante,
+     * o con un valor menor que 1, no hay límite.
+     *
+     * El código de la excepción indica los segundos que faltan para poder volver a intentarlo.
+     */
+    private function checkRateLimit(): void
+    {
+        $limit = (int)Tools::config('api_rate_limit', 0);
+        if ($limit < 1) {
+            return;
+        }
+
+        $key = self::RATE_LIMIT_PREFIX . ($this->apiKey->id ? 'key-' . $this->apiKey->id : 'config');
+        if (RateLimiter::attempt($key, $limit, self::RATE_LIMIT_WINDOW)) {
+            return;
+        }
+
+        throw new KernelException(
+            'ApiRateLimitExceeded',
+            Tools::trans('api-rate-limit-exceeded'),
+            RateLimiter::retryAfter($key, self::RATE_LIMIT_WINDOW)
+        );
     }
 
     private function clientHasManyIncidents(): bool

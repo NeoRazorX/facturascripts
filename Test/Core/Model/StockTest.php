@@ -56,6 +56,51 @@ final class StockTest extends TestCase
         $this->assertFalse($stock->save(), 'stock-can-not-create-without-product');
     }
 
+    public function testCantDuplicateReferenceAndWarehouse(): void
+    {
+        // creamos un producto
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // creamos un almacén adicional
+        $warehouse = $this->getRandomWarehouse();
+        $this->assertTrue($warehouse->save(), 'warehouse-cant-save');
+
+        // añadimos stock al producto
+        $stock = new Stock();
+        $stock->idproducto = $product->idproducto;
+        $stock->referencia = $product->referencia;
+        $stock->cantidad = 10;
+        $this->assertTrue($stock->save(), 'stock-cant-save');
+
+        // no podemos añadir otro stock para la misma referencia y almacén
+        $duplicated = new Stock();
+        $duplicated->idproducto = $product->idproducto;
+        $duplicated->referencia = $product->referencia;
+        $duplicated->cantidad = 5;
+        $this->assertFalse($duplicated->save(), 'duplicated-stock-can-be-saved');
+
+        // el stock original se puede seguir modificando
+        $stock->cantidad = 7;
+        $this->assertTrue($stock->save(), 'stock-cant-update');
+
+        // en otro almacén sí podemos añadir stock
+        $other = new Stock();
+        $other->codalmacen = $warehouse->codalmacen;
+        $other->idproducto = $product->idproducto;
+        $other->referencia = $product->referencia;
+        $other->cantidad = 5;
+        $this->assertTrue($other->save(), 'stock-cant-save-in-other-warehouse');
+
+        // pero no podemos moverlo al almacén donde ya hay stock
+        $other->codalmacen = $stock->codalmacen;
+        $this->assertFalse($other->save(), 'stock-can-be-moved-to-duplicated-warehouse');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($warehouse->delete(), 'warehouse-cant-delete');
+    }
+
     public function testStockChangesProduct(): void
     {
         // creamos un producto
@@ -84,12 +129,21 @@ final class StockTest extends TestCase
         $product->load($product->idproducto);
         $this->assertEquals(7, $product->stockfis, 'product-stock-not-update');
 
-        // borramos el stock
-        $this->assertTrue($stock->delete(), 'stock-cant-delete');
+        // no podemos borrar el stock mientras tenga cantidad
+        $this->assertFalse($stock->delete(), 'stock-with-quantity-can-be-deleted');
+        $this->assertTrue($stock->exists(), 'stock-with-quantity-deleted');
+
+        // lo ponemos a cero
+        $stock->cantidad = 0;
+        $this->assertTrue($stock->save(), 'stock-can-not-update');
 
         // refrescamos producto
         $product->load($product->idproducto);
         $this->assertEquals(0, $product->stockfis, 'stock-not-update');
+
+        // ahora sí podemos borrar el stock
+        $this->assertTrue($stock->delete(), 'stock-cant-delete');
+        $this->assertFalse($stock->exists(), 'stock-not-deleted');
 
         // borramos el producto
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -200,8 +254,8 @@ final class StockTest extends TestCase
         $this->assertEquals(5, $stock->disponible, 'stock-disponible-bad');
 
         // eliminamos
-        $this->assertTrue($stock->delete(), 'stock-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($stock->exists(), 'stock-not-removed-when-delete-product');
     }
 
     public function testNegativeQuantity(): void
@@ -221,8 +275,8 @@ final class StockTest extends TestCase
         $this->assertEquals(-10, $stock->cantidad, 'stock-quantity-changed');
 
         // eliminamos
-        $this->assertTrue($stock->delete(), 'stock-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($stock->exists(), 'stock-not-removed-when-delete-product');
     }
 
     public function testNegativeAvailable(): void
@@ -243,8 +297,8 @@ final class StockTest extends TestCase
         $this->assertEquals(0, $stock->disponible, 'stock-disponible-no-puede-ser-negativo');
 
         // eliminamos
-        $this->assertTrue($stock->delete(), 'stock-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($stock->exists(), 'stock-not-removed-when-delete-product');
     }
 
     protected function tearDown(): void

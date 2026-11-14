@@ -162,7 +162,7 @@ class OpenAi
     /**
      * Transcribe a texto el archivo de audio indicado.
      */
-    public function audioTranscript(CURLFile $file, string $model = 'gpt-4o-transcribe'): string
+    public function audioTranscript(CURLFile $file, string $model = 'gpt-transcribe'): string
     {
         $data = [
             'file' => $file,
@@ -186,7 +186,7 @@ class OpenAi
     /**
      * Envía una conversación al modelo de chat y devuelve la respuesta como texto.
      */
-    public function chat(array $messages, string $user = '', string $model = 'gpt-5.6-luna'): string
+    public function chat(array $messages, string $user = '', string $model = 'gpt-6-luna'): string
     {
         $params = new stdClass();
         $params->model = $model;
@@ -221,7 +221,7 @@ class OpenAi
     /**
      * Envía una conversación al modelo de chat forzando un formato de respuesta y la devuelve como array.
      */
-    public function chatJson(array $messages, array $response_format, string $user = '', string $model = 'gpt-5.6-luna'): array
+    public function chatJson(array $messages, array $response_format, string $user = '', string $model = 'gpt-6-luna'): array
     {
         $params = new stdClass();
         $params->model = $model;
@@ -342,7 +342,7 @@ class OpenAi
     /**
      * Genera una imagen a partir del prompt, la guarda en MyFiles y devuelve su ruta.
      */
-    public function image(string $prompt, int $width = 1024, int $height = 1024, int $count = 1, string $model = 'gpt-image-2', array $options = []): string
+    public function image(string $prompt, int $width = 1024, int $height = 1024, int $count = 1, string $model = 'gpt-image-2.6-flare', array $options = []): string
     {
         $format = strtolower($options['output_format'] ?? 'png');
         if (!in_array($format, ['jpeg', 'png', 'webp'], true)) {

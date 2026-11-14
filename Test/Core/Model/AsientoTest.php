@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use Closure;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\Ejercicio;
@@ -41,6 +42,12 @@ final class AsientoTest extends TestCase
     use DefaultSettingsTrait;
     use LogErrorsTrait;
     use RandomDataTrait;
+
+    /** @var int|null */
+    public static $blockedId;
+
+    /** @var int|null */
+    public static $linesOnDeleteBefore;
 
     public static function setUpBeforeClass(): void
     {
@@ -479,6 +486,57 @@ final class AsientoTest extends TestCase
         }
 
         return null;
+    }
+
+    public function testDeleteBeforeExtensionRunsBeforeDeletingLines(): void
+    {
+        // creamos un asiento con dos líneas
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test';
+        $this->assertTrue($asiento->save(), 'asiento-cant-save');
+        $ejercicio = $asiento->getExercise();
+
+        $firstLine = $asiento->getNewLine();
+        $firstLine->codsubcuenta = $this->getSampleSubaccount($ejercicio);
+        $firstLine->concepto = 'Test linea 1';
+        $firstLine->debe = 100;
+        $this->assertTrue($firstLine->save(), 'linea-cant-save-1');
+
+        $secondLine = $asiento->getNewLine();
+        $secondLine->codsubcuenta = $this->getSampleSubaccount($ejercicio);
+        $secondLine->concepto = 'Test linea 2';
+        $secondLine->haber = 100;
+        $this->assertTrue($secondLine->save(), 'linea-cant-save-2');
+
+        // añadimos una extensión que impide eliminar este asiento y anota las líneas que tiene en ese momento
+        self::$blockedId = $asiento->idasiento;
+        self::$linesOnDeleteBefore = null;
+        Asiento::addExtension(new class {
+            public function deleteBefore(): Closure
+            {
+                return function () {
+                    if ($this instanceof Asiento && $this->idasiento === AsientoTest::$blockedId) {
+                        AsientoTest::$linesOnDeleteBefore = count($this->getLines());
+                        return false;
+                    }
+                };
+            }
+        });
+
+        // el asiento no se puede eliminar: la extensión se ejecuta con las líneas intactas y se conservan
+        $this->assertFalse($asiento->delete(), 'asiento-should-not-be-deleted');
+        $this->assertSame(2, self::$linesOnDeleteBefore, 'lines-deleted-before-extension');
+        $this->assertTrue($asiento->exists(), 'asiento-should-exist');
+        $this->assertTrue($firstLine->exists(), 'linea-should-not-be-deleted-1');
+        $this->assertTrue($secondLine->exists(), 'linea-should-not-be-deleted-2');
+
+        // retiramos el bloqueo
+        self::$blockedId = null;
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
+        $this->assertFalse($firstLine->exists(), 'linea-cant-delete-1');
+        $this->assertFalse($secondLine->exists(), 'linea-cant-delete-2');
     }
 
     protected function tearDown(): void

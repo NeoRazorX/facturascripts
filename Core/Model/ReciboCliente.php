@@ -113,18 +113,6 @@ class ReciboCliente extends ModelClass
         $this->vencido = false;
     }
 
-    public function delete(): bool
-    {
-        foreach ($this->getPayments() as $pay) {
-            if (false === $pay->delete()) {
-                Tools::log()->warning('cant-remove-payment');
-                return false;
-            }
-        }
-
-        return parent::delete();
-    }
-
     public function disableInvoiceUpdate(bool $disable = true): void
     {
         $this->disable_invoice_update = $disable;
@@ -236,6 +224,9 @@ class ReciboCliente extends ModelClass
             $this->codigofactura = $this->getInvoice()->codigo;
         }
 
+        // pagado no admite nulos: un valor nulo equivale a no pagado
+        $this->pagado = (bool)$this->pagado;
+
         // comprobamos la fecha de pago
         if ($this->pagado === false) {
             $this->fechapago = null;
@@ -329,6 +320,19 @@ class ReciboCliente extends ModelClass
         $this->updateCustomerRisk();
 
         parent::onDelete();
+    }
+
+    protected function onDeleteBefore(): bool
+    {
+        // eliminamos los pagos aquí, y no en delete(), para que se ejecuten antes las extensiones deleteBefore
+        foreach ($this->getPayments() as $pay) {
+            if (false === $pay->delete()) {
+                Tools::log()->warning('cant-remove-payment');
+                return false;
+            }
+        }
+
+        return parent::onDeleteBefore();
     }
 
     protected function onInsert(): void

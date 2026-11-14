@@ -31,8 +31,15 @@ final class OpenAiTest extends TestCase
         $chatParameters = (new ReflectionMethod(OpenAi::class, 'chat'))->getParameters();
         $chatJsonParameters = (new ReflectionMethod(OpenAi::class, 'chatJson'))->getParameters();
 
-        $this->assertSame('gpt-5.6-luna', $chatParameters[2]->getDefaultValue());
-        $this->assertSame('gpt-5.6-luna', $chatJsonParameters[3]->getDefaultValue());
+        $this->assertSame('gpt-6-luna', $chatParameters[2]->getDefaultValue());
+        $this->assertSame('gpt-6-luna', $chatJsonParameters[3]->getDefaultValue());
+    }
+
+    public function testAudioTranscriptDefaultModel(): void
+    {
+        $parameters = (new ReflectionMethod(OpenAi::class, 'audioTranscript'))->getParameters();
+
+        $this->assertSame('gpt-transcribe', $parameters[1]->getDefaultValue());
     }
 
     public function testImageDefaults(): void
@@ -40,7 +47,7 @@ final class OpenAiTest extends TestCase
         $method = new ReflectionMethod(OpenAi::class, 'image');
         $parameters = $method->getParameters();
 
-        $this->assertSame('gpt-image-2', $parameters[4]->getDefaultValue());
+        $this->assertSame('gpt-image-2.6-flare', $parameters[4]->getDefaultValue());
         $this->assertSame(180, OpenAi::IMAGE_TIMEOUT);
     }
 
@@ -55,7 +62,7 @@ final class OpenAiTest extends TestCase
             'output_format' => 'WEBP',
             'stream' => true
         ];
-        $args = ['prompt', 2048, 1152, 'gpt-image-2', $options, &$resize];
+        $args = ['prompt', 2048, 1152, 'gpt-image-2.6-flare', $options, &$resize];
         $data = $method->invokeArgs($openAi, $args);
 
         $this->assertSame(1, $data['n']);

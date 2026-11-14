@@ -302,6 +302,20 @@ final class DbUpdater
                 continue;
             }
 
+            // si la columna pasa a no admitir nulos, antes rellenamos los nulos con el valor por defecto
+            $fill_nulls = $column['is_nullable'] !== $xml_col['null']
+                && $xml_col['null'] === 'NO'
+                && $xml_col['type'] !== 'serial'
+                && $xml_col['default'] !== null
+                && $xml_col['default'] !== '';
+            if ($fill_nulls) {
+                $col_name = self::db()->escapeColumn($xml_col['name']);
+                $sql_part = 'UPDATE ' . $table_name . ' SET ' . $col_name . ' = ' . $xml_col['default']
+                    . ' WHERE ' . $col_name . ' IS NULL;';
+                $sqlQueries[] = $sql_part;
+                self::saveChangeLog('fill-column-nulls', $sql_part, ['db' => $column, 'xml' => $xml_col]);
+            }
+
             if (false === self::compareDataTypes($column['type'], $xml_col['type'])) {
                 $sql_part = self::sqlTool()->sqlAlterModifyColumn($table_name, $xml_col);
                 $sqlQueries[] = $sql_part;

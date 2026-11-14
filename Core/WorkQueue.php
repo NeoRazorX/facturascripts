@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -82,6 +82,11 @@ final class WorkQueue
 
     public static function run(): bool
     {
+        // en modo mantenimiento no ejecutamos nada: el código puede estar a medio sustituir
+        if (Maintenance::isActive()) {
+            return false;
+        }
+
         // creamos un bloqueo para evitar que se ejecute el mismo evento varias veces
         if (false === Kernel::lock('work-queue')) {
             return false;
