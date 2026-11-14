@@ -40,7 +40,7 @@ final class DataBaseTest extends TestCase
 
     public function testType(): void
     {
-        $this->assertContains($this->db->type(), ['mysql', 'postgresql', '']);
+        $this->assertContains($this->db->type(), ['mysql', 'postgresql', 'sqlite', '']);
     }
 
     public function testGetEngine(): void
@@ -75,7 +75,7 @@ final class DataBaseTest extends TestCase
     {
         // Si el nombre contiene el carácter de cita, debe escaparse duplicándolo
         // para evitar inyección SQL si el nombre proviene de input no confiable.
-        if ($this->db->type() === 'postgresql') {
+        if (in_array($this->db->type(), ['postgresql', 'sqlite'], true)) {
             $escaped = $this->db->escapeColumn('a"b');
             $this->assertSame('"a""b"', $escaped);
         } else {
