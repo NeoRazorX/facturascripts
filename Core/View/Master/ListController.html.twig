@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,7 +69,7 @@
                                 <h6 class="dropdown-header">{{ trans('options-button-header') }}</h6>
                                 {% for viewName, view in fsc.views %}
                                     <a class="dropdown-item"
-                                       href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
+                                       href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}{% if view.pageOptionKey > 0 %}&id={{ view.pageOptionKey }}&nick={{ fsc.user.nick | url_encode }}{% endif %}">
                                         <i class="{{ view.icon }} fa-fw me-1" aria-hidden="true"></i> {{ view.title }}
                                         {% if view.settings.customized %}
                                             <i class="fa-solid fa-user-pen ms-2" title="{{ trans('personalized') }}"></i>

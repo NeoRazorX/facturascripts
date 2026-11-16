@@ -32,6 +32,7 @@
     <input type="hidden" name="action"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="loadfilter" value="{{ currentView.pageFilterKey }}"/>
+    <input type="hidden" name="loadpageoption" value=""/>
     <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
@@ -86,6 +87,8 @@
                     {{ _self.searchControl(currentView) }}
                 </div>
                 <div class="col-sm-auto text-end mb-2">
+                    {# -- Custom views button -- #}
+                    {{ _self.pageOptionButton(currentView) }}
                     {# -- Filters button -- #}
                     {{ _self.filterButton(currentView, fsc) }}
                     {# -- OrderBy button -- #}
@@ -320,6 +323,39 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro pageOptionButton(currentView) %}
+    {% if currentView.pageOptions is not empty %}
+        {% set viewName = currentView.getViewName() %}
+        <div class="btn-group">
+            <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false" title="{{ trans('custom-views') }}">
+                <i class="fa-solid fa-table-columns fa-fw" aria-hidden="true"></i>
+                {% for pageOption in currentView.pageOptions %}
+                    {% if pageOption.id == currentView.pageOptionKey %}
+                        {% set optionDesc = pageOption.description|length > 10 ? pageOption.description|slice(0,10) ~ '...' : pageOption.description %}
+                        <span class="d-none d-lg-inline" title="{{ pageOption.description }}">{{ optionDesc }}</span>
+                    {% endif %}
+                {% endfor %}
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                {% set activeClass = currentView.pageOptionKey == 0 ? ' active' : '' %}
+                <a class="dropdown-item{{ activeClass }}" href="#"
+                   onclick="listViewSetPageOption('{{ viewName }}', 0);">
+                    {{ trans('default') }}
+                </a>
+                <div class="dropdown-divider"></div>
+                {% for pageOption in currentView.pageOptions %}
+                    {% set activeClass = pageOption.id == currentView.pageOptionKey ? ' active' : '' %}
+                    <a class="dropdown-item{{ activeClass }}" href="#"
+                       onclick="listViewSetPageOption('{{ viewName }}', {{ pageOption.id }});">
+                        {{ pageOption.description }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
     {% endif %}
 {% endmacro %}
 

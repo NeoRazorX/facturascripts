@@ -12,6 +12,10 @@
         <type>text</type>
     </column>
     <column>
+        <name>description</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
@@ -37,13 +41,19 @@
         <name>rows</name>
         <type>text</type>
     </column>
+    <column>
+        <name>selected</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
     <constraint>
         <name>pages_options_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
-        <name>uniq_pages_options</name>
-        <type>UNIQUE (name, nick)</type>
+        <name>uniq_pages_options2</name>
+        <type>UNIQUE (name, nick, description)</type>
     </constraint>
     <constraint>
         <name>ca_pagesoptions_users</name>
