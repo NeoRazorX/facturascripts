@@ -33,7 +33,16 @@ use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 
 /**
- * Description of crm_contacto
+ * Un contacto o dirección. Puede estar vinculado a un cliente (codcliente)
+ * o a un proveedor (codproveedor), y ser su contacto por defecto.
+ *
+ * Sincronización de email, telefono1 y telefono2 con el cliente o proveedor:
+ * - Del cliente o proveedor al contacto por defecto: automática. Cliente::onUpdate()
+ *   y Proveedor::onUpdate() trasladan los cambios, solo en los campos donde el
+ *   contacto conservaba el valor anterior.
+ * - Del contacto al cliente o proveedor: este modelo no la hace. Guardar un contacto
+ *   nunca modifica su cliente o proveedor; si tu código lo necesita, debe hacerlo él,
+ *   como EditContacto::updateRelations() cuando el usuario edita el contacto.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
