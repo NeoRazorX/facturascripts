@@ -178,7 +178,6 @@ class Contacto extends ModelClass
             $cliente->codagente = $this->codagente;
             $cliente->codproveedor = $this->codproveedor;
             $cliente->email = $this->email;
-            $cliente->fax = $this->fax;
             $cliente->idcontactoenv = $this->idcontacto;
             $cliente->idcontactofact = $this->idcontacto;
             $cliente->langcode = $this->langcode;
@@ -211,7 +210,6 @@ class Contacto extends ModelClass
             $proveedor->cifnif = $this->cifnif ?? '';
             $proveedor->codcliente = $this->codcliente;
             $proveedor->email = $this->email;
-            $proveedor->fax = $this->fax;
             $proveedor->idcontacto = $this->idcontacto;
             $proveedor->langcode = $this->langcode;
             $proveedor->nombre = $this->fullName();

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -279,6 +279,54 @@ final class ClienteTest extends TestCase
         $dirty = array_keys($cliente2->getDirty());
         sort($dirty);
         $this->assertEquals(['fechaalta', 'riesgomax'], $dirty, 'cliente-getdirty-bad-fields');
+
+        // eliminamos
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
+    }
+
+    public function testUpdateDefaultContact(): void
+    {
+        // creamos con email y teléfonos
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test Contact Sync';
+        $cliente->cifnif = '12345678A';
+        $cliente->email = 'old@example.com';
+        $cliente->telefono1 = '600000001';
+        $cliente->telefono2 = '600000002';
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        // el contacto por defecto tiene los mismos datos
+        $contact = $cliente->getDefaultAddress();
+        $this->assertEquals('old@example.com', $contact->email);
+        $this->assertEquals('600000001', $contact->telefono1);
+        $this->assertEquals('600000002', $contact->telefono2);
+
+        // recargamos, cambiamos email y teléfono1: el contacto se actualiza
+        $this->assertTrue($cliente->load($cliente->id()));
+        $cliente->email = 'new@example.com';
+        $cliente->telefono1 = '611111111';
+        $this->assertTrue($cliente->save(), 'cliente-cant-update');
+        $contact = $cliente->getDefaultAddress();
+        $this->assertEquals('new@example.com', $contact->email, 'contact-email-not-updated');
+        $this->assertEquals('611111111', $contact->telefono1, 'contact-phone1-not-updated');
+        $this->assertEquals('600000002', $contact->telefono2, 'contact-phone2-changed');
+
+        // si el contacto tiene un email propio, no se sobrescribe
+        $contact->email = 'own@example.com';
+        $this->assertTrue($contact->save(), 'contact-cant-save');
+        $this->assertTrue($cliente->load($cliente->id()));
+        $cliente->email = 'newer@example.com';
+        $cliente->telefono2 = '622222222';
+        $this->assertTrue($cliente->save(), 'cliente-cant-update-2');
+        $contact = $cliente->getDefaultAddress();
+        $this->assertEquals('own@example.com', $contact->email, 'contact-own-email-overwritten');
+        $this->assertEquals('622222222', $contact->telefono2, 'contact-phone2-not-updated');
+
+        // al vaciar el teléfono, el contacto también lo pierde
+        $cliente->telefono1 = '';
+        $this->assertTrue($cliente->save(), 'cliente-cant-update-3');
+        $this->assertEmpty($cliente->getDefaultAddress()->telefono1, 'contact-phone1-not-emptied');
 
         // eliminamos
         $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');

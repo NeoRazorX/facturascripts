@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -193,6 +193,54 @@ final class ProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($address->delete());
         $this->assertTrue($proveedor->delete());
+    }
+
+    public function testUpdateDefaultContact(): void
+    {
+        // creamos con email y teléfonos
+        $proveedor = new Proveedor();
+        $proveedor->nombre = 'Test Contact Sync';
+        $proveedor->cifnif = '12345678A';
+        $proveedor->email = 'old@example.com';
+        $proveedor->telefono1 = '600000001';
+        $proveedor->telefono2 = '600000002';
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
+
+        // el contacto por defecto tiene los mismos datos
+        $contact = $proveedor->getDefaultAddress();
+        $this->assertEquals('old@example.com', $contact->email);
+        $this->assertEquals('600000001', $contact->telefono1);
+        $this->assertEquals('600000002', $contact->telefono2);
+
+        // recargamos, cambiamos email y teléfono1: el contacto se actualiza
+        $this->assertTrue($proveedor->load($proveedor->id()));
+        $proveedor->email = 'new@example.com';
+        $proveedor->telefono1 = '611111111';
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-update');
+        $contact = $proveedor->getDefaultAddress();
+        $this->assertEquals('new@example.com', $contact->email, 'contact-email-not-updated');
+        $this->assertEquals('611111111', $contact->telefono1, 'contact-phone1-not-updated');
+        $this->assertEquals('600000002', $contact->telefono2, 'contact-phone2-changed');
+
+        // si el contacto tiene un email propio, no se sobrescribe
+        $contact->email = 'own@example.com';
+        $this->assertTrue($contact->save(), 'contact-cant-save');
+        $this->assertTrue($proveedor->load($proveedor->id()));
+        $proveedor->email = 'newer@example.com';
+        $proveedor->telefono2 = '622222222';
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-update-2');
+        $contact = $proveedor->getDefaultAddress();
+        $this->assertEquals('own@example.com', $contact->email, 'contact-own-email-overwritten');
+        $this->assertEquals('622222222', $contact->telefono2, 'contact-phone2-not-updated');
+
+        // al vaciar el teléfono, el contacto también lo pierde
+        $proveedor->telefono1 = '';
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-update-3');
+        $this->assertEmpty($proveedor->getDefaultAddress()->telefono1, 'contact-phone1-not-emptied');
+
+        // eliminamos
+        $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
     protected function tearDown(): void

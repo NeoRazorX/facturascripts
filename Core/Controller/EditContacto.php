@@ -169,9 +169,22 @@ class EditContacto extends EditController
 
     protected function editAction(): bool
     {
+        // cargamos el contacto tal y como está guardado, para saber después qué ha cambiado
+        $previous = new Contacto();
+        $previous->load($this->request->input('code', ''));
+
         $return = parent::editAction();
-        if ($return && $this->active === $this->mainTabName()) {
-            $this->updateRelations($this->activeTab()->model);
+        if (false === $return || $this->active !== $this->mainTabName()) {
+            return $return;
+        }
+
+        // solo actualizamos el cliente o proveedor si ha cambiado el email o algún teléfono
+        $contact = $this->activeTab()->model;
+        foreach (['email', 'telefono1', 'telefono2'] as $field) {
+            if ((string)$contact->{$field} !== (string)$previous->{$field}) {
+                $this->updateRelations($contact);
+                break;
+            }
         }
 
         return $return;
@@ -326,6 +339,19 @@ class EditContacto extends EditController
     }
 
     /**
+     * Copia el email y los teléfonos del contacto al cliente o proveedor del que es
+     * contacto por defecto.
+     * Solo se llama cuando ha cambiado alguno de esos campos,
+     * y entonces se copian los tres.
+     *
+     * Está en el controlador, y no en el modelo Contacto, a propósito: solo debe
+     * ejecutarse cuando es el usuario quien edita el contacto desde esta pantalla.
+     * El sentido contrario está en Cliente::onUpdate() y Proveedor::onUpdate(); si
+     * esta copia se moviese a Contacto, ambos modelos se guardarían el uno al otro
+     * y habría que protegerlos frente a bucles.
+     *
+     * El fax no se copia porque Contacto no tiene ese campo.
+     *
      * @param Contacto $contact
      */
     protected function updateRelations($contact): void
@@ -333,7 +359,6 @@ class EditContacto extends EditController
         $customer = $contact->getCustomer(false);
         if ($customer->idcontactofact == $contact->idcontacto && $customer->exists()) {
             $customer->email = $contact->email;
-            $customer->fax = $contact->fax;
             $customer->telefono1 = $contact->telefono1;
             $customer->telefono2 = $contact->telefono2;
             $customer->save();
@@ -342,7 +367,6 @@ class EditContacto extends EditController
         $supplier = $contact->getSupplier(false);
         if ($supplier->idcontacto == $contact->idcontacto && $supplier->exists()) {
             $supplier->email = $contact->email;
-            $supplier->fax = $contact->fax;
             $supplier->telefono1 = $contact->telefono1;
             $supplier->telefono2 = $contact->telefono2;
             $supplier->save();

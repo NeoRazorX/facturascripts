@@ -389,14 +389,12 @@ class Cliente extends ModelClass
         return $subAccount;
     }
 
-    protected function saveInsert(): bool
+    /**
+     * Crea el contacto por defecto, si no tiene uno asignado.
+     */
+    protected function onInsert(): void
     {
-        if (empty($this->codcliente)) {
-            $this->codcliente = (string)$this->newCode();
-        }
-
-        $return = parent::saveInsert();
-        if ($return && empty($this->idcontactofact)) {
+        if (empty($this->idcontactofact)) {
             $parts = explode(' ', $this->nombre);
 
             // creates new contact
@@ -408,7 +406,6 @@ class Cliente extends ModelClass
             $contact->descripcion = $this->nombre;
             $contact->email = $this->email;
             $contact->empresa = $this->razonsocial;
-            $contact->fax = $this->fax;
             $contact->nombre = $parts[0];
             $contact->personafisica = $this->personafisica;
             $contact->telefono1 = $this->telefono1;
@@ -416,11 +413,60 @@ class Cliente extends ModelClass
             $contact->tipoidfiscal = $this->tipoidfiscal;
             if ($contact->save()) {
                 $this->idcontactofact = $contact->idcontacto;
-                return $this->save();
+                $this->save();
             }
         }
 
-        return $return;
+        parent::onInsert();
+    }
+
+    /**
+     * Traslada al contacto por defecto (idcontactofact) los cambios de email y teléfonos,
+     * porque SendMail usa el email de ese contacto antes que el del cliente.
+     *
+     * Solo se copian los campos modificados en los que el contacto conservaba el valor
+     * anterior, para respetar los datos que se hayan cambiado a propósito en el contacto.
+     *
+     * El sentido contrario (del contacto al cliente) está en EditContacto::updateRelations()
+     * y solo se ejecuta cuando el usuario edita el contacto desde esa pantalla. No hay
+     * bucle: guardar el contacto desde aquí no guarda el cliente, y cuando EditContacto
+     * guarda el cliente, el contacto ya tiene el valor nuevo y no se vuelve a escribir.
+     */
+    protected function onUpdate(): void
+    {
+        $contact = new DinContacto();
+        $update = false;
+        foreach (['email', 'telefono1', 'telefono2'] as $field) {
+            $oldValue = (string)$this->getOriginal($field);
+            if (false === $this->isDirty($field) || (string)$this->{$field} === $oldValue) {
+                continue;
+            }
+
+            // cargamos el contacto solamente si hay cambios
+            if (empty($contact->idcontacto) && false === $contact->load($this->idcontactofact)) {
+                break;
+            }
+
+            if ((string)$contact->{$field} === $oldValue) {
+                $contact->{$field} = $this->{$field};
+                $update = true;
+            }
+        }
+
+        if ($update) {
+            $contact->save();
+        }
+
+        parent::onUpdate();
+    }
+
+    protected function saveInsert(): bool
+    {
+        if (empty($this->codcliente)) {
+            $this->codcliente = (string)$this->newCode();
+        }
+
+        return parent::saveInsert();
     }
 
     protected function testDiasPago(): bool

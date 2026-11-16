@@ -100,6 +100,108 @@ final class EditContactoTest extends TestCase
         }
     }
 
+    public function testEditDefaultContactKeepsCustomerFax(): void
+    {
+        // creamos un cliente con fax
+        $customer = new Cliente();
+        $customer->nombre = 'EditContactoTest Fax';
+        $customer->cifnif = '12345678A';
+        $customer->email = 'old-fax-test@example.com';
+        $customer->fax = '910000001';
+        $this->assertTrue($customer->save());
+        $contact = $customer->getDefaultAddress();
+
+        try {
+            // editamos el email de su contacto por defecto;
+            // el formulario envía todos los campos del contacto
+            $formData = array_merge($contact->toArray(), [
+                'activetab' => 'EditContacto',
+                'code' => $contact->idcontacto,
+                'email' => 'new-fax-test@example.com',
+            ]);
+            $this->runController($contact, 'edit', true, true, $formData);
+            $this->assertEquals('new-fax-test@example.com', $this->reload($contact)->email);
+
+            // el cliente recibe el email y conserva el fax
+            $this->assertTrue($customer->load($customer->id()));
+            $this->assertEquals('new-fax-test@example.com', $customer->email, 'customer-email-not-updated');
+            $this->assertEquals('910000001', $customer->fax, 'customer-fax-lost');
+        } finally {
+            $this->deleteContact($contact);
+            $customer->delete();
+        }
+    }
+
+    public function testEditDefaultContactKeepsSupplierFax(): void
+    {
+        // creamos un proveedor con fax
+        $supplier = new Proveedor();
+        $supplier->nombre = 'EditContactoTest Fax';
+        $supplier->cifnif = '12345678A';
+        $supplier->email = 'old-fax-test@example.com';
+        $supplier->fax = '910000001';
+        $this->assertTrue($supplier->save());
+        $contact = $supplier->getDefaultAddress();
+
+        try {
+            // editamos el email de su contacto por defecto;
+            // el formulario envía todos los campos del contacto
+            $formData = array_merge($contact->toArray(), [
+                'activetab' => 'EditContacto',
+                'code' => $contact->idcontacto,
+                'email' => 'new-fax-test@example.com',
+            ]);
+            $this->runController($contact, 'edit', true, true, $formData);
+            $this->assertEquals('new-fax-test@example.com', $this->reload($contact)->email);
+
+            // el proveedor recibe el email y conserva el fax
+            $this->assertTrue($supplier->load($supplier->id()));
+            $this->assertEquals('new-fax-test@example.com', $supplier->email, 'supplier-email-not-updated');
+            $this->assertEquals('910000001', $supplier->fax, 'supplier-fax-lost');
+        } finally {
+            $this->deleteContact($contact);
+            $supplier->delete();
+        }
+    }
+
+    public function testEditOtherFieldsDoesNotUpdateCustomer(): void
+    {
+        $customer = new Cliente();
+        $customer->nombre = 'EditContactoTest Sync';
+        $customer->cifnif = '12345678A';
+        $customer->email = 'customer-sync-test@example.com';
+        $customer->telefono1 = '600000001';
+        $this->assertTrue($customer->save());
+        $contact = $customer->getDefaultAddress();
+
+        try {
+            // el contacto tiene un email distinto al del cliente
+            $contact->email = 'contact-sync-test@example.com';
+            $this->assertTrue($contact->save());
+
+            // editamos otro campo del contacto: el cliente no cambia
+            $formData = array_merge($contact->toArray(), [
+                'activetab' => 'EditContacto',
+                'code' => $contact->idcontacto,
+                'cargo' => 'Test',
+            ]);
+            $this->runController($contact, 'edit', true, true, $formData);
+            $this->assertEquals('Test', $this->reload($contact)->cargo);
+            $this->assertTrue($customer->load($customer->id()));
+            $this->assertEquals('customer-sync-test@example.com', $customer->email, 'customer-email-changed');
+
+            // editamos un teléfono del contacto: el cliente recibe email y teléfonos
+            $formData['telefono1'] = '611111111';
+            $this->runController($contact, 'edit', true, true, $formData);
+            $this->assertTrue($customer->load($customer->id()));
+            $this->assertEquals('611111111', $customer->telefono1, 'customer-phone-not-updated');
+            $this->assertEquals('contact-sync-test@example.com', $customer->email, 'customer-email-not-updated');
+        } finally {
+            $this->deleteContact($contact);
+            $customer->delete();
+        }
+    }
+
     protected function setUp(): void
     {
         MiniLog::clear();
@@ -132,9 +234,15 @@ final class EditContactoTest extends TestCase
 
     /**
      * @param bool|null $validToken null envía la acción por GET sin token
+     * @param array $formData campos adicionales del formulario
      */
-    private function runController(Contacto $contact, string $action, bool $allowUpdate, ?bool $validToken): void
-    {
+    private function runController(
+        Contacto $contact,
+        string $action,
+        bool $allowUpdate,
+        ?bool $validToken,
+        array $formData = []
+    ): void {
         $controller = new EditContacto('EditContacto', '/EditContacto');
         $controller->multiRequestProtection->clearSeed();
         $controller->multiRequestProtection->addSeed($this->user->nick);
@@ -142,7 +250,7 @@ final class EditContactoTest extends TestCase
         $controller->multiRequestProtection->clearSeed();
 
         $query = ['code' => $contact->idcontacto];
-        $request = [];
+        $request = $formData;
         if (null === $validToken) {
             $query['action'] = $action;
         } else {
