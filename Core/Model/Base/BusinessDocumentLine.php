@@ -29,6 +29,7 @@ use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
+use Throwable;
 
 /**
  * Linea de documento de negocio.
@@ -410,6 +411,10 @@ abstract class BusinessDocumentLine extends NewModelClass
     /**
      * Transfiere el stock de la línea de un almacén a otro.
      *
+     * Las filas de stock de los dos almacenes se bloquean (SELECT ... FOR UPDATE) en orden fijo
+     * dentro de una transacción, abriendo una propia si no hay ninguna en curso, para que
+     * dos peticiones simultáneas no se pisen las cantidades.
+     *
      * @param string $fromCodalmacen
      * @param string $toCodalmacen
      *
@@ -417,45 +422,14 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     public function transfer($fromCodalmacen, $toCodalmacen): bool
     {
-        // buscamos el stock
-        $fromStock = new Stock();
-        $where = [
-            Where::eq('codalmacen', $fromCodalmacen),
-            Where::eq('referencia', $this->referencia)
-        ];
-        if (empty($this->referencia) || false === $fromStock->loadWhere($where)) {
+        if (empty($this->referencia)) {
             // no es necesario transferir
             return true;
         }
-        $this->applyStockChanges(
-            $fromStock,
-            $this->getOriginal('actualizastock'),
-            $this->getOriginal('cantidad') * -1,
-            $this->getOriginal('servido') * -1
-        );
-        $fromStock->save();
 
-        // buscamos el nuevo stock
-        $toStock = new Stock();
-        $where2 = [
-            Where::eq('codalmacen', $toCodalmacen),
-            Where::eq('referencia', $this->referencia)
-        ];
-        if (false === $toStock->loadWhere($where2)) {
-            // stock no encontrado, creamos uno
-            $toStock->codalmacen = $toCodalmacen;
-            $toStock->idproducto = $this->idproducto ?? $this->getProducto()->idproducto;
-            $toStock->referencia = $this->referencia;
-        }
-
-        $this->applyStockChanges($toStock, $this->actualizastock, $this->cantidad, $this->servido);
-        if (false === $toStock->save()) {
-            return false;
-        }
-
-        $this->pipe('transfer', $fromCodalmacen, $toCodalmacen, $this->getDocument());
-
-        return true;
+        return $this->runInStockTransaction(function () use ($fromCodalmacen, $toCodalmacen) {
+            return $this->transferLocked((string)$fromCodalmacen, (string)$toCodalmacen);
+        });
     }
 
     public function test(): bool
@@ -521,6 +495,98 @@ abstract class BusinessDocumentLine extends NewModelClass
     }
 
     /**
+     * Ejecuta $callback dentro de una transacción para que los bloqueos de fila del stock
+     * duren hasta que se guarden los cambios. Si ya hay una transacción en curso, la usa
+     * (y el bloqueo dura hasta que esta termine); si no, abre una propia y la confirma
+     * o deshace según el resultado.
+     *
+     * @param callable $callback Función que devuelve true si todo ha ido bien.
+     *
+     * @return bool
+     */
+    private function runInStockTransaction(callable $callback): bool
+    {
+        $newTransaction = false === self::db()->inTransaction() && self::db()->beginTransaction();
+
+        try {
+            $result = (bool)$callback();
+        } catch (Throwable $exception) {
+            if ($newTransaction) {
+                self::db()->rollback();
+            }
+            throw $exception;
+        }
+
+        if (false === $newTransaction) {
+            return $result;
+        }
+
+        if ($result && self::db()->commit()) {
+            return true;
+        }
+
+        self::db()->rollback();
+        return false;
+    }
+
+    /**
+     * Realiza la transferencia de transfer() con las filas de stock bloqueadas.
+     * Debe ejecutarse dentro de una transacción.
+     *
+     * @param string $fromCodalmacen
+     * @param string $toCodalmacen
+     *
+     * @return bool
+     */
+    private function transferLocked(string $fromCodalmacen, string $toCodalmacen): bool
+    {
+        // bloqueamos los dos almacenes siempre en el mismo orden para evitar deadlocks
+        Stock::lockWarehouses($this->referencia, [$fromCodalmacen, $toCodalmacen]);
+
+        // buscamos el stock
+        $fromStock = new Stock();
+        if (false === $fromStock->loadForUpdate($fromCodalmacen, $this->referencia)) {
+            // no es necesario transferir
+            return true;
+        }
+        $this->applyStockChanges(
+            $fromStock,
+            $this->getOriginal('actualizastock'),
+            $this->getOriginal('cantidad') * -1,
+            $this->getOriginal('servido') * -1
+        );
+        if (false === $fromStock->save()) {
+            Tools::log()->warning('cant-update-stock', [
+                '%reference%' => $this->referencia,
+                '%codalmacen%' => $fromCodalmacen,
+            ]);
+            return false;
+        }
+
+        // buscamos el nuevo stock
+        $toStock = new Stock();
+        if (false === $toStock->loadForUpdate($toCodalmacen, $this->referencia)) {
+            // stock no encontrado, creamos uno
+            $toStock->codalmacen = $toCodalmacen;
+            $toStock->idproducto = $this->idproducto ?? $this->getProducto()->idproducto;
+            $toStock->referencia = $this->referencia;
+        }
+
+        $this->applyStockChanges($toStock, $this->actualizastock, $this->cantidad, $this->servido);
+        if (false === $toStock->save()) {
+            Tools::log()->warning('cant-update-stock', [
+                '%reference%' => $this->referencia,
+                '%codalmacen%' => $toCodalmacen,
+            ]);
+            return false;
+        }
+
+        $this->pipe('transfer', $fromCodalmacen, $toCodalmacen, $this->getDocument());
+
+        return true;
+    }
+
+    /**
      * Este método se ejecuta antes de guardar (update) cuando algún campo ha cambiado.
      *
      * @param string $field
@@ -558,6 +624,11 @@ abstract class BusinessDocumentLine extends NewModelClass
     /**
      * Actualiza el stock según los datos de la línea y el almacén.
      *
+     * La fila de stock se lee bloqueada (SELECT ... FOR UPDATE) dentro de una transacción,
+     * abriendo una propia si no hay ninguna en curso, para que dos peticiones que guardan
+     * líneas del mismo producto y almacén a la vez no se pisen la cantidad ni se salten
+     * la comprobación de venta sin stock.
+     *
      * @return bool
      */
     protected function updateStock(): bool
@@ -580,15 +651,27 @@ abstract class BusinessDocumentLine extends NewModelClass
             return true;
         }
 
-        // buscamos el stock
+        return $this->runInStockTransaction(function () use ($producto) {
+            return $this->updateStockLocked($producto);
+        });
+    }
+
+    /**
+     * Aplica los cambios de la línea al stock del almacén del documento con la fila bloqueada.
+     * Debe ejecutarse dentro de una transacción.
+     *
+     * @param Producto $producto Producto de la línea.
+     *
+     * @return bool
+     */
+    private function updateStockLocked(Producto $producto): bool
+    {
+        // buscamos el stock, bloqueando la fila hasta que termine la transacción
         $stock = new Stock();
         $doc = $this->getDocument();
-        $where2 = [
-            Where::eq('codalmacen', $doc->codalmacen),
-            Where::eq('referencia', $this->referencia)
-        ];
-        if (false === $stock->loadWhere($where2)) {
+        if (false === $stock->loadForUpdate((string)$doc->codalmacen, $this->referencia)) {
             // stock no encontrado, creamos uno
+            // (si otra petición lo crea a la vez, la restricción única hará fallar este guardado)
             $stock->codalmacen = $doc->codalmacen;
             $stock->idproducto = $this->idproducto ?? $this->getProducto()->idproducto;
             $stock->referencia = $this->referencia;
