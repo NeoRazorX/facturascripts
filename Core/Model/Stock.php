@@ -27,6 +27,7 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Almacen as DinAlmacen;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
+use Throwable;
 
 /**
  * The quantity in inventory of an item in a particular warehouse.
@@ -92,6 +93,56 @@ class Stock extends ModelClass
         return parent::install();
     }
 
+    /**
+     * Carga el stock de la referencia en el almacén indicado bloqueando la fila (SELECT ... FOR UPDATE)
+     * hasta que termine la transacción en curso, para que otras peticiones no puedan leerla ni modificarla
+     * a la vez y se pierdan actualizaciones.
+     *
+     * El bloqueo solo tiene efecto dentro de una transacción: quien llama debe abrirla antes.
+     * No se usa selectLimit() porque añade el LIMIT al final y MySQL/MariaDB exigen el LIMIT antes
+     * del FOR UPDATE; tampoco hace falta, ya que (codalmacen, referencia) es único.
+     *
+     * @param string $codalmacen Código del almacén.
+     * @param string $referencia Referencia de la variante.
+     *
+     * @return bool True si existe el stock y se ha cargado; false si no existe (el modelo queda limpio).
+     */
+    public function loadForUpdate(string $codalmacen, string $referencia): bool
+    {
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE codalmacen = ' . self::db()->var2str($codalmacen)
+            . ' AND referencia = ' . self::db()->var2str($referencia)
+            . ' FOR UPDATE;';
+        $data = self::db()->select($sql);
+        if (empty($data)) {
+            $this->clear();
+            return false;
+        }
+
+        $this->loadFromData($data[0]);
+        return true;
+    }
+
+    /**
+     * Bloquea las filas de stock de una referencia en varios almacenes, siempre en el mismo orden
+     * (por código de almacén), para que dos transacciones que bloquean los mismos almacenes
+     * no se esperen mutuamente (deadlock).
+     *
+     * Debe llamarse dentro de una transacción. Los almacenes sin fila de stock se ignoran.
+     *
+     * @param string $referencia Referencia de la variante.
+     * @param array $warehouses Códigos de almacén.
+     */
+    public static function lockWarehouses(string $referencia, array $warehouses): void
+    {
+        $codes = array_unique(array_map('strval', $warehouses));
+        sort($codes, SORT_STRING);
+        foreach ($codes as $code) {
+            $stock = new static();
+            $stock->loadForUpdate($code, $referencia);
+        }
+    }
+
     public static function primaryColumn(): string
     {
         return 'idstock';
@@ -114,32 +165,45 @@ class Stock extends ModelClass
     }
 
     /**
-     * Transfer $qty unities of stock to $toWarehouse
+     * Transfiere $qty unidades de stock a $toWarehouse.
      *
-     * @param string $toWarehouse destination warehouse
-     * @param float $qty quantity to move
+     * Bloquea las filas de origen y destino (en orden fijo de almacén) dentro de una transacción,
+     * abriendo una propia si no hay ninguna en curso, y recarga el origen desde la base de datos
+     * antes de restar, por lo que se descartan los cambios sin guardar de este modelo.
+     *
+     * @param string $toWarehouse almacén de destino
+     * @param float $qty cantidad a mover
      *
      * @return bool
      */
     public function transferTo(string $toWarehouse, float $qty): bool
     {
-        $destination = new static();
-        $where = [
-            Where::eq('codalmacen', $toWarehouse),
-            Where::eq('referencia', $this->referencia)
-        ];
-        if ($destination->loadWhere($where)) {
-            $destination->cantidad += $qty;
-        } else {
-            $destination->codalmacen = $toWarehouse;
-            $destination->idproducto = $this->idproducto;
-            $destination->referencia = $this->referencia;
-            $destination->cantidad = $qty;
+        if ($toWarehouse === $this->codalmacen) {
+            // mismo almacén: no hay nada que mover
+            return true;
         }
 
-        $this->cantidad -= $qty;
+        $newTransaction = false === self::db()->inTransaction() && self::db()->beginTransaction();
 
-        return $destination->save() && $this->save();
+        try {
+            $result = $this->transferToLocked($toWarehouse, $qty);
+        } catch (Throwable $exception) {
+            if ($newTransaction) {
+                self::db()->rollback();
+            }
+            throw $exception;
+        }
+
+        if (false === $newTransaction) {
+            return $result;
+        }
+
+        if ($result && self::db()->commit()) {
+            return true;
+        }
+
+        self::db()->rollback();
+        return false;
     }
 
     public function test(): bool
@@ -235,6 +299,39 @@ class Stock extends ModelClass
         }
 
         return parent::onDeleteBefore();
+    }
+
+    /**
+     * Realiza la transferencia de transferTo() con las filas de stock bloqueadas.
+     * Debe ejecutarse dentro de una transacción.
+     *
+     * @param string $toWarehouse almacén de destino
+     * @param float $qty cantidad a mover
+     *
+     * @return bool
+     */
+    private function transferToLocked(string $toWarehouse, float $qty): bool
+    {
+        static::lockWarehouses($this->referencia, [$this->codalmacen, $toWarehouse]);
+
+        // recargamos el origen ya bloqueado para partir de la cantidad real
+        if (!empty($this->idstock) && false === $this->loadForUpdate($this->codalmacen, $this->referencia)) {
+            return false;
+        }
+
+        $destination = new static();
+        if ($destination->loadForUpdate($toWarehouse, $this->referencia)) {
+            $destination->cantidad += $qty;
+        } else {
+            $destination->codalmacen = $toWarehouse;
+            $destination->idproducto = $this->idproducto;
+            $destination->referencia = $this->referencia;
+            $destination->cantidad = $qty;
+        }
+
+        $this->cantidad -= $qty;
+
+        return $destination->save() && $this->save();
     }
 
     protected function updateProductStock(): bool
