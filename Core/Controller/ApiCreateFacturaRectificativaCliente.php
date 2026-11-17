@@ -130,12 +130,14 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
 
             $pending = abs($line->cantidad) - $line->refundedQuantity();
             if ($quantity - $pending > self::QUANTITY_TOLERANCE) {
-                $this->sendError('refund-quantity-exceeded', Response::HTTP_BAD_REQUEST, [
-                    '%idlinea%' => $line->id(),
-                    '%description%' => $line->descripcion,
-                    '%quantity%' => $quantity,
-                    '%pending%' => max(0, $pending),
-                ]);
+                // mensaje fijo, sin traducir, para que indique la línea en cualquier idioma
+                $this->response
+                    ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                    ->json([
+                        'status' => 'error',
+                        'message' => 'refund_' . $line->id() . ' exceeds the pending quantity to refund'
+                            . ' (quantity: ' . $quantity . ', pending: ' . max(0, $pending) . ')',
+                    ]);
                 return null;
             }
 
@@ -157,7 +159,12 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
 
         // si no queda nada pendiente de rectificar, no creamos una rectificativa vacía o duplicada
         if (empty($lines)) {
-            $this->sendError('nothing-to-refund', Response::HTTP_BAD_REQUEST);
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'nothing pending to refund in this invoice',
+                ]);
             return null;
         }
 

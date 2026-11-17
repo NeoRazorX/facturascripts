@@ -255,7 +255,7 @@ final class ApiCreateFacturaRectificativaClienteTest extends TestCase
             'refund_' . $line->idlinea => 3,
         ]);
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'refund-exceeded-should-fail');
-        $this->assertStringContainsString((string)$line->idlinea, $result['body']['message'] ?? '', 'error-should-name-the-line');
+        $this->assertStringContainsString('refund_' . $line->idlinea, $result['body']['message'] ?? '', 'error-should-name-the-line');
 
         // el signo de la cantidad enviada no permite saltarse el límite
         $result = $this->callApi([
