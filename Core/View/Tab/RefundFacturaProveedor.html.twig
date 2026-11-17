@@ -176,6 +176,8 @@
                             <tbody>
                             {% for line in firstView.model.getLines() %}
                                 {% set refunded = line.refundedQuantity() %}
+                                {# cantidad pendiente de devolver, con el signo de la línea #}
+                                {% set pending = line.cantidad > 0 ? line.cantidad - refunded : line.cantidad + refunded %}
                                 <tr>
                                     <td class="align-middle">
                                         <a href="{{ line.getProducto().url() }}">{{ line.referencia }}</a>
@@ -185,10 +187,10 @@
                                         {{ number(line.cantidad) }}
                                     </td>
                                     <td class="table-warning">
-                                        <input type="hidden" value="{{ line.cantidad }}" class="refundable">
+                                        <input type="hidden" value="{{ pending }}" class="refundable">
                                         {% if line.cantidad > 0 %}
                                             <input type="number" name="refund_{{ line.primaryColumnValue() }}"
-                                                   value="0" min="0" max="{{ line.cantidad - refunded }}" step="any"
+                                                   value="0" min="0" max="{{ pending }}" step="any"
                                                    class="form-control text-end to_refund" autocomplete="off"/>
                                         {% else %}
                                             <input type="number" name="refund_{{ line.primaryColumnValue() }}"

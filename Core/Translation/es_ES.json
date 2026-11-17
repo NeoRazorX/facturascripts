@@ -1634,6 +1634,7 @@
     "refund": "Devolución",
     "refund-amount": "Cantidad devuelta",
     "refund-payment-concept": "Devolución del recibo %document%",
+    "refund-quantity-exceeded": "La cantidad a devolver de la línea %idlinea% «%description%» (%quantity%) supera la cantidad pendiente de devolver (%pending%).",
     "refund-reason": "Motivo de la rectificación",
     "refund-reason-none": "Sin indicar",
     "refunds": "Devoluciones",
