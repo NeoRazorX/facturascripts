@@ -620,6 +620,7 @@
     "dont-sell-above-pvp": "Verkaufen Sie nicht über den Einzelhandelspreis",
     "dont-sell-below-cost": "Verkaufe nicht unter Kosten",
     "download": "Download",
+    "download-checksum-error": "Das heruntergeladene Paket von %name% ist beschädigt oder unvollständig (md5sum stimmt nicht überein). Es wurde gelöscht: Bitte erneut herunterladen.",
     "download-completed": "Download beendet",
     "download-csv": "CSV herunterladen",
     "download-error": "Fehler beim Herunterladen. Code %status% - %error% %body%",

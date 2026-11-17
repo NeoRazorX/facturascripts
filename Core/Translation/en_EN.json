@@ -620,6 +620,7 @@
     "dont-sell-above-pvp": "Don't sell above retail price",
     "dont-sell-below-cost": "Don't sell below cost",
     "download": "Download",
+    "download-checksum-error": "The downloaded package of %name% is damaged or incomplete (md5sum does not match). It has been deleted: please download it again.",
     "download-completed": "Download completed",
     "download-csv": "Download CSV",
     "download-error": "Download error. Code %status% - %error% %body%",

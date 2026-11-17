@@ -282,6 +282,20 @@ class Updater extends Controller
     }
 
     /**
+     * Comprueba que el archivo coincide con el md5sum del build. Si el build no tiene md5sum
+     * (builds antiguos), no se puede comprobar y se da por bueno.
+     */
+    private static function checksumMatches(string $filePath, ?string $md5sum): bool
+    {
+        if (empty($md5sum)) {
+            return true;
+        }
+
+        $fileMd5 = file_exists($filePath) ? md5_file($filePath) : false;
+        return is_string($fileMd5) && hash_equals(strtolower(trim($md5sum)), $fileMd5);
+    }
+
+    /**
      * Download selected update.
      */
     private function downloadAction(): void
@@ -304,6 +318,13 @@ class Updater extends Controller
             $url = $this->telemetryManager->signUrl($item['url']);
             $http = Http::get($url);
             if ($http->saveAs(Tools::folder($item['filename']))) {
+                // comprobamos que el paquete descargado corresponde al build esperado
+                if (false === self::checksumMatches(Tools::folder($item['filename']), $item['md5sum'] ?? null)) {
+                    unlink(Tools::folder($item['filename']));
+                    Tools::log()->error('download-checksum-error', ['%name%' => $item['name']]);
+                    break;
+                }
+
                 Tools::log()->notice('download-completed');
                 $this->updaterItems[$key]['downloaded'] = true;
                 break;
@@ -424,6 +445,7 @@ class Updater extends Controller
                 'stable' => $build['stable'],
                 'url' => self::UPDATE_CORE_URL . '/' . Forja::CORE_PROJECT_ID . '/' . $build['version'],
                 'version' => $build['version'],
+                'md5sum' => $build['md5sum'] ?? null,
                 'mincore' => 0,
                 'maxcore' => 0
             ];
@@ -480,6 +502,7 @@ class Updater extends Controller
                 'stable' => $build['stable'],
                 'url' => self::UPDATE_CORE_URL . '/' . $id . '/' . $build['version'],
                 'version' => $build['version'],
+                'md5sum' => $build['md5sum'] ?? null,
                 'mincore' => $build['mincore'],
                 'maxcore' => $build['maxcore']
             ];
@@ -619,6 +642,25 @@ class Updater extends Controller
 
         $idItem = $this->request->get('item', '');
         $fileName = 'update-' . $idItem . '.zip';
+        $updateItems = self::getUpdateItems();
+
+        // antes de extraer, comprobamos que el zip corresponde al build esperado,
+        // por si se descargó con una versión anterior o se ha modificado después
+        foreach ($updateItems as $item) {
+            if ($item['id'] != $idItem) {
+                continue;
+            }
+
+            if (false === self::checksumMatches(Tools::folder($fileName), $item['md5sum'] ?? null)) {
+                if (file_exists(Tools::folder($fileName))) {
+                    unlink(Tools::folder($fileName));
+                }
+                Tools::log()->error('download-checksum-error', ['%name%' => $item['name']]);
+                $this->updaterItems = self::getUpdateItems();
+                return;
+            }
+            break;
+        }
 
         // open the zip file
         $zip = new ZipArchive();
@@ -630,7 +672,7 @@ class Updater extends Controller
 
         // get the name of the plugin to init after update (if the plugin is enabled)
         $init = '';
-        foreach (self::getUpdateItems() as $item) {
+        foreach ($updateItems as $item) {
             if ($idItem == Forja::CORE_PROJECT_ID) {
                 break;
             }

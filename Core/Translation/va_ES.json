@@ -620,6 +620,7 @@
     "dont-sell-above-pvp": "No vendre per damunt del PVP",
     "dont-sell-below-cost": "No vendre per baix del cost",
     "download": "Descarregar",
+    "download-checksum-error": "El paquet descarregat de %name% està danyat o incomplet (l'md5sum no coincidix). S'ha esborrat: torneu a descarregar-lo.",
     "download-completed": "Descàrrega finalisada",
     "download-csv": "Descarregar CSV",
     "download-error": "Error en la descàrrega. Codi %status% - %error% %body%",

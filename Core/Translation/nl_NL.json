@@ -620,6 +620,7 @@
     "dont-sell-above-pvp": "Niet boven de verkoopprijs verkopen",
     "dont-sell-below-cost": "Niet onder de kostprijs verkopen",
     "download": "Downloaden",
+    "download-checksum-error": "Het gedownloade pakket van %name% is beschadigd of onvolledig (md5sum komt niet overeen). Het is verwijderd: download het opnieuw.",
     "download-completed": "Download voltooid",
     "download-csv": "CSV downloaden",
     "download-error": "Fout bij het downloaden. Code %status% - %error% %body%",

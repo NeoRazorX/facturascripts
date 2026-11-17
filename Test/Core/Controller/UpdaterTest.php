@@ -36,6 +36,31 @@ final class UpdaterTest extends TestCase
         $this->setForjaPluginList(null);
     }
 
+    public function testChecksumMatches(): void
+    {
+        $file = Tools::folder('MyFiles', 'Tmp', 'UpdaterTest-checksum.zip');
+        Tools::folderCheckOrCreate(dirname($file));
+        file_put_contents($file, 'package content');
+        $method = new ReflectionMethod(Updater::class, 'checksumMatches');
+
+        // checksum correcto (también en mayúsculas o con espacios)
+        $this->assertTrue($method->invoke(null, $file, md5('package content')));
+        $this->assertTrue($method->invoke(null, $file, ' ' . strtoupper(md5('package content')) . ' '));
+
+        // checksum incorrecto: archivo truncado, vacío o distinto
+        $this->assertFalse($method->invoke(null, $file, md5('package content and more')));
+        file_put_contents($file, '');
+        $this->assertFalse($method->invoke(null, $file, md5('package content')));
+
+        // sin checksum (builds antiguos) se mantiene el comportamiento actual
+        $this->assertTrue($method->invoke(null, $file, null));
+        $this->assertTrue($method->invoke(null, $file, ''));
+
+        // si el archivo no existe, un checksum nunca coincide
+        unlink($file);
+        $this->assertFalse($method->invoke(null, $file, md5('package content')));
+    }
+
     public function testCoreUpdateSkipsBuildsRequiringNewerPhp(): void
     {
         $nextVersion = Kernel::version() + 1;

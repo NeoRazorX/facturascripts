@@ -620,6 +620,7 @@
     "dont-sell-above-pvp": "Non vender por riba do PVP",
     "dont-sell-below-cost": "Non vender por debaixo do custo",
     "download": "Descargar",
+    "download-checksum-error": "O paquete descargado de %name% está danado ou incompleto (o md5sum non coincide). Borrouse: volva descargalo.",
     "download-completed": "Descarga completada",
     "download-csv": "Descargar CSV",
     "download-error": "Erro ao descargar. Código %status% - %error% %body%",

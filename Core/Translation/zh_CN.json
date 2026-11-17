@@ -620,6 +620,7 @@
     "dont-sell-above-pvp": "不得高于零售价销售",
     "dont-sell-below-cost": "不得低于成本销售",
     "download": "下载",
+    "download-checksum-error": "%name% 的下载包已损坏或不完整（md5sum 不匹配）。已将其删除：请重新下载。",
     "download-completed": "下载完成",
     "download-csv": "下载 CSV",
     "download-error": "下载出错。代码 %status% - %error% %body%",
