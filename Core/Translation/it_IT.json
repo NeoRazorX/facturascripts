@@ -614,6 +614,7 @@
     "dont-sell-above-pvp": "Non vendere al di sopra del prezzo al dettaglio",
     "dont-sell-below-cost": "Non vendere sottocosto",
     "download": "Scarica",
+    "download-checksum-error": "Il pacchetto scaricato di %name% è danneggiato o incompleto (l'md5sum non corrisponde). È stato eliminato: scaricalo di nuovo.",
     "download-completed": "Download completato",
     "download-csv": "Scarica CSV",
     "download-error": "Errore durante il download. Codice %status% - %error% %body%",

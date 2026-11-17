@@ -614,6 +614,7 @@
     "dont-sell-above-pvp": "Nie sprzedawaj powyżej PVP",
     "dont-sell-below-cost": "Nie sprzedawaj poniżej kosztu",
     "download": "Pobierz",
+    "download-checksum-error": "Pobrany pakiet %name% jest uszkodzony lub niekompletny (md5sum się nie zgadza). Został usunięty: pobierz go ponownie.",
     "download-completed": "Pobieranie zakończone",
     "download-csv": "Pobierz CSV",
     "download-error": "Błąd podczas pobierania. Kod %status% - %error% %body%",

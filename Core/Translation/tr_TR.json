@@ -614,6 +614,7 @@
     "dont-sell-above-pvp": "PVP'nin üzerinde satmayın",
     "dont-sell-below-cost": "Maliyetinin altında satma",
     "download": "İndir",
+    "download-checksum-error": "%name% için indirilen paket bozuk veya eksik (md5sum eşleşmiyor). Silindi: lütfen yeniden indirin.",
     "download-completed": "İndirme tamamlandı",
     "download-csv": "CSV indir",
     "download-error": "İndirirken hata oluştu. Kod %status% - %error% %body%",

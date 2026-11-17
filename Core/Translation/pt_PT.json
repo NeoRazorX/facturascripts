@@ -614,6 +614,7 @@
     "dont-sell-above-pvp": "Não venda acima o preço de varejo",
     "dont-sell-below-cost": "Não venda abaixo o custo",
     "download": "Baixar",
+    "download-checksum-error": "O pacote transferido de %name% está danificado ou incompleto (o md5sum não corresponde). Foi eliminado: transfira-o novamente.",
     "download-completed": "Download completado",
     "download-csv": "Descarregar CSV",
     "download-error": "Erro ao baixar. Código %status% - %error% %body%",

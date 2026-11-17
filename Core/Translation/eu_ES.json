@@ -614,6 +614,7 @@
     "dont-sell-above-pvp": "Salmenta prezioaren gainetik ez saldu",
     "dont-sell-below-cost": "Ez saldu kostu prezioaren azpitik",
     "download": "Deskarga",
+    "download-checksum-error": "%name%-ren pakete deskargatua hondatuta edo osatu gabe dago (md5sum-a ez dator bat). Ezabatu egin da: deskargatu berriro.",
     "download-completed": "Deskarga amaitua",
     "download-csv": "CSV deskargatu",
     "download-error": "Errorea gertatu da deskargatzerakoan. Kodea %status% - %error% %body%",

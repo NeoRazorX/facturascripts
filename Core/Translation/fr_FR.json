@@ -614,6 +614,7 @@
     "dont-sell-above-pvp": "Ne pas vendre au-dessus du prix de détail",
     "dont-sell-below-cost": "Ne pas vendre en dessous du coût",
     "download": "télécharger",
+    "download-checksum-error": "Le paquet téléchargé de %name% est endommagé ou incomplet (le md5sum ne correspond pas). Il a été supprimé : veuillez le télécharger à nouveau.",
     "download-completed": "Téléchargement terminé",
     "download-csv": "Télécharger le CSV",
     "download-error": "Erreur lors du téléchargement. Code %status% - %error% %body%",

@@ -614,6 +614,7 @@
     "dont-sell-above-pvp": "Neprodávat nad doporučenou cenu",
     "dont-sell-below-cost": "Neprodávat pod nákladovou cenu",
     "download": "Stáhnout",
+    "download-checksum-error": "Stažený balíček %name% je poškozený nebo neúplný (md5sum nesouhlasí). Byl smazán: stáhněte jej znovu.",
     "download-completed": "Descargar completada",
     "download-csv": "Stáhnout CSV",
     "download-error": "Chyba při stahování. Kód %status% - %error% %body%",
