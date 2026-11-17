@@ -1,7 +1,6 @@
 /cache/
 /Cache/
 /Dinamic/
-/doc/
 /MyFiles/
 /node_modules/
 /Plugins/
@@ -32,8 +31,12 @@ package-lock.json
 *.code-workspace
 .history
 
-# IA
-AGENTS.md
-CLAUDE.md
-/.claude
+# IA: lo local de Claude Code y de Codex no se versiona; sí sus skills (.agents/skills, con enlace desde .claude/skills)
+/.claude/*
+!/.claude/skills
+/.agents/*
+!/.agents/skills
+/CLAUDE.local.md
+/AGENTS.override.md
 .codex
+__pycache__/
