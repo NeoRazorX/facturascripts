@@ -242,8 +242,192 @@ final class ApiCreateFacturaRectificativaClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
 
+    public function testRefundExceedingQuantityFails(): void
+    {
+        // creamos una factura con una línea de 2 unidades
+        $invoice = $this->getInvoiceWithQuantities([2]);
+        $line = $invoice->getLines()[0];
+
+        // rectificar 3 unidades supera lo facturado y se rechaza indicando la línea
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'refund_' . $line->idlinea => 3,
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'refund-exceeded-should-fail');
+        $this->assertStringContainsString((string)$line->idlinea, $result['body']['message'] ?? '', 'error-should-name-the-line');
+
+        // el signo de la cantidad enviada no permite saltarse el límite
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'refund_' . $line->idlinea => -3,
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'negative-refund-exceeded-should-fail');
+
+        // no se ha creado ninguna rectificativa y la factura sigue editable
+        $this->assertCount(0, FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]), 'refund-created');
+        $this->assertTrue($invoice->reload(), 'can-not-reload-invoice');
+        $this->assertTrue($invoice->editable, 'invoice-should-stay-editable');
+
+        // limpiamos
+        $this->deleteInvoiceAndRefunds($invoice);
+    }
+
+    public function testRefundNegativeLine(): void
+    {
+        // creamos una factura con una línea de 2 unidades y otra de -1
+        $invoice = $this->getInvoiceWithQuantities([2, -1]);
+        $positive = $negative = null;
+        foreach ($invoice->getLines() as $line) {
+            $line->cantidad > 0 ? $positive = $line : $negative = $line;
+        }
+
+        // en la línea negativa se compara en valor absoluto: rectificar 2 se rechaza
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'refund_' . $negative->idlinea => 2,
+        ]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'negative-line-exceeded-should-fail');
+
+        // rectificar 1 sí se permite y la línea rectificativa lleva el signo contrario
+        $result = $this->callApi([
+            'idfactura' => $invoice->idfactura,
+            'fecha' => Tools::date(),
+            'refund_' . $negative->idlinea => 1,
+        ]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'negative-line-refund-failed');
+        $refunds = FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]);
+        $this->assertCount(1, $refunds, 'refund-not-created');
+        $refundLines = $refunds[0]->getLines();
+        $this->assertCount(1, $refundLines, 'bad-refund-lines-count');
+        $this->assertEquals(1, $refundLines[0]->cantidad, 'bad-negative-refund-quantity');
+
+        // sin refund_ solo se rectifica lo pendiente: las 2 unidades de la línea positiva
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date()]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'pending-refund-failed');
+        $this->assertEquals(-2, $this->getRefundedQuantity($invoice, $positive->idlinea), 'bad-positive-refunded');
+        $this->assertEquals(1, $this->getRefundedQuantity($invoice, $negative->idlinea), 'bad-negative-refunded');
+
+        // limpiamos
+        $this->deleteInvoiceAndRefunds($invoice);
+    }
+
+    public function testRepeatFullRefundFails(): void
+    {
+        // creamos una factura con una línea de 2 unidades
+        $invoice = $this->getInvoiceWithQuantities([2]);
+        $line = $invoice->getLines()[0];
+
+        // sin refund_ se rectifica la factura completa
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date()]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'full-refund-failed');
+
+        // repetir la llamada ya no crea otra rectificativa
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date()]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'repeated-full-refund-should-fail');
+        $this->assertCount(1, FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]), 'bad-refunds-count');
+        $this->assertEquals(-2, $this->getRefundedQuantity($invoice, $line->idlinea), 'bad-refunded-quantity');
+
+        // limpiamos
+        $this->deleteInvoiceAndRefunds($invoice);
+    }
+
+    public function testSuccessivePartialRefunds(): void
+    {
+        // creamos una factura con una línea de 4 unidades
+        $invoice = $this->getInvoiceWithQuantities([4]);
+        $line = $invoice->getLines()[0];
+        $refundKey = 'refund_' . $line->idlinea;
+
+        // rectificamos 1 y luego 2 unidades
+        foreach ([1, 2] as $quantity) {
+            $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date(), $refundKey => $quantity]);
+            $this->assertEquals(Response::HTTP_OK, $result['code'], 'partial-refund-failed');
+        }
+
+        // queda 1 unidad pendiente: rectificar 2 se rechaza
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date(), $refundKey => 2]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'refund-over-pending-should-fail');
+
+        // sin refund_ se rectifica solo la unidad pendiente
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date()]);
+        $this->assertEquals(Response::HTTP_OK, $result['code'], 'pending-refund-failed');
+        $this->assertEquals(-1, $result['body']['lines'][0]['cantidad'] ?? null, 'bad-pending-refund-quantity');
+
+        // ya no queda nada pendiente: ni con refund_ ni sin él se crea otra rectificativa
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date(), $refundKey => 1]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'refund-without-pending-should-fail');
+        $result = $this->callApi(['idfactura' => $invoice->idfactura, 'fecha' => Tools::date()]);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $result['code'], 'nothing-to-refund-should-fail');
+
+        $this->assertCount(3, FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]), 'bad-refunds-count');
+        $this->assertEquals(-4, $this->getRefundedQuantity($invoice, $line->idlinea), 'bad-refunded-quantity');
+
+        // limpiamos
+        $this->deleteInvoiceAndRefunds($invoice);
+    }
+
     /**
-     * Elimina una rectificativa, devolviéndola antes a un estado editable si hace falta.
+     * Elimina las rectificativas de la factura, la factura y su cliente.
+     */
+    private function deleteInvoiceAndRefunds(FacturaCliente $invoice): void
+    {
+        foreach (FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]) as $refund) {
+            $this->deleteRefund($refund);
+        }
+
+        // al borrar cada rectificativa la original vuelve a su estado anterior, que puede no ser editable
+        $invoice->reload();
+        $subject = $invoice->getSubject();
+        $this->deleteRefund($invoice);
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+    }
+
+    /**
+     * Crea una factura de cliente con una línea por cada cantidad indicada.
+     *
+     * @param float[] $quantities
+     */
+    private function getInvoiceWithQuantities(array $quantities): FacturaCliente
+    {
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-invoice');
+
+        // la primera línea ya la crea getRandomCustomerInvoice()
+        foreach ($quantities as $num => $quantity) {
+            $line = $num === 0 ? $invoice->getLines()[0] : $invoice->getNewLine();
+            $line->cantidad = $quantity;
+            $line->pvpunitario = 10;
+            $this->assertTrue($line->save(), 'can-not-save-line');
+        }
+
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'can-not-calculate-invoice');
+        return $invoice;
+    }
+
+    /**
+     * Suma la cantidad de todas las líneas rectificativas de una línea de la factura.
+     */
+    private function getRefundedQuantity(FacturaCliente $invoice, int $idlinea): float
+    {
+        $quantity = 0.0;
+        foreach (FacturaCliente::all([Where::eq('idfacturarect', $invoice->idfactura)]) as $refund) {
+            foreach ($refund->getLines() as $line) {
+                if ((int)$line->idlinearect === $idlinea) {
+                    $quantity += $line->cantidad;
+                }
+            }
+        }
+
+        return $quantity;
+    }
+
+    /**
+     * Elimina una factura (rectificativa u original), devolviéndola antes a un estado editable si hace falta.
      */
     private function deleteRefund(FacturaCliente $refund): void
     {
