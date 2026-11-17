@@ -52,6 +52,31 @@ class WidgetSelectTest extends TestCase
         $this->assertSame($firstList[1], $secondList[1]);
     }
 
+    public function testZeroTitleIsRenderedInsteadOfValue(): void
+    {
+        $widget = new WidgetSelectForTest($this->widgetData());
+        $widget->setValuesFromArray([
+            ['value' => 57, 'title' => '0', 'group' => 'Size'],
+            ['value' => 58, 'title' => 'L', 'group' => 'Size'],
+            ['value' => 59, 'title' => '', 'group' => 'Size'],
+        ], false, true, 'value', 'title', 'group');
+
+        $selected = $widget->renderInput(57);
+        $other = $widget->renderInput(58);
+
+        $this->assertStringContainsString('<option value="57" selected>0</option>', $selected);
+        $this->assertStringContainsString('<option value="57">0</option>', $other);
+        $this->assertStringContainsString('<option value="59">59</option>', $other);
+    }
+
+    public function testZeroTitleIsRenderedInMultipleSelectCell(): void
+    {
+        $widget = new WidgetSelectForTest($this->widgetData(['multiple' => 'true']));
+        $widget->setValuesFromArrayKeys([1 => '0', 2 => 'L']);
+
+        $this->assertSame('0, L', $widget->renderShow('1,2'));
+    }
+
     public function testParentSelectDoesNotShareItsOptions(): void
     {
         $widget = new WidgetSelectForTest($this->widgetData([
@@ -124,6 +149,12 @@ class WidgetSelectForTest extends WidgetSelect
     {
         $this->setCustomValue($value);
         return $this->inputHtml();
+    }
+
+    public function renderShow($value): string
+    {
+        $this->setCustomValue($value);
+        return $this->show();
     }
 }
 
