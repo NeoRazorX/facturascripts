@@ -20,22 +20,33 @@
 namespace FacturaScripts\Test\Core\Lib\API;
 
 use FacturaScripts\Core\Lib\API\APIModel;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\ApiKey;
 use FacturaScripts\Core\Model\Base\ModelClass as BaseModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait as BaseModelTrait;
 use FacturaScripts\Core\Model\Divisa;
+use FacturaScripts\Core\Model\PedidoProveedor;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
 
 final class APIModelTest extends TestCase
 {
+    use DefaultSettingsTrait;
     use LogErrorsTrait;
+    use RandomDataTrait;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::setDefaultSettings();
+    }
 
     public function testUserHidesSensitiveFieldsOnGet(): void
     {
@@ -197,6 +208,99 @@ final class APIModelTest extends TestCase
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'apikey-not-rejected');
         $this->assertStringContainsString('fields not allowed: apikey', $body['error'] ?? '');
         $this->assertFalse((new ApiKey())->loadWhereEq('apikey', 'attacker-chosen-key'), 'apikey-created');
+    }
+
+    public function testPutCastsNumericFields(): void
+    {
+        // creamos un pedido de proveedor con una línea
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save(), 'can-not-save-supplier');
+
+        $doc = new PedidoProveedor();
+        $doc->setSubject($supplier);
+        $this->assertTrue($doc->save(), 'can-not-create-order');
+
+        $line = $doc->getNewLine();
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save(), 'can-not-save-line');
+
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-order');
+        $total = $doc->total;
+
+        // un importe vacío o no numérico no debe llegar como cadena a la suma de los totales
+        foreach (['', 'abc'] as $value) {
+            $response = new Response();
+            $body = $this->callApi('PedidoProveedor', 'PUT', [(string)$doc->idpedido], [
+                'observaciones' => 'test-' . $value,
+                'totalsuplidos' => $value,
+            ], [], $response);
+            $this->assertEquals(Response::HTTP_OK, $response->getHttpCode(), 'order-not-updated-' . $value);
+            $this->assertNull($body['data']['totalsuplidos'], 'totalsuplidos-not-null-' . $value);
+
+            $this->assertTrue($doc->reload());
+            $this->assertSame('test-' . $value, $doc->observaciones);
+            $this->assertEquals($total, $doc->total);
+        }
+
+        // un importe numérico se convierte a float y un entero, a int
+        $response = new Response();
+        $body = $this->callApi('PedidoProveedor', 'PUT', [(string)$doc->idpedido], [
+            'dtopor1' => '0',
+            'numdocs' => '3',
+        ], [], $response);
+        $this->assertEquals(Response::HTTP_OK, $response->getHttpCode(), 'order-not-updated-numeric');
+        $this->assertSame(3, $body['data']['numdocs']);
+        $this->assertTrue($doc->reload());
+        $this->assertSame(0.0, $doc->dtopor1);
+        $this->assertSame(3, $doc->numdocs);
+
+        // la cadena 'null' sigue asignando null
+        $response = new Response();
+        $this->callApi('PedidoProveedor', 'PUT', [(string)$doc->idpedido], ['numdocs' => 'null'], [], $response);
+        $this->assertEquals(Response::HTTP_OK, $response->getHttpCode(), 'order-not-updated-null');
+        $this->assertTrue($doc->reload());
+        $this->assertNull($doc->numdocs);
+
+        // eliminamos
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($supplier->getDefaultAddress()->delete());
+        $this->assertTrue($supplier->delete());
+    }
+
+    public function testPostCastsNumericFields(): void
+    {
+        $code = 'T' . mt_rand(10, 99);
+        $divisa = new Divisa();
+        if ($divisa->load($code)) {
+            $this->assertTrue($divisa->delete());
+        }
+
+        // tasaconv no admite nulos: un valor no numérico pasa a 0.0 y el modelo lo rechaza
+        $response = new Response();
+        $this->callApi('Divisa', 'POST', [], [
+            'coddivisa' => $code,
+            'descripcion' => 'test-apimodel',
+            'tasaconv' => 'abc',
+        ], [], $response);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'bad-rate-not-rejected');
+        $this->assertFalse($divisa->load($code), 'currency-created-with-bad-rate');
+
+        // tasaconvcompra admite nulos: un valor vacío pasa a null
+        $response = new Response();
+        $body = $this->callApi('Divisa', 'POST', [], [
+            'coddivisa' => $code,
+            'descripcion' => 'test-apimodel',
+            'tasaconv' => '1.5',
+            'tasaconvcompra' => '',
+        ], [], $response);
+        $this->assertEquals(Response::HTTP_OK, $response->getHttpCode(), 'currency-not-created');
+        $this->assertSame(1.5, $body['data']['tasaconv']);
+        $this->assertNull($body['data']['tasaconvcompra']);
+
+        $this->assertTrue($divisa->load($code));
+        $this->assertSame(1.5, $divisa->tasaconv);
+        $this->assertTrue($divisa->delete());
     }
 
     public function testListRejectsInjectedOperation(): void
