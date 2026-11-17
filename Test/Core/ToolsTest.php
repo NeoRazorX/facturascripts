@@ -475,6 +475,24 @@ final class ToolsTest extends TestCase
         $this->assertEquals(0.0, Tools::round(null));
         $this->assertEquals(0.0, Tools::round(0.0));
 
+        // sumas que caen en medio céntimo: en coma flotante quedan justo por debajo (11,774999999999999) y PHP 8.4
+        // ya no lo corrige en round(); el resultado tiene que ser el mismo con cualquier versión de PHP
+        $this->assertSame(11.78, Tools::round(3.925 + 7.85));
+        $this->assertSame(3.6, Tools::round(0.70244 + 2.89256));
+        $this->assertSame(-11.78, Tools::round(-3.925 - 7.85));
+        $this->assertSame(0.29, Tools::round(0.285));
+        $this->assertSame(1.01, Tools::round(1.005));
+        $this->assertSame(INF, Tools::round(INF));
+        $this->assertTrue(is_nan(Tools::round(NAN)));
+
+        // con un locale de coma decimal el resultado es el mismo (si el sistema tiene alguno instalado)
+        $locale = setlocale(LC_NUMERIC, '0');
+        if (false !== setlocale(LC_NUMERIC, 'es_ES.UTF-8', 'es_ES', 'de_DE.UTF-8', 'fr_FR.UTF-8')) {
+            $this->assertSame(11.78, Tools::round(3.925 + 7.85));
+            $this->assertSame(1234.57, Tools::round(1234.5678));
+        }
+        setlocale(LC_NUMERIC, $locale);
+
         // probamos con 0 decimales
         Tools::settingsSet('default', 'decimals', 0);
         $this->assertEquals(1.0, Tools::round(1.234));

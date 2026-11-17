@@ -544,6 +544,11 @@ class Tools
     /**
      * Redondea un número utilizando el número de decimales configurado en el sistema.
      *
+     * Primero lo redondea a 15 cifras significativas (la precisión de un float), como hacía round() hasta PHP 8.3:
+     * desde PHP 8.4, round() ya no corrige el error de la coma flotante y una suma que vale 11,775
+     * (11,774999999999999) se redondeaba a 11,77 en lugar de 11,78. Así el resultado es el mismo en cualquier versión.
+     * El formato %h no depende del locale (%g escribiría «11,775» con LC_NUMERIC en español y se leería como 11).
+     *
      * @param float|null $num El número que se debe redondear. Si es null, se devuelve 0.0.
      *
      * @return float El número redondeado con los decimales configurados.
@@ -554,7 +559,11 @@ class Tools
             return 0.0;
         }
 
-        return round($num, self::decimals());
+        if (false === is_finite($num)) {
+            return $num;
+        }
+
+        return round((float)sprintf('%.15h', $num), self::decimals());
     }
 
     /**
