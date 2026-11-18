@@ -69,6 +69,11 @@ abstract class ModelCore
     abstract public function hasExtension($extension): bool;
 
     /**
+     * Descarta la lista de campos del modelo (memoria y caché).
+     */
+    abstract protected function clearModelFields(): void;
+
+    /**
      * Loads table fields if is necessary.
      *
      * @param DataBase $dataBase
@@ -142,10 +147,15 @@ abstract class ModelCore
 
         if (DbUpdater::isTableChecked(static::tableName())) {
             // none
-        } elseif (self::$dataBase->tableExists(static::tableName())) {
-            DbUpdater::updateTable(static::tableName());
-        } elseif (false === DbUpdater::createTable(static::tableName(), [], $this->install())) {
-            Tools::log()->critical('Failed to create table ' . static::tableName());
+        } else {
+            if (self::$dataBase->tableExists(static::tableName())) {
+                DbUpdater::updateTable(static::tableName());
+            } elseif (false === DbUpdater::createTable(static::tableName(), [], $this->install())) {
+                Tools::log()->critical('Failed to create table ' . static::tableName());
+            }
+
+            // la estructura de la tabla puede haber cambiado, descartamos los campos cacheados
+            $this->clearModelFields();
         }
 
         $this->loadModelFields(self::$dataBase, static::tableName());
