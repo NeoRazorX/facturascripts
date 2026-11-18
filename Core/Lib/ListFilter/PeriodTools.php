@@ -54,6 +54,34 @@ class PeriodTools
     public static function applyPeriod(string $period, string &$startDate, string &$endDate)
     {
         switch ($period) {
+            case 'next-year':
+                static::applyFormatToPeriod($startDate, $endDate, 'first day of January next year', 'last day of December next year');
+                break;
+
+            case 'until-end-of-year':
+                static::applyFormatToPeriod($startDate, $endDate, 'today', 'last day of December this year');
+                break;
+
+            case 'next-month':
+                static::applyFormatToPeriod($startDate, $endDate, 'first day of next month', 'last day of next month');
+                break;
+
+            case 'until-end-of-month':
+                static::applyFormatToPeriod($startDate, $endDate, 'today', 'last day of this month');
+                break;
+
+            case 'next-week':
+                static::applyFormatToPeriod($startDate, $endDate, 'mon next week', 'sun next week');
+                break;
+
+            case 'until-end-of-week':
+                static::applyFormatToPeriod($startDate, $endDate, 'today', 'sun this week');
+                break;
+
+            case 'tomorrow':
+                static::applyFormatToPeriod($startDate, $endDate, 'tomorrow', 'tomorrow');
+                break;
+
             case 'today':
                 static::applyFormatToPeriod($startDate, $endDate, 'today', 'today');
                 break;
@@ -160,6 +188,14 @@ class PeriodTools
     protected static function getPeriods(): array
     {
         return [
+            'next-year',
+            'until-end-of-year',
+            'next-month',
+            'until-end-of-month',
+            'next-week',
+            'until-end-of-week',
+            'tomorrow',
+            '',
             'today',
             'yesterday',
             'this-week',
