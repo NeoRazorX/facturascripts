@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
@@ -84,19 +85,21 @@ class CostPriceTools
 
         // we collect the latest delivery notes for this product
         foreach (LineaAlbaranProveedor::all($where, $order, 0, (int)$variant->stockfis) as $line) {
+            $doc = $line->getDocument();
             $rows[] = [
-                'time' => strtotime($line->getDocument()->fecha),
+                'time' => strtotime($doc->fecha),
                 'quantity' => $line->cantidad,
-                'cost' => $line->pvptotal
+                'cost' => static::toDefaultCurrency($line->pvptotal, $doc->coddivisa, $doc->tasaconv)
             ];
         }
 
         // we collect the latest invoices for this product
         foreach (LineaFacturaProveedor::all($where, $order, 0, (int)$variant->stockfis) as $line) {
+            $doc = $line->getDocument();
             $rows[] = [
-                'time' => strtotime($line->getDocument()->fecha),
+                'time' => strtotime($doc->fecha),
                 'quantity' => $line->cantidad,
-                'cost' => $line->pvptotal
+                'cost' => static::toDefaultCurrency($line->pvptotal, $doc->coddivisa, $doc->tasaconv)
             ];
         }
 
@@ -138,7 +141,7 @@ class CostPriceTools
             Where::gt('neto', 0),
         ];
         foreach (ProductoProveedor::all($where, ['actualizado' => 'DESC'], 0, 0) as $prod) {
-            $prices[] = $prod->neto;
+            $prices[] = static::supplierNet($prod);
         }
 
         $newCost = empty($prices) ? 0.0 : array_sum($prices) / count($prices);
@@ -158,7 +161,7 @@ class CostPriceTools
             Where::gt('neto', 0),
         ];
         foreach (ProductoProveedor::all($where, ['actualizado' => 'DESC'], 0, 1) as $prod) {
-            $variant->coste = round($prod->neto, Producto::ROUND_DECIMALS);
+            $variant->coste = round(static::supplierNet($prod), Producto::ROUND_DECIMALS);
             $variant->save();
             break;
         }
@@ -175,10 +178,58 @@ class CostPriceTools
             Where::eq('referencia', $variant->referencia),
             Where::gt('neto', 0),
         ];
-        foreach (ProductoProveedor::all($where, ['precio' => 'DESC'], 0, 1) as $prod) {
-            $variant->coste = round($prod->neto, Producto::ROUND_DECIMALS);
-            $variant->save();
-            break;
+        // los precios pueden estar en divisas distintas, así que comparamos ya convertidos
+        $highPrice = null;
+        $highNet = 0.0;
+        foreach (ProductoProveedor::all($where, [], 0, 0) as $prod) {
+            $price = static::toDefaultCurrency($prod->precio, $prod->coddivisa);
+            if (null === $highPrice || $price > $highPrice) {
+                $highPrice = $price;
+                $highNet = static::supplierNet($prod);
+            }
         }
+
+        if (null !== $highPrice) {
+            $variant->coste = round($highNet, Producto::ROUND_DECIMALS);
+            $variant->save();
+        }
+    }
+
+    /**
+     * Devuelve el precio neto del proveedor convertido a la divisa por defecto.
+     *
+     * @param ProductoProveedor $prod
+     *
+     * @return float
+     */
+    protected static function supplierNet(ProductoProveedor $prod): float
+    {
+        return static::toDefaultCurrency($prod->neto, $prod->coddivisa);
+    }
+
+    /**
+     * Convierte un importe de compra a la divisa por defecto. Si no se indica la tasa
+     * de conversión, se usa la tasa de compra actual de la divisa.
+     *
+     * @param float $amount
+     * @param string|null $coddivisa
+     * @param float|null $tasaconv
+     *
+     * @return float
+     */
+    protected static function toDefaultCurrency(float $amount, ?string $coddivisa, ?float $tasaconv = null): float
+    {
+        $defaultCurrency = Tools::settings('default', 'coddivisa');
+        if (empty($coddivisa) || $coddivisa === $defaultCurrency) {
+            return $amount;
+        }
+
+        $rate = empty($tasaconv) ? Divisas::get($coddivisa)->tasaconvcompra : $tasaconv;
+        $defaultRate = Divisas::get($defaultCurrency)->tasaconvcompra;
+        if (empty($rate) || empty($defaultRate)) {
+            return $amount;
+        }
+
+        return $amount / $rate * $defaultRate;
     }
 }
