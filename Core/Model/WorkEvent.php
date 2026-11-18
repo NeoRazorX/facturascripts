@@ -31,6 +31,9 @@ class WorkEvent extends ModelClass
     /** @var string Fecha y hora de creación del evento de trabajo. */
     public $creation_date;
 
+    /** @var bool Indica si el evento solo se debe procesar desde el cron. */
+    public $cron;
+
     /** @var bool Indica si el evento ha terminado de procesarse. */
     public $done;
 
@@ -65,6 +68,7 @@ class WorkEvent extends ModelClass
     {
         parent::clear();
         $this->creation_date = Tools::dateTime();
+        $this->cron = false;
         $this->done = false;
         $this->nick = Session::user()->nick;
         $this->workers = 0;
