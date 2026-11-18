@@ -53,34 +53,32 @@ class Deploy implements ControllerInterface
                 $this->deployAction();
                 break;
         }
-
-        echo '<a href="' . Tools::config('route') . '/">Reload</a>';
     }
 
     protected function deployAction(): void
     {
         // si ya existe la carpeta Dinamic, no hacemos deploy
         if (is_dir(Tools::folder('Dinamic'))) {
-            echo '<p>Deploy not needed. Dinamic folder already exists. Delete it if you want to deploy again.</p>';
+            echo $this->render('Deploy not needed. Dinamic folder already exists. Delete it if you want to deploy again.', 'warning');
             return;
         }
 
         Plugins::deploy();
 
-        echo '<p>Deploy finished.</p>';
+        echo $this->render('Deploy finished.');
     }
 
     protected function disablePluginsAction(): void
     {
         // comprobamos que no se ha desactivado
         if (Tools::config('disable_deploy_actions', false)) {
-            echo '<p>Deploy actions already disabled.</p>';
+            echo $this->render('Deploy actions already disabled.', 'warning');
             return;
         }
 
         // comprobamos el token
         if (false === CrashReport::validateToken($_GET['token'] ?? '')) {
-            echo '<p>Invalid token.</p>';
+            echo $this->render('Invalid token.', 'danger');
             return;
         }
 
@@ -89,25 +87,54 @@ class Deploy implements ControllerInterface
             Plugins::disable($name, false);
         }
 
-        echo '<p>Plugins disabled.</p>';
+        echo $this->render('Plugins disabled.');
     }
 
     protected function rebuildAction(): void
     {
         // comprobamos que no se ha desactivado
         if (Tools::config('disable_deploy_actions', false)) {
-            echo '<p>Deploy actions already disabled.</p>';
+            echo $this->render('Deploy actions already disabled.', 'warning');
             return;
         }
 
         // comprobamos el token
         if (false === CrashReport::validateToken($_GET['token'] ?? '')) {
-            echo '<p>Invalid token.</p>';
+            echo $this->render('Invalid token.', 'danger');
             return;
         }
 
         Plugins::deploy();
 
-        echo '<p>Rebuild finished.</p>';
+        echo $this->render('Rebuild finished.');
+    }
+
+    private function render($message, $type = 'success'): string
+    {
+        return '
+        <!doctype html>
+        <html lang="es">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>' . $message . '</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+          </head>
+          <body class="min-vh-100 d-flex align-items-center justify-content-center bg-secondary-subtle">
+            <div class="container">
+              <div class="row justify-content-center">
+                <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+                  <div class="card text-center text-bg-' . $type . '">
+                    <div class="card-body">
+                      <p class="card-text">' . $message . '</p>
+                      <a href="' . Tools::config('route') . '/" class="btn btn-secondary">Reload</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </body>
+        </html>
+        ';
     }
 }
