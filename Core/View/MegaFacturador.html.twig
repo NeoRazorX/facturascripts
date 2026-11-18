@@ -1,0 +1,185 @@
+{#
+ # Megafacturador: listado de clientes con albaranes pendientes de facturar y
+ # formulario para generar una única factura con todos los albaranes del
+ # cliente seleccionado.
+ #
+ # @author Esteban Sánchez Martínez <esteban@factura.city>
+ #}
+{% extends "Master/MenuBghTemplate.html.twig" %}
+
+{% block bodyHeaderOptions %}
+    {{ parent() }}
+    <div class="container pt-4 pb-4">
+        <div class="row">
+            <div class="col-auto">
+                {% set pageData = fsc.getPageData() %}
+                <h1 class="h3">
+                    <i class="{{ pageData['icon'] }} me-2"></i> {{ trans('mega-invoicer') }}
+                </h1>
+            </div>
+            <div class="col">
+                <a class="btn btn-sm btn-outline-secondary" href="ListAlbaranCliente" title="{{ trans('delivery-notes') }}">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" title="{{ trans('refresh') }}">
+                    <i class="fa-solid fa-redo"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <br/>
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="container" style="margin-top: -50px;">
+        {% if fsc.lastInvoice %}
+            <div class="alert alert-success">
+                <i class="fa-solid fa-circle-check me-1"></i>
+                {{ trans('mega-invoice-created', {'%code%': fsc.lastInvoice.codigo}) }}
+                <a href="{{ fsc.lastInvoice.url() }}" class="alert-link ms-2">
+                    {{ trans('open') }} <i class="fa-solid fa-up-right-from-square"></i>
+                </a>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-lg-7">
+                {{ _self.groupsCard(fsc) }}
+            </div>
+            <div class="col-lg-5">
+                {{ _self.invoiceCard(fsc) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% macro groupsCard(fsc) %}
+    <div class="card shadow mb-3">
+        <div class="card-body">
+            <p class="mb-2">{{ trans('mega-invoicer-p') }}</p>
+            <input type="text" id="filterCustomers" class="form-control" onkeyup="filterCustomers()"
+                   placeholder="{{ trans('search') }}" autocomplete="off"/>
+        </div>
+        {% if fsc.groups is empty %}
+            <div class="card-body pt-0">
+                <div class="alert alert-info mb-0">{{ trans('no-pending-delivery-notes') }}</div>
+            </div>
+        {% else %}
+            <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                <table class="table table-hover mb-0">
+                    <thead>
+                    <tr>
+                        <th>{{ trans('customer') }}</th>
+                        {% if fsc.hasSeveralCompanies() %}
+                            <th>{{ trans('company') }}</th>
+                        {% endif %}
+                        <th>{{ trans('serie') }}</th>
+                        <th>{{ trans('warehouse') }}</th>
+                        <th class="text-end">{{ trans('delivery-notes') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for group in fsc.groups %}
+                        <tr class="mega-group" style="cursor: pointer;" onclick="selectGroup(this)"
+                            data-text="{{ (group.codcliente ~ ' ' ~ group.nombre) | lower }}"
+                            data-nombre="{{ group.nombre }}"
+                            data-albaranes="{{ group.albaranes }}"
+                            data-total="{{ money(group.total, group.coddivisa) }}"
+                            {% for field in ['codcliente', 'idempresa', 'codserie', 'coddivisa', 'codalmacen', 'dtopor1', 'dtopor2'] %}
+                                data-{{ field }}="{{ attribute(group, field) }}"
+                            {% endfor %}>
+                            <td>
+                                {{ group.nombre }}
+                                <a href="EditCliente?code={{ group.codcliente | url_encode }}" target="_blank"
+                                   rel="noopener" class="ms-2" title="{{ trans('open') }}"
+                                   onclick="event.stopPropagation();">
+                                    <i class="fa-solid fa-up-right-from-square"></i>
+                                </a>
+                            </td>
+                            {% if fsc.hasSeveralCompanies() %}
+                                <td>{{ group.idempresa }}</td>
+                            {% endif %}
+                            <td>{{ group.codserie }}</td>
+                            <td>{{ group.codalmacen }}</td>
+                            <td class="text-end">
+                                <span class="badge bg-secondary">{{ group.albaranes }}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro invoiceCard(fsc) %}
+    <div class="card shadow mb-3" id="invoiceCard" style="display: none;">
+        <form action="{{ fsc.url() }}" method="post">
+            {{ formToken() }}
+            <input type="hidden" name="action" value="invoice"/>
+            {% for field in ['codcliente', 'idempresa', 'codserie', 'coddivisa', 'codalmacen', 'dtopor1', 'dtopor2'] %}
+                <input type="hidden" name="{{ field }}" id="invoice-{{ field }}" value=""/>
+            {% endfor %}
+            <div class="card-body">
+                <h2 class="h5 mb-3" id="invoiceCustomer"></h2>
+                <div class="row mb-3">
+                    <div class="col">
+                        {{ trans('delivery-notes') }}
+                        <div class="fs-4" id="invoiceAlbaranes"></div>
+                    </div>
+                    <div class="col text-end">
+                        {{ trans('total') }}
+                        <div class="fs-4 fw-bold" id="invoiceTotal"></div>
+                    </div>
+                </div>
+                <div class="mb-0">
+                    {{ trans('date') }}
+                    <input type="date" name="fecha" class="form-control" value="{{ 'now' | date('Y-m-d') }}" required/>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                {% if fsc.permissions.allowUpdate %}
+                    <button type="submit" class="btn btn-primary btn-spin-action">
+                        <i class="fa-solid fa-file-invoice-dollar me-1"></i> {{ trans('to-invoice') }}
+                    </button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    <div class="card shadow mb-3" id="invoiceHelp">
+        <div class="card-body text-muted">
+            <i class="fa-solid fa-hand-pointer me-1"></i> {{ trans('mega-invoicer-select-customer') }}
+        </div>
+    </div>
+    <script>
+        const MEGA_GROUP_FIELDS = ['codcliente', 'idempresa', 'codserie', 'coddivisa', 'codalmacen', 'dtopor1', 'dtopor2'];
+
+        function selectGroup(row) {
+            // marcamos la fila seleccionada
+            document.querySelectorAll('.mega-group').forEach(function (item) {
+                item.classList.remove('table-primary');
+            });
+            row.classList.add('table-primary');
+
+            // rellenamos el formulario con los datos del grupo, sin pedir nada al servidor
+            MEGA_GROUP_FIELDS.forEach(function (field) {
+                document.getElementById('invoice-' + field).value = row.dataset[field];
+            });
+            document.getElementById('invoiceCustomer').textContent = row.dataset.nombre;
+            document.getElementById('invoiceAlbaranes').textContent = row.dataset.albaranes;
+            document.getElementById('invoiceTotal').textContent = row.dataset.total;
+
+            document.getElementById('invoiceHelp').style.display = 'none';
+            document.getElementById('invoiceCard').style.display = '';
+        }
+
+        function filterCustomers() {
+            const text = document.getElementById('filterCustomers').value.toLowerCase();
+            document.querySelectorAll('.mega-group').forEach(function (row) {
+                row.style.display = row.dataset.text.includes(text) ? '' : 'none';
+            });
+        }
+    </script>
+{% endmacro %}

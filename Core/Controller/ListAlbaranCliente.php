@@ -44,6 +44,27 @@ class ListAlbaranCliente extends ListBusinessDocument
     }
 
     /**
+     * Añade el botón Megafacturador, que abre el asistente para facturar de
+     * golpe los albaranes pendientes de cada cliente.
+     *
+     * @param string $viewName
+     */
+    protected function addButtonMegaFacturador(string $viewName): void
+    {
+        if (false === $this->permissions->allowUpdate) {
+            return;
+        }
+
+        $this->tab($viewName)->addButton([
+            'action' => 'MegaFacturador',
+            'color' => 'warning',
+            'icon' => 'fa-solid fa-file-invoice-dollar',
+            'label' => 'mega-invoicer',
+            'type' => 'link',
+        ]);
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
@@ -67,6 +88,7 @@ class ListAlbaranCliente extends ListBusinessDocument
         ]);
         $this->addButtonApproveDocument($viewName, 'doc-actions');
         $this->addButtonGroupDocument($viewName, 'doc-actions');
+        $this->addButtonMegaFacturador($viewName);
 
         $paises = Paises::codeModel();
         $this->addFilterSelect($viewName, 'country', 'country', 'codpais', $paises);
