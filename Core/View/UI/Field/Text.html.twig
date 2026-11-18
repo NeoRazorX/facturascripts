@@ -1,0 +1,11 @@
+{% extends 'UI/Field/_wrapper.html.twig' %}
+
+{% block input %}
+    <input type="text" name="{{ c.inputName() }}" id="{{ c.inputId() }}" value="{{ c.valueAttr() }}"
+           class="{{ c.inputCssClass('form-control') }}"
+           {%- if c.getMaxLength() > 0 %} maxlength="{{ c.getMaxLength() }}"{% endif %}
+           {%- if c.getPlaceholder() %} placeholder="{{ c.getPlaceholder() }}"{% endif %}
+           {%- if c.isRequired() %} required{% endif %}
+           {%- if c.isReadOnly() %} readonly{% endif %}
+           {%- if c.getTabIndex() >= 0 %} tabindex="{{ c.getTabIndex() }}"{% endif %}/>
+{% endblock %}
