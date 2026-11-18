@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\AlbaranProveedor;
 use FacturaScripts\Core\Model\Divisa;
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
@@ -232,6 +233,11 @@ final class ProductoProveedorTest extends TestCase
         $doc = new AlbaranProveedor();
         $doc->setSubject($subject);
         $doc->fecha = $futureDate;
+
+        // al guardar se crea el ejercicio de esa fecha si no existe: lo anotamos para eliminarlo al terminar
+        $futureExercise = new Ejercicio();
+        $futureExercise->idempresa = $doc->idempresa;
+        $exerciseExisted = $futureExercise->loadFromDate($futureDate, false, false);
         $this->assertTrue($doc->save());
 
         // añadimos el producto con un precio alto
@@ -296,6 +302,13 @@ final class ProductoProveedorTest extends TestCase
         $this->assertTrue($subject->delete());
         $this->assertTrue($product->delete());
         $this->assertTrue(ProductoProveedor::deleteWhere([]));
+
+        // eliminamos el ejercicio futuro si lo ha creado este test,
+        // para no dejar ocupado el año siguiente a otros tests (EjercicioTest)
+        if (false === $exerciseExisted) {
+            $this->assertTrue($futureExercise->loadFromDate($futureDate, false, false));
+            $this->assertTrue($futureExercise->delete());
+        }
     }
 
     /**

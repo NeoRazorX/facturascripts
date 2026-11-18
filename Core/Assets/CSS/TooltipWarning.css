@@ -3,5 +3,12 @@
     --bs-tooltip-color: #000;
     --bs-tooltip-max-width: 320px;
     --bs-tooltip-opacity: 1;
+    /* por debajo de los modales y su fondo (1050) */
+    --bs-tooltip-zindex: 1040;
     pointer-events: none;
+}
+
+.tooltip-warning.tooltip-dismissible {
+    cursor: pointer;
+    pointer-events: auto;
 }

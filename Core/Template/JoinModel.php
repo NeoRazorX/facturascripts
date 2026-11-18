@@ -582,7 +582,7 @@ abstract class JoinModel
      * Establece el modelo master, un ModelClass de Core\Template sobre el que se ejecutan
      * delete(), exists() y url(). Se llama desde el constructor de la subclase.
      */
-    protected function setMasterModel($model): void
+    protected function setMasterModel(ModelClass $model): void
     {
         $this->masterModel = $model;
     }

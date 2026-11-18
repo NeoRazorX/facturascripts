@@ -333,14 +333,12 @@ class Proveedor extends ModelClass
         return $subAccount;
     }
 
-    protected function saveInsert(): bool
+    /**
+     * Crea el contacto por defecto, si no tiene uno asignado.
+     */
+    protected function onInsert(): void
     {
-        if (empty($this->codproveedor)) {
-            $this->codproveedor = (string)$this->newCode();
-        }
-
-        $return = parent::saveInsert();
-        if ($return && empty($this->idcontacto)) {
+        if (empty($this->idcontacto)) {
             // creates new contact
             $contact = new DinContacto();
             $contact->cifnif = $this->cifnif;
@@ -348,7 +346,6 @@ class Proveedor extends ModelClass
             $contact->descripcion = $this->nombre;
             $contact->email = $this->email;
             $contact->empresa = $this->razonsocial;
-            $contact->fax = $this->fax;
             $contact->nombre = $this->nombre;
             $contact->personafisica = $this->personafisica;
             $contact->telefono1 = $this->telefono1;
@@ -356,10 +353,59 @@ class Proveedor extends ModelClass
             $contact->tipoidfiscal = $this->tipoidfiscal;
             if ($contact->save()) {
                 $this->idcontacto = $contact->idcontacto;
-                return $this->save();
+                $this->save();
             }
         }
 
-        return $return;
+        parent::onInsert();
+    }
+
+    /**
+     * Traslada al contacto por defecto (idcontacto) los cambios de email y teléfonos,
+     * porque SendMail usa el email de ese contacto antes que el del proveedor.
+     *
+     * Solo se copian los campos modificados en los que el contacto conservaba el valor
+     * anterior, para respetar los datos que se hayan cambiado a propósito en el contacto.
+     *
+     * El sentido contrario (del contacto al proveedor) está en EditContacto::updateRelations()
+     * y solo se ejecuta cuando el usuario edita el contacto desde esa pantalla. No hay
+     * bucle: guardar el contacto desde aquí no guarda el proveedor, y cuando EditContacto
+     * guarda el proveedor, el contacto ya tiene el valor nuevo y no se vuelve a escribir.
+     */
+    protected function onUpdate(): void
+    {
+        $contact = new DinContacto();
+        $update = false;
+        foreach (['email', 'telefono1', 'telefono2'] as $field) {
+            $oldValue = (string)$this->getOriginal($field);
+            if (false === $this->isDirty($field) || (string)$this->{$field} === $oldValue) {
+                continue;
+            }
+
+            // cargamos el contacto solamente si hay cambios
+            if (empty($contact->idcontacto) && false === $contact->load($this->idcontacto)) {
+                break;
+            }
+
+            if ((string)$contact->{$field} === $oldValue) {
+                $contact->{$field} = $this->{$field};
+                $update = true;
+            }
+        }
+
+        if ($update) {
+            $contact->save();
+        }
+
+        parent::onUpdate();
+    }
+
+    protected function saveInsert(): bool
+    {
+        if (empty($this->codproveedor)) {
+            $this->codproveedor = (string)$this->newCode();
+        }
+
+        return parent::saveInsert();
     }
 }

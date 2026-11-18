@@ -145,9 +145,7 @@ class APIModel extends APIResourceClass
             return false;
         }
 
-        foreach ($values as $key => $value) {
-            $this->model->{$key} = $value === 'null' ? null : $value;
-        }
+        $this->setModelValues($values);
 
         return $this->saveResource();
     }
@@ -174,9 +172,7 @@ class APIModel extends APIResourceClass
             return false;
         }
 
-        foreach ($values as $key => $value) {
-            $this->model->{$key} = $value === 'null' ? null : $value;
-        }
+        $this->setModelValues($values);
 
         return $this->saveResource();
     }
@@ -415,6 +411,43 @@ class APIModel extends APIResourceClass
 
         $this->setError($message, $this->filterHidden($this->model->toArray(true), $hidden));
         return false;
+    }
+
+    /**
+     * Asigna al modelo los valores recibidos. Los de los campos numéricos se convierten
+     * al tipo del campo, con las mismas reglas que ModelClass::loadFromData(), para que
+     * un importe vacío o no numérico no llegue como cadena a los cálculos del modelo.
+     * El resto de campos se asignan tal cual.
+     *
+     * @param array $values
+     */
+    private function setModelValues(array $values): void
+    {
+        $fields = $this->model->getModelFields();
+        foreach ($values as $key => $value) {
+            if ($value === 'null') {
+                $this->model->{$key} = null;
+                continue;
+            }
+
+            // comprobamos si el tipo lleva longitud u otros parámetros entre paréntesis
+            $type = $fields[$key]['type'] ?? '';
+            if (str_contains($type, '(')) {
+                $type = substr($type, 0, strpos($type, '('));
+            }
+
+            $isInteger = in_array($type, ['integer', 'int'], true);
+            $isFloat = in_array($type, ['decimal', 'double', 'double precision', 'float'], true);
+            if (false === $isInteger && false === $isFloat) {
+                $this->model->{$key} = $value;
+            } elseif (is_numeric($value)) {
+                $this->model->{$key} = $isInteger ? (int)$value : (float)$value;
+            } elseif ($fields[$key]['is_nullable'] !== 'NO' || ($isInteger && $key === $this->model->primaryColumn())) {
+                $this->model->{$key} = null;
+            } else {
+                $this->model->{$key} = $isInteger ? 0 : 0.0;
+            }
+        }
     }
 
     private function filterOrder(array $order, array $hidden, array &$badFields = []): array

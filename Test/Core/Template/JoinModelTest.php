@@ -20,6 +20,8 @@
 namespace FacturaScripts\Test\Core\Template;
 
 use FacturaScripts\Core\Model\Asiento;
+use FacturaScripts\Core\Model\Base\ModelClass as BaseModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait as BaseModelTrait;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Partida;
 use FacturaScripts\Core\Template\JoinModel;
@@ -28,6 +30,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 final class JoinModelTest extends TestCase
 {
@@ -68,6 +71,35 @@ final class JoinModelTest extends TestCase
         // eliminamos
         $this->assertTrue($asiento1->delete(), 'asiento-cant-delete');
         $this->assertTrue($asiento2->delete(), 'asiento-cant-delete');
+    }
+
+    public function testMasterModelMustBeTemplateModel(): void
+    {
+        // un modelo de Core\Template se acepta como master
+        $join = $this->getJoinModelWithMaster(new Partida());
+        $this->assertInstanceOf(JoinModel::class, $join);
+
+        // un modelo antiguo de Core\Model\Base no tiene load(): se rechaza al construir el join
+        $legacy = new class extends BaseModelClass {
+            use BaseModelTrait;
+
+            public function __construct(array $data = [])
+            {
+            }
+
+            public static function primaryColumn(): string
+            {
+                return 'idpartida';
+            }
+
+            public static function tableName(): string
+            {
+                return 'partidas';
+            }
+        };
+
+        $this->expectException(TypeError::class);
+        $this->getJoinModelWithMaster($legacy);
     }
 
     protected function tearDown(): void
@@ -141,6 +173,32 @@ final class JoinModelTest extends TestCase
             protected function getTables(): array
             {
                 return ['asientos', 'partidas'];
+            }
+        };
+    }
+
+    private function getJoinModelWithMaster(object $master): JoinModel
+    {
+        return new class ($master) extends JoinModel {
+            public function __construct(object $master)
+            {
+                parent::__construct();
+                $this->setMasterModel($master);
+            }
+
+            protected function getFields(): array
+            {
+                return ['idpartida' => 'partidas.idpartida'];
+            }
+
+            protected function getSQLFrom(): string
+            {
+                return 'partidas';
+            }
+
+            protected function getTables(): array
+            {
+                return ['partidas'];
             }
         };
     }
