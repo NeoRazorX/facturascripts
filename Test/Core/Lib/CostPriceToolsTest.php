@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Lib;
 
+use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\CostPriceTools;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\ProductoProveedor;
@@ -67,7 +68,7 @@ final class CostPriceToolsTest extends TestCase
         Tools::settingsSet('default', 'costpricepolicy', 'last-price');
         CostPriceTools::update($variant);
 
-        $variant->loadFromCode($variant->idvariante);
+        $variant->reload();
         $this->assertEquals(20.0, (float)$variant->coste, 'last-price debe ignorar neto = 0 y devolver el último positivo');
     }
 
@@ -83,7 +84,7 @@ final class CostPriceToolsTest extends TestCase
         Tools::settingsSet('default', 'costpricepolicy', 'average-price');
         CostPriceTools::update($variant);
 
-        $variant->loadFromCode($variant->idvariante);
+        $variant->reload();
         // media de [10, 20] excluyendo el 0; sin filtro sería (10+0+20)/3 = 10
         $this->assertEquals(15.0, (float)$variant->coste, 'average-price debe excluir filas con neto <= 0');
     }
@@ -102,7 +103,7 @@ final class CostPriceToolsTest extends TestCase
         Tools::settingsSet('default', 'costpricepolicy', 'high-price');
         CostPriceTools::update($variant);
 
-        $variant->loadFromCode($variant->idvariante);
+        $variant->reload();
         // sin filtro habría elegido la fila precio=50 (neto=0); con filtro, precio=30 (neto=30)
         $this->assertEquals(30.0, (float)$variant->coste, 'high-price debe ignorar filas con neto <= 0 aunque su precio sea mayor');
     }
@@ -120,8 +121,44 @@ final class CostPriceToolsTest extends TestCase
         Tools::settingsSet('default', 'costpricepolicy', 'last-price');
         CostPriceTools::update($variant);
 
-        $variant->loadFromCode($variant->idvariante);
+        $variant->reload();
         $this->assertEquals(7.5, (float)$variant->coste, 'sin filas con neto > 0 el coste anterior debe preservarse');
+    }
+
+    public function testLastPriceConvertsCurrency(): void
+    {
+        $product = $this->createProduct();
+        $variant = $product->getVariants()[0];
+
+        $rate = Divisas::get('USD')->tasaconvcompra;
+        $this->assertNotEmpty($rate, 'la divisa USD debe existir');
+
+        $this->createSupplierProduct($product, 113.0, '2024-01-01 00:00:00', 0.0, 'USD');
+
+        Tools::settingsSet('default', 'costpricepolicy', 'last-price');
+        CostPriceTools::update($variant);
+
+        $variant->reload();
+        $this->assertEquals(round(113.0 / $rate, Producto::ROUND_DECIMALS), (float)$variant->coste, 'last-price debe convertir el precio a la divisa por defecto');
+    }
+
+    public function testHighPriceComparesConvertedPrices(): void
+    {
+        $product = $this->createProduct();
+        $variant = $product->getVariants()[0];
+
+        $rate = Divisas::get('USD')->tasaconvcompra;
+        $this->assertGreaterThan(1, $rate, 'el test necesita que 1 EUR valga más de 1 USD');
+
+        // en USD la cifra es mayor que 100, pero convertida vale menos de 100 EUR
+        $this->createSupplierProduct($product, 100.0 * $rate - 1, '2024-01-01 00:00:00', 0.0, 'USD');
+        $this->createSupplierProduct($product, 100.0, '2024-01-01 00:00:00');
+
+        Tools::settingsSet('default', 'costpricepolicy', 'high-price');
+        CostPriceTools::update($variant);
+
+        $variant->reload();
+        $this->assertEquals(100.0, (float)$variant->coste, 'high-price debe comparar los precios ya convertidos');
     }
 
     private function createProduct(): Producto
@@ -137,7 +174,8 @@ final class CostPriceToolsTest extends TestCase
         Producto $product,
         float $precio,
         string $actualizado,
-        float $dtopor = 0.0
+        float $dtopor = 0.0,
+        ?string $coddivisa = null
     ): ProductoProveedor {
         // un proveedor distinto por fila para evitar el unique (codproveedor, refproveedor, referencia, coddivisa)
         $supplier = $this->getRandomSupplier();
@@ -151,6 +189,9 @@ final class CostPriceToolsTest extends TestCase
         $row->precio = $precio;
         $row->dtopor = $dtopor;
         $row->actualizado = $actualizado;
+        if ($coddivisa) {
+            $row->coddivisa = $coddivisa;
+        }
         $this->assertTrue($row->save());
         $this->supplierProductsToCleanup[] = $row;
 
