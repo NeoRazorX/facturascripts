@@ -26,10 +26,12 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Lib\Widget\RowStatus;
+use FacturaScripts\Dinamic\Model\PageOption;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -59,6 +61,9 @@ class ListView extends BaseView
 
     /** @var array */
     public $orderOptions = [];
+
+    /** @var PageOption[] Personalizaciones con nombre del usuario para esta vista. */
+    public $pageOptions = [];
 
     /** @var string */
     public $query = '';
@@ -258,6 +263,7 @@ class ListView extends BaseView
     public function loadPageOptions($user = false)
     {
         parent::loadPageOptions($user);
+        $this->loadNamedPageOptions(explode('-', $this->getViewName())[0], $user);
 
         // load saved filters
         $where = $this->getPageWhere($user);
@@ -371,6 +377,27 @@ class ListView extends BaseView
     {
         $route = Tools::config('route');
         AssetManager::addJs($route . '/Dinamic/Assets/JS/ListView.js');
+    }
+
+    /**
+     * Carga las personalizaciones con nombre del usuario para el desplegable del listado.
+     *
+     * @param string $viewName
+     * @param User|false $user
+     */
+    protected function loadNamedPageOptions(string $viewName, $user = false): void
+    {
+        if (is_bool($user)) {
+            $this->pageOptions = [];
+            return;
+        }
+
+        $where = [
+            Where::eq('name', $viewName),
+            Where::eq('nick', $user->nick),
+            Where::isNotNull('description'),
+        ];
+        $this->pageOptions = PageOption::all($where, ['description' => 'ASC']);
     }
 
     private function loadTotalAmounts(): void

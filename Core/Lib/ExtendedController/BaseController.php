@@ -133,6 +133,12 @@ abstract class BaseController extends Controller
             throw new Exception('$viewName must be equals to $view->name');
         }
 
+        // guardamos la personalización elegida en el desplegable del listado antes de cargarla
+        $pageOptionId = $this->request->input('loadpageoption', '');
+        if ($pageOptionId !== '' && $this->active === $viewName) {
+            $view->selectPageOption((int)$pageOptionId, $this->user);
+        }
+
         $view->loadPageOptions($this->user);
 
         $this->views[$viewName] = $view;
