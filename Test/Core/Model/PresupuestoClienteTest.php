@@ -86,6 +86,42 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
     }
 
+    /**
+     * Un almacén nulo o vacío no provoca TypeError y se usa el almacén por defecto.
+     */
+    public function testSetWarehouseEmptyUsesDefault(): void
+    {
+        $doc = new PresupuestoCliente();
+        $default = Tools::settings('default', 'codalmacen');
+
+        $this->assertTrue($doc->setWarehouse(null), 'presupuesto-warehouse-null');
+        $this->assertEquals($default, $doc->codalmacen, 'presupuesto-warehouse-null-not-default');
+
+        $doc->codalmacen = null;
+        $this->assertTrue($doc->setWarehouse(''), 'presupuesto-warehouse-empty');
+        $this->assertEquals($default, $doc->codalmacen, 'presupuesto-warehouse-empty-not-default');
+    }
+
+    /**
+     * Con un almacén válido se asignan el almacén y su empresa.
+     */
+    public function testSetWarehouseValid(): void
+    {
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save(), 'can-not-create-company');
+        $warehouse = $company->getWarehouses()[0];
+
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setWarehouse($warehouse->codalmacen), 'presupuesto-warehouse-valid');
+        $this->assertEquals($warehouse->codalmacen, $doc->codalmacen, 'presupuesto-bad-warehouse');
+        $this->assertEquals($company->idempresa, $doc->idempresa, 'presupuesto-bad-warehouse-company');
+
+        // un almacén inexistente se rechaza
+        $this->assertFalse($doc->setWarehouse('NOEXISTE'), 'presupuesto-warehouse-not-found');
+
+        $this->assertTrue($company->delete(), 'can-not-delete-company');
+    }
+
     public function testSetAuthorWithoutCompanyUsesDefaults(): void
     {
         // un usuario sin empresa ni almacén asignados

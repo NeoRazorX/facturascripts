@@ -453,13 +453,18 @@ abstract class BusinessDocument extends NewModelClass
 
     /**
      * Establece el almacén y la empresa de este documento.
+     * Si el código está vacío, se usa el almacén por defecto.
      *
-     * @param string $codalmacen
+     * @param string|null $codalmacen
      *
      * @return bool
      */
-    public function setWarehouse(string $codalmacen): bool
+    public function setWarehouse(?string $codalmacen): bool
     {
+        if (empty($codalmacen)) {
+            $codalmacen = Almacenes::default()->codalmacen;
+        }
+
         foreach (Almacenes::all() as $almacen) {
             if ($almacen->codalmacen == $codalmacen) {
                 $this->codalmacen = $almacen->codalmacen;
