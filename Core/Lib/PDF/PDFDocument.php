@@ -513,6 +513,12 @@ abstract class PDFDocument extends PDFCore
         if (!empty($this->format->titulo)) {
             $headerData['title'] = Tools::fixHtml($this->format->titulo);
         }
+        // el título del formato está escrito en el idioma de la instalación, así que si la
+        // rectificativa se imprime en otro idioma usamos el título traducido ("Credit note", etc.)
+        $printInOtherLang = $this->i18n->getLang() !== Tools::config('lang');
+        if ($printInOtherLang && method_exists($model, 'isRefund') && $model->isRefund()) {
+            $headerData['title'] = $this->i18n->trans('credit-note');
+        }
 
         // Título alineado a la izquierda y dentro del bloque
         $this->pdf->ezText("\n" . $headerData['title'] . ': ' . $model->codigo, self::FONT_SIZE + 6, [
