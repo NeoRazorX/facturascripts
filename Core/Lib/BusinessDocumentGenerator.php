@@ -29,7 +29,13 @@ use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
 /**
- * Generador de documentos de negocio.
+ * Genera un documento de compra o de venta a partir de otro que actúa como
+ * prototipo: por ejemplo, un albarán a partir de un pedido o una factura a
+ * partir de un albarán. Copia la cabecera, las líneas indicadas con las
+ * cantidades solicitadas y los archivos adjuntos, registra la relación entre
+ * documentos en DocTransformation y actualiza la cantidad servida del original.
+ * Con setSameDate() se puede forzar que el nuevo documento conserve la fecha del
+ * prototipo en lugar de usar la fecha actual.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>

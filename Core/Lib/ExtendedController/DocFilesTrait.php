@@ -26,7 +26,12 @@ use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**
- * Description of DocFilesTrait
+ * Añade a un controlador la pestaña de archivos adjuntos, con las acciones para
+ * subir, editar las observaciones, ordenar, desvincular y eliminar los ficheros
+ * relacionados con el registro que se está editando. Los ficheros se guardan en
+ * MyFiles mediante el modelo AttachedFile y se enlazan al registro a través de
+ * AttachedFileRelation. Si el modelo es un BusinessDocument, además mantiene
+ * actualizada la columna numdocs del documento.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

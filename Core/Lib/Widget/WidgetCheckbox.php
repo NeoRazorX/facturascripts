@@ -23,7 +23,11 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of WidgetCheckbox
+ * Widget para campos booleanos. En modo edición pinta una casilla de verificación
+ * y en las tablas muestra el texto traducido sí o no, o un guion si el valor es
+ * nulo. Como los navegadores no envían las
+ * casillas desmarcadas, su processFormData() asigna al modelo verdadero o falso
+ * según el campo esté presente o no en la petición.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

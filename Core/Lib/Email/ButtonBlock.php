@@ -22,7 +22,10 @@ namespace FacturaScripts\Core\Lib\Email;
 use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
- * Description of ButtonBlock
+ * Bloque de email que dibuja un botón con un texto y un enlace. Al generar el HTML
+ * añade automáticamente a la URL el parámetro verificode del correo, respetando los
+ * parámetros que el enlace ya pudiera tener, de manera que se pueda comprobar que el
+ * destinatario ha abierto el mensaje y llegado al enlace.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>

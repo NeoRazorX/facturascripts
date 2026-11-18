@@ -22,7 +22,10 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Tools;
 
 /**
- * WidgetPercentage
+ * Widget para campos de porcentaje, declarado con type="percentage" en las vistas XMLView.
+ * Amplía WidgetNumber añadiendo el símbolo de porcentaje al valor mostrado y asignando por
+ * defecto el icono de porcentaje, que puede sustituirse con el atributo icon.
+ * El valor se guarda tal cual en el modelo, sin dividir entre cien.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Raúl Jiménez Jiménez <raljopa@gmail.com>

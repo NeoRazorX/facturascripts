@@ -23,7 +23,12 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Tools;
 
 /**
- * Description of WidgetMoney
+ * Widget para campos de importe, declarado con type="money" en las vistas XMLView.
+ * Amplía WidgetNumber formateando el valor con Tools::money() según la divisa del modelo,
+ * o la divisa por defecto cuando este no tiene el campo coddivisa. Los campos cuyo nombre
+ * contiene euros se muestran siempre en euros.
+ * Asigna automáticamente el icono correspondiente al símbolo de la divisa y activa por
+ * defecto los totales de columna, salvo que se indique lo contrario con el atributo totals.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */

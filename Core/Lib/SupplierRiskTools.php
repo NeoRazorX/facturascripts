@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of SupplierRiskTools
+ * Utilidades para calcular el riesgo alcanzado con un proveedor, es decir, el
+ * importe total que se le adeuda en un momento dado. Suma los recibos de facturas
+ * de compra pendientes de pago más los albaranes y pedidos de proveedor todavía
+ * editables, y permite limitar el cálculo a una empresa concreta. Consulta la base
+ * de datos directamente para evitar el coste de cargar los modelos.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

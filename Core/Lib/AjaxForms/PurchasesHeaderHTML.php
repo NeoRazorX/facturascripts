@@ -30,7 +30,13 @@ use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
- * Description of PurchasesHeaderHTML
+ * Genera el HTML de la cabecera del formulario de los documentos de compra:
+ * proveedor, dirección, fechas, número de proveedor, serie, forma de pago,
+ * divisa, almacén, estado y demás datos generales del documento. También aplica
+ * sobre el modelo los datos enviados por el usuario, rellenando automáticamente
+ * los valores del proveedor cuando este cambia.
+ * Los plugins pueden añadir o modificar campos mediante mods que implementen
+ * PurchasesModInterface y se registren con addMod().
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

@@ -32,7 +32,11 @@ use FacturaScripts\Core\Where;
 use XLSXWriter;
 
 /**
- * XLS export data.
+ * Exporta datos a una hoja de cálculo en formato XLSX. Cada página añadida se
+ * convierte en una hoja del libro, ya provenga de la ficha de un modelo, de un
+ * listado, de una tabla libre o de un documento de compra y venta con sus líneas.
+ * Los números, fechas y casillas se vuelcan con su tipo real para que sean
+ * procesables, y los textos que empiezan por caracteres de fórmula se escapan.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

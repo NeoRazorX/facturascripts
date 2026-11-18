@@ -24,7 +24,13 @@ use FacturaScripts\Core\Response;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 
 /**
- * Description of ExportManager
+ * Coordina la exportación de datos a los distintos formatos disponibles: PDF, hoja de
+ * cálculo, CSV o envío por email. Mantiene el listado de opciones y herramientas de
+ * exportación, que los plugins pueden ampliar, selecciona el motor de la carpeta
+ * Export que corresponde a la opción elegida y le va añadiendo las páginas con los
+ * modelos, listados, tablas o documentos a exportar, hasta volcar el resultado en la
+ * respuesta. También permite elegir el formato de documento y el idioma de la
+ * exportación.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

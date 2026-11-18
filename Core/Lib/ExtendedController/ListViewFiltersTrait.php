@@ -34,7 +34,11 @@ use FacturaScripts\Dinamic\Lib\ListFilter\TreeFilter;
 use FacturaScripts\Dinamic\Model\PageFilter;
 
 /**
- * Description of ListViewFiltersTrait
+ * Dota a la ListView de la gestión de filtros: permite añadir filtros de tipo
+ * autocompletado, casilla, fecha, número, periodo, selección, where o árbol,
+ * traduce los valores recibidos del formulario en condiciones where para el
+ * modelo y ordena los filtros para mostrarlos. También guarda y elimina los
+ * filtros predefinidos del usuario mediante el modelo PageFilter.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

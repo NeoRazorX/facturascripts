@@ -20,7 +20,11 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * This class centralizes all types of products.
+ * Centraliza los tipos de producto disponibles en el sistema (normal, servicio,
+ * segunda mano, viaje o arrendamiento de local de negocio), que determinan el
+ * tratamiento fiscal y de stock de los artículos. Los plugins pueden registrar
+ * tipos adicionales con add(), y all() devuelve el listado completo con la clave
+ * guardada en base de datos y su etiqueta de traducción.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>

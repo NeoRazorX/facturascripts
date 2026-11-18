@@ -33,7 +33,10 @@ use FacturaScripts\Dinamic\Lib\Widget\RowStatus;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * View definition for its use in ListController
+ * Vista que muestra los registros de un modelo en forma de tabla paginada, con
+ * ordenaciones, campos de búsqueda, colores por estado y totales de columnas.
+ * Es la vista que utilizan las pestañas de los ListController y sus filtros se
+ * definen mediante el trait ListViewFiltersTrait.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

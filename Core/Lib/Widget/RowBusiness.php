@@ -19,7 +19,10 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 /**
- * Description of RowBusiness
+ * Fila especial de los XMLView de documentos de compra y venta. Agrupa las
+ * columnas que se muestran en la cabecera del documento (cliente, serie, almacén,
+ * fechas, etc.), las ordena según el atributo order y genera su HTML de edición
+ * de forma conjunta. La utilizan las vistas basadas en BusinessDocumentView.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */

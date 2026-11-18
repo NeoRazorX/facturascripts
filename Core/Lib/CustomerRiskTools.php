@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Devuelve el riesgo actual de un cliente.
+ * Calcula el riesgo actual de un cliente, es decir, el importe que tiene pendiente de
+ * pago con la empresa. Suma el importe de las facturas no pagadas descontando los
+ * recibos ya cobrados, más el total de los pedidos y albaranes que todavía siguen
+ * editables y por tanto no se han facturado. El cálculo puede limitarse a una empresa
+ * concreta y se realiza mediante consultas SQL directas por motivos de rendimiento.
  *
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
  * @author Carlos García Gómez              <carlos@facturascripts.com>
