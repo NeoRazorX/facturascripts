@@ -266,7 +266,7 @@ class AccountingPlanImport
         $account->codcuenta = $code;
         $account->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
         $account->codejercicio = $this->exercise->codejercicio;
-        $account->descripcion = $definition;
+        $account->descripcion = '' === trim($definition) ? $code : $definition;
         $account->parent_codcuenta = empty($parentCode) ? null : $parentCode;
         return $account->save();
     }
@@ -302,7 +302,7 @@ class AccountingPlanImport
         $subaccount->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
         $subaccount->codejercicio = $this->exercise->codejercicio;
         $subaccount->codsubcuenta = $newCode;
-        $subaccount->descripcion = $description;
+        $subaccount->descripcion = '' === trim($description) ? $newCode : $description;
         return $subaccount->save();
     }
 
@@ -330,7 +330,7 @@ class AccountingPlanImport
     {
         foreach ($data as $xmlAccount) {
             $item = (array)$xmlAccount;
-            if (false === $this->createAccount($item['codcuenta'], base64_decode($item['descripcion']), $item['codepigrafe'], $item['idcuentaesp'])) {
+            if (false === $this->createAccount($item['codcuenta'], (string)(base64_decode($item['descripcion'] ?? '') ?: ''), $item['codepigrafe'], $item['idcuentaesp'])) {
                 return false;
             }
         }
@@ -344,7 +344,7 @@ class AccountingPlanImport
     {
         foreach ($data as $xmlEpigrafeElement) {
             $item = (array)$xmlEpigrafeElement;
-            if (false === $this->createAccount($item['codepigrafe'], base64_decode($item['descripcion']), $item['codgrupo'])) {
+            if (false === $this->createAccount($item['codepigrafe'], (string)(base64_decode($item['descripcion'] ?? '') ?: ''), $item['codgrupo'])) {
                 return false;
             }
         }
@@ -358,7 +358,7 @@ class AccountingPlanImport
     {
         foreach ($data as $xmlEpigrafeGroup) {
             $item = (array)$xmlEpigrafeGroup;
-            if (false === $this->createAccount($item['codgrupo'], base64_decode($item['descripcion']))) {
+            if (false === $this->createAccount($item['codgrupo'], (string)(base64_decode($item['descripcion'] ?? '') ?: ''))) {
                 return false;
             }
         }
@@ -372,7 +372,7 @@ class AccountingPlanImport
     {
         foreach ($data as $xmlSubaccountElement) {
             $item = (array)$xmlSubaccountElement;
-            if (false === $this->createSubaccount($item['codsubcuenta'], base64_decode($item['descripcion']), $item['codcuenta'])) {
+            if (false === $this->createSubaccount($item['codsubcuenta'], (string)(base64_decode($item['descripcion'] ?? '') ?: ''), $item['codcuenta'])) {
                 return false;
             }
         }
