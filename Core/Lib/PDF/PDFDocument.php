@@ -54,6 +54,13 @@ abstract class PDFDocument extends PDFCore
 
     const INVOICE_TOTALS_Y = 200;
 
+    private const COLOR_ACCENT = [0.15, 0.15, 0.15];
+    private const COLOR_HEADER = [0.95, 0.95, 0.95];
+    private const COLOR_ROW = [0.98, 0.98, 0.98];
+    private const COLOR_TEXT = [0.10, 0.10, 0.10];
+    private const COLOR_LINE = [0.75, 0.75, 0.75];
+    private const COLOR_TOTAL = [0.88, 0.88, 0.88];
+
     /** @var FormatoDocumento */
     protected $format;
 
@@ -179,6 +186,23 @@ abstract class PDFDocument extends PDFCore
         ];
     }
 
+    protected function businessTableOptions(array $cols = [], bool $showHeadings = true): array
+    {
+        return [
+            'cols' => $cols,
+            'shaded' => $showHeadings ? 1 : 0,
+            'showHeadings' => $showHeadings ? 1 : 0,
+            'shadeCol' => self::COLOR_ROW,
+            'shadeHeadingCol' => self::COLOR_HEADER,
+            'textCol' => self::COLOR_TEXT,
+            'lineCol' => self::COLOR_LINE,
+            'innerLineThickness' => 0.35,
+            'outerLineThickness' => 0.7,
+            'rowGap' => 3,
+            'width' => $this->tableWidth
+        ];
+    }
+
     /**
      * @param BusinessDocument $model
      *
@@ -283,12 +307,7 @@ abstract class PDFDocument extends PDFCore
         $qrSubtitle = $this->pipe('qrSubtitleAfterLines', $model);
 
         $headers = [];
-        $tableOptions = [
-            'cols' => [],
-            'shadeCol' => [0.95, 0.95, 0.95],
-            'shadeHeadingCol' => [0.95, 0.95, 0.95],
-            'width' => $this->tableWidth
-        ];
+        $tableOptions = $this->businessTableOptions();
 
         // fill headers and options with the line headers information
         foreach ($this->getLineHeaders() as $key => $value) {
@@ -389,19 +408,14 @@ abstract class PDFDocument extends PDFCore
             'taxsurcharge' => $this->i18n->trans('amount')
         ];
         $taxRows = $this->getTaxesRows($model);
-        $taxTableOptions = [
-            'cols' => [
+        $taxTableOptions = $this->businessTableOptions([
                 'tax' => ['justification' => 'right'],
                 'taxbase' => ['justification' => 'right'],
                 'taxp' => ['justification' => 'right'],
                 'taxamount' => ['justification' => 'right'],
                 'taxsurchargep' => ['justification' => 'right'],
                 'taxsurcharge' => ['justification' => 'right']
-            ],
-            'shadeCol' => [0.95, 0.95, 0.95],
-            'shadeHeadingCol' => [0.95, 0.95, 0.95],
-            'width' => $this->tableWidth
-        ];
+            ]);
         if (count($taxRows) > 1) {
             $this->removeEmptyCols($taxRows, $taxHeaders, Tools::number(0));
             $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
@@ -438,8 +452,10 @@ abstract class PDFDocument extends PDFCore
             ]
         ];
         $this->removeEmptyCols($rows, $headers, Tools::number(0));
-        $tableOptions = [
-            'cols' => [
+        if (isset($headers['total'])) {
+            $rows[0]['total'] = '<b>' . $rows[0]['total'] . '</b>';
+        }
+        $tableOptions = $this->businessTableOptions([
                 'subtotal' => ['justification' => 'right'],
                 'dto' => ['justification' => 'right'],
                 'dto-2' => ['justification' => 'right'],
@@ -448,12 +464,9 @@ abstract class PDFDocument extends PDFCore
                 'totalSurcharge' => ['justification' => 'right'],
                 'totalIrpf' => ['justification' => 'right'],
                 'totalSupplied' => ['justification' => 'right'],
-                'total' => ['justification' => 'right']
-            ],
-            'shadeCol' => [0.95, 0.95, 0.95],
-            'shadeHeadingCol' => [0.95, 0.95, 0.95],
-            'width' => $this->tableWidth
-        ];
+                'total' => ['justification' => 'right', 'bgcolor' => self::COLOR_TOTAL]
+            ]);
+        $rows[0]['totalColor'] = [0, 0, 0];
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
 
         // receipts
@@ -515,17 +528,15 @@ abstract class PDFDocument extends PDFCore
         }
 
         // Título alineado a la izquierda y dentro del bloque
-        $this->pdf->ezText("\n" . $headerData['title'] . ': ' . $model->codigo, self::FONT_SIZE + 6, [
-            'justification' => 'left',
-            'left' => $startX - $this->pdf->ez['leftMargin'], // compensar margen
-            'width' => $leftBlockWidth
-        ]);
-
-        // Línea divisoria solo del 80%
-        $lineY = $this->pdf->y;
-        $this->pdf->setStrokeColor(0, 0, 0);
-        $this->pdf->line($startX, $lineY - 8, $startX + $leftBlockWidth, $lineY - 8);
-        $this->pdf->y -= 10;
+        $title = $headerData['title'] . ': ' . Tools::fixHtml($model->codigo);
+        $barHeight = 28;
+        $barY = $startY - $barHeight;
+        $this->pdf->setColor(...self::COLOR_ACCENT);
+        $this->pdf->filledRectangle($startX, $barY, $leftBlockWidth, $barHeight);
+        $this->pdf->setColor(1, 1, 1);
+        $this->pdf->addText($startX + 10, $startY - 19, self::FONT_SIZE + 6, $title, $leftBlockWidth - 20, 'left');
+        $this->pdf->setColor(...self::COLOR_TEXT);
+        $this->pdf->y = $barY - 14;
         $subject = $model->getSubject();
         $tipoIdFiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
         $serie = $model->getSerie();
@@ -556,15 +567,10 @@ abstract class PDFDocument extends PDFCore
         }
 
         // Opciones de la tabla
-        $tableWidth = $leftBlockWidth + 5;
-        $tableOptions = [
-            'width' => $tableWidth,
-            'showHeadings' => 0,
-            'shaded' => 0,
-            'lineCol' => [1, 1, 1],
-            'cols' => [],
-            'xPos' => $startX + ($tableWidth / 2) - 5, // Posicionar el centro de la tabla para que empiece en el margen izquierdo
-        ];
+        $tableWidth = $leftBlockWidth;
+        $tableOptions = $this->businessTableOptions([], false);
+        $tableOptions['xPos'] = $startX + ($tableWidth / 2);
+        $tableOptions['width'] = $tableWidth;
         $this->insertParallelTable($tableData, '', $tableOptions);
         $this->pdf->ezText('');
         $this->pdf->restoreState();
@@ -585,7 +591,9 @@ abstract class PDFDocument extends PDFCore
      */
     protected function insertBusinessDocShipping($model)
     {
+        $this->pdf->setColor(...self::COLOR_ACCENT);
         $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
+        $this->pdf->setColor(...self::COLOR_TEXT);
         $this->newLine();
 
         $contacto = new Contacto();
@@ -600,13 +608,7 @@ abstract class PDFDocument extends PDFCore
                 ['key' => $this->i18n->trans('tracking-code'), 'value' => $model->codigoenv]
             ];
 
-            $tableOptions = [
-                'width' => $this->tableWidth,
-                'showHeadings' => 0,
-                'shaded' => 0,
-                'lineCol' => [1, 1, 1],
-                'cols' => []
-            ];
+            $tableOptions = $this->businessTableOptions([], false);
             $this->insertParallelTable($tableData, '', $tableOptions);
             $this->pdf->ezText('');
         }
@@ -671,7 +673,9 @@ abstract class PDFDocument extends PDFCore
         }
 
         $size = mb_strlen($company->nombre) > 20 ? self::FONT_SIZE + 2 : self::FONT_SIZE + 7;
+        $this->pdf->setColor(...self::COLOR_ACCENT);
         $this->pdf->ezText(Tools::fixHtml($company->nombre), $size, ['justification' => 'right']);
+        $this->pdf->setColor(...self::COLOR_TEXT);
         $address = $company->direccion;
         $address .= empty($company->codpostal) ? "\n" : "\n" . $company->codpostal . ', ';
         $address .= empty($company->ciudad) ? '' : $company->ciudad;
@@ -689,6 +693,9 @@ abstract class PDFDocument extends PDFCore
 
         $idLogo = $this->format->idlogo ?? $company->idlogo;
         $this->insertCompanyLogo($idLogo);
+        $this->pdf->setStrokeColor(...self::COLOR_ACCENT);
+        $this->pdf->line(self::CONTENT_X, $this->pdf->y + 8, $this->tableWidth + self::CONTENT_X, $this->pdf->y + 8);
+        $this->pdf->setStrokeColor(0, 0, 0);
     }
 
     /**
@@ -706,15 +713,10 @@ abstract class PDFDocument extends PDFCore
             ['method' => $this->getBankData($invoice), 'expiration' => $expiration]
         ];
 
-        $tableOptions = [
-            'cols' => [
+        $tableOptions = $this->businessTableOptions([
                 'method' => ['justification' => 'left'],
                 'expiration' => ['justification' => 'right']
-            ],
-            'shadeCol' => [0.95, 0.95, 0.95],
-            'shadeHeadingCol' => [0.95, 0.95, 0.95],
-            'width' => $this->tableWidth
-        ];
+            ]);
         $this->pdf->ezText("\n");
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
     }
@@ -743,17 +745,12 @@ abstract class PDFDocument extends PDFCore
                     'vencimiento' => $receipt->pagado ? $this->i18n->trans('paid') : $receipt->vencimiento
                 ];
             }
-            $tableOptions = [
-                'cols' => [
+            $tableOptions = $this->businessTableOptions([
                     'numero' => ['justification' => 'center'],
                     'bank' => ['justification' => 'center'],
                     'importe' => ['justification' => 'right'],
                     'vencimiento' => ['justification' => 'right']
-                ],
-                'shadeCol' => [0.95, 0.95, 0.95],
-                'shadeHeadingCol' => [0.95, 0.95, 0.95],
-                'width' => $this->tableWidth
-            ];
+                ]);
             $this->pdf->ezText("\n");
             $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         }
