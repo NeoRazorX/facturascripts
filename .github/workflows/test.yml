@@ -1,10 +1,46 @@
 name: PHPUnit Tests
 
+# Los tests solo se lanzan si el commit o la PR cambia algo que pueda alterar el
+# comportamiento del programa. Si TODOS los archivos cambiados están en
+# paths-ignore, el workflow no se ejecuta y no consume minutos.
+# Las traducciones las valida aparte validate-translations.yml, mucho más barato.
 on:
   push:
     branches: [ master, main ]
+    paths-ignore: &ignored-paths
+      # traducciones: se descargan de facturascripts.com y no cambian el código
+      - 'Core/Translation/**'
+      # JS, CSS, imágenes y fuentes: phpunit no los usa
+      - 'Core/Assets/**'
+      # documentación
+      - '**.md'
+      - 'Doc/**'
+      - 'COPYING'
+      # configuración de los asistentes de IA (Claude Code, Codex...)
+      - '.claude/**'
+      - '.agents/**'
+      - '.codex/**'
+      # configuración de plugins, de npm y del servidor web
+      - '**/facturascripts.ini'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'htaccess-sample'
+      # configuración de GitHub que no afecta a este workflow
+      - '.github/codecov.yml'
+      - '.github/VULNERABILITY_REPORT.yml'
+      - '.github/workflows/test-countries.yml'
+      - '.github/workflows/validate-translations.yml'
   pull_request:
     branches: [ master, main ]
+    paths-ignore: *ignored-paths
+  # permite lanzarlo a mano desde la pestaña Actions cuando se quiera forzar
+  workflow_dispatch:
+
+# Si llega un commit nuevo a la misma rama o PR, se cancela la ejecución
+# anterior, que ya no sirve, en lugar de dejar que termine.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
   DB_NAME: facturascripts_test
@@ -15,6 +51,8 @@ env:
 jobs:
   test:
     runs-on: ubuntu-26.04
+    # un job colgado no puede consumir las 6 horas por defecto
+    timeout-minutes: 30
 
     strategy:
       matrix:
