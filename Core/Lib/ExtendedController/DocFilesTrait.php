@@ -36,6 +36,8 @@ trait DocFilesTrait
 
     abstract protected function checkOwnerData($model): bool;
 
+    abstract protected function checkOwnerUpdate($model): bool;
+
     private function addFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
@@ -100,11 +102,11 @@ trait DocFilesTrait
 
     /**
      * Comprueba que el usuario puede modificar los adjuntos del registro actual
-     * cuando solo tiene acceso a sus propios datos.
+     * cuando solo tiene acceso a sus propios datos o solo puede modificar los suyos.
      */
     private function checkFileOwnerData(): bool
     {
-        if (empty($this->permissions->onlyOwnerData)) {
+        if (empty($this->permissions->onlyOwnerData) && empty($this->permissions->onlyOwnerUpdate)) {
             return true;
         }
 
@@ -117,7 +119,7 @@ trait DocFilesTrait
             $model->load($code);
         }
 
-        if (false === $this->checkOwnerData($model)) {
+        if (false === $this->checkOwnerUpdate($model)) {
             Tools::log()->warning('access-denied');
             return false;
         }

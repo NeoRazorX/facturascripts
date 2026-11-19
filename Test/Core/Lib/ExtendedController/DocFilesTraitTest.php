@@ -96,6 +96,11 @@ class DocFilesTraitHost
     {
         return $this->ownerAllowed;
     }
+
+    protected function checkOwnerUpdate($model): bool
+    {
+        return $this->ownerAllowed;
+    }
 }
 
 class DocFilesResponse
@@ -170,6 +175,23 @@ final class DocFilesTraitTest extends TestCase
 
         $host = $this->getHost($code, ['id' => $relation->id]);
         $host->permissions->onlyOwnerData = true;
+        $host->model = $this->attachedFile;
+        $host->ownerAllowed = false;
+        $this->assertTrue($host->unlinkFile());
+        $this->assertTrue($relation->exists());
+
+        $host->ownerAllowed = true;
+        $this->assertTrue($host->unlinkFile());
+        $this->assertFalse($relation->exists());
+    }
+
+    public function testFileActionsRespectOwnerUpdate(): void
+    {
+        $code = 'docfiles-' . uniqid();
+        $relation = $this->createRelation('DocFilesTest', $code);
+
+        $host = $this->getHost($code, ['id' => $relation->id]);
+        $host->permissions->onlyOwnerUpdate = true;
         $host->model = $this->attachedFile;
         $host->ownerAllowed = false;
         $this->assertTrue($host->unlinkFile());

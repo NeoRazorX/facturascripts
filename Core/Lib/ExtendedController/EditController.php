@@ -158,6 +158,13 @@ abstract class EditController extends PanelController
                 // el usuario puede acceder a este registro? si no, se interrumpe la petición
                 $this->assertOwnerData($view->model);
 
+                // si solamente puede modificar sus registros y este no es suyo, ocultamos guardar y eliminar
+                if (false === $this->checkOwnerUpdate($view->model)) {
+                    $view->setSettings('btnSave', false)
+                        ->setSettings('btnDelete', false)
+                        ->setSettings('btnUndo', false);
+                }
+
                 // Data not found?
                 $action = $this->request->input('action', '');
                 if ('' === $action && !empty($code) && false === $view->model->exists()) {

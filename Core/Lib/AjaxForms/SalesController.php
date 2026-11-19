@@ -47,6 +47,12 @@ abstract class SalesController extends PanelController
     use DocFilesTrait;
     use LogAuditTrait;
 
+    /** Acciones que modifican el documento y requieren checkOwnerUpdate. */
+    private const OWNER_UPDATE_ACTIONS = [
+        'add-file', 'delete-doc', 'delete-file', 'edit-file', 'save-doc',
+        'save-paid', 'save-status', 'sort-files', 'unlink-file'
+    ];
+
     const MAIN_VIEW_NAME = 'main';
     const MAIN_VIEW_TEMPLATE = 'Tab/SalesDocument';
 
@@ -205,6 +211,17 @@ abstract class SalesController extends PanelController
         ) {
             $this->setTemplate(false);
             Tools::log()->warning('access-denied');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
+        // con onlyOwnerUpdate solamente puede guardar o eliminar los documentos que sean suyos
+        if (
+            in_array($action, self::OWNER_UPDATE_ACTIONS, true) && false === empty($code)
+            && false === $this->checkOwnerUpdate($this->getModel())
+        ) {
+            $this->setTemplate(false);
+            Tools::log()->warning('not-allowed-modify');
             $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }

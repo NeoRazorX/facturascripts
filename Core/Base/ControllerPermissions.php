@@ -50,6 +50,9 @@ final class ControllerPermissions
     /** @var bool */
     public $onlyOwnerData = false;
 
+    /** @var bool */
+    public $onlyOwnerUpdate = false;
+
     public function __construct(?User $user = null, ?string $pageName = null)
     {
         if (empty($user) || empty($pageName)) {
@@ -63,6 +66,7 @@ final class ControllerPermissions
             $this->allowImport = true;
             $this->allowUpdate = true;
             $this->onlyOwnerData = false;
+            $this->onlyOwnerUpdate = false;
         } else {
             // normal user
             foreach (RoleAccess::allFromUser($user->nick, $pageName) as $access) {
@@ -72,17 +76,19 @@ final class ControllerPermissions
                 $this->allowImport = $access->allowimport ? true : $this->allowImport;
                 $this->allowUpdate = $access->allowupdate ? true : $this->allowUpdate;
                 $this->onlyOwnerData = $access->onlyownerdata ? true : $this->onlyOwnerData;
+                $this->onlyOwnerUpdate = $access->onlyownerupdate ? true : $this->onlyOwnerUpdate;
             }
         }
     }
 
-    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner = false): void
+    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner = false, bool $onlyOwnerUpdate = false): void
     {
         $this->accessMode = $accessMode;
         $this->allowAccess = $access;
         $this->allowDelete = $delete;
         $this->allowUpdate = $update;
         $this->onlyOwnerData = $onlyOwner;
+        $this->onlyOwnerUpdate = $onlyOwnerUpdate;
     }
 
     public function setParams(array $params): void

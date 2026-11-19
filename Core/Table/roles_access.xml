@@ -47,6 +47,12 @@
         <default>false</default>
     </column>
     <column>
+        <name>onlyownerupdate</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
         <name>pagename</name>
         <type>character varying(40)</type>
         <null>NO</null>

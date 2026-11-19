@@ -55,6 +55,9 @@ final class ControllerPermissions
     /** @var bool Whether the user can only see their own data */
     public $onlyOwnerData = false;
 
+    /** @var bool Whether the user can only modify their own data */
+    public $onlyOwnerUpdate = false;
+
     public function __construct(?User $user = null, ?string $pageName = null)
     {
         if (!$this->hasValidParameters($user, $pageName)) {
@@ -76,14 +79,16 @@ final class ControllerPermissions
      * @param bool $delete Whether to allow delete operations
      * @param bool $update Whether to allow update operations
      * @param bool $onlyOwner Whether to restrict to owner data only
+     * @param bool $onlyOwnerUpdate Whether to restrict modifications to owner data only
      */
-    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner = false): void
+    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner = false, bool $onlyOwnerUpdate = false): void
     {
         $this->accessMode = $accessMode;
         $this->allowAccess = $access;
         $this->allowDelete = $delete;
         $this->allowUpdate = $update;
         $this->onlyOwnerData = $onlyOwner;
+        $this->onlyOwnerUpdate = $onlyOwnerUpdate;
     }
 
     /**
@@ -122,6 +127,7 @@ final class ControllerPermissions
         $this->allowImport = true;
         $this->allowUpdate = true;
         $this->onlyOwnerData = false;
+        $this->onlyOwnerUpdate = false;
     }
 
     /**
@@ -145,6 +151,7 @@ final class ControllerPermissions
         $this->allowImport = $access->allowimport || $this->allowImport;
         $this->allowUpdate = $access->allowupdate || $this->allowUpdate;
         $this->onlyOwnerData = $access->onlyownerdata || $this->onlyOwnerData;
+        $this->onlyOwnerUpdate = $access->onlyownerupdate || $this->onlyOwnerUpdate;
     }
 
     /**

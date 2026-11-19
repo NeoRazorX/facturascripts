@@ -324,7 +324,7 @@ abstract class PanelController extends BaseController
         }
 
         // User can modify this record?
-        if (false === $this->checkOwnerData($this->activeTab()->model)) {
+        if (false === $this->checkOwnerUpdate($this->activeTab()->model)) {
             Tools::log()->warning('not-allowed-modify');
             return false;
         }

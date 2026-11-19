@@ -172,9 +172,9 @@ class User extends ModelClass
 
         // si es admin, tiene acceso completo
         if ($this->admin) {
-            // comprobamos si la página existe y si el permiso a comprobar no es only-owner-data
+            // comprobamos si la página existe y si el permiso a comprobar no es una restricción de propietario
             $page = new DinPage();
-            return $page->load($pageName) && $permission != 'only-owner-data';
+            return $page->load($pageName) && false === in_array($permission, ['only-owner-data', 'only-owner-update'], true);
         }
 
         // si no es admin, comprobamos si tiene acceso a la página

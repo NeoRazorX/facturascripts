@@ -38,6 +38,8 @@ trait ListBusinessActionTrait
 
     abstract protected function checkOwnerData($model): bool;
 
+    abstract protected function checkOwnerUpdate($model): bool;
+
     abstract protected function validateFormToken(): bool;
 
     /**
@@ -218,7 +220,7 @@ trait ListBusinessActionTrait
             }
 
             // ¿el usuario puede modificar este documento?
-            if (false === $this->checkOwnerData($model)) {
+            if (false === $this->checkOwnerUpdate($model)) {
                 Tools::log()->warning('not-allowed-modify');
                 continue;
             }
@@ -270,7 +272,7 @@ trait ListBusinessActionTrait
             }
 
             // ¿el usuario puede generar el asiento de esta factura ajena?
-            if (false === $this->checkOwnerData($invoice)) {
+            if (false === $this->checkOwnerUpdate($invoice)) {
                 continue;
             }
 
@@ -355,7 +357,7 @@ trait ListBusinessActionTrait
             }
 
             // ¿el usuario puede modificar este documento?
-            if (false === $this->checkOwnerData($model)) {
+            if (false === $this->checkOwnerUpdate($model)) {
                 Tools::log()->warning('not-allowed-modify');
                 continue;
             }
@@ -418,7 +420,7 @@ trait ListBusinessActionTrait
             }
 
             // ¿el usuario puede modificar este documento?
-            if (false === $this->checkOwnerData($model)) {
+            if (false === $this->checkOwnerUpdate($model)) {
                 Tools::log()->warning('not-allowed-modify');
                 continue;
             }
@@ -474,7 +476,7 @@ trait ListBusinessActionTrait
             }
 
             // ¿el usuario puede modificar este recibo?
-            if (false === $this->checkOwnerData($model)) {
+            if (false === $this->checkOwnerUpdate($model)) {
                 Tools::log()->warning('not-allowed-modify');
                 continue;
             }

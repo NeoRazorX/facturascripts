@@ -59,6 +59,9 @@ class RoleAccess extends ModelClass
     /** @var bool Indica si el rol solo puede acceder a los datos de su propietario. */
     public $onlyownerdata;
 
+    /** @var bool Indica si el rol solo puede modificar los registros de los que es propietario. */
+    public $onlyownerupdate;
+
     /** @var string Nombre de la página a la que se aplica el permiso. */
     public $pagename;
 
@@ -128,6 +131,9 @@ class RoleAccess extends ModelClass
             case 'only-owner-data':
                 return $this->onlyownerdata;
 
+            case 'only-owner-update':
+                return $this->onlyownerupdate;
+
             default:
                 Tools::log()->error('invalid-user-can-permission', ['%permission%' => $permission]);
                 return false;
@@ -142,6 +148,7 @@ class RoleAccess extends ModelClass
         $this->allowimport = true;
         $this->allowupdate = true;
         $this->onlyownerdata = false;
+        $this->onlyownerupdate = false;
     }
 
     public function getPage(): DinPage
