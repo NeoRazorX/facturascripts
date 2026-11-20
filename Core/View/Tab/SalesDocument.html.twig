@@ -15,6 +15,15 @@
 </style>
 
 <script>
+    // cambia la parte aleatoria del token (lo que va tras el |) para que cada petición
+    // lleve un token distinto: el servidor rechaza los tokens repetidos
+    function salesFormToken() {
+        const input = document.forms['salesForm']['multireqtoken'];
+        const random = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+        input.value = input.value.split('|')[0] + '|' + random;
+        return input.value;
+    }
+
     let waitCounter = 0;
     let keyupInputName = null;
 
@@ -194,7 +203,7 @@
         let data = new FormData();
         data.append('action', action);
         data.append('code', document.forms['salesForm']['code'].value);
-        data.append('multireqtoken', document.forms['salesForm']['multireqtoken'].value);
+        data.append('multireqtoken', salesFormToken());
         data.append('selectedLine', document.forms['salesForm']['selectedLine'].value);
         data.append('data', formDataJsonString);
         console.log(data);
@@ -349,7 +358,7 @@
         let data = new FormData();
         data.append('action', action);
         data.append('code', document.forms['salesForm']['code'].value);
-        data.append('multireqtoken', document.forms['salesForm']['multireqtoken'].value);
+        data.append('multireqtoken', salesFormToken());
         data.append('selectedLine', document.forms['salesForm']['selectedLine'].value);
         data.append('data', formDataJsonString);
         console.log(data);
