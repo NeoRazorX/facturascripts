@@ -78,6 +78,7 @@
                     <th class="text-center">{{ trans('show') }}</th>
                     <th class="table-warning text-center">{{ trans('only-owner-data') }}</th>
                     <th class="table-warning text-center">{{ trans('only-owner-update') }}</th>
+                    <th class="table-warning text-center">{{ trans('only-owner-delete') }}</th>
                     <th class="text-center">{{ trans('allow-update') }}</th>
                     <th class="text-center">{{ trans('allow-import') }}</th>
                     <th class="text-center">{{ trans('allow-export') }}</th>
@@ -109,6 +110,13 @@
                             <input class="all-permission form-check-input" id="checkbox-all-onlyOwnerUpdate"
                                    value="only-owner-update" type="checkbox" data-menu="{{ menu }}" data-type="only-owner-update"
                                    aria-label="{{ trans('only-owner-update') }} - {{ trans('all') }}"/>
+                        </div>
+                    </td>
+                    <td class="table-warning text-center">
+                        <div class="form-check checkbox-center-aligned">
+                            <input class="all-permission form-check-input" id="checkbox-all-onlyOwnerDelete"
+                                   value="only-owner-delete" type="checkbox" data-menu="{{ menu }}" data-type="only-owner-delete"
+                                   aria-label="{{ trans('only-owner-delete') }} - {{ trans('all') }}"/>
                         </div>
                     </td>
                     <td class="text-center">
@@ -182,6 +190,17 @@
                                     <label class="form-check-label label-contador"
                                            for="checkbox-all-menu-only-owner-update-{{ menu }}" data-menu="{{ menu }}"
                                            data-type="only-owner-update" aria-hidden="true">&nbsp;</label>
+                                </div>
+                            </td>
+                            <td class="table-warning text-center">
+                                <div class="form-check checkbox-center-aligned">
+                                    <input class="all-menu-permission only-owner-delete-menu-permission form-check-input"
+                                           id="checkbox-all-menu-only-owner-delete-{{ menu }}" value="only-owner-delete-{{ menu }}"
+                                           type="checkbox" data-menu="{{ menu }}" data-type="only-owner-delete"
+                                           aria-label="{{ trans('only-owner-delete') }} - {{ menu }}"/>
+                                    <label class="form-check-label label-contador"
+                                           for="checkbox-all-menu-only-owner-delete-{{ menu }}" data-menu="{{ menu }}"
+                                           data-type="only-owner-delete" aria-hidden="true">&nbsp;</label>
                                 </div>
                             </td>
                             <td class="text-center">
@@ -275,6 +294,19 @@
                                 </label>
                             </div>
                         </td>
+                        <td class="table-warning text-center">
+                            <div class="form-check checkbox-center-aligned">
+                                <input class="permission only-owner-delete-permission only-owner-delete-menu-permission only-owner-delete-{{ menu }}-permission form-check-input"
+                                       id="checkbox-large-onlyOwnerDelete-{{ pageName }}" type="checkbox" name="onlyOwnerDelete[]"
+                                       data-menu="{{ menu }}" data-type="only-owner-delete" value="{{ pageName }}"
+                                       {% if rule.onlyOwnerDelete %}checked{% endif %}
+                                       aria-label="{{ trans('only-owner-delete') }} - {{ pageName }}"/>
+                                <label class="form-check-label"
+                                       for="checkbox-large-onlyOwnerDelete-{{ pageName }}" aria-hidden="true">
+                                    <i class="fa-solid fa-user-xmark text-secondary"></i>
+                                </label>
+                            </div>
+                        </td>
                         <td class="text-center">
                             <div class="form-check checkbox-center-aligned">
                                 <input class="permission update-permission update-menu-permission update-{{ menu }}-permission form-check-input"
@@ -314,7 +346,7 @@
                     </tr>
                 {% else %}
                     <tr class="table-warning">
-                        <td colspan="8">
+                        <td colspan="9">
                             {{ trans('no-data') }}
                         </td>
                     </tr>
@@ -330,6 +362,9 @@
                     </p>
                     <p class="mb-0">
                         <i class="fa-solid fa-user-pen me-1"></i> {{ trans('only-owner-update-p') }}
+                    </p>
+                    <p class="mb-0">
+                        <i class="fa-solid fa-user-xmark me-1"></i> {{ trans('only-owner-delete-p') }}
                     </p>
                 </div>
                 <div class="col-auto">
@@ -414,7 +449,7 @@
             }
             if (!this.checked && $(this).data('type') === 'show') {
                 $("#tr" + $(this).data("menu")).find('input').prop('checked', false);
-                $(this).parent().parent().parent().find('input.only-owner-permission, input.only-owner-update-permission, input.update-permission, input.import-permission, input.export-permission, input.delete-permission').prop('checked', false).change();
+                $(this).parent().parent().parent().find('input.only-owner-permission, input.only-owner-update-permission, input.only-owner-delete-permission, input.update-permission, input.import-permission, input.export-permission, input.delete-permission').prop('checked', false).change();
             }
             if (!this.checked && 'show' !== $(this).data('type')) {
                 $("#trTodosMenus").find('input[data-type=' + $(this).data('type') + ']').prop('checked', false);

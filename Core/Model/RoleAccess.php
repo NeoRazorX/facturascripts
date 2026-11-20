@@ -62,6 +62,9 @@ class RoleAccess extends ModelClass
     /** @var bool Indica si el rol solo puede modificar los registros de los que es propietario. */
     public $onlyownerupdate;
 
+    /** @var bool Indica si el rol solo puede eliminar los registros de los que es propietario. */
+    public $onlyownerdelete;
+
     /** @var string Nombre de la página a la que se aplica el permiso. */
     public $pagename;
 
@@ -134,6 +137,9 @@ class RoleAccess extends ModelClass
             case 'only-owner-update':
                 return $this->onlyownerupdate;
 
+            case 'only-owner-delete':
+                return $this->onlyownerdelete;
+
             default:
                 Tools::log()->error('invalid-user-can-permission', ['%permission%' => $permission]);
                 return false;
@@ -149,6 +155,7 @@ class RoleAccess extends ModelClass
         $this->allowupdate = true;
         $this->onlyownerdata = false;
         $this->onlyownerupdate = false;
+        $this->onlyownerdelete = false;
     }
 
     public function getPage(): DinPage

@@ -25,7 +25,7 @@ use FacturaScripts\Core\Tools;
 
 /**
  * Comprueba si el usuario activo es propietario de un registro, según la
- * restricciones onlyOwnerData / onlyOwnerUpdate y las columnas de propiedad (codagente / nick)
+ * restricciones onlyOwnerData / onlyOwnerUpdate / onlyOwnerDelete y las columnas de propiedad (codagente / nick)
  * del modelo. El host debe disponer de $this->user y $this->permissions.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -59,6 +59,28 @@ trait OwnerDataTrait
     protected function checkOwnerData($model): bool
     {
         if (false === $this->permissions->onlyOwnerData || empty($model->id())) {
+            return true;
+        }
+
+        return $this->isOwnerOf($model);
+    }
+
+    /**
+     * Devuelve true si el usuario activo puede eliminar el registro. Con la
+     * restricción onlyOwnerDelete solamente puede eliminar los registros que
+     * tengan su nick o su codagente. También se exige checkOwnerData.
+     *
+     * @param ModelClass $model
+     *
+     * @return bool
+     */
+    protected function checkOwnerDelete($model): bool
+    {
+        if (false === $this->checkOwnerData($model)) {
+            return false;
+        }
+
+        if (empty($this->permissions->onlyOwnerDelete) || empty($model->id())) {
             return true;
         }
 

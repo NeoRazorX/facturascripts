@@ -58,6 +58,9 @@ final class ControllerPermissions
     /** @var bool Whether the user can only modify their own data */
     public $onlyOwnerUpdate = false;
 
+    /** @var bool Whether the user can only delete their own data */
+    public $onlyOwnerDelete = false;
+
     public function __construct(?User $user = null, ?string $pageName = null)
     {
         if (!$this->hasValidParameters($user, $pageName)) {
@@ -80,8 +83,9 @@ final class ControllerPermissions
      * @param bool $update Whether to allow update operations
      * @param bool $onlyOwner Whether to restrict to owner data only
      * @param bool $onlyOwnerUpdate Whether to restrict modifications to owner data only
+     * @param bool $onlyOwnerDelete Whether to restrict deletions to owner data only
      */
-    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner = false, bool $onlyOwnerUpdate = false): void
+    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner = false, bool $onlyOwnerUpdate = false, bool $onlyOwnerDelete = false): void
     {
         $this->accessMode = $accessMode;
         $this->allowAccess = $access;
@@ -89,6 +93,7 @@ final class ControllerPermissions
         $this->allowUpdate = $update;
         $this->onlyOwnerData = $onlyOwner;
         $this->onlyOwnerUpdate = $onlyOwnerUpdate;
+        $this->onlyOwnerDelete = $onlyOwnerDelete;
     }
 
     /**
@@ -128,6 +133,7 @@ final class ControllerPermissions
         $this->allowUpdate = true;
         $this->onlyOwnerData = false;
         $this->onlyOwnerUpdate = false;
+        $this->onlyOwnerDelete = false;
     }
 
     /**
@@ -152,6 +158,7 @@ final class ControllerPermissions
         $this->allowUpdate = $access->allowupdate || $this->allowUpdate;
         $this->onlyOwnerData = $access->onlyownerdata || $this->onlyOwnerData;
         $this->onlyOwnerUpdate = $access->onlyownerupdate || $this->onlyOwnerUpdate;
+        $this->onlyOwnerDelete = $access->onlyownerdelete || $this->onlyOwnerDelete;
     }
 
     /**

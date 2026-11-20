@@ -52,6 +52,11 @@ class OwnerDataTraitHost
     {
         return $this->checkOwnerUpdate($model);
     }
+
+    public function canDelete($model): bool
+    {
+        return $this->checkOwnerDelete($model);
+    }
 }
 
 /**
@@ -212,47 +217,35 @@ final class OwnerDataTraitTest extends TestCase
         $this->assertFalse($host->isOwner($model));
     }
 
-    public function testOnlyOwnerUpdatePermiteVerPeroNoModificarAjenos(): void
+    public function testOnlyOwnerUpdateSoloModificaLoSuyo(): void
     {
         $host = $this->host(false, '5', 'pepe');
         $host->permissions->onlyOwnerUpdate = true;
-        $model = new OwnerDataFakeModel(10, ['codagente', 'nick'], '9', 'ana');
+        $ajeno = new OwnerDataFakeModel(10, ['codagente', 'nick'], '9', 'ana');
 
-        $this->assertTrue($host->isOwner($model));
-        $this->assertFalse($host->canUpdate($model));
-    }
+        // puede ver y eliminar lo ajeno, pero no modificarlo
+        $this->assertTrue($host->isOwner($ajeno));
+        $this->assertTrue($host->canDelete($ajeno));
+        $this->assertFalse($host->canUpdate($ajeno));
 
-    public function testOnlyOwnerUpdatePermiteModificarPorAgenteOPorNick(): void
-    {
-        $host = $this->host(false, '5', 'pepe');
-        $host->permissions->onlyOwnerUpdate = true;
-
+        // puede modificar lo suyo, por agente o por nick
         $this->assertTrue($host->canUpdate(new OwnerDataFakeModel(10, ['codagente', 'nick'], '5', 'ana')));
         $this->assertTrue($host->canUpdate(new OwnerDataFakeModel(10, ['codagente', 'nick'], '9', 'pepe')));
     }
 
-    public function testOnlyOwnerUpdateRegistroNuevoOSinColumnasPermite(): void
+    public function testOnlyOwnerDeleteSoloEliminaLoSuyo(): void
     {
         $host = $this->host(false, '5', 'pepe');
-        $host->permissions->onlyOwnerUpdate = true;
+        $host->permissions->onlyOwnerDelete = true;
+        $ajeno = new OwnerDataFakeModel(10, ['codagente', 'nick'], '9', 'ana');
 
-        $this->assertTrue($host->canUpdate(new OwnerDataFakeModel(0, ['codagente', 'nick'], '9', 'ana')));
-        $this->assertTrue($host->canUpdate(new OwnerDataFakeModel(10, ['otracolumna'])));
-    }
+        // puede ver y modificar lo ajeno, pero no eliminarlo
+        $this->assertTrue($host->isOwner($ajeno));
+        $this->assertTrue($host->canUpdate($ajeno));
+        $this->assertFalse($host->canDelete($ajeno));
 
-    public function testSinOnlyOwnerUpdatePermiteModificar(): void
-    {
-        $host = $this->host(false, '5', 'pepe');
-        $model = new OwnerDataFakeModel(10, ['codagente', 'nick'], '9', 'ana');
-
-        $this->assertTrue($host->canUpdate($model));
-    }
-
-    public function testOnlyOwnerDataTambienImpideModificarAjenos(): void
-    {
-        $host = $this->host(true, '5', 'pepe');
-        $model = new OwnerDataFakeModel(10, ['codagente', 'nick'], '9', 'ana');
-
-        $this->assertFalse($host->canUpdate($model));
+        // puede eliminar lo suyo, por agente o por nick
+        $this->assertTrue($host->canDelete(new OwnerDataFakeModel(10, ['codagente', 'nick'], '5', 'ana')));
+        $this->assertTrue($host->canDelete(new OwnerDataFakeModel(10, ['codagente', 'nick'], '9', 'pepe')));
     }
 }

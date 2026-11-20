@@ -47,6 +47,7 @@ class EditRole extends EditController
                 'show' => false,
                 'onlyOwner' => false,
                 'onlyOwnerUpdate' => false,
+                'onlyOwnerDelete' => false,
                 'update' => false,
                 'delete' => false
             ];
@@ -56,6 +57,7 @@ class EditRole extends EditController
             $rules[$roleAccess->pagename]['show'] = true;
             $rules[$roleAccess->pagename]['onlyOwner'] = $roleAccess->onlyownerdata;
             $rules[$roleAccess->pagename]['onlyOwnerUpdate'] = $roleAccess->onlyownerupdate;
+            $rules[$roleAccess->pagename]['onlyOwnerDelete'] = $roleAccess->onlyownerdelete;
             $rules[$roleAccess->pagename]['update'] = $roleAccess->allowupdate;
             $rules[$roleAccess->pagename]['delete'] = $roleAccess->allowdelete;
             $rules[$roleAccess->pagename]['export'] = $roleAccess->allowexport;
@@ -122,6 +124,7 @@ class EditRole extends EditController
         $show = $this->request->request->getArray('show', false);
         $onlyOwner = $this->request->request->getArray('onlyOwner', false);
         $onlyOwnerUpdate = $this->request->request->getArray('onlyOwnerUpdate', false);
+        $onlyOwnerDelete = $this->request->request->getArray('onlyOwnerDelete', false);
         $update = $this->request->request->getArray('update', false);
         $delete = $this->request->request->getArray('delete', false);
         $export = $this->request->request->getArray('export', false);
@@ -139,6 +142,7 @@ class EditRole extends EditController
             // actualizamos la regla
             $roleAccess->onlyownerdata = is_array($onlyOwner) && in_array($roleAccess->pagename, $onlyOwner);
             $roleAccess->onlyownerupdate = is_array($onlyOwnerUpdate) && in_array($roleAccess->pagename, $onlyOwnerUpdate);
+            $roleAccess->onlyownerdelete = is_array($onlyOwnerDelete) && in_array($roleAccess->pagename, $onlyOwnerDelete);
             $roleAccess->allowupdate = is_array($update) && in_array($roleAccess->pagename, $update);
             $roleAccess->allowdelete = is_array($delete) && in_array($roleAccess->pagename, $delete);
             $roleAccess->allowexport = is_array($export) && in_array($roleAccess->pagename, $export);
@@ -161,6 +165,7 @@ class EditRole extends EditController
             $newRoleAccess->pagename = $pageName;
             $newRoleAccess->onlyownerdata = is_array($onlyOwner) && in_array($pageName, $onlyOwner);
             $newRoleAccess->onlyownerupdate = is_array($onlyOwnerUpdate) && in_array($pageName, $onlyOwnerUpdate);
+            $newRoleAccess->onlyownerdelete = is_array($onlyOwnerDelete) && in_array($pageName, $onlyOwnerDelete);
             $newRoleAccess->allowupdate = is_array($update) && in_array($pageName, $update);
             $newRoleAccess->allowdelete = is_array($delete) && in_array($pageName, $delete);
             $newRoleAccess->allowexport = is_array($export) && in_array($pageName, $export);

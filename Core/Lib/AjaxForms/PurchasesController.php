@@ -50,7 +50,7 @@ abstract class PurchasesController extends PanelController
 
     /** Acciones que modifican el documento y requieren checkOwnerUpdate. */
     private const OWNER_UPDATE_ACTIONS = [
-        'add-file', 'delete-doc', 'delete-file', 'edit-file', 'save-doc',
+        'add-file', 'delete-file', 'edit-file', 'save-doc',
         'save-paid', 'save-status', 'sort-files', 'unlink-file'
     ];
 
@@ -322,13 +322,24 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
-        // con onlyOwnerUpdate solamente puede guardar o eliminar los documentos que sean suyos
+        // con onlyOwnerUpdate solamente puede modificar los documentos que sean suyos
         if (
             in_array($action, self::OWNER_UPDATE_ACTIONS, true) && false === empty($code)
             && false === $this->checkOwnerUpdate($this->getModel())
         ) {
             $this->setTemplate(false);
             Tools::log()->warning('not-allowed-modify');
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
+        // con onlyOwnerDelete solamente puede eliminar los documentos que sean suyos
+        if (
+            'delete-doc' === $action && false === empty($code)
+            && false === $this->checkOwnerDelete($this->getModel())
+        ) {
+            $this->setTemplate(false);
+            Tools::log()->warning('not-allowed-delete');
             $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
