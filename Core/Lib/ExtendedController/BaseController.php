@@ -392,30 +392,42 @@ abstract class BaseController extends Controller
         if (false === empty($codes) && is_array($codes)) {
             $this->dataBase->beginTransaction();
 
-            // deleting multiples rows
-            $numDeletes = 0;
+            // deleting multiples rows: si alguno falla no se elimina ninguno
+            $error = '';
             foreach ($codes as $cod) {
-                if ($model->loadFromCode($cod) && $this->checkOwnerDelete($model) && $model->delete()) {
-                    ++$numDeletes;
-                    continue;
+                if (false === $model->loadFromCode($cod)) {
+                    $error = 'record-deleted-error';
+                    break;
+                } elseif (false === $this->checkOwnerDelete($model)) {
+                    $error = 'not-allowed-delete';
+                    break;
+                } elseif (false === $model->delete()) {
+                    $error = 'record-deleted-error';
+                    break;
                 }
-
-                // ¿error?
-                $this->dataBase->rollback();
-                break;
             }
 
             $model->clear();
+            if ($error) {
+                $this->dataBase->rollback();
+                Tools::log()->warning($error);
+                return false;
+            }
+
             $this->dataBase->commit();
-            if ($numDeletes > 0) {
+            Tools::log()->notice('record-deleted-correctly');
+            return true;
+        } elseif ($model->loadFromCode($code)) {
+            if (false === $this->checkOwnerDelete($model)) {
+                Tools::log()->warning('not-allowed-delete');
+                $model->clear();
+                return false;
+            } elseif ($model->delete()) {
+                // deleting a single row
                 Tools::log()->notice('record-deleted-correctly');
+                $model->clear();
                 return true;
             }
-        } elseif ($model->loadFromCode($code) && $this->checkOwnerDelete($model) && $model->delete()) {
-            // deleting a single row
-            Tools::log()->notice('record-deleted-correctly');
-            $model->clear();
-            return true;
         }
 
         Tools::log()->warning('record-deleted-error');

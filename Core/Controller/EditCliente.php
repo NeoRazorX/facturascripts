@@ -396,6 +396,12 @@ class EditCliente extends ComercialContactController
             return false;
         }
 
+        // ¿el usuario puede modificar este cliente?
+        if (false === $this->checkOwnerUpdate($cliente)) {
+            Tools::log()->warning('not-allowed-modify');
+            return false;
+        }
+
         // variable para registrar los errores
         $failCounter = 0;
         $successCounter = 0;
@@ -430,6 +436,11 @@ class EditCliente extends ComercialContactController
 
             // para cada documento de venta aplicar y guardar
             foreach ($salesDocuments as $salesDoc) {
+                // no modificamos documentos ajenos
+                if (false === $this->checkOwnerUpdate($salesDoc)) {
+                    continue;
+                }
+
                 $salesDoc->direccion = $contacto->direccion;
                 $salesDoc->apartado = $contacto->apartado;
                 $salesDoc->codpostal = $contacto->codpostal;
