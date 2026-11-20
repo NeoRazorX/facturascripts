@@ -149,6 +149,20 @@ class PostgresqlQueries implements DataBaseQueries
     }
 
     /**
+     * Devuelve la sentencia SQL que permite valores nulos en una columna de la base de datos.
+     * En PostgreSQL basta con quitar el NOT NULL: el tipo y el valor por defecto se conservan.
+     *
+     * @param string $tableName
+     * @param array $dbColumn Columna tal y como la devuelve DataBase::getColumns().
+     *
+     * @return string
+     */
+    public function sqlAlterColumnDropNotNull(string $tableName, array $dbColumn): string
+    {
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $dbColumn['name'] . ' DROP NOT NULL;';
+    }
+
+    /**
      * Returns the SQL needed to alter a column in a table
      *
      * @param string $tableName

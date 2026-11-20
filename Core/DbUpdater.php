@@ -255,6 +255,8 @@ final class DbUpdater
         $sqlQueries = [];
         // primero las columnas, para que estén disponibles cuando se añadan las restricciones
         self::compareColumns($table_name, $structure['columns'], $db_cols, $sqlQueries);
+        // las columnas que ya no están en el XML pasan a admitir nulos, para que los modelos puedan guardar sin ellas
+        self::dropNotNullFromMissingColumns($table_name, $structure['columns'], $db_cols, $sqlQueries);
         // luego las restricciones (los DROP se añaden al principio, los ADD al final)
         self::compareConstraints($table_name, $structure['constraints'], $db_cons, $sqlQueries);
         // finalmente los índices
@@ -472,6 +474,51 @@ final class DbUpdater
         }
     }
 
+    /**
+     * Quita la restricción NOT NULL de las columnas de la base de datos que no están en el XML.
+     * Los modelos cargan sus campos desde la base de datos e insertan null en las columnas que no conocen,
+     * así que una columna huérfana con NOT NULL (por ejemplo, la de un plugin desactivado) impediría guardar.
+     * Se excluyen las columnas de la clave primaria, las autoincrementales, las generadas
+     * y las que se van a renombrar a una columna del XML.
+     *
+     * @param string $table_name
+     * @param array $xml_cols
+     * @param array $db_cols
+     * @param array $sqlQueries
+     */
+    private static function dropNotNullFromMissingColumns(string $table_name, array $xml_cols, array $db_cols, array &$sqlQueries): void
+    {
+        $primary_cols = null;
+
+        foreach ($db_cols as $db_col) {
+            if ($db_col['is_nullable'] !== 'NO' || !empty(self::searchInArray($xml_cols, 'name', $db_col['name']))) {
+                continue;
+            }
+
+            // si se va a renombrar a una columna del XML, ya se gestiona con la definición del XML
+            $renamed = array_filter($xml_cols, fn($xml_col) => ($xml_col['rename'] ?? '') === $db_col['name']);
+            if (!empty($renamed)) {
+                continue;
+            }
+
+            // las columnas autoincrementales y las generadas (virtuales o almacenadas) no se tocan
+            $extra = strtolower((string)($db_col['extra'] ?? ''));
+            if (str_contains($extra, 'auto_increment') || str_contains($extra, 'virtual') || str_contains($extra, 'stored')) {
+                continue;
+            }
+
+            // las columnas de la clave primaria no pueden admitir nulos
+            $primary_cols ??= self::getPrimaryKeyColumns($table_name);
+            if (in_array($db_col['name'], $primary_cols, true)) {
+                continue;
+            }
+
+            $sql_part = self::sqlTool()->sqlAlterColumnDropNotNull($table_name, $db_col);
+            $sqlQueries[] = $sql_part;
+            self::saveChangeLog('drop-column-not-null', $sql_part, ['db' => $db_col]);
+        }
+    }
+
     private static function getBoolValue($value): ?bool
     {
         if ($value === true || $value === 1 || $value === '1' || strtolower($value ?? '') === 'true') {
@@ -483,6 +530,25 @@ final class DbUpdater
         }
 
         return null;
+    }
+
+    /**
+     * Devuelve los nombres de las columnas que forman la clave primaria de la tabla.
+     *
+     * @param string $table_name
+     *
+     * @return string[]
+     */
+    private static function getPrimaryKeyColumns(string $table_name): array
+    {
+        $columns = [];
+        foreach (self::db()->getConstraints($table_name, true) as $constraint) {
+            if ($constraint['type'] === 'PRIMARY KEY' && !empty($constraint['column_name'])) {
+                $columns[] = $constraint['column_name'];
+            }
+        }
+
+        return $columns;
     }
 
     private static function needRename(array $db_cols, array $xml_col): bool

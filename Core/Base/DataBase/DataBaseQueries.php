@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -76,6 +76,17 @@ interface DataBaseQueries
      * @return string
      */
     public function sqlAlterColumnNull(string $tableName, array $colData): string;
+
+    /**
+     * Sentencia SQL que permite valores nulos en una columna de la base de datos,
+     * conservando su tipo y su valor por defecto.
+     *
+     * @param string $tableName
+     * @param array $dbColumn Columna tal y como la devuelve DataBase::getColumns().
+     *
+     * @return string
+     */
+    public function sqlAlterColumnDropNotNull(string $tableName, array $dbColumn): string;
 
     /**
      * SQL statement to alter a given table column's definition
