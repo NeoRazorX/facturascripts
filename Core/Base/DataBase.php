@@ -22,11 +22,12 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
 use FacturaScripts\Core\Base\DataBase\MysqlEngine;
 use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
+use FacturaScripts\Core\Base\DataBase\SqliteEngine;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Tools;
 
 /**
- * Generic class of access to the database, either MySQL or PostgreSQL.
+ * Generic class of access to the database, either MySQL, PostgreSQL or SQLite.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -82,6 +83,10 @@ final class DataBase
             switch (self::$type) {
                 case 'postgresql':
                     self::$engine = new PostgresqlEngine();
+                    break;
+
+                case 'sqlite':
+                    self::$engine = new SqliteEngine();
                     break;
 
                 default:
@@ -520,6 +525,12 @@ final class DataBase
         // If it's an object
         if (is_object($val)) {
             throw new KernelException('DatabaseError', 'Object not allowed in var2str function');
+        }
+
+        // en SQLite los números van sin comillas: una expresión como LENGTH(x) no tiene
+        // afinidad de tipo y no se puede comparar con un texto como '10'
+        if (self::$type === 'sqlite' && (is_int($val) || is_float($val))) {
+            return (string)$val;
         }
 
         // If it's a date

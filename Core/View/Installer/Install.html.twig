@@ -26,7 +26,19 @@
 
             // Función para mostrar/ocultar campos según el tipo de base de datos
             function toggleDatabaseFields(dbType) {
-                if (dbType === 'mysql') {
+                // SQLite no usa servidor: ocultamos host, puerto, usuario y contraseña
+                const isSqlite = dbType === 'sqlite';
+                $('.db-server-field').toggle(!isSqlite);
+                $('.db-server-field input[required], .db-server-field input[data-required]').each(function () {
+                    $(this).attr('data-required', '1').prop('required', !isSqlite);
+                });
+                $('#sqlite_db_name_p').toggle(isSqlite);
+
+                if (isSqlite) {
+                    $('#mysql_socket_div').hide();
+                    $('#pgsql_ssl_div').hide();
+                    $('#pgsql_endpoint').hide();
+                } else if (dbType === 'mysql') {
                     $('#db_port').val(3306);
                     $('#db_user').val('root');
                     $('#mysql_socket_div').show();
@@ -201,24 +213,20 @@
                                 <div class="mb-3">
                                     <label for="db_type">{{ trans('db-type') }}:</label>
                                     <select id="db_type" name="fs_db_type" class="form-select">
-                                        {% if fsc.db_type == 'mysql' %}
-                                            <option value="mysql" selected>MySQL</option>
-                                            <option value="postgresql">PostgreSQL</option>
-                                        {% else %}
-                                            <option value="mysql">MySQL</option>
-                                            <option value="postgresql" selected>PostgreSQL</option>
-                                        {% endif %}
+                                        <option value="mysql"{{ fsc.db_type == 'mysql' ? ' selected' : '' }}>MySQL</option>
+                                        <option value="postgresql"{{ fsc.db_type == 'postgresql' ? ' selected' : '' }}>PostgreSQL</option>
+                                        <option value="sqlite"{{ fsc.db_type == 'sqlite' ? ' selected' : '' }}>SQLite</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-6">
+                            <div class="col-md-12 col-lg-6 db-server-field">
                                 <div class="mb-3">
                                     <label for="fs_db_host">{{ trans('db-host') }}:</label>
                                     <input type="text" id="fs_db_host" name="fs_db_host" value="{{ fsc.db_host }}"
                                            class="form-control" required/>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-6">
+                            <div class="col-md-12 col-lg-6 db-server-field">
                                 <div class="mb-3">
                                     <label for="db_port">{{ trans('db-port') }}:</label>
                                     <input type="number" id="db_port" name="fs_db_port"
@@ -235,16 +243,17 @@
                                         <input type="text" id="fs_db_name" name="fs_db_name" value="{{ fsc.db_name }}"
                                                class="form-control" pattern="[A-Za-z0-9_]+" required/>
                                     </div>
+                                    <div id="sqlite_db_name_p" class="form-text">{{ trans('sqlite-db-name-p') }}</div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-6">
+                            <div class="col-md-12 col-lg-6 db-server-field">
                                 <div class="mb-3">
                                     <label for="db_user">{{ trans('db-user') }}:</label>
                                     <input type="text" id="db_user" name="fs_db_user" value="{{ fsc.db_user }}"
                                            class="form-control" required/>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-6">
+                            <div class="col-md-12 col-lg-6 db-server-field">
                                 <div class="mb-3">
                                     <label for="fs_db_pass">{{ trans('db-password') }}:</label>
                                     <div class="input-group">

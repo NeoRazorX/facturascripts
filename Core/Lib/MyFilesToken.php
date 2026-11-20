@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\AppKey;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of MyFilesToken
@@ -127,7 +128,7 @@ class MyFilesToken
 
     private static function legacyToken(string $path, bool $permanent, string $expiration = ''): string
     {
-        $init = FS_DB_NAME . FS_DB_PASS;
+        $init = Tools::config('db_name') . Tools::config('db_pass');
         if ($expiration && $permanent === false) {
             return sha1($init . $path . $expiration) . '|' . $expiration;
         }
