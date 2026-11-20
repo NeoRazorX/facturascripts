@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Tools;
 use mysqli;
 
 /**
@@ -204,19 +205,28 @@ class MysqlEngine extends DataBaseEngine
             throw new KernelException('DatabaseError', $error);
         }
 
-        $result = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int)FS_DB_PORT);
+        // leemos la configuración con Tools::config() para admitir también la url FS_DB_URL
+        $socket = Tools::config('mysql_socket');
+        $result = new mysqli(
+            Tools::config('db_host', 'localhost'),
+            Tools::config('db_user', ''),
+            Tools::config('db_pass', ''),
+            Tools::config('db_name', ''),
+            (int)Tools::config('db_port', 3306),
+            empty($socket) ? null : $socket
+        );
         if ($result->connect_errno) {
             $error = $result->connect_error;
             $this->lastErrorMsg = $error;
             throw new KernelException('DatabaseError', $error);
         }
 
-        $charset = defined('FS_MYSQL_CHARSET') ? FS_MYSQL_CHARSET : 'utf8';
+        $charset = Tools::config('mysql_charset', 'utf8');
         $result->set_charset($charset);
         $result->autocommit(false);
 
         // disable foreign keys
-        if (defined('FS_DB_FOREIGN_KEYS') && false === FS_DB_FOREIGN_KEYS) {
+        if (false === Tools::config('db_foreign_keys', true)) {
             $this->exec($result, 'SET foreign_key_checks = 0;');
         }
 
@@ -333,7 +343,7 @@ class MysqlEngine extends DataBaseEngine
     {
         $tables = [];
         foreach ($this->select($link, 'SHOW TABLES;') as $row) {
-            $key = 'Tables_in_' . FS_DB_NAME;
+            $key = 'Tables_in_' . Tools::config('db_name');
             if (isset($row[$key])) {
                 $tables[] = $row[$key];
             }

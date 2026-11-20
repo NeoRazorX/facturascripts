@@ -100,6 +100,8 @@ final class DbUpdaterTest extends TestCase
 
     public function testCanAddColumnsAndConstraintsToTable(): void
     {
+        $this->skipOnSqlite();
+
         // creamos la tabla
         $table_name = 'test_table';
         $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
@@ -135,6 +137,8 @@ final class DbUpdaterTest extends TestCase
 
     public function testCanUpdateTableColumnNullAndDefault(): void
     {
+        $this->skipOnSqlite();
+
         // creamos la tabla
         $table_name = 'test_table';
         $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
@@ -178,6 +182,8 @@ final class DbUpdaterTest extends TestCase
 
     public function testCanSetNotNullOnColumnWithNullValues(): void
     {
+        $this->skipOnSqlite();
+
         // creamos la tabla
         $table_name = 'test_table';
         $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
@@ -439,6 +445,17 @@ final class DbUpdaterTest extends TestCase
         }
 
         return count(json_decode(file_get_contents($file), true) ?? []);
+    }
+
+    /**
+     * Salta el test en SQLite, que no permite cambiar el NOT NULL, el valor por defecto
+     * ni el tipo de una columna, ni añadir una columna NOT NULL sin valor por defecto.
+     */
+    private function skipOnSqlite(): void
+    {
+        if ($this->db()->type() === 'sqlite') {
+            $this->markTestSkipped('SQLite no permite modificar columnas con ALTER TABLE');
+        }
     }
 
     private function db(): DataBase

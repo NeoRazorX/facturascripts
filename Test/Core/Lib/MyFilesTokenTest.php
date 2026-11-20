@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Lib;
 use FacturaScripts\Core\AppKey;
 use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Model\AttachedFile;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
 final class MyFilesTokenTest extends TestCase
@@ -91,7 +92,7 @@ final class MyFilesTokenTest extends TestCase
 
         // con FS_APP_KEY los tokens nuevos ya no son los antiguos
         $path = 'MyFiles' . DIRECTORY_SEPARATOR . 'test.jpg';
-        $init = FS_DB_NAME . FS_DB_PASS;
+        $init = Tools::config('db_name') . Tools::config('db_pass');
         $nextWeek = date('d-m-Y', strtotime('+1 week'));
         $tokenPermanent = MyFilesToken::get($path, true);
         $tokenTemporal = MyFilesToken::get($path, false);
@@ -113,7 +114,7 @@ final class MyFilesTokenTest extends TestCase
     {
         // los tokens anteriores a FS_APP_KEY siguen siendo válidos, para no romper los enlaces compartidos
         $path = 'MyFiles' . DIRECTORY_SEPARATOR . 'test.jpg';
-        $init = FS_DB_NAME . FS_DB_PASS;
+        $init = Tools::config('db_name') . Tools::config('db_pass');
         $nextWeek = date('d-m-Y', strtotime('+1 week'));
         $this->assertTrue(MyFilesToken::validate($path, sha1($init . $path)), 'legacy-permanent-token-not-valid');
         $this->assertTrue(MyFilesToken::validate($path, sha1($init . $path . MyFilesToken::getCurrentDate())), 'legacy-daily-token-not-valid');

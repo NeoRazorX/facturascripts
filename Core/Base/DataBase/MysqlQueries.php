@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,8 @@
  */
 
 namespace FacturaScripts\Core\Base\DataBase;
+
+use FacturaScripts\Core\Tools;
 
 /**
  * Class that gathers all the needed SQL sentences by the database engine
@@ -190,8 +192,8 @@ class MysqlQueries implements DataBaseQueries
 
         $sql = $this->fixPostgresql(substr($fields, 2));
 
-        $charset = defined('FS_MYSQL_CHARSET') ? FS_MYSQL_CHARSET : 'utf8';
-        $collate = defined('FS_MYSQL_COLLATE') ? FS_MYSQL_COLLATE : 'utf8_bin';
+        $charset = Tools::config('mysql_charset', 'utf8');
+        $collate = Tools::config('mysql_collate', 'utf8_bin');
         return 'CREATE TABLE ' . $tableName . ' (' . $sql
             . $this->sqlTableConstraints($constraints) . ') '
             . 'ENGINE=InnoDB DEFAULT CHARSET=' . $charset . ' COLLATE=' . $collate . ';'
@@ -277,7 +279,7 @@ class MysqlQueries implements DataBaseQueries
         $sql = '';
         foreach ($xmlCons as $res) {
             $value = strtolower($res['constraint']);
-            if (false !== strpos($value, 'primary key') || FS_DB_FOREIGN_KEYS) {
+            if (false !== strpos($value, 'primary key') || Tools::config('db_foreign_keys')) {
                 $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
             }
         }

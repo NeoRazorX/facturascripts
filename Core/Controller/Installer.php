@@ -23,6 +23,7 @@ use DateTimeZone;
 use Exception;
 use FacturaScripts\Core\AppKey;
 use FacturaScripts\Core\Contract\ControllerInterface;
+use FacturaScripts\Core\DB\Connection;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Internal\PhpExtensions;
 use FacturaScripts\Core\Kernel;
@@ -31,6 +32,7 @@ use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use mysqli;
+use PDO;
 
 /**
  * Controlador del instalador que configura la aplicación en su primera puesta en marcha.
@@ -188,6 +190,9 @@ class Installer implements ControllerInterface
 
             case 'postgresql':
                 return $this->testPostgresql($dbData);
+
+            case 'sqlite':
+                return $this->testSqlite($dbData);
         }
 
         Tools::log()->critical('cant-connect-database');
@@ -285,6 +290,8 @@ class Installer implements ControllerInterface
         }
 
         if ($this->db_type === 'mysql' && $this->request->input('mysql_socket', '') !== '') {
+            // el socket también se guarda como constante para las conexiones PDO de Core\DB
+            $config .= $this->configLineString('FS_MYSQL_SOCKET', $this->request->input('mysql_socket', ''));
             $config .= "\nini_set('mysqli.default_socket', '" . $this->escapeConfig($this->request->input('mysql_socket', '')) . "');\n";
         } elseif ($this->db_type === 'postgresql') {
             $config .= $this->configLineString('FS_PGSQL_SSL', $this->request->input('pgsql_ssl_mode', ''));
@@ -489,6 +496,46 @@ class Installer implements ControllerInterface
         }
 
         return false;
+    }
+
+    /**
+     * Comprueba que se puede crear y usar la base de datos SQLite. El archivo se guarda
+     * en MyFiles (que no se sirve sin token) con el nombre indicado y la extensión .sqlite,
+     * y esa ruta relativa es la que se guarda como FS_DB_NAME.
+     *
+     * @param array $dbData
+     *
+     * @return bool
+     */
+    private function testSqlite(array $dbData): bool
+    {
+        if (false === in_array('sqlite', PDO::getAvailableDrivers(), true)) {
+            Tools::log()->critical('php-extension-not-found', ['%extension%' => 'pdo_sqlite']);
+            return false;
+        }
+
+        if (1 !== preg_match('/^[A-Za-z0-9_]+$/', $dbData['name'])) {
+            Tools::log()->warning('invalid-db-name');
+            return false;
+        }
+
+        $this->db_name = 'MyFiles/' . $dbData['name'] . '.sqlite';
+        $connection = new Connection(['type' => 'sqlite', 'name' => $this->db_name]);
+        if (false === $connection->connect()) {
+            Tools::log()->critical('cant-connect-database');
+            Tools::log()->critical($connection->lastError());
+            return false;
+        }
+
+        // necesitamos SQLite 3.25 o superior para poder renombrar columnas
+        $version = $connection->pdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
+        $connection->close();
+        if (version_compare($version, '3.25.0', '<')) {
+            Tools::log()->critical('sqlite-version-too-old', ['%version%' => $version]);
+            return false;
+        }
+
+        return true;
     }
 
     private function versionPostgres($connection): float

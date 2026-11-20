@@ -174,7 +174,8 @@ class CodigoPostal extends ModelClass
         $columns = implode(',', array_map(function (string $name): string {
             return self::db()->escapeColumn($name);
         }, ['codpais', 'idprovincia', 'idciudad', 'number', 'creation_date']));
-        $isPostgres = 'postgresql' === Tools::config('db_type');
+        // PostgreSQL y SQLite usan ON CONFLICT DO NOTHING, MySQL usa INSERT IGNORE
+        $isPostgres = in_array(Tools::config('db_type'), ['postgresql', 'sqlite'], true);
         $insert = ($isPostgres ? 'INSERT INTO ' : 'INSERT IGNORE INTO ') . static::tableName()
             . ' (' . $columns . ') VALUES ';
         $suffix = $isPostgres ? ' ON CONFLICT DO NOTHING;' : ';';

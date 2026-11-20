@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,10 +38,11 @@ echo "\n" . 'Using ' . $config . "\n";
 require_once $config;
 
 echo "\n" . '    PHP: ' . phpversion();
-echo "\n" . 'DB Host: ' . FS_DB_HOST;
-echo "\n" . 'DB User: ' . FS_DB_USER;
-echo "\n" . 'DB Pass: ' . FS_DB_PASS;
-echo "\n" . 'DB Name: ' . FS_DB_NAME . "\n\n";
+echo "\n" . 'DB Type: ' . Tools::config('db_type');
+echo "\n" . 'DB Host: ' . Tools::config('db_host');
+echo "\n" . 'DB User: ' . Tools::config('db_user');
+echo "\n" . 'DB Pass: ' . Tools::config('db_pass');
+echo "\n" . 'DB Name: ' . Tools::config('db_name') . "\n\n";
 
 // establecemos la zona horaria
 $timeZone = Tools::config('timezone', 'Europe/Madrid');
