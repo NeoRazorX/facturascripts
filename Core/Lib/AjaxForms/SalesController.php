@@ -250,14 +250,16 @@ abstract class SalesController extends PanelController
                 return $this->recalculateAction(false);
 
             case 'save-doc':
-                $this->saveDocAction();
+                if ($this->validateDocFormToken()) {
+                    $this->saveDocAction();
+                }
                 return false;
 
             case 'save-paid':
-                return $this->savePaidAction();
+                return $this->validateDocFormToken() && $this->savePaidAction();
 
             case 'save-status':
-                return $this->saveStatusAction();
+                return $this->validateDocFormToken() && $this->saveStatusAction();
 
             case 'sort-files':
                 return $this->sortFilesAction();
@@ -754,6 +756,26 @@ abstract class SalesController extends PanelController
             'multireqtoken' => $this->multiRequestProtection->newToken(),
             'products' => '',
         ];
+    }
+
+    /**
+     * Comprueba el token del formulario antes de guardar el documento, para evitar CSRF
+     * y peticiones duplicadas. Si no es válido, responde con el error en JSON.
+     *
+     * Se comprueba aquí y no dentro de saveDocAction() porque savePaidAction() y
+     * saveStatusAction() también llaman a saveDocAction() y el token solo se puede usar una vez.
+     *
+     * @return bool
+     */
+    private function validateDocFormToken(): bool
+    {
+        if ($this->validateFormToken()) {
+            return true;
+        }
+
+        $this->setTemplate(false);
+        $this->sendJsonWithLogs(['ok' => false]);
+        return false;
     }
 
     private function sendJsonWithLogs(array $data): void
