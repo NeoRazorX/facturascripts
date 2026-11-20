@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\MysqlQueries;
 use FacturaScripts\Core\Base\DataBase\PostgresqlQueries;
 use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Tools;
@@ -216,6 +217,124 @@ final class DbUpdaterTest extends TestCase
         // eliminamos
         $dropped = DbUpdater::dropTable($table_name);
         $this->assertTrue($dropped, 'test-table-not-dropped');
+    }
+
+    public function testDropsNotNullFromColumnsMissingInXml(): void
+    {
+        $table_name = 'test_table';
+
+        try {
+            // creamos la tabla con una columna extra que no admite nulos y tiene un texto con comilla como valor por defecto
+            $file_path = Tools::folder('Test', '__files', $table_name . '.xml');
+            $structure = DbUpdater::readTableXml($file_path);
+            $structure['columns']['codigo'] = [
+                'name' => 'codigo',
+                'type' => 'character varying(20)',
+                'null' => 'NO',
+                'default' => "'o''k'",
+                'rename' => '',
+            ];
+            $created = DbUpdater::createTable($table_name, $structure);
+            $this->assertTrue($created, 'test-table-not-created');
+
+            $columns = $this->db()->getColumns($table_name);
+            $this->assertEquals('NO', $columns['codigo']['is_nullable'], 'column-codigo-bad-nullable');
+            $this->assertEquals('NO', $columns['importe']['is_nullable'], 'column-importe-bad-nullable');
+            $this->assertEquals('NO', $columns['numero']['is_nullable'], 'column-numero-bad-nullable');
+
+            // quitamos del XML las columnas codigo, importe y numero, que siguen en la base de datos
+            DbUpdater::rebuild();
+            $new_structure = DbUpdater::readTableXml($file_path);
+            unset($new_structure['columns']['importe'], $new_structure['columns']['numero']);
+            $updated = DbUpdater::updateTable($table_name, $new_structure);
+            $this->assertTrue($updated, 'test-table-not-updated');
+
+            // las columnas que no están en el XML admiten nulos y no se eliminan
+            $columns = $this->db()->getColumns($table_name);
+            $this->assertCount(11, $columns, 'missing-columns');
+            $this->assertEquals('YES', $columns['codigo']['is_nullable'], 'column-codigo-still-not-null');
+            $this->assertEquals('YES', $columns['importe']['is_nullable'], 'column-importe-still-not-null');
+            $this->assertEquals('YES', $columns['numero']['is_nullable'], 'column-numero-still-not-null');
+
+            // la clave primaria sigue sin admitir nulos
+            $this->assertEquals('NO', $columns['id']['is_nullable'], 'column-id-nullable');
+
+            // podemos insertar como lo haría un modelo, con null en la columna que no conoce y sin el resto
+            $sql = 'INSERT INTO ' . $table_name . ' (debaja, numero) VALUES (true, NULL);';
+            $this->assertTrue($this->db()->exec($sql), 'insert-without-missing-columns-failed');
+
+            // los valores por defecto se conservan
+            $rows = $this->db()->select('SELECT codigo, importe, numero FROM ' . $table_name . ';');
+            $this->assertCount(1, $rows, 'row-not-found');
+            $this->assertSame("o'k", $rows[0]['codigo'], 'column-codigo-lost-default');
+            $this->assertEquals(0, $rows[0]['importe'], 'column-importe-lost-default');
+            $this->assertNull($rows[0]['numero'], 'column-numero-not-null');
+
+            // al volver a comprobar la tabla con el mismo XML no se modifica de nuevo
+            DbUpdater::rebuild();
+            $changes = $this->countChangeLog();
+            $updated = DbUpdater::updateTable($table_name, $new_structure);
+            $this->assertTrue($updated, 'test-table-not-updated-again');
+            $this->assertSame($changes, $this->countChangeLog(), 'test-table-modified-again');
+        } finally {
+            if ($this->db()->tableExists($table_name)) {
+                DbUpdater::dropTable($table_name);
+            }
+        }
+    }
+
+    public function testMysqlDropNotNullKeepsDefaults(): void
+    {
+        $sqlTool = new MysqlQueries();
+
+        // sin valor por defecto
+        $this->assertSame(
+            'ALTER TABLE t MODIFY `c` int(11) NULL DEFAULT NULL;',
+            $sqlTool->sqlAlterColumnDropNotNull('t', ['name' => 'c', 'type' => 'int(11)', 'default' => null, 'extra' => ''])
+        );
+
+        // literal con comilla, tal y como lo devuelve MySQL
+        $this->assertSame(
+            "ALTER TABLE t MODIFY `c` varchar(20) NULL DEFAULT 'o''k';",
+            $sqlTool->sqlAlterColumnDropNotNull('t', ['name' => 'c', 'type' => 'varchar(20)', 'default' => "o'k", 'extra' => ''])
+        );
+
+        // literal ya entrecomillado, tal y como lo puede devolver MariaDB
+        $this->assertSame(
+            "ALTER TABLE t MODIFY `c` varchar(20) NULL DEFAULT 'o''k';",
+            $sqlTool->sqlAlterColumnDropNotNull('t', ['name' => 'c', 'type' => 'varchar(20)', 'default' => "'o''k'", 'extra' => ''])
+        );
+
+        // función con ON UPDATE, en MySQL 8 y en MariaDB
+        $this->assertSame(
+            'ALTER TABLE t MODIFY `c` timestamp NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;',
+            $sqlTool->sqlAlterColumnDropNotNull('t', [
+                'name' => 'c', 'type' => 'timestamp', 'default' => 'CURRENT_TIMESTAMP',
+                'extra' => 'DEFAULT_GENERATED on update CURRENT_TIMESTAMP'
+            ])
+        );
+        $this->assertSame(
+            'ALTER TABLE t MODIFY `c` timestamp NULL DEFAULT current_timestamp() on update current_timestamp();',
+            $sqlTool->sqlAlterColumnDropNotNull('t', [
+                'name' => 'c', 'type' => 'timestamp', 'default' => 'current_timestamp()',
+                'extra' => 'on update current_timestamp()'
+            ])
+        );
+
+        // expresión de MySQL 8
+        $this->assertSame(
+            'ALTER TABLE t MODIFY `c` double NULL DEFAULT (rand());',
+            $sqlTool->sqlAlterColumnDropNotNull('t', ['name' => 'c', 'type' => 'double', 'default' => 'rand()', 'extra' => 'DEFAULT_GENERATED'])
+        );
+    }
+
+    public function testPostgresqlDropNotNull(): void
+    {
+        $sqlTool = new PostgresqlQueries();
+        $this->assertSame(
+            'ALTER TABLE t ALTER COLUMN c DROP NOT NULL;',
+            $sqlTool->sqlAlterColumnDropNotNull('t', ['name' => 'c', 'type' => 'integer', 'default' => '7', 'extra' => null])
+        );
     }
 
     public function testCanUseMysqlTypes(): void
