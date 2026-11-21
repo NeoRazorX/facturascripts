@@ -19,9 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\Block\Columns;
+use FacturaScripts\Core\Lib\Block\ListBlock;
+use FacturaScripts\Core\Lib\Block\Tabs;
+use FacturaScripts\Core\Template\EditBlockController;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Pais;
 
 /**
  * Controlador para editar un único elemento del modelo Pais
@@ -29,7 +32,7 @@ use FacturaScripts\Core\Where;
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
-class EditPais extends EditController
+class EditPais extends EditBlockController
 {
     public function getModelClassName(): string
     {
@@ -45,38 +48,43 @@ class EditPais extends EditController
         return $data;
     }
 
-    protected function createViews()
+    protected function createBlocks(): void
     {
-        parent::createViews();
-        $this->setTabsPosition('bottom');
+        parent::createBlocks();
 
-        $this->createViewsProvince();
-    }
+        $byCountry = fn(Pais $country) => [Where::eq('codpais', $country->codpais)];
+        $provinces = fn(Pais $country) => 'SELECT idprovincia FROM provincias WHERE codpais = '
+            . $this->db()->var2str($country->codpais);
 
-    protected function createViewsProvince(string $viewName = 'ListProvincia'): void
-    {
-        $this->addListView($viewName, 'Provincia', 'provinces', 'fa-solid fa-map-signs')
-            ->addOrderBy(['provincia'], 'name')
-            ->addOrderBy(['codpais'], 'country')
-            ->addSearchFields(['provincia', 'codisoprov', 'alias'])
-            ->disableColumn('country');
-    }
+        // provincias y códigos postales, uno al lado del otro
+        $this->page()->add(
+            Columns::make('geography')
+                ->col(7, ListBlock::make('ListProvincia', 'Provincia', 'provinces', 'fa-solid fa-map-signs')
+                    ->addOrderBy(['provincia'], 'name')
+                    ->addSearchFields(['provincia', 'codisoprov', 'alias'])
+                    ->disableColumn('country')
+                    ->where($byCountry))
+                ->col(5, ListBlock::make('ListCodigoPostal', 'CodigoPostal', 'zip-codes', 'fa-solid fa-map-pin')
+                    ->addOrderBy(['number'], 'number')
+                    ->addSearchFields(['number'])
+                    ->disableColumn('country')
+                    ->where($byCountry))
+        );
 
-    /**
-     * @param string $viewName
-     * @param BaseView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        switch ($viewName) {
-            case 'ListProvincia':
-                $codpais = $this->mainTabModelValue('codpais');
-                $where = [Where::eq('codpais', $codpais)];
-                $view->loadData('', $where);
-                break;
-
-            default:
-                parent::loadData($viewName, $view);
-        }
+        // ciudades y puntos de interés en pestañas: solo se cargan los datos de la que se abre
+        $this->page()->add(
+            Tabs::make('places')
+                ->setLazy()
+                ->tab(ListBlock::make('ListCiudad', 'Ciudad', 'cities', 'fa-solid fa-city')
+                    ->addOrderBy(['ciudad'], 'name')
+                    ->addSearchFields(['ciudad', 'alias'])
+                    ->where(fn(Pais $country) => [Where::in('idprovincia', $provinces($country))]))
+                ->tab(ListBlock::make('ListPuntoInteresCiudad', 'PuntoInteresCiudad', 'points-of-interest', 'fa-solid fa-location-dot')
+                    ->addOrderBy(['name'], 'name')
+                    ->addSearchFields(['name', 'alias'])
+                    ->where(fn(Pais $country) => [
+                        Where::in('idciudad', 'SELECT idciudad FROM ciudades WHERE idprovincia IN (' . $provinces($country) . ')')
+                    ]))
+        );
     }
 }

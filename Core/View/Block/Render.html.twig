@@ -1,0 +1,41 @@
+{#
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2026 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+#}
+{# -- Pinta un bloque o, si está aplazado, el hueco que lo pide después por separado -- #}
+{% if blockItem.isVisible(fsc.hasRecord()) %}
+    <div class="mb-3" id="block-{{ blockItem.name() }}">
+        {# -- el título del registro principal ya está en la cabecera de la página -- #}
+        {% if blockItem.title() is not empty and not inTab and blockItem.name() != fsc.mainBlockName() %}
+            <h2 class="h6 text-uppercase text-body-secondary fw-bold mb-2">
+                {% if blockItem.icon() is not empty %}
+                    <i class="{{ blockItem.icon() }} fa-fw me-1" aria-hidden="true"></i>
+                {% endif %}
+                {{- blockItem.title() }}
+            </h2>
+        {% endif %}
+        {% if blockItem.isDeferred() %}
+            <div class="block-lazy text-center text-body-secondary p-4"
+                 data-block-url="{{ asset(fsc.fragmentUrl(blockItem)) }}">
+                <i class="fa-solid fa-circle-notch fa-spin fa-2x" aria-hidden="true"></i>
+            </div>
+        {% else %}
+            {{ include(blockItem.template()) }}
+        {% endif %}
+    </div>
+{% endif %}

@@ -1,0 +1,52 @@
+{#
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2026 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+#}
+{% set tabs = blockItem %}
+{% set visibleTabs = tabs.children() | filter(child => child.isVisible(fsc.hasRecord())) %}
+{% set activeName = tabs.activeName(fsc.target()) %}
+{% if activeName not in visibleTabs | map(child => child.name()) %}
+    {% set activeName = (visibleTabs | first).name() %}
+{% endif %}
+<ul class="nav nav-tabs" role="tablist">
+    {% for child in visibleTabs %}
+        <li class="nav-item" role="presentation">
+            <button type="button" class="nav-link{{ child.name() == activeName ? ' active' : '' }}"
+                    id="block-tab-{{ child.name() }}" data-bs-toggle="tab"
+                    data-bs-target="#block-pane-{{ child.name() }}" role="tab"
+                    aria-controls="block-pane-{{ child.name() }}"
+                    aria-selected="{{ child.name() == activeName ? 'true' : 'false' }}">
+                {% if child.icon() is not empty %}
+                    <i class="{{ child.icon() }} fa-fw me-1 d-none d-lg-inline-block" aria-hidden="true"></i>
+                {% endif %}
+                {{- child.title() }}
+                {% if child.count() > 0 %}
+                    <span class="badge bg-secondary ms-1">{{ child.count() }}</span>
+                {% endif %}
+            </button>
+        </li>
+    {% endfor %}
+</ul>
+<div class="tab-content pt-3">
+    {% for child in visibleTabs %}
+        <div class="tab-pane fade{{ child.name() == activeName ? ' show active' : '' }}"
+             id="block-pane-{{ child.name() }}" role="tabpanel" aria-labelledby="block-tab-{{ child.name() }}">
+            {{ include('Block/Render.html.twig', {blockItem: child, inTab: true}) }}
+        </div>
+    {% endfor %}
+</div>
