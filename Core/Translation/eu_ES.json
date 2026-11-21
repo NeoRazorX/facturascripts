@@ -2084,6 +2084,7 @@
     "update-stock": "Stocka eguneratu",
     "update-supplier-prices": "Hornitzaileen prezioak eguneratu",
     "update-time": "Eguneratze ordua",
+    "updated-data": "Datuak eguneratuta",
     "updated-model": "%model% (%key%) %desc% Eguneratua",
     "updated-records": "%updatedRecords% erregistro eguneratuak %totalRecords%-n",
     "updater": "Eguneratzailea",

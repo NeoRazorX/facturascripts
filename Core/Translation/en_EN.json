@@ -2084,6 +2084,7 @@
     "update-stock": "Update stock",
     "update-supplier-prices": "Update supplier prices",
     "update-time": "Update time",
+    "updated-data": "Updated data",
     "updated-model": "Updated %model% (%key%) %desc%",
     "updated-records": "Updated %updatedRecords% records in %totalRecords%",
     "updater": "Updater",

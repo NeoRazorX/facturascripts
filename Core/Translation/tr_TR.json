@@ -2084,6 +2084,7 @@
     "update-stock": "Stok güncelle",
     "update-supplier-prices": "Tedarikçi fiyatlarını güncelleyin",
     "update-time": "Güncelleme Saati",
+    "updated-data": "Veriler güncellendi",
     "updated-model": "%model% (%key%) %desc% güncellendi.",
     "updated-records": "%updatedRecords% kayıt %totalRecords% güncellendi.",
     "updater": "Güncelleyici",

@@ -2084,6 +2084,7 @@
     "update-stock": "更新库存",
     "update-supplier-prices": "更新供应商价格",
     "update-time": "更新时间",
+    "updated-data": "数据已更新",
     "updated-model": "已更新 %model% (%key%) %desc%",
     "updated-records": "已更新 %updatedRecords% \/ %totalRecords% 条记录",
     "updater": "更新程序",

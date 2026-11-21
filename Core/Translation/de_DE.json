@@ -2084,6 +2084,7 @@
     "update-stock": "Lagerbestand aktualisieren",
     "update-supplier-prices": "aktullieren Lieferantenpreise",
     "update-time": "Aktuallierungszeit",
+    "updated-data": "Daten aktualisiert",
     "updated-model": "Aktualisiert %model% (%key%) %desc%",
     "updated-records": "%updatedRecords% von %totalRecords% Datensätzen wurden aktualisiert",
     "updater": "Updater",

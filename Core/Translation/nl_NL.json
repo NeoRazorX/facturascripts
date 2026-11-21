@@ -2084,6 +2084,7 @@
     "update-stock": "Voorraad bijwerken",
     "update-supplier-prices": "Leveranciersprijzen bijwerken",
     "update-time": "Tijd van bijwerking",
+    "updated-data": "Bijgewerkte gegevens",
     "updated-model": "%model% bijgewerkt (%key%) %desc%",
     "updated-records": "%updatedRecords% van de %totalRecords% records zijn bijgewerkt",
     "updater": "Updater",

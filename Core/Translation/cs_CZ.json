@@ -2084,6 +2084,7 @@
     "update-stock": "Aktualizovat zásoby",
     "update-supplier-prices": "Aktualizovat ceny dodavatelů",
     "update-time": "Čas aktualizace",
+    "updated-data": "Aktualizovaná data",
     "updated-model": "Aktualizováno %model% (%key%) %desc%",
     "updated-records": "Bylo aktualizováno %updatedRecords% záznamů z %totalRecords%",
     "updater": "Aktualizátor",

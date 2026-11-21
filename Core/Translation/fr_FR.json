@@ -2084,6 +2084,7 @@
     "update-stock": "Mise à jour du stock",
     "update-supplier-prices": "Mise à jour des prix fournisseurs",
     "update-time": "Heure de mise à jour",
+    "updated-data": "Données mises à jour",
     "updated-model": "%model% (%key%) %desc% mis à jour",
     "updated-records": "Les enregistrements %updatedRecords% de %totalRecords% ont été mis à jour.",
     "updater": "Processus de mise à jour",

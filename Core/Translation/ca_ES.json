@@ -2084,6 +2084,7 @@
     "update-stock": "Actualitzar estoc",
     "update-supplier-prices": "Actualitzar preus de proveïdors",
     "update-time": "Hora d'actualització",
+    "updated-data": "Dades actualitzades",
     "updated-model": "Actualitzat %model% (%key%) %desc%",
     "updated-records": "S'han actualitzat %updatedRecords% registres de %totalRecords%",
     "updater": "Actualitzador",
