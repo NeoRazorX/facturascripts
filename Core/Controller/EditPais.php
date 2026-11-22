@@ -95,10 +95,6 @@ class EditPais extends EditBlockController
     {
         $this->header()
             ->status(fn(Pais $country) => $country->isDefault() ? [Tools::trans('default'), 'success'] : null)
-            ->stat('provinces', ['block' => 'ListProvincia'])
-            ->stat('zip-codes', ['block' => 'ListCodigoPostal'])
-            ->stat('cities', ['block' => 'ListCiudad'])
-            ->stat('points-of-interest', ['block' => 'ListPuntoInteresCiudad'])
             ->dropdown('location', ['label' => 'location', 'icon' => 'fa-solid fa-map-location-dot'])
             ->button('open-map', [
                 'dropdown' => 'location',

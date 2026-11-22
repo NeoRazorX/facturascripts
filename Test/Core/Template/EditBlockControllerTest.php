@@ -188,13 +188,19 @@ final class EditBlockControllerTest extends TestCase
 
     public function testHeaderShowsTheRecord(): void
     {
-        $controller = $this->handle(['code' => $this->country->codpais]);
+        // las estadísticas las declara cada página: aquí, una de un bloque cargado y otra de uno aplazado
+        $register = function (TestableEditPais $controller): void {
+            $controller->header()
+                ->stat('provinces', ['block' => 'ListProvincia'])
+                ->stat('points-of-interest', ['block' => 'ListPuntoInteresCiudad']);
+        };
+        $controller = $this->handle(['code' => $this->country->codpais], [], true, $register);
         $header = $controller->header();
         $record = $controller->record();
 
-        // las estadísticas salen de los bloques ya cargados: la pestaña aplazada no tiene cifra
+        // la cifra sale del bloque ya cargado: la pestaña aplazada todavía no la tiene
         $stats = $header->stats($record, $controller->page());
-        $this->assertSame(['provinces', 'zip-codes', 'cities'], array_column($stats, 'name'));
+        $this->assertSame(['provinces'], array_column($stats, 'name'));
         $this->assertSame(1, $stats[0]['value']);
         $this->assertSame('ListProvincia', $stats[0]['block']);
 
