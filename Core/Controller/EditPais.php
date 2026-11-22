@@ -27,7 +27,6 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Pais;
-use FacturaScripts\Dinamic\Model\Provincia;
 use FacturaScripts\Dinamic\Model\PuntoInteresCiudad;
 
 /**
@@ -73,11 +72,6 @@ class EditPais extends EditBlockController
             MapBlock::make('map', 'location', 'fa-solid fa-map-location-dot')
                 ->setLazy()
                 ->center(fn(Pais $country) => [$country->latitude, $country->longitude, 5])
-                ->markers(fn(Pais $country) => $this->markers(
-                    Provincia::all($this->located($byCountry($country)), ['provincia' => 'ASC'], 0, self::MAP_LIMIT),
-                    'provincia',
-                    'provinces'
-                ))
                 ->markers(fn(Pais $country) => $this->markers(
                     Ciudad::all(
                         $this->located([Where::in('idprovincia', $provinces($country))]),

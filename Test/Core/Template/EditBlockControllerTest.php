@@ -153,25 +153,26 @@ final class EditBlockControllerTest extends TestCase
         $this->assertFalse($controller->block('map')->isDeferred());
         $this->assertSame([], $controller->block('map')->config()['markers']);
 
-        // con coordenadas sale la provincia de este país, pero no la del otro
+        // con coordenadas sale la ciudad de este país, pero no la del otro; las provincias no se pintan
         foreach (Provincia::all([Where::in('codpais', [$this->country->codpais, $this->otherCountry->codpais])]) as $province) {
             $province->latitude = 40.4;
             $province->longitude = -3.7;
             $this->assertTrue($province->save());
         }
-        $this->city->latitude = 41.6;
-        $this->city->longitude = -0.9;
-        $this->assertTrue($this->city->save());
+        foreach (Ciudad::all() as $city) {
+            if (0 === strpos($city->ciudad, 'City ')) {
+                $city->latitude = 41.6;
+                $city->longitude = -0.9;
+                $this->assertTrue($city->save());
+            }
+        }
 
         $controller = $this->handle(['code' => $this->country->codpais, 'fragment' => 'map']);
         $markers = $controller->block('map')->config()['markers'];
-        $this->assertSame(
-            ['Province ' . $this->country->codpais, 'City ' . $this->country->codpais],
-            array_column($markers, 'title')
-        );
-        $this->assertSame(40.4, $markers[0]['lat']);
-        $this->assertSame($this->province->url(), $markers[0]['url']);
-        $this->assertSame(2, $controller->block('map')->count());
+        $this->assertSame(['City ' . $this->country->codpais], array_column($markers, 'title'));
+        $this->assertSame(41.6, $markers[0]['lat']);
+        $this->assertSame($this->city->url(), $markers[0]['url']);
+        $this->assertSame(1, $controller->block('map')->count());
     }
 
     public function testFragmentUrlKeepsTheRecord(): void
