@@ -84,7 +84,7 @@
         </div>
     {% endif %}
     <div class="row">
-        <div class="col pb-2">
+        <div class="col pb-2 d-flex flex-wrap align-items-center gap-1">
             {# -- Volver a la página desde la que se llegó: lo muestra el javascript si no es el listado -- #}
             {% if header.shows('back') %}
                 <a href="#" id="blockHeaderBack" class="btn btn-sm btn-secondary d-none" title="{{ trans('back') }}"
@@ -159,12 +159,13 @@
             {# -- Menú "más": en pantallas grandes solo se muestra si tiene algo más que los botones plegados -- #}
             {% set fixedItems = header.shows('link') or showClone or showOptions %}
             {% if fixedItems or secondary is not empty %}
-                <div class="dropdown {{ fixedItems ? 'd-inline-block' : 'd-inline-block d-lg-none' }}">
+                {# -- va al final de la fila, separado del resto de botones -- #}
+                <div class="dropdown ms-auto {{ fixedItems ? 'd-inline-block' : 'd-inline-block d-lg-none' }}">
                     <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="dropdown"
                             aria-expanded="false" title="{{ trans('more') }}">
                         <i class="fa-solid fa-ellipsis-vertical fa-fw" aria-hidden="true"></i>
                     </button>
-                    <div class="dropdown-menu">
+                    <div class="dropdown-menu dropdown-menu-end">
                         {% for item in secondary %}
                             <div class="d-lg-none">
                                 {% if item.isDropdown() %}
