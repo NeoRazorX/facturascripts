@@ -35,7 +35,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Prueba el ciclo de petición de los controladores de bloques con EditPais, que tiene
- * un formulario y cuatro listados en pestañas perezosas.
+ * un formulario y dos listados en pestañas perezosas.
  */
 final class EditBlockControllerTest extends TestCase
 {
@@ -130,15 +130,14 @@ final class EditBlockControllerTest extends TestCase
 
     public function testFragmentLoadsOnlyThatBlock(): void
     {
-        $controller = $this->handle(['code' => $this->country->codpais, 'fragment' => 'ListPuntoInteresCiudad']);
+        $controller = $this->handle(['code' => $this->country->codpais, 'fragment' => 'ListCiudad']);
 
         $this->assertTrue($controller->hasData);
-        $this->assertFalse($controller->block('ListPuntoInteresCiudad')->isDeferred());
-        $this->assertNotEmpty($controller->viewBlock('ListPuntoInteresCiudad')->view()->where);
+        $this->assertFalse($controller->block('ListCiudad')->isDeferred());
+        $this->assertNotEmpty($controller->viewBlock('ListCiudad')->view()->where);
 
         // el resto de bloques no se cargan
         $this->assertSame([], $controller->viewBlock('ListProvincia')->view()->cursor);
-        $this->assertSame([], $controller->viewBlock('ListCiudad')->view()->cursor);
     }
 
     public function testMapShowsOnlyThePlacesOfTheRecord(): void
@@ -228,7 +227,7 @@ final class EditBlockControllerTest extends TestCase
         $register = function (TestableEditPais $controller): void {
             $controller->header()
                 ->stat('provinces', ['block' => 'ListProvincia'])
-                ->stat('points-of-interest', ['block' => 'ListPuntoInteresCiudad'])
+                ->stat('cities', ['block' => 'ListCiudad'])
                 ->dropdown('location', ['label' => 'location'])
                 ->button('open-map', [
                     'dropdown' => 'location',
@@ -256,7 +255,7 @@ final class EditBlockControllerTest extends TestCase
 
         // el índice lista los bloques con título, también los de dentro de las pestañas
         $sections = array_map(fn($block) => $block->name(), $controller->sections());
-        $this->assertSame(['map', 'ListProvincia', 'ListCiudad', 'ListCodigoPostal', 'ListPuntoInteresCiudad'], $sections);
+        $this->assertSame(['map', 'ListProvincia', 'ListCiudad'], $sections);
         $this->assertSame('EditPais?code=' . $this->country->codpais, $controller->pageUrl());
 
         // cada listado recibe la url de sus opciones, para pintar el botón en su barra
@@ -275,25 +274,24 @@ final class EditBlockControllerTest extends TestCase
         // la primera pestaña se carga y las demás quedan aplazadas, sin consultar sus datos
         $this->assertFalse($controller->block('ListProvincia')->isDeferred());
         $this->assertTrue($controller->block('ListCiudad')->isDeferred());
-        $this->assertTrue($controller->block('ListPuntoInteresCiudad')->isDeferred());
-        $this->assertSame([], $controller->viewBlock('ListPuntoInteresCiudad')->view()->where);
+        $this->assertSame([], $controller->viewBlock('ListCiudad')->view()->where);
 
         // si la petición va dirigida a otra pestaña, es esa la que se carga
-        $controller = $this->handle(['code' => $this->country->codpais, 'activetab' => 'ListPuntoInteresCiudad']);
-        $this->assertSame('ListPuntoInteresCiudad', $controller->target());
+        $controller = $this->handle(['code' => $this->country->codpais, 'activetab' => 'ListCiudad']);
+        $this->assertSame('ListCiudad', $controller->target());
         $this->assertTrue($controller->block('ListProvincia')->isDeferred());
-        $this->assertFalse($controller->block('ListPuntoInteresCiudad')->isDeferred());
-        $this->assertNotEmpty($controller->viewBlock('ListPuntoInteresCiudad')->view()->where);
+        $this->assertFalse($controller->block('ListCiudad')->isDeferred());
+        $this->assertNotEmpty($controller->viewBlock('ListCiudad')->view()->where);
     }
 
     public function testCountsOfDeferredBlocksWithoutLoadingThem(): void
     {
-        $names = ['ListProvincia', 'ListCiudad', 'ListPuntoInteresCiudad', 'map', 'unknown'];
+        $names = ['ListProvincia', 'ListCiudad', 'ListCodigoPostal', 'map', 'unknown'];
         $controller = $this->handle(['code' => $this->country->codpais, 'counts' => implode(',', $names)]);
 
         // solo cuentan los listados, y solo los registros de este país; el mapa no sabe contar sin cargarse
         $this->assertSame(
-            ['ListProvincia' => 1, 'ListCiudad' => 1, 'ListPuntoInteresCiudad' => 0],
+            ['ListProvincia' => 1, 'ListCiudad' => 1],
             $controller->jsonData
         );
 

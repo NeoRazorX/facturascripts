@@ -23,6 +23,7 @@ namespace FacturaScripts\Core\Lib\Block;
 use Closure;
 use FacturaScripts\Core\Template\BlockController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Bloque con un mapa. Los marcadores los calculan funciones que reciben el registro
@@ -93,6 +94,26 @@ class MapBlock extends Block
     public function count(): int
     {
         return count($this->points);
+    }
+
+    /**
+     * Convierte registros en marcadores: usa sus campos latitude y longitude, su url y,
+     * como título, el campo indicado. El grupo es la clave de traducción de su tipo.
+     */
+    public static function fromModels(array $models, string $titleField, string $group): array
+    {
+        $markers = [];
+        foreach ($models as $model) {
+            $markers[] = [
+                'lat' => $model->latitude,
+                'lng' => $model->longitude,
+                'title' => $model->{$titleField},
+                'url' => $model->url(),
+                'group' => Tools::trans($group),
+            ];
+        }
+
+        return $markers;
     }
 
     public function height(): int
@@ -169,6 +190,17 @@ class MapBlock extends Block
     {
         return is_numeric($latitude) && is_numeric($longitude)
             && abs((float)$latitude) <= 90 && abs((float)$longitude) <= 180;
+    }
+
+    /**
+     * Añade a un filtro la condición de tener coordenadas.
+     */
+    public static function withCoordinates(array $where): array
+    {
+        $where[] = Where::isNotNull('latitude');
+        $where[] = Where::isNotNull('longitude');
+
+        return $where;
     }
 
     private function point($marker): ?array

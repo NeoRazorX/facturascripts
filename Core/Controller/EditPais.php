@@ -72,9 +72,9 @@ class EditPais extends EditBlockController
             MapBlock::make('map', 'location', 'fa-solid fa-map-location-dot')
                 ->setLazy()
                 ->center(fn(Pais $country) => [$country->latitude, $country->longitude, 5])
-                ->markers(fn(Pais $country) => $this->markers(
+                ->markers(fn(Pais $country) => MapBlock::fromModels(
                     Ciudad::all(
-                        $this->located([Where::in('idprovincia', $provinces($country))]),
+                        MapBlock::withCoordinates([Where::in('idprovincia', $provinces($country))]),
                         ['ciudad' => 'ASC'],
                         0,
                         self::MAP_LIMIT
@@ -82,9 +82,9 @@ class EditPais extends EditBlockController
                     'ciudad',
                     'cities'
                 ))
-                ->markers(fn(Pais $country) => $this->markers(
+                ->markers(fn(Pais $country) => MapBlock::fromModels(
                     PuntoInteresCiudad::all(
-                        $this->located([Where::in('idciudad', $cities($country))]),
+                        MapBlock::withCoordinates([Where::in('idciudad', $cities($country))]),
                         ['name' => 'ASC'],
                         0,
                         self::MAP_LIMIT
@@ -107,15 +107,6 @@ class EditPais extends EditBlockController
                     ->addOrderBy(['ciudad'], 'name')
                     ->addSearchFields(['ciudad', 'alias'])
                     ->where(fn(Pais $country) => [Where::in('idprovincia', $provinces($country))]))
-                ->tab(ListBlock::make('ListCodigoPostal', 'CodigoPostal', 'zip-codes', 'fa-solid fa-map-pin')
-                    ->addOrderBy(['number'], 'number')
-                    ->addSearchFields(['number'])
-                    ->disableColumn('country')
-                    ->where($byCountry))
-                ->tab(ListBlock::make('ListPuntoInteresCiudad', 'PuntoInteresCiudad', 'points-of-interest', 'fa-solid fa-location-dot')
-                    ->addOrderBy(['name'], 'name')
-                    ->addSearchFields(['name', 'alias'])
-                    ->where(fn(Pais $country) => [Where::in('idciudad', $cities($country))]))
         );
     }
 
@@ -123,35 +114,5 @@ class EditPais extends EditBlockController
     {
         $this->header()
             ->status(fn(Pais $country) => $country->isDefault() ? [Tools::trans('default'), 'warning'] : null);
-    }
-
-    /**
-     * Añade al filtro la condición de tener coordenadas.
-     */
-    private function located(array $where): array
-    {
-        $where[] = Where::isNotNull('latitude');
-        $where[] = Where::isNotNull('longitude');
-
-        return $where;
-    }
-
-    /**
-     * Convierte los registros en marcadores del mapa, agrupados por su tipo.
-     */
-    private function markers(array $models, string $field, string $group): array
-    {
-        $markers = [];
-        foreach ($models as $model) {
-            $markers[] = [
-                'lat' => $model->latitude,
-                'lng' => $model->longitude,
-                'title' => $model->{$field},
-                'url' => $model->url(),
-                'group' => Tools::trans($group),
-            ];
-        }
-
-        return $markers;
     }
 }

@@ -19,9 +19,14 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\Block\ListBlock;
+use FacturaScripts\Core\Lib\Block\MapBlock;
+use FacturaScripts\Core\Lib\Block\Tabs;
+use FacturaScripts\Core\Template\EditBlockController;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Ciudad;
+use FacturaScripts\Dinamic\Model\Provincia;
+use FacturaScripts\Dinamic\Model\PuntoInteresCiudad;
 
 /**
  * Controlador para la edición de un registro del modelo de Provincia
@@ -29,8 +34,11 @@ use FacturaScripts\Core\Where;
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class EditProvincia extends EditController
+class EditProvincia extends EditBlockController
 {
+    /** Máximo de marcadores de cada tipo en el mapa. */
+    private const MAP_LIMIT = 500;
+
     public function getModelClassName(): string
     {
         return 'Provincia';
@@ -45,39 +53,58 @@ class EditProvincia extends EditController
         return $data;
     }
 
-    protected function createViews()
+    protected function createBlocks(): void
     {
-        parent::createViews();
-        $this->setTabsPosition('bottom');
+        parent::createBlocks();
 
-        $this->createViewsCities();
-    }
+        $byProvince = fn(Provincia $province) => [Where::eq('idprovincia', $province->idprovincia)];
+        $byCity = fn(Provincia $province) => [
+            Where::in('idciudad', 'SELECT idciudad FROM ciudades WHERE idprovincia = '
+                . $this->db()->var2str($province->idprovincia)),
+        ];
 
-    protected function createViewsCities(string $viewName = 'ListCiudad'): void
-    {
-        $this->addListView($viewName, 'Ciudad', 'cities', 'fa-solid fa-city')
-            ->addOrderBy(['ciudad'], 'name')
-            ->addOrderBy(['idprovincia'], 'province')
-            ->addSearchFields(['ciudad', 'alias'])
-            ->disableColumn('province');
-    }
+        // el mapa se pide aparte cuando entra en pantalla, con lo que tenga coordenadas
+        $this->page()->add(
+            MapBlock::make('map', 'location', 'fa-solid fa-map-location-dot')
+                ->setLazy()
+                ->center(fn(Provincia $province) => [$province->latitude, $province->longitude, 8])
+                ->markers(fn(Provincia $province) => MapBlock::fromModels(
+                    Ciudad::all(
+                        MapBlock::withCoordinates($byProvince($province)),
+                        ['ciudad' => 'ASC'],
+                        0,
+                        self::MAP_LIMIT
+                    ),
+                    'ciudad',
+                    'cities'
+                ))
+                ->markers(fn(Provincia $province) => MapBlock::fromModels(
+                    PuntoInteresCiudad::all(
+                        MapBlock::withCoordinates($byCity($province)),
+                        ['name' => 'ASC'],
+                        0,
+                        self::MAP_LIMIT
+                    ),
+                    'name',
+                    'points-of-interest'
+                ))
+        );
 
-    /**
-     * @param string $viewName
-     * @param BaseView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        switch ($viewName) {
-            case 'ListCiudad':
-                $id_provincia = $this->mainTabModelValue('idprovincia');
-                $where = [Where::eq('idprovincia', $id_provincia)];
-                $view->loadData('', $where);
-                break;
-
-            default:
-                parent::loadData($viewName, $view);
-                break;
-        }
+        // un listado por pestaña: solo se cargan los datos de la que se abre
+        $this->page()->add(
+            Tabs::make('places')
+                ->setLazy()
+                ->tab(ListBlock::make('ListCiudad', 'Ciudad', 'cities', 'fa-solid fa-city')
+                    ->addOrderBy(['ciudad'], 'name')
+                    ->addSearchFields(['ciudad', 'alias'])
+                    ->disableColumn('province')
+                    ->where($byProvince))
+                ->tab(ListBlock::make('ListCodigoPostal', 'CodigoPostal', 'zip-codes', 'fa-solid fa-map-pin')
+                    ->addOrderBy(['number'], 'number')
+                    ->addSearchFields(['number'])
+                    ->disableColumn('country')
+                    ->disableColumn('province')
+                    ->where($byProvince))
+        );
     }
 }
