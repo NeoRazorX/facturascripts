@@ -30,7 +30,7 @@
 {% set showOptions = mainBlock and mainBlock.hasOptions() %}
 {% set showPrint = exists and header.shows('print') and mainBlock and mainBlock.view().settings.btnPrint and fsc.permissions.allowExport %}
 
-<div class="container-fluid d-print-none bg-light pt-2 block-header{{ header.isSticky() ? ' block-header-sticky' : '' }}">
+<div class="container-fluid d-print-none bg-light pt-2 pb-2 block-header{{ header.isSticky() ? ' block-header-sticky' : '' }}">
     {# -- Formulario con el que los botones envían sus acciones -- #}
     <form id="formBlockHeader" method="post" class="d-none"
           data-confirm-message="{{ trans('are-you-sure-action') }}" data-confirm-cancel="{{ trans('cancel') }}"
