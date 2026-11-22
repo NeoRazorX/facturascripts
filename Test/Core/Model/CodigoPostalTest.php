@@ -311,12 +311,13 @@ final class CodigoPostalTest extends TestCase
         // sin guardar, el listado es el de países
         $this->assertEquals('ListPais?activetab=ListCodigoPostal', $codigoPostal->url('list'));
 
-        // una vez guardado, el listado es la pestaña de códigos postales de su ciudad
+        // una vez guardado sigue siendo el de países, y no la ficha de su ciudad
         $this->assertTrue($codigoPostal->save(), 'codigo-postal-cant-save');
-        $this->assertEquals(
-            'EditCiudad?code=' . self::$ciudad->idciudad . '&activetab=ListCodigoPostal',
-            $codigoPostal->url('list')
-        );
+        $this->assertEquals('ListPais?activetab=ListCodigoPostal', $codigoPostal->url('list'));
+
+        // lo mismo para su ciudad y su provincia: el listado no es la ficha del registro padre
+        $this->assertEquals('ListPais?activetab=ListCiudad', self::$ciudad->url('list'));
+        $this->assertEquals('ListPais?activetab=ListProvincia', self::$provincia->url('list'));
         $this->assertEquals('EditCodigoPostal?code=' . $codigoPostal->id, $codigoPostal->url());
 
         // eliminamos

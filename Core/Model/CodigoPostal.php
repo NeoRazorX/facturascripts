@@ -215,12 +215,6 @@ class CodigoPostal extends ModelClass
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
-        // al volver al listado vamos a la pestaña de códigos postales de su ciudad
-        $city = 'list' === $type && !empty($this->id()) ? $this->getCity() : null;
-        if ($city) {
-            return $city->url() . '&activetab=List' . $this->modelClassName();
-        }
-
         return parent::url($type, $list);
     }
 

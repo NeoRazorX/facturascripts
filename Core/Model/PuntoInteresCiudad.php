@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -89,10 +89,6 @@ class PuntoInteresCiudad extends ModelClass
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
-        if ('list' === $type && !empty($this->id())) {
-            return $this->getCity()->url() . '&activetab=List' . $this->modelClassName();
-        }
-
         return parent::url($type, $list);
     }
 

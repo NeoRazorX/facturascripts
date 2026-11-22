@@ -91,6 +91,9 @@ final class PuntoInteresCiudadTest extends TestCase
         // Verificar que se establecieron los campos automáticos
         $this->assertNotEmpty($puntoInteres->creation_date, 'punto-interes-empty-creation-date');
 
+        // el listado es el de países, y no la ficha de su ciudad
+        $this->assertEquals('ListPais?activetab=ListPuntoInteresCiudad', $puntoInteres->url('list'));
+
         // Eliminar
         $this->assertTrue($puntoInteres->delete(), 'punto-interes-cant-delete');
     }
