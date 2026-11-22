@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Template;
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Block\Block;
+use FacturaScripts\Core\Lib\Block\Header;
 use FacturaScripts\Core\Lib\Block\Page;
 use FacturaScripts\Core\Lib\Block\ViewBlock;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
@@ -61,6 +62,9 @@ abstract class BlockController extends Controller
     /** @var bool */
     private $finished = false;
 
+    /** @var Header */
+    private $header;
+
     /**
      * Indica si existe el registro principal. Lo consultan las plantillas de las vistas.
      *
@@ -86,6 +90,7 @@ abstract class BlockController extends Controller
     {
         parent::__construct($className, $url);
 
+        $this->header = new Header();
         $this->page = new Page();
     }
 
@@ -120,12 +125,29 @@ abstract class BlockController extends Controller
     }
 
     /**
+     * Devuelve los datos para navegar entre los registros del listado de origen, o un array
+     * vacío si no los hay. Una página sin registro principal no tiene navegación.
+     */
+    public function getNavigation(): array
+    {
+        return [];
+    }
+
+    /**
      * Indica si existe el registro principal de la página. Los bloques que lo necesitan
      * no se muestran hasta entonces. Una página sin registro principal devuelve siempre true.
      */
     public function hasRecord(): bool
     {
         return true;
+    }
+
+    /**
+     * Devuelve la cabecera de la página, donde se declaran sus botones, estado, avisos y estadísticas.
+     */
+    public function header(): Header
+    {
+        return $this->header;
     }
 
     /**
@@ -139,6 +161,14 @@ abstract class BlockController extends Controller
     public function page(): Page
     {
         return $this->page;
+    }
+
+    /**
+     * Devuelve la url de la página tal como se está mostrando, con su registro si lo tiene.
+     */
+    public function pageUrl(): string
+    {
+        return $this->url();
     }
 
     /**
@@ -187,6 +217,29 @@ abstract class BlockController extends Controller
         $this->view('Master/BlockController.html.twig');
     }
 
+    /**
+     * Devuelve los bloques con título que se muestran, para el índice de la cabecera.
+     *
+     * @return Block[]
+     */
+    public function sections(?Block $parent = null): array
+    {
+        $sections = [];
+        foreach (($parent ?? $this->page)->children() as $child) {
+            if (false === $child->isVisible($this->hasRecord())) {
+                continue;
+            }
+
+            if ('' !== $child->title() && $child->name() !== $this->mainBlockName()) {
+                $sections[] = $child;
+            }
+
+            $sections = array_merge($sections, $this->sections($child));
+        }
+
+        return $sections;
+    }
+
     public function setCurrentBlock(string $name): void
     {
         $this->current = $name;
@@ -208,6 +261,18 @@ abstract class BlockController extends Controller
         }
 
         throw new Exception('ViewBlock not found: ' . $name);
+    }
+
+    /**
+     * Devuelve el registro principal tal como está guardado, para comprobar las condiciones
+     * de los botones de la cabecera antes de ejecutar su acción, que es antes de cargar los
+     * datos de la página. Devuelve null si la página no tiene registro o si no existe.
+     *
+     * @return ModelClass|null
+     */
+    protected function actionRecord()
+    {
+        return null;
     }
 
     /**
@@ -419,7 +484,10 @@ abstract class BlockController extends Controller
         $callback = $block instanceof ViewBlock ? $block->getAction($action) : null;
         if (null !== $callback) {
             call_user_func($callback, $block, $this);
+            return true;
         }
+
+        $this->headerAction($action);
 
         return true;
     }
@@ -466,6 +534,34 @@ abstract class BlockController extends Controller
         $response = $this->response();
         $this->exportManager->show($response);
         $this->finished = true;
+    }
+
+    /**
+     * Ejecuta la acción de un botón de la cabecera, si es suya. Como al pulsarlo, exige
+     * que el botón se muestre y esté activo para el registro, además de un token válido.
+     */
+    protected function headerAction(string $action): void
+    {
+        $button = $this->header->findAction($action);
+        $callback = null === $button ? null : $button->runCallback();
+        if (null === $callback) {
+            return;
+        }
+
+        $record = $this->actionRecord();
+        if ('' !== $this->mainBlockName() && null === $record) {
+            Tools::log()->error('record-not-found');
+            return;
+        }
+
+        if (false === $button->isVisible($record) || false === $button->isEnabled($record)) {
+            Tools::log()->warning('not-allowed-modify');
+            return;
+        }
+
+        if ($this->validateFormToken()) {
+            call_user_func($callback, $this);
+        }
     }
 
     /**

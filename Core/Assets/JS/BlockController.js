@@ -17,14 +17,15 @@
  */
 
 /**
- * Carga perezosa de los bloques de BlockController: cada hueco .block-lazy pide su bloque
- * cuando entra en pantalla, lo que incluye el momento en que se abre la pestaña que lo contiene.
+ * Comportamiento de las páginas de BlockController: carga perezosa de bloques y cabecera.
  */
 (function () {
     'use strict';
 
     var observer = null;
 
+    // cada hueco .block-lazy pide su bloque cuando entra en pantalla, lo que incluye
+    // el momento en que se abre la pestaña que lo contiene
     function loadBlock(element) {
         if (element.dataset.blockState) {
             return;
@@ -57,6 +58,132 @@
         });
     }
 
+    // los botones de la cabecera envían su acción con el formulario de la cabecera
+    function headerAction(button) {
+        var form = document.getElementById('formBlockHeader');
+        form.querySelector('input[name="block"]').value = button.dataset.headerBlock || '';
+
+        if (button.dataset.headerConfirm) {
+            confirmAction('BlockHeader', button.dataset.headerAction, button.dataset.headerLabel,
+                form.dataset.confirmMessage, form.dataset.confirmCancel, form.dataset.confirmAccept,
+                button.dataset.headerIcon, 'btn-' + (button.dataset.headerColor || 'danger'));
+            return;
+        }
+
+        form.querySelector('input[name="action"]').value = button.dataset.headerAction;
+        animateSpinner('add');
+        form.submit();
+    }
+
+    // lleva a un bloque, abriendo antes las pestañas que lo contienen
+    function goToBlock(name) {
+        var block = document.getElementById('block-' + name);
+        if (!block) {
+            return;
+        }
+
+        var panes = [];
+        for (var pane = block.closest('.tab-pane'); pane; pane = pane.parentElement.closest('.tab-pane')) {
+            panes.unshift(pane);
+        }
+        // una pestaña no ocupa su sitio hasta que termina de abrirse, así que esperamos a la última
+        var pending = null;
+        panes.forEach(function (pane) {
+            var trigger = document.querySelector('[data-bs-target="#' + pane.id + '"]');
+            if (trigger && !pane.classList.contains('active')) {
+                pending = trigger;
+                bootstrap.Tab.getOrCreateInstance(trigger).show();
+            }
+        });
+
+        function scroll() {
+            block.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+
+        if (pending) {
+            pending.addEventListener('shown.bs.tab', scroll, {once: true});
+        } else {
+            scroll();
+        }
+    }
+
+    // la cabecera se queda fija debajo de la barra superior, y los saltos a un bloque le dejan sitio
+    function measureHeader() {
+        var navbar = document.querySelector('nav.navbar');
+        var header = document.querySelector('.block-header-sticky');
+        var top = navbar ? navbar.offsetHeight : 0;
+        document.documentElement.style.setProperty('--block-header-top', top + 'px');
+        document.documentElement.style.setProperty('--block-scroll-margin', (top + (header ? header.offsetHeight : 0) + 8) + 'px');
+    }
+
+    // recordamos la página desde la que se llegó a esta, para poder volver a ella aunque
+    // después se guarde, se recargue o se navegue entre registros
+    function setupBack() {
+        var back = document.getElementById('blockHeaderBack');
+        if (!back) {
+            return;
+        }
+
+        var key = 'fs-back-' + location.pathname;
+        try {
+            var referrer = document.referrer ? new URL(document.referrer) : null;
+            if (referrer && referrer.origin === location.origin && referrer.pathname !== location.pathname) {
+                sessionStorage.setItem(key, referrer.pathname + referrer.search);
+            }
+
+            var url = sessionStorage.getItem(key);
+            var listPath = back.dataset.listUrl ? new URL(back.dataset.listUrl, location.href).pathname : '';
+            if (url && new URL(url, location.href).pathname !== listPath) {
+                back.href = url;
+                back.classList.remove('d-none');
+            }
+        } catch (error) {
+            // sin sessionStorage no hay botón de volver
+        }
+    }
+
+    // avisamos de que hay cambios sin guardar en los formularios de edición
+    function setupDirty() {
+        var badge = document.getElementById('blockHeaderDirty');
+        if (!badge) {
+            return;
+        }
+
+        function isEditForm(form) {
+            var action = form ? form.querySelector('input[name="action"]') : null;
+            return action && ['edit', 'insert'].indexOf(action.value) !== -1;
+        }
+
+        document.addEventListener('input', function (event) {
+            if (isEditForm(event.target.form)) {
+                badge.classList.remove('d-none');
+            }
+        });
+        document.addEventListener('reset', function (event) {
+            if (isEditForm(event.target)) {
+                badge.classList.add('d-none');
+            }
+        });
+    }
+
+    function setupCopyLink() {
+        var button = document.getElementById('blockHeaderCopyLink');
+        if (!button || !navigator.clipboard) {
+            return;
+        }
+
+        button.addEventListener('click', function () {
+            navigator.clipboard.writeText(new URL(button.dataset.url, location.href).href).then(function () {
+                // el icono confirma durante un momento que el enlace se ha copiado
+                var icon = button.querySelector('i');
+                icon.className = 'fa-solid fa-check fa-fw me-2 text-success';
+                setTimeout(function () {
+                    icon.className = 'fa-solid fa-link fa-fw me-2';
+                }, 2000);
+            });
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         if ('IntersectionObserver' in window) {
             observer = new IntersectionObserver(function (entries) {
@@ -68,7 +195,26 @@
                 });
             }, {rootMargin: '200px'});
         }
-
         watch(document);
+
+        document.addEventListener('click', function (event) {
+            var action = event.target.closest('[data-header-action]');
+            if (action) {
+                headerAction(action);
+                return;
+            }
+
+            var link = event.target.closest('[data-block-goto]');
+            if (link) {
+                event.preventDefault();
+                goToBlock(link.dataset.blockGoto);
+            }
+        });
+
+        measureHeader();
+        window.addEventListener('resize', measureHeader);
+        setupBack();
+        setupDirty();
+        setupCopyLink();
     });
 })();

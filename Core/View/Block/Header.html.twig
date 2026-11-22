@@ -1,0 +1,347 @@
+{#
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2026 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+#}
+{% set header = fsc.header() %}
+{% set pageData = fsc.getPageData() %}
+{% set record = fsc.record() %}
+{% set hasRecord = fsc.hasRecord() %}
+{% set exists = record and fsc.hasData %}
+{% set mainBlock = fsc.mainBlockName() ? fsc.block(fsc.mainBlockName()) : null %}
+{% set buttons = hasRecord ? header.buttons(record) : [] %}
+{% set secondary = buttons | filter(item => not item.primary) %}
+{% set sections = header.shows('sections') ? fsc.sections() : [] %}
+{% set showClone = exists and header.shows('clone') %}
+{% set showOptions = mainBlock and mainBlock.hasOptions() %}
+{% set showPrint = exists and header.shows('print') and mainBlock and mainBlock.view().settings.btnPrint and fsc.permissions.allowExport %}
+
+<div class="container-fluid d-print-none bg-light pt-2 block-header{{ header.isSticky() ? ' block-header-sticky' : '' }}">
+    {# -- Formulario con el que los botones envían sus acciones -- #}
+    <form id="formBlockHeader" method="post" class="d-none"
+          data-confirm-message="{{ trans('are-you-sure-action') }}" data-confirm-cancel="{{ trans('cancel') }}"
+          data-confirm-accept="{{ trans('confirm') }}">
+        {{ formToken() }}
+        <input type="hidden" name="action"/>
+        <input type="hidden" name="block"/>
+    </form>
+    <div class="row">
+        <div class="col pb-2">
+            {# -- Volver a la página desde la que se llegó: lo muestra el javascript si no es el listado -- #}
+            {% if header.shows('back') %}
+                <a href="#" id="blockHeaderBack" class="btn btn-sm btn-secondary d-none" title="{{ trans('back') }}"
+                   data-list-url="{{ record ? record.url('list') : '' }}">
+                    <i class="fa-solid fa-arrow-left fa-fw" aria-hidden="true"></i>
+                </a>
+            {% endif %}
+            <div class="btn-group">
+                {% if record and header.shows('list') %}
+                    <a href="{{ record.url('list') }}" class="btn btn-sm btn-secondary">
+                        <i class="fa-solid fa-list fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-lg-inline-block">{{ trans('all') }}</span>
+                    </a>
+                {% endif %}
+                {% if header.shows('reload') %}
+                    <a href="{{ asset(fsc.pageUrl()) }}" class="btn btn-sm btn-secondary" title="{{ trans('refresh') }}">
+                        <i class="fa-solid fa-redo" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+            </div>
+            {% if exists and header.shows('new') %}
+                <a href="{{ record.url('new') }}" class="btn btn-sm btn-success">
+                    <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
+                    <span class="d-none d-lg-inline-block">{{ trans('new') }}</span>
+                </a>
+            {% endif %}
+            {# -- Botones y desplegables de la página: los secundarios se pliegan en el menú "más" -- #}
+            {% for item in buttons %}
+                <span class="{{ item.primary ? '' : 'd-none d-lg-inline-block' }}">
+                    {% if item.isDropdown() %}
+                        <span class="dropdown d-inline-block">
+                            <button type="button" class="btn btn-sm btn-{{ item.color }} dropdown-toggle"
+                                    id="header-{{ item.name() }}" data-bs-toggle="dropdown" aria-expanded="false"
+                                    title="{{ trans(item.title ?: item.label) }}">
+                                {{ _self.content(item, true) }}
+                            </button>
+                            <div class="dropdown-menu">
+                                {% for child in item.items(record) %}
+                                    {{ _self.button(child, record, false) }}
+                                {% endfor %}
+                            </div>
+                        </span>
+                    {% else %}
+                        {{ _self.button(item, record, true) }}
+                    {% endif %}
+                </span>
+            {% endfor %}
+            {% if showPrint %}
+                {{ _self.printButton(fsc, record, i18n) }}
+            {% endif %}
+            {# -- Índice de secciones -- #}
+            {% if sections | length > 1 %}
+                <div class="dropdown d-inline-block">
+                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false" title="{{ trans('sections') }}">
+                        <i class="fa-solid fa-bars-staggered fa-fw" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        {% for section in sections %}
+                            <a class="dropdown-item" href="#block-{{ section.name() }}"
+                               data-block-goto="{{ section.name() }}">
+                                {% if section.icon() is not empty %}
+                                    <i class="{{ section.icon() }} fa-fw me-2" aria-hidden="true"></i>
+                                {% endif %}
+                                {{- section.title() }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {# -- Menú "más": en pantallas grandes solo se muestra si tiene algo más que los botones plegados -- #}
+            {% set fixedItems = header.shows('link') or showClone or showOptions %}
+            {% if fixedItems or secondary is not empty %}
+                <div class="dropdown {{ fixedItems ? 'd-inline-block' : 'd-inline-block d-lg-none' }}">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="dropdown"
+                            aria-expanded="false" title="{{ trans('more') }}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-fw" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        {% for item in secondary %}
+                            <div class="d-lg-none">
+                                {% if item.isDropdown() %}
+                                    <h6 class="dropdown-header">{{ trans(item.label ?: item.title) }}</h6>
+                                    {% for child in item.items(record) %}
+                                        {{ _self.button(child, record, false) }}
+                                    {% endfor %}
+                                {% else %}
+                                    {{ _self.button(item, record, false) }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        {% if fixedItems and secondary is not empty %}
+                            <div class="dropdown-divider d-lg-none"></div>
+                        {% endif %}
+                        {% if header.shows('link') %}
+                            <button type="button" class="dropdown-item" id="blockHeaderCopyLink"
+                                    data-url="{{ asset(fsc.pageUrl()) }}">
+                                <i class="fa-solid fa-link fa-fw me-2" aria-hidden="true"></i>{{ trans('copy-link') }}
+                            </button>
+                        {% endif %}
+                        {% if showClone %}
+                            <a class="dropdown-item"
+                               href="{{ asset('CopyModel') }}?model={{ record.modelClassName() }}&code={{ record.id() | url_encode }}">
+                                <i class="fa-solid fa-clone fa-fw me-2" aria-hidden="true"></i>{{ trans('clone') }}
+                            </a>
+                        {% endif %}
+                        {% if showOptions %}
+                            <a class="dropdown-item"
+                               href="{{ asset('EditPageOption') }}?code={{ mainBlock.name() }}&url={{ fsc.pageUrl() | url_encode }}">
+                                <i class="fa-solid fa-wrench fa-fw me-2" aria-hidden="true"></i>{{ trans('options') }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            <span id="blockHeaderDirty" class="badge text-bg-warning align-middle d-none">
+                <i class="fa-solid fa-pen fa-fw" aria-hidden="true"></i> {{ trans('unsaved-changes') }}
+            </span>
+        </div>
+        <div class="col-auto text-end align-self-center pb-2">
+            {% set navData = fsc.getNavigation() %}
+            {% set description = exists ? record.primaryDescription() : trans('new') %}
+            {% set status = exists ? header.statusFor(record) : null %}
+            {% if navData %}
+                {# -- Navegación y, debajo, título y descripción en la misma línea -- #}
+                {% include 'Master/PanelNavigation.html.twig' %}
+                <h1 class="h5 mb-0">
+                    {{ trans(pageData.title) }}
+                    <span class="panel-nav-description d-inline-block text-truncate text-info fw-normal"
+                          title="{{ description | striptags }}">{{ description | raw }}</span>
+                    {{ _self.status(status) }}
+                </h1>
+            {% else %}
+                <h1 class="h5 mb-0">{{ trans(pageData.title) }} {{ _self.status(status) }}</h1>
+                {% if record %}
+                    <p class="text-info mb-0">{{ description | raw }}</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="col-auto d-none d-lg-block align-self-center pb-2">
+            <i class="{{ pageData.icon }} fa-3x" aria-hidden="true"></i>
+        </div>
+    </div>
+    {# -- Estadísticas del registro -- #}
+    {% set stats = hasRecord ? header.stats(record, fsc.page()) : [] %}
+    {% if stats is not empty %}
+        <div class="d-flex flex-wrap gap-2 pb-2">
+            {% for stat in stats %}
+                <a class="btn btn-sm btn-light border" id="header-stat-{{ stat.name }}"
+                   href="{{ stat.block ? '#block-' ~ stat.block : (stat.url starts with 'http' ? stat.url : asset(stat.url)) }}"
+                        {% if stat.block %} data-block-goto="{{ stat.block }}"{% endif %}>
+                    {% if stat.icon is not empty %}
+                        <i class="{{ stat.icon }} fa-fw text-body-secondary" aria-hidden="true"></i>
+                    {% endif %}
+                    <span class="fw-bold">{{ stat.value }}</span>
+                    <span class="text-body-secondary">{{ stat.label ? trans(stat.label) : stat.title }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+{# -- Avisos del registro: se quedan mientras se cumpla su condición -- #}
+{% set alerts = hasRecord ? header.alerts(record) : [] %}
+{% if alerts is not empty %}
+    <div class="container-fluid">
+        {% for alert in alerts %}
+            <div class="alert alert-{{ alert.color }} py-2 mb-2" role="alert" id="header-alert-{{ alert.name }}">
+                <i class="fa-solid fa-triangle-exclamation fa-fw me-1" aria-hidden="true"></i>{{ alert.message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% macro content(item, short) %}
+    {% if item.icon is not empty %}
+        <i class="{{ item.icon }} fa-fw{{ short ? '' : ' me-2' }}" aria-hidden="true"></i>
+    {% endif %}
+    {% if item.label is not empty %}
+        {% if short %}
+            <span class="d-none d-sm-inline">{{ trans(item.label) }}</span>
+        {% else %}
+            {{- trans(item.label) }}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro button(item, record, asButton) %}
+    {% set cssClass = asButton ? 'btn btn-sm btn-' ~ item.color : 'dropdown-item' %}
+    {% set title = trans(item.title ?: item.label) %}
+    {% set disabled = not item.isEnabled(record) %}
+    {% if item.type == 'link' %}
+        {% set href = item.href(record) %}
+        <a class="{{ cssClass }}{{ disabled ? ' disabled' : '' }}" data-header-button="{{ item.name() }}"
+           href="{{ href starts with 'http' ? href : asset(href) }}" title="{{ title }}"
+                {% if item.target %} target="{{ item.target }}" rel="noopener"{% endif %}>
+            {{- _self.content(item, asButton) -}}
+        </a>
+    {% elseif item.type == 'js' %}
+        <button type="button" class="{{ cssClass }}" data-header-button="{{ item.name() }}" title="{{ title }}"
+                onclick="{{ item.js }}"{{ disabled ? ' disabled' : '' }}>
+            {{- _self.content(item, asButton) -}}
+        </button>
+    {% else %}
+        <button type="button" class="{{ cssClass }}" data-header-button="{{ item.name() }}" title="{{ title }}"
+                data-header-action="{{ item.action }}" data-header-block="{{ item.block }}"
+                data-header-label="{{ title }}" data-header-icon="{{ item.icon }}" data-header-color="{{ item.color }}"
+                {% if item.confirm %} data-header-confirm="1"{% endif %}{{ disabled ? ' disabled' : '' }}>
+            {{- _self.content(item, asButton) -}}
+        </button>
+    {% endif %}
+{% endmacro %}
+
+{% macro status(status) %}
+    {% if status %}
+        <span class="badge text-bg-{{ status.color }} align-middle" id="blockHeaderStatus">{{ status.label }}</span>
+    {% endif %}
+{% endmacro %}
+
+{% macro printButton(fsc, record, i18n) %}
+    <div class="btn-group">
+        <a href="{{ record.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}"
+           target="_blank" class="btn btn-sm btn-secondary">
+            <i class="fa-solid fa-print fa-fw" aria-hidden="true"></i>
+            <span class="d-none d-lg-inline-block">{{ trans('print') }}</span>
+        </a>
+        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="visually-hidden">{{ trans('more') }}</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end">
+            {% for key, option in fsc.exportManager.options() %}
+                {% if key != fsc.exportManager.defaultOption() %}
+                    <a href="{{ record.url() }}&action=export&option={{ key }}" class="dropdown-item" target="_blank">
+                        <i class="{{ option.icon }} fa-fw me-1" aria-hidden="true"></i>
+                        {{ trans(option.description) }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#advancedExportModal">
+                <i class="fa-solid fa-tools fa-fw me-1" aria-hidden="true"></i> {{ trans('advanced') }}
+            </a>
+            {% set tools = fsc.exportManager.tools() %}
+            {% if tools is not empty %}
+                <div class="dropdown-divider"></div>
+                {% for key, tool in tools %}
+                    <a href="{{ tool.link }}" target="_blank" class="dropdown-item">
+                        <i class="{{ tool.icon }} fa-fw me-1" aria-hidden="true"></i>
+                        {{ trans(tool.description) }}
+                    </a>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    <form action="{{ record.url() }}" method="post" class="d-inline" target="_blank">
+        <input type="hidden" name="action" value="export"/>
+        <div class="modal fade" id="advancedExportModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-tools fa-fw me-1" aria-hidden="true"></i>
+                            {{ trans('advanced') }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-start">
+                        <div class="mb-3">
+                            <select name="option" class="form-select">
+                                {% for key, option in fsc.exportManager.options() %}
+                                    <option value="{{ key }}">{{ trans(option.description) }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            {{ trans('format') }}
+                            <select name="idformat" class="form-select">
+                                <option value="">{{ trans('default') }}</option>
+                                <option value="">------</option>
+                                {% for format in fsc.exportManager.getFormats(record) %}
+                                    <option value="{{ format.id }}">{{ format.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            {{ trans('language') }}
+                            <select name="langcode" class="form-select">
+                                <option value="">{{ trans('default') }}</option>
+                                <option value="">------</option>
+                                {% for code, lang in i18n.getAvailableLanguages() %}
+                                    <option value="{{ code }}">{{ lang }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">{{ trans('accept') }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endmacro %}

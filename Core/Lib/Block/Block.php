@@ -102,6 +102,14 @@ abstract class Block
         return $name === $this->name ? $this : null;
     }
 
+    /**
+     * Indica si el usuario puede personalizar las columnas del bloque.
+     */
+    public function hasOptions(): bool
+    {
+        return false;
+    }
+
     public function icon(): string
     {
         return $this->icon;

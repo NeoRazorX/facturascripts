@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Template;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\Block\FormBlock;
 use FacturaScripts\Core\Tools;
 
@@ -35,6 +36,36 @@ abstract class EditBlockController extends BlockController
      * Devuelve el nombre de la clase del modelo del registro principal.
      */
     abstract public function getModelClassName(): string;
+
+    /**
+     * Devuelve los datos para navegar entre los registros del listado de origen: llegan
+     * cuando se accede desde una fila del listado, que añade un token a su enlace. Devuelve
+     * un array vacío si no hay token, si ha caducado o si el registro no está en el listado.
+     */
+    public function getNavigation(): array
+    {
+        $token = $this->request()->query->getAlnum('navfrom');
+        if (empty($token) || false === $this->hasData) {
+            return [];
+        }
+
+        // buscamos los registros de este controlador en la foto que guardó el listado
+        $data = Cache::get('nav-' . $this->user->nick . '-' . $token);
+        $codes = is_array($data) ? ($data['targets'][$this->url()] ?? []) : [];
+        $position = array_search((string)$this->record()->id(), $codes, true);
+        if (false === $position) {
+            return [];
+        }
+
+        // count y position son null cuando la foto no puede situar el registro en el listado completo
+        $url = $this->url() . '?code=%s&navfrom=' . $token;
+        return [
+            'count' => $data['count'] ?? null,
+            'next' => isset($codes[$position + 1]) ? sprintf($url, rawurlencode($codes[$position + 1])) : '',
+            'position' => isset($data['start']) ? $data['start'] + $position + 1 : null,
+            'prev' => $position > 0 ? sprintf($url, rawurlencode($codes[$position - 1])) : '',
+        ];
+    }
 
     public function getPageData(): array
     {
@@ -62,12 +93,25 @@ abstract class EditBlockController extends BlockController
         return 'Edit' . $this->getModelClassName();
     }
 
+    public function pageUrl(): string
+    {
+        return $this->hasData ? $this->record()->url() : $this->url();
+    }
+
     /**
      * @return ModelClass
      */
     public function record()
     {
         return $this->mainBlock()->model();
+    }
+
+    protected function actionRecord()
+    {
+        $record = clone $this->record();
+        $code = (string)$this->request()->query('code', '');
+
+        return '' !== $code && $record->loadFromCode($code) ? $record : null;
     }
 
     /**

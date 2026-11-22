@@ -152,6 +152,18 @@ select[required].form-select.select2 + .select2-container--bootstrap-5 .select2-
     vertical-align: bottom;
 }
 
+/* block controllers: the header stays below the navbar while scrolling */
+.block-header-sticky {
+    position: sticky;
+    top: var(--block-header-top, 56px);
+    z-index: 1010;
+}
+
+/* block controllers: jumping to a block leaves room for the navbar and the sticky header */
+.block-anchor {
+    scroll-margin-top: var(--block-scroll-margin, 130px);
+}
+
 .pointer {
     cursor: pointer;
 }

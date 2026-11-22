@@ -19,52 +19,9 @@
 #}
 {% extends "Master/MenuBgTemplate.html.twig" %}
 
-{% block bodyHeaderOptions %}
-    {{ parent() }}
-    {% set pageData = fsc.getPageData() %}
-    {% set record = fsc.record() %}
-    <div class="container-fluid d-print-none">
-        <div class="row">
-            <div class="col pb-2">
-                {% if record %}
-                    <div class="btn-group">
-                        <a href="{{ record.url('list') }}" class="btn btn-sm btn-secondary">
-                            <i class="fa-solid fa-list fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-lg-inline-block">{{ trans('all') }}</span>
-                        </a>
-                        <a href="{{ record.url('edit') }}" class="btn btn-sm btn-secondary"
-                           title="{{ trans('refresh') }}">
-                            <i class="fa-solid fa-redo" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                    {% if fsc.hasData %}
-                        <a href="{{ record.url('new') }}" class="btn btn-sm btn-success">
-                            <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-lg-inline-block">{{ trans('new') }}</span>
-                        </a>
-                    {% endif %}
-                {% else %}
-                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary" title="{{ trans('refresh') }}">
-                        <i class="fa-solid fa-redo" aria-hidden="true"></i>
-                    </a>
-                {% endif %}
-            </div>
-            <div class="col-auto text-end align-self-center pb-2">
-                <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
-                {% if record %}
-                    <p class="text-info mb-0">
-                        {{ fsc.hasData ? record.primaryDescription() | raw : trans('new') }}
-                    </p>
-                {% endif %}
-            </div>
-            <div class="col-auto d-none d-lg-block align-self-center pb-2">
-                <i class="{{ pageData.icon }} fa-3x" aria-hidden="true"></i>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
+{# -- La cabecera va en el cuerpo, y no en bodyHeaderOptions, para que pueda quedarse fija al desplazarse -- #}
 {% block body %}
+    {{ include('Block/Header.html.twig') }}
     <div class="container-fluid">
         {{ include('Block/Page.html.twig', {blockItem: fsc.page()}) }}
     </div>

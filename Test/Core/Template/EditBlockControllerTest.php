@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Template;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\ControllerPermissions;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Where;
@@ -150,6 +151,66 @@ final class EditBlockControllerTest extends TestCase
         );
     }
 
+    public function testHeaderActionNeedsTokenAndAnAvailableButton(): void
+    {
+        $calls = 0;
+        $available = true;
+        $register = function (TestableEditPais $controller) use (&$calls, &$available): void {
+            $controller->header()->button('ping', [
+                'enabled' => function () use (&$available): bool {
+                    return $available;
+                },
+                'run' => function () use (&$calls): void {
+                    $calls++;
+                },
+            ]);
+        };
+        $query = ['code' => $this->country->codpais];
+
+        // sin token válido no se ejecuta
+        $this->handle($query, ['action' => 'ping', 'multireqtoken' => 'invalid-token'], true, $register);
+        $this->assertSame(0, $calls);
+
+        // tampoco si el botón no está disponible para el registro, o si el registro no existe
+        $available = false;
+        $this->handle($query, ['action' => 'ping', 'multireqtoken' => $this->token()], true, $register);
+        $this->assertSame(0, $calls);
+
+        $available = true;
+        $this->handle(['code' => 'missing'], ['action' => 'ping', 'multireqtoken' => $this->token()], true, $register);
+        $this->assertSame(0, $calls);
+
+        // con token y el botón disponible, se ejecuta
+        MiniLog::clear();
+        $this->handle($query, ['action' => 'ping', 'multireqtoken' => $this->token()], true, $register);
+        $this->assertSame(1, $calls);
+    }
+
+    public function testHeaderShowsTheRecord(): void
+    {
+        $controller = $this->handle(['code' => $this->country->codpais]);
+        $header = $controller->header();
+        $record = $controller->record();
+
+        // las estadísticas salen de los bloques ya cargados: la pestaña aplazada no tiene cifra
+        $stats = $header->stats($record, $controller->page());
+        $this->assertSame(['provinces', 'zip-codes', 'cities'], array_column($stats, 'name'));
+        $this->assertSame(1, $stats[0]['value']);
+        $this->assertSame('ListProvincia', $stats[0]['block']);
+
+        // sin coordenadas no se muestra el desplegable de ubicación, que se queda sin botones
+        $this->assertSame([], $header->buttons($record));
+        $record->latitude = 40.4;
+        $record->longitude = -3.7;
+        $this->assertSame('location', $header->buttons($record)[0]->name());
+        $this->assertStringContainsString('mlat=40.4&mlon=-3.7', $header->find('open-map')->href($record));
+
+        // el índice lista los bloques con título, también los de dentro de las pestañas
+        $sections = array_map(fn($block) => $block->name(), $controller->sections());
+        $this->assertSame(['ListProvincia', 'ListCodigoPostal', 'ListCiudad', 'ListPuntoInteresCiudad'], $sections);
+        $this->assertSame('EditPais?code=' . $this->country->codpais, $controller->pageUrl());
+    }
+
     public function testLazyTabsLoadOnlyTheActiveTab(): void
     {
         $controller = $this->handle(['code' => $this->country->codpais]);
@@ -165,6 +226,30 @@ final class EditBlockControllerTest extends TestCase
         $this->assertTrue($controller->block('ListCiudad')->isDeferred());
         $this->assertFalse($controller->block('ListPuntoInteresCiudad')->isDeferred());
         $this->assertNotEmpty($controller->viewBlock('ListPuntoInteresCiudad')->view()->where);
+    }
+
+    public function testNavigationComesFromTheSourceList(): void
+    {
+        // la foto que guarda el listado de origen al pintar sus filas
+        $codes = [$this->otherCountry->codpais, $this->country->codpais];
+        Cache::set('nav-test-block-controller-abc123', ['targets' => ['EditPais' => $codes], 'count' => 20, 'start' => 4]);
+
+        try {
+            // sin token no hay navegación
+            $this->assertSame([], $this->handle(['code' => $this->country->codpais])->getNavigation());
+
+            $navigation = $this->handle(['code' => $this->country->codpais, 'navfrom' => 'abc123'])->getNavigation();
+            $this->assertSame(20, $navigation['count']);
+            $this->assertSame(6, $navigation['position']);
+            $this->assertSame('EditPais?code=' . $this->otherCountry->codpais . '&navfrom=abc123', $navigation['prev']);
+            $this->assertSame('', $navigation['next']);
+
+            // con un token desconocido, o sin registro, tampoco
+            $this->assertSame([], $this->handle(['code' => $this->country->codpais, 'navfrom' => 'zzz999'])->getNavigation());
+            $this->assertSame([], $this->handle(['navfrom' => 'abc123'])->getNavigation());
+        } finally {
+            Cache::delete('nav-test-block-controller-abc123');
+        }
     }
 
     protected function setUp(): void
@@ -239,6 +324,11 @@ final class EditBlockControllerTest extends TestCase
         $this->assertTrue($country->load($this->country->codpais));
 
         return $country;
+    }
+
+    private function token(): string
+    {
+        return (new MultiRequestProtection())->newToken();
     }
 }
 

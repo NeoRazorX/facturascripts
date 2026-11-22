@@ -23,6 +23,7 @@ use FacturaScripts\Core\Lib\Block\Columns;
 use FacturaScripts\Core\Lib\Block\ListBlock;
 use FacturaScripts\Core\Lib\Block\Tabs;
 use FacturaScripts\Core\Template\EditBlockController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Pais;
 
@@ -56,6 +57,8 @@ class EditPais extends EditBlockController
         $provinces = fn(Pais $country) => 'SELECT idprovincia FROM provincias WHERE codpais = '
             . $this->db()->var2str($country->codpais);
 
+        $this->createHeader();
+
         // provincias y códigos postales, uno al lado del otro
         $this->page()->add(
             Columns::make('geography')
@@ -86,5 +89,28 @@ class EditPais extends EditBlockController
                         Where::in('idciudad', 'SELECT idciudad FROM ciudades WHERE idprovincia IN (' . $provinces($country) . ')')
                     ]))
         );
+    }
+
+    protected function createHeader(): void
+    {
+        $this->header()
+            ->status(fn(Pais $country) => $country->isDefault() ? [Tools::trans('default'), 'success'] : null)
+            ->stat('provinces', ['block' => 'ListProvincia'])
+            ->stat('zip-codes', ['block' => 'ListCodigoPostal'])
+            ->stat('cities', ['block' => 'ListCiudad'])
+            ->stat('points-of-interest', ['block' => 'ListPuntoInteresCiudad'])
+            ->dropdown('location', ['label' => 'location', 'icon' => 'fa-solid fa-map-location-dot'])
+            ->button('open-map', [
+                'dropdown' => 'location',
+                'type' => 'link',
+                'label' => 'OpenStreetMap',
+                'icon' => 'fa-solid fa-map',
+                'target' => '_blank',
+                'url' => fn(Pais $country) => 'https://www.openstreetmap.org/?mlat=' . $country->latitude
+                    . '&mlon=' . $country->longitude . '#map=5/' . $country->latitude . '/' . $country->longitude,
+                // sin coordenadas no hay nada que mostrar en el mapa
+                'visible' => fn(Pais $country) => false === empty($country->latitude)
+                    && false === empty($country->longitude),
+            ]);
     }
 }

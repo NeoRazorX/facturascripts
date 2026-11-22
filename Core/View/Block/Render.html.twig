@@ -19,15 +19,31 @@
 #}
 {# -- Pinta un bloque o, si está aplazado, el hueco que lo pide después por separado -- #}
 {% if blockItem.isVisible(fsc.hasRecord()) %}
-    <div class="mb-3" id="block-{{ blockItem.name() }}">
-        {# -- el título del registro principal ya está en la cabecera de la página -- #}
-        {% if blockItem.title() is not empty and not inTab and blockItem.name() != fsc.mainBlockName() %}
-            <h2 class="h6 text-uppercase text-body-secondary fw-bold mb-2">
-                {% if blockItem.icon() is not empty %}
-                    <i class="{{ blockItem.icon() }} fa-fw me-1" aria-hidden="true"></i>
+    <div class="mb-3 block-anchor" id="block-{{ blockItem.name() }}">
+        {# -- el título y las opciones del registro principal ya están en la cabecera de la página -- #}
+        {% set isMain = blockItem.name() == fsc.mainBlockName() %}
+        {% set showTitle = blockItem.title() is not empty and not inTab and not isMain %}
+        {% set showOptions = blockItem.hasOptions() and not isMain %}
+        {% if showTitle or showOptions %}
+            <div class="d-flex align-items-center mb-2">
+                {% if showTitle %}
+                    <h2 class="h6 text-uppercase text-body-secondary fw-bold mb-0">
+                        {% if blockItem.icon() is not empty %}
+                            <i class="{{ blockItem.icon() }} fa-fw me-1" aria-hidden="true"></i>
+                        {% endif %}
+                        {{- blockItem.title() }}
+                    </h2>
                 {% endif %}
-                {{- blockItem.title() }}
-            </h2>
+                {% if showOptions %}
+                    <a class="ms-auto small link-secondary d-print-none" title="{{ trans('options') }}"
+                       href="{{ asset('EditPageOption') }}?code={{ blockItem.name() }}&url={{ fsc.pageUrl() | url_encode }}">
+                        <i class="fa-solid fa-wrench" aria-hidden="true"></i>
+                        {% if blockItem.view().settings.customized %}
+                            <i class="fa-solid fa-user-pen" title="{{ trans('personalized') }}" aria-hidden="true"></i>
+                        {% endif %}
+                    </a>
+                {% endif %}
+            </div>
         {% endif %}
         {% if blockItem.isDeferred() %}
             <div class="block-lazy text-center text-body-secondary p-4"

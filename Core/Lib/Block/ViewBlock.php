@@ -105,6 +105,11 @@ abstract class ViewBlock extends Block
         return $this->actions[$name] ?? null;
     }
 
+    public function hasOptions(): bool
+    {
+        return (bool)$this->view->settings['btnOptions'] && false === empty($this->view->getColumns());
+    }
+
     public function icon(): string
     {
         return (string)$this->view->icon;
