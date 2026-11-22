@@ -2078,6 +2078,7 @@
     "unsafe-file-p": "Aus Sicherheitsgründen verhindern wir das Herunterladen bestimmter Dateitypen, wie diesen: %file%",
     "unsafe-folder": "Unsicherer Ordner",
     "unsaved-changes": "Cambios sin guardar",
+    "unsaved-changes-warning": "Si continúas se perderán los cambios sin guardar de estos formularios:",
     "unsupported-file-ext": "Dateiendung nicht unterstützt. Sollte eine Datei vom Typ %ext% sein",
     "until-accounting-entry": "Bis Buchung",
     "until-date": "bis",

@@ -2078,6 +2078,7 @@
     "unsafe-file-p": "Per motivi di sicurezza impediamo il download di alcuni tipi di file, come questo: %file%",
     "unsafe-folder": "Cartella non sicura",
     "unsaved-changes": "Cambios sin guardar",
+    "unsaved-changes-warning": "Si continúas se perderán los cambios sin guardar de estos formularios:",
     "unsupported-file-ext": "File non supportato. Deve essere un file %ext%",
     "until-accounting-entry": "Fino alla registrazione contabile",
     "until-date": "Fino a",

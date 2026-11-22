@@ -2078,6 +2078,7 @@
     "unsafe-file-p": "Güvenlik nedenleriyle bazı dosya türlerinin indirilmesine izin vermiyoruz, bu tür: %file%",
     "unsafe-folder": "Güvenli olmayan klasör",
     "unsaved-changes": "Cambios sin guardar",
+    "unsaved-changes-warning": "Si continúas se perderán los cambios sin guardar de estos formularios:",
     "unsupported-file-ext": "Desteklenmeyen dosya. %ext% uzantılı bir dosya olmalıdır.",
     "until-accounting-entry": "Hesaba kadar",
     "until-date": "Tarihine kadar",

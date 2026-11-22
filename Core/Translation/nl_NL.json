@@ -2078,6 +2078,7 @@
     "unsafe-file-p": "Om veiligheidsredenen verhinderen we het downloaden van bepaalde bestandstypen, zoals dit bestand: %file%",
     "unsafe-folder": "Onveilige map",
     "unsaved-changes": "Cambios sin guardar",
+    "unsaved-changes-warning": "Si continúas se perderán los cambios sin guardar de estos formularios:",
     "unsupported-file-ext": "Niet-ondersteund bestand. Het bestand moet een %ext%-bestand zijn",
     "until-accounting-entry": "Tot boeking",
     "until-date": "Tot",

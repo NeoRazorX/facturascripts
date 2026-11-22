@@ -2078,6 +2078,7 @@
     "unsafe-file-p": "Z bezpečnostních důvodů neumožňujeme stahování některých typů souborů, například tohoto: %file%",
     "unsafe-folder": "Nezabezpečená složka",
     "unsaved-changes": "Cambios sin guardar",
+    "unsaved-changes-warning": "Si continúas se perderán los cambios sin guardar de estos formularios:",
     "unsupported-file-ext": "Archivo no soportado. Debe ser un archivo %ext%",
     "until-accounting-entry": "Do účetního zápisu",
     "until-date": "Do",

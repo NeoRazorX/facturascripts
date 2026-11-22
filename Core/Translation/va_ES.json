@@ -2078,6 +2078,7 @@
     "unsafe-file-p": "Per motius de seguretat, impedim les descàrregues d'alguns tipus d'arxius, com aquest: %file%",
     "unsafe-folder": "Carpeta no segura",
     "unsaved-changes": "Cambios sin guardar",
+    "unsaved-changes-warning": "Si continúas se perderán los cambios sin guardar de estos formularios:",
     "unsupported-file-ext": "Fitxer no suportat. Ha de ser un fitxer %ext%",
     "until-accounting-entry": "Fins a assentament",
     "until-date": "Fins a",
