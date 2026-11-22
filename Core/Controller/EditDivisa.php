@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Template\EditBlockController;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Divisa;
 
 /**
  * Controlador para editar un único elemento del modelo Divisa
@@ -27,7 +29,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Raúl Jiménez         <comercial@nazcanetworks.com>
  */
-class EditDivisa extends EditController
+class EditDivisa extends EditBlockController
 {
     public function getModelClassName(): string
     {
@@ -41,5 +43,16 @@ class EditDivisa extends EditController
         $data['title'] = 'currency';
         $data['icon'] = 'fa-solid fa-money-bill-alt';
         return $data;
+    }
+
+    protected function createBlocks(): void
+    {
+        parent::createBlocks();
+
+        // solo hay un formulario pequeño: lo centramos en lugar de estirarlo a todo el ancho
+        $this->page()->centered();
+
+        $this->header()
+            ->status(fn(Divisa $currency) => $currency->isDefault() ? [Tools::trans('default'), 'warning'] : null);
     }
 }
