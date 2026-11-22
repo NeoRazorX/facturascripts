@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Block;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListView;
+use FacturaScripts\Core\Template\BlockController;
 
 /**
  * Listado de registros, definido por su XMLView, con búsqueda, filtros, orden y paginación.
@@ -47,6 +48,25 @@ class ListBlock extends ViewBlock
         $this->view()->addSearchFields($fields);
 
         return $this;
+    }
+
+    /**
+     * El botón de opciones va en la barra del listado, junto al orden.
+     */
+    public function hasOptionsButton(): bool
+    {
+        return true;
+    }
+
+    public function load(BlockController $controller, bool $target): void
+    {
+        parent::load($controller, $target);
+
+        // la plantilla del listado pinta el botón de opciones si recibe su url
+        if ($this->hasOptions()) {
+            $url = 'EditPageOption?code=' . $this->name() . '&url=' . rawurlencode($controller->pageUrl());
+            $this->view()->setSettings('optionsUrl', $url);
+        }
     }
 
     /**

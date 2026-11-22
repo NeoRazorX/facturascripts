@@ -209,6 +209,14 @@ final class EditBlockControllerTest extends TestCase
         $sections = array_map(fn($block) => $block->name(), $controller->sections());
         $this->assertSame(['ListProvincia', 'ListCodigoPostal', 'ListCiudad', 'ListPuntoInteresCiudad'], $sections);
         $this->assertSame('EditPais?code=' . $this->country->codpais, $controller->pageUrl());
+
+        // cada listado recibe la url de sus opciones, para pintar el botón en su barra
+        $this->assertSame(
+            'EditPageOption?code=ListProvincia&url=' . rawurlencode($controller->pageUrl()),
+            $controller->viewBlock('ListProvincia')->view()->settings['optionsUrl']
+        );
+        $this->assertTrue($controller->block('ListProvincia')->hasOptionsButton());
+        $this->assertFalse($controller->block('EditPais')->hasOptionsButton());
     }
 
     public function testLazyTabsLoadOnlyTheActiveTab(): void

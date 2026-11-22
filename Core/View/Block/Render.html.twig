@@ -23,7 +23,8 @@
         {# -- el título y las opciones del registro principal ya están en la cabecera de la página -- #}
         {% set isMain = blockItem.name() == fsc.mainBlockName() %}
         {% set showTitle = blockItem.title() is not empty and not inTab and not isMain %}
-        {% set showOptions = blockItem.hasOptions() and not isMain %}
+        {# -- los listados llevan las opciones en su propia barra -- #}
+        {% set showOptions = blockItem.hasOptions() and not isMain and not blockItem.hasOptionsButton() %}
         {% if showTitle or showOptions %}
             <div class="d-flex align-items-center mb-2">
                 {% if showTitle %}

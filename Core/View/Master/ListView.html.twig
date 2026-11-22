@@ -92,6 +92,8 @@
                     {{ _self.sortButton(currentView) }}
                     {# -- Colors button -- #}
                     {{ _self.colorsButton(currentView) }}
+                    {# -- Options button: only when the controller sets its url on the view -- #}
+                    {{ _self.optionsButton(currentView) }}
                 </div>
             </div>
             {# -- Filters -- #}
@@ -420,6 +422,17 @@
                 </button>
             </div>
         </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro optionsButton(currentView) %}
+    {% if currentView.settings.optionsUrl is not empty %}
+        <a class="btn btn-light" href="{{ asset(currentView.settings.optionsUrl) }}" title="{{ trans('options') }}">
+            <i class="fa-solid fa-wrench fa-fw" aria-hidden="true"></i>
+            {% if currentView.settings.customized %}
+                <i class="fa-solid fa-user-pen" title="{{ trans('personalized') }}" aria-hidden="true"></i>
+            {% endif %}
+        </a>
     {% endif %}
 {% endmacro %}
 

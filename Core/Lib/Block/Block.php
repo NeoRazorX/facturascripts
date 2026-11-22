@@ -110,6 +110,14 @@ abstract class Block
         return false;
     }
 
+    /**
+     * Indica si el bloque pinta su propio botón de opciones. Si no, va junto a su título.
+     */
+    public function hasOptionsButton(): bool
+    {
+        return false;
+    }
+
     public function icon(): string
     {
         return $this->icon;
