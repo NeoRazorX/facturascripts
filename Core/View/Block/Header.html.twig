@@ -160,7 +160,6 @@
         <div class="col-auto text-end align-self-center pb-2">
             {% set navData = fsc.getNavigation() %}
             {% set description = exists ? record.primaryDescription() : trans('new') %}
-            {% set status = exists ? header.statusFor(record) : null %}
             {% if navData %}
                 {# -- Navegación y, debajo, título y descripción en la misma línea -- #}
                 {% include 'Master/PanelNavigation.html.twig' %}
@@ -168,10 +167,9 @@
                     {{ trans(pageData.title) }}
                     <span class="panel-nav-description d-inline-block text-truncate text-info fw-normal"
                           title="{{ description | striptags }}">{{ description | raw }}</span>
-                    {{ _self.status(status) }}
                 </h1>
             {% else %}
-                <h1 class="h5 mb-0">{{ trans(pageData.title) }} {{ _self.status(status) }}</h1>
+                <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
                 {% if record %}
                     <p class="text-info mb-0">{{ description | raw }}</p>
                 {% endif %}
@@ -181,10 +179,12 @@
             <i class="{{ pageData.icon }} fa-3x" aria-hidden="true"></i>
         </div>
     </div>
-    {# -- Estadísticas del registro -- #}
+    {# -- Estado y estadísticas del registro -- #}
+    {% set status = hasRecord ? header.statusFor(record) : null %}
     {% set stats = hasRecord ? header.stats(record, fsc.page()) : [] %}
-    {% if stats is not empty %}
-        <div class="d-flex flex-wrap gap-2 pb-2">
+    {% if status or stats is not empty %}
+        <div class="d-flex flex-wrap align-items-center gap-2 pb-2">
+            {{ _self.status(status) }}
             {% for stat in stats %}
                 <a class="btn btn-sm btn-light border" id="header-stat-{{ stat.name }}"
                    href="{{ stat.block ? '#block-' ~ stat.block : (stat.url starts with 'http' ? stat.url : asset(stat.url)) }}"
@@ -253,7 +253,7 @@
 
 {% macro status(status) %}
     {% if status %}
-        <span class="badge text-bg-{{ status.color }} align-middle" id="blockHeaderStatus">{{ status.label }}</span>
+        <span class="badge text-bg-{{ status.color }} fs-6 fw-normal" id="blockHeaderStatus">{{ status.label }}</span>
     {% endif %}
 {% endmacro %}
 

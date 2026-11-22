@@ -128,7 +128,7 @@ class EditPais extends EditBlockController
     protected function createHeader(): void
     {
         $this->header()
-            ->status(fn(Pais $country) => $country->isDefault() ? [Tools::trans('default'), 'success'] : null);
+            ->status(fn(Pais $country) => $country->isDefault() ? [Tools::trans('default'), 'warning'] : null);
     }
 
     /**
