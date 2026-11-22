@@ -2078,6 +2078,7 @@
     "unsafe-file-p": "Por motivos de seguridade impedimos as descargas dalgunhas clases de ficheiros, como este: %file%",
     "unsafe-folder": "Cartafol non seguro",
     "unsaved-changes": "Cambios sin guardar",
+    "unsaved-changes-warning": "Si continúas se perderán los cambios sin guardar de estos formularios:",
     "unsupported-file-ext": "Arquivo non soportado. Debe ser un arquivo con extensión %ext%",
     "until-accounting-entry": "Ata asento",
     "until-date": "Ata",

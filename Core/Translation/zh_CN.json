@@ -2078,6 +2078,7 @@
     "unsafe-file-p": "出于安全原因，我们禁止下载某些类型的文件，例如：%file%",
     "unsafe-folder": "不安全的文件夹",
     "unsaved-changes": "Cambios sin guardar",
+    "unsaved-changes-warning": "Si continúas se perderán los cambios sin guardar de estos formularios:",
     "unsupported-file-ext": "不支持的文件。必须是 %ext% 文件",
     "until-accounting-entry": "截止凭证",
     "until-date": "至",

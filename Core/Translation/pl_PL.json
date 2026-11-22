@@ -2078,6 +2078,7 @@
     "unsafe-file-p": "Z powodów bezpieczeństwa uniemożliwiamy pobieranie niektórych typów plików, takich jak ten: %file%",
     "unsafe-folder": "Niebezpieczny folder",
     "unsaved-changes": "Cambios sin guardar",
+    "unsaved-changes-warning": "Si continúas se perderán los cambios sin guardar de estos formularios:",
     "unsupported-file-ext": "Nieobsługiwany plik. Musi być plik %ext%",
     "until-accounting-entry": "Do wpisu księgowego",
     "until-date": "Do",

@@ -2078,6 +2078,7 @@
     "unsafe-file-p": "Segurtasun arrazoiak direla eta, ezin dazu deskargatu tipo hauetako fitxategiren bat: %file%",
     "unsafe-folder": "Segururik gabeko karpeta",
     "unsaved-changes": "Cambios sin guardar",
+    "unsaved-changes-warning": "Si continúas se perderán los cambios sin guardar de estos formularios:",
     "unsupported-file-ext": "Artxibo onartezina. %ext% artxiboa izan behar du",
     "until-accounting-entry": "Idazpenara arte",
     "until-date": "Data arte",
