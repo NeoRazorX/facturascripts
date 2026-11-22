@@ -20,4 +20,8 @@
 {# -- Un bloque pedido por separado: solo su contenido, sin la página -- #}
 {% if blockItem.isVisible(fsc.hasRecord()) %}
     {{ include(blockItem.template()) }}
+    {# -- el contador de la página se pone al día con lo que se acaba de cargar -- #}
+    {% if blockItem.countable() %}
+        <span class="d-none" data-block-total="{{ blockItem.count() }}" data-block-name="{{ blockItem.name() }}"></span>
+    {% endif %}
 {% endif %}

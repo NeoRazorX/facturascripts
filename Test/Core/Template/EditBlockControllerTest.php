@@ -285,6 +285,26 @@ final class EditBlockControllerTest extends TestCase
         $this->assertNotEmpty($controller->viewBlock('ListPuntoInteresCiudad')->view()->where);
     }
 
+    public function testCountsOfDeferredBlocksWithoutLoadingThem(): void
+    {
+        $names = ['ListProvincia', 'ListCiudad', 'ListPuntoInteresCiudad', 'map', 'unknown'];
+        $controller = $this->handle(['code' => $this->country->codpais, 'counts' => implode(',', $names)]);
+
+        // solo cuentan los listados, y solo los registros de este país; el mapa no sabe contar sin cargarse
+        $this->assertSame(
+            ['ListProvincia' => 1, 'ListCiudad' => 1, 'ListPuntoInteresCiudad' => 0],
+            $controller->jsonData
+        );
+
+        // la petición de contadores no carga ningún bloque
+        $this->assertSame([], $controller->viewBlock('ListProvincia')->view()->cursor);
+        $this->assertSame([], $controller->viewBlock('ListCiudad')->view()->where);
+
+        // sin registro principal los bloques no se muestran, así que no hay nada que contar
+        $controller = $this->handle(['counts' => 'ListProvincia']);
+        $this->assertSame([], $controller->jsonData);
+    }
+
     public function testNavigationComesFromTheSourceList(): void
     {
         // la foto que guarda el listado de origen al pintar sus filas
@@ -391,6 +411,9 @@ final class EditBlockControllerTest extends TestCase
 
 final class TestableEditPais extends EditPais
 {
+    /** @var array|null */
+    public $jsonData;
+
     /** @var Request */
     public $testRequest;
 
@@ -407,5 +430,14 @@ final class TestableEditPais extends EditPais
     public function request(): Request
     {
         return $this->testRequest;
+    }
+
+    protected function json(array $data): bool
+    {
+        // la respuesta real envía cabeceras: en los tests solo anotamos los datos
+        $this->jsonData = $data;
+        $this->finished = true;
+
+        return false;
     }
 }

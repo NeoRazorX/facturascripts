@@ -99,6 +99,23 @@ abstract class Block
     }
 
     /**
+     * Indica si el bloque es una lista de registros cuyo número tiene sentido mostrar.
+     */
+    public function countable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Cuenta los registros del bloque sin cargarlo, para dar el contador de un bloque aplazado.
+     * Devuelve null si el bloque no puede contar sin hacer el trabajo de cargarse.
+     */
+    public function countOnly(BlockController $controller): ?int
+    {
+        return null;
+    }
+
+    /**
      * Marca el bloque como aplazado: no se cargan sus datos y en su lugar se pinta
      * un hueco que lo pide después por separado.
      */

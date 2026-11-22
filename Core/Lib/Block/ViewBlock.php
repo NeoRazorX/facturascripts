@@ -119,8 +119,7 @@ abstract class ViewBlock extends Block
     {
         $this->view->processFormData($controller->request(), $target ? 'load' : 'preload');
 
-        $where = null === $this->where ? [] : call_user_func($this->where, $controller->record());
-        $this->view->loadData('', $where);
+        $this->view->loadData('', $this->baseWhere($controller));
 
         if (null !== $this->onLoad) {
             call_user_func($this->onLoad, $this, $controller);
@@ -212,6 +211,14 @@ abstract class ViewBlock extends Block
         $this->where = $callback;
 
         return $this;
+    }
+
+    /**
+     * Filtro del bloque para el registro principal de la página, sin búsquedas ni filtros del usuario.
+     */
+    protected function baseWhere(BlockController $controller): array
+    {
+        return null === $this->where ? [] : call_user_func($this->where, $controller->record());
     }
 
     protected static function modelClass(string $modelName): string

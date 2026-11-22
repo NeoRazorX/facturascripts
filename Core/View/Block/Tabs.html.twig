@@ -26,7 +26,7 @@
 <ul class="nav nav-underline" role="tablist">
     {% for child in visibleTabs %}
         <li class="nav-item" role="presentation">
-            <button type="button" class="nav-link{{ child.name() == activeName ? ' active' : '' }}"
+            <button type="button" class="nav-link{{ child.name() == activeName ? ' active' : '' }}{{ child.count() == 0 and not child.isDeferred() and child.countable() ? ' block-tab-empty' : '' }}"
                     id="block-tab-{{ child.name() }}" data-bs-toggle="tab"
                     data-bs-target="#block-pane-{{ child.name() }}" role="tab"
                     aria-controls="block-pane-{{ child.name() }}"
@@ -35,9 +35,7 @@
                     <i class="{{ child.icon() }} fa-fw me-1 d-none d-lg-inline-block" aria-hidden="true"></i>
                 {% endif %}
                 {{- child.title() }}
-                {% if child.count() > 0 %}
-                    <span class="badge bg-secondary ms-1">{{ child.count() }}</span>
-                {% endif %}
+                {{ include('Block/Count.html.twig', {blockItem: child}) }}
             </button>
         </li>
     {% endfor %}

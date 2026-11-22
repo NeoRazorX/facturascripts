@@ -41,6 +41,11 @@
             $(element).replaceWith($content);
             watch($content[0]);
 
+            // el contenido trae su total, que puede haber cambiado desde que se pidió el contador
+            $content[0].querySelectorAll('[data-block-total]').forEach(function (total) {
+                setCount(total.dataset.blockName, parseInt(total.dataset.blockTotal, 10));
+            });
+
             // avisamos a los scripts de los bloques, como el de los mapas
             document.dispatchEvent(new CustomEvent('block:loaded', {detail: {root: $content[0]}}));
 
@@ -56,6 +61,45 @@
                 + '<i class="fa-solid fa-rotate-right" aria-hidden="true"></i></button>');
             $(element).find('button').on('click', function () {
                 loadBlock(element);
+            });
+        });
+    }
+
+    // pone el contador de un bloque en su insignia; una pestaña sin registros queda atenuada
+    function setCount(name, count) {
+        document.querySelectorAll('[data-block-count="' + name + '"]').forEach(function (badge) {
+            badge.textContent = count;
+            badge.classList.toggle('d-none', count === 0);
+            delete badge.dataset.blockCountPending;
+
+            var tab = badge.closest('.nav-link');
+            if (tab) {
+                tab.classList.toggle('block-tab-empty', count === 0);
+            }
+        });
+    }
+
+    // los bloques aplazados no saben cuántos registros tienen: los pedimos todos en una petición
+    function loadCounts() {
+        var pending = document.querySelectorAll('[data-block-count-pending]');
+        if (pending.length === 0) {
+            return;
+        }
+
+        var names = [];
+        pending.forEach(function (badge) {
+            if (names.indexOf(badge.dataset.blockCount) === -1) {
+                names.push(badge.dataset.blockCount);
+            }
+        });
+
+        var url = pending[0].dataset.blockCountUrl;
+        $.getJSON(url + (url.indexOf('?') === -1 ? '?' : '&') + 'counts=' + names.join(',')).done(function (counts) {
+            Object.keys(counts).forEach(function (name) {
+                // si el bloque ya ha cargado mientras tanto, su total es más reciente
+                if (document.querySelector('[data-block-count="' + name + '"][data-block-count-pending]')) {
+                    setCount(name, counts[name]);
+                }
             });
         });
     }
@@ -411,6 +455,7 @@
             }, {rootMargin: '200px'});
         }
         watch(document);
+        loadCounts();
 
         document.addEventListener('click', function (event) {
             var action = event.target.closest('[data-header-action]');

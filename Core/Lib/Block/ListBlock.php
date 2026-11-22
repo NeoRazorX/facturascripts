@@ -50,6 +50,16 @@ class ListBlock extends ViewBlock
         return $this;
     }
 
+    public function countable(): bool
+    {
+        return true;
+    }
+
+    public function countOnly(BlockController $controller): ?int
+    {
+        return $this->model()->count($this->baseWhere($controller));
+    }
+
     /**
      * El botón de opciones va en la barra del listado, junto al orden.
      */

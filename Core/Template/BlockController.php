@@ -345,6 +345,30 @@ abstract class BlockController extends Controller
     /**
      * Devuelve los valores para un widget datalist.
      */
+    /**
+     * Devuelve el número de registros de los bloques indicados, sin cargarlos. Se omiten
+     * los que no existen, los que no se muestran y los que no saben contar sin cargarse.
+     *
+     * @param string[] $names
+     */
+    protected function blockCounts(array $names): array
+    {
+        $counts = [];
+        foreach ($names as $name) {
+            $block = $this->page->find($name);
+            if (null === $block || false === $block->isVisible($this->hasRecord())) {
+                continue;
+            }
+
+            $count = $block->countOnly($this);
+            if (null !== $count) {
+                $counts[$block->name()] = $count;
+            }
+        }
+
+        return $counts;
+    }
+
     protected function datalistAction(): array
     {
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldsign', 'fieldtitle', 'formname', 'source', 'term']);
@@ -699,6 +723,13 @@ abstract class BlockController extends Controller
         if (null === $root) {
             $this->response()->setHttpCode(404);
             $this->finished = true;
+            return;
+        }
+
+        // ¿se piden solo los contadores de los bloques aplazados?
+        $counts = (string)$this->request()->query('counts', '');
+        if ('' !== $counts) {
+            $this->json($this->blockCounts(explode(',', $counts)));
             return;
         }
 

@@ -164,6 +164,11 @@ select[required].form-select.select2 + .select2-container--bootstrap-5 .select2-
     scroll-margin-top: var(--block-scroll-margin, 130px);
 }
 
+/* block controllers: a tab without records is dimmed */
+.nav-link.block-tab-empty:not(.active) {
+    opacity: 0.6;
+}
+
 /* block controllers: unsaved changes bar, always visible at the bottom */
 .block-dirty-bar {
     position: fixed;

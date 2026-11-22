@@ -34,10 +34,7 @@
                             <i class="{{ blockItem.icon() }} fa-fw me-1" aria-hidden="true"></i>
                         {% endif %}
                         {{- blockItem.title() }}
-                        {# -- un bloque aplazado todavía no sabe cuántos registros tiene -- #}
-                        {% if blockItem.count() > 0 and not blockItem.isDeferred() %}
-                            <span class="badge bg-secondary ms-1 align-text-bottom">{{ blockItem.count() }}</span>
-                        {% endif %}
+                        {{ include('Block/Count.html.twig', {blockItem: blockItem, badgeClass: 'align-text-bottom'}) }}
                     </h2>
                 {% endif %}
                 {% if showOptions %}
