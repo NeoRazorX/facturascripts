@@ -17,6 +17,14 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 #}
-{% for child in blockItem.children() %}
-    {{ include('Block/Render.html.twig', {blockItem: child, inTab: false}) }}
-{% endfor %}
+{% if blockItem.maxWidth() > 0 %}
+    <div class="block-centered mx-auto" style="max-width: {{ blockItem.maxWidth() }}px;">
+        {% for child in blockItem.children() %}
+            {{ include('Block/Render.html.twig', {blockItem: child, inTab: false}) }}
+        {% endfor %}
+    </div>
+{% else %}
+    {% for child in blockItem.children() %}
+        {{ include('Block/Render.html.twig', {blockItem: child, inTab: false}) }}
+    {% endfor %}
+{% endif %}

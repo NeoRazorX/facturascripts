@@ -49,6 +49,20 @@ final class BlockTreeTest extends TestCase
         $this->assertNull($page->find('lost'));
     }
 
+    public function testCenteredContainer(): void
+    {
+        // por defecto un contenedor ocupa todo el ancho
+        $page = new Page();
+        $this->assertSame(0, $page->maxWidth());
+
+        $this->assertSame($page, $page->centered());
+        $this->assertSame(Page::CENTERED_WIDTH, $page->maxWidth());
+
+        // el ancho se puede elegir, pero nunca queda por debajo de un mínimo usable
+        $this->assertSame(900, Section::make('wide')->centered(900)->maxWidth());
+        $this->assertSame(320, Section::make('tiny')->centered(10)->maxWidth());
+    }
+
     public function testColumnsWidth(): void
     {
         $columns = Columns::make('columns')

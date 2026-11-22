@@ -26,8 +26,14 @@ namespace FacturaScripts\Core\Lib\Block;
  */
 abstract class Container extends Block
 {
+    /** Ancho máximo, en píxeles, por defecto de un contenedor centrado. */
+    public const CENTERED_WIDTH = 720;
+
     /** @var Block[] */
     private $children = [];
+
+    /** @var int */
+    private $maxWidth = 0;
 
     /**
      * Añade un bloque al final.
@@ -81,6 +87,21 @@ abstract class Container extends Block
     }
 
     /**
+     * Limita el ancho del contenedor y lo centra en la pantalla, en lugar de ocupar todo
+     * el ancho: pensado para páginas que solo tienen un formulario pequeño.
+     *
+     * @param int $maxWidth ancho máximo en píxeles
+     *
+     * @return static
+     */
+    public function centered(int $maxWidth = self::CENTERED_WIDTH)
+    {
+        $this->maxWidth = max(320, $maxWidth);
+
+        return $this;
+    }
+
+    /**
      * @return Block[]
      */
     public function children(): array
@@ -126,6 +147,14 @@ abstract class Container extends Block
         }
 
         return false;
+    }
+
+    /**
+     * Devuelve el ancho máximo en píxeles, o 0 si ocupa todo el ancho disponible.
+     */
+    public function maxWidth(): int
+    {
+        return $this->maxWidth;
     }
 
     /**

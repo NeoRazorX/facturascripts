@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Template\EditBlockController;
 
 /**
  * Controlador para editar un único elemento del modelo CodigoPostal
  */
-class EditCodigoPostal extends EditController
+class EditCodigoPostal extends EditBlockController
 {
     public function getModelClassName(): string
     {
@@ -38,5 +38,13 @@ class EditCodigoPostal extends EditController
         $data["title"] = "zip-code";
         $data["icon"] = "fa-solid fa-map-pin";
         return $data;
+    }
+
+    protected function createBlocks(): void
+    {
+        parent::createBlocks();
+
+        // solo hay un formulario pequeño: lo centramos en lugar de estirarlo a todo el ancho
+        $this->page()->centered();
     }
 }

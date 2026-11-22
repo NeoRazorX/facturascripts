@@ -164,6 +164,20 @@ select[required].form-select.select2 + .select2-container--bootstrap-5 .select2-
     scroll-margin-top: var(--block-scroll-margin, 130px);
 }
 
+/* block controllers: in a centered container the form fields are stacked, one per row */
+.block-centered form .row.g-2 > [class*="col-"]:not(.col-auto):not(.col-sm-auto) {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+/* block controllers: a centered page is also centered vertically, while it fits on the screen */
+.block-centered-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - 280px);
+}
+
 /* block controllers: a tab without records is dimmed */
 .nav-link.block-tab-empty:not(.active) {
     opacity: 0.6;
