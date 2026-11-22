@@ -111,6 +111,11 @@ class Provincia extends ModelClass
         return 'idprovincia';
     }
 
+    public function primaryDescriptionColumn(): string
+    {
+        return 'provincia';
+    }
+
     public static function tableName(): string
     {
         return 'provincias';

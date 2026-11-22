@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Block;
 
 use Closure;
+use FacturaScripts\Core\Tools;
 use InvalidArgumentException;
 
 /**
@@ -37,6 +38,12 @@ class Header
 
     /** @var array */
     private $alerts = [];
+
+    /** @var Closure|null */
+    private $breadcrumb;
+
+    /** @var string */
+    private $breadcrumbList = '';
 
     /** @var HeaderButton[] */
     private $buttons = [];
@@ -86,6 +93,52 @@ class Header
         }
 
         return $alerts;
+    }
+
+    /**
+     * Declara la miga de pan de la página, que sustituye al botón del listado: empieza por
+     * el listado, sigue con los registros de los que cuelga el registro y termina en él.
+     *
+     * @param string $list clave de traducción del listado, el primer elemento de la miga
+     * @param Closure $parents function (ModelClass $record): array, que devuelve los registros
+     * padre, del más lejano al más cercano, como arrays con las claves title y url
+     */
+    public function breadcrumb(string $list, Closure $parents): self
+    {
+        $this->breadcrumb = $parents;
+        $this->breadcrumbList = $list;
+
+        return $this;
+    }
+
+    /**
+     * Devuelve los elementos de la miga de pan, o un array vacío si la página no la declara.
+     *
+     * @param mixed $record registro principal de la página, o null si no tiene
+     *
+     * @return array lista de arrays con las claves title y url; el último, el propio
+     * registro, no lleva url
+     */
+    public function breadcrumbFor($record): array
+    {
+        if (null === $this->breadcrumb || null === $record) {
+            return [];
+        }
+
+        $crumbs = [['title' => Tools::trans($this->breadcrumbList), 'url' => (string)$record->url('list')]];
+        $parents = call_user_func($this->breadcrumb, $record);
+        foreach (is_array($parents) ? $parents : [] as $parent) {
+            if (is_array($parent) && false === empty($parent['title'])) {
+                $crumbs[] = ['title' => (string)$parent['title'], 'url' => (string)($parent['url'] ?? '')];
+            }
+        }
+
+        $crumbs[] = [
+            'title' => $record->exists() ? (string)$record->primaryDescription() : Tools::trans('new'),
+            'url' => '',
+        ];
+
+        return $crumbs;
     }
 
     /**

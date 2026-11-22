@@ -39,6 +39,18 @@ final class EditDivisaTest extends TestCase
     /** @var Divisa */
     private $currency;
 
+    public function testBreadcrumbIsTheListAndTheCurrency(): void
+    {
+        $controller = $this->handle(['code' => $this->currency->coddivisa]);
+        $crumbs = $controller->header()->breadcrumbFor($controller->record());
+
+        $this->assertSame(
+            [Tools::trans('currencies'), $this->currency->descripcion],
+            array_column($crumbs, 'title')
+        );
+        $this->assertSame(['ListPais?activetab=ListDivisa', ''], array_column($crumbs, 'url'));
+    }
+
     public function testDefaultCurrencyShowsItsStatus(): void
     {
         // una divisa cualquiera no tiene estado

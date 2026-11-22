@@ -442,6 +442,7 @@
     "cron-timeout": "De cron is gestopt om te voorkomen dat de maximale uitvoeringstijd van PHP wordt overschreden. Voer de cron uit vanaf de terminal om deze limiet te vermijden.",
     "crons": "Cronjobs",
     "csv-file-must-have-at-least-2-columns": "Het CSV-bestand moet minstens 2 kolommen bevatten",
+    "currencies": "Divisas",
     "currency": "Valuta",
     "currency-position": "Positie van valutasymbool",
     "current-quarter": "Huidig kwartaal",

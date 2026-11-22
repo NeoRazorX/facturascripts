@@ -442,6 +442,7 @@
     "cron-timeout": "Kronoa gelditu da PHP-ren exekuzio denbora maksimoa gainditu ez dadin. Mesedez, exekutatu kronoa terminaletik, mugarik hau saihesteko.",
     "crons": "Krons",
     "csv-file-must-have-at-least-2-columns": "CSV-ak gutxienez 2 zutabe izan behar ditu",
+    "currencies": "Divisas",
     "currency": "Dibisa",
     "currency-position": "Moneta sinboloaren posizioa",
     "current-quarter": "Laukiztako gertakariak",

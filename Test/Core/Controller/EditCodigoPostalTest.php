@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Controller;
 use FacturaScripts\Core\Lib\Block\Container;
 use FacturaScripts\Core\Lib\ControllerPermissions;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Controller\EditCodigoPostal;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\CodigoPostal;
@@ -45,6 +46,28 @@ final class EditCodigoPostalTest extends TestCase
 
     /** @var CodigoPostal */
     private $zipCode;
+
+    public function testBreadcrumbGoesFromTheListToTheZipCode(): void
+    {
+        $controller = $this->handle(['code' => $this->zipCode->id]);
+        $crumbs = $controller->header()->breadcrumbFor($controller->record());
+
+        // listado, país, provincia, ciudad y el propio código postal, que no lleva enlace
+        $this->assertSame(
+            [
+                Tools::trans('zip-codes'),
+                $this->province->getCountry()->nombre,
+                $this->province->provincia,
+                $this->city->ciudad,
+                $this->zipCode->number,
+            ],
+            array_column($crumbs, 'title')
+        );
+        $this->assertSame(
+            [$this->zipCode->url('list'), 'EditPais?code=ESP', $this->province->url(), $this->city->url(), ''],
+            array_column($crumbs, 'url')
+        );
+    }
 
     public function testNewZipCodeTakesTheValuesOfTheUrl(): void
     {

@@ -442,6 +442,7 @@
     "cron-timeout": "Cron, PHP'nin maksimum yürütme süresini aşmamak için durduruldu. Lütfen bu sınırı aşmamak için terminalden cron'u çalıştırın.",
     "crons": "Cronlar",
     "csv-file-must-have-at-least-2-columns": "CSV en az 2 sütun içermelidir",
+    "currencies": "Divisas",
     "currency": "Para birimi",
     "currency-position": "Para birimi simgesi konumu",
     "current-quarter": "Mevcut çeyrek",

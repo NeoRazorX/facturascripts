@@ -39,6 +39,50 @@
         <input type="hidden" name="action"/>
         <input type="hidden" name="block"/>
     </form>
+    {# -- Miga de pan y, a su derecha, la posición en el listado desde el que se llegó -- #}
+    {% set crumbs = header.breadcrumbFor(record) %}
+    {% set navData = fsc.getNavigation() %}
+    {% if crumbs is not empty %}
+        <div class="d-flex align-items-center gap-3 pb-2">
+            <nav aria-label="breadcrumb" class="block-breadcrumb text-truncate" id="blockHeaderBreadcrumb">
+                {% for crumb in crumbs %}
+                    {# -- en pantallas pequeñas solo queda el padre inmediato -- #}
+                    <span class="{{ loop.revindex == 2 ? '' : 'd-none d-md-inline' }}">
+                        {% if not loop.first %}
+                            <i class="fa-solid fa-chevron-right fa-xs text-body-tertiary mx-1 d-none d-md-inline"
+                               aria-hidden="true"></i>
+                        {% endif %}
+                        {% if crumb.url is not empty %}
+                            <a href="{{ asset(crumb.url) }}" class="link-secondary text-decoration-none">
+                                {% if loop.first %}
+                                    <i class="{{ pageData.icon }} fa-fw" aria-hidden="true"></i>
+                                {% elseif loop.revindex == 2 %}
+                                    <i class="fa-solid fa-chevron-left fa-xs d-md-none" aria-hidden="true"></i>
+                                {% endif %}
+                                {{- crumb.title | raw -}}
+                            </a>
+                        {% else %}
+                            <span class="fw-bold" aria-current="page">{{ crumb.title | raw }}</span>
+                        {% endif %}
+                    </span>
+                {% endfor %}
+            </nav>
+            {% if navData %}
+                <div class="ms-auto d-flex align-items-center gap-2 small text-nowrap" id="blockHeaderPager">
+                    {% if navData.source is not empty %}
+                        <span class="text-body-secondary d-none d-md-inline">
+                            {{- navData.source -}}
+                            {% if navData.query is not empty %}
+                                <i class="fa-solid fa-magnifying-glass fa-xs ms-1" aria-hidden="true"></i>
+                                {{ navData.query }}
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                    {% include 'Master/PanelNavigation.html.twig' %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
     <div class="row">
         <div class="col pb-2">
             {# -- Volver a la página desde la que se llegó: lo muestra el javascript si no es el listado -- #}
@@ -49,7 +93,8 @@
                 </a>
             {% endif %}
             <div class="btn-group">
-                {% if record and header.shows('list') %}
+                {# -- con miga de pan, el listado es su primer elemento -- #}
+                {% if record and header.shows('list') and crumbs is empty %}
                     <a href="{{ record.url('list') }}" class="btn btn-sm btn-secondary">
                         <i class="fa-solid fa-list fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-lg-inline-block">{{ trans('all') }}</span>
@@ -157,8 +202,11 @@
                 </div>
             {% endif %}
         </div>
+        {# -- con miga de pan sobran el título y el icono: el registro ya es su último elemento -- #}
+        {% if crumbs is not empty %}
+            <h1 class="visually-hidden">{{ trans(pageData.title) }}</h1>
+        {% else %}
         <div class="col-auto text-end align-self-center pb-2">
-            {% set navData = fsc.getNavigation() %}
             {% set description = exists ? record.primaryDescription() : trans('new') %}
             {% if navData %}
                 {# -- Navegación y, debajo, título y descripción en la misma línea -- #}
@@ -178,6 +226,7 @@
         <div class="col-auto d-none d-lg-block align-self-center pb-2">
             <i class="{{ pageData.icon }} fa-3x" aria-hidden="true"></i>
         </div>
+        {% endif %}
     </div>
     {# -- Estado y estadísticas del registro -- #}
     {% set status = hasRecord ? header.statusFor(record) : null %}

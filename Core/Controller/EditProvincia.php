@@ -90,6 +90,13 @@ class EditProvincia extends EditBlockController
                 ))
         );
 
+        // miga de pan: el listado de provincias y el país de la provincia
+        $this->header()->breadcrumb('provinces', function (Provincia $province): array {
+            $country = $province->getCountry();
+
+            return [['title' => $country->nombre, 'url' => $country->exists() ? $country->url() : '']];
+        });
+
         // un listado por pestaña: solo se cargan los datos de la que se abre
         $this->page()->add(
             Tabs::make('places')

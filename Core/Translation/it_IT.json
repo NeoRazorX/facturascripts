@@ -442,6 +442,7 @@
     "cron-timeout": "Il cron è stato interrotto per non superare il tempo massimo di esecuzione di PHP. Si prega di eseguire il cron da terminale per evitare questo limite.",
     "crons": "Cron",
     "csv-file-must-have-at-least-2-columns": "Il CSV deve contenere almeno 2 colonne",
+    "currencies": "Divisas",
     "currency": "Moneta",
     "currency-position": "Posizione del simbolo di valuta",
     "current-quarter": "Trimestre attuale",

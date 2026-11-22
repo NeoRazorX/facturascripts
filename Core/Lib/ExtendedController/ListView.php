@@ -347,8 +347,10 @@ class ListView extends BaseView
         $this->navToken = bin2hex(random_bytes(8));
         Cache::set('nav-' . $nick . '-' . $this->navToken, [
             'count' => $exact ? $this->count : null,
+            'query' => (string)$this->query,
             'start' => $exact ? $start : null,
             'targets' => $targets,
+            'title' => (string)$this->title,
         ]);
 
         // only keep the latest tokens from this view

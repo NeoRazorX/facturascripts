@@ -196,6 +196,11 @@ class CodigoPostal extends ModelClass
         return ['added' => static::count() - $before, 'discarded' => $discarded];
     }
 
+    public function primaryDescriptionColumn(): string
+    {
+        return 'number';
+    }
+
     public static function tableName(): string
     {
         return "codigos_postales";

@@ -442,6 +442,7 @@
     "cron-timeout": "cron 已停止，以免超过 PHP 的最大执行时间。请从终端运行 cron 以避免此限制。",
     "crons": "定时任务",
     "csv-file-must-have-at-least-2-columns": "CSV 至少需要 2 列",
+    "currencies": "Divisas",
     "currency": "货币",
     "currency-position": "货币符号位置",
     "current-quarter": "本季度",

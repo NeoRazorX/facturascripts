@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Template\EditBlockController;
+use FacturaScripts\Dinamic\Model\CodigoPostal;
 
 /**
  * Controlador para editar un único elemento del modelo CodigoPostal
@@ -46,5 +47,21 @@ class EditCodigoPostal extends EditBlockController
 
         // solo hay un formulario pequeño: lo centramos en lugar de estirarlo a todo el ancho
         $this->page()->centered();
+
+        // miga de pan: el listado de códigos postales y el país, la provincia y la ciudad del código
+        $this->header()->breadcrumb('zip-codes', function (CodigoPostal $zipCode): array {
+            $city = $zipCode->getCity();
+            $province = $city ? $city->getProvince() : null;
+            if (null === $city || null === $province) {
+                return [];
+            }
+
+            $country = $province->getCountry();
+            return [
+                ['title' => $country->nombre, 'url' => $country->exists() ? $country->url() : ''],
+                ['title' => $province->provincia, 'url' => $province->url()],
+                ['title' => $city->ciudad, 'url' => $city->url()],
+            ];
+        });
     }
 }

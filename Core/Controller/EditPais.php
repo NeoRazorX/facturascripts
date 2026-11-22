@@ -112,7 +112,9 @@ class EditPais extends EditBlockController
 
     protected function createHeader(): void
     {
+        // un país no cuelga de nada: la miga de pan es el listado y el propio país
         $this->header()
+            ->breadcrumb('countries', fn(Pais $country) => [])
             ->status(fn(Pais $country) => $country->isDefault() ? [Tools::trans('default'), 'warning'] : null);
     }
 }

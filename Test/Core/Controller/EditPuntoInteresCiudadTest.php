@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Controller;
 
 use FacturaScripts\Core\Lib\ControllerPermissions;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Controller\EditPuntoInteresCiudad;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Provincia;
@@ -44,6 +45,28 @@ final class EditPuntoInteresCiudadTest extends TestCase
 
     /** @var Provincia */
     private $province;
+
+    public function testBreadcrumbGoesFromTheListToThePoint(): void
+    {
+        $controller = $this->handle(['code' => $this->point->id]);
+        $crumbs = $controller->header()->breadcrumbFor($controller->record());
+
+        // listado, país, provincia, ciudad y el propio punto, que no lleva enlace
+        $this->assertSame(
+            [
+                Tools::trans('points-of-interest'),
+                $this->province->getCountry()->nombre,
+                $this->province->provincia,
+                $this->city->ciudad,
+                $this->point->name,
+            ],
+            array_column($crumbs, 'title')
+        );
+        $this->assertSame(
+            [$this->point->url('list'), 'EditPais?code=ESP', $this->province->url(), $this->city->url(), ''],
+            array_column($crumbs, 'url')
+        );
+    }
 
     public function testMapShowsOnlyThePoint(): void
     {

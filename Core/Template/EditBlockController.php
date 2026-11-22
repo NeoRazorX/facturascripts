@@ -57,13 +57,16 @@ abstract class EditBlockController extends BlockController
             return [];
         }
 
-        // count y position son null cuando la foto no puede situar el registro en el listado completo
+        // count y position son null cuando la foto no puede situar el registro en el listado completo;
+        // source y query dicen de qué listado, y con qué búsqueda, sale la cuenta
         $url = $this->url() . '?code=%s&navfrom=' . $token;
         return [
             'count' => $data['count'] ?? null,
             'next' => isset($codes[$position + 1]) ? sprintf($url, rawurlencode($codes[$position + 1])) : '',
             'position' => isset($data['start']) ? $data['start'] + $position + 1 : null,
             'prev' => $position > 0 ? sprintf($url, rawurlencode($codes[$position - 1])) : '',
+            'query' => (string)($data['query'] ?? ''),
+            'source' => (string)($data['title'] ?? ''),
         ];
     }
 

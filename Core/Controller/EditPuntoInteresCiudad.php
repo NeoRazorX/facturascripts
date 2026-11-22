@@ -49,6 +49,22 @@ class EditPuntoInteresCiudad extends EditBlockController
     {
         parent::createBlocks();
 
+        // miga de pan: el listado de puntos de interés y el país, la provincia y la ciudad del punto
+        $this->header()->breadcrumb('points-of-interest', function (PuntoInteresCiudad $point): array {
+            $city = $point->getCity();
+            $province = $city ? $city->getProvince() : null;
+            if (null === $city || null === $province) {
+                return [];
+            }
+
+            $country = $province->getCountry();
+            return [
+                ['title' => $country->nombre, 'url' => $country->exists() ? $country->url() : ''],
+                ['title' => $province->provincia, 'url' => $province->url()],
+                ['title' => $city->ciudad, 'url' => $city->url()],
+            ];
+        });
+
         // el mapa se pide aparte cuando entra en pantalla, con el punto como único marcador
         $this->page()->add(
             MapBlock::make('map', 'location', 'fa-solid fa-map-location-dot')

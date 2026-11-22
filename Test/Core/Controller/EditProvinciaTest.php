@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Controller;
 
 use FacturaScripts\Core\Lib\ControllerPermissions;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Controller\EditProvincia;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Provincia;
@@ -58,6 +59,20 @@ final class EditProvinciaTest extends TestCase
         $this->assertSame($this->cities[0]->idciudad, $cursor[0]->idciudad);
         $this->assertTrue($controller->block('ListCodigoPostal')->isDeferred());
         $this->assertTrue($controller->block('map')->isDeferred());
+    }
+
+    public function testBreadcrumbGoesFromTheListToTheProvince(): void
+    {
+        $province = $this->provinces[0];
+        $controller = $this->handle(['code' => $province->idprovincia]);
+        $crumbs = $controller->header()->breadcrumbFor($controller->record());
+
+        // listado, país y la propia provincia, que no lleva enlace
+        $this->assertSame(
+            [Tools::trans('provinces'), $province->getCountry()->nombre, $province->provincia],
+            array_column($crumbs, 'title')
+        );
+        $this->assertSame([$province->url('list'), 'EditPais?code=ESP', ''], array_column($crumbs, 'url'));
     }
 
     public function testCountsAndMapOfTheProvince(): void

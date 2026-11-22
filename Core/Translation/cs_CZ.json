@@ -442,6 +442,7 @@
     "cron-timeout": "Časový limit cronu byl dosažen, aby nedošlo k překročení maximálního běhového limitu PHP. Pro vyhnutí se této limitaci spusťte cron z terminálu.",
     "crons": "Stroje",
     "csv-file-must-have-at-least-2-columns": "Soubor CSV musí mít alespoň 2 sloupce",
+    "currencies": "Divisas",
     "currency": "Měna",
     "currency-position": "Pozice symbolu měny",
     "current-quarter": "Aktuální čtvrtletí",

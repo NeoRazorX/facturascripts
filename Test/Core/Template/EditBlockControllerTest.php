@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\ControllerPermissions;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Controller\EditPais;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
@@ -246,6 +247,11 @@ final class EditBlockControllerTest extends TestCase
         $this->assertSame(1, $stats[0]['value']);
         $this->assertSame('ListProvincia', $stats[0]['block']);
 
+        // un país no cuelga de nada: su miga de pan es el listado y el propio país
+        $crumbs = $header->breadcrumbFor($record);
+        $this->assertSame([Tools::trans('countries'), $record->nombre], array_column($crumbs, 'title'));
+        $this->assertSame([$record->url('list'), ''], array_column($crumbs, 'url'));
+
         // sin coordenadas no se muestra el desplegable, que se queda sin botones
         $this->assertSame([], $header->buttons($record));
         $record->latitude = 40.4;
@@ -308,7 +314,13 @@ final class EditBlockControllerTest extends TestCase
     {
         // la foto que guarda el listado de origen al pintar sus filas
         $codes = [$this->otherCountry->codpais, $this->country->codpais];
-        Cache::set('nav-test-block-controller-abc123', ['targets' => ['EditPais' => $codes], 'count' => 20, 'start' => 4]);
+        Cache::set('nav-test-block-controller-abc123', [
+            'targets' => ['EditPais' => $codes],
+            'count' => 20,
+            'start' => 4,
+            'title' => 'Countries',
+            'query' => 'spa',
+        ]);
 
         try {
             // sin token no hay navegación
@@ -316,6 +328,10 @@ final class EditBlockControllerTest extends TestCase
 
             $navigation = $this->handle(['code' => $this->country->codpais, 'navfrom' => 'abc123'])->getNavigation();
             $this->assertSame(20, $navigation['count']);
+
+            // el listado de origen y su búsqueda explican de dónde sale la cuenta
+            $this->assertSame('Countries', $navigation['source']);
+            $this->assertSame('spa', $navigation['query']);
             $this->assertSame(6, $navigation['position']);
             $this->assertSame('EditPais?code=' . $this->otherCountry->codpais . '&navfrom=abc123', $navigation['prev']);
             $this->assertSame('', $navigation['next']);

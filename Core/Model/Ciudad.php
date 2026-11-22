@@ -92,6 +92,11 @@ class Ciudad extends ModelClass
         return 'idciudad';
     }
 
+    public function primaryDescriptionColumn(): string
+    {
+        return 'ciudad';
+    }
+
     public static function tableName(): string
     {
         return 'ciudades';

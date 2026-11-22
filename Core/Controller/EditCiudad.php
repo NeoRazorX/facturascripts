@@ -85,6 +85,20 @@ class EditCiudad extends EditBlockController
                 ))
         );
 
+        // miga de pan: el listado de ciudades, el país y la provincia de la ciudad
+        $this->header()->breadcrumb('cities', function (Ciudad $city): array {
+            $province = $city->getProvince();
+            if (null === $province) {
+                return [];
+            }
+
+            $country = $province->getCountry();
+            return [
+                ['title' => $country->nombre, 'url' => $country->exists() ? $country->url() : ''],
+                ['title' => $province->provincia, 'url' => $province->url()],
+            ];
+        });
+
         // un listado por pestaña: solo se cargan los datos de la que se abre
         $this->page()->add(
             Tabs::make('places')

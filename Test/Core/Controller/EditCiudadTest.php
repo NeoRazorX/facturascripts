@@ -19,8 +19,10 @@
 
 namespace FacturaScripts\Test\Core\Controller;
 
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\ControllerPermissions;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Controller\EditCiudad;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\CodigoPostal;
@@ -72,6 +74,28 @@ final class EditCiudadTest extends TestCase
         $this->assertStringContainsString('codpais=ESP', $newUrl);
         $this->assertTrue($controller->block('ListPuntoInteresCiudad')->isDeferred());
         $this->assertTrue($controller->block('map')->isDeferred());
+    }
+
+    public function testBreadcrumbGoesFromTheListToTheCity(): void
+    {
+        $city = $this->cities[0];
+        $controller = $this->handle(['code' => $city->idciudad]);
+        $crumbs = $controller->header()->breadcrumbFor($controller->record());
+
+        // listado, país, provincia y la propia ciudad, que no lleva enlace
+        $this->assertSame(
+            [Tools::trans('cities'), Paises::get('ESP')->nombre, $this->province->provincia, $city->ciudad],
+            array_column($crumbs, 'title')
+        );
+        $this->assertSame(
+            [$city->url('list'), 'EditPais?code=ESP', $this->province->url(), ''],
+            array_column($crumbs, 'url')
+        );
+
+        // una ciudad nueva todavía no cuelga de nada
+        $controller = $this->handle([]);
+        $crumbs = $controller->header()->breadcrumbFor($controller->record());
+        $this->assertSame([Tools::trans('cities'), Tools::trans('new')], array_column($crumbs, 'title'));
     }
 
     public function testCountsAndMapOfTheCity(): void

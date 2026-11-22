@@ -52,7 +52,9 @@ class EditDivisa extends EditBlockController
         // solo hay un formulario pequeño: lo centramos en lugar de estirarlo a todo el ancho
         $this->page()->centered();
 
+        // una divisa no cuelga de nada: la miga de pan es el listado y la propia divisa
         $this->header()
+            ->breadcrumb('currencies', fn(Divisa $currency) => [])
             ->status(fn(Divisa $currency) => $currency->isDefault() ? [Tools::trans('default'), 'warning'] : null);
     }
 }
