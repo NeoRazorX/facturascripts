@@ -35,7 +35,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Prueba el ciclo de petición de los controladores de bloques con EditPais, que tiene
- * un formulario, dos listados en columnas y dos listados en pestañas perezosas.
+ * un formulario y cuatro listados en pestañas perezosas.
  */
 final class EditBlockControllerTest extends TestCase
 {
@@ -83,6 +83,8 @@ final class EditBlockControllerTest extends TestCase
         $this->assertSame(1, $provinces->count);
         $this->assertSame($this->province->idprovincia, $provinces->cursor[0]->idprovincia);
 
+        // las ciudades están en otra pestaña: se cargan cuando la petición va dirigida a ella
+        $controller = $this->handle(['code' => $this->country->codpais, 'activetab' => 'ListCiudad']);
         $cities = $controller->viewBlock('ListCiudad')->view();
         $this->assertSame(1, $cities->count);
         $this->assertSame($this->city->idciudad, $cities->cursor[0]->idciudad);
@@ -94,7 +96,6 @@ final class EditBlockControllerTest extends TestCase
 
         $this->assertFalse($controller->hasData);
         $this->assertTrue($controller->block('EditPais')->isVisible($controller->hasRecord()));
-        $this->assertFalse($controller->block('geography')->isVisible($controller->hasRecord()));
         $this->assertFalse($controller->block('places')->isVisible($controller->hasRecord()));
         $this->assertSame([], $controller->viewBlock('ListProvincia')->view()->cursor);
     }
@@ -213,7 +214,7 @@ final class EditBlockControllerTest extends TestCase
 
         // el índice lista los bloques con título, también los de dentro de las pestañas
         $sections = array_map(fn($block) => $block->name(), $controller->sections());
-        $this->assertSame(['ListProvincia', 'ListCodigoPostal', 'ListCiudad', 'ListPuntoInteresCiudad'], $sections);
+        $this->assertSame(['ListProvincia', 'ListCiudad', 'ListCodigoPostal', 'ListPuntoInteresCiudad'], $sections);
         $this->assertSame('EditPais?code=' . $this->country->codpais, $controller->pageUrl());
 
         // cada listado recibe la url de sus opciones, para pintar el botón en su barra
@@ -229,15 +230,16 @@ final class EditBlockControllerTest extends TestCase
     {
         $controller = $this->handle(['code' => $this->country->codpais]);
 
-        // la primera pestaña se carga y la segunda queda aplazada, sin consultar sus datos
-        $this->assertFalse($controller->block('ListCiudad')->isDeferred());
+        // la primera pestaña se carga y las demás quedan aplazadas, sin consultar sus datos
+        $this->assertFalse($controller->block('ListProvincia')->isDeferred());
+        $this->assertTrue($controller->block('ListCiudad')->isDeferred());
         $this->assertTrue($controller->block('ListPuntoInteresCiudad')->isDeferred());
         $this->assertSame([], $controller->viewBlock('ListPuntoInteresCiudad')->view()->where);
 
-        // si la petición va dirigida a la segunda pestaña, es esa la que se carga
+        // si la petición va dirigida a otra pestaña, es esa la que se carga
         $controller = $this->handle(['code' => $this->country->codpais, 'activetab' => 'ListPuntoInteresCiudad']);
         $this->assertSame('ListPuntoInteresCiudad', $controller->target());
-        $this->assertTrue($controller->block('ListCiudad')->isDeferred());
+        $this->assertTrue($controller->block('ListProvincia')->isDeferred());
         $this->assertFalse($controller->block('ListPuntoInteresCiudad')->isDeferred());
         $this->assertNotEmpty($controller->viewBlock('ListPuntoInteresCiudad')->view()->where);
     }

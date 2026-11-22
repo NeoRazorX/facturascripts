@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\Block\Columns;
 use FacturaScripts\Core\Lib\Block\ListBlock;
 use FacturaScripts\Core\Lib\Block\Tabs;
 use FacturaScripts\Core\Template\EditBlockController;
@@ -59,29 +58,24 @@ class EditPais extends EditBlockController
 
         $this->createHeader();
 
-        // provincias y códigos postales, uno al lado del otro
+        // un listado por pestaña: solo se cargan los datos de la que se abre
         $this->page()->add(
-            Columns::make('geography')
-                ->col(7, ListBlock::make('ListProvincia', 'Provincia', 'provinces', 'fa-solid fa-map-signs')
+            Tabs::make('places')
+                ->setLazy()
+                ->tab(ListBlock::make('ListProvincia', 'Provincia', 'provinces', 'fa-solid fa-map-signs')
                     ->addOrderBy(['provincia'], 'name')
                     ->addSearchFields(['provincia', 'codisoprov', 'alias'])
                     ->disableColumn('country')
                     ->where($byCountry))
-                ->col(5, ListBlock::make('ListCodigoPostal', 'CodigoPostal', 'zip-codes', 'fa-solid fa-map-pin')
-                    ->addOrderBy(['number'], 'number')
-                    ->addSearchFields(['number'])
-                    ->disableColumn('country')
-                    ->where($byCountry))
-        );
-
-        // ciudades y puntos de interés en pestañas: solo se cargan los datos de la que se abre
-        $this->page()->add(
-            Tabs::make('places')
-                ->setLazy()
                 ->tab(ListBlock::make('ListCiudad', 'Ciudad', 'cities', 'fa-solid fa-city')
                     ->addOrderBy(['ciudad'], 'name')
                     ->addSearchFields(['ciudad', 'alias'])
                     ->where(fn(Pais $country) => [Where::in('idprovincia', $provinces($country))]))
+                ->tab(ListBlock::make('ListCodigoPostal', 'CodigoPostal', 'zip-codes', 'fa-solid fa-map-pin')
+                    ->addOrderBy(['number'], 'number')
+                    ->addSearchFields(['number'])
+                    ->disableColumn('country')
+                    ->where($byCountry))
                 ->tab(ListBlock::make('ListPuntoInteresCiudad', 'PuntoInteresCiudad', 'points-of-interest', 'fa-solid fa-location-dot')
                     ->addOrderBy(['name'], 'name')
                     ->addSearchFields(['name', 'alias'])
