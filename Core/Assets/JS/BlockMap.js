@@ -83,7 +83,9 @@
         }
 
         if (bounds.length > 0) {
-            map.fitBounds(bounds, {padding: [30, 30], maxZoom: 12});
+            // con un solo marcador no hay nada que encuadrar: se usa el zoom del centro, si lo hay
+            var single = bounds.length === 1 && data.center && data.center[2];
+            map.fitBounds(bounds, {padding: [30, 30], maxZoom: single ? data.center[2] : 12});
         } else {
             map.setView([data.center[0], data.center[1]], data.center[2] || 5);
         }

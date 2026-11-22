@@ -19,13 +19,18 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\Block\MapBlock;
+use FacturaScripts\Core\Template\EditBlockController;
+use FacturaScripts\Dinamic\Model\PuntoInteresCiudad;
 
 /**
  * Controlador para editar un único elemento del modelo PuntoInteresCiudad
  */
-class EditPuntoInteresCiudad extends EditController
+class EditPuntoInteresCiudad extends EditBlockController
 {
+    /** Zoom del mapa: suficiente para ver las calles que rodean al punto. */
+    private const MAP_ZOOM = 16;
+
     public function getModelClassName(): string
     {
         return "PuntoInteresCiudad";
@@ -35,8 +40,23 @@ class EditPuntoInteresCiudad extends EditController
     {
         $data = parent::getPageData();
         $data["menu"] = "admin";
-        $data["title"] = "PuntoInteresCiudad";
-        $data["icon"] = "fa-solid fa-search";
+        $data["title"] = "point-of-interest";
+        $data["icon"] = "fa-solid fa-location-dot";
         return $data;
+    }
+
+    protected function createBlocks(): void
+    {
+        parent::createBlocks();
+
+        // el mapa se pide aparte cuando entra en pantalla, con el punto como único marcador
+        $this->page()->add(
+            MapBlock::make('map', 'location', 'fa-solid fa-map-location-dot')
+                ->setLazy()
+                ->center(fn(PuntoInteresCiudad $point) => [$point->latitude, $point->longitude, self::MAP_ZOOM])
+                ->markers(fn(PuntoInteresCiudad $point) => [
+                    ['lat' => $point->latitude, 'lng' => $point->longitude, 'title' => $point->name],
+                ])
+        );
     }
 }
