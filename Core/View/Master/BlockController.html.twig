@@ -25,4 +25,21 @@
     <div class="container-fluid">
         {{ include('Block/Page.html.twig', {blockItem: fsc.page()}) }}
     </div>
+    {# -- Barra de cambios sin guardar: el javascript la muestra mientras algún formulario tenga cambios -- #}
+    <div id="blockDirtyBar" class="block-dirty-bar d-none d-print-none" role="status"
+         data-title="{{ trans('unsaved-changes') }}" data-warning="{{ trans('unsaved-changes-warning') }}"
+         data-cancel="{{ trans('cancel') }}" data-continue="{{ trans('continue') }}">
+        <div class="container-fluid d-flex flex-wrap align-items-center gap-2 py-2">
+            <span class="fw-bold">
+                <i class="fa-solid fa-pen fa-fw" aria-hidden="true"></i> {{ trans('unsaved-changes') }}
+            </span>
+            <span id="blockDirtyList"></span>
+            <button type="button" class="btn btn-sm btn-secondary ms-auto" id="blockDirtyDiscard">
+                <i class="fa-solid fa-undo fa-fw" aria-hidden="true"></i> {{ trans('undo') }}
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" id="blockDirtySave">
+                <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+            </button>
+        </div>
+    </div>
 {% endblock %}

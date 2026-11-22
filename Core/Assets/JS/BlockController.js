@@ -80,8 +80,18 @@
         }
 
         form.querySelector('input[name="action"]').value = button.dataset.headerAction;
-        animateSpinner('add');
-        form.submit();
+        var send = function () {
+            permitUnload();
+            animateSpinner('add');
+            form.submit();
+        };
+
+        var pending = dirtyForms();
+        if (pending.length > 0) {
+            confirmLosingChanges(pending, send);
+        } else {
+            send();
+        }
     }
 
     // lleva a un bloque, abriendo antes las pestañas que lo contienen
@@ -154,26 +164,216 @@
         }
     }
 
-    // avisamos de que hay cambios sin guardar en los formularios de edición
-    function setupDirty() {
-        var badge = document.getElementById('blockHeaderDirty');
-        if (!badge) {
+    // --- cambios sin guardar ---
+    // Un formulario de edición tiene cambios cuando sus valores difieren de los que tenía
+    // antes de que el usuario lo tocara. Mientras alguno los tenga se muestra una barra fija,
+    // se marcan el formulario y su pestaña, y se avisa antes de salir de la página.
+    var DIRTY_IGNORED = ['multireqtoken', 'action', 'activetab', 'code'];
+    var dirtySnapshots = new Map();
+    var allowUnload = false;
+
+    function isEditForm(form) {
+        var action = form ? form.querySelector('input[name="action"]') : null;
+        return !!action && ['edit', 'insert'].indexOf(action.value) !== -1;
+    }
+
+    function serializeForm(form) {
+        var parts = [];
+        new FormData(form).forEach(function (value, key) {
+            if (DIRTY_IGNORED.indexOf(key) === -1) {
+                // de un archivo solo importa si se ha elegido otro
+                parts.push(key + '=' + (value instanceof File ? value.name + ':' + value.size : value));
+            }
+        });
+        return parts.join('&');
+    }
+
+    // la foto se toma en la primera interacción: para entonces los widgets ya han puesto sus valores
+    function watchForm(form) {
+        if (!form || dirtySnapshots.has(form) || !isEditForm(form)) {
+            return;
+        }
+        dirtySnapshots.set(form, serializeForm(form));
+
+        // form.submit() no emite el evento submit, así que lo anotamos aquí
+        form.submit = function () {
+            if (dirtyForms(form).length === 0) {
+                permitUnload();
+            }
+            HTMLFormElement.prototype.submit.call(form);
+        };
+    }
+
+    function dirtyForms(except) {
+        var forms = [];
+        dirtySnapshots.forEach(function (snapshot, form) {
+            if (form !== except && document.contains(form) && serializeForm(form) !== snapshot) {
+                forms.push(form);
+            }
+        });
+        return forms;
+    }
+
+    function formBlock(form) {
+        return form.closest('.block-anchor');
+    }
+
+    function formTitle(form) {
+        var block = formBlock(form);
+        return (block && block.dataset.blockTitle) || document.title;
+    }
+
+    // la navegación que provoca el propio guardado no debe avisar
+    function permitUnload() {
+        allowUnload = true;
+        setTimeout(function () {
+            allowUnload = false;
+        }, 2000);
+    }
+
+    function refreshDirty() {
+        var bar = document.getElementById('blockDirtyBar');
+        if (!bar) {
             return;
         }
 
-        function isEditForm(form) {
-            var action = form ? form.querySelector('input[name="action"]') : null;
-            return action && ['edit', 'insert'].indexOf(action.value) !== -1;
+        var forms = dirtyForms();
+        document.querySelectorAll('.block-form-dirty').forEach(function (form) {
+            form.classList.remove('block-form-dirty');
+        });
+        document.querySelectorAll('.block-tab-dirty').forEach(function (tab) {
+            tab.classList.remove('block-tab-dirty');
+        });
+
+        var list = document.getElementById('blockDirtyList');
+        list.textContent = '';
+        forms.forEach(function (form, index) {
+            form.classList.add('block-form-dirty');
+            for (var pane = form.closest('.tab-pane'); pane; pane = pane.parentElement.closest('.tab-pane')) {
+                var trigger = document.querySelector('[data-bs-target="#' + pane.id + '"]');
+                if (trigger) {
+                    trigger.classList.add('block-tab-dirty');
+                }
+            }
+
+            // cada formulario con cambios se nombra con un enlace que lleva a él
+            var block = formBlock(form);
+            var link = document.createElement('a');
+            link.href = '#' + (block ? block.id : '');
+            link.className = 'link-dark';
+            link.dataset.blockGoto = block ? block.dataset.blockName : '';
+            link.textContent = formTitle(form);
+            if (index > 0) {
+                list.appendChild(document.createTextNode(', '));
+            }
+            list.appendChild(link);
+        });
+
+        // solo se puede guardar desde la barra si los cambios están en un único formulario
+        document.getElementById('blockDirtySave').classList.toggle('d-none', forms.length !== 1);
+        bar.classList.toggle('d-none', forms.length === 0);
+        document.body.classList.toggle('block-dirty-open', forms.length > 0);
+    }
+
+    // al enviar un formulario, los cambios de los demás se pierden: pedimos confirmación
+    function confirmLosingChanges(others, onContinue) {
+        var bar = document.getElementById('blockDirtyBar');
+        var previous = document.getElementById('blockDirtyModal');
+        if (previous) {
+            previous.remove();
         }
 
-        document.addEventListener('input', function (event) {
-            if (isEditForm(event.target.form)) {
-                badge.classList.remove('d-none');
+        var modal = document.createElement('div');
+        modal.className = 'modal fade';
+        modal.id = 'blockDirtyModal';
+        modal.tabIndex = -1;
+        modal.innerHTML = '<div class="modal-dialog"><div class="modal-content">'
+            + '<div class="modal-header"><h5 class="modal-title"><i class="fa-solid fa-pen fa-fw me-1"></i></h5>'
+            + '<button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>'
+            + '<div class="modal-body"><p></p><ul class="mb-0"></ul></div>'
+            + '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal"></button>'
+            + '<button type="button" class="btn btn-warning" id="blockDirtyContinue"></button></div>'
+            + '</div></div>';
+        modal.querySelector('.modal-title').appendChild(document.createTextNode(bar.dataset.title));
+        modal.querySelector('.modal-body p').textContent = bar.dataset.warning;
+        others.forEach(function (form) {
+            var item = document.createElement('li');
+            item.textContent = formTitle(form);
+            modal.querySelector('ul').appendChild(item);
+        });
+        modal.querySelector('.modal-footer .btn-secondary').textContent = bar.dataset.cancel;
+        modal.querySelector('#blockDirtyContinue').textContent = bar.dataset.continue;
+        document.body.appendChild(modal);
+
+        var instance = new bootstrap.Modal(modal);
+        modal.querySelector('#blockDirtyContinue').addEventListener('click', function () {
+            instance.hide();
+            onContinue();
+        });
+        modal.addEventListener('hidden.bs.modal', function () {
+            modal.remove();
+        });
+        instance.show();
+    }
+
+    function setupDirty() {
+        if (!document.getElementById('blockDirtyBar')) {
+            return;
+        }
+
+        ['focusin', 'pointerdown', 'keydown'].forEach(function (type) {
+            document.addEventListener(type, function (event) {
+                watchForm(event.target.form || (event.target.closest ? event.target.closest('form') : null));
+            }, true);
+        });
+        ['input', 'change'].forEach(function (type) {
+            document.addEventListener(type, refreshDirty);
+        });
+        document.addEventListener('reset', function () {
+            // los valores se restauran después del evento
+            setTimeout(refreshDirty, 0);
+        });
+
+        // jQuery también avisa aquí de los envíos que hacen los listados con $(form).submit()
+        $(document).on('submit', 'form', function (event) {
+            var form = event.target;
+            if (form.target && form.target !== '_self') {
+                return;
+            }
+
+            var others = dirtyForms(form);
+            if (others.length === 0 || form.dataset.dirtyConfirmed) {
+                permitUnload();
+                return;
+            }
+
+            event.preventDefault();
+            animateSpinner('remove');
+            confirmLosingChanges(others, function () {
+                form.dataset.dirtyConfirmed = '1';
+                permitUnload();
+                animateSpinner('add');
+                HTMLFormElement.prototype.submit.call(form);
+            });
+        });
+
+        window.addEventListener('beforeunload', function (event) {
+            if (!allowUnload && dirtyForms().length > 0) {
+                event.preventDefault();
+                event.returnValue = '';
             }
         });
-        document.addEventListener('reset', function (event) {
-            if (isEditForm(event.target)) {
-                badge.classList.add('d-none');
+
+        document.getElementById('blockDirtyDiscard').addEventListener('click', function () {
+            dirtyForms().forEach(function (form) {
+                form.reset();
+            });
+            setTimeout(refreshDirty, 0);
+        });
+        document.getElementById('blockDirtySave').addEventListener('click', function () {
+            var forms = dirtyForms();
+            if (forms.length === 1) {
+                forms[0].requestSubmit();
             }
         });
     }

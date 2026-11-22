@@ -19,7 +19,8 @@
 #}
 {# -- Pinta un bloque o, si está aplazado, el hueco que lo pide después por separado -- #}
 {% if blockItem.isVisible(fsc.hasRecord()) %}
-    <div class="mb-3 block-anchor" id="block-{{ blockItem.name() }}">
+    <div class="mb-3 block-anchor" id="block-{{ blockItem.name() }}" data-block-name="{{ blockItem.name() }}"
+         data-block-title="{{ blockItem.title() }}">
         {# -- el título y las opciones del registro principal ya están en la cabecera de la página -- #}
         {% set isMain = blockItem.name() == fsc.mainBlockName() %}
         {% set showTitle = blockItem.title() is not empty and not inTab and not isMain %}
