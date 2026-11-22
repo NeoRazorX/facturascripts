@@ -45,6 +45,7 @@
     "fullcalendar": "^6.1.21",
     "jquery": "^3.6.4",
     "jquery-ui-dist": "1.12.*",
+    "leaflet": "^1.9.4",
     "pace-js": "1.*",
     "select2": "^4.0.13",
     "select2-bootstrap-5-theme": "^1.3.0"

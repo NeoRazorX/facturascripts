@@ -1,0 +1,31 @@
+{#
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2026 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+#}
+{# -- El mapa lo monta BlockMap.js a partir de los datos del atributo data-block-map -- #}
+{% set map = blockItem.config() %}
+<div class="card shadow-sm overflow-hidden">
+    {% if map.markers is empty and map.center is null %}
+        <div class="card-body text-center text-body-secondary">
+            <i class="fa-solid fa-map-location-dot me-1" aria-hidden="true"></i>{{ trans('no-data') }}
+        </div>
+    {% else %}
+        <div class="block-map" style="height: {{ blockItem.height() }}px;"
+             data-block-map="{{ map | json_encode }}"></div>
+    {% endif %}
+</div>

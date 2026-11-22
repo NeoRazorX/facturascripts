@@ -41,6 +41,9 @@
             $(element).replaceWith($content);
             watch($content[0]);
 
+            // avisamos a los scripts de los bloques, como el de los mapas
+            document.dispatchEvent(new CustomEvent('block:loaded', {detail: {root: $content[0]}}));
+
             // el bloque ya tiene su tamaño real: repetimos el salto que quedó a medias
             if (pendingGoto && pendingGoto.contains($content[0])) {
                 pendingGoto.scrollIntoView({behavior: 'smooth', block: 'start'});

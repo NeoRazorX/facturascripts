@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Lib\Block;
 
 use FacturaScripts\Core\Lib\Block\Block;
 use FacturaScripts\Core\Lib\Block\Columns;
+use FacturaScripts\Core\Lib\Block\MapBlock;
 use FacturaScripts\Core\Lib\Block\Page;
 use FacturaScripts\Core\Lib\Block\Section;
 use FacturaScripts\Core\Lib\Block\Tabs;
@@ -122,6 +123,22 @@ final class BlockTreeTest extends TestCase
         $page->plan('main');
         $page->plan('main', 'second');
         $this->assertFalse($page->find('second')->isDeferred());
+    }
+
+    public function testMapBlockDiscardsInvalidMarkers(): void
+    {
+        $this->assertTrue(MapBlock::validCoordinates('40.4', -3.7));
+        $this->assertTrue(MapBlock::validCoordinates(0, 0));
+        $this->assertFalse(MapBlock::validCoordinates(null, -3.7));
+        $this->assertFalse(MapBlock::validCoordinates('', ''));
+        $this->assertFalse(MapBlock::validCoordinates(91, 0));
+        $this->assertFalse(MapBlock::validCoordinates(0, 181));
+
+        $map = MapBlock::make('map', 'location')->setHeight(10);
+        $this->assertSame(120, $map->height());
+        $this->assertSame('Block/MapBlock.html.twig', $map->template());
+        $this->assertNotEmpty($map->assets()['js']);
+        $this->assertSame(0, $map->count());
     }
 
     public function testNotLazyTabsLoadEveryTab(): void

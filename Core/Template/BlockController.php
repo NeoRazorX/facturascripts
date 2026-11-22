@@ -200,6 +200,7 @@ abstract class BlockController extends Controller
         $this->createBlocks();
         $this->pipe('createBlocks');
         $this->page->assertUniqueNames();
+        $this->addBlockAssets($this->page);
 
         $this->process();
         if ($this->finished) {
@@ -261,6 +262,24 @@ abstract class BlockController extends Controller
         }
 
         throw new Exception('ViewBlock not found: ' . $name);
+    }
+
+    /**
+     * Añade a la página los recursos que necesitan sus bloques, también los aplazados.
+     */
+    protected function addBlockAssets(Block $block): void
+    {
+        $assets = $block->assets();
+        foreach ($assets['css'] ?? [] as $css) {
+            AssetManager::addCss(Tools::config('route') . '/' . $css);
+        }
+        foreach ($assets['js'] ?? [] as $js) {
+            AssetManager::addJs(Tools::config('route') . '/' . $js);
+        }
+
+        foreach ($block->children() as $child) {
+            $this->addBlockAssets($child);
+        }
     }
 
     /**

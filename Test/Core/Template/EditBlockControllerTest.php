@@ -141,6 +141,39 @@ final class EditBlockControllerTest extends TestCase
         $this->assertSame([], $controller->viewBlock('ListCiudad')->view()->cursor);
     }
 
+    public function testMapShowsOnlyThePlacesOfTheRecord(): void
+    {
+        // con la página el mapa queda aplazado y no consulta nada
+        $controller = $this->handle(['code' => $this->country->codpais]);
+        $this->assertTrue($controller->block('map')->isDeferred());
+        $this->assertSame(0, $controller->block('map')->count());
+
+        // sin coordenadas no hay marcadores
+        $controller = $this->handle(['code' => $this->country->codpais, 'fragment' => 'map']);
+        $this->assertFalse($controller->block('map')->isDeferred());
+        $this->assertSame([], $controller->block('map')->config()['markers']);
+
+        // con coordenadas sale la provincia de este país, pero no la del otro
+        foreach (Provincia::all([Where::in('codpais', [$this->country->codpais, $this->otherCountry->codpais])]) as $province) {
+            $province->latitude = 40.4;
+            $province->longitude = -3.7;
+            $this->assertTrue($province->save());
+        }
+        $this->city->latitude = 41.6;
+        $this->city->longitude = -0.9;
+        $this->assertTrue($this->city->save());
+
+        $controller = $this->handle(['code' => $this->country->codpais, 'fragment' => 'map']);
+        $markers = $controller->block('map')->config()['markers'];
+        $this->assertSame(
+            ['Province ' . $this->country->codpais, 'City ' . $this->country->codpais],
+            array_column($markers, 'title')
+        );
+        $this->assertSame(40.4, $markers[0]['lat']);
+        $this->assertSame($this->province->url(), $markers[0]['url']);
+        $this->assertSame(2, $controller->block('map')->count());
+    }
+
     public function testFragmentUrlKeepsTheRecord(): void
     {
         $controller = $this->handle(['code' => $this->country->codpais, 'action' => 'save-ok']);
@@ -189,11 +222,19 @@ final class EditBlockControllerTest extends TestCase
 
     public function testHeaderShowsTheRecord(): void
     {
-        // las estadísticas las declara cada página: aquí, una de un bloque cargado y otra de uno aplazado
+        // las estadísticas y los botones los declara cada página: aquí, una estadística de un bloque
+        // cargado, otra de uno aplazado y un desplegable con un enlace que depende del registro
         $register = function (TestableEditPais $controller): void {
             $controller->header()
                 ->stat('provinces', ['block' => 'ListProvincia'])
-                ->stat('points-of-interest', ['block' => 'ListPuntoInteresCiudad']);
+                ->stat('points-of-interest', ['block' => 'ListPuntoInteresCiudad'])
+                ->dropdown('location', ['label' => 'location'])
+                ->button('open-map', [
+                    'dropdown' => 'location',
+                    'type' => 'link',
+                    'url' => fn($country) => 'map?mlat=' . $country->latitude . '&mlon=' . $country->longitude,
+                    'visible' => fn($country) => false === empty($country->latitude),
+                ]);
         };
         $controller = $this->handle(['code' => $this->country->codpais], [], true, $register);
         $header = $controller->header();
@@ -205,7 +246,7 @@ final class EditBlockControllerTest extends TestCase
         $this->assertSame(1, $stats[0]['value']);
         $this->assertSame('ListProvincia', $stats[0]['block']);
 
-        // sin coordenadas no se muestra el desplegable de ubicación, que se queda sin botones
+        // sin coordenadas no se muestra el desplegable, que se queda sin botones
         $this->assertSame([], $header->buttons($record));
         $record->latitude = 40.4;
         $record->longitude = -3.7;
@@ -214,7 +255,7 @@ final class EditBlockControllerTest extends TestCase
 
         // el índice lista los bloques con título, también los de dentro de las pestañas
         $sections = array_map(fn($block) => $block->name(), $controller->sections());
-        $this->assertSame(['ListProvincia', 'ListCiudad', 'ListCodigoPostal', 'ListPuntoInteresCiudad'], $sections);
+        $this->assertSame(['map', 'ListProvincia', 'ListCiudad', 'ListCodigoPostal', 'ListPuntoInteresCiudad'], $sections);
         $this->assertSame('EditPais?code=' . $this->country->codpais, $controller->pageUrl());
 
         // cada listado recibe la url de sus opciones, para pintar el botón en su barra

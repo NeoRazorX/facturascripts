@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Block;
 
 use FacturaScripts\Core\Template\BlockController;
+use FacturaScripts\Core\Tools;
 use InvalidArgumentException;
 
 /**
@@ -62,6 +63,15 @@ abstract class Block
         }
 
         $this->name = $name;
+    }
+
+    /**
+     * Recursos que el bloque necesita en la página: ['css' => rutas, 'js' => rutas]. Se añaden
+     * al cargar la página aunque el bloque esté aplazado, para que estén listos cuando llegue.
+     */
+    public function assets(): array
+    {
+        return [];
     }
 
     /**
@@ -181,11 +191,13 @@ abstract class Block
     }
 
     /**
+     * @param string $title clave de traducción del título
+     *
      * @return static
      */
     public function setTitle(string $title)
     {
-        $this->title = $title;
+        $this->title = '' === $title ? '' : Tools::trans($title);
 
         return $this;
     }

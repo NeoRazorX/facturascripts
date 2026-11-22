@@ -20,11 +20,15 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\Block\ListBlock;
+use FacturaScripts\Core\Lib\Block\MapBlock;
 use FacturaScripts\Core\Lib\Block\Tabs;
 use FacturaScripts\Core\Template\EditBlockController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Pais;
+use FacturaScripts\Dinamic\Model\Provincia;
+use FacturaScripts\Dinamic\Model\PuntoInteresCiudad;
 
 /**
  * Controlador para editar un único elemento del modelo Pais
@@ -34,6 +38,9 @@ use FacturaScripts\Dinamic\Model\Pais;
  */
 class EditPais extends EditBlockController
 {
+    /** Máximo de marcadores de cada tipo en el mapa. */
+    private const MAP_LIMIT = 500;
+
     public function getModelClassName(): string
     {
         return 'Pais';
@@ -56,7 +63,42 @@ class EditPais extends EditBlockController
         $provinces = fn(Pais $country) => 'SELECT idprovincia FROM provincias WHERE codpais = '
             . $this->db()->var2str($country->codpais);
 
+        $cities = fn(Pais $country) => 'SELECT idciudad FROM ciudades WHERE idprovincia IN ('
+            . $provinces($country) . ')';
+
         $this->createHeader();
+
+        // el mapa se pide aparte cuando entra en pantalla, con lo que tenga coordenadas
+        $this->page()->add(
+            MapBlock::make('map', 'location', 'fa-solid fa-map-location-dot')
+                ->setLazy()
+                ->center(fn(Pais $country) => [$country->latitude, $country->longitude, 5])
+                ->markers(fn(Pais $country) => $this->markers(
+                    Provincia::all($this->located($byCountry($country)), ['provincia' => 'ASC'], 0, self::MAP_LIMIT),
+                    'provincia',
+                    'provinces'
+                ))
+                ->markers(fn(Pais $country) => $this->markers(
+                    Ciudad::all(
+                        $this->located([Where::in('idprovincia', $provinces($country))]),
+                        ['ciudad' => 'ASC'],
+                        0,
+                        self::MAP_LIMIT
+                    ),
+                    'ciudad',
+                    'cities'
+                ))
+                ->markers(fn(Pais $country) => $this->markers(
+                    PuntoInteresCiudad::all(
+                        $this->located([Where::in('idciudad', $cities($country))]),
+                        ['name' => 'ASC'],
+                        0,
+                        self::MAP_LIMIT
+                    ),
+                    'name',
+                    'points-of-interest'
+                ))
+        );
 
         // un listado por pestaña: solo se cargan los datos de la que se abre
         $this->page()->add(
@@ -79,28 +121,43 @@ class EditPais extends EditBlockController
                 ->tab(ListBlock::make('ListPuntoInteresCiudad', 'PuntoInteresCiudad', 'points-of-interest', 'fa-solid fa-location-dot')
                     ->addOrderBy(['name'], 'name')
                     ->addSearchFields(['name', 'alias'])
-                    ->where(fn(Pais $country) => [
-                        Where::in('idciudad', 'SELECT idciudad FROM ciudades WHERE idprovincia IN (' . $provinces($country) . ')')
-                    ]))
+                    ->where(fn(Pais $country) => [Where::in('idciudad', $cities($country))]))
         );
     }
 
     protected function createHeader(): void
     {
         $this->header()
-            ->status(fn(Pais $country) => $country->isDefault() ? [Tools::trans('default'), 'success'] : null)
-            ->dropdown('location', ['label' => 'location', 'icon' => 'fa-solid fa-map-location-dot'])
-            ->button('open-map', [
-                'dropdown' => 'location',
-                'type' => 'link',
-                'label' => 'OpenStreetMap',
-                'icon' => 'fa-solid fa-map',
-                'target' => '_blank',
-                'url' => fn(Pais $country) => 'https://www.openstreetmap.org/?mlat=' . $country->latitude
-                    . '&mlon=' . $country->longitude . '#map=5/' . $country->latitude . '/' . $country->longitude,
-                // sin coordenadas no hay nada que mostrar en el mapa
-                'visible' => fn(Pais $country) => false === empty($country->latitude)
-                    && false === empty($country->longitude),
-            ]);
+            ->status(fn(Pais $country) => $country->isDefault() ? [Tools::trans('default'), 'success'] : null);
+    }
+
+    /**
+     * Añade al filtro la condición de tener coordenadas.
+     */
+    private function located(array $where): array
+    {
+        $where[] = Where::isNotNull('latitude');
+        $where[] = Where::isNotNull('longitude');
+
+        return $where;
+    }
+
+    /**
+     * Convierte los registros en marcadores del mapa, agrupados por su tipo.
+     */
+    private function markers(array $models, string $field, string $group): array
+    {
+        $markers = [];
+        foreach ($models as $model) {
+            $markers[] = [
+                'lat' => $model->latitude,
+                'lng' => $model->longitude,
+                'title' => $model->{$field},
+                'url' => $model->url(),
+                'group' => Tools::trans($group),
+            ];
+        }
+
+        return $markers;
     }
 }
