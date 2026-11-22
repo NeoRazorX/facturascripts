@@ -19,9 +19,13 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\Block\ListBlock;
+use FacturaScripts\Core\Lib\Block\MapBlock;
+use FacturaScripts\Core\Lib\Block\Tabs;
+use FacturaScripts\Core\Template\EditBlockController;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Ciudad;
+use FacturaScripts\Dinamic\Model\PuntoInteresCiudad;
 
 /**
  * Controlador para editar un único elemento del modelo Ciudad
@@ -29,8 +33,11 @@ use FacturaScripts\Core\Where;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Frank Aguirre        <faguirre@soenac.com>
  */
-class EditCiudad extends EditController
+class EditCiudad extends EditBlockController
 {
+    /** Máximo de marcadores en el mapa. */
+    private const MAP_LIMIT = 500;
+
     public function getModelClassName(): string
     {
         return 'Ciudad';
@@ -45,62 +52,60 @@ class EditCiudad extends EditController
         return $data;
     }
 
-    protected function createViews()
+    protected function createBlocks(): void
     {
-        parent::createViews();
-        $this->setTabsPosition('bottom');
+        parent::createBlocks();
 
-        $this->createViewsZipCodes();
-        $this->createViewsPOI();
-    }
+        $byCity = fn(Ciudad $city) => [Where::eq('idciudad', $city->idciudad)];
+        // también por provincia y país, para que el botón nuevo los lleve ya rellenos
+        $zipCodes = function (Ciudad $city) use ($byCity): array {
+            $where = $byCity($city);
+            $where[] = Where::eq('idprovincia', $city->idprovincia);
+            $province = $city->getProvince();
+            if ($province) {
+                $where[] = Where::eq('codpais', $province->codpais);
+            }
+            return $where;
+        };
 
-    protected function createViewsPOI(string $viewName = 'ListPuntoInteresCiudad'): void
-    {
-        $this->addListView($viewName, 'PuntoInteresCiudad', 'points-of-interest', 'fa-solid fa-location-dot')
-            ->addOrderBy(['name'], 'name')
-            ->addOrderBy(['idciudad'], 'city')
-            ->addSearchFields(['name', 'alias'])
-            ->addFilterAutocomplete('idciudad', 'city', 'idciudad', 'ciudades', 'idciudad', 'ciudad')
-            ->disableColumn('city');
-    }
+        // el mapa se pide aparte cuando entra en pantalla, con lo que tenga coordenadas
+        $this->page()->add(
+            MapBlock::make('map', 'location', 'fa-solid fa-map-location-dot')
+                ->setLazy()
+                ->center(fn(Ciudad $city) => [$city->latitude, $city->longitude, 12])
+                ->markers(fn(Ciudad $city) => MapBlock::fromModels(
+                    PuntoInteresCiudad::all(
+                        MapBlock::withCoordinates($byCity($city)),
+                        ['name' => 'ASC'],
+                        0,
+                        self::MAP_LIMIT
+                    ),
+                    'name',
+                    'points-of-interest'
+                ))
+        );
 
-    protected function createViewsZipCodes(string $viewName = 'ListCodigoPostal'): void
-    {
-        $this->addListView($viewName, 'CodigoPostal', 'zip-codes', 'fa-solid fa-map-pin')
-            ->addOrderBy(['number'], 'number')
-            ->addSearchFields(['number'])
-            ->disableColumn('city');
-    }
-
-    /**
-     * @param string $viewName
-     * @param BaseView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        switch ($viewName) {
-            case 'ListCodigoPostal':
-                // filtramos también por provincia y país para que el botón nuevo los lleve ya rellenos
-                $where = [
-                    Where::eq('idciudad', $this->mainTabModelValue('idciudad')),
-                    Where::eq('idprovincia', $this->mainTabModelValue('idprovincia'))
-                ];
-                $province = $this->getModel()->getProvince();
-                if ($province) {
-                    $where[] = Where::eq('codpais', $province->codpais);
-                }
-                $view->loadData('', $where);
-                break;
-
-            case 'ListPuntoInteresCiudad':
-                $id_ciudad = $this->mainTabModelValue('idciudad');
-                $where = [Where::eq('idciudad', $id_ciudad)];
-                $view->loadData('', $where);
-                break;
-
-            default:
-                parent::loadData($viewName, $view);
-                break;
-        }
+        // un listado por pestaña: solo se cargan los datos de la que se abre
+        $this->page()->add(
+            Tabs::make('places')
+                ->setLazy()
+                ->tab(ListBlock::make('ListCodigoPostal', 'CodigoPostal', 'zip-codes', 'fa-solid fa-map-pin')
+                    ->addOrderBy(['number'], 'number')
+                    ->addSearchFields(['number'])
+                    ->disableColumn('country')
+                    ->disableColumn('province')
+                    ->disableColumn('city')
+                    ->where($zipCodes))
+                ->tab(ListBlock::make(
+                    'ListPuntoInteresCiudad',
+                    'PuntoInteresCiudad',
+                    'points-of-interest',
+                    'fa-solid fa-location-dot'
+                )
+                    ->addOrderBy(['name'], 'name')
+                    ->addSearchFields(['name', 'alias'])
+                    ->disableColumn('city')
+                    ->where($byCity))
+        );
     }
 }
