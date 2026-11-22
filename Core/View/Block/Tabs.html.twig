@@ -23,7 +23,7 @@
 {% if activeName not in visibleTabs | map(child => child.name()) %}
     {% set activeName = (visibleTabs | first).name() %}
 {% endif %}
-<ul class="nav nav-tabs" role="tablist">
+<ul class="nav nav-underline" role="tablist">
     {% for child in visibleTabs %}
         <li class="nav-item" role="presentation">
             <button type="button" class="nav-link{{ child.name() == activeName ? ' active' : '' }}"
