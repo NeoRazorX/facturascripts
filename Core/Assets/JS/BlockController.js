@@ -24,6 +24,9 @@
 
     var observer = null;
 
+    // bloque al que se está saltando mientras todavía no ha cargado su contenido
+    var pendingGoto = null;
+
     // cada hueco .block-lazy pide su bloque cuando entra en pantalla, lo que incluye
     // el momento en que se abre la pestaña que lo contiene
     function loadBlock(element) {
@@ -37,6 +40,12 @@
             var $content = $('<div></div>').html(html);
             $(element).replaceWith($content);
             watch($content[0]);
+
+            // el bloque ya tiene su tamaño real: repetimos el salto que quedó a medias
+            if (pendingGoto && pendingGoto.contains($content[0])) {
+                pendingGoto.scrollIntoView({behavior: 'smooth', block: 'start'});
+                pendingGoto = null;
+            }
         }).fail(function () {
             // dejamos un botón para reintentarlo
             delete element.dataset.blockState;
@@ -86,22 +95,25 @@
         for (var pane = block.closest('.tab-pane'); pane; pane = pane.parentElement.closest('.tab-pane')) {
             panes.unshift(pane);
         }
-        // una pestaña no ocupa su sitio hasta que termina de abrirse, así que esperamos a la última
-        var pending = null;
+        var opened = false;
         panes.forEach(function (pane) {
             var trigger = document.querySelector('[data-bs-target="#' + pane.id + '"]');
             if (trigger && !pane.classList.contains('active')) {
-                pending = trigger;
                 bootstrap.Tab.getOrCreateInstance(trigger).show();
+                opened = true;
             }
         });
+
+        // un bloque que aún no ha cargado apenas ocupa sitio: al cargar repetiremos el salto
+        pendingGoto = block.querySelector('.block-lazy') ? block : null;
 
         function scroll() {
             block.scrollIntoView({behavior: 'smooth', block: 'start'});
         }
 
-        if (pending) {
-            pending.addEventListener('shown.bs.tab', scroll, {once: true});
+        // bootstrap coloca la pestaña al abrirla, pero dejamos que el navegador recalcule antes de desplazar
+        if (opened) {
+            setTimeout(scroll, 0);
         } else {
             scroll();
         }
