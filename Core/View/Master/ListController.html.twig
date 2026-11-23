@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -207,22 +207,12 @@
                 }
             }
 
-            if (document.location.hash) {
-                $(".nav-tabs a[href=\\" + document.location.hash + "]").tab('show');
-            }
-
             // Desplazar la pestaña activa al cargar la página
             scrollActiveTabIntoView();
 
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
                 $("input[name='query']:visible").focus();
             }
-            $('.nav-tabs a').click(function (e) {
-                $(this).tab('show');
-                var scrollmem = $('body').scrollTop();
-                window.location.hash = this.hash;
-                $('html,body').scrollTop(scrollmem);
-            });
             $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
                 // Desplazar la pestaña activa cuando se cambia de pestaña
                 scrollActiveTabIntoView();

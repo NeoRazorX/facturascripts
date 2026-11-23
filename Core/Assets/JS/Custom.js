@@ -138,7 +138,53 @@ function setModalParentForm(modal, form) {
     }
 }
 
+/**
+ * Mantiene la pestaña activa de #mainTabs en el parámetro activetab de la URL, que es el que
+ * entiende el servidor. Así, al volver atrás desde otra página o al recargar, se abre la misma pestaña.
+ * Se usa replaceState para no añadir una entrada al historial por cada cambio de pestaña.
+ */
+function initMainTabsUrl() {
+    const tabs = document.getElementById('mainTabs');
+    if (!tabs) {
+        return;
+    }
+
+    const setActiveTabUrl = function (link) {
+        const viewName = link.hash ? link.hash.substring(1) : '';
+        if (viewName === '') {
+            return;
+        }
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('activetab', viewName);
+        url.hash = '';
+        history.replaceState(history.state, '', url);
+    };
+
+    $(tabs).on('shown.bs.tab', 'a', function () {
+        setActiveTabUrl(this);
+    });
+
+    // compatibilidad con los enlaces antiguos del tipo Controlador#Pestaña
+    if (window.location.hash) {
+        const link = Array.from(tabs.querySelectorAll('a:not(.disabled)')).find(function (item) {
+            return item.hash === window.location.hash;
+        });
+        if (link && !link.classList.contains('active')) {
+            bootstrap.Tab.getOrCreateInstance(link).show();
+            return;
+        }
+    }
+
+    // si la URL ya indica una pestaña, la igualamos a la que ha pintado el servidor
+    const active = tabs.querySelector('a.active');
+    if (active && new URL(window.location.href).searchParams.has('activetab')) {
+        setActiveTabUrl(active);
+    }
+}
+
 $(document).ready(function () {
+    initMainTabsUrl();
     $(".clickableRow").mousedown(function (event) {
         if (event.which === 1 || event.which === 2) {
             var href = $(this).attr("data-href");
