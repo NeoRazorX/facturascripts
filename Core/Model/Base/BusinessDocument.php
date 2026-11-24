@@ -453,13 +453,30 @@ abstract class BusinessDocument extends NewModelClass
 
     /**
      * Establece el almacén y la empresa de este documento.
+     * Si el código está vacío, se usa el almacén predeterminado cuando pertenece
+     * a la empresa del documento o, en su defecto, el primer almacén de esa empresa.
      *
-     * @param string $codalmacen
+     * @param string|null $codalmacen
      *
      * @return bool
      */
-    public function setWarehouse(string $codalmacen): bool
+    public function setWarehouse(?string $codalmacen): bool
     {
+        if (empty($codalmacen)) {
+            $default = Almacenes::default();
+            if ($default->codalmacen && (empty($this->idempresa) || $default->idempresa == $this->idempresa)) {
+                $codalmacen = $default->codalmacen;
+            } else {
+                // el almacén predeterminado es de otra empresa: no cambiamos la empresa del documento
+                foreach (Almacenes::all() as $almacen) {
+                    if ($almacen->idempresa == $this->idempresa) {
+                        $codalmacen = $almacen->codalmacen;
+                        break;
+                    }
+                }
+            }
+        }
+
         foreach (Almacenes::all() as $almacen) {
             if ($almacen->codalmacen == $codalmacen) {
                 $this->codalmacen = $almacen->codalmacen;
