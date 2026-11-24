@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,11 +46,11 @@
                 </div>
             {% endif %}
         {% elseif fsc.views | length > 2 %}
-            {# -- More than two tabs: show pills -- #}
+            {# -- More than two tabs: show underline tabs -- #}
             <div class="row">
                 <div class="col">
                     <div class="nav-pills-wrapper d-print-none">
-                        <ul class="nav nav-pills nav-pills-scroll mb-3" id="mainTabs" role="tablist">
+                        <ul class="nav nav-underline nav-pills-scroll mb-3" id="mainTabs" role="tablist">
                             {% set contActiveTab = 0 %}
                             {% for viewName, view in fsc.views | slice(1, fsc.views | length) %}
                                 {% if view.settings.active %}
@@ -93,7 +93,7 @@
 {% block css %}
     {{ parent() }}
     <style>
-        /* Scroll horizontal para pestañas pills en móviles */
+        /* Scroll horizontal para las pestañas en móviles */
         @media (max-width: 767px) {
             .nav-pills-wrapper {
                 overflow-x: auto;
