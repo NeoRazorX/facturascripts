@@ -35,6 +35,29 @@ final class EditGrupoClientesTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
+    public function testActionsWithoutSelectionWarn(): void
+    {
+        $group = new GrupoClientes();
+        $group->codgrupo = 'TEG' . mt_rand(100, 999);
+        $group->nombre = 'Test EditGrupoClientes';
+        $this->assertTrue($group->save());
+        $code = $group->codgrupo;
+
+        try {
+            foreach (['addCustomerAction' => 'items-added-correctly', 'removeCustomerAction' => 'items-removed-correctly'] as $method => $notice) {
+                MiniLog::clear();
+                $this->runAction($method, $code, [], true, true);
+
+                // sin elementos seleccionados se avisa, en lugar de informar de 0 elementos
+                $messages = array_column(MiniLog::read(), 'original');
+                $this->assertContains('no-selected-item', $messages, $method);
+                $this->assertNotContains($notice, $messages, $method);
+            }
+        } finally {
+            $group->delete();
+        }
+    }
+
     public function testCustomerActionsRequireUpdatePermissionAndToken(): void
     {
         $group = new GrupoClientes();

@@ -35,6 +35,29 @@ final class EditFabricanteTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
+    public function testActionsWithoutSelectionWarn(): void
+    {
+        $manufacturer = new Fabricante();
+        $manufacturer->codfabricante = 'TEF' . mt_rand(100, 999);
+        $manufacturer->nombre = 'Test EditFabricante';
+        $this->assertTrue($manufacturer->save());
+        $code = $manufacturer->codfabricante;
+
+        try {
+            foreach (['addProductAction' => 'items-added-correctly', 'removeProductAction' => 'items-removed-correctly'] as $method => $notice) {
+                MiniLog::clear();
+                $this->runAction($method, $code, [], true, true);
+
+                // sin elementos seleccionados se avisa, en lugar de informar de 0 elementos
+                $messages = array_column(MiniLog::read(), 'original');
+                $this->assertContains('no-selected-item', $messages, $method);
+                $this->assertNotContains($notice, $messages, $method);
+            }
+        } finally {
+            $manufacturer->delete();
+        }
+    }
+
     public function testProductActionsRequireUpdatePermissionAndToken(): void
     {
         $manufacturer = new Fabricante();

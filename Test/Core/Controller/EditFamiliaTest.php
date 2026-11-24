@@ -35,6 +35,29 @@ final class EditFamiliaTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
+    public function testActionsWithoutSelectionWarn(): void
+    {
+        $family = new Familia();
+        $family->codfamilia = 'TEF' . mt_rand(100, 999);
+        $family->descripcion = 'Test EditFamilia';
+        $this->assertTrue($family->save());
+        $code = $family->codfamilia;
+
+        try {
+            foreach (['addProductAction' => 'items-added-correctly', 'removeProductAction' => 'items-removed-correctly'] as $method => $notice) {
+                MiniLog::clear();
+                $this->runAction($method, $code, [], true, true);
+
+                // sin elementos seleccionados se avisa, en lugar de informar de 0 elementos
+                $messages = array_column(MiniLog::read(), 'original');
+                $this->assertContains('no-selected-item', $messages, $method);
+                $this->assertNotContains($notice, $messages, $method);
+            }
+        } finally {
+            $family->delete();
+        }
+    }
+
     public function testProductActionsRequireUpdatePermissionAndToken(): void
     {
         $family = new Familia();

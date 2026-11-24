@@ -71,13 +71,6 @@ class EditTarifa extends EditController
             'label' => 'add',
             'type' => 'modal'
         ]);
-        $this->tab($viewName)->addButton([
-            'action' => 'unsetgrouprate',
-            'color' => 'danger',
-            'confirm' => true,
-            'icon' => 'fa-solid fa-folder-minus',
-            'label' => 'remove-from-list'
-        ]);
     }
 
     protected function createCustomerView(string $viewName = 'ListCliente'): void
@@ -96,13 +89,6 @@ class EditTarifa extends EditController
             'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add',
             'type' => 'modal'
-        ]);
-        $this->tab($viewName)->addButton([
-            'action' => 'unsetcustomerrate',
-            'color' => 'danger',
-            'confirm' => true,
-            'icon' => 'fa-solid fa-folder-minus',
-            'label' => 'remove-from-list'
         ]);
     }
 
@@ -146,6 +132,18 @@ class EditTarifa extends EditController
                 $codtarifa = $this->mainTabModelValue('codtarifa');
                 $where = [Where::eq('codtarifa', $codtarifa)];
                 $view->loadData('', $where);
+
+                // botón quitar de la lista, solamente si hay algún resultado
+                $removeActions = ['ListCliente' => 'unsetcustomerrate', 'ListGrupoClientes' => 'unsetgrouprate'];
+                if (isset($removeActions[$viewName]) && $view->count > 0) {
+                    $this->tab($viewName)->addButton([
+                        'action' => $removeActions[$viewName],
+                        'color' => 'danger',
+                        'confirm' => true,
+                        'icon' => 'fa-solid fa-folder-minus',
+                        'label' => 'remove-from-list'
+                    ]);
+                }
                 break;
 
             default:

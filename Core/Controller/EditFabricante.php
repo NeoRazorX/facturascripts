@@ -57,8 +57,13 @@ class EditFabricante extends EditController
             return;
         }
 
-        $num = 0;
         $codes = $this->request->request->getArray('codes', false);
+        if (empty($codes)) {
+            Tools::log()->warning('no-selected-item');
+            return;
+        }
+
+        $num = 0;
         foreach ($codes as $code) {
             $product = new Producto();
             if (false === $product->load($code)) {
@@ -104,15 +109,6 @@ class EditFabricante extends EditController
     {
         $this->addListView($viewName, 'Producto', 'products', 'fa-solid fa-cubes');
         $this->createViewProductsCommon($viewName);
-
-        // botón quitar producto
-        $this->tab($viewName)->addButton([
-            'action' => 'remove-product',
-            'color' => 'danger',
-            'confirm' => true,
-            'icon' => 'fa-solid fa-folder-minus',
-            'label' => 'remove-from-list'
-        ]);
     }
 
     protected function createViewProductsCommon(string $viewName): void
@@ -186,6 +182,17 @@ class EditFabricante extends EditController
                 $codfabricante = $this->mainTabModelValue('codfabricante');
                 $where = [Where::eq('codfabricante', $codfabricante)];
                 $view->loadData('', $where);
+
+                // botón quitar producto, solamente si hay algún resultado
+                if ($view->count > 0) {
+                    $this->tab($viewName)->addButton([
+                        'action' => 'remove-product',
+                        'color' => 'danger',
+                        'confirm' => true,
+                        'icon' => 'fa-solid fa-folder-minus',
+                        'label' => 'remove-from-list'
+                    ]);
+                }
                 break;
 
             case 'ListProducto-new':
@@ -208,8 +215,13 @@ class EditFabricante extends EditController
             return;
         }
 
-        $num = 0;
         $codes = $this->request->request->getArray('codes', false);
+        if (empty($codes)) {
+            Tools::log()->warning('no-selected-item');
+            return;
+        }
+
+        $num = 0;
         foreach ($codes as $code) {
             $product = new Producto();
             if (false === $product->load($code)) {
