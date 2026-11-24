@@ -107,9 +107,9 @@ abstract class ApiController implements ControllerInterface
         // comprobamos el límite de peticiones por minuto
         $this->checkRateLimit();
 
-        // actualizamos la última actividad de la API key
-        if ($this->apiKey->id && false === $this->apiKey->fullaccess) {
-            $this->apiKey->updateActivity(Session::getClientIp());
+        // actualizamos la última actividad de la API key (la clave de config.php no tiene registro)
+        if ($this->apiKey->id) {
+            $this->apiKey->updateActivity(Session::getClientIp(), $this->request->userAgent());
         }
 
         // comprobamos los permisos

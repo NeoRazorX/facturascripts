@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -159,6 +159,38 @@ final class ApiKeyTest extends TestCase
         // comprobamos que se ha escapado el html
         $this->assertEquals($escaped, $key->apikey);
         $this->assertEquals($escaped, $key->description);
+
+        // eliminamos
+        $this->assertTrue($key->delete());
+    }
+
+    public function testUpdateActivity(): void
+    {
+        // creamos una api key
+        $key = new ApiKey();
+        $key->description = 'test-update-activity';
+        $this->assertTrue($key->save());
+        $this->assertNull($key->lastactivity);
+        $this->assertNull($key->lastip);
+        $this->assertNull($key->lastuseragent);
+
+        // registramos la actividad
+        $this->assertTrue($key->updateActivity('192.168.1.10', 'curl/8.5.0'));
+        $this->assertTrue($key->load($key->id));
+        $this->assertNotEmpty($key->lastactivity);
+        $this->assertEquals('192.168.1.10', $key->lastip);
+        $this->assertEquals('curl/8.5.0', $key->lastuseragent);
+
+        // el user agent se escapa y se limita a 255 caracteres
+        $this->assertTrue($key->updateActivity('192.168.1.10', '<b>' . str_repeat('a', 300)));
+        $this->assertTrue($key->load($key->id));
+        $this->assertStringStartsWith(Tools::noHtml('<b>'), $key->lastuseragent);
+        $this->assertEquals(255, mb_strlen($key->lastuseragent));
+
+        // sin user agent se guarda null
+        $this->assertTrue($key->updateActivity('192.168.1.10'));
+        $this->assertTrue($key->load($key->id));
+        $this->assertNull($key->lastuseragent);
 
         // eliminamos
         $this->assertTrue($key->delete());
