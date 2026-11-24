@@ -2112,6 +2112,7 @@
     "use-gaps": "使用空号",
     "use-holes-invoices-esp": "如果取消勾选发票使用空号并删除了某张发票，开票编号中将留下空号，可能会给您带来税务问题",
     "user": "用户",
+    "user-agent": "User agent",
     "user-and-config": "用户和配置",
     "user-guide": "用户指南",
     "user-level": "用户级别",

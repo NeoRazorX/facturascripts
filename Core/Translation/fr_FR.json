@@ -2112,6 +2112,7 @@
     "use-gaps": "Utiliser les écarts",
     "use-holes-invoices-esp": "Si vous désactivez l'utilisation des écarts de facturation et que vous supprimez une facture, l'écart restera sur la facture et vous aurez des problèmes avec l'administration fiscale.",
     "user": "Utilisateur",
+    "user-agent": "User agent",
     "user-and-config": "Utilisateur et configuration",
     "user-guide": "Guide de l'utilisateur",
     "user-level": "Niveau utilisateur",

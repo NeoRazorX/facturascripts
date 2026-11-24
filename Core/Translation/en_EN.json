@@ -2112,6 +2112,7 @@
     "use-gaps": "Use gaps",
     "use-holes-invoices-esp": "If you uncheck the use of gaps in invoices and delete some, the gap will remain in the billing and you will have problems with the treasury",
     "user": "User",
+    "user-agent": "User agent",
     "user-and-config": "User and configuration",
     "user-guide": "User guide",
     "user-level": "User level",
