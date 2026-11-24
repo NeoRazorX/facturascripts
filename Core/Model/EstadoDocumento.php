@@ -167,6 +167,13 @@ class EstadoDocumento extends ModelClass
                 return false;
             }
 
+            // no puede generar un documento de su mismo tipo: se crearía una copia
+            // vinculada como hija que bloquea el original y se podría encadenar sin fin
+            if ($this->generadoc === $this->tipodoc) {
+                Tools::log()->warning('status-cant-generate-same-doc-type');
+                return false;
+            }
+
             // si genera otro documento, no puede actualizar stock (lo hará el documento destino)
             if (!empty($this->actualizastock)) {
                 Tools::log()->warning('status-with-generadoc-cant-update-stock');

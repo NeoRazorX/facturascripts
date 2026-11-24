@@ -52,14 +52,14 @@ final class EstadoDocumentoTest extends TestCase
         $status = new EstadoDocumento();
         $status->nombre = '<test>';
         $status->tipodoc = '<test>';
-        $status->generadoc = '<test>';
+        $status->generadoc = '<gen>';
         $status->icon = '<test>';
         $this->assertTrue($status->save(), 'estado-documento-cant-save');
 
         // comprobamos que el html se ha escapado
         $this->assertEquals('&lt;test&gt;', $status->nombre, 'estado-documento-html-not-escaped');
         $this->assertEquals('&lt;test&gt;', $status->tipodoc, 'estado-documento-html-not-escaped');
-        $this->assertEquals('&lt;test&gt;', $status->generadoc, 'estado-documento-html-not-escaped');
+        $this->assertEquals('&lt;gen&gt;', $status->generadoc, 'estado-documento-html-not-escaped');
         $this->assertEquals('&lt;test&gt;', $status->icon, 'estado-documento-html-not-escaped');
 
         // eliminamos
@@ -153,6 +153,33 @@ final class EstadoDocumentoTest extends TestCase
         $status->generadoc = 'PedidoProveedor';
         $status->tipodoc = 'FacturaProveedor';
         $this->assertFalse($status->save(), 'invalid-estado-documento-for-purchase-invoice-can-save');
+    }
+
+    public function testCanNotGenerateSameDocType(): void
+    {
+        // un estado no puede generar un documento de su mismo tipo
+        $status = new EstadoDocumento();
+        $status->generadoc = 'PresupuestoCliente';
+        $status->nombre = 'Generate same';
+        $status->tipodoc = 'PresupuestoCliente';
+        $this->assertFalse($status->save(), 'estado-documento-can-generate-same-doc-type');
+        $this->assertFalse($status->exists(), 'estado-documento-same-doc-type-persisted');
+
+        // con otro tipo de documento destino sí se puede guardar
+        $status->generadoc = 'PedidoCliente';
+        $this->assertTrue($status->save(), 'estado-documento-cant-save');
+
+        // al modificarlo para que genere su mismo tipo debe fallar
+        $status->generadoc = 'PresupuestoCliente';
+        $this->assertFalse($status->save(), 'estado-documento-can-update-to-same-doc-type');
+
+        // recargamos y comprobamos que en BD sigue el destino anterior
+        $reloaded = new EstadoDocumento();
+        $this->assertTrue($reloaded->load($status->idestado), 'estado-documento-cant-reload');
+        $this->assertEquals('PedidoCliente', $reloaded->generadoc, 'estado-documento-generadoc-was-persisted');
+
+        // delete
+        $this->assertTrue($reloaded->delete(), 'estado-documento-cant-delete');
     }
 
     public function testCanNotUpdateStockWithGeneration(): void

@@ -1869,6 +1869,7 @@
     "state": "Estado",
     "states": "Estados",
     "status": "Estado",
+    "status-cant-generate-same-doc-type": "Un estado no puede generar un documento del mismo tipo al que pertenece.",
     "status-document": "Estado del documento",
     "status-name-valid-length": "Nombre del estado no válido (debe tener entre 1 y 20 carácteres).",
     "status-value-is-number": "El campo estado debe ser numérico.",
