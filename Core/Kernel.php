@@ -197,27 +197,47 @@ final class Kernel
     }
 
     /**
+     * Amplía la caducidad de un bloqueo existente, para que no caduque mientras
+     * el proceso que lo tiene sigue trabajando.
+     *
+     * @param string $processName Nombre del proceso bloqueado.
+     * @param int $ttl Segundos de validez del bloqueo a partir de ahora.
+     *
+     * @return bool True si el bloqueo existía y se ha renovado.
+     */
+    public static function extendLock(string $processName, int $ttl = 7200): bool
+    {
+        $lockFile = self::lockFile($processName);
+        if (false === file_exists($lockFile)) {
+            return false;
+        }
+
+        return false !== file_put_contents($lockFile, (string)(time() + $ttl));
+    }
+
+    /**
      * Intenta bloquear el proceso indicado para que no se ejecute más de una vez
-     * a la vez, mediante un archivo de bloqueo en MyFiles. Los bloqueos de más
-     * de 2 horas se descartan.
+     * a la vez, mediante un archivo de bloqueo en MyFiles. El archivo guarda la
+     * fecha de caducidad del bloqueo; los bloqueos caducados se descartan.
      *
      * @param string $processName Nombre del proceso a bloquear.
+     * @param int $ttl Segundos de validez del bloqueo (2 horas por defecto).
      *
      * @return bool True si se ha conseguido el bloqueo, false si ya estaba bloqueado.
      */
-    public static function lock(string $processName): bool
+    public static function lock(string $processName, int $ttl = 7200): bool
     {
-        $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
+        $lockFile = self::lockFile($processName);
         if (file_exists($lockFile)) {
-            // si tiene más de 2 horas, lo eliminamos
-            if (filemtime($lockFile) < time() - 7200) {
-                unlink($lockFile);
+            // si ha caducado, lo eliminamos
+            if (self::lockExpiration($lockFile) < time()) {
+                @unlink($lockFile);
             } else {
                 return false;
             }
         }
 
-        return false !== file_put_contents($lockFile, $processName);
+        return false !== file_put_contents($lockFile, (string)(time() + $ttl));
     }
 
     /**
@@ -367,7 +387,7 @@ final class Kernel
      */
     public static function unlock(string $processName): bool
     {
-        $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
+        $lockFile = self::lockFile($processName);
         return file_exists($lockFile) && @unlink($lockFile);
     }
 
@@ -613,6 +633,37 @@ final class Kernel
         uasort(self::$routes, function ($a, $b) {
             return $a['position'] <=> $b['position'];
         });
+    }
+
+    /**
+     * Devuelve la fecha de caducidad (timestamp) de un archivo de bloqueo. Los archivos
+     * antiguos, que guardan el nombre del proceso en lugar de la caducidad, caducan
+     * 2 horas después de su última modificación.
+     *
+     * @param string $lockFile Ruta del archivo de bloqueo.
+     *
+     * @return int
+     */
+    private static function lockExpiration(string $lockFile): int
+    {
+        $content = trim((string)@file_get_contents($lockFile));
+        if (ctype_digit($content)) {
+            return (int)$content;
+        }
+
+        return (int)@filemtime($lockFile) + 7200;
+    }
+
+    /**
+     * Devuelve la ruta del archivo de bloqueo del proceso indicado.
+     *
+     * @param string $processName Nombre del proceso.
+     *
+     * @return string
+     */
+    private static function lockFile(string $processName): string
+    {
+        return Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
     }
 
     /**

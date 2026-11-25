@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core;
 
 use Closure;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\WorkEvent;
@@ -399,8 +400,195 @@ final class WorkQueueTest extends TestCase
         $this->assertFalse(file_exists($filePath));
     }
 
+    public function testRunCountsAttempts(): void
+    {
+        // añadimos el worker y el evento
+        WorkQueue::addWorker('TestWorker', 'test-event-attempts');
+        $this->assertTrue(WorkQueue::send('test-event-attempts', 'test-value'));
+
+        // el evento nuevo no tiene intentos
+        $event = new WorkEvent();
+        $this->assertTrue($event->loadWhereEq('name', 'test-event-attempts'));
+        $this->assertEquals(0, $event->attempts);
+
+        // ejecutamos la cola: el evento termina con un intento
+        $this->assertTrue(WorkQueue::run());
+        $this->assertTrue($event->reload());
+        $this->assertTrue($event->done);
+        $this->assertEquals(1, $event->attempts);
+
+        // la cola ha liberado el bloqueo
+        $this->assertFileDoesNotExist($this->lockFile());
+
+        // limpieza
+        $this->assertTrue($event->delete());
+        WorkQueue::clear();
+    }
+
+    public function testEventWithMaxAttemptsIsDiscarded(): void
+    {
+        Cache::set('test-worker-name', '-');
+        WorkQueue::addWorker('TestWorker', 'test-event-discard');
+        WorkQueue::addWorker('TestWorker', 'test-event-next');
+
+        // evento que ya ha agotado sus intentos
+        $stuck = new WorkEvent();
+        $stuck->name = 'test-event-discard';
+        $stuck->value = 'stuck';
+        $stuck->setParams([]);
+        $stuck->attempts = WorkQueue::MAX_ATTEMPTS;
+        $this->assertTrue($stuck->save());
+
+        // evento normal que va detrás
+        $this->assertTrue(WorkQueue::send('test-event-next', 'next'));
+
+        // primera ejecución: aparta el evento sin ejecutar su worker
+        $this->assertTrue(WorkQueue::run());
+        $this->assertTrue($stuck->reload());
+        $this->assertTrue($stuck->done);
+        $this->assertNotNull($stuck->done_date);
+        $this->assertEquals(0, $stuck->workers);
+        $this->assertEquals(WorkQueue::MAX_ATTEMPTS, $stuck->attempts);
+        $this->assertEquals('-', Cache::get('test-worker-name'));
+
+        // segunda ejecución: procesa el siguiente evento
+        $this->assertTrue(WorkQueue::run());
+        $this->assertEquals('test-event-next', Cache::get('test-worker-name'));
+
+        // limpieza
+        $this->deleteEvents(['test-event-discard', 'test-event-next']);
+        WorkQueue::clear();
+    }
+
+    /**
+     * Prueba real: lanza 3 procesos PHP que mueren por tiempo máximo de ejecución
+     * mientras procesan el mismo evento. Cada uno debe dejar la cola desbloqueada
+     * y sumar un intento; después, la cola aparta ese evento y sigue con el siguiente.
+     */
+    public function testDeadRequestReleasesLockAndEventIsDiscarded(): void
+    {
+        Cache::set('test-worker-name', '-');
+        WorkQueue::addWorker('TestWorker', 'test-event-after-dead');
+
+        // evento que hará morir la petición
+        $dead = new WorkEvent();
+        $dead->name = 'test-dead-worker';
+        $dead->value = 'dead';
+        $dead->setParams([]);
+        $this->assertTrue($dead->save());
+
+        // evento normal que queda detrás
+        $this->assertTrue(WorkQueue::send('test-event-after-dead', 'after'));
+
+        for ($attempt = 1; $attempt <= WorkQueue::MAX_ATTEMPTS; $attempt++) {
+            $output = $this->runChildProcess(1);
+
+            // el worker empezó y la petición murió sin terminar la cola
+            $this->assertStringContainsString('worker-started', $output);
+            $this->assertStringContainsString('Maximum execution time', $output);
+            $this->assertStringNotContainsString('queue-finished', $output);
+
+            // el bloqueo se ha liberado al apagarse PHP
+            $this->assertFileDoesNotExist($this->lockFile(), 'El bloqueo sigue puesto tras el intento ' . $attempt);
+
+            // el evento sigue pendiente, con el intento anotado
+            $this->assertTrue($this->reloadFromDb($dead));
+            $this->assertFalse($dead->done);
+            $this->assertEquals($attempt, $dead->attempts);
+        }
+
+        // la cola ya no está bloqueada: aparta el evento que siempre muere
+        $this->assertTrue(WorkQueue::run());
+        $this->assertTrue($dead->reload());
+        $this->assertTrue($dead->done);
+        $this->assertEquals('-', Cache::get('test-worker-name'));
+
+        // y procesa el siguiente sin esperas
+        $this->assertTrue(WorkQueue::run());
+        $this->assertEquals('test-event-after-dead', Cache::get('test-worker-name'));
+
+        // limpieza
+        $this->deleteEvents(['test-dead-worker', 'test-event-after-dead']);
+        WorkQueue::clear();
+    }
+
     protected function tearDown(): void
     {
+        // por si algún test falla a mitad, no dejamos la cola bloqueada
+        if (file_exists($this->lockFile())) {
+            unlink($this->lockFile());
+        }
+
         $this->logErrors();
+    }
+
+    /**
+     * Elimina los eventos de prueba con los nombres indicados.
+     *
+     * @param array $names Nombres de los eventos.
+     */
+    private function deleteEvents(array $names): void
+    {
+        $model = new WorkEvent();
+        foreach ($names as $name) {
+            foreach ($model->all([Where::eq('name', $name)], [], 0, 0) as $event) {
+                $event->delete();
+            }
+        }
+    }
+
+    /**
+     * Vuelve a leer el evento de la base de datos. Antes cerramos la transacción de
+     * lectura: la conexión MySQL trabaja sin autocommit y, sin cerrarla, no veríamos
+     * los cambios que ha guardado el proceso hijo.
+     *
+     * @param WorkEvent $event Evento a recargar.
+     *
+     * @return bool
+     */
+    private function reloadFromDb(WorkEvent $event): bool
+    {
+        (new DataBase())->commit();
+        return $event->reload();
+    }
+
+    /**
+     * Devuelve la ruta del archivo de bloqueo de la cola.
+     *
+     * @return string
+     */
+    private function lockFile(): string
+    {
+        return Tools::folder('MyFiles', 'lock_' . md5(WorkQueue::LOCK_NAME) . '.lock');
+    }
+
+    /**
+     * Ejecuta la cola en un proceso PHP aparte con un worker que nunca termina
+     * y devuelve su salida cuando el proceso acaba.
+     *
+     * @param int $seconds Tiempo máximo de ejecución del proceso hijo.
+     *
+     * @return string
+     */
+    private function runChildProcess(int $seconds): string
+    {
+        $command = [PHP_BINARY];
+        $ini = php_ini_loaded_file();
+        if ($ini) {
+            $command[] = '-c';
+            $command[] = $ini;
+        }
+        $command[] = Tools::folder('Test', '__files', 'work-queue-dead-request.php');
+        $command[] = (string)$seconds;
+
+        $process = proc_open($command, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, Tools::folder());
+        $this->assertIsResource($process, 'No se pudo lanzar el proceso hijo');
+
+        $output = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+
+        return $output;
     }
 }

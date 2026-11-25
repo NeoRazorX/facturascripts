@@ -28,6 +28,9 @@ class WorkEvent extends ModelClass
 {
     use ModelTrait;
 
+    /** @var int Número de veces que se ha empezado a procesar el evento. */
+    public $attempts;
+
     /** @var string Fecha y hora de creación del evento de trabajo. */
     public $creation_date;
 
@@ -64,6 +67,7 @@ class WorkEvent extends ModelClass
     public function clear(): void
     {
         parent::clear();
+        $this->attempts = 0;
         $this->creation_date = Tools::dateTime();
         $this->done = false;
         $this->nick = Session::user()->nick;

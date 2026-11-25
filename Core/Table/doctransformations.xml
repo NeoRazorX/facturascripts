@@ -50,4 +50,12 @@
         <name>doctransformations_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
+    <index>
+        <name>doctransformations_doc1</name>
+        <columns>model1,iddoc1</columns>
+    </index>
+    <index>
+        <name>doctransformations_doc2</name>
+        <columns>model2,iddoc2</columns>
+    </index>
 </table>

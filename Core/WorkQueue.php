@@ -29,6 +29,18 @@ use Throwable;
  */
 final class WorkQueue
 {
+    /** @var string Nombre del bloqueo que impide ejecutar la cola en paralelo. */
+    const LOCK_NAME = 'work-queue';
+
+    /** @var int Segundos de margen que se suman al tiempo máximo de ejecución al calcular la caducidad del bloqueo. */
+    const LOCK_MARGIN = 60;
+
+    /** @var int Número máximo de intentos antes de apartar un evento que no llega a terminar. */
+    const MAX_ATTEMPTS = 3;
+
+    /** @var bool Indica si esta petición tiene el bloqueo de la cola. */
+    private static $locked = false;
+
     /** @var array */
     private static $new_events = [];
 
@@ -80,6 +92,32 @@ final class WorkQueue
         self::$prevent_new_events = $event_names;
     }
 
+    /**
+     * Devuelve los segundos de validez del bloqueo de la cola. Si PHP tiene un tiempo
+     * máximo de ejecución, el bloqueo dura ese tiempo más un margen: si la petición
+     * muere, la cola queda libre en pocos minutos. Sin límite (CLI), dura 2 horas.
+     *
+     * @return int
+     */
+    public static function lockTtl(): int
+    {
+        $max = (int)ini_get('max_execution_time');
+        return $max > 0 ? $max + self::LOCK_MARGIN : 7200;
+    }
+
+    /**
+     * Libera el bloqueo de la cola si lo tiene esta petición. Se llama al apagarse
+     * PHP, de modo que el bloqueo no queda puesto aunque la petición muera por un
+     * error fatal o por superar el tiempo máximo de ejecución.
+     */
+    public static function releaseLock(): void
+    {
+        if (self::$locked) {
+            self::$locked = false;
+            Kernel::unlock(self::LOCK_NAME);
+        }
+    }
+
     public static function run(): bool
     {
         // en modo mantenimiento no ejecutamos nada: el código puede estar a medio sustituir
@@ -88,9 +126,15 @@ final class WorkQueue
         }
 
         // creamos un bloqueo para evitar que se ejecute el mismo evento varias veces
-        if (false === Kernel::lock('work-queue')) {
+        if (false === Kernel::lock(self::LOCK_NAME, self::lockTtl())) {
             return false;
         }
+
+        // si la petición muere, liberamos el bloqueo al apagarse PHP
+        if (false === self::$locked) {
+            register_shutdown_function([self::class, 'releaseLock']);
+        }
+        self::$locked = true;
 
         $return = false;
 
@@ -103,11 +147,24 @@ final class WorkQueue
         foreach (WorkEvent::all($where, $orderBy, 0, 1) as $event) {
             self::preventDuplicated($event);
 
+            // si el evento ya ha agotado sus intentos, lo apartamos para que no bloquee a los demás
+            $event->attempts = (int)$event->attempts;
+            if ($event->attempts >= self::MAX_ATTEMPTS) {
+                $return = self::discardEvent($event);
+                continue;
+            }
+
+            // anotamos el intento antes de ejecutarlo, para contarlo aunque la petición muera
+            $event->attempts++;
+            if (false === $event->save()) {
+                break;
+            }
+
             $return = self::runEvent($event);
         }
 
         // liberamos el bloqueo
-        Kernel::unlock('work-queue');
+        self::releaseLock();
 
         return $return;
     }
@@ -159,6 +216,28 @@ final class WorkQueue
         }
 
         return false;
+    }
+
+    /**
+     * Aparta un evento que ha agotado sus intentos sin llegar a terminar: lo marca
+     * como realizado sin ejecutar sus workers y deja constancia en el registro.
+     *
+     * @param WorkEvent $event Evento a apartar.
+     *
+     * @return bool
+     */
+    private static function discardEvent(WorkEvent $event): bool
+    {
+        Tools::log(self::LOCK_NAME)->error('work-event-discarded', [
+            '%attempts%' => $event->attempts,
+            '%event%' => $event->name,
+            '%id%' => $event->id,
+            '%value%' => $event->value,
+        ]);
+
+        $event->done = true;
+        $event->done_date = Tools::dateTime();
+        return $event->save();
     }
 
     private static function getWorkerClass(string $worker_name): string
@@ -219,6 +298,9 @@ final class WorkQueue
             if (!class_exists($info['class'])) {
                 continue;
             }
+
+            // renovamos el bloqueo para que no caduque mientras seguimos trabajando
+            Kernel::extendLock(self::LOCK_NAME, self::lockTtl());
 
             // ejecutamos el worker
             $continue = true;

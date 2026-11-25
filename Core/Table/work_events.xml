@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <table>
     <column>
+        <name>attempts</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
         <name>creation_date</name>
         <type>timestamp</type>
         <null>NO</null>
