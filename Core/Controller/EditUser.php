@@ -313,10 +313,7 @@ class EditUser extends EditController
                 $this->loadHomepageValues();
                 $this->loadLanguageValues();
 
-                // deshabilitamos la columna de empresa si solo hay una empresa
-                if ($this->empresa->count() < 2) {
-                    $view->disableColumn('company');
-                }
+                // la columna de empresa no se oculta: el almacén depende de ella
 
                 // deshabilitamos la columna de almacén si solo hay un almacén
                 $almacen = new Almacen();
