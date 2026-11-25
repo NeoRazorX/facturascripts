@@ -74,14 +74,14 @@
         </group>
         <group name="advanced" title="permissions" icon="fa-solid fa-shield-halved"
                description="desc-user-permissions" numcolumns="12" valign="bottom">
-            <column name="enabled" level="99" numcolumns="3" order="100">
-                <widget type="checkbox" fieldname="enabled"/>
+            <column name="level" level="99" numcolumns="3" order="100">
+                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fa-solid fa-low-vision"/>
             </column>
             <column name="is-admin" level="99" numcolumns="3" order="110">
                 <widget type="checkbox" fieldname="admin"/>
             </column>
-            <column name="level" level="99" numcolumns="3" order="120">
-                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fa-solid fa-low-vision"/>
+            <column name="enabled" level="99" numcolumns="3" order="120">
+                <widget type="checkbox" fieldname="enabled"/>
             </column>
         </group>
         <group name="info" title="activity" icon="fa-solid fa-clock-rotate-left"
