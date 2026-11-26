@@ -20,10 +20,12 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Model\Asiento;
+use FacturaScripts\Core\Model\Partida;
 use FacturaScripts\Core\Model\PagoCliente;
 use FacturaScripts\Core\Model\PagoProveedor;
 use FacturaScripts\Core\Model\ReciboCliente;
 use FacturaScripts\Core\Model\ReciboProveedor;
+use FacturaScripts\Core\Model\Subcuenta;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -33,12 +35,29 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
  * (cliente/proveedor) contra la subcuenta de la forma de pago, más una línea
  * adicional de gastos bancarios en los pagos de cliente.
  *
+ * El asiento se genera en la divisa de la empresa: si la factura del recibo está en otra
+ * divisa, los importes del pago se convierten con la tasa de la factura, la misma con la
+ * que se contabilizó, para que el pago salde exactamente la subcuenta del cliente/proveedor.
+ * No se generan diferencias de cambio (cuentas 668/768): si el cobro o pago real se hizo a
+ * otra tasa, la diferencia se debe contabilizar a mano.
+ *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 class PaymentToAccounting
 {
     /** @var Ejercicio */
     protected $exercise;
+
+    /**
+     * Tasa para pasar los importes del pago a la divisa de la empresa (la de la factura):
+     * importe en la divisa de la empresa = importe del pago / $exchangeRate.
+     *
+     * @var float
+     */
+    protected $exchangeRate = 1.0;
+
+    /** @var string|null Divisa de la factura del recibo. */
+    protected $invoiceCurrency;
 
     /** @var PagoCliente|PagoProveedor */
     protected $payment;
@@ -70,6 +89,9 @@ class PaymentToAccounting
                     Tools::log()->warning('record-not-found');
                     return false;
                 }
+                $invoice = $this->receipt->getInvoice();
+                $this->exchangeRate = AccountingClass::exchangeRate($invoice);
+                $this->invoiceCurrency = $invoice->coddivisa;
                 $this->exercise->idempresa = $this->receipt->idempresa;
                 if (false === $this->exercise->loadFromDate($this->payment->fecha)) {
                     // buscamos el ejercicio de la fecha, aunque esté cerrado, para indicar su nombre
@@ -179,9 +201,10 @@ class PaymentToAccounting
             return false;
         }
 
-        $amount = $this->payment->importe - $this->payment->gastos;
+        // restamos los importes ya convertidos para que el asiento cuadre con las otras partidas
+        $amount = $this->toCompanyCurrency($this->payment->importe) - $this->toCompanyCurrency($this->payment->gastos);
 
-        $newLine = $entry->getNewLine($account);
+        $newLine = $this->getNewLine($entry, $account);
         $newLine->debe = max($amount, 0);
         $newLine->haber = $amount < 0 ? abs($amount) : 0;
         return $newLine->save();
@@ -208,10 +231,11 @@ class PaymentToAccounting
             return false;
         }
 
-        $expLine = $entry->getNewLine($account);
+        $expenses = $this->toCompanyCurrency($this->payment->gastos);
+        $expLine = $this->getNewLine($entry, $account);
         $expLine->concepto = Tools::trans('receipt-expense-account', ['%document%' => $entry->documento]);
-        $expLine->debe = max($this->payment->gastos, 0);
-        $expLine->haber = $this->payment->gastos < 0 ? abs($this->payment->gastos) : 0;
+        $expLine->debe = max($expenses, 0);
+        $expLine->haber = $expenses < 0 ? abs($expenses) : 0;
         return $expLine->save();
     }
 
@@ -230,9 +254,10 @@ class PaymentToAccounting
             return false;
         }
 
-        $newLine = $entry->getNewLine($account);
-        $newLine->debe = $this->payment->importe < 0 ? abs($this->payment->importe) : 0;
-        $newLine->haber = max($this->payment->importe, 0);
+        $amount = $this->toCompanyCurrency($this->payment->importe);
+        $newLine = $this->getNewLine($entry, $account);
+        $newLine->debe = $amount < 0 ? abs($amount) : 0;
+        $newLine->haber = max($amount, 0);
         return $newLine->save();
     }
 
@@ -305,9 +330,10 @@ class PaymentToAccounting
             return false;
         }
 
-        $newLine = $entry->getNewLine($account);
-        $newLine->debe = $this->payment->importe < 0 ? abs($this->payment->importe) : 0;
-        $newLine->haber = max($this->payment->importe, 0);
+        $amount = $this->toCompanyCurrency($this->payment->importe);
+        $newLine = $this->getNewLine($entry, $account);
+        $newLine->debe = $amount < 0 ? abs($amount) : 0;
+        $newLine->haber = max($amount, 0);
         return $newLine->save();
     }
 
@@ -326,15 +352,16 @@ class PaymentToAccounting
             return false;
         }
 
-        $newLine = $entry->getNewLine($account);
-        $newLine->debe = max($this->payment->importe, 0);
-        $newLine->haber = $this->payment->importe < 0 ? abs($this->payment->importe) : 0;
+        $amount = $this->toCompanyCurrency($this->payment->importe);
+        $newLine = $this->getNewLine($entry, $account);
+        $newLine->debe = max($amount, 0);
+        $newLine->haber = $amount < 0 ? abs($amount) : 0;
         return $newLine->save();
     }
 
     /**
      * Rellena los datos comunes del asiento (ejercicio, concepto, documento, fecha,
-     * empresa, importe) y copia el canal analítico desde la serie de la factura.
+     * empresa, importe en la divisa de la empresa) y copia el canal analítico desde la serie de la factura.
      */
     protected function setCommonData(Asiento &$entry, string $concept, $invoice): void
     {
@@ -344,6 +371,44 @@ class PaymentToAccounting
         $entry->canal = $invoice->getSerie()->canal;
         $entry->fecha = $this->payment->fecha;
         $entry->idempresa = $this->exercise->idempresa;
-        $entry->importe = $this->payment->importe;
+        $entry->importe = $this->toCompanyCurrency($this->payment->importe);
+    }
+
+    /**
+     * Devuelve una partida nueva del asiento para la subcuenta indicada. Si el pago se
+     * convierte de divisa, la partida guarda la divisa de la factura y la tasa usada
+     * (importe original = importe de la partida * tasaconv).
+     *
+     * @param Asiento $entry
+     * @param Subcuenta $account
+     *
+     * @return Partida
+     */
+    protected function getNewLine(Asiento $entry, Subcuenta $account): Partida
+    {
+        $line = $entry->getNewLine($account);
+        if ($this->exchangeRate != 1.0) {
+            $line->coddivisa = $this->invoiceCurrency ?? $line->coddivisa;
+            $line->tasaconv = $this->exchangeRate;
+        }
+
+        return $line;
+    }
+
+    /**
+     * Convierte un importe del pago a la divisa de la empresa con la tasa de la factura,
+     * redondeado a los decimales configurados. Sin conversión lo devuelve tal cual.
+     *
+     * @param float|int|null $amount
+     *
+     * @return float
+     */
+    protected function toCompanyCurrency($amount): float
+    {
+        if ($this->exchangeRate == 1.0) {
+            return (float)$amount;
+        }
+
+        return Tools::round((float)$amount / $this->exchangeRate);
     }
 }

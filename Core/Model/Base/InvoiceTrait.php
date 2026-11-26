@@ -198,7 +198,9 @@ trait InvoiceTrait
             // no break
             case 'fechadevengo':
             case 'operacion':
+            case 'tasaconv':
             case 'total':
+                // el asiento depende de estos campos (la tasa convierte sus importes a la divisa de la empresa)
                 return $this->onChangeTotal();
 
             case 'codserie':
