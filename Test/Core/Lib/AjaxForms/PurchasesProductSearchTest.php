@@ -24,6 +24,7 @@ use FacturaScripts\Core\Lib\AjaxForms\PurchasesModalHTML;
 use FacturaScripts\Core\Model\Atributo;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Stock;
@@ -56,6 +57,9 @@ final class PurchasesProductSearchTest extends TestCase
 
         // la consulta del modal necesita la tabla de stocks
         new Stock();
+
+        // al borrar el producto se consultan sus imágenes, y la tabla no se puede crear dentro de una transacción
+        new ProductoImagen();
     }
 
     protected function setUp(): void
@@ -108,6 +112,22 @@ final class PurchasesProductSearchTest extends TestCase
 
         // varias palabras: descripción del producto y valor del atributo
         $html = $this->findProducts($this->product->descripcion . ' ' . $value);
+        $this->assertStringContainsString('data-reference="' . $this->variant->referencia . '"', $html);
+        $this->assertStringNotContainsString('data-reference="' . $this->product->referencia . '"', $html);
+
+        $this->assertTrue($this->product->delete(), 'product-cant-delete');
+        $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
+    }
+
+    /**
+     * El valor de atributo también se encuentra cuando está en la última posición de la variante.
+     */
+    public function testFindByAttributeValueInLastSlot(): void
+    {
+        $attribute = $this->createAttributeValue($this->variant, 'Acabado', 'satinado' . mt_rand(1, 99999), 4);
+        $value = $attribute->getValues()[0]->valor;
+
+        $html = $this->findProducts($value);
         $this->assertStringContainsString('data-reference="' . $this->variant->referencia . '"', $html);
         $this->assertStringNotContainsString('data-reference="' . $this->product->referencia . '"', $html);
 
@@ -176,7 +196,16 @@ final class PurchasesProductSearchTest extends TestCase
         return $method->invoke($controller, $query, $codproveedor);
     }
 
-    private function createAttributeValue(Variante $variant, string $name, string $value): Atributo
+    /**
+     * Crea un atributo con un valor y lo asigna a la variante en la posición indicada.
+     *
+     * @param Variante $variant Variante a la que se asigna el valor.
+     * @param string $name Nombre base del atributo.
+     * @param string $value Valor del atributo.
+     * @param int $slot Posición del atributo en la variante (1 a 4).
+     * @return Atributo
+     */
+    private function createAttributeValue(Variante $variant, string $name, string $value, int $slot = 1): Atributo
     {
         $attribute = new Atributo();
         $attribute->nombre = $name . ' ' . mt_rand(1, 99999);
@@ -185,7 +214,7 @@ final class PurchasesProductSearchTest extends TestCase
         $attValue = $attribute->getNewValue($value);
         $this->assertTrue($attValue->save(), 'attribute-value-cant-save');
 
-        $variant->idatributovalor1 = $attValue->id;
+        $variant->{'idatributovalor' . $slot} = $attValue->id;
         $this->assertTrue($variant->save(), 'variant-cant-save');
         return $attribute;
     }
