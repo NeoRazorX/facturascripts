@@ -131,7 +131,9 @@ class PurchasesModalHTML
     public static function renderProductList(): string
     {
         $tbody = '';
-        foreach (static::getProducts() as $row) {
+        $rows = static::getProducts();
+        static::loadAtributoValores($rows);
+        foreach ($rows as $row) {
             $cssClass = $row['nostock'] ? 'table-info clickableRow' : ($row['disponible'] > 0 ? 'clickableRow' : 'table-warning clickableRow');
             // el precio del proveedor está en la divisa del documento; el coste y el precio de venta, en la de la empresa
             $supplierPrice = $row['neto'] === null ?
@@ -255,7 +257,9 @@ class PurchasesModalHTML
         }
 
         if (self::$query) {
-            $words = explode(' ', self::$query);
+            // descartamos las palabras vacías (espacios repetidos): no filtran nada
+            // y obligarían a buscar todos los valores de atributo
+            $words = preg_split('/\s+/', self::$query, -1, PREG_SPLIT_NO_EMPTY);
             if (count($words) === 1) {
                 $sql .= " AND (LOWER(v.codbarras) = " . $dataBase->var2str(self::$query)
                     . " OR LOWER(v.referencia) LIKE '%" . self::$query . "%'"
@@ -305,6 +309,35 @@ class PurchasesModalHTML
         }
 
         return ', ' . self::$idatributovalores[$id];
+    }
+
+    /**
+     * Carga en una sola consulta las descripciones de los valores de atributo de las filas,
+     * para que idatributovalor() no tenga que consultar cada valor por separado.
+     *
+     * @param array $rows Filas de productos, con las columnas idatributovalor1 a idatributovalor4.
+     */
+    protected static function loadAtributoValores(array $rows): void
+    {
+        $ids = [];
+        foreach ($rows as $row) {
+            foreach ([1, 2, 3, 4] as $num) {
+                $id = (int)($row['idatributovalor' . $num] ?? 0);
+                if ($id > 0 && !isset(self::$idatributovalores[$id])) {
+                    $ids[$id] = $id;
+                }
+            }
+        }
+
+        if (empty($ids)) {
+            return;
+        }
+
+        $dataBase = new DataBase();
+        $sql = 'SELECT id, descripcion FROM atributos_valores WHERE id IN (' . implode(',', $ids) . ')';
+        foreach ($dataBase->select($sql) as $row) {
+            self::$idatributovalores[(int)$row['id']] = (string)$row['descripcion'];
+        }
     }
 
     protected static function modalProductos(): string

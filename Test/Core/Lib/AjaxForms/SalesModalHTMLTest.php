@@ -142,6 +142,49 @@ final class SalesModalHTMLTest extends TestCase
         $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
     }
 
+    /**
+     * Los espacios repetidos no generan palabras vacías en la búsqueda.
+     */
+    public function testFindIgnoresEmptyWords(): void
+    {
+        $attribute = new Atributo();
+        $attribute->nombre = 'Tejido ' . mt_rand(1, 99999);
+        $this->assertTrue($attribute->save(), 'attribute-cant-save');
+        $attValue = $attribute->getNewValue('lino' . mt_rand(1, 99999));
+        $this->assertTrue($attValue->save(), 'attribute-value-cant-save');
+        $value = $attValue->valor;
+
+        $variant = new Variante();
+        $variant->idproducto = $this->product->idproducto;
+        $variant->referencia = $this->product->referencia . '-D';
+        $variant->idatributovalor1 = $attValue->id;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        $modal = new class extends SalesModalHTML {
+            /** @var string[] */
+            public static $words = [];
+
+            protected static function wordFilter(string $word): string
+            {
+                self::$words[] = $word;
+                return parent::wordFilter($word);
+            }
+        };
+
+        $doc = new PresupuestoCliente();
+        $doc->setSubject($this->customer);
+        $modal::apply($doc, ['fp_query' => '  ' . $this->product->descripcion . '   ' . $value . '  ']);
+        $html = $modal::renderProductList();
+
+        $this->assertStringContainsString('data-reference="' . $variant->referencia . '"', $html);
+        $this->assertStringNotContainsString('data-reference="' . $this->product->referencia . '"', $html);
+        $this->assertNotContains('', $modal::$words);
+        $this->assertContains($value, $modal::$words);
+
+        $this->assertTrue($this->product->delete(), 'product-cant-delete');
+        $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
+    }
+
     public function testLastPriceUsesLatestInvoiceOfTheDay(): void
     {
         $date = Tools::date();
@@ -151,6 +194,65 @@ final class SalesModalHTMLTest extends TestCase
         $html = $this->findProducts($this->product->referencia, true);
         $lastPrice = '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money(20)) . '</td>';
         $this->assertStringContainsString($lastPrice, $html);
+    }
+
+    /**
+     * Cada producto muestra su propio último precio, aunque se obtengan todos en una sola consulta.
+     */
+    public function testLastPriceOfSeveralProducts(): void
+    {
+        $other = $this->getRandomProduct();
+        $other->descripcion = $this->product->descripcion . ' bis';
+        $this->assertTrue($other->save(), 'product-cant-save');
+
+        $date = Tools::date();
+        $this->createInvoice($date, '09:00:00', 10);
+        $this->createInvoice($date, '10:00:00', 20);
+        $this->createInvoice($date, '11:00:00', 35, $other->referencia);
+        $this->createInvoice($date, '12:00:00', 45, $other->referencia);
+
+        $html = $this->findProducts($this->product->descripcion, true);
+        $this->assertStringContainsString($this->moneyCell(20), $this->getRow($html, $this->product->referencia));
+        $this->assertStringNotContainsString($this->moneyCell(45), $this->getRow($html, $this->product->referencia));
+        $this->assertStringContainsString($this->moneyCell(45), $this->getRow($html, $other->referencia));
+        $this->assertStringNotContainsString($this->moneyCell(20), $this->getRow($html, $other->referencia));
+
+        foreach (array_reverse($this->invoices) as $invoice) {
+            $this->assertTrue($invoice->delete(), 'invoice-cant-delete');
+        }
+        $this->invoices = [];
+        $this->assertTrue($other->delete(), 'product-cant-delete');
+    }
+
+    /**
+     * La fila muestra las descripciones de todos los valores de atributo de la variante.
+     */
+    public function testListShowsAttributeValues(): void
+    {
+        $attribute = new Atributo();
+        $attribute->nombre = 'Medida ' . mt_rand(1, 99999);
+        $this->assertTrue($attribute->save(), 'attribute-cant-save');
+        $first = $attribute->getNewValue('ancho' . mt_rand(1, 99999));
+        $this->assertTrue($first->save(), 'attribute-value-cant-save');
+        $second = $attribute->getNewValue('largo' . mt_rand(1, 99999));
+        $this->assertTrue($second->save(), 'attribute-value-cant-save');
+
+        $variant = new Variante();
+        $variant->idproducto = $this->product->idproducto;
+        $variant->referencia = $this->product->referencia . '-E';
+        $variant->idatributovalor1 = $first->id;
+        $variant->idatributovalor3 = $second->id;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        $html = $this->findProducts($this->product->referencia, false);
+        $this->assertStringContainsString(
+            ', ' . $first->descripcion . ', ' . $second->descripcion . '</td>',
+            $this->getRow($html, $variant->referencia)
+        );
+        $this->assertStringNotContainsString($first->descripcion, $this->getRow($html, $this->product->referencia));
+
+        $this->assertTrue($this->product->delete(), 'product-cant-delete');
+        $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
     }
 
     public function testPriceWithTax(): void
@@ -191,7 +293,7 @@ final class SalesModalHTMLTest extends TestCase
         $this->logErrors();
     }
 
-    private function createInvoice(string $date, string $hour, float $price): void
+    private function createInvoice(string $date, string $hour, float $price, ?string $reference = null): void
     {
         $invoice = new FacturaCliente();
         $invoice->setSubject($this->customer);
@@ -199,7 +301,7 @@ final class SalesModalHTMLTest extends TestCase
         $this->assertTrue($invoice->save(), 'invoice-cant-save');
         $this->invoices[] = $invoice;
 
-        $line = $invoice->getNewProductLine($this->product->referencia);
+        $line = $invoice->getNewProductLine($reference ?? $this->product->referencia);
         $line->cantidad = 1;
         $line->pvpunitario = $price;
         $this->assertTrue($line->save(), 'invoice-line-cant-save');
@@ -215,6 +317,13 @@ final class SalesModalHTMLTest extends TestCase
 
         SalesModalHTML::apply($doc, ['fp_query' => $query, 'fp_vendido' => $vendido]);
         return SalesModalHTML::renderProductList();
+    }
+
+    private function getRow(string $html, string $referencia): string
+    {
+        $pattern = '/<tr[^>]*data-reference="' . preg_quote($referencia, '/') . '".*?<\/tr>/s';
+        $this->assertSame(1, preg_match($pattern, $html, $matches), 'row-not-found: ' . $referencia);
+        return $matches[0];
     }
 
     private function moneyCell(float $value): string

@@ -130,7 +130,9 @@ class SalesModalHTML
     public static function renderProductList(): string
     {
         $tbody = '';
-        foreach (static::getProducts() as $row) {
+        $rows = static::getProducts();
+        static::loadAtributoValores($rows);
+        foreach ($rows as $row) {
             $cssClass = $row['nostock'] ? 'table-info clickableRow' : ($row['disponible'] > 0 ? 'clickableRow' : 'table-warning clickableRow');
             $reference = static::html($row['referencia']);
             $description = Tools::textBreak($row['descripcion'], 120)
@@ -274,7 +276,9 @@ class SalesModalHTML
         }
 
         if (self::$query) {
-            $words = explode(' ', self::$query);
+            // descartamos las palabras vacías (espacios repetidos): no filtran nada
+            // y obligarían a buscar todos los valores de atributo
+            $words = preg_split('/\s+/', self::$query, -1, PREG_SPLIT_NO_EMPTY);
             if (count($words) === 1) {
                 $sql .= " AND (LOWER(v.codbarras) = " . $dataBase->var2str(self::$query)
                     . " OR LOWER(v.referencia) LIKE '%" . self::$query . "%'"
@@ -327,6 +331,35 @@ class SalesModalHTML
         }
 
         return ', ' . self::$idatributovalores[$id];
+    }
+
+    /**
+     * Carga en una sola consulta las descripciones de los valores de atributo de las filas,
+     * para que idatributovalor() no tenga que consultar cada valor por separado.
+     *
+     * @param array $rows Filas de productos, con las columnas idatributovalor1 a idatributovalor4.
+     */
+    protected static function loadAtributoValores(array $rows): void
+    {
+        $ids = [];
+        foreach ($rows as $row) {
+            foreach ([1, 2, 3, 4] as $num) {
+                $id = (int)($row['idatributovalor' . $num] ?? 0);
+                if ($id > 0 && !isset(self::$idatributovalores[$id])) {
+                    $ids[$id] = $id;
+                }
+            }
+        }
+
+        if (empty($ids)) {
+            return;
+        }
+
+        $dataBase = new DataBase();
+        $sql = 'SELECT id, descripcion FROM atributos_valores WHERE id IN (' . implode(',', $ids) . ')';
+        foreach ($dataBase->select($sql) as $row) {
+            self::$idatributovalores[(int)$row['id']] = (string)$row['descripcion'];
+        }
     }
 
     protected static function modalClientes(string $url): string
@@ -531,20 +564,34 @@ class SalesModalHTML
 
     protected static function setProductsLastPrice(DataBase $db, array &$items): void
     {
-        foreach ($items as $key => $item) {
-            // obtenemos el último precio en facturas de este cliente
-            $sql = 'SELECT pvpunitario FROM lineasfacturascli l'
-                . ' LEFT JOIN facturascli f ON f.idfactura = l.idfactura'
-                . ' WHERE f.codcliente = ' . $db->var2str(self::$codcliente)
-                . ' AND l.referencia = ' . $db->var2str($item['referencia'])
-                . ' ORDER BY f.fecha DESC, f.hora DESC, f.idfactura DESC';
-            foreach ($db->selectLimit($sql, 1) as $row) {
-                $items[$key]['ultimo_precio'] = $row['pvpunitario'];
-                continue 2;
-            }
+        if (empty($items)) {
+            return;
+        }
 
-            // no hay facturas, asignamos el último precio de venta
-            $items[$key]['ultimo_precio'] = $item['precio'];
+        $references = [];
+        foreach ($items as $item) {
+            $references[] = $db->var2str($item['referencia']);
+        }
+
+        // obtenemos en una sola consulta los precios en facturas de este cliente, de la más reciente
+        // a la más antigua: de cada referencia nos quedamos con la primera fila
+        $sql = 'SELECT l.referencia, l.pvpunitario FROM lineasfacturascli l'
+            . ' LEFT JOIN facturascli f ON f.idfactura = l.idfactura'
+            . ' WHERE f.codcliente = ' . $db->var2str(self::$codcliente)
+            . ' AND l.referencia IN (' . implode(',', $references) . ')'
+            . ' ORDER BY f.fecha DESC, f.hora DESC, f.idfactura DESC';
+        $prices = [];
+        foreach ($db->select($sql) as $row) {
+            $reference = mb_strtolower($row['referencia'], 'UTF8');
+            if (!isset($prices[$reference])) {
+                $prices[$reference] = $row['pvpunitario'];
+            }
+        }
+
+        foreach ($items as $key => $item) {
+            // si no hay facturas, asignamos el precio de venta
+            $reference = mb_strtolower($item['referencia'], 'UTF8');
+            $items[$key]['ultimo_precio'] = $prices[$reference] ?? $item['precio'];
         }
     }
 

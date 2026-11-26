@@ -135,6 +135,39 @@ final class PurchasesProductSearchTest extends TestCase
         $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
     }
 
+    /**
+     * Los espacios repetidos no generan palabras vacías en la búsqueda.
+     */
+    public function testFindIgnoresEmptyWords(): void
+    {
+        $attribute = $this->createAttributeValue($this->variant, 'Tejido', 'lino' . mt_rand(1, 99999));
+        $value = $attribute->getValues()[0]->valor;
+
+        $modal = new class extends PurchasesModalHTML {
+            /** @var string[] */
+            public static $words = [];
+
+            protected static function wordFilter(string $word): string
+            {
+                self::$words[] = $word;
+                return parent::wordFilter($word);
+            }
+        };
+
+        $doc = new PresupuestoProveedor();
+        $doc->setSubject($this->supplier);
+        $modal::apply($doc, ['fp_query' => '  ' . $this->product->descripcion . '   ' . $value . '  ']);
+        $html = $modal::renderProductList();
+
+        $this->assertStringContainsString('data-reference="' . $this->variant->referencia . '"', $html);
+        $this->assertStringNotContainsString('data-reference="' . $this->product->referencia . '"', $html);
+        $this->assertNotContains('', $modal::$words);
+        $this->assertContains($value, $modal::$words);
+
+        $this->assertTrue($this->product->delete(), 'product-cant-delete');
+        $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
+    }
+
     public function testFindByMainVariantSupplierReference(): void
     {
         $supplierRef = 'PRV-MAIN-' . mt_rand(1, 99999);
@@ -157,6 +190,28 @@ final class PurchasesProductSearchTest extends TestCase
         // la referencia del proveedor se identifica al pasar el ratón
         $title = 'title="' . Tools::trans('supplier-reference') . '">' . $supplierRef . '</span>';
         $this->assertStringContainsString($title, $html);
+    }
+
+    /**
+     * La fila muestra las descripciones de todos los valores de atributo de la variante.
+     */
+    public function testListShowsAttributeValues(): void
+    {
+        $first = $this->createAttributeValue($this->variant, 'Ancho', 'ancho' . mt_rand(1, 99999));
+        $second = $this->createAttributeValue($this->variant, 'Largo', 'largo' . mt_rand(1, 99999), 3);
+        $firstDesc = $first->getValues()[0]->descripcion;
+        $secondDesc = $second->getValues()[0]->descripcion;
+
+        $html = $this->findProducts($this->product->referencia);
+        $this->assertStringContainsString(
+            ', ' . $firstDesc . ', ' . $secondDesc . '</td>',
+            $this->getRow($html, $this->variant->referencia)
+        );
+        $this->assertStringNotContainsString($firstDesc, $this->getRow($html, $this->product->referencia));
+
+        $this->assertTrue($this->product->delete(), 'product-cant-delete');
+        $this->assertTrue($first->delete(), 'attribute-cant-delete');
+        $this->assertTrue($second->delete(), 'attribute-cant-delete');
     }
 
     public function testPriceColumns(): void
