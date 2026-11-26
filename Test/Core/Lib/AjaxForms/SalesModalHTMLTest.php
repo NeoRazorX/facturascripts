@@ -25,8 +25,10 @@ use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\Atributo;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\PagoCliente;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
@@ -58,6 +60,11 @@ final class SalesModalHTMLTest extends TestCase
 
         // la consulta del modal necesita la tabla de stocks
         new Stock();
+
+        // tablas que se usan dentro de transacciones (borrar el producto, guardar los recibos de la factura),
+        // donde no se pueden crear
+        new ProductoImagen();
+        new PagoCliente();
     }
 
     protected function setUp(): void
@@ -103,6 +110,31 @@ final class SalesModalHTMLTest extends TestCase
 
         // varias palabras: descripción del producto y valor del atributo
         $html = $this->findProducts($this->product->descripcion . ' ' . $attValue->valor, false);
+        $this->assertStringContainsString('data-reference="' . $variant->referencia . '"', $html);
+        $this->assertStringNotContainsString('data-reference="' . $this->product->referencia . '"', $html);
+
+        $this->assertTrue($this->product->delete(), 'product-cant-delete');
+        $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
+    }
+
+    /**
+     * El valor de atributo también se encuentra cuando está en la última posición de la variante.
+     */
+    public function testFindByAttributeValueInLastSlot(): void
+    {
+        $attribute = new Atributo();
+        $attribute->nombre = 'Acabado ' . mt_rand(1, 99999);
+        $this->assertTrue($attribute->save(), 'attribute-cant-save');
+        $attValue = $attribute->getNewValue('satinado' . mt_rand(1, 99999));
+        $this->assertTrue($attValue->save(), 'attribute-value-cant-save');
+
+        $variant = new Variante();
+        $variant->idproducto = $this->product->idproducto;
+        $variant->referencia = $this->product->referencia . '-C';
+        $variant->idatributovalor4 = $attValue->id;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        $html = $this->findProducts($attValue->valor, false);
         $this->assertStringContainsString('data-reference="' . $variant->referencia . '"', $html);
         $this->assertStringNotContainsString('data-reference="' . $this->product->referencia . '"', $html);
 

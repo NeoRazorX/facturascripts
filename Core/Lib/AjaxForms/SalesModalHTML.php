@@ -551,14 +551,34 @@ class SalesModalHTML
     /**
      * Condición para que la palabra aparezca en la descripción del producto
      * o en alguno de los valores de atributo de la variante.
+     *
+     * Los valores de atributo que contienen la palabra se buscan antes, en una consulta aparte,
+     * y se filtra la variante por sus identificadores. Una subconsulta correlacionada con la
+     * variante obliga a la base de datos a recorrer toda la tabla de valores de atributo por
+     * cada variante, y con catálogos grandes la búsqueda tarda minutos.
+     *
+     * @param string $word Palabra a buscar, ya en minúsculas.
+     * @return string
      */
     protected static function wordFilter(string $word): string
     {
         $like = "LIKE '%" . $word . "%'";
-        return "(LOWER(p.descripcion) " . $like
-            . " OR EXISTS (SELECT 1 FROM atributos_valores av"
-            . " WHERE av.id IN (v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4)"
-            . " AND LOWER(av.descripcion) " . $like . "))";
+        $filter = "LOWER(p.descripcion) " . $like;
+
+        $ids = [];
+        $dataBase = new DataBase();
+        foreach ($dataBase->select("SELECT id FROM atributos_valores WHERE LOWER(descripcion) " . $like) as $row) {
+            $ids[] = (int)$row['id'];
+        }
+
+        if (!empty($ids)) {
+            $list = implode(',', $ids);
+            foreach ([1, 2, 3, 4] as $num) {
+                $filter .= " OR v.idatributovalor" . $num . " IN (" . $list . ")";
+            }
+        }
+
+        return "(" . $filter . ")";
     }
 
     /**
