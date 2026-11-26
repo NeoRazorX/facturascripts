@@ -76,6 +76,21 @@
         }
     }
 
+    function createProductFromPurchases() {
+        const modal = document.getElementById('newProductModal');
+        if (modal === null) {
+            return false;
+        }
+
+        for (const input of modal.querySelectorAll('input, select, textarea')) {
+            if (false === input.reportValidity()) {
+                return false;
+            }
+        }
+
+        return purchasesFormAction('create-product', '0');
+    }
+
     function createSupplierFromPurchases() {
         const modal = document.getElementById('newSupplierModal');
         if (modal === null) {
@@ -89,6 +104,17 @@
         }
 
         return purchasesFormAction('create-supplier', '0');
+    }
+
+    function newProductKeyDown(event) {
+        // al pulsar intro en un campo del modal (salvo en la descripción), guardamos el producto
+        if (event.key !== 'Enter' || event.repeat || event.isComposing || event.target.tagName !== 'INPUT') {
+            return true;
+        }
+
+        event.preventDefault();
+        createProductFromPurchases();
+        return false;
     }
 
     function newSupplierKeyDown(event) {
@@ -170,6 +196,27 @@
         return false;
     }
 
+    function showNewProductModal() {
+        $('#findProductModal').one('hidden.bs.modal', function () {
+            // si no se ha escrito descripción, proponemos el texto buscado
+            const description = document.getElementById('newProductDescription');
+            if (description.value.trim() === '') {
+                description.value = document.forms['purchasesForm']['fp_query'].value.trim();
+            }
+            $('#newProductModal').modal('show');
+            description.focus();
+        }).modal('hide');
+        return false;
+    }
+
+    function showProductModal() {
+        $('#newProductModal').one('hidden.bs.modal', function () {
+            $('#findProductModal').modal('show');
+            $('#productModalInput').focus();
+        }).modal('hide');
+        return false;
+    }
+
     function showSupplierModal() {
         $('#newSupplierModal').one('hidden.bs.modal', function () {
             $('#findSupplierModal').modal('show');
@@ -238,6 +285,18 @@
                 purchasesFormAction('create-supplier', '0');
                 return;
             }
+            if (data.productCreated === true) {
+                $('#newProductModal').modal('hide');
+                document.getElementById('newProductModal').querySelectorAll('input, select, textarea').forEach(function (input) {
+                    if (input.tagName === 'SELECT') {
+                        Array.from(input.options).forEach(function (option) {
+                            option.selected = option.defaultSelected;
+                        });
+                    } else {
+                        input.value = input.defaultValue;
+                    }
+                });
+            }
             if (data.supplierCreated === true) {
                 $('#newSupplierModal').modal('hide');
                 document.getElementById('newSupplierName').closest('.modal-body').querySelectorAll('input').forEach(function (input) {
@@ -275,6 +334,7 @@
             }
             switch (document.forms['purchasesForm']['action'].value) {
                 case 'add-product':
+                case 'create-product':
                 case 'fast-product':
                     $(".doc-line-qty:last").select();
                     break;

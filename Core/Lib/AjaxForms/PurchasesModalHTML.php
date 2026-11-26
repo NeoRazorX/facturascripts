@@ -24,6 +24,7 @@ use FacturaScripts\Core\Contract\PurchasesModalInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Fabricantes;
 use FacturaScripts\Core\DataSrc\Familias;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
@@ -342,6 +343,17 @@ class PurchasesModalHTML
 
     protected static function modalProductos(): string
     {
+        $newProductButton = '';
+        $newProductModal = '';
+        if (static::canCreateProduct(Session::user())) {
+            $newProductButton = '<div class="modal-footer bg-light">'
+                . '<button type="button" class="btn w-100 btn-success" onclick="return showNewProductModal();">'
+                . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::trans('new-product')
+                . '</button>'
+                . '</div>';
+            $newProductModal = static::modalNewProduct();
+        }
+
         return '<div class="modal" id="findProductModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
@@ -377,6 +389,73 @@ class PurchasesModalHTML
             . '</div>'
             . '</div>'
             . '<div class="table-responsive" id="findProductList">' . static::renderProductList() . '</div>'
+            . $newProductButton
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . $newProductModal;
+    }
+
+    protected static function modalNewProduct(): string
+    {
+        $taxOptions = '';
+        $defaultTax = Tools::settings('default', 'codimpuesto');
+        foreach (Impuestos::all() as $tax) {
+            $selected = $tax->codimpuesto === $defaultTax ? ' selected' : '';
+            $taxOptions .= '<option value="' . static::html($tax->codimpuesto) . '"' . $selected . '>'
+                . static::html($tax->descripcion) . '</option>';
+        }
+
+        $familyOptions = '<option value="">------</option>';
+        foreach (Familias::children() as $fam) {
+            $familyOptions .= '<option value="' . static::html($fam->codfamilia) . '">' . static::html($fam->descripcion) . '</option>'
+                . static::subfamilias($fam);
+        }
+
+        $manufacturerOptions = '<option value="">------</option>';
+        foreach (Fabricantes::all() as $man) {
+            $manufacturerOptions .= '<option value="' . static::html($man->codfabricante) . '">'
+                . static::html($man->nombre) . '</option>';
+        }
+
+        return '<div class="modal" id="newProductModal" tabindex="-1" aria-hidden="true">'
+            . '<div class="modal-dialog modal-lg modal-dialog-scrollable">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title"><i class="fa-solid fa-cube fa-fw me-1"></i> '
+            . Tools::trans('new-product') . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'
+            . '</div>'
+            . '<div class="modal-body" onkeydown="return newProductKeyDown(event);">'
+            . '<div class="row g-2">'
+            . '<div class="col-sm-6"><label for="newProductReference" class="form-label">' . Tools::trans('reference') . '</label>'
+            . '<input type="text" name="newproduct_referencia" id="newProductReference" class="form-control" maxlength="30"'
+            . ' placeholder="' . Tools::trans('automatic') . '"></div>'
+            . '<div class="col-sm-6"><label for="newProductSupplierReference" class="form-label">'
+            . Tools::trans('supplier-reference') . '</label>'
+            . '<input type="text" name="newproduct_refproveedor" id="newProductSupplierReference" class="form-control"'
+            . ' maxlength="30" placeholder="' . Tools::trans('optional') . '"></div>'
+            . '<div class="col-12"><label for="newProductDescription" class="form-label">' . Tools::trans('description') . '</label>'
+            . '<textarea name="newproduct_descripcion" id="newProductDescription" class="form-control" rows="2" required></textarea></div>'
+            . '<div class="col-sm-4"><label for="newProductSupplierPrice" class="form-label">' . Tools::trans('supplier-price') . '</label>'
+            . '<input type="number" name="newproduct_coste" id="newProductSupplierPrice" class="form-control" min="0" step="any"></div>'
+            . '<div class="col-sm-4"><label for="newProductSalePrice" class="form-label">' . Tools::trans('sale-price') . '</label>'
+            . '<input type="number" name="newproduct_precio" id="newProductSalePrice" class="form-control" min="0" step="any"></div>'
+            . '<div class="col-sm-4"><label for="newProductTax" class="form-label">' . Tools::trans('tax') . '</label>'
+            . '<select name="newproduct_codimpuesto" id="newProductTax" class="form-select" required>' . $taxOptions . '</select></div>'
+            . '<div class="col-sm-6"><label for="newProductFamily" class="form-label">' . Tools::trans('family') . '</label>'
+            . '<select name="newproduct_codfamilia" id="newProductFamily" class="form-select">' . $familyOptions . '</select></div>'
+            . '<div class="col-sm-6"><label for="newProductManufacturer" class="form-label">' . Tools::trans('manufacturer') . '</label>'
+            . '<select name="newproduct_codfabricante" id="newProductManufacturer" class="form-select">'
+            . $manufacturerOptions . '</select></div>'
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer bg-light">'
+            . '<button type="button" class="btn btn-secondary" onclick="return showProductModal();">'
+            . '<i class="fa-solid fa-arrow-left fa-fw"></i> ' . Tools::trans('back') . '</button>'
+            . '<button type="button" class="btn btn-success btn-spin-action" onclick="return createProductFromPurchases();">'
+            . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::trans('save') . '</button>'
+            . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
@@ -487,6 +566,11 @@ class PurchasesModalHTML
             . '</div>'
             . '</div>'
             . '</div>';
+    }
+
+    protected static function canCreateProduct(User $user): bool
+    {
+        return $user->can('EditProducto', 'update');
     }
 
     protected static function canCreateSupplier(User $user): bool
