@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Lib\Export;
 
 use FacturaScripts\Core\Lib\Export\ExportBase;
+use FacturaScripts\Core\Lib\Widget\ColumnItem;
 use FacturaScripts\Core\Model\FormatoDocumento;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -107,6 +108,55 @@ final class ExportBaseTest extends TestCase
         $this->deleteInvoice($invoice);
     }
 
+    /**
+     * Las columnas con display="right" (que ColumnItem guarda como 'end') deben exportarse
+     * alineadas a la derecha, y las de display="left" ('start') a la izquierda.
+     */
+    public function testColumnAlignmentsTranslateBootstrapValues(): void
+    {
+        $columns = [
+            $this->column('descripcion', 'left'),
+            $this->column('debe', 'right'),
+            $this->column('estado', 'center'),
+            $this->column('codigo', ''),
+            'campo-texto',
+        ];
+
+        $alignments = $this->exporter()->getColumnAlignments($columns);
+        $this->assertSame('left', $alignments['descripcion']);
+        $this->assertSame('right', $alignments['debe']);
+        $this->assertSame('center', $alignments['estado']);
+        $this->assertSame('left', $alignments['codigo']);
+        $this->assertSame('left', $alignments['campo-texto']);
+    }
+
+    /**
+     * Crea una columna con un widget de texto y la alineación indicada.
+     *
+     * @param string $fieldname Campo de la columna.
+     * @param string $display Alineación tal como se escribe en el XMLView.
+     *
+     * @return ColumnItem
+     */
+    private function column(string $fieldname, string $display): ColumnItem
+    {
+        $data = [
+            'name' => $fieldname,
+            'title' => $fieldname,
+            'children' => [[
+                'tag' => 'widget',
+                'type' => 'text',
+                'fieldname' => $fieldname,
+                'children' => [],
+            ]],
+        ];
+        if ($display !== '') {
+            $data['display'] = $display;
+        }
+
+        return new ColumnItem($data);
+    }
+
     private function createFormat(int $idempresa, ?string $tipodoc, ?string $codserie): FormatoDocumento
     {
         $format = new FormatoDocumento();
@@ -135,6 +185,11 @@ final class ExportBaseTest extends TestCase
     private function exporter(): ExportBase
     {
         return new class extends ExportBase {
+            public function getColumnAlignments(array $columns): array
+            {
+                return parent::getColumnAlignments($columns);
+            }
+
             public function getDocumentFormat($model)
             {
                 return parent::getDocumentFormat($model);

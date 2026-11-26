@@ -86,6 +86,32 @@ abstract class ExportBase
     abstract public function show(Response &$response);
 
     /**
+     * Traduce la alineación de una columna (display) al valor que entienden los exportadores.
+     * Desde Bootstrap 5, ColumnItem guarda 'start' y 'end' en lugar de 'left' y 'right',
+     * pero las librerías de PDF solo entienden 'left', 'center' y 'right'.
+     *
+     * @param string $display Alineación de la columna (start, end, left, right, center...).
+     *
+     * @return string Alineación equivalente: left, center o right.
+     */
+    protected function getColumnAlignment(string $display): string
+    {
+        switch ($display) {
+            case 'end':
+            case 'right':
+                return 'right';
+
+            case 'center':
+                return 'center';
+
+            default:
+                return 'left';
+        }
+    }
+
+    /**
+     * Devuelve la alineación (left, center o right) de cada columna visible, indexada por el campo.
+     *
      * @param array $columns
      *
      * @return array
@@ -107,7 +133,7 @@ abstract class ExportBase
             }
 
             if (!$col->hidden()) {
-                $alignments[$col->widget->fieldname] = $col->display;
+                $alignments[$col->widget->fieldname] = $this->getColumnAlignment($col->display);
             }
         }
 
