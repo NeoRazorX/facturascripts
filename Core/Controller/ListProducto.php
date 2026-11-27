@@ -53,6 +53,7 @@ class ListProducto extends ListController
         $this->createViewProducto();
         $this->createViewVariante();
         $this->createViewStock();
+        $this->removeManufacturerFilter();
     }
 
     protected function createViewProducto(string $viewName = 'ListProducto'): void
@@ -234,5 +235,21 @@ class ListProducto extends ListController
         ]));
 
         return $values;
+    }
+
+    /**
+     * Quita el filtro de fabricantes de todas las pestañas si el usuario
+     * no tiene nivel suficiente para ver la columna de fabricante.
+     */
+    protected function removeManufacturerFilter(): void
+    {
+        $column = isset($this->views['ListProducto']) ? $this->views['ListProducto']->columnForName('manufacturer') : null;
+        if (null === $column || $column->level <= $this->user->level) {
+            return;
+        }
+
+        foreach ($this->views as $view) {
+            unset($view->filters['codfabricante']);
+        }
     }
 }
