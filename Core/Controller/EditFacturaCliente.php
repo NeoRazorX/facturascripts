@@ -230,6 +230,23 @@ class EditFacturaCliente extends SalesController
 
     private function generateReceiptsWithAmounts(FacturaCliente $invoice, array $amounts): bool
     {
+        // los importes no pueden superar lo que queda pendiente de la factura
+        $pending = $invoice->total;
+        foreach ($invoice->getReceipts() as $receipt) {
+            $pending -= $receipt->importe;
+        }
+        $pending = Tools::round($pending);
+        if ($pending <= 0) {
+            Tools::log()->warning('no-outstanding-amount');
+            return true;
+        }
+
+        $diff = Tools::round($pending - array_sum($amounts));
+        if ($diff < 0) {
+            Tools::log()->warning('invoice-receipts-diff', ['%diff%' => $diff]);
+            return true;
+        }
+
         // creamos los recibos con los importes especificados
         $numero = count($invoice->getReceipts()) + 1;
 
