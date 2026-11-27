@@ -435,6 +435,7 @@
     "created-default-admin-account": "Se ha creado el usuario %nick% con la contraseña %pass%",
     "creation-date": "Fecha creación",
     "credit": "Haber",
+    "credit-note": "Factura rectificativa",
     "crm": "CRM",
     "cron-job": "Tarea programada",
     "cron-maintenance-mode": "El cron se ha detenido porque se está instalando una actualización. Las tareas pendientes se ejecutarán en la siguiente ejecución del cron.",
