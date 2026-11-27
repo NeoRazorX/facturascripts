@@ -22,7 +22,6 @@ namespace FacturaScripts\Test\Core\Controller;
 use Closure;
 use FacturaScripts\Core\Controller\ApiAttachedFiles;
 use FacturaScripts\Core\Response;
-use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -37,6 +36,9 @@ final class ApiAttachedFilesTest extends TestCase
 
     /** @var string[] */
     private $created = [];
+
+    /** @var int[] */
+    private $ids = [];
 
     public function testPostWithCustomIdDoesNotRegisterServerFiles(): void
     {
@@ -122,8 +124,11 @@ final class ApiAttachedFilesTest extends TestCase
         }
 
         // eliminamos cualquier registro de prueba que haya quedado
-        foreach (AttachedFile::all([Where::gte('idfile', 900000)]) as $file) {
-            $file->delete();
+        foreach ($this->ids as $id) {
+            $file = new AttachedFile();
+            if ($file->load($id)) {
+                $file->delete();
+            }
         }
 
         $_FILES = [];
@@ -157,6 +162,11 @@ final class ApiAttachedFilesTest extends TestCase
             ];
         };
         $result = Closure::bind($exec, $controller, ApiAttachedFiles::class)();
+        foreach ([$post['idfile'] ?? null, $result['body']['data']['idfile'] ?? null] as $id) {
+            if (!empty($id)) {
+                $this->ids[] = (int)$id;
+            }
+        }
 
         // limpiamos los globales
         $_FILES = [];
