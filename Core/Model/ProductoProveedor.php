@@ -221,7 +221,7 @@ class ProductoProveedor extends ModelClass
      */
     protected function onUpdate(): void
     {
-        if ($this->isDirty('neto')) {
+        if ($this->isDirty('neto') || $this->isDirty('coddivisa')) {
             CostPriceTools::update($this->getVariant());
         }
 
