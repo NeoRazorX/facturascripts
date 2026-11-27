@@ -230,8 +230,8 @@ class GroupItem extends VisualItem
             return '<legend class="text-info mt-2 mb-0">' . $icon . Tools::trans($this->title) . '</legend>';
         }
 
-        return '<legend class="text-info mt-2 mb-1">' . $icon . Tools::trans($this->title) . '</legend>'
-            . '<small class="form-text text-muted w-100 mb-2">' . Tools::trans($this->description) . '</small>';
+        return '<legend class="text-info mt-2 mb-0">' . $icon . Tools::trans($this->title) . '</legend>'
+            . '<small class="form-text text-muted w-100 mt-0 mb-2">' . Tools::trans($this->description) . '</small>';
     }
 
     /**

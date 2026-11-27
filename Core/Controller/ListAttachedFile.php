@@ -74,8 +74,60 @@ class ListAttachedFile extends ListController
         ]);
     }
 
+    /**
+     * Crea un zip temporal con los archivos indicados y devuelve su ruta,
+     * o null si no se pudo crear o no contiene ningún archivo.
+     *
+     * @param AttachedFile $model
+     * @param array $codes
+     *
+     * @return string|null
+     */
+    protected function createZip($model, array $codes): ?string
+    {
+        // nombre único por petición, para no mezclar archivos de dos descargas
+        $folder = Tools::folder('MyFiles', 'Tmp');
+        Tools::folderCheckOrCreate($folder);
+        $filepath = $folder . DIRECTORY_SEPARATOR . 'attached-files-' . Tools::randomString(20) . '.zip';
+
+        $zip = new ZipArchive();
+        if ($zip->open($filepath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            Tools::log()->warning('error-creating-zip-file');
+            return null;
+        }
+
+        // añadimos los archivos
+        $added = 0;
+        foreach ($codes as $code) {
+            $file = $model->get($code);
+            // solo añadimos archivos que estén dentro de MyFiles
+            if (
+                $file && $this->isInsideMyFiles($file->getFullPath()) &&
+                $zip->addFile($file->getFullPath(), $file->idfile . '_' . $file->filename)
+            ) {
+                $added++;
+            }
+        }
+
+        // un zip sin archivos no llega a crearse en disco
+        if (false === $zip->close() || 0 === $added || false === file_exists($filepath)) {
+            if (file_exists($filepath)) {
+                unlink($filepath);
+            }
+            Tools::log()->warning('no-data');
+            return null;
+        }
+
+        return $filepath;
+    }
+
     protected function downloadAction(): bool
     {
+        if (false === $this->permissions->allowExport) {
+            Tools::log()->warning('no-print-permission');
+            return true;
+        }
+
         $codes = $this->request->request->getArray('codes');
         if (empty($codes)) {
             Tools::log()->warning('no-selected-item');
@@ -83,29 +135,14 @@ class ListAttachedFile extends ListController
         }
 
         // creamos el zip
-        $zip = new ZipArchive();
-        $filename = 'attached-files.zip';
-        $filepath = FS_FOLDER . '/MyFiles/' . $filename;
-        if ($zip->open($filepath, ZipArchive::CREATE) !== true) {
-            Tools::log()->warning('error-creating-zip-file');
+        $filepath = $this->createZip($this->activeTab()->model, $codes);
+        if (null === $filepath) {
             return true;
         }
 
-        // añadimos los archivos
-        $model = $this->activeTab()->model;
-        foreach ($codes as $code) {
-            $file = $model->get($code);
-            if ($file) {
-                $zip->addFile($file->getFullPath(), $file->idfile . '_' . $file->filename);
-            }
-        }
-
-        // cerramos el zip
-        $zip->close();
-
         // descargamos el zip
         header('Content-Type: application/zip');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Disposition: attachment; filename="attached-files.zip"');
         header('Content-Length: ' . filesize($filepath));
 
         // descartamos los buffers de salida para no cargar el archivo entero en memoria
@@ -129,6 +166,13 @@ class ListAttachedFile extends ListController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    private function isInsideMyFiles(string $filePath): bool
+    {
+        $realPath = realpath($filePath);
+        $folder = realpath(FS_FOLDER . '/MyFiles');
+        return $realPath !== false && $folder !== false && str_starts_with($realPath, $folder . DIRECTORY_SEPARATOR);
     }
 
     protected function showStorageLimitWarning(): void

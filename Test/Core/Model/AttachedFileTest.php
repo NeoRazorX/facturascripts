@@ -179,6 +179,39 @@ final class AttachedFileTest extends TestCase
         unlink($outsidePath);
     }
 
+    public function testCustomIdDoesNotSkipPathValidation(): void
+    {
+        // archivo fuera de MyFiles que no se debe poder registrar como adjunto
+        $outsideName = 'attached_outside_' . Tools::randomString(6) . '.txt';
+        $outsidePath = FS_FOLDER . '/' . $outsideName;
+        $this->assertNotFalse(file_put_contents($outsidePath, 'secret'), 'File not created');
+
+        // un idfile elegido por el cliente no evita la validación del path
+        $id = 900000 + mt_rand(1, 99999);
+        foreach ([$outsideName, '../' . basename(FS_FOLDER) . '/' . $outsideName, 'MyFiles/routes.json'] as $path) {
+            $model = new AttachedFile();
+            $model->idfile = $id;
+            $model->path = $path;
+            $model->filename = 'invoice.pdf';
+            $this->assertFalse($model->save(), 'unsafe-path-saved-with-custom-id: ' . $path);
+            $this->assertFalse($model->exists(), 'unsafe-record-created: ' . $path);
+        }
+        $this->assertFileExists($outsidePath, 'outside-file-moved');
+        unlink($outsidePath);
+
+        // con un archivo válido en MyFiles se guarda, conserva el idfile y se mueve a su carpeta
+        $name = 'attached_' . Tools::randomString(6) . '.jpg';
+        $this->assertTrue(copy(FS_FOLDER . '/Test/__files/product_image.jpg', FS_FOLDER . '/MyFiles/' . $name), 'File not copied');
+        $model = new AttachedFile();
+        $model->idfile = $id;
+        $model->path = $name;
+        $this->assertTrue($model->save(), 'can-not-save-file-with-custom-id');
+        $this->assertEquals($id, $model->idfile);
+        $this->assertStringStartsWith('MyFiles/' . date('Y/m') . '/', $model->path);
+        $this->assertFileDoesNotExist(FS_FOLDER . '/MyFiles/' . $name);
+        $this->assertTrue($model->delete(), 'can-not-delete-file');
+    }
+
     public function testDeleteDoesNotRemoveFilesOutsideMyFiles(): void
     {
         $outsideName = 'attached_outside_' . Tools::randomString(6) . '.txt';

@@ -62,7 +62,8 @@ class EditGrupoClientes extends EditController
         }
 
         $codes = $this->request->request->getArray('codes');
-        if (false === is_array($codes)) {
+        if (empty($codes) || false === is_array($codes)) {
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
@@ -130,15 +131,6 @@ class EditGrupoClientes extends EditController
     {
         $this->addListView($viewName, 'Cliente', 'customers', 'fa-solid fa-users');
         $this->createViewCommon($viewName);
-
-        // add action button
-        $this->tab($viewName)->addButton([
-            'action' => 'remove-customer',
-            'color' => 'danger',
-            'confirm' => true,
-            'icon' => 'fa-solid fa-folder-minus',
-            'label' => 'remove-from-list'
-        ]);
     }
 
     /**
@@ -191,6 +183,17 @@ class EditGrupoClientes extends EditController
             case 'ListCliente':
                 $where = [Where::eq('codgrupo', $codgrupo)];
                 $view->loadData('', $where);
+
+                // botón quitar cliente, solamente si hay algún resultado
+                if ($view->count > 0) {
+                    $this->tab($viewName)->addButton([
+                        'action' => 'remove-customer',
+                        'color' => 'danger',
+                        'confirm' => true,
+                        'icon' => 'fa-solid fa-folder-minus',
+                        'label' => 'remove-from-list'
+                    ]);
+                }
                 break;
 
             case 'ListCliente-new':
@@ -214,7 +217,8 @@ class EditGrupoClientes extends EditController
         }
 
         $codes = $this->request->request->getArray('codes');
-        if (false === is_array($codes)) {
+        if (empty($codes) || false === is_array($codes)) {
+            Tools::log()->warning('no-selected-item');
             return;
         }
 

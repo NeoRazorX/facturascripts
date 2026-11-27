@@ -157,6 +157,9 @@ abstract class PanelController extends BaseController
             }
         }
 
+        // sin permiso para modificar, los selectores de la biblioteca no listan los archivos
+        $this->lockLibraryWidgets();
+
         // General operations with the loaded data
         $this->execAfterAction($action);
         $this->pipeFalse('execAfterAction', $action);
@@ -490,8 +493,36 @@ abstract class PanelController extends BaseController
         return true;
     }
 
+    /**
+     * Pone en solo lectura los selectores de la biblioteca cuando el usuario no puede
+     * modificar, para que la página no incluya el listado de archivos adjuntos.
+     */
+    protected function lockLibraryWidgets(): void
+    {
+        if ($this->permissions->allowUpdate) {
+            return;
+        }
+
+        foreach ($this->views as $view) {
+            foreach ($view->getColumns() as $group) {
+                // las pestañas de listado tienen las columnas sin agrupar
+                foreach ($group->columns ?? [$group] as $column) {
+                    if (isset($column->widget) && strtolower($column->widget->getType()) === 'library') {
+                        $column->widget->readonly = 'true';
+                    }
+                }
+            }
+        }
+    }
+
     protected function widgetLibrarySearchAction(): array
     {
+        // el selector de la biblioteca solo sirve para modificar el registro
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return ['records' => 0, 'html' => ''];
+        }
+
         // localizamos la pestaña y el nombre de la columna
         $activeTab = $this->request->input('active_tab', '');
         $colName = $this->request->input('col_name', '');
@@ -522,6 +553,18 @@ abstract class PanelController extends BaseController
 
     protected function widgetLibraryUploadAction(): array
     {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return [];
+        }
+
+        // el token es el del formulario, que se vuelve a usar al guardar: no lo damos por consumido
+        $token = $this->request->input('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+            Tools::log()->warning('invalid-request');
+            return [];
+        }
+
         // localizamos la pestaña y el nombre de la columna
         $activeTab = $this->request->input('active_tab', '');
         $colName = $this->request->input('col_name', '');

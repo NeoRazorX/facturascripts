@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
+use FacturaScripts\Core\DataSrc\Fabricantes;
+use FacturaScripts\Core\DataSrc\Familias;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
@@ -33,6 +36,8 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\CodigoPostal;
+use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Variante;
 use Throwable;
@@ -335,6 +340,9 @@ abstract class PurchasesController extends PanelController
             case 'check-numproveedor':
                 return $this->checkNumProveedorAction();
 
+            case 'create-product':
+                return $this->createProductAction();
+
             case 'create-supplier':
                 return $this->createSupplierAction();
 
@@ -377,6 +385,120 @@ abstract class PurchasesController extends PanelController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    /**
+     * Crea un producto desde el modal de productos y lo añade como nueva línea del documento.
+     * Si el documento tiene proveedor, guarda también su referencia y su precio para ese proveedor.
+     */
+    protected function createProductAction(): bool
+    {
+        $this->setTemplate(false);
+
+        if (false === $this->user->can('EditProducto', 'update')) {
+            Tools::log()->warning('not-allowed-modify');
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        if (false === $this->validateFormToken()) {
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        $formData = json_decode($this->request->input('data'), true);
+        if (false === is_array($formData)) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        $fields = [];
+        foreach (['descripcion', 'referencia', 'refproveedor', 'codimpuesto', 'codfamilia', 'codfabricante'] as $field) {
+            $value = $formData['newproduct_' . $field] ?? '';
+            if (false === is_string($value)) {
+                Tools::log()->warning('invalid-request');
+                $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+                return false;
+            }
+
+            $fields[$field] = trim($value);
+        }
+
+        $prices = [];
+        foreach (['coste', 'precio'] as $field) {
+            $value = $formData['newproduct_' . $field] ?? '';
+            if ($value === '' || $value === null) {
+                $prices[$field] = 0.0;
+                continue;
+            }
+
+            if (false === is_numeric($value) || (float)$value < 0) {
+                Tools::log()->warning('invalid-request');
+                $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+                return false;
+            }
+
+            $prices[$field] = (float)$value;
+        }
+
+        if (
+            $fields['descripcion'] === ''
+            || $fields['codimpuesto'] === '' || false === Impuestos::get($fields['codimpuesto'])->exists()
+            || ($fields['codfamilia'] !== '' && false === Familias::get($fields['codfamilia'])->exists())
+            || ($fields['codfabricante'] !== '' && false === Fabricantes::get($fields['codfabricante'])->exists())
+        ) {
+            Tools::log()->warning('invalid-request');
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        // aplicamos los datos del formulario para conocer el proveedor y la divisa del documento
+        $model = $this->getModel();
+        $lines = $model->getLines();
+        PurchasesHeaderHTML::apply($model, $formData);
+        PurchasesFooterHTML::apply($model, $formData);
+
+        $product = new Producto();
+        $product->codfabricante = $fields['codfabricante'] === '' ? null : $fields['codfabricante'];
+        $product->codfamilia = $fields['codfamilia'] === '' ? null : $fields['codfamilia'];
+        $product->codimpuesto = $fields['codimpuesto'];
+        $product->descripcion = $fields['descripcion'];
+        $product->precio = $prices['precio'];
+        $product->referencia = $fields['referencia'];
+
+        $this->db()->beginTransaction();
+        try {
+            if (false === $product->save() || false === $this->saveNewProductCost($product, $model, $fields, $prices)) {
+                $this->db()->rollback();
+                $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+                return false;
+            }
+
+            $this->db()->commit();
+        } catch (Throwable $e) {
+            $this->db()->rollback();
+            Tools::log()->error($e->getMessage());
+            $this->sendJsonWithLogs($this->emptyPurchasesResponse());
+            return false;
+        }
+
+        // añadimos el nuevo producto al documento
+        $formData['action'] = 'add-product';
+        $formData['selectedLine'] = $product->referencia;
+        PurchasesLineHTML::apply($model, $lines, $formData);
+        Calculator::calculate($model, $lines, false);
+
+        $this->sendJsonWithLogs([
+            'productCreated' => true,
+            'footer' => PurchasesFooterHTML::render($model),
+            'header' => PurchasesHeaderHTML::render($model),
+            'lines' => PurchasesLineHTML::render($lines, $model),
+            'linesMap' => [],
+            'multireqtoken' => $this->multiRequestProtection->newToken(),
+            'products' => '',
+        ]);
+        return false;
     }
 
     protected function createSupplierAction(): bool
@@ -642,6 +764,32 @@ abstract class PurchasesController extends PanelController
         return false;
     }
 
+    /**
+     * Guarda el precio de compra del producto recién creado: como precio del proveedor del documento,
+     * con su referencia, o como coste de la variante si el documento aún no tiene proveedor.
+     */
+    protected function saveNewProductCost(Producto $product, PurchaseDocument $model, array $fields, array $prices): bool
+    {
+        if (empty($model->codproveedor)) {
+            foreach ($product->getVariants() as $variant) {
+                $variant->coste = $prices['coste'];
+                if (false === $variant->save()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        $supplierProduct = new ProductoProveedor();
+        $supplierProduct->coddivisa = $model->coddivisa;
+        $supplierProduct->codproveedor = $model->codproveedor;
+        $supplierProduct->idproducto = $product->idproducto;
+        $supplierProduct->precio = $prices['coste'];
+        $supplierProduct->referencia = $product->referencia;
+        $supplierProduct->refproveedor = $fields['refproveedor'];
+        return $supplierProduct->save();
+    }
+
     protected function saveDocAction(bool $sendOk = true): bool
     {
         $this->setTemplate(false);
@@ -817,6 +965,7 @@ abstract class PurchasesController extends PanelController
     private function emptyPurchasesResponse(): array
     {
         return [
+            'productCreated' => false,
             'supplierCreated' => false,
             'footer' => '',
             'header' => '',

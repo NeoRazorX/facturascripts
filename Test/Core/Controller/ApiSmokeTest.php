@@ -155,6 +155,12 @@ final class ApiSmokeTest extends TestCase
             $this->assertArrayHasKey('resources', $data);
             $this->assertContains('divisas', $data['resources']);
 
+            // las claves con acceso completo también registran la última actividad, la IP y el user agent
+            $this->assertTrue($apiKey->load($apiKey->id), 'can-not-reload-api-key');
+            $this->assertNotEmpty($apiKey->lastactivity, 'api-key-lastactivity-not-saved');
+            $this->assertSame('127.0.0.1', $apiKey->lastip, 'api-key-lastip-not-saved');
+            $this->assertStringStartsWith('FacturaScripts ', $apiKey->lastuseragent, 'api-key-user-agent-not-saved');
+
             $this->assertUnauthorized($url, 'invalid-' . $apiKey->apikey);
             $this->assertUnauthorized($url, null);
         } finally {

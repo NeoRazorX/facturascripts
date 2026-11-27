@@ -60,6 +60,9 @@ class ApiKey extends ModelClass
     /** @var string Dirección IP desde la que se utilizó la clave API por última vez. */
     public $lastip;
 
+    /** @var string User agent del cliente que utilizó la clave API por última vez. */
+    public $lastuseragent;
+
     /** @var string Nombre del usuario que creó la clave API. No determina los permisos de la clave. */
     public $nick;
 
@@ -186,13 +189,18 @@ class ApiKey extends ModelClass
             $this->lastactivity = null;
         }
 
+        // el user agent lo envía el cliente: lo escapamos y limitamos su longitud
+        $userAgent = mb_substr(Tools::noHtml($this->lastuseragent ?? ''), 0, 255, 'UTF-8');
+        $this->lastuseragent = empty($userAgent) ? null : $userAgent;
+
         return parent::test();
     }
 
-    public function updateActivity(?string $ip = null): bool
+    public function updateActivity(?string $ip = null, ?string $userAgent = null): bool
     {
         $this->lastactivity = Tools::dateTime();
         $this->lastip = $ip;
+        $this->lastuseragent = $userAgent;
         return $this->save();
     }
 

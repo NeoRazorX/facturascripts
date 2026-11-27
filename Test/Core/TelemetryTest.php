@@ -91,7 +91,6 @@ final class TelemetryTest extends TestCase
     private function getLangUsers(): array
     {
         $method = new ReflectionMethod(Telemetry::class, 'collectData');
-        $method->setAccessible(true);
         $data = $method->invoke(new Telemetry());
 
         // convertimos "ca_ES:1,es_ES:4" en ['ca_ES' => 1, 'es_ES' => 4]

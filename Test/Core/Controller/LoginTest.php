@@ -257,6 +257,64 @@ final class LoginTest extends TestCase
         }
     }
 
+    public function testChangePasswordNeedsSecret(): void
+    {
+        // el sufijo numérico garantiza que la contraseña cumple la política aunque el hex no traiga dígitos
+        $oldPassword = 'Old-password-' . bin2hex(random_bytes(4)) . '1';
+        $newPassword = 'New-password-' . bin2hex(random_bytes(4)) . '2';
+        $user = $this->getRandomUser();
+        $user->setPassword($oldPassword);
+        $this->assertTrue($user->save());
+
+        $previousIp = $_SERVER['REMOTE_ADDR'] ?? null;
+        $ip = $this->getRandomIp();
+        $_SERVER['REMOTE_ADDR'] = $ip;
+
+        try {
+            // sin contraseña de base de datos ni clave de recuperación, nunca se cambia la contraseña
+            $controller = new TestableLogin('Login', '/login');
+            $controller->recoverySecret = '';
+            for ($i = 0; $i <= Login::MAX_INCIDENT_COUNT; $i++) {
+                $this->changePassword($controller, $user->nick, $newPassword, '');
+            }
+            $this->assertTrue($this->reloadUser($user)->verifyPassword($oldPassword), 'changed-with-empty-secret');
+
+            // y esos intentos no cuentan como incidentes, porque no hay secreto que adivinar
+            $this->assertFalse($controller->userHasManyIncidents($ip, $user->nick));
+
+            // con clave de recuperación, una clave vacía o incorrecta no sirve
+            $controller->recoverySecret = 'recovery-' . bin2hex(random_bytes(4));
+            $this->changePassword($controller, $user->nick, $newPassword, '');
+            $this->changePassword($controller, $user->nick, $newPassword, 'wrong-key');
+            $this->assertTrue($this->reloadUser($user)->verifyPassword($oldPassword), 'changed-with-wrong-secret');
+
+            // la clave correcta sí cambia la contraseña
+            $this->changePassword($controller, $user->nick, $newPassword, $controller->recoverySecret);
+            $this->assertTrue(
+                $this->reloadUser($user)->verifyPassword($newPassword),
+                'not-changed-with-secret: ' . json_encode(array_column(Tools::log()->read(), 'original'))
+            );
+        } finally {
+            if (null === $previousIp) {
+                unset($_SERVER['REMOTE_ADDR']);
+            } else {
+                $_SERVER['REMOTE_ADDR'] = $previousIp;
+            }
+            $user->delete();
+        }
+    }
+
+    public function testRecoverySecretIsDbPasswordWhenSet(): void
+    {
+        // con contraseña de base de datos, el secreto es esa contraseña
+        $dbPassword = (string)Tools::config('db_pass', '');
+        if ('' === $dbPassword) {
+            $this->markTestSkipped('database-without-password');
+        }
+
+        $this->assertSame($dbPassword, $this->invoke('getRecoverySecret', []));
+    }
+
     public function testTitleBeforeAndAfterWizard(): void
     {
         $homepage = Tools::settings('default', 'homepage');
@@ -306,6 +364,20 @@ final class LoginTest extends TestCase
         $this->assertFalse($this->invoke('checkFormToken', [$request, 'admin']));
     }
 
+    private function changePassword(Login $controller, string $nick, string $password, string $secret): void
+    {
+        $request = new Request([
+            'request' => [
+                'fsNewUserPasswd' => $nick,
+                'fsNewPasswd' => $password,
+                'fsNewPasswd2' => $password,
+                'fsDbPasswd' => $secret,
+                'multireqtoken' => $this->newToken(''),
+            ],
+        ]);
+        (new ReflectionMethod(Login::class, 'changePasswordAction'))->invokeArgs($controller, [$request]);
+    }
+
     private function getRandomIp(): string
     {
         return rand(1, 255) . '.' . rand(1, 255) . '.' . rand(1, 255) . '.' . rand(1, 255);
@@ -336,11 +408,29 @@ final class LoginTest extends TestCase
         return $multiRequestProtection->newToken();
     }
 
+    private function reloadUser(User $user): User
+    {
+        $reloaded = new User();
+        $this->assertTrue($reloaded->load($user->nick));
+        return $reloaded;
+    }
+
     private function runController(): void
     {
         // run() imprime la página de login, que no necesitamos
         ob_start();
         $this->controller->run();
         ob_end_clean();
+    }
+}
+
+final class TestableLogin extends Login
+{
+    /** @var string */
+    public $recoverySecret = '';
+
+    protected function getRecoverySecret(): string
+    {
+        return $this->recoverySecret;
     }
 }

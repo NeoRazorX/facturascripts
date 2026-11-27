@@ -70,6 +70,10 @@ class AttachedFile extends ModelClass
 
     public function delete(): bool
     {
+        // onDeleteBefore() consulta las imágenes de productos dentro de la transacción,
+        // donde no se pueden crear tablas: nos aseguramos de que ya existan
+        new ProductoImagen();
+
         // eliminamos el registro de la base de datos. El archivo y las relaciones
         // con los productos se eliminan en onDeleteBefore()
         if (false === parent::delete()) {
@@ -177,8 +181,12 @@ class AttachedFile extends ModelClass
 
     public function test(): bool
     {
-        if (empty($this->idfile)) {
-            $this->idfile = $this->getNextCode();
+        // un registro nuevo siempre pasa por setFile(), aunque llegue con un idfile ya asignado:
+        // es lo que valida el path y mueve el archivo a su carpeta definitiva
+        if (empty($this->idfile) || false === $this->exists()) {
+            if (empty($this->idfile)) {
+                $this->idfile = $this->getNextCode();
+            }
             return $this->setFile() && parent::test();
         }
 

@@ -50,6 +50,9 @@
         <column name="last-ip" display="none" order="180">
             <widget type="text" fieldname="lastip"/>
         </column>
+        <column name="user-agent" display="none" order="190">
+            <widget type="text" fieldname="lastuseragent"/>
+        </column>
     </columns>
     <rows>
         <row type="status">

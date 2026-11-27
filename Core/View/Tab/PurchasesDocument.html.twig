@@ -17,6 +17,8 @@
 <script>
     let waitCounter = 0;
     let keyupInputName = null;
+    let findProductController = null;
+    let findProductQuery = '';
 
     function changeColumn(btn) {
         $(btn).addClass('active').siblings().removeClass('active');
@@ -74,6 +76,21 @@
         }
     }
 
+    function createProductFromPurchases() {
+        const modal = document.getElementById('newProductModal');
+        if (modal === null) {
+            return false;
+        }
+
+        for (const input of modal.querySelectorAll('input, select, textarea')) {
+            if (false === input.reportValidity()) {
+                return false;
+            }
+        }
+
+        return purchasesFormAction('create-product', '0');
+    }
+
     function createSupplierFromPurchases() {
         const modal = document.getElementById('newSupplierModal');
         if (modal === null) {
@@ -87,6 +104,17 @@
         }
 
         return purchasesFormAction('create-supplier', '0');
+    }
+
+    function newProductKeyDown(event) {
+        // al pulsar intro en un campo del modal (salvo en la descripción), guardamos el producto
+        if (event.key !== 'Enter' || event.repeat || event.isComposing || event.target.tagName !== 'INPUT') {
+            return true;
+        }
+
+        event.preventDefault();
+        createProductFromPurchases();
+        return false;
     }
 
     function newSupplierKeyDown(event) {
@@ -168,6 +196,27 @@
         return false;
     }
 
+    function showNewProductModal() {
+        $('#findProductModal').one('hidden.bs.modal', function () {
+            // si no se ha escrito descripción, proponemos el texto buscado
+            const description = document.getElementById('newProductDescription');
+            if (description.value.trim() === '') {
+                description.value = document.forms['purchasesForm']['fp_query'].value.trim();
+            }
+            $('#newProductModal').modal('show');
+            description.focus();
+        }).modal('hide');
+        return false;
+    }
+
+    function showProductModal() {
+        $('#newProductModal').one('hidden.bs.modal', function () {
+            $('#findProductModal').modal('show');
+            $('#productModalInput').focus();
+        }).modal('hide');
+        return false;
+    }
+
     function showSupplierModal() {
         $('#newSupplierModal').one('hidden.bs.modal', function () {
             $('#findSupplierModal').modal('show');
@@ -203,9 +252,21 @@
         data.append('data', formDataJsonString);
         console.log(data);
 
+        // si hay una búsqueda de productos sin terminar, la descartamos: solo interesa la última
+        let signal = null;
+        if (action === 'find-product') {
+            if (findProductController !== null) {
+                findProductController.abort();
+            }
+            findProductController = new AbortController();
+            findProductQuery = document.forms['purchasesForm']['fp_query'].value.trim();
+            signal = findProductController.signal;
+        }
+
         fetch('{{ fsc.url() }}', {
             method: 'POST',
-            body: data
+            body: data,
+            signal: signal
         }).then(function (response) {
             animateSpinner('remove');
             if (response.ok) {
@@ -223,6 +284,18 @@
                 document.forms['purchasesForm']['newsupplier_cifnif_confirmed'].value = '1';
                 purchasesFormAction('create-supplier', '0');
                 return;
+            }
+            if (data.productCreated === true) {
+                $('#newProductModal').modal('hide');
+                document.getElementById('newProductModal').querySelectorAll('input, select, textarea').forEach(function (input) {
+                    if (input.tagName === 'SELECT') {
+                        Array.from(input.options).forEach(function (option) {
+                            option.selected = option.defaultSelected;
+                        });
+                    } else {
+                        input.value = input.defaultValue;
+                    }
+                });
             }
             if (data.supplierCreated === true) {
                 $('#newSupplierModal').modal('hide');
@@ -261,6 +334,7 @@
             }
             switch (document.forms['purchasesForm']['action'].value) {
                 case 'add-product':
+                case 'create-product':
                 case 'fast-product':
                     $(".doc-line-qty:last").select();
                     break;
@@ -297,8 +371,17 @@
 
             findProduct();
         }).catch(function (error) {
+            if (error && error.name === 'AbortError') {
+                // búsqueda de productos descartada por otra más reciente, que es la que quita el spinner
+                return;
+            }
+
             console.warn(error);
             animateSpinner('remove', false);
+            if (action === 'find-product') {
+                // la búsqueda ha fallado: permitimos repetirla con el mismo texto
+                findProductQuery = null;
+            }
             if (error && typeof error.text === 'function') {
                 error.text().then(function (body) {
                     alert((error.status ? error.status + ' ' : '') + (body || error.statusText || 'error'));
@@ -336,6 +419,15 @@
         // obtenemos el name del input si cumple la condición de pulsado
         if ($(event.target).is('input') && ['keyup', 'keypress', 'change'].includes(event.type)) {
             keyupInputName = event.target.name;
+        }
+
+        // en el buscador de productos, salvo que se pulse intro, no buscamos si el texto no ha cambiado
+        // (flechas, mayúsculas, etc.) ni con un solo carácter
+        if (action === 'find-product' && event.target && event.target.name === 'fp_query' && event.key !== 'Enter') {
+            const query = event.target.value.trim();
+            if (query === findProductQuery || query.length === 1) {
+                return false;
+            }
         }
 
         console.log('waitNum: ' + waitNum);

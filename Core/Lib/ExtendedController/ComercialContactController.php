@@ -226,10 +226,12 @@ abstract class ComercialContactController extends EditController
      * @param string $viewName
      * @param string $model
      * @param string $label
+     * @param bool $hideLinkField oculta la columna del cliente; pásalo a false cuando el listado
+     *                            mezcle documentos de varios clientes (por ejemplo, en la ficha del agente)
      */
-    protected function createCustomerListView(string $viewName, string $model, string $label): ListView
+    protected function createCustomerListView(string $viewName, string $model, string $label, bool $hideLinkField = true): ListView
     {
-        return $this->createListView($viewName, $model, $label, $this->getCustomerFields());
+        return $this->createListView($viewName, $model, $label, $this->getCustomerFields(), $hideLinkField);
     }
 
     /**
@@ -273,8 +275,9 @@ abstract class ComercialContactController extends EditController
      * @param string $model
      * @param string $label
      * @param array $fields
+     * @param bool $hideLinkField oculta la columna del cliente o proveedor del documento
      */
-    private function createListView(string $viewName, string $model, string $label, array $fields): ListView
+    private function createListView(string $viewName, string $model, string $label, array $fields, bool $hideLinkField = true): ListView
     {
         $view = $this->addListView($viewName, $model, $label, 'fa-regular fa-file')
             ->addOrderBy(['codigo'], 'code')
@@ -282,8 +285,12 @@ abstract class ComercialContactController extends EditController
             ->addOrderBy(['numero'], 'number')
             ->addOrderBy([$fields['numfield']], $fields['numtitle'])
             ->addOrderBy(['total'], 'amount')
-            ->addSearchFields(['codigo', 'observaciones', $fields['numfield']])
-            ->disableColumn($fields['linkfield'], true);
+            ->addSearchFields(['codigo', 'observaciones', $fields['numfield']]);
+
+        // en la ficha del cliente o proveedor todos los documentos son suyos, así que ocultamos la columna
+        if ($hideLinkField) {
+            $view->disableColumn($fields['linkfield'], true);
+        }
 
         $this->addCommonViewFilters($viewName, $model);
 

@@ -24,7 +24,6 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
-use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleUser;
 use FacturaScripts\Dinamic\Model\User;
@@ -312,17 +311,6 @@ class EditUser extends EditController
 
                 $this->loadHomepageValues();
                 $this->loadLanguageValues();
-
-                // deshabilitamos la columna de empresa si solo hay una empresa
-                if ($this->empresa->count() < 2) {
-                    $view->disableColumn('company');
-                }
-
-                // deshabilitamos la columna de almacén si solo hay un almacén
-                $almacen = new Almacen();
-                if ($almacen->count() < 2) {
-                    $view->disableColumn('warehouse');
-                }
 
                 // deshabilitamos los botones de opciones e imprimir
                 $view->setSettings('btnOptions', false)

@@ -24,6 +24,7 @@ use FacturaScripts\Core\Contract\PurchasesModalInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Fabricantes;
 use FacturaScripts\Core\DataSrc\Familias;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
@@ -131,7 +132,9 @@ class PurchasesModalHTML
     public static function renderProductList(): string
     {
         $tbody = '';
-        foreach (static::getProducts() as $row) {
+        $rows = static::getProducts();
+        static::loadAtributoValores($rows);
+        foreach ($rows as $row) {
             $cssClass = $row['nostock'] ? 'table-info clickableRow' : ($row['disponible'] > 0 ? 'clickableRow' : 'table-warning clickableRow');
             // el precio del proveedor está en la divisa del documento; el coste y el precio de venta, en la de la empresa
             $supplierPrice = $row['neto'] === null ?
@@ -255,7 +258,9 @@ class PurchasesModalHTML
         }
 
         if (self::$query) {
-            $words = explode(' ', self::$query);
+            // descartamos las palabras vacías (espacios repetidos): no filtran nada
+            // y obligarían a buscar todos los valores de atributo
+            $words = preg_split('/\s+/', self::$query, -1, PREG_SPLIT_NO_EMPTY);
             if (count($words) === 1) {
                 $sql .= " AND (LOWER(v.codbarras) = " . $dataBase->var2str(self::$query)
                     . " OR LOWER(v.referencia) LIKE '%" . self::$query . "%'"
@@ -307,8 +312,48 @@ class PurchasesModalHTML
         return ', ' . self::$idatributovalores[$id];
     }
 
+    /**
+     * Carga en una sola consulta las descripciones de los valores de atributo de las filas,
+     * para que idatributovalor() no tenga que consultar cada valor por separado.
+     *
+     * @param array $rows Filas de productos, con las columnas idatributovalor1 a idatributovalor4.
+     */
+    protected static function loadAtributoValores(array $rows): void
+    {
+        $ids = [];
+        foreach ($rows as $row) {
+            foreach ([1, 2, 3, 4] as $num) {
+                $id = (int)($row['idatributovalor' . $num] ?? 0);
+                if ($id > 0 && !isset(self::$idatributovalores[$id])) {
+                    $ids[$id] = $id;
+                }
+            }
+        }
+
+        if (empty($ids)) {
+            return;
+        }
+
+        $dataBase = new DataBase();
+        $sql = 'SELECT id, descripcion FROM atributos_valores WHERE id IN (' . implode(',', $ids) . ')';
+        foreach ($dataBase->select($sql) as $row) {
+            self::$idatributovalores[(int)$row['id']] = (string)$row['descripcion'];
+        }
+    }
+
     protected static function modalProductos(): string
     {
+        $newProductButton = '';
+        $newProductModal = '';
+        if (static::canCreateProduct(Session::user())) {
+            $newProductButton = '<div class="modal-footer bg-light">'
+                . '<button type="button" class="btn w-100 btn-success" onclick="return showNewProductModal();">'
+                . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::trans('new-product')
+                . '</button>'
+                . '</div>';
+            $newProductModal = static::modalNewProduct();
+        }
+
         return '<div class="modal" id="findProductModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
@@ -344,6 +389,73 @@ class PurchasesModalHTML
             . '</div>'
             . '</div>'
             . '<div class="table-responsive" id="findProductList">' . static::renderProductList() . '</div>'
+            . $newProductButton
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . $newProductModal;
+    }
+
+    protected static function modalNewProduct(): string
+    {
+        $taxOptions = '';
+        $defaultTax = Tools::settings('default', 'codimpuesto');
+        foreach (Impuestos::all() as $tax) {
+            $selected = $tax->codimpuesto === $defaultTax ? ' selected' : '';
+            $taxOptions .= '<option value="' . static::html($tax->codimpuesto) . '"' . $selected . '>'
+                . static::html($tax->descripcion) . '</option>';
+        }
+
+        $familyOptions = '<option value="">------</option>';
+        foreach (Familias::children() as $fam) {
+            $familyOptions .= '<option value="' . static::html($fam->codfamilia) . '">' . static::html($fam->descripcion) . '</option>'
+                . static::subfamilias($fam);
+        }
+
+        $manufacturerOptions = '<option value="">------</option>';
+        foreach (Fabricantes::all() as $man) {
+            $manufacturerOptions .= '<option value="' . static::html($man->codfabricante) . '">'
+                . static::html($man->nombre) . '</option>';
+        }
+
+        return '<div class="modal" id="newProductModal" tabindex="-1" aria-hidden="true">'
+            . '<div class="modal-dialog modal-lg modal-dialog-scrollable">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title"><i class="fa-solid fa-cube fa-fw me-1"></i> '
+            . Tools::trans('new-product') . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'
+            . '</div>'
+            . '<div class="modal-body" onkeydown="return newProductKeyDown(event);">'
+            . '<div class="row g-2">'
+            . '<div class="col-sm-6"><label for="newProductReference" class="form-label">' . Tools::trans('reference') . '</label>'
+            . '<input type="text" name="newproduct_referencia" id="newProductReference" class="form-control" maxlength="30"'
+            . ' placeholder="' . Tools::trans('automatic') . '"></div>'
+            . '<div class="col-sm-6"><label for="newProductSupplierReference" class="form-label">'
+            . Tools::trans('supplier-reference') . '</label>'
+            . '<input type="text" name="newproduct_refproveedor" id="newProductSupplierReference" class="form-control"'
+            . ' maxlength="30" placeholder="' . Tools::trans('optional') . '"></div>'
+            . '<div class="col-12"><label for="newProductDescription" class="form-label">' . Tools::trans('description') . '</label>'
+            . '<textarea name="newproduct_descripcion" id="newProductDescription" class="form-control" rows="2" required></textarea></div>'
+            . '<div class="col-sm-4"><label for="newProductSupplierPrice" class="form-label">' . Tools::trans('supplier-price') . '</label>'
+            . '<input type="number" name="newproduct_coste" id="newProductSupplierPrice" class="form-control" min="0" step="any"></div>'
+            . '<div class="col-sm-4"><label for="newProductSalePrice" class="form-label">' . Tools::trans('sale-price') . '</label>'
+            . '<input type="number" name="newproduct_precio" id="newProductSalePrice" class="form-control" min="0" step="any"></div>'
+            . '<div class="col-sm-4"><label for="newProductTax" class="form-label">' . Tools::trans('tax') . '</label>'
+            . '<select name="newproduct_codimpuesto" id="newProductTax" class="form-select" required>' . $taxOptions . '</select></div>'
+            . '<div class="col-sm-6"><label for="newProductFamily" class="form-label">' . Tools::trans('family') . '</label>'
+            . '<select name="newproduct_codfamilia" id="newProductFamily" class="form-select">' . $familyOptions . '</select></div>'
+            . '<div class="col-sm-6"><label for="newProductManufacturer" class="form-label">' . Tools::trans('manufacturer') . '</label>'
+            . '<select name="newproduct_codfabricante" id="newProductManufacturer" class="form-select">'
+            . $manufacturerOptions . '</select></div>'
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer bg-light">'
+            . '<button type="button" class="btn btn-secondary" onclick="return showProductModal();">'
+            . '<i class="fa-solid fa-arrow-left fa-fw"></i> ' . Tools::trans('back') . '</button>'
+            . '<button type="button" class="btn btn-success btn-spin-action" onclick="return createProductFromPurchases();">'
+            . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::trans('save') . '</button>'
+            . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
@@ -456,6 +568,11 @@ class PurchasesModalHTML
             . '</div>';
     }
 
+    protected static function canCreateProduct(User $user): bool
+    {
+        return $user->can('EditProducto', 'update');
+    }
+
     protected static function canCreateSupplier(User $user): bool
     {
         return $user->can('EditProveedor', 'update');
@@ -479,14 +596,34 @@ class PurchasesModalHTML
     /**
      * Condición para que la palabra aparezca en la descripción del producto
      * o en alguno de los valores de atributo de la variante.
+     *
+     * Los valores de atributo que contienen la palabra se buscan antes, en una consulta aparte,
+     * y se filtra la variante por sus identificadores. Una subconsulta correlacionada con la
+     * variante obliga a la base de datos a recorrer toda la tabla de valores de atributo por
+     * cada variante, y con catálogos grandes la búsqueda tarda minutos.
+     *
+     * @param string $word Palabra a buscar, ya en minúsculas.
+     * @return string
      */
     protected static function wordFilter(string $word): string
     {
         $like = "LIKE '%" . $word . "%'";
-        return "(LOWER(p.descripcion) " . $like
-            . " OR EXISTS (SELECT 1 FROM atributos_valores av"
-            . " WHERE av.id IN (v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4)"
-            . " AND LOWER(av.descripcion) " . $like . "))";
+        $filter = "LOWER(p.descripcion) " . $like;
+
+        $ids = [];
+        $dataBase = new DataBase();
+        foreach ($dataBase->select("SELECT id FROM atributos_valores WHERE LOWER(descripcion) " . $like) as $row) {
+            $ids[] = (int)$row['id'];
+        }
+
+        if (!empty($ids)) {
+            $list = implode(',', $ids);
+            foreach ([1, 2, 3, 4] as $num) {
+                $filter .= " OR v.idatributovalor" . $num . " IN (" . $list . ")";
+            }
+        }
+
+        return "(" . $filter . ")";
     }
 
     /**

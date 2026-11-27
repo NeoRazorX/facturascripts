@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Core\Lib\Calculator;
@@ -84,6 +85,75 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'can-not-delete-agent');
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
+    }
+
+    public function testSetWarehouse(): void
+    {
+        // creamos una empresa, que crea su propio almacén
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save(), 'can-not-create-company');
+        $warehouse = $company->getWarehouses()[0];
+
+        // con un almacén válido se asignan el almacén y su empresa
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setWarehouse($warehouse->codalmacen), 'presupuesto-warehouse-valid');
+        $this->assertEquals($warehouse->codalmacen, $doc->codalmacen, 'presupuesto-bad-warehouse');
+        $this->assertEquals($company->idempresa, $doc->idempresa, 'presupuesto-bad-warehouse-company');
+
+        // un almacén inexistente se rechaza
+        $this->assertFalse($doc->setWarehouse('NOEXISTE'), 'presupuesto-warehouse-not-found');
+
+        // eliminamos
+        $this->assertTrue($company->delete(), 'can-not-delete-company');
+    }
+
+    public function testSetWarehouseEmptyUsesDefault(): void
+    {
+        $defaultWarehouse = Tools::settings('default', 'codalmacen');
+        $defaultCompany = Almacenes::default()->idempresa;
+
+        // un almacén nulo no provoca TypeError y se usa el almacén predeterminado
+        $doc = new PresupuestoCliente();
+        $doc->codalmacen = null;
+        $this->assertTrue($doc->setWarehouse(null), 'presupuesto-warehouse-null');
+        $this->assertEquals($defaultWarehouse, $doc->codalmacen, 'presupuesto-warehouse-null-not-default');
+        $this->assertEquals($defaultCompany, $doc->idempresa, 'presupuesto-warehouse-null-bad-company');
+
+        // lo mismo con un almacén vacío
+        $doc->codalmacen = null;
+        $this->assertTrue($doc->setWarehouse(''), 'presupuesto-warehouse-empty');
+        $this->assertEquals($defaultWarehouse, $doc->codalmacen, 'presupuesto-warehouse-empty-not-default');
+    }
+
+    public function testSetWarehouseEmptyKeepsCompany(): void
+    {
+        // creamos una segunda empresa, que crea su propio almacén
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save(), 'can-not-create-company');
+        $warehouse = $company->getWarehouses()[0];
+
+        // un documento de esa empresa sin almacén usa el almacén de su empresa, no el predeterminado
+        $doc = new PresupuestoCliente();
+        $doc->idempresa = $company->idempresa;
+        $doc->codalmacen = null;
+        $this->assertTrue($doc->setWarehouse(null), 'presupuesto-warehouse-null-other-company');
+        $this->assertEquals($warehouse->codalmacen, $doc->codalmacen, 'presupuesto-bad-company-warehouse');
+        $this->assertEquals($company->idempresa, $doc->idempresa, 'presupuesto-company-changed');
+
+        // al asignar la fecha tampoco cambia de empresa
+        $doc->codalmacen = null;
+        $doc->setDate(Tools::date(), Tools::hour());
+        $this->assertEquals($warehouse->codalmacen, $doc->codalmacen, 'presupuesto-bad-company-warehouse-date');
+        $this->assertEquals($company->idempresa, $doc->idempresa, 'presupuesto-company-changed-date');
+
+        // si la empresa no tiene almacenes, se rechaza y no cambia de empresa
+        $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
+        $doc->codalmacen = null;
+        $this->assertFalse($doc->setWarehouse(null), 'presupuesto-warehouse-without-company-warehouses');
+        $this->assertEquals($company->idempresa, $doc->idempresa, 'presupuesto-company-changed-no-warehouse');
+
+        // eliminamos
+        $this->assertTrue($company->delete(), 'can-not-delete-company');
     }
 
     public function testSetAuthorWithoutCompanyUsesDefaults(): void

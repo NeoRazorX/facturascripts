@@ -59,7 +59,8 @@ class EditFamilia extends EditController
         }
 
         $codes = $this->request->request->getArray('codes');
-        if (false === is_array($codes)) {
+        if (empty($codes) || false === is_array($codes)) {
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
@@ -123,15 +124,6 @@ class EditFamilia extends EditController
         $this->addListView($viewName, 'Producto', 'products', 'fa-solid fa-cubes')
             ->setSettings('group', 'products');
         $this->createViewProductsCommon($viewName);
-
-        // botón quitar producto
-        $this->tab($viewName)->addButton([
-            'action' => 'remove-product',
-            'color' => 'danger',
-            'confirm' => true,
-            'icon' => 'fa-solid fa-folder-minus',
-            'label' => 'remove-from-list'
-        ]);
     }
 
     protected function createViewProductsCommon(string $viewName): void
@@ -202,6 +194,17 @@ class EditFamilia extends EditController
             case 'ListProducto':
                 $where = [Where::eq('codfamilia', $codfamilia)];
                 $view->loadData('', $where);
+
+                // botón quitar producto, solamente si hay algún resultado
+                if ($view->count > 0) {
+                    $this->tab($viewName)->addButton([
+                        'action' => 'remove-product',
+                        'color' => 'danger',
+                        'confirm' => true,
+                        'icon' => 'fa-solid fa-folder-minus',
+                        'label' => 'remove-from-list'
+                    ]);
+                }
                 break;
 
             case 'ListProducto-new':
@@ -230,7 +233,8 @@ class EditFamilia extends EditController
         }
 
         $codes = $this->request->request->getArray('codes');
-        if (false === is_array($codes)) {
+        if (empty($codes) || false === is_array($codes)) {
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
