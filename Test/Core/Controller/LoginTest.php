@@ -259,8 +259,9 @@ final class LoginTest extends TestCase
 
     public function testChangePasswordNeedsSecret(): void
     {
-        $oldPassword = 'Old-password-' . bin2hex(random_bytes(4));
-        $newPassword = 'New-password-' . bin2hex(random_bytes(4));
+        // el sufijo numérico garantiza que la contraseña cumple la política aunque el hex no traiga dígitos
+        $oldPassword = 'Old-password-' . bin2hex(random_bytes(4)) . '1';
+        $newPassword = 'New-password-' . bin2hex(random_bytes(4)) . '2';
         $user = $this->getRandomUser();
         $user->setPassword($oldPassword);
         $this->assertTrue($user->save());
@@ -289,7 +290,10 @@ final class LoginTest extends TestCase
 
             // la clave correcta sí cambia la contraseña
             $this->changePassword($controller, $user->nick, $newPassword, $controller->recoverySecret);
-            $this->assertTrue($this->reloadUser($user)->verifyPassword($newPassword), 'not-changed-with-secret');
+            $this->assertTrue(
+                $this->reloadUser($user)->verifyPassword($newPassword),
+                'not-changed-with-secret: ' . json_encode(array_column(Tools::log()->read(), 'original'))
+            );
         } finally {
             if (null === $previousIp) {
                 unset($_SERVER['REMOTE_ADDR']);
