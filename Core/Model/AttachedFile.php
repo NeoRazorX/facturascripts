@@ -70,6 +70,10 @@ class AttachedFile extends ModelClass
 
     public function delete(): bool
     {
+        // onDeleteBefore() consulta las imágenes de productos dentro de la transacción,
+        // donde no se pueden crear tablas: nos aseguramos de que ya existan
+        new ProductoImagen();
+
         // eliminamos el registro de la base de datos. El archivo y las relaciones
         // con los productos se eliminan en onDeleteBefore()
         if (false === parent::delete()) {
