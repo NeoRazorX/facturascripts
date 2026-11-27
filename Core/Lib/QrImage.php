@@ -19,8 +19,13 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Common\Mode;
+use chillerlan\QRCode\Common\Version;
+use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use Exception;
 
 /**
  * Imagen PNG de un código QR, con la librería que ya trae el core (chillerlan/php-qrcode; el PNG necesita GD,
@@ -59,17 +64,19 @@ class QrImage
      */
     public static function png(string $data, string $eccLevel = self::ECC_M, int $scale = 5, int $quietZone = 4): string
     {
+        self::checkData($data);
+
         $options = new QROptions([
-            'version' => QRCode::VERSION_AUTO,
+            'version' => Version::AUTO,
             'eccLevel' => self::eccLevel($eccLevel),
-            'outputType' => QRCode::OUTPUT_IMAGE_PNG,
-            'imageBase64' => true,
+            'outputType' => QROutputInterface::GDIMAGE_PNG,
+            'outputBase64' => true,
             'scale' => max(1, $scale),
             'addQuietzone' => $quietZone > 0,
             'quietzoneSize' => max(0, $quietZone),
         ]);
 
-        return (new QRCode($options))->render($data);
+        return self::qrCode($data, $options)->render();
     }
 
     /**
@@ -85,13 +92,27 @@ class QrImage
      */
     public static function size(string $data, string $eccLevel = self::ECC_M): int
     {
+        self::checkData($data);
+
         $options = new QROptions([
-            'version' => QRCode::VERSION_AUTO,
+            'version' => Version::AUTO,
             'eccLevel' => self::eccLevel($eccLevel),
             'addQuietzone' => false,
         ]);
 
-        return (new QRCode($options))->getMatrix($data)->size();
+        return self::qrCode($data, $options)->getQRMatrix()->getSize();
+    }
+
+    /**
+     * La librería genera un código vacío si no hay datos, así que lo comprobamos antes.
+     *
+     * @throws Exception si los datos están vacíos
+     */
+    private static function checkData(string $data): void
+    {
+        if ($data === '') {
+            throw new Exception('QR code data is empty');
+        }
     }
 
     /**
@@ -100,10 +121,27 @@ class QrImage
     private static function eccLevel(string $eccLevel): int
     {
         return match ($eccLevel) {
-            self::ECC_L => QRCode::ECC_L,
-            self::ECC_Q => QRCode::ECC_Q,
-            self::ECC_H => QRCode::ECC_H,
-            default => QRCode::ECC_M,
+            self::ECC_L => EccLevel::L,
+            self::ECC_Q => EccLevel::Q,
+            self::ECC_H => EccLevel::H,
+            default => EccLevel::M,
         };
+    }
+
+    /**
+     * Código con los datos añadidos en el modo más compacto que admitan (números, alfanumérico, kanji, hanzi
+     * o bytes), igual que hace la librería al renderizar, para que png() y size() midan lo mismo.
+     */
+    private static function qrCode(string $data, QROptions $options): QRCode
+    {
+        $qrCode = new QRCode($options);
+        foreach (Mode::INTERFACES as $dataMode) {
+            if ($dataMode::validateString($data)) {
+                $qrCode->addSegment(new $dataMode($data));
+                break;
+            }
+        }
+
+        return $qrCode;
     }
 }

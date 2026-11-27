@@ -37,7 +37,7 @@
     "twig/twig": "3.*",
     "globalcitizen/php-iban": "4.*",
     "pragmarx/google2fa": "^8.0",
-    "chillerlan/php-qrcode": "^4.0"
+    "chillerlan/php-qrcode": "^5.0"
   },
   "require-dev": {
     "phpunit/phpunit": "9.*",
