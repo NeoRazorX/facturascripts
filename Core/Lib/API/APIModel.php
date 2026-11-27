@@ -317,7 +317,7 @@ class APIModel extends APIResourceClass
 
             // la columna debe existir en el modelo y no estar oculta
             $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
-            if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
+            if (!in_array($column, $allowedFields, true) || $this->isHiddenColumn($column, $hidden)) {
                 $badFields[] = $field;
                 continue;
             }
@@ -326,6 +326,22 @@ class APIModel extends APIResourceClass
         }
 
         return $where;
+    }
+
+    /**
+     * Indica si la columna está oculta en la API, entera o por contener alguna clave
+     * json oculta (columna.clave). Por esas columnas no se puede filtrar ni ordenar,
+     * porque permitiría deducir el valor oculto.
+     */
+    private function isHiddenColumn(string $column, array $hidden): bool
+    {
+        foreach ($hidden as $field) {
+            if ($field === $column || str_starts_with($field, $column . '.')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function listAll(): bool
@@ -470,7 +486,7 @@ class APIModel extends APIResourceClass
             }
 
             $column = strpos($field, '.') === false ? $field : substr($field, strpos($field, '.') + 1);
-            if (!in_array($column, $allowedFields, true) || in_array($column, $hidden, true)) {
+            if (!in_array($column, $allowedFields, true) || $this->isHiddenColumn($column, $hidden)) {
                 $badFields[] = $key;
                 continue;
             }

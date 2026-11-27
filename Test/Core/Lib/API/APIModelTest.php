@@ -26,6 +26,7 @@ use FacturaScripts\Core\Model\Base\ModelClass as BaseModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait as BaseModelTrait;
 use FacturaScripts\Core\Model\Divisa;
 use FacturaScripts\Core\Model\PedidoProveedor;
+use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
@@ -347,6 +348,45 @@ final class APIModelTest extends TestCase
         $this->assertEquals([$user->nick], array_column($body, 'nick'), 'desc-sort-not-applied');
 
         $this->assertTrue($user->delete());
+    }
+
+    public function testListRejectsFilterAndSortOnColumnWithHiddenKeys(): void
+    {
+        // grupo de configuración con una clave oculta (properties.password)
+        $settings = new Settings();
+        $settings->name = 'apimodel_' . Tools::randomString(6);
+        $settings->setProperty('host', 'smtp.test.local');
+        $settings->setProperty('password', 'S3cretApiTest');
+        $this->assertTrue($settings->save());
+
+        try {
+            // la respuesta normal no incluye la clave oculta
+            $body = $this->callApi('Settings', 'GET', [], [], ['filter' => ['name' => $settings->name]]);
+            $this->assertEquals([$settings->name], array_column($body, 'name'));
+            $this->assertStringNotContainsString('S3cretApiTest', json_encode($body));
+
+            // filtrar por la columna que contiene la clave oculta permitiría adivinarla
+            foreach (['properties_like', 'properties', 'properties_gt', 'settings.properties_like'] as $key) {
+                $response = new Response();
+                $body = $this->callApi('Settings', 'GET', [], [], [
+                    'filter' => ['name' => $settings->name, $key => '%"password":"S%'],
+                ], $response);
+                $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'hidden-filter-not-rejected: ' . $key);
+                $this->assertStringContainsString('fields not allowed', $body['error'] ?? '');
+            }
+
+            // ordenar por ella, también
+            foreach (['properties', 'lower:properties'] as $key) {
+                $response = new Response();
+                $this->callApi('Settings', 'GET', [], [], [
+                    'filter' => ['name' => $settings->name],
+                    'sort' => [$key => 'ASC'],
+                ], $response);
+                $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getHttpCode(), 'hidden-sort-not-rejected: ' . $key);
+            }
+        } finally {
+            $this->assertTrue($settings->delete());
+        }
     }
 
     public function testListSortDirectionReachesLegacyModelNormalized(): void
