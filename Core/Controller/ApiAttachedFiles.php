@@ -136,19 +136,32 @@ class ApiAttachedFiles extends ApiController
 
         // el registro guarda un único archivo: usamos el primero válido.
         // Un campo con varios archivos (files[]) llega como array
+        $uploadedPath = null;
         foreach ($this->request->files->all() as $item) {
             foreach (is_array($item) ? $item : [$item] as $file) {
                 if (!$file->isValid()) {
                     continue;
                 }
 
-                $file->move('MyFiles', $file->getClientOriginalName());
-                $this->model->path = $file->getClientOriginalName();
+                // nunca sobrescribimos un archivo que ya existe en MyFiles
+                $fileName = $file->getClientOriginalName();
+                if (file_exists(FS_FOLDER . '/MyFiles/' . $fileName)) {
+                    $fileName = mt_rand(1, 999999) . '_' . $fileName;
+                }
+
+                if ($file->move(FS_FOLDER . '/MyFiles', $fileName)) {
+                    $uploadedPath = $fileName;
+                }
                 break 2;
             }
         }
+        // el path nunca se acepta del cliente: solo lo fija el archivo subido
+        unset($values['path']);
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
+        }
+        if (null !== $uploadedPath) {
+            $this->model->path = $uploadedPath;
         }
 
         $this->saveResource();
@@ -169,6 +182,8 @@ class ApiAttachedFiles extends ApiController
             return;
         }
 
+        // el path nunca se acepta del cliente
+        unset($values['path']);
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }

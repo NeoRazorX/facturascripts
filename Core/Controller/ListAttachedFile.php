@@ -95,7 +95,8 @@ class ListAttachedFile extends ListController
         $model = $this->activeTab()->model;
         foreach ($codes as $code) {
             $file = $model->get($code);
-            if ($file) {
+            // solo añadimos archivos que estén dentro de MyFiles
+            if ($file && $this->isInsideMyFiles($file->getFullPath())) {
                 $zip->addFile($file->getFullPath(), $file->idfile . '_' . $file->filename);
             }
         }
@@ -129,6 +130,13 @@ class ListAttachedFile extends ListController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    private function isInsideMyFiles(string $filePath): bool
+    {
+        $realPath = realpath($filePath);
+        $folder = realpath(FS_FOLDER . '/MyFiles');
+        return $realPath !== false && $folder !== false && str_starts_with($realPath, $folder . DIRECTORY_SEPARATOR);
     }
 
     protected function showStorageLimitWarning(): void
