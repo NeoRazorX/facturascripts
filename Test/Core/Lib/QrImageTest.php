@@ -27,6 +27,18 @@ final class QrImageTest extends TestCase
 {
     const URL = 'https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR?nif=89890001K&numserie=12345678-G33&fecha=01-09-2024&importe=241.4';
 
+    public function testEmptyData(): void
+    {
+        $this->expectException(\Exception::class);
+        QrImage::png('');
+    }
+
+    public function testEmptyDataSize(): void
+    {
+        $this->expectException(\Exception::class);
+        QrImage::size('');
+    }
+
     public function testPng(): void
     {
         $image = QrImage::png(self::URL);
@@ -67,6 +79,21 @@ final class QrImageTest extends TestCase
         // un nivel desconocido se toma como M
         $this->assertSame($medium, QrImage::size(self::URL, 'X'), 'unknown-level-not-medium');
         $this->assertSame($medium, QrImage::size(self::URL), 'default-level-not-medium');
+    }
+
+    public function testSizeUsesData(): void
+    {
+        // la medida depende de los datos: esta URL no cabe en la versión 1 (21 módulos)
+        $this->assertSame(41, QrImage::size(self::URL, QrImage::ECC_L), 'bad-size-low');
+        $this->assertSame(45, QrImage::size(self::URL, QrImage::ECC_M), 'bad-size-medium');
+        $this->assertSame(53, QrImage::size(self::URL, QrImage::ECC_Q), 'bad-size-quartile');
+        $this->assertSame(57, QrImage::size(self::URL, QrImage::ECC_H), 'bad-size-high');
+
+        // solo números usa el modo más compacto, y la imagen mide lo mismo que dice size()
+        $numbers = str_repeat('1234567890', 10);
+        $image = QrImage::png($numbers, QrImage::ECC_M, 1, 0);
+        $size = getimagesizefromstring(base64_decode(substr($image, strlen('data:image/png;base64,'))));
+        $this->assertSame(QrImage::size($numbers), $size[0], 'numeric-size-not-image-width');
     }
 
     public function testTwoFactorImage(): void
