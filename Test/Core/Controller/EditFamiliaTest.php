@@ -23,6 +23,8 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Controller\EditFamilia;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\User;
@@ -94,6 +96,71 @@ final class EditFamiliaTest extends TestCase
         }
     }
 
+    public function testLibraryWidgetRequiresUpdatePermission(): void
+    {
+        // adjunto que ya existe en la biblioteca
+        $name = 'edit_familia_' . Tools::randomString(6) . '.jpg';
+        $this->assertTrue(copy(FS_FOLDER . '/Test/__files/product_image.jpg', FS_FOLDER . '/MyFiles/' . $name));
+        $file = new AttachedFile();
+        $file->path = $name;
+        $this->assertTrue($file->save());
+
+        $family = new Familia();
+        $family->codfamilia = 'TEF' . mt_rand(100, 999);
+        $family->descripcion = 'Test EditFamilia';
+        $this->assertTrue($family->save());
+
+        $request = ['active_tab' => 'EditFamilia', 'col_name' => 'idattachedfile', 'widget_id' => 'w1'];
+        $total = AttachedFile::count();
+
+        try {
+            // sin permiso de actualización no se listan los archivos de la biblioteca
+            $controller = $this->libraryController($family->codfamilia, $request, false, true);
+            $result = $controller->runLibrary('widgetLibrarySearchAction');
+            $this->assertSame(0, $result['records']);
+            $this->assertSame('', $result['html']);
+
+            // ni la página incluye el listado: el selector queda en solo lectura
+            $widget = $controller->tab('EditFamilia')->columnForField('idattachedfile')->widget;
+            $this->assertSame('true', $widget->readonly);
+            $html = $widget->edit($controller->tab('EditFamilia')->model);
+            $this->assertStringNotContainsString('myft=', $html);
+            $this->assertStringNotContainsString($file->filename, $html);
+
+            // ni se pueden subir archivos
+            $upload = $this->uploadField('edit-familia-' . uniqid() . '.txt');
+            $controller = $this->libraryController($family->codfamilia, $request, false, true, $upload);
+            $this->assertSame([], $controller->runLibrary('widgetLibraryUploadAction'));
+            $this->assertSame($total, AttachedFile::count());
+
+            // con permiso, pero sin token válido, tampoco
+            $controller = $this->libraryController($family->codfamilia, $request, true, false, $upload);
+            $this->assertSame([], $controller->runLibrary('widgetLibraryUploadAction'));
+            $this->assertSame($total, AttachedFile::count());
+
+            // con permiso se listan los archivos
+            $controller = $this->libraryController($family->codfamilia, $request, true, true);
+            $result = $controller->runLibrary('widgetLibrarySearchAction');
+            $this->assertGreaterThan(0, $result['records']);
+            $this->assertStringContainsString($file->filename, $result['html']);
+            $this->assertSame('false', $controller->tab('EditFamilia')->columnForField('idattachedfile')->widget->readonly);
+
+            // y con permiso y token se sube el archivo, sin consumir el token del formulario
+            $controller = $this->libraryController($family->codfamilia, $request, true, true, $upload);
+            $result = $controller->runLibrary('widgetLibraryUploadAction');
+            $this->assertNotEmpty($result['new_file'] ?? null);
+            $this->assertFalse($controller->multiRequestProtection->tokenExist($controller->request->input('multireqtoken')));
+
+            $uploaded = new AttachedFile();
+            $this->assertTrue($uploaded->load($result['new_file']));
+            $this->assertTrue($uploaded->delete());
+        } finally {
+            MiniLog::clear();
+            $file->delete();
+            $family->delete();
+        }
+    }
+
     protected function setUp(): void
     {
         MiniLog::clear();
@@ -104,11 +171,52 @@ final class EditFamiliaTest extends TestCase
         $this->logErrors();
     }
 
+    private function libraryController(string $code, array $data, bool $allowUpdate, bool $validToken, array $files = []): TestableEditFamilia
+    {
+        $controller = new TestableEditFamilia('EditFamilia', '/EditFamilia');
+
+        $user = new User();
+        $user->nick = 'test-edit-familia';
+        $controller->user = $user;
+
+        $controller->permissions = new ControllerPermissions();
+        $controller->permissions->set(true, 1, false, $allowUpdate);
+
+        $controller->multiRequestProtection->clearSeed();
+        $controller->multiRequestProtection->addSeed($user->nick);
+        $data['multireqtoken'] = $validToken ? $controller->multiRequestProtection->newToken() : 'invalid-token';
+
+        $controller->request = new Request([
+            'query' => ['code' => $code],
+            'request' => $data,
+            'files' => $files,
+        ]);
+        foreach ($controller->request->files->all() as $file) {
+            $file->test = true;
+        }
+
+        return $controller;
+    }
+
     private function reload(Producto $product): Producto
     {
         $reloaded = new Producto();
         $this->assertTrue($reloaded->load($product->idproducto));
         return $reloaded;
+    }
+
+    private function uploadField(string $name): array
+    {
+        $tmpName = tempnam(sys_get_temp_dir(), 'tef');
+        file_put_contents($tmpName, 'test');
+
+        return ['file' => [
+            'name' => $name,
+            'type' => 'text/plain',
+            'tmp_name' => $tmpName,
+            'error' => UPLOAD_ERR_OK,
+            'size' => filesize($tmpName),
+        ]];
     }
 
     private function runAction(string $method, string $code, array $codes, bool $allowUpdate, bool $validToken): void
@@ -139,5 +247,19 @@ final class TestableEditFamilia extends EditFamilia
     public function runAction(string $method): void
     {
         $this->{$method}();
+    }
+
+    public function runLibrary(string $method): array
+    {
+        // cargamos las pestañas y sus columnas, como hace privateCore() antes de las acciones
+        if (empty($this->views)) {
+            $this->createViews();
+            foreach ($this->views as $viewName => $view) {
+                $this->loadData($viewName, $view);
+            }
+        }
+        $this->lockLibraryWidgets();
+
+        return $this->{$method}();
     }
 }
