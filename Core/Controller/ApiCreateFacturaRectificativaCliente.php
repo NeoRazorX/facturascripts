@@ -31,6 +31,9 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
  */
 class ApiCreateFacturaRectificativaCliente extends ApiController
 {
+    /** @var float Margen para comparar cantidades decimales sin errores de redondeo. */
+    private const QUANTITY_TOLERANCE = 0.000001;
+
     protected function runResource(): void
     {
         // si el método no es POST o PUT, devolvemos un error
@@ -68,6 +71,12 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         }
     }
 
+    /**
+     * Crea la rectificativa de la factura indicada. Cada refund_X indica la cantidad a rectificar
+     * de la línea X, sin superar lo pendiente; sin refund_X se rectifica lo pendiente de cada línea.
+     *
+     * @return FacturaCliente|null la rectificativa creada, o null si se ha enviado un error
+     */
     protected function newRefundAction(): ?FacturaCliente
     {
         $invoice = new FacturaCliente();
@@ -111,17 +120,52 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
             }
         }
 
+        // la cantidad a rectificar de cada línea no puede superar lo pendiente de rectificar
+        $quantities = [];
         foreach ($invoiceLines as $line) {
-            $quantity = (float)$this->request->input('refund_' . $line->id(), '0');
-            if (!empty($quantity)) {
-                $lines[] = $line;
+            $quantity = abs((float)$this->request->input('refund_' . $line->id(), '0'));
+            if (empty($quantity)) {
+                continue;
             }
+
+            $pending = abs($line->cantidad) - $line->refundedQuantity();
+            if ($quantity - $pending > self::QUANTITY_TOLERANCE) {
+                // mensaje fijo, sin traducir, para que indique la línea en cualquier idioma
+                $this->response
+                    ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                    ->json([
+                        'status' => 'error',
+                        'message' => 'refund_' . $line->id() . ' exceeds the pending quantity to refund'
+                            . ' (quantity: ' . $quantity . ', pending: ' . max(0, $pending) . ')',
+                    ]);
+                return null;
+            }
+
+            $lines[] = $line;
+            $quantities[$line->id()] = $quantity;
         }
 
         // si no se especifican cantidades de las lineas,
-        // incluimos todas las lineas en la factura rectificativa.
+        // rectificamos lo pendiente de cada línea.
         if (empty($lines)) {
-            $lines = $invoiceLines;
+            foreach ($invoiceLines as $line) {
+                $pending = abs($line->cantidad) - $line->refundedQuantity();
+                if ($pending > self::QUANTITY_TOLERANCE) {
+                    $lines[] = $line;
+                    $quantities[$line->id()] = $pending;
+                }
+            }
+        }
+
+        // si no queda nada pendiente de rectificar, no creamos una rectificativa vacía o duplicada
+        if (empty($lines)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'nothing pending to refund in this invoice',
+                ]);
+            return null;
         }
 
         $this->db()->beginTransaction();
@@ -168,7 +212,8 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
 
         foreach ($lines as $line) {
             $newLine = $newRefund->getNewLine($line->toArray());
-            $newLine->cantidad = 0 - (float)$this->request->input('refund_' . $line->id(), $line->cantidad);
+            // la línea rectificativa lleva el signo contrario al de la original
+            $newLine->cantidad = $line->cantidad < 0 ? $quantities[$line->id()] : 0 - $quantities[$line->id()];
             $newLine->idlinearect = $line->idlinea;
             if (false === $newLine->save()) {
                 $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);

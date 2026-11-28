@@ -23,6 +23,8 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
  */
 class EditFacturaCliente extends SalesController
 {
+    /** @var float Margen para comparar cantidades decimales sin errores de redondeo. */
+    private const QUANTITY_TOLERANCE = 0.000001;
     private const VIEW_ACCOUNTS = 'ListAsiento';
     private const VIEW_RECEIPTS = 'ListReciboCliente';
 
@@ -294,6 +296,12 @@ class EditFacturaCliente extends SalesController
         }
     }
 
+    /**
+     * Crea la rectificativa con las cantidades refund_X del formulario. La cantidad de cada
+     * línea no puede superar lo pendiente de rectificar; si se supera, no se crea nada.
+     *
+     * @return bool
+     */
     protected function newRefundAction(): bool
     {
         $invoice = new FacturaCliente();
@@ -307,12 +315,28 @@ class EditFacturaCliente extends SalesController
             return true;
         }
 
+        // la cantidad a rectificar de cada línea no puede superar lo pendiente de rectificar
         $lines = [];
+        $quantities = [];
         foreach ($invoice->getLines() as $line) {
-            $quantity = (float)$this->request->input('refund_' . $line->id(), '0');
-            if (!empty($quantity)) {
-                $lines[] = $line;
+            $quantity = abs((float)$this->request->input('refund_' . $line->id(), '0'));
+            if (empty($quantity)) {
+                continue;
             }
+
+            $pending = abs($line->cantidad) - $line->refundedQuantity();
+            if ($quantity - $pending > self::QUANTITY_TOLERANCE) {
+                Tools::log()->warning('refund-quantity-exceeded', [
+                    '%idlinea%' => $line->id(),
+                    '%description%' => $line->descripcion,
+                    '%quantity%' => $quantity,
+                    '%pending%' => max(0, $pending),
+                ]);
+                return true;
+            }
+
+            $lines[] = $line;
+            $quantities[$line->id()] = $quantity;
         }
         if (empty($lines)) {
             Tools::log()->warning('no-selected-item');
@@ -354,7 +378,8 @@ class EditFacturaCliente extends SalesController
 
         foreach ($lines as $line) {
             $newLine = $newRefund->getNewLine($line->toArray());
-            $newLine->cantidad = 0 - (float)$this->request->input('refund_' . $line->id(), '0');
+            // la línea rectificativa lleva el signo contrario al de la original
+            $newLine->cantidad = $line->cantidad < 0 ? $quantities[$line->id()] : 0 - $quantities[$line->id()];
             $newLine->idlinearect = $line->idlinea;
             if (false === $newLine->save()) {
                 Tools::log()->error('record-save-error');
