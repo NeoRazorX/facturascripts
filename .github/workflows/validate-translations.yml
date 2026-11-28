@@ -1,0 +1,46 @@
+name: Validate Translations
+
+# Sustituye a TranslationTest cuando solo cambian las traducciones: comprueba que
+# cada JSON de Core/Translation es válido y contiene un objeto, sin instalar PHP,
+# composer ni bases de datos. Un solo job de pocos segundos en lugar de toda la
+# batería de PHPUnit, que test.yml y test-countries.yml ya no lanzan en este caso.
+on:
+  push:
+    branches: [ master, main ]
+    paths:
+      - 'Core/Translation/**.json'
+      - '.github/workflows/validate-translations.yml'
+  pull_request:
+    branches: [ master, main ]
+    paths:
+      - 'Core/Translation/**.json'
+      - '.github/workflows/validate-translations.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  json:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    name: Translation JSON files
+
+    steps:
+      - name: Checkout translations
+        uses: actions/checkout@v5
+        with:
+          sparse-checkout: Core/Translation
+
+      - name: Validate JSON files
+        run: |
+          # jq -e devuelve error si el archivo no es JSON válido o si no es un objeto
+          status=0
+          for file in Core/Translation/*.json; do
+            if ! error=$(jq -e 'type == "object"' "$file" 2>&1 >/dev/null); then
+              echo "::error file=$file::El archivo no es un objeto JSON válido. $error"
+              status=1
+            fi
+          done
+          exit $status
