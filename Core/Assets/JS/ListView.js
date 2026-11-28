@@ -125,6 +125,20 @@ function listViewSetOrder(viewName, value) {
     $("#form" + viewName).submit();
 }
 
+/**
+ * Carga la personalización con nombre indicada en el listado (0 = "por defecto").
+ *
+ * @param {string} viewName
+ * @param {number} value
+ */
+function listViewSetPageOption(viewName, value) {
+    const form = document.getElementById("form" + viewName);
+    form.elements["action"].value = "";
+    form.elements["loadpageoption"].value = value;
+    form.elements["offset"].value = 0;
+    form.requestSubmit();
+}
+
 function listViewShowFilters(viewName) {
     $("#form" + viewName + "Filters").toggle(500);
 }

@@ -30,7 +30,7 @@
                     <i class="fa-solid fa-arrow-left fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-md-inline-block">{{ trans('back') }}</span>
                 </a>
-                {% set refreshParams = {'code': fsc.selectedViewName, 'nick': fsc.selectedUser, 'url': fsc.backPage} %}
+                {% set refreshParams = {'code': fsc.selectedViewName, 'id': fsc.selectedId, 'nick': fsc.selectedUser, 'url': fsc.backPage} %}
                 <a href="{{ fsc.url() ~ '?' ~ refreshParams|url_encode }}" class="btn btn-sm btn-secondary"
                    title="{{ trans('refresh') }}">
                     <i class="fa-solid fa-redo" aria-hidden="true"></i>
@@ -78,6 +78,23 @@
                                             {'onChange': 'this.form.submit()'}) }}
                                     </div>
                                 </div>
+                                {% if fsc.allowNamed() %}
+                                    <div class="col-3">
+                                        <div class="input-group mb-3" title="{{ trans('custom-views') }}">
+                                            <span class="input-group-text">
+                                                <i class="fa-solid fa-table-columns"></i>
+                                            </span>
+                                            {{ simpleSelect(
+                                                'pageoption',
+                                                'id',
+                                                fsc.selectedId,
+                                                fsc.getPageOptionList(),
+                                                FALSE,
+                                                FALSE,
+                                                {'onChange': 'this.form.submit()'}) }}
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </form>
                     </div>
@@ -85,8 +102,18 @@
                         {{ formToken() }}
                         <input type="hidden" name="action" value="save"/>
                         <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
+                        <input type="hidden" name="id" value="{{ fsc.selectedId }}"/>
                         <input type="hidden" name="nick" value="{{ fsc.selectedUser }}"/>
                         <input type="hidden" name="url" value="{{ fsc.backPage }}"/>
+                        {% if fsc.selectedId > 0 %}
+                            <div class="card-body pt-0">
+                                <label class="mb-1" for="description">{{ trans('description') }}</label>
+                                <input type="text" class="form-control" id="description" name="description"
+                                       value="{{ fsc.model.description }}" maxlength="50" required/>
+                            </div>
+                        {% else %}
+                            <input type="hidden" name="description" value=""/>
+                        {% endif %}
                         {% set showWidth = fsc.selectedViewName starts with 'List' ? false : true %}
                         <div class="table-responsive">
                             <table class="table table-sm table-hover mb-0">
@@ -142,6 +169,12 @@
                                     <button class="btn btn-spin-action btn-sm btn btn-secondary" type="reset">
                                         <i class="fa-solid fa-undo fa-fw" aria-hidden="true"></i> {{ trans('undo') }}
                                     </button>
+                                    {% if fsc.allowNamed() %}
+                                        <button class="btn btn-spin-action btn-sm btn-secondary" type="button"
+                                                onclick="saveNewOptions();">
+                                            <i class="fa-solid fa-copy fa-fw" aria-hidden="true"></i> {{ trans('save-as') }}
+                                        </button>
+                                    {% endif %}
                                     <button class="btn btn-spin-action btn-sm btn-primary" type="submit">
                                         <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
@@ -176,6 +209,32 @@
             </div>
         </div>
     </div>
+
+    {# -- Save As Modal -- #}
+    {% if fsc.allowNamed() %}
+        <div class="modal fade" id="saveNewOptionsModal" tabindex="-1" aria-labelledby="saveNewOptionsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="saveNewOptionsModalLabel">{{ trans('save-as') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="mb-1" for="newDescription">{{ trans('description') }}</label>
+                        <input type="text" class="form-control" id="newDescription" maxlength="50" autocomplete="off"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-times"></i> {{ trans('cancel') }}
+                        </button>
+                        <button type="button" class="btn btn-primary" id="confirmSaveNewOptionsBtn">
+                            <i class="fa-solid fa-check"></i> {{ trans('new') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block css %}
@@ -200,6 +259,26 @@
             };
             
             deleteModal.show();
+        }
+
+        function saveNewOptions() {
+            const saveModal = new bootstrap.Modal(document.getElementById('saveNewOptionsModal'));
+            const newDescription = document.getElementById('newDescription');
+
+            document.getElementById('confirmSaveNewOptionsBtn').onclick = function () {
+                const description = newDescription.value.trim();
+                if (description === '') {
+                    newDescription.focus();
+                    return;
+                }
+
+                animateSpinner('add');
+                document.main_form.action.value = 'save-new';
+                document.main_form.description.value = description;
+                document.main_form.submit();
+            };
+
+            saveModal.show();
         }
     </script>
 {% endblock %}

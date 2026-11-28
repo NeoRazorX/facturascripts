@@ -69,6 +69,13 @@ class EditPageOption extends Controller
     public $rows = [];
 
     /**
+     * Identificador de la personalización con nombre que se edita; 0 = "por defecto".
+     *
+     * @var int
+     */
+    public $selectedId = 0;
+
+    /**
      * Selected user, for which the controller columns are created or modified
      *
      * @var string
@@ -82,6 +89,16 @@ class EditPageOption extends Controller
      */
     public $selectedViewName;
 
+    /**
+     * Indica si se permiten personalizaciones con nombre: solo en listados y para un usuario concreto.
+     *
+     * @return bool
+     */
+    public function allowNamed(): bool
+    {
+        return str_starts_with($this->selectedViewName, 'List') && false === empty($this->selectedUser);
+    }
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -90,6 +107,31 @@ class EditPageOption extends Controller
         $data['icon'] = 'fa-solid fa-wrench';
         $data['showonmenu'] = false;
         return $data;
+    }
+
+    /**
+     * Devuelve la lista para el selector de personalizaciones: la "por defecto"
+     * y las personalizaciones con nombre del usuario seleccionado.
+     *
+     * @return array
+     */
+    public function getPageOptionList(): array
+    {
+        $result = [0 => Tools::trans('default')];
+        if (false === $this->allowNamed()) {
+            return $result;
+        }
+
+        $where = [
+            Where::eq('name', $this->selectedViewName),
+            Where::eq('nick', $this->selectedUser),
+            Where::isNotNull('description'),
+        ];
+        foreach (PageOption::all($where, ['description' => 'ASC']) as $pageOption) {
+            $result[$pageOption->id] = $pageOption->description;
+        }
+
+        return $result;
     }
 
     /**
@@ -127,6 +169,7 @@ class EditPageOption extends Controller
         $this->selectedUser = $this->user->admin ?
             $this->request->inputOrQuery('nick') :
             $this->user->nick;
+        $this->selectedId = (int)$this->request->queryOrInput('id', 0);
         $this->loadPageOptions();
 
         $action = $this->request->inputOrQuery('action', '');
@@ -137,6 +180,10 @@ class EditPageOption extends Controller
 
             case 'save':
                 $this->saveAction();
+                break;
+
+            case 'save-new':
+                $this->saveNewAction();
                 break;
         }
     }
@@ -169,10 +216,19 @@ class EditPageOption extends Controller
      */
     protected function loadPageOptions(): void
     {
+        // si la personalización con nombre no es válida, se edita la "por defecto"
+        if ($this->selectedId > 0 && false === $this->loadPageOptionsNamed()) {
+            $this->selectedId = 0;
+        }
+
         // comprobamos si existen personalizaciones guardadas
-        $customized = $this->selectedUser ?
-            $this->loadPageOptionsForUser() :
-            $this->loadPageOptionsForAll();
+        if ($this->selectedId > 0) {
+            $customized = true;
+        } else {
+            $customized = $this->selectedUser ?
+                $this->loadPageOptionsForUser() :
+                $this->loadPageOptionsForAll();
+        }
 
         // partimos de la estructura actual del XML y, si hay personalización, aplicamos sus cambios sobre ella
         if ($customized) {
@@ -200,7 +256,9 @@ class EditPageOption extends Controller
     }
 
     /**
-     * Save new configuration for view
+     * Guarda la configuración editada. Si tiene nombre, la renombra y la marca como elegida;
+     * si es la "por defecto" de un usuario, desmarca sus personalizaciones con nombre.
+     * Tras guardar vuelve a la página de origen.
      */
     protected function saveAction(): void
     {
@@ -211,38 +269,62 @@ class EditPageOption extends Controller
             return;
         }
 
-        foreach ($this->model->columns as $key1 => $group) {
-            if ($group['tag'] === 'column') {
-                $name = $group['name'];
-                $this->setColumnOption($this->model->columns[$key1], $name, 'title', false, false);
-                $this->setColumnOption($this->model->columns[$key1], $name, 'display', false, false);
-                $this->setColumnOption($this->model->columns[$key1], $name, 'level', false, true);
-                $this->setColumnOption($this->model->columns[$key1], $name, 'readonly', true, true);
-                $this->setColumnOption($this->model->columns[$key1], $name, 'decimal', true, true);
-                $this->setColumnOption($this->model->columns[$key1], $name, 'numcolumns', false, true);
-                $this->setColumnOption($this->model->columns[$key1], $name, 'order', false, true);
-                continue;
+        if (null !== $this->model->description) {
+            $description = trim($this->request->input('description', ''));
+            if ($description === '') {
+                Tools::log()->warning('description-error');
+                return;
             }
 
-            foreach ($group['children'] as $key2 => $col) {
-                $name = $col['name'];
-                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'title', false, false);
-                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'display', false, false);
-                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'level', false, true);
-                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'readonly', true, true);
-                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'decimal', true, true);
-                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'numcolumns', false, true);
-                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'order', false, true);
-            }
+            $this->model->description = $description;
+            $this->model->selected = true;
         }
 
-        if ($this->model->save()) {
-            Tools::log()->notice('record-updated-correctly');
-            $this->loadPageOptions();
+        $this->setColumnsFromForm();
+        if (false === $this->model->save()) {
+            Tools::log()->error('record-save-error');
             return;
         }
 
-        Tools::log()->error('record-save-error');
+        if (null === $this->model->description && false === empty($this->model->nick)) {
+            PageOption::unselect($this->model->name, $this->model->nick);
+        }
+
+        Tools::log()->notice('record-updated-correctly');
+        $this->redirect($this->backPage);
+    }
+
+    /**
+     * Crea una nueva personalización con nombre para el usuario seleccionado
+     * a partir de los valores del formulario, la marca como elegida y vuelve a la página de origen.
+     */
+    protected function saveNewAction(): void
+    {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->validateFormToken() || false === $this->allowNamed()) {
+            return;
+        }
+
+        $description = trim($this->request->input('description', ''));
+        if ($description === '') {
+            Tools::log()->warning('description-error');
+            return;
+        }
+
+        $this->setColumnsFromForm();
+        $this->model->id = null;
+        $this->model->description = $description;
+        $this->model->nick = $this->selectedUser;
+        $this->model->selected = true;
+        if (false === $this->model->save()) {
+            Tools::log()->error('record-save-error');
+            return;
+        }
+
+        Tools::log()->notice('record-updated-correctly');
+        $this->redirect($this->backPage);
     }
 
     /**
@@ -256,6 +338,7 @@ class EditPageOption extends Controller
         $where = [
             Where::eq('name', $this->selectedViewName),
             Where::isNull('nick'),
+            Where::isNull('description'),
         ];
         return $this->model->loadWhere($where);
     }
@@ -272,6 +355,7 @@ class EditPageOption extends Controller
         $where = [
             Where::eq('name', $this->selectedViewName),
             Where::eq('nick', $this->selectedUser),
+            Where::isNull('description'),
         ];
         if ($this->model->loadWhere($where)) {
             // Existen opciones para el usuario.
@@ -288,6 +372,27 @@ class EditPageOption extends Controller
         $this->model->id = null;
         $this->model->nick = $this->selectedUser;
         return true;
+    }
+
+    /**
+     * Carga la personalización con nombre seleccionada, comprobando que sea
+     * de la vista y del usuario seleccionados.
+     *
+     * @return bool
+     */
+    private function loadPageOptionsNamed(): bool
+    {
+        if (false === $this->allowNamed()) {
+            return false;
+        }
+
+        $where = [
+            Where::eq('id', $this->selectedId),
+            Where::eq('name', $this->selectedViewName),
+            Where::eq('nick', $this->selectedUser),
+            Where::isNotNull('description'),
+        ];
+        return $this->model->loadWhere($where);
     }
 
     private function setBackPage(): void
@@ -324,6 +429,37 @@ class EditPageOption extends Controller
 
         if (!empty($newValue) || $allowEmpty) {
             $column[$key] = $newValue;
+        }
+    }
+
+    /**
+     * Aplica al modelo los valores de las columnas enviados en el formulario.
+     */
+    private function setColumnsFromForm(): void
+    {
+        foreach ($this->model->columns as $key1 => $group) {
+            if ($group['tag'] === 'column') {
+                $name = $group['name'];
+                $this->setColumnOption($this->model->columns[$key1], $name, 'title', false, false);
+                $this->setColumnOption($this->model->columns[$key1], $name, 'display', false, false);
+                $this->setColumnOption($this->model->columns[$key1], $name, 'level', false, true);
+                $this->setColumnOption($this->model->columns[$key1], $name, 'readonly', true, true);
+                $this->setColumnOption($this->model->columns[$key1], $name, 'decimal', true, true);
+                $this->setColumnOption($this->model->columns[$key1], $name, 'numcolumns', false, true);
+                $this->setColumnOption($this->model->columns[$key1], $name, 'order', false, true);
+                continue;
+            }
+
+            foreach ($group['children'] as $key2 => $col) {
+                $name = $col['name'];
+                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'title', false, false);
+                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'display', false, false);
+                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'level', false, true);
+                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'readonly', true, true);
+                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'decimal', true, true);
+                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'numcolumns', false, true);
+                $this->setColumnOption($this->model->columns[$key1]['children'][$key2], $name, 'order', false, true);
+            }
         }
     }
 }

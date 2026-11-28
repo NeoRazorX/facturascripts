@@ -108,6 +108,13 @@ abstract class BaseView
     protected $pageOption;
 
     /**
+     * Identificador de la personalización con nombre aplicada; 0 = "por defecto".
+     *
+     * @var int
+     */
+    public $pageOptionKey = 0;
+
+    /**
      * @var array
      */
     protected $rows = [];
@@ -401,6 +408,7 @@ abstract class BaseView
 
         // si hay personalización guardada, superponemos sus cambios sobre el XML
         $custom = $this->getCustomPageOption($viewName, $user);
+        $this->pageOptionKey = null === $custom?->description ? 0 : (int)$custom->id;
         if (false === is_null($custom)) {
             $this->settings['customized'] = true;
             VisualItemLoadEngine::mergeCustomization($this->pageOption, $custom);
@@ -408,6 +416,38 @@ abstract class BaseView
 
         // creamos la estructura visual
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->pageOption);
+    }
+
+    /**
+     * Marca como elegida la personalización con nombre indicada para el usuario,
+     * o vuelve a la "por defecto" si el identificador es 0.
+     * Solo acepta personalizaciones con nombre de esta vista y del propio usuario.
+     *
+     * @param int $id
+     * @param User|false $user
+     */
+    public function selectPageOption(int $id, $user = false): void
+    {
+        if (is_bool($user)) {
+            return;
+        }
+
+        $viewName = explode('-', $this->name)[0];
+        if ($id === 0) {
+            PageOption::unselect($viewName, $user->nick);
+            return;
+        }
+
+        $pageOption = new PageOption();
+        if (false === $pageOption->load($id)
+            || $pageOption->name !== $viewName
+            || $pageOption->nick !== $user->nick
+            || null === $pageOption->description) {
+            return;
+        }
+
+        $pageOption->selected = true;
+        $pageOption->save();
     }
 
     public function setSettings(string $key, $value): BaseView
@@ -492,7 +532,8 @@ abstract class BaseView
     }
 
     /**
-     * Devuelve la personalización guardada de la vista: la del usuario si existe o, en su defecto, la general.
+     * Devuelve la personalización guardada de la vista por orden de prioridad:
+     * la con nombre elegida por el usuario, la "por defecto" del usuario y la general.
      *
      * @param string $viewName
      * @param User|false $user
@@ -501,20 +542,23 @@ abstract class BaseView
      */
     protected function getCustomPageOption(string $viewName, $user = false): ?PageOption
     {
-        // no ordenamos por nick: MySQL y MariaDB colocan los NULL primero y PostgreSQL al final
-        if (false === is_bool($user)) {
-            $custom = PageOption::findWhere([
+        if (is_bool($user)) {
+            return PageOption::findWhere([
                 Where::eq('name', $viewName),
-                Where::eq('nick', $user->nick),
+                Where::isNull('nick'),
+                Where::isNull('description'),
             ]);
-            if (null !== $custom) {
-                return $custom;
-            }
         }
 
+        // no se ordena por nick porque MySQL coloca los NULL primero y PostgreSQL al final;
+        // DbQuery solo admite COALESCE con la forma exacta COALESCE(campo, 'literal')
         return PageOption::findWhere([
             Where::eq('name', $viewName),
-            Where::isNull('nick'),
+            Where::sub([Where::eq('nick', $user->nick), Where::orIsNull('nick')]),
+            Where::sub([Where::isNull('description'), Where::orEq('selected', true)]),
+        ], [
+            'selected' => 'DESC',
+            "COALESCE(nick, '')" => 'DESC',
         ]);
     }
 
