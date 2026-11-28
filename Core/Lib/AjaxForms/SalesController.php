@@ -250,14 +250,22 @@ abstract class SalesController extends PanelController
                 return $this->recalculateAction(false);
 
             case 'save-doc':
+            case 'save-paid':
+            case 'save-status':
+                // un reintento con el mismo token (p. ej. tras perder la respuesta) no debe volver a guardar
+                if (false === $this->validateFormToken()) {
+                    $this->setTemplate(false);
+                    $this->sendJsonWithLogs(['ok' => false, 'multireqtoken' => null]);
+                    return false;
+                }
+                if ('save-paid' === $action) {
+                    return $this->savePaidAction();
+                }
+                if ('save-status' === $action) {
+                    return $this->saveStatusAction();
+                }
                 $this->saveDocAction();
                 return false;
-
-            case 'save-paid':
-                return $this->savePaidAction();
-
-            case 'save-status':
-                return $this->saveStatusAction();
 
             case 'sort-files':
                 return $this->sortFilesAction();
@@ -758,6 +766,11 @@ abstract class SalesController extends PanelController
 
     private function sendJsonWithLogs(array $data): void
     {
+        // si no se ha guardado, damos un token nuevo para poder reintentar
+        if (($data['ok'] ?? null) === false && false === array_key_exists('multireqtoken', $data)) {
+            $data['multireqtoken'] = $this->multiRequestProtection->newToken();
+        }
+
         $messages = array_merge(
             Tools::log()::read('master', $this->logLevels),
             $this->humanizeDatabaseMessages(Tools::log()::read('database', $this->logLevels))
