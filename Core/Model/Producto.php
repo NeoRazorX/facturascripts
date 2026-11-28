@@ -154,7 +154,10 @@ class Producto extends ModelClass
             }
         }
 
-        // las imágenes se eliminan en onDeleteBefore()
+        // las imágenes se eliminan en onDeleteBefore(), dentro de la transacción de delete(),
+        // así que comprobamos antes la tabla de imágenes porque no se puede crear en una transacción
+        new DinProductoImagen();
+
         return parent::delete();
     }
 
