@@ -25,7 +25,11 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
- * Description of AutocompleteFilter
+ * Filtro de listado que muestra un campo de texto con autocompletado sobre una tabla,
+ * de forma que el usuario busca por descripción y el filtro guarda internamente el código
+ * seleccionado. Se apoya en CodeModel para obtener la descripción del valor elegido y
+ * carga los assets de jQuery UI necesarios para el desplegable de sugerencias. Resulta
+ * útil cuando el número de opciones es demasiado grande para un desplegable normal.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib\ListFilter;
 use FacturaScripts\Core\Where;
 
 /**
- * Description of DateFilter
+ * Filtro de listado que muestra un selector de fecha y compara el campo indicado con el
+ * valor elegido usando la operación configurada, que por defecto es mayor o igual. Si el
+ * campo de la tabla incluye hora, completa el valor con las 00:00:00 o las 23:59:59 según
+ * la operación, para que los rangos incluyan el día entero. Es el filtro que utiliza
+ * PeriodFilter para construir las fechas de inicio y fin de un periodo.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

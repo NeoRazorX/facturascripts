@@ -29,7 +29,13 @@ use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Description of SalesLineHTML
+ * Genera el HTML de las partidas del formulario de asientos contables y aplica
+ * sobre ellas los datos enviados por el usuario, creando, actualizando o
+ * eliminando partidas según lo recibido. También recalcula el debe, el haber y
+ * el importe del asiento tras cada cambio, y ofrece un modal por línea con los
+ * campos de IVA, recargo, base imponible, CIF/NIF, documento y serie.
+ * Los plugins pueden alterar o añadir campos mediante mods que implementen
+ * AccountingLineModInterface y se registren con addMod().
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>

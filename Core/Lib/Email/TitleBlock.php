@@ -22,7 +22,9 @@ namespace FacturaScripts\Core\Lib\Email;
 use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
- * Description of TitleBlock
+ * Bloque de email que dibuja un título o encabezado. Se puede elegir la etiqueta HTML
+ * a utilizar, que por defecto es h2, además de las clases CSS y los estilos que se le
+ * quieran aplicar.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>

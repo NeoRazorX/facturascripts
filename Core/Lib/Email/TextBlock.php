@@ -22,7 +22,9 @@ namespace FacturaScripts\Core\Lib\Email;
 use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
- * Description of TextBlock
+ * Bloque de email que muestra un párrafo de texto. Convierte los saltos de línea del
+ * texto en etiquetas HTML para respetar el formato original, y permite personalizar
+ * las clases CSS y los estilos del párrafo.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <contacto@danielfg.es>

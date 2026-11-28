@@ -19,6 +19,13 @@
 
 namespace FacturaScripts\Core\Lib;
 
+/**
+ * Valida los números de identificación fiscal de Ecuador: cédula de identidad y
+ * RUC de persona natural, de sociedad privada y de sociedad pública. Comprueba la
+ * longitud, el código de provincia, el tercer dígito propio de cada tipo y el
+ * dígito verificador calculado con el algoritmo módulo 10 u 11 según corresponda.
+ * La usa el modelo de clientes y proveedores para verificar el CIF/NIF.
+ */
 class ValidadorEcuador
 {
     public static function validarCedula(?string $number): bool

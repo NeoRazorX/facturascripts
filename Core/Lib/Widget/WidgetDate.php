@@ -22,7 +22,10 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Request;
 
 /**
- * Description of WidgetDate
+ * Widget para campos de fecha, declarado con type="date" en las vistas XMLView.
+ * En edición genera un input date de HTML5 con el valor en formato Y-m-d, y al mostrarlo
+ * lo presenta en el formato habitual d-m-Y, o un guion si el campo está vacío.
+ * Cuando la fecha es hoy o futura resalta la celda de la tabla en negrita.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */

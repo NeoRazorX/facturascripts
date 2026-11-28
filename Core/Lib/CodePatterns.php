@@ -22,7 +22,11 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Tools;
 
 /**
- * Class to apply patterns.
+ * Traduce los patrones de numeración de documentos a su valor final. Recibe una
+ * plantilla de texto con comodines como {FECHA}, {ANYO}, {MES}, {SERIE}, {NUM} o
+ * {0NUM} y los sustituye por los datos del modelo que se le pasa, normalmente un
+ * documento de compra o venta. Admite además un filtro final tras el separador |
+ * para convertir el resultado a mayúsculas, minúsculas o capitalizarlo.
  *
  * @author Jose Antonio Cuello <yopli2000@gmail.com>
  * @author Carlos García Gómez <carlos@facturascripts.com>

@@ -21,6 +21,12 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
+/**
+ * Añade a un controlador la pestaña de histórico del registro, un listado de
+ * solo lectura sobre el modelo LogMessage con los mensajes de auditoría
+ * asociados al modelo y al código indicados. Se crea desde createViews() con
+ * createViewLogAudit() y se rellena desde loadData() con loadDataLogAudit().
+ */
 trait LogAuditTrait
 {
     public function createViewLogAudit(string $viewName = 'ListLogMessage')
