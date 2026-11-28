@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,6 +97,31 @@ class MysqlQueries implements DataBaseQueries
     public function sqlAlterColumnNull(string $tableName, array $colData): string
     {
         return $this->sqlAlterModifyColumn($tableName, $colData);
+    }
+
+    /**
+     * Devuelve la sentencia SQL que permite valores nulos en una columna de la base de datos,
+     * conservando su tipo, su valor por defecto y su cláusula ON UPDATE.
+     * MySQL no permite quitar solo el NOT NULL: MODIFY redefine la columna completa,
+     * por lo que hay que repetir todo lo que se quiera mantener.
+     *
+     * @param string $tableName
+     * @param array $dbColumn Columna tal y como la devuelve DataBase::getColumns().
+     *
+     * @return string
+     */
+    public function sqlAlterColumnDropNotNull(string $tableName, array $dbColumn): string
+    {
+        $sql = 'ALTER TABLE ' . $tableName . ' MODIFY `' . $dbColumn['name'] . '` ' . $dbColumn['type'] . ' NULL'
+            . ' DEFAULT ' . $this->getDbDefault($dbColumn);
+
+        // conservamos la cláusula ON UPDATE (por ejemplo, ON UPDATE CURRENT_TIMESTAMP)
+        $extra = (string)($dbColumn['extra'] ?? '');
+        if (1 === preg_match('/on update .+$/i', $extra, $matches)) {
+            $sql .= ' ' . $matches[0];
+        }
+
+        return $sql . ';';
     }
 
     /**
@@ -307,6 +332,41 @@ class MysqlQueries implements DataBaseQueries
         $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
         $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
         return str_replace($search, $replace, $sql);
+    }
+
+    /**
+     * Devuelve el valor por defecto de una columna de la base de datos listo para usar en un DEFAULT.
+     * Las funciones (CURRENT_TIMESTAMP, current_timestamp()...) se dejan tal cual, las expresiones
+     * de MySQL 8 se encierran entre paréntesis y los literales se entrecomillan.
+     *
+     * @param array $dbColumn Columna tal y como la devuelve DataBase::getColumns().
+     *
+     * @return string
+     */
+    private function getDbDefault(array $dbColumn): string
+    {
+        $default = $dbColumn['default'] ?? null;
+        if (null === $default) {
+            return 'NULL';
+        }
+
+        $default = (string)$default;
+        $extra = (string)($dbColumn['extra'] ?? '');
+        if (1 === preg_match('/^(current_timestamp|current_date|current_time|localtime|localtimestamp|now)(\(\d*\))?$/i', $default)) {
+            return $default;
+        }
+
+        // MySQL 8 marca con DEFAULT_GENERATED las columnas cuyo valor por defecto es una expresión
+        if (false !== stripos($extra, 'DEFAULT_GENERATED')) {
+            return '(' . $default . ')';
+        }
+
+        // MariaDB puede devolver los literales ya entrecomillados
+        if (strlen($default) >= 2 && str_starts_with($default, "'") && str_ends_with($default, "'")) {
+            $default = str_replace("''", "'", substr($default, 1, -1));
+        }
+
+        return "'" . str_replace(['\\', "'"], ['\\\\', "''"], $default) . "'";
     }
 
     /**
