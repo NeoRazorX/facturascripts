@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -28,6 +29,10 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Base class for creation of accounting processes
  *
+ * Los asientos se generan siempre en la divisa de la empresa. Si el documento está en otra
+ * divisa, la subclase asigna a $exchangeRate la tasa de conversión (ver exchangeRate()) y
+ * getBasicLine() convierte todos los importes de las partidas al crearlas.
+ *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  */
@@ -35,6 +40,44 @@ abstract class AccountingClass extends AccountingAccounts
 {
     /** @var ModelClass */
     protected $document;
+
+    /**
+     * Tasa para pasar los importes del documento a la divisa de la empresa:
+     * importe en la divisa de la empresa = importe del documento / $exchangeRate.
+     * Con 1.0 (valor por defecto) los importes no se convierten.
+     *
+     * @var float
+     */
+    protected $exchangeRate = 1.0;
+
+    /**
+     * Devuelve la tasa para pasar los importes de un documento a la divisa de la empresa.
+     * Las tasas de las divisas son respecto al euro (totaleuros = total / tasaconv), así que
+     * la tasa es la del documento entre la de la divisa de la empresa; si la empresa usa el
+     * euro, es directamente el tasaconv del documento.
+     *
+     * Devuelve 1.0 (sin conversión) si el documento está en la divisa de la empresa, no tiene
+     * divisa o su tasa está vacía, es 0 o negativa, para no dividir por cero.
+     *
+     * @param object $document documento con coddivisa y tasaconv (factura, albarán...)
+     *
+     * @return float
+     */
+    public static function exchangeRate($document): float
+    {
+        $docRate = (float)($document->tasaconv ?? 0.0);
+        if (empty($document->coddivisa) || $docRate <= 0.0) {
+            return 1.0;
+        }
+
+        $default = Divisas::default();
+        if ($document->coddivisa === $default->coddivisa) {
+            return 1.0;
+        }
+
+        $companyRate = (float)($default->tasaconv ?? 0.0);
+        return $companyRate > 0.0 ? $docRate / $companyRate : $docRate;
+    }
 
     /**
      * Method to launch the accounting process
@@ -128,7 +171,7 @@ abstract class AccountingClass extends AccountingAccounts
         }
 
         // add tax register data
-        $line->baseimponible = (float)$values['neto'];
+        $line->baseimponible = $this->toCompanyCurrency((float)$values['neto']);
         $line->iva = 0;
         $line->recargo = (float)$values['recargo'];
         $line->cifnif = $this->document->cifnif;
@@ -163,7 +206,7 @@ abstract class AccountingClass extends AccountingAccounts
         }
 
         // add tax register data
-        $line->baseimponible = (float)$values['neto'];
+        $line->baseimponible = $this->toCompanyCurrency((float)$values['neto']);
         $line->iva = (float)$values['iva'];
         $line->recargo = 0;
         $line->cifnif = $this->document->cifnif;
@@ -178,10 +221,15 @@ abstract class AccountingClass extends AccountingAccounts
     /**
      * Obtain a standard line to the accounting entry based on the reported sub-account
      *
+     * El importe se indica en la divisa del documento y aquí se convierte a la divisa de la
+     * empresa con $exchangeRate. Si hay conversión, la partida guarda en coddivisa y tasaconv
+     * la divisa del documento y la tasa usada, para dejar constancia del importe original
+     * (importe original = importe de la partida * tasaconv).
+     *
      * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
      * @param bool $isDebit
-     * @param float $amount
+     * @param float $amount importe en la divisa del documento; si es null, el total del documento
      *
      * @return Partida
      */
@@ -190,7 +238,12 @@ abstract class AccountingClass extends AccountingAccounts
         $line = $accountEntry->getNewLine();
         $line->setAccount($subaccount);
 
-        $total = ($amount === null) ? $this->document->total : $amount;
+        if ($this->exchangeRate != 1.0) {
+            $line->coddivisa = $this->document->coddivisa ?? $line->coddivisa;
+            $line->tasaconv = $this->exchangeRate;
+        }
+
+        $total = $this->toCompanyCurrency(($amount === null) ? $this->document->total : $amount);
         if ($isDebit) {
             $line->debe = max($total, 0);
             $line->haber = $total < 0 ? abs($total) : 0;
@@ -200,5 +253,22 @@ abstract class AccountingClass extends AccountingAccounts
         $line->debe = $total < 0 ? abs($total) : 0;
         $line->haber = max($total, 0);
         return $line;
+    }
+
+    /**
+     * Convierte un importe de la divisa del documento a la divisa de la empresa, redondeado
+     * a los decimales configurados. Sin conversión ($exchangeRate = 1.0) lo devuelve tal cual.
+     *
+     * @param float|int|null $amount
+     *
+     * @return float
+     */
+    protected function toCompanyCurrency($amount): float
+    {
+        if ($this->exchangeRate == 1.0) {
+            return (float)$amount;
+        }
+
+        return Tools::round((float)$amount / $this->exchangeRate);
     }
 }

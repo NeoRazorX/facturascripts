@@ -43,6 +43,12 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  * Clase para la generación de asientos contables a partir de un documento
  * de venta/compra y la liquidación de sus recibos.
  *
+ * El asiento se genera en la divisa de la empresa: si la factura está en otra divisa,
+ * todos los importes se dividen por su tasa de conversión (el mismo criterio que
+ * totaleuros = total / tasaconv) y los céntimos de diferencia que dejan los redondeos
+ * se ajustan en la partida de ventas/compras de mayor importe, para que la partida del
+ * cliente/proveedor sea exactamente el total convertido y la salden sus cobros/pagos.
+ *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Raúl Jiménez Jiménez          <raljopa@gmail.com>
@@ -76,6 +82,7 @@ class InvoiceToAccounting extends AccountingClass
     public function generate($model)
     {
         parent::generate($model);
+        $this->exchangeRate = static::exchangeRate($model);
         if (false === $this->initialChecks()) {
             return;
         }
@@ -89,6 +96,59 @@ class InvoiceToAccounting extends AccountingClass
                 $this->purchaseAccountingEntry();
                 break;
         }
+    }
+
+    /**
+     * Ajusta los céntimos de descuadre que deja la conversión de divisa. Cada partida se
+     * convierte y redondea por separado, así que la suma puede diferir en algún céntimo del
+     * total convertido. La diferencia se lleva a la partida de mayor importe de las subcuentas
+     * indicadas (ventas o compras), para no tocar la del cliente/proveedor, que debe ser el
+     * total convertido exacto para que la salden sus cobros/pagos, ni las de impuestos.
+     *
+     * Sin conversión no hace nada. Un descuadre mayor que el posible por redondeo (un céntimo
+     * por partida) no se ajusta: lo detecta después la comprobación de asiento cuadrado.
+     *
+     * @param Asiento $entry
+     * @param array $codes subcuentas en las que se puede ajustar la diferencia
+     *
+     * @return bool
+     */
+    protected function adjustExchangeRounding(Asiento $entry, array $codes): bool
+    {
+        if ($this->exchangeRate == 1.0 || empty($codes)) {
+            return true;
+        }
+
+        // las claves numéricas de los arrays de PHP se convierten en enteros
+        $codes = array_map('strval', $codes);
+
+        $lines = $entry->getLines();
+        $debit = 0.0;
+        $credit = 0.0;
+        $target = null;
+        foreach ($lines as $line) {
+            $debit += $line->debe;
+            $credit += $line->haber;
+
+            if (false === in_array((string)$line->codsubcuenta, $codes, true)) {
+                continue;
+            }
+
+            if (null === $target || abs($line->debe - $line->haber) > abs($target->debe - $target->haber)) {
+                $target = $line;
+            }
+        }
+
+        $diff = Tools::round($debit - $credit);
+        if (empty($diff) || null === $target || abs($diff) > count($lines) * 0.01 + 0.000001) {
+            return true;
+        }
+
+        // restamos la diferencia del saldo de la partida para que el asiento cuadre
+        $net = Tools::round($target->debe - $target->haber - $diff);
+        $target->debe = max($net, 0);
+        $target->haber = $net < 0 ? abs($net) : 0;
+        return $target->save();
     }
 
     /**
@@ -125,7 +185,8 @@ class InvoiceToAccounting extends AccountingClass
     /**
      * Añade la línea de compra de mercancías al asiento, una por cada subcuenta de
      * producto/familia. En facturas rectificativas usa la cuenta especial DEVCOM si
-     * está configurada; en caso contrario cae a COMPRA.
+     * está configurada; en caso contrario cae a COMPRA. En facturas en divisa ajusta
+     * después los céntimos de redondeo de la conversión (ver adjustExchangeRounding()).
      *
      * @param Asiento $entry
      *
@@ -146,7 +207,7 @@ class InvoiceToAccounting extends AccountingClass
 
         $tool = new PurchasesDocLineAccount();
         $totals = $tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta ?? '');
-        return $this->addLinesFromTotals(
+        $done = $this->addLinesFromTotals(
             $entry,
             $totals,
             true,
@@ -154,12 +215,14 @@ class InvoiceToAccounting extends AccountingClass
             'purchases-subaccount-not-found',
             'good-purchases-line-error'
         );
+        return $done && $this->adjustExchangeRounding($entry, array_keys($totals));
     }
 
     /**
      * Añade la línea de venta de mercancías al asiento, una por cada subcuenta de
      * producto/familia. En facturas rectificativas usa la cuenta especial DEVVEN si
-     * está configurada; en caso contrario cae a VENTAS.
+     * está configurada; en caso contrario cae a VENTAS. En facturas en divisa ajusta
+     * después los céntimos de redondeo de la conversión (ver adjustExchangeRounding()).
      *
      * @param Asiento $entry
      *
@@ -180,7 +243,7 @@ class InvoiceToAccounting extends AccountingClass
 
         $tool = new SalesDocLineAccount();
         $totals = $tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta ?? '');
-        return $this->addLinesFromTotals(
+        $done = $this->addLinesFromTotals(
             $entry,
             $totals,
             false,
@@ -188,6 +251,7 @@ class InvoiceToAccounting extends AccountingClass
             'sales-subaccount-not-found',
             'good-sales-line-error'
         );
+        return $done && $this->adjustExchangeRounding($entry, array_keys($totals));
     }
 
     /**
@@ -780,7 +844,8 @@ class InvoiceToAccounting extends AccountingClass
 
     /**
      * Asigna al asiento los datos básicos del documento (ejercicio, concepto, fecha,
-     * empresa, importe) y copia el diario y el canal analítico desde la Serie.
+     * empresa, importe en la divisa de la empresa) y copia el diario y el canal analítico
+     * desde la Serie.
      *
      * @param Asiento $entry
      * @param string $concept
@@ -792,7 +857,7 @@ class InvoiceToAccounting extends AccountingClass
         $entry->documento = $this->document->codigo;
         $entry->fecha = $this->document->fechadevengo ?? $this->document->fecha;
         $entry->idempresa = $this->document->idempresa;
-        $entry->importe = $this->document->total;
+        $entry->importe = $this->toCompanyCurrency($this->document->total);
 
         $serie = new Serie();
         $serie->load($this->document->codserie);
