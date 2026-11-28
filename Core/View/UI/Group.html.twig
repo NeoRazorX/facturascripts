@@ -1,0 +1,10 @@
+<div id="{{ c.domId() }}" data-ui-path="{{ c.path() }}" class="col-12">
+    {% if c.titleText() %}
+        <legend class="fs-6 fw-semibold border-bottom pb-1 mb-2">{{ c.titleText() }}</legend>
+    {% endif %}
+    <div class="row g-2{{ c.isAlignBottom() ? ' align-items-end' : '' }}">
+        {% for child in c.children() %}
+            {{ child.render()|raw }}
+        {% endfor %}
+    </div>
+</div>

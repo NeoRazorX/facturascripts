@@ -1,0 +1,9 @@
+{% extends 'UI/Field/_wrapper.html.twig' %}
+
+{% block input %}
+    <input type="date" name="{{ c.inputName() }}" id="{{ c.inputId() }}" value="{{ c.valueAttr() }}"
+           class="{{ c.inputCssClass('form-control') }}"
+           {%- if c.isRequired() %} required{% endif %}
+           {%- if c.isReadOnly() %} readonly{% endif %}
+           {%- if c.getTabIndex() >= 0 %} tabindex="{{ c.getTabIndex() }}"{% endif %}/>
+{% endblock %}

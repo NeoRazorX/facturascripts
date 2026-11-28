@@ -1,0 +1,5 @@
+<div id="{{ c.domId() }}" class="ui-page">
+    {% for child in c.children() %}
+        {{ child.render()|raw }}
+    {% endfor %}
+</div>

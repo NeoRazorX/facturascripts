@@ -1,0 +1,19 @@
+<div id="{{ c.domId() }}" data-ui-path="{{ c.path() }}" class="ui-tabs">
+    <ul class="nav nav-tabs px-3 pt-2" role="tablist">
+        {% for tab in c.tabs() %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link{{ loop.first ? ' active' : '' }}" id="{{ tab.domId() }}-btn"
+                        data-bs-toggle="tab" data-bs-target="#{{ tab.domId() }}"
+                        type="button" role="tab" aria-controls="{{ tab.domId() }}">
+                    {% if tab.getIcon() %}<i class="{{ tab.getIcon() }} fa-fw me-1"></i>{% endif %}
+                    {{ tab.labelText() }}
+                </button>
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content" id="{{ c.domId() }}-content" data-ui-panel="{{ c.path() }}" data-ui-behavior="tab-persist">
+        {% for tab in c.tabs() %}
+            {{ tab.render()|raw }}
+        {% endfor %}
+    </div>
+</div>
