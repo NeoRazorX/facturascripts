@@ -2204,6 +2204,7 @@
     "wizard-plugins": "Un plugin es un complemento que añade nuevas funcionalidades. Selecciona los plugins que quieras activar inmediatamente, o hazlo más tarde desde el panel de control.",
     "work": "Trabajo",
     "work-certification": "Certificación",
+    "work-event-discarded": "El evento de trabajo %event% (%id%, valor %value%) se ha descartado tras %attempts% intentos sin llegar a terminar.",
     "work-events": "Eventos de trabajo",
     "working-hours": "Horario de trabajo",
     "works": "Trabajos",

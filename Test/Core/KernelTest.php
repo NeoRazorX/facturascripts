@@ -129,6 +129,41 @@ final class KernelTest extends TestCase
         Kernel::unlock($processName);
     }
 
+    public function testLockWithTtlExpires(): void
+    {
+        $processName = 'test-ttl-lock-' . uniqid();
+
+        // bloqueamos con una caducidad de 1 segundo
+        $this->assertTrue(Kernel::lock($processName, 1));
+        $this->assertFalse(Kernel::lock($processName, 1), 'El bloqueo no debería haber caducado aún');
+
+        // esperamos a que caduque y lo volvemos a adquirir
+        sleep(2);
+        $this->assertTrue(Kernel::lock($processName, 1), 'El bloqueo caducado no se ha descartado');
+
+        // limpieza
+        Kernel::unlock($processName);
+    }
+
+    public function testExtendLock(): void
+    {
+        $processName = 'test-extend-lock-' . uniqid();
+
+        // no se puede renovar un bloqueo que no existe
+        $this->assertFalse(Kernel::extendLock($processName, 60));
+
+        // bloqueamos con 1 segundo y lo renovamos a 60
+        $this->assertTrue(Kernel::lock($processName, 1));
+        $this->assertTrue(Kernel::extendLock($processName, 60));
+
+        // pasado el segundo inicial, el bloqueo sigue vigente
+        sleep(2);
+        $this->assertFalse(Kernel::lock($processName), 'El bloqueo renovado ha caducado');
+
+        // limpieza
+        Kernel::unlock($processName);
+    }
+
     public function testSaveRoutes(): void
     {
         // Añadir algunas rutas de prueba
