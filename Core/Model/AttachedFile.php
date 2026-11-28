@@ -241,6 +241,14 @@ class AttachedFile extends ModelClass
                     return max($this->newCode(), $row['nextval']);
                 }
                 break;
+
+            case 'sqlite':
+                // último id asignado por AUTOINCREMENT, aunque se haya borrado
+                $sql = "SELECT seq FROM sqlite_sequence WHERE name = '" . static::tableName() . "';";
+                foreach (static::db()->select($sql) as $row) {
+                    return max($this->newCode(), (int)$row['seq'] + 1);
+                }
+                break;
         }
 
         return $this->newCode();

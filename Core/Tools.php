@@ -21,6 +21,7 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DB\Connection;
 use FacturaScripts\Core\Model\Settings;
 
 /**
@@ -40,6 +41,20 @@ class Tools
         'ŕ' => 'r'
     ];
     const DATE_STYLE = 'd-m-Y';
+
+    /** @var array<string, string> Claves de configuración que se pueden leer de FS_DB_URL, con su parámetro de la url. */
+    const DB_URL_KEYS = [
+        'db_host' => 'host',
+        'db_name' => 'name',
+        'db_pass' => 'pass',
+        'db_port' => 'port',
+        'db_type' => 'type',
+        'db_user' => 'user',
+        'mysql_charset' => 'charset',
+        'mysql_socket' => 'socket',
+        'pgsql_endpoint' => 'endpoint',
+        'pgsql_ssl' => 'sslmode',
+    ];
     const DATETIME_STYLE = 'd-m-Y H:i:s';
     const HOUR_STYLE = 'H:i:s';
     const HTML_CHARS = ['<', '>', '"', "'"];
@@ -104,6 +119,10 @@ class Tools
      * y la clave en mayúsculas precedida por 'FS_'. Si alguna de estas constantes está
      * definida, retorna su valor. De lo contrario, retorna un valor por defecto.
      *
+     * Si la base de datos se configura con una url (constante FS_DB_URL), los datos de conexión
+     * que no estén definidos como constantes (db_type, db_host, db_port, db_name, db_user, db_pass,
+     * pgsql_ssl, pgsql_endpoint, mysql_charset y mysql_socket) se obtienen de esa url.
+     *
      * @param string $key La clave de la configuración que se desea obtener.
      * @param mixed $default El valor por defecto que se retornará si no se encuentra ninguna constante (por defecto es null).
      *
@@ -115,6 +134,15 @@ class Tools
         foreach ($constants as $constant) {
             if (defined($constant)) {
                 return constant($constant);
+            }
+        }
+
+        // datos de conexión a la base de datos definidos en la url
+        $urlKey = self::DB_URL_KEYS[strtolower($key)] ?? null;
+        if ($urlKey !== null) {
+            $url = self::config('db_url', '');
+            if (!empty($url)) {
+                return Connection::parseUrl($url)[$urlKey] ?? $default;
             }
         }
 

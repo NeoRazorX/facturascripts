@@ -40,7 +40,7 @@ final class DataBaseTest extends TestCase
 
     public function testType(): void
     {
-        $this->assertContains($this->db->type(), ['mysql', 'postgresql', '']);
+        $this->assertContains($this->db->type(), ['mysql', 'postgresql', 'sqlite', '']);
     }
 
     public function testGetEngine(): void
@@ -53,7 +53,7 @@ final class DataBaseTest extends TestCase
     {
         $escaped = $this->db->escapeColumn('nombre');
 
-        // Esperamos `nombre` en MySQL o "nombre" en PostgreSQL
+        // Esperamos `nombre` en MySQL o "nombre" en PostgreSQL y SQLite
         $this->assertContains($escaped, ['`nombre`', '"nombre"']);
     }
 
@@ -75,7 +75,7 @@ final class DataBaseTest extends TestCase
     {
         // Si el nombre contiene el carácter de cita, debe escaparse duplicándolo
         // para evitar inyección SQL si el nombre proviene de input no confiable.
-        if ($this->db->type() === 'postgresql') {
+        if (in_array($this->db->type(), ['postgresql', 'sqlite'], true)) {
             $escaped = $this->db->escapeColumn('a"b');
             $this->assertSame('"a""b"', $escaped);
         } else {
@@ -122,7 +122,9 @@ final class DataBaseTest extends TestCase
 
     public function testVar2strInt(): void
     {
-        $this->assertSame("'42'", $this->db->var2str(42));
+        // en SQLite los números van sin comillas
+        $expected = $this->db->type() === 'sqlite' ? '42' : "'42'";
+        $this->assertSame($expected, $this->db->var2str(42));
     }
 
     public function testVar2strDate(): void
