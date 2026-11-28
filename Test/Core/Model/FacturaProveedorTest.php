@@ -30,6 +30,7 @@ use FacturaScripts\Core\Lib\RefundReason;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\FacturaProveedor;
+use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\ReciboProveedor;
 use FacturaScripts\Core\Model\Retencion;
 use FacturaScripts\Core\Model\Subcuenta;
@@ -39,6 +40,7 @@ use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 final class FacturaProveedorTest extends TestCase
 {
@@ -48,6 +50,9 @@ final class FacturaProveedorTest extends TestCase
 
     /** @var int|null */
     public static $blockedId;
+
+    /** @var array Modelos creados por el test que se borran en tearDown(). */
+    private $cleanup = [];
 
     const INVOICE_NOTES = 'Test test test.';
     const INVOICE_REF = '7777777';
@@ -173,6 +178,52 @@ final class FacturaProveedorTest extends TestCase
 
         // eliminamos el producto
         $this->assertTrue($product->delete(), 'cant-delete-producto');
+    }
+
+    /**
+     * Una línea guardada con una referencia que aún no existe no mueve stock. Si después se crea
+     * el producto y se borra la factura, no se debe restar un stock que nunca se sumó.
+     */
+    public function testLineWithoutProductDoesNotUndoStock(): void
+    {
+        // creamos el proveedor
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
+        $this->cleanup[] = $supplier;
+
+        // creamos la factura con una referencia que todavía no existe como producto
+        $product = $this->getRandomProduct();
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($supplier);
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+        $this->cleanup[] = $invoice;
+        $line = $invoice->getNewProductLine($product->referencia);
+        $line->cantidad = self::PRODUCT1_QUANTITY;
+        $this->assertTrue($line->save(), 'cant-save-line');
+
+        // la línea no ha movido stock y así queda reflejado
+        $this->assertEquals($product->referencia, $line->referencia, 'bad-line-reference');
+        $this->assertEquals(0, $line->actualizastock, 'line-without-product-should-not-update-stock');
+
+        // creamos el producto con esa referencia
+        $this->assertTrue($product->save(), 'cant-create-product');
+        $this->cleanup[] = $product;
+
+        // al borrar la factura no se debe restar nada
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $product->reload();
+        $this->assertEquals(0, $product->stockfis, 'stock-should-not-be-subtracted');
+
+        // una factura nueva con el producto ya creado suma su cantidad
+        $invoice2 = new FacturaProveedor();
+        $invoice2->setSubject($supplier);
+        $this->assertTrue($invoice2->save(), 'cant-create-invoice-2');
+        $this->cleanup[] = $invoice2;
+        $line2 = $invoice2->getNewProductLine($product->referencia);
+        $line2->cantidad = self::PRODUCT1_QUANTITY;
+        $this->assertTrue($line2->save(), 'cant-save-line-2');
+        $product->reload();
+        $this->assertEquals(self::PRODUCT1_QUANTITY, $product->stockfis, 'bad-product-stock');
     }
 
     public function testCreateInvoiceCreatesAccountingEntry(): void
@@ -1108,6 +1159,28 @@ final class FacturaProveedorTest extends TestCase
 
     protected function tearDown(): void
     {
+        // borramos lo que haya creado el test, cada entidad por separado para no dejar restos:
+        // primero las facturas, después los productos y al final los proveedores
+        $priority = function ($model): int {
+            return $model instanceof FacturaProveedor ? 0 : ($model instanceof Proveedor ? 2 : 1);
+        };
+        usort($this->cleanup, function ($a, $b) use ($priority) {
+            return $priority($a) <=> $priority($b);
+        });
+        foreach ($this->cleanup as $model) {
+            try {
+                if ($model instanceof Proveedor) {
+                    $model->getDefaultAddress()->delete();
+                }
+                if ($model->exists()) {
+                    $model->delete();
+                }
+            } catch (Throwable $e) {
+                // seguimos con el resto de entidades
+            }
+        }
+        $this->cleanup = [];
+
         $this->logErrors();
     }
 }

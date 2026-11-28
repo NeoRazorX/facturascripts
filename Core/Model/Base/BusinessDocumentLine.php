@@ -558,6 +558,10 @@ abstract class BusinessDocumentLine extends NewModelClass
     /**
      * Actualiza el stock según los datos de la línea y el almacén.
      *
+     * Si la referencia de la línea no existe como variante, la línea no mueve stock y se guarda
+     * con actualizastock a 0. Así, si el producto se crea más tarde, al borrar o modificar la línea
+     * no se deshace un stock que nunca se llegó a aplicar.
+     *
      * @return bool
      */
     protected function updateStock(): bool
@@ -566,11 +570,15 @@ abstract class BusinessDocumentLine extends NewModelClass
             return true;
         } elseif (empty($this->actualizastock) && empty($this->getOriginal('actualizastock'))) {
             return true;
+        } elseif (empty($this->referencia)) {
+            return true;
         }
 
         // buscamos la variante
         $variante = new Variante();
-        if (empty($this->referencia) || false === $variante->loadWhereEq('referencia', $this->referencia)) {
+        if (false === $variante->loadWhereEq('referencia', $this->referencia)) {
+            // la línea no mueve stock: lo dejamos reflejado para no deshacerlo más adelante
+            $this->actualizastock = 0;
             return true;
         }
 
