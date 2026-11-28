@@ -80,6 +80,9 @@
                         </div>
                     </div>
                 {% endif %}
+                {% for includeView in getIncludeViews('ListController', 'topButtons') %}
+                    {% include includeView['path'] %}
+                {% endfor %}
             </div>
             <div class="col-md-5 text-end">
                 <h1 class="h4 mb-0 d-none d-md-inline-block">
